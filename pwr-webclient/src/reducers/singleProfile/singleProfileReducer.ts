@@ -1,7 +1,8 @@
 import {LanguageLevel, LanguageSkill, RequestStatus, SingleProfile} from '../../Store';
 import {isNullOrUndefined} from 'util';
-import {ChangeLanguageSkillAction} from './singleProfileActions';
+import {ChangeLanguageSkillAction, ReceiveFullProfileAction} from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
+import {ReceiveSingleConsultantAction} from '../consultants/consultant_actions';
 const initialState: SingleProfile = {
     profile: {
         abstract: "Lorem Ipsum",
@@ -27,6 +28,11 @@ function handleChangeLanguageSkill(state: SingleProfile, action: ChangeLanguageS
     return Object.assign({}, state, {languages: newLanguages});
 }
 
+
+function handleReceiveSingleConsultant(state: SingleProfile, action: ReceiveFullProfileAction) : SingleProfile {
+    return Object.assign({}, state, {profile: action.profile});
+}
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -41,6 +47,8 @@ export function singleProfile(state : SingleProfile, action: AbstractAction) : S
     switch(action.type) {
         case ActionType.ChangeLanguageSkill:
             return handleChangeLanguageSkill(state, <ChangeLanguageSkillAction> action );
+        case ActionType.ReceiveFullProfile:
+            return handleReceiveSingleConsultant(state, <ReceiveFullProfileAction> action);
         default:
             return state;
     }

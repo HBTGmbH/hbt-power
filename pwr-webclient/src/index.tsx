@@ -9,11 +9,10 @@ import {Provider} from 'react-redux';
 
 import thunkMiddleware from 'redux-thunk';
 import {AsyncActions} from './reducers/consultants/consultant_actions';
-import {Profile} from './modules/profile/profile_module';
-import injectTapEventPlugin = require('react-tap-event-plugin');
-import {PowerToolbar} from './modules/power-toolbar_module';
 import {PowerClient} from './modules/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
+import {ProfileAsyncActionCreator} from './reducers/singleProfile/singleProfileActions';
+import injectTapEventPlugin = require('react-tap-event-plugin');
 
 
 injectTapEventPlugin();
@@ -29,7 +28,7 @@ let store = createStore(
 
 PowerLocalize.setLocale(navigator.language);
 
-
+store.dispatch(ProfileAsyncActionCreator.requestSingleProfile("nt"));
 store.dispatch(AsyncActions.fetchConsultants());
 
 ReactDOM.render(

@@ -79,7 +79,7 @@ export class ProfileAsyncActionCreator {
             // Perform the actual request
             // FIXME make async axios call.
             dispatch(ProfileActionCreator.receiveFullProfile(singleProfile));
-            // uncomment when an error occurs during axios call
+            //FIXME uncomment when an error occurs during axios call
             //dispatch(ProfileActionCreator.failRequestFullProfile())
 
         }
