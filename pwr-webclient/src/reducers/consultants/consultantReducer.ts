@@ -1,16 +1,17 @@
-import {PowerClientState} from '../Store';
+import {AllConsultantsState} from '../../Store';
 import {
-    AbstractAction, ActionType, ChangeInfoAction, ChangeInitialsAction, ReceiveConsultantsAction,
+    ChangeInfoAction, ChangeInitialsAction, ReceiveConsultantsAction,
     ReceiveSingleConsultantAction
-} from '../actions';
-import {ConsultantLocalProps, ConsultantProps} from '../consultant_module';
+} from './consultant_actions';
+import {ConsultantLocalProps, ConsultantProps} from '../../modules/consultant_module';
 import {isNullOrUndefined} from 'util';
-/**
- * Created by nt on 12.04.2017.
- */
+import {AbstractAction, ActionType} from '../reducerIndex';
 
 
 let cons_data: ConsultantProps[] = [];
+
+var log = require('loglevel');
+log.info("unreasonably simple");
 
 // Um obj vollständig unveränderbar zu machen, friere jedes Objekt in obj ein.
 function deepFreeze(obj: Object) {
@@ -31,7 +32,7 @@ function deepFreeze(obj: Object) {
     return Object.freeze(obj);
 }
 
-function handleChangeInitialsAction(action: ChangeInitialsAction, state: PowerClientState) : PowerClientState {
+function handleChangeInitialsAction(action: ChangeInitialsAction, state: AllConsultantsState) : AllConsultantsState {
     let consultants: Array<ConsultantProps> = state.consultants;
     // Creates a copy of the old consultant.
     let updatedConsultant: ConsultantProps = Object.assign(consultants[action.consultantIndex]);
@@ -48,7 +49,7 @@ function handleChangeInitialsAction(action: ChangeInitialsAction, state: PowerCl
     return Object.assign({}, state, {consultants: newCList});
 }
 
-function handleChangeFirstnameAction(action: ChangeInfoAction, state: PowerClientState) : PowerClientState {
+function handleChangeFirstnameAction(action: ChangeInfoAction, state: AllConsultantsState) : AllConsultantsState {
     let consultants: Array<ConsultantProps> = state.consultants;
     // Creates a copy of the old consultant.
     let updatedConsultant: ConsultantProps = Object.assign(consultants[action.consultantIndex]);
@@ -65,7 +66,7 @@ function handleChangeFirstnameAction(action: ChangeInfoAction, state: PowerClien
     return Object.assign({}, state, {consultants: newCList});
 }
 
-function handleChangeLastnameAction(action: ChangeInfoAction, state: PowerClientState) : PowerClientState {
+function handleChangeLastnameAction(action: ChangeInfoAction, state: AllConsultantsState) : AllConsultantsState {
     let consultants: Array<ConsultantProps> = state.consultants;
     // Creates a copy of the old consultant.
     let updatedConsultant: ConsultantProps = Object.assign(consultants[action.consultantIndex]);
@@ -82,8 +83,8 @@ function handleChangeLastnameAction(action: ChangeInfoAction, state: PowerClient
     return Object.assign({}, state, {consultants: newCList});
 }
 
-function handleReceiveConsultants(action: ReceiveConsultantsAction, state:PowerClientState) {
-    let newState : PowerClientState = Object.assign({}, state);
+function handleReceiveConsultants(action: ReceiveConsultantsAction, state:AllConsultantsState) {
+    let newState : AllConsultantsState = Object.assign({}, state, {requestingConsultants: false});
     newState.consultants = action.consultants;
     console.log("Received consultants from API",newState );
     return newState;
@@ -91,9 +92,9 @@ function handleReceiveConsultants(action: ReceiveConsultantsAction, state:PowerC
 
 function handleReceiveSingleConsultant(
     action: ReceiveSingleConsultantAction,
-    state: PowerClientState) : PowerClientState {
+    state: AllConsultantsState) : AllConsultantsState {
     deepFreeze(state); //FIXME remove
-    let newState : PowerClientState = Object.assign({}, state);
+    let newState : AllConsultantsState = Object.assign({}, state);
     let newCList: Array<ConsultantProps> = [];
     for(let i: number = 0; i < newState.consultants.length; i++) {
         if (newState.consultants[i].initials === action.consultant.initials) {
@@ -108,23 +109,30 @@ function handleReceiveSingleConsultant(
     return newState;
 }
 
+function handleRequestConsultantFailed(state: AllConsultantsState) : AllConsultantsState {
+    return Object.assign({}, state, {requestingConsultants: false});
+}
 
 
-export function updateConsultant(state : PowerClientState, action: AbstractAction) : PowerClientState {
+
+export function updateConsultant(state : AllConsultantsState, action: AbstractAction) : AllConsultantsState {
     if(isNullOrUndefined(state)) {
         console.log("State was undefined");
         let newState = {
-            consultants: cons_data
+            consultants: cons_data,
+            requestingConsultants: false
         };
         console.log("State initialized with: ", newState);
         return newState;
     }
-    console.log("Reducer called with state actiontype", ActionType[action.type]);
+    console.log("Consultant Reducer called for action type " + ActionType[action.type]);
     switch(action.type) {
+        case ActionType.RequestConsultantsFailed:
+            return handleRequestConsultantFailed(state);
         case ActionType.ReceiveConsultants:
             return handleReceiveConsultants(<ReceiveConsultantsAction> action, state);
         case ActionType.RequestConsultants:
-            return state;
+            return Object.assign({}, state, {requestingConsultants: true});
         case ActionType.ChangeInitials:
             return handleChangeInitialsAction(<ChangeInitialsAction> action, state);
         case ActionType.ChangeBirthDate:

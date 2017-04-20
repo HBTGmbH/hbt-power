@@ -3,8 +3,8 @@ import * as redux from 'redux';
 import {connect} from 'react-redux';
 import {Card} from 'material-ui/Card';
 import {CardHeader, CardMedia, List, ListItem, RaisedButton, TextField} from 'material-ui';
-import {ActionCreator, AsyncActions} from './actions';
-import {PowerClientState} from './Store';
+import {ActionCreator, AsyncActions} from '../reducers/consultants/consultant_actions';
+import {ApplicationState, AllConsultantsState} from '../Store';
 import {Col, Row} from 'react-flexbox-grid';
 
 
@@ -44,7 +44,7 @@ export interface ConsultantDispatch {
     saveConsultant: (consultant: ConsultantProps) => void;
 }
 
-function mapStateToProps(state: any, consultantProps: ConsultantLocalProps) {
+function mapStateToProps(state: ApplicationState, consultantProps: ConsultantLocalProps) {
     return {
         initials: state.updateConsultant.consultants[consultantProps.index].initials,
         firstName: state.updateConsultant.consultants[consultantProps.index].firstName,
@@ -53,7 +53,7 @@ function mapStateToProps(state: any, consultantProps: ConsultantLocalProps) {
     }
 }
 
-function mapDispatchToProps(dispatch: redux.Dispatch<PowerClientState>) : ConsultantDispatch {
+function mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ConsultantDispatch {
     return {
         changeInitials: function(newInitials: string, index: number) {
             dispatch(ActionCreator.changeInitials(newInitials, index))
@@ -130,7 +130,7 @@ class ConsultantComponent extends
                 actAsExpander={true}
             />
             <CardMedia expandable={true}>
-                <img src={this.props.image_ref}/>
+                <img src={this.props.image_ref} style={{"width": "50%"}}/>
             </CardMedia>
             <CardMedia expandable={true}>
                 <List>

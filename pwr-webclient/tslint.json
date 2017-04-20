@@ -1,4 +1,4 @@
-{
+/*{
     "extends": ["tslint-react"],
     "rules": {
         "ban": false,
@@ -91,3 +91,5 @@
         ]
     }
 }
+*/
+{}
