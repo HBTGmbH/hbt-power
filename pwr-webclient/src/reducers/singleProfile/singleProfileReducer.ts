@@ -1,7 +1,7 @@
 import {RequestStatus, SingleProfile} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
-    ChangeLanguageSkillLevelAction, ChangeLanguageSkillNameAction,
+    ChangeLanguageSkillLevelAction, ChangeLanguageSkillNameAction, ProfileAsyncActionCreator,
     ReceiveFullProfileAction
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
@@ -39,7 +39,8 @@ function handleChangeLanguageSkill(state: SingleProfile, action: ChangeLanguageS
         newLanguage,
         ...state.profile.languages.slice(action.index + 1)
     ];
-    return Object.assign({}, state, {profile:{languages: newLanguages}});
+    let newProfile = Object.assign({}, state.profile, {languages: newLanguages});
+    return Object.assign({}, state, {profile:newProfile});
 }
 
 function handleChangeLanguageSkillLevel(state: SingleProfile, action: ChangeLanguageSkillLevelAction) {
@@ -50,7 +51,8 @@ function handleChangeLanguageSkillLevel(state: SingleProfile, action: ChangeLang
         newLanguage,
         ...state.profile.languages.slice(action.index + 1)
     ];
-    return Object.assign({}, state, {profile:{languages: newLanguages}});
+    let newProfile = Object.assign({}, state.profile, {languages: newLanguages});
+    return Object.assign({}, state, {profile:newProfile});
 }
 
 
@@ -65,6 +67,8 @@ function handleRequestingFullProfile(state: SingleProfile, action: AbstractActio
 function handleFailRequestFullProfile(state: SingleProfile, action: AbstractAction) {
     return Object.assign({}, state, {requestProfileStatus: RequestStatus.Failiure});
 }
+
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -76,7 +80,7 @@ export function singleProfile(state : SingleProfile, action: AbstractAction) : S
         state = initialState;
     }
     deepFreeze(state);
-    console.log("Profile Reducer called for action type " + ActionType[action.type]);
+    console.log("ConsultantProfile Reducer called for action type " + ActionType[action.type]);
     switch(action.type) {
         case ActionType.ChangeLanguageSkillName:
             return handleChangeLanguageSkill(state, <ChangeLanguageSkillNameAction> action );

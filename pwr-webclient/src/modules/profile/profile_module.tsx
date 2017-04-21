@@ -1,13 +1,21 @@
-
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, RequestStatus} from '../../Store';
 import {
-    Card, CardHeader, Divider, Drawer, Menu, MenuItem, Paper, Toolbar, IconButton, Snackbar,
-    FontIcon, RefreshIndicator, CircularProgress, TouchTapEvent
+    Card,
+    CardHeader,
+    CircularProgress,
+    Divider,
+    Drawer,
+    FontIcon,
+    IconButton,
+    MenuItem,
+    Paper,
+    Snackbar,
+    Toolbar,
+    TouchTapEvent
 } from 'material-ui';
-import {Grid, Row} from 'react-flexbox-grid';
 import {AbstractText} from './elements/abstract_module';
 import {LanguageSkills} from './elements/languages_module';
 import {Sectors} from './elements/sectors_module';
@@ -16,9 +24,12 @@ import {Education} from './elements/eduction_module';
 import {Qualifications} from './elements/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
+import {Profile} from '../../model/Profile';
 
 interface ProfileProps {
     requestProfileStatus: RequestStatus;
+    saveProfileStatus: RequestStatus;
+    profile: Profile;
 }
 
 /**
@@ -42,13 +53,16 @@ interface ProfileLocalState {
 
 interface ProfileDispatch {
     reloadProfile(): void;
+    saveProfile(initials: string, profile: Profile): void;
 }
 
 class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & ProfileDispatch, ProfileLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps) : ProfileProps {
         return {
-            requestProfileStatus: state.singleProfile.requestProfileStatus
+            requestProfileStatus: state.singleProfile.requestProfileStatus,
+            saveProfileStatus: state.singleProfile.saveProfileStatus,
+            profile: state.singleProfile.profile
         };
     }
 
@@ -58,38 +72,38 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ProfileDispatch {
         return {
-            reloadProfile: function() {dispatch(ProfileAsyncActionCreator.requestSingleProfile("nt"))} //FIXME no hardcoding
+            reloadProfile: function() {dispatch(ProfileAsyncActionCreator.requestSingleProfile('nt'));} ,//FIXME no hardcoding
+            saveProfile: function(initials: string, profile: Profile) {
+                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, profile))
+            }
         };
     }
 
-    private renderSnackbar() : JSX.Element {
+    private static renderSnackbar(statusName: string, status: RequestStatus) : JSX.Element {
         let msgSuccess: JSX.Element = (
-            <div>
-                {"Status:\n" + RequestStatus[this.props.requestProfileStatus]}
-                <FontIcon className="material-icons" style={{color: "green"}}>done</FontIcon>
+            <div className="row">
+                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'green', fontSize: "45"}}>done</FontIcon>
             </div>
         );
 
         let msgFail: JSX.Element = (
-            <div>
-                {"Status:\n" + RequestStatus[this.props.requestProfileStatus]}
-                <FontIcon className="material-icons" style={{color: "red"}}>error</FontIcon>
+            <div className="row">
+                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'red', fontSize: "45"}}>error</FontIcon>
             </div>
         );
 
         let msgPending: JSX.Element = (
             <div className="row">
-                <div className="col-md-6">
-                {"Status:\n" + RequestStatus[this.props.requestProfileStatus]}
+                <div className="col-md-2 col-md-offset-5">
+                    <CircularProgress size={40}/>
                 </div>
-                <CircularProgress size={40}/>
             </div>
         );
 
         let msg: JSX.Element;
-        if(this.props.requestProfileStatus === RequestStatus.Successful) {
+        if(status === RequestStatus.Successful) {
             msg = msgSuccess;
-        } else if(this.props.requestProfileStatus === RequestStatus.Failiure) {
+        } else if(status === RequestStatus.Failiure) {
             msg = msgFail;
         } else {
             msg = msgPending;
@@ -99,12 +113,15 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 
 
+
+
     private handleReloadProfile = (event: TouchTapEvent) => {
         this.props.reloadProfile();
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {
-        // FIXME implement
+        console.log(this.props.profile);
+        this.props.saveProfile("nt", this.props.profile); //FIXME remove hardcoding
     };
 
     private handleResetProfile = (event: TouchTapEvent) => {
@@ -156,7 +173,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             <IconButton iconClassName="material-icons" onClick={this.handleResetProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
                         </Toolbar>
                         <br/>
-                        {this.renderSnackbar()}
+                        {ProfileModule.renderSnackbar('Save', this.props.saveProfileStatus)}
+                        {ProfileModule.renderSnackbar('Load', this.props.requestProfileStatus)}
                     </Card>
                 </div>
                 <div className="col-md-2"/>
@@ -165,4 +183,4 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 }
 
-export const Profile: React.ComponentClass<ProfileLocalProps> = connect(ProfileModule.mapStateToProps, ProfileModule.mapDispatchToProps)(ProfileModule);
+export const ConsultantProfile: React.ComponentClass<ProfileLocalProps> = connect(ProfileModule.mapStateToProps, ProfileModule.mapDispatchToProps)(ProfileModule);

@@ -8,6 +8,7 @@ import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {getProfileAPIString} from '../../API_CONFIG';
 import {Profile} from '../../model/Profile';
+import {isNull, isNullOrUndefined} from 'util';
 
 export interface ChangeAbstractAction extends AbstractAction {
     newAbstract: string;
@@ -103,6 +104,16 @@ export class ProfileAsyncActionCreator {
 
     }
 
+    private static validate(profile: Profile) {
+        if(isNullOrUndefined(profile.languages)) throw new Error("Languages may not be null or undefined.");
+        if(isNullOrUndefined(profile.qualification)) throw new Error("qualification may not be null or undefined.");
+        if(isNullOrUndefined(profile.description)) throw new Error("description may not be null or undefined.");
+        if(isNullOrUndefined(profile.currentPosition)) throw new Error("currentPosition may not be null or undefined.");
+        if(isNullOrUndefined(profile.career)) throw new Error("career may not be null or undefined.");
+        if(isNullOrUndefined(profile.education)) throw new Error("education may not be null or undefined.");
+        if(isNullOrUndefined(profile.sectors)) throw new Error("sectors may not be null or undefined.");
+    }
+
     public static requestSingleProfile(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             // Dispatch the action that sets the status to "Request Pendign" or similar
@@ -111,6 +122,7 @@ export class ProfileAsyncActionCreator {
             axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
                 let profile: Profile = Object.assign({}, response.data);
                 console.info("Received profile during API request:", profile);
+                ProfileAsyncActionCreator.validate(profile);
                 ProfileAsyncActionCreator.parseInfos(profile);
                 // Parse the dates.
                 dispatch(ProfileActionCreator.receiveFullProfile(profile));

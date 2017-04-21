@@ -21,7 +21,7 @@ export enum ActionType {
     ChangeBirthDate,
     RequestConsultants,
     ReceiveConsultants,
-    // == Single Profile Actions == //
+    // == Single ConsultantProfile Actions == //
     ChangeAbstract,
     ChangeLanguageSkillName
 }

@@ -58,8 +58,6 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     }
 
     public static mapStateToProps(state: ApplicationState, props: SingleLanguageLocalProps) : SingleLanguageProps {
-        console.log(props.index);
-        console.log("mapping state to props", state.singleProfile.profile.languages);
         return {
             languageSkill: state.singleProfile.profile.languages[props.index],
             possibleLanguages: state.singleProfile.possibleLanguageNames,
@@ -109,7 +107,6 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     };
 
     render() {
-        console.log("Value:", this.props.languageSkill.level);
         return(
         <tr>
             <td>
