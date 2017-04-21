@@ -1,6 +1,10 @@
 import * as React from 'react';
-import {Card, CardHeader, CardMedia, Divider, List, Table, TableBody, TableHeader} from 'material-ui';
+import {
+    Card, CardHeader, CardMedia, Divider, FontIcon, IconButton, List, Table, TableBody, TableHeader, Toolbar,
+    ToolbarTitle
+} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {Color} from '../../utils/ColorUtil';
 
 interface ProfileElementLocalProps {
     title: string;
@@ -16,29 +20,39 @@ interface ProfileElementLocalProps {
  */
 export class ProfileElement extends React.Component<ProfileElementLocalProps, {}> {
 
+
+    private readonly cardHeaderStyle = {
+       'background-color' : Color.HBTSilver.toCSSRGBString()
+    };
+
     render() {
         return(
-            <Card>
-                <CardHeader actAsExpander={true}
-                            title={this.props.title}
-                            subtitle={React.Children.count(this.props.children) + " " + this.props.subtitleCountedName}
-                >
-                </CardHeader>
-                <Divider/>
-                <CardMedia expandable={true}>
-                    <div className="table-responsive">
-                        <table className="table table-striped table-condensed">
-                            <thead>
-                            {this.props.tableHeader}
-                            </thead>
-                            <tbody>
-                            {this.props.children}
-                            </tbody>
-                        </table>
+            <div>
+                <br/>
+                <Card>
+                    <CardHeader actAsExpander={true} title={this.props.title} style={this.cardHeaderStyle}>
 
-                    </div>
-                </CardMedia>
-            </Card>
+                    </CardHeader>
+                    <Divider/>
+
+                    <CardMedia expandable={true}>
+                        <div className="table-responsive">
+                            <table className="table table-striped table-condensed">
+                                <thead>
+                                {this.props.tableHeader}
+                                </thead>
+                                <tbody>
+                                {this.props.children}
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </CardMedia>
+
+
+                </Card>
+            </div>
         );
     }
 }

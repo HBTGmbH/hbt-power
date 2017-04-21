@@ -46,12 +46,12 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
 
     private static renderSingleQualification(qualification: Qualification, index: number) {
         return (
-        <tr>
+        <tr  key={"qualification." + index}>
             <td>
-                <DatePicker container="inline"  value={qualification.date}/>
+                <DatePicker id={"Qualification.DatePicker." + index } container="inline"  value={qualification.date}/>
             </td>
             <td>
-                <TextField value={qualification.name} key={index} fullWidth={true} disabled={true}/>
+                <TextField id={"Qualification.TextField." + index } value={qualification.name} fullWidth={true} disabled={true}/>
             </td>
         </tr>
         );

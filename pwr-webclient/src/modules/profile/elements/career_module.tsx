@@ -41,13 +41,13 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
         return (
             <tr key={'Career.' + index} >
                 <td>
-                    <DatePicker container="inline"  value={careerStep.startDate}/>
+                    <DatePicker id={'C.DatePick.Start' + index} container="inline"  value={careerStep.startDate}/>
                 </td>
                 <td>
-                    <DatePicker container="inline"  value={careerStep.endDate}/>
+                    <DatePicker id={'C.DatePick.End' + index} container="inline"  value={careerStep.endDate}/>
                 </td>
                 <td>
-                    <TextField value={careerStep.name}  disabled={true}/>
+                    <TextField id={'Career.TextField.' + index} value={careerStep.name}  disabled={true}/>
                 </td>
             </tr>
         );

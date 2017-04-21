@@ -8,17 +8,9 @@ import {
 } from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
-
-
-const singleProfile: ConsultantProfile = {
-    abstract: "Lorem Ipsum",
-    languages: [{name: "Englisch", languageLevel: LanguageLevel.Expert}, {name:"Russisch", languageLevel: LanguageLevel.Native}],
-    sectors: ["Luftfahrt", "Logistik"],
-    qualifications: [{date: new Date(), name: "Irgend ein ISO Zeug"}],
-    career: [{startDate: new Date(), endDate: new Date(), name: "Entwickler"}, {startDate: new Date(), endDate: new Date(), name: "Senior-Entwickler"}],
-    education: [{date: new Date(), name: "Bachelor Informatik"}]
-};
-
+import axios, {AxiosResponse} from 'axios';
+import {getProfileAPIString} from '../../API_CONFIG';
+import {LanguageLevelUtil} from '../../utils/LanguageLevelUtil';
 
 export interface ChangeAbstractAction extends AbstractAction {
     newAbstract: string;
@@ -71,16 +63,35 @@ export class ProfileActionCreator {
 
 }
 
+
 export class ProfileAsyncActionCreator {
+    private static parseInfos(profile: ConsultantProfile) {
+        profile.education.forEach(e => e.date = new Date(e.date));
+        profile.qualifications.forEach(e => e.date = new Date(e.date));
+        profile.career.forEach(e => {e.startDate = new Date(e.startDate); e.endDate = new Date(e.endDate)});
+        // Very very bad hacking, but there is no other way to parse it as an enum
+        // The input from the API will be a string, therefor, during runtime, e.languageLevel will be a string
+        // But to typescript, it is a language level. Thats why we treat e.languageLevel in the FromString method
+        // as a string...
+        profile.languages.forEach(e => {e.languageLevel = LanguageLevelUtil.fromString(e.languageLevel)});
+
+    }
+
     public static requestSingleProfile(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             // Dispatch the action that sets the status to "Request Pendign" or similar
             dispatch(ProfileActionCreator.requestingFullProfile());
             // Perform the actual request
-            // FIXME make async axios call.
-            dispatch(ProfileActionCreator.receiveFullProfile(singleProfile));
-            //FIXME uncomment when an error occurs during axios call
-            //dispatch(ProfileActionCreator.failRequestFullProfile())
+            axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
+                let profile: ConsultantProfile = Object.assign({}, response.data);
+
+                ProfileAsyncActionCreator.parseInfos(profile);
+                console.log("Profile:", profile);
+                // Parse the dates.
+                dispatch(ProfileActionCreator.receiveFullProfile(profile));
+            }).catch(function(error:any) {
+                dispatch(ProfileActionCreator.failRequestFullProfile())
+            });
 
         }
     }

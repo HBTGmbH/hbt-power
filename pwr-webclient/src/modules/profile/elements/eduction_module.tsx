@@ -46,12 +46,12 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     private static renderSingleEducationStep(step: EducationStep, index: number) {
         return (
-            <tr key={"EducationModule." + index} >
+            <tr key={"Education." + index} >
                 <td>
-                    <DatePicker container="inline"  value={step.date}/>
+                    <DatePicker id={"Education.DatePicker." + index} container="inline"  value={step.date}/>
                 </td>
                 <td>
-                    <TextField value={step.name} fullWidth={true} disabled={true}/>
+                    <TextField id={"Education.TextField." + index} value={step.name} fullWidth={true} disabled={true}/>
                 </td>
             </tr>
         );

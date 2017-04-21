@@ -49,7 +49,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     }
 
     private static renderSingleDropDownElement(languageLevel: LanguageLevel, idx: number) {
-        return (<MenuItem value={idx} primaryText={LanguageLevel[languageLevel]} key={idx}/>);
+        return (<MenuItem value={idx} primaryText={LanguageLevel[languageLevel]} key={"LanguageLevel." + idx}/>);
     }
 
     public static mapStateToProps(state: ApplicationState, props: SingleLanguageLocalProps) : SingleLanguageProps {

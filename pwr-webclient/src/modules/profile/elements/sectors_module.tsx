@@ -2,13 +2,13 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../Store';
+import {AllConsultantsState, ApplicationState, Sector} from '../../../Store';
 import {Card, CardHeader, CardMedia, Divider, List, TextField} from 'material-ui';
 import {ProfileElement} from '../profile-element_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface SectorsProps {
-    sectors: string[];
+    sectors: Array<Sector>;
 }
 
 /**
@@ -57,8 +57,8 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         };
     }
 
-    static renderSingleListElement(sector: string, index:number) {
-        return (<tr><td><TextField value={sector} key={index} fullWidth={true} disabled={true}/></td></tr>);
+    static renderSingleListElement(sector: Sector, index:number) {
+        return (<tr  key={"sectors." + index}><td><TextField id={"sectors.textfield." + index} value={sector.name} fullWidth={true} disabled={true}/></td></tr>);
     }
 
     render() {

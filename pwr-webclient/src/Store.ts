@@ -45,10 +45,14 @@ export enum RequestStatus {
     Failiure
 }
 
+export interface Sector {
+    name: string;
+}
+
 export interface ConsultantProfile {
     abstract: string;
     languages: LanguageSkill[];
-    sectors: Array<string>;
+    sectors: Array<Sector>;
     career: Array<CareerStep>;
     education: Array<EducationStep>;
     qualifications: Array<Qualification>;

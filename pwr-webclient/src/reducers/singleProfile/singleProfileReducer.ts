@@ -30,7 +30,11 @@ function handleChangeLanguageSkill(state: SingleProfile, action: ChangeLanguageS
 
 
 function handleReceiveSingleConsultant(state: SingleProfile, action: ReceiveFullProfileAction) : SingleProfile {
-    return Object.assign({}, state, {profile: action.profile});
+    return Object.assign({}, state, {profile: action.profile, requestProfileStatus: RequestStatus.Successful});
+}
+
+function handleRequestingFullProfile(state: SingleProfile, action: AbstractAction) : SingleProfile {
+    return Object.assign({}, state, {requestProfileStatus: RequestStatus.Pending});
 }
 
 /**
@@ -49,6 +53,8 @@ export function singleProfile(state : SingleProfile, action: AbstractAction) : S
             return handleChangeLanguageSkill(state, <ChangeLanguageSkillAction> action );
         case ActionType.ReceiveFullProfile:
             return handleReceiveSingleConsultant(state, <ReceiveFullProfileAction> action);
+        case ActionType.RequestingFullProfile:
+            return handleRequestingFullProfile(state, action);
         default:
             return state;
     }

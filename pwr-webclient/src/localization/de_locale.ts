@@ -10,5 +10,8 @@ export const de_locale : any = {
     "EducationStep.Plural": "Ausbildungs-Schritte",
     "Qualification.Plural": "Zusatzqualifikationen",
     "Sector.Singular": "Branche",
-    "Sector.Plural": "Branchen"
+    "Sector.Plural": "Branchen",
+    "Action.Save": "Speichern",
+    "Action.Update": "Aktualisieren",
+    "Action.Undo": "Zurücksetzen"
 };

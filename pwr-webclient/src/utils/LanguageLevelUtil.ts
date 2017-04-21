@@ -7,6 +7,27 @@ export class LanguageLevelUtil {
         return [LanguageLevel.Beginner, LanguageLevel.Apprentice, LanguageLevel.Expert, LanguageLevel.Native];
     }
 
+    /**
+     * Bad hacking
+     * @param val
+     * @returns {any}
+     */
+    static fromString(val: any ): LanguageLevel {
+        if(val == "Beginner") {
+            return LanguageLevel.Beginner;
+        }
+        if(val == "Apprentice") {
+            return LanguageLevel.Apprentice;
+        }
+        if(val == "Expert") {
+            return LanguageLevel.Expert;
+        }
+        if(val == "Native") {
+            return LanguageLevel.Native;
+        }
+        return null;
+    }
+
     static getDisplayString(level: LanguageLevel) {
         switch(level) {
             case LanguageLevel.Native:

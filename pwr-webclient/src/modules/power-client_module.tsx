@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import {AppBar} from 'material-ui';
+import {AppBar, Snackbar} from 'material-ui';
 import {ConsultantDashboard} from './consultant-dashboard_module';
 import {connect} from 'react-redux';
 import {PowerToolbar} from './power-toolbar_module';
