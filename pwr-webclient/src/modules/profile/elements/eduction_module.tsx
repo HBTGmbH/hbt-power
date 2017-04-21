@@ -1,9 +1,10 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, CareerStep, EducationStep} from '../../Store';
+import {AllConsultantsState, ApplicationState, CareerStep, EducationStep} from '../../../Store';
 import {Card, List, CardMedia, CardHeader, Divider, DatePicker, TextField} from 'material-ui';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ProfileElement} from '../profile-element_module';
 
 interface EducationProps {
     education: Array<EducationStep>;
@@ -34,16 +35,25 @@ interface EducationDispatch {
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
 
+    private static renderHeader() {
+        return (
+            <tr>
+                <th>Datum</th>
+                <th>Bezeichner</th>
+            </tr>
+        );
+    }
+
     private static renderSingleEducationStep(step: EducationStep, index: number) {
         return (
-            <div className="row" key={"EducationModule." + index} >
-                <div className="col-md-3">
-                    Datum: <DatePicker container="inline"  value={step.date}/>
-                </div>
-                <div className="col-md-6">
-                    Bezeichner: <TextField value={step.name} fullWidth={true} disabled={true}/>
-                </div>
-            </div>
+            <tr key={"EducationModule." + index} >
+                <td>
+                    <DatePicker container="inline"  value={step.date}/>
+                </td>
+                <td>
+                    <TextField value={step.name} fullWidth={true} disabled={true}/>
+                </td>
+            </tr>
         );
     }
 
@@ -61,25 +71,13 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     render() {
         return(
-            <Card>
-                <CardHeader actAsExpander={true}
-                            title={PowerLocalize.get("Education.Singular")}
-                            subtitle={this.props.education.length + ' ' + PowerLocalize.get("EducationStep.Plural")}
-                >
-                </CardHeader>
-                <Divider/>
-                <CardMedia expandable={true}>
-                    <div className="row">
-                        <div className="col-md-1"/>
-                        <div className="col-md-10">
-                            <List>
-                                {this.props.education.map(EducationModule.renderSingleEducationStep)}
-                            </List>
-                        </div>
-                        <div className="col-md-1"/>
-                    </div>
-                </CardMedia>
-            </Card>
+            <ProfileElement
+                title={PowerLocalize.get('Education.Singular')}
+                subtitleCountedName={PowerLocalize.get('EducationStep.Plural')}
+                tableHeader={EducationModule.renderHeader()}
+            >
+                {this.props.education.map(EducationModule.renderSingleEducationStep)}
+            </ProfileElement>
         );
     }
 }

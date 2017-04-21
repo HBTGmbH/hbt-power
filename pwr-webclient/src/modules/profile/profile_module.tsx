@@ -5,12 +5,12 @@ import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
 import {Card, CardHeader, Divider, Drawer, Menu, MenuItem, Paper} from 'material-ui';
 import {Grid, Row} from 'react-flexbox-grid';
-import {AbstractText} from './abstract_module';
-import {LanguageSkills} from './languages_module';
-import {Sectors} from './sectors_module';
-import {Career} from './career_module';
-import {Education} from './eduction_module';
-import {Qualifications} from './qualification_module';
+import {AbstractText} from './elements/abstract_module';
+import {LanguageSkills} from './elements/languages_module';
+import {Sectors} from './elements/sectors_module';
+import {Career} from './elements/career_module';
+import {Education} from './elements/eduction_module';
+import {Qualifications} from './elements/qualification_module';
 
 interface ProfileProps {
 

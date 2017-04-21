@@ -1,8 +1,10 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, Qualification} from '../../Store';
+import {AllConsultantsState, ApplicationState, Qualification} from '../../../Store';
 import {Card, CardHeader, CardMedia, Divider, List, DatePicker, TextField} from 'material-ui';
+import {ProfileElement} from '../profile-element_module';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface QualificationProps {
     qualifications: Array<Qualification>;
@@ -33,17 +35,25 @@ interface QualificationDispatch {
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
 
+    private static renderHeader() {
+        return (
+            <tr>
+                <th>{PowerLocalize.get("Date.Singular")}</th>
+                <th>{PowerLocalize.get("Qualification.Plural")}</th>
+            </tr>
+        );
+    }
 
     private static renderSingleQualification(qualification: Qualification, index: number) {
         return (
-        <div className="row">
-            <div className="col-md-3">
-                Datum: <DatePicker container="inline"  value={qualification.date}/>
-            </div>
-            <div className="col-md-6">
-                Bezeichner: <TextField value={qualification.name} key={index} fullWidth={true} disabled={true}/>
-            </div>
-        </div>
+        <tr>
+            <td>
+                <DatePicker container="inline"  value={qualification.date}/>
+            </td>
+            <td>
+                <TextField value={qualification.name} key={index} fullWidth={true} disabled={true}/>
+            </td>
+        </tr>
         );
     }
 
@@ -61,25 +71,13 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
 
     render() {
         return(
-            <Card>
-                <CardHeader actAsExpander={true}
-                            title="Zusatzqualifikationen"
-                            subtitle={this.props.qualifications.length + ' Zusatzqualifikationen'}
-                >
-                </CardHeader>
-                <Divider/>
-                <CardMedia expandable={true}>
-                    <div className="row">
-                        <div className="col-md-1"/>
-                        <div className="col-md-10">
-                            <List>
-                                {this.props.qualifications.map(QualificationModule.renderSingleQualification)}
-                            </List>
-                        </div>
-                        <div className="col-md-1"/>
-                    </div>
-                </CardMedia>
-            </Card>
+            <ProfileElement
+                title={PowerLocalize.get('Qualification.Plural')}
+                subtitleCountedName={PowerLocalize.get('Qualification.Plural')}
+                tableHeader={QualificationModule.renderHeader()}
+            >
+                {this.props.qualifications.map(QualificationModule.renderSingleQualification)}
+            </ProfileElement>
         );
     }
 }

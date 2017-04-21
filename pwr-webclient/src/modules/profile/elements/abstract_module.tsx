@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {LinearProgress, TextField} from 'material-ui';
 import {Col, Grid, Row} from 'react-flexbox-grid';
-import {Color} from '../../utils/ColorUtil';
+import {Color} from '../../../utils/ColorUtil';
 
 
 interface AbstractTextProps {

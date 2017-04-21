@@ -4,13 +4,13 @@
 
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState, LanguageLevel, LanguageSkill, SingleProfile} from '../../Store';
+import {ApplicationState, LanguageLevel, LanguageSkill, SingleProfile} from '../../../Store';
 import {AutoComplete, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
-import {LanguageLevelUtil} from '../../utils/LanguageLevelUtil';
-import {ProfileActionCreator} from '../../reducers/singleProfile/singleProfileActions';
+import {LanguageLevelUtil} from '../../../utils/LanguageLevelUtil';
+import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfileActions';
 import {connect} from 'react-redux';
 import {Col, Grid, Row} from 'react-flexbox-grid';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface SingleLanguageProps {
     languageSkill: LanguageSkill;
@@ -103,31 +103,29 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     render() {
         return(
-            <Grid fluid>
-                <Row>
-                    <Col>
-                        <SelectField
-                            value={this.props.languageSkill.languageLevel}
-                            onChange={this.handleLevelChange}
-                            style={{"width": "10em"}}
-                        >
-                            {
-                                LanguageLevelUtil.getValues().map(SingleLanguageModule.renderSingleDropDownElement)
-                            }
-                        </SelectField>
-                    </Col>
-                    <Col>
-                        <AutoComplete
-                            hintText={PowerLocalize.get("Language.Singular")}
-                            value={this.state.nameAutoCompleteValue}
-                            dataSource={this.props.possibleLanguages}
-                            onUpdateInput={this.handleAutoCompleteChange}
-                            onNewRequest={this.handleLanguageRequest}
-                            style={{"backgroundColor":this.state.backgroundColor}}
-                        />
-                    </Col>
-                </Row>
-            </Grid>
+        <tr>
+            <td>
+                <SelectField
+                    value={this.props.languageSkill.languageLevel}
+                    onChange={this.handleLevelChange}
+                    style={{"width": "10em"}}
+                >
+                    {
+                        LanguageLevelUtil.getValues().map(SingleLanguageModule.renderSingleDropDownElement)
+                    }
+                </SelectField>
+            </td>
+            <td>
+                <AutoComplete
+                    hintText={PowerLocalize.get("Language.Singular")}
+                    value={this.state.nameAutoCompleteValue}
+                    dataSource={this.props.possibleLanguages}
+                    onUpdateInput={this.handleAutoCompleteChange}
+                    onNewRequest={this.handleLanguageRequest}
+                    style={{"backgroundColor":this.state.backgroundColor}}
+                />
+            </td>
+        </tr>
         );
     }
 }

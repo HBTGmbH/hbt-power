@@ -1,10 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, LanguageSkill} from '../../Store';
+import {AllConsultantsState, ApplicationState, LanguageSkill} from '../../../Store';
 import {List, Paper, Card, CardMedia, CardHeader, Divider} from 'material-ui';
 import {SingleLanguage} from './singleLanguage_module';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ProfileElement} from '../profile-element_module';
 
 interface LanguageProps {
     languages: LanguageSkill[];
@@ -39,6 +40,15 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         return(<SingleLanguage index={index} key={index}/>);
     }
 
+    private static renderHeader() {
+        return (
+            <tr>
+                <th>{PowerLocalize.get("Language.Level.Singular")}</th>
+                <th>{PowerLocalize.get("Qualifier.Singular")}</th>
+            </tr>
+        );
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps) : LanguageProps {
         return {
             languages: state.singleProfile.profile.languages
@@ -53,19 +63,13 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
 
     render() {
         return(
-            <Card>
-                <CardHeader actAsExpander={true}
-                    title={PowerLocalize.get("Language.Plural")}
-                    subtitle={this.props.languages.length + " " + PowerLocalize.get("Language.Plural")}
-                >
-                </CardHeader>
-                <Divider/>
-                <CardMedia expandable={true}>
-                    <List>
-                        {this.props.languages.map(LanguagesModule.renderSingleLanguage)}
-                    </List>
-                </CardMedia>
-            </Card>
+            <ProfileElement
+                title={PowerLocalize.get('Language.Singular')}
+                subtitleCountedName={PowerLocalize.get('Language.Plural')}
+                tableHeader={LanguagesModule.renderHeader()}
+            >
+                {this.props.languages.map(LanguagesModule.renderSingleLanguage)}
+            </ProfileElement>
         );
     }
 }

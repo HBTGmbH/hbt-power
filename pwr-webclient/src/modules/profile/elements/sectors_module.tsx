@@ -2,8 +2,10 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../Store';
+import {AllConsultantsState, ApplicationState} from '../../../Store';
 import {Card, CardHeader, CardMedia, Divider, List, TextField} from 'material-ui';
+import {ProfileElement} from '../profile-element_module';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface SectorsProps {
     sectors: string[];
@@ -34,6 +36,15 @@ interface SectorsDispatch {
 
 class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & SectorsDispatch, SectorsLocalState> {
 
+
+    private static renderHeader() {
+        return (
+            <tr>
+                <th>{PowerLocalize.get("Sector.Singular")}</th>
+            </tr>
+        );
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
         return {
             sectors: state.singleProfile.profile.sectors
@@ -47,30 +58,18 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
     }
 
     static renderSingleListElement(sector: string, index:number) {
-        return (<TextField value={sector} key={index} fullWidth={true} disabled={true}/>);
+        return (<tr><td><TextField value={sector} key={index} fullWidth={true} disabled={true}/></td></tr>);
     }
 
     render() {
         return(
-        <Card>
-            <CardHeader actAsExpander={true}
-                        title="Sprachen"
-                        subtitle={this.props.sectors.length + ' Sectors'}
+            <ProfileElement
+                title={PowerLocalize.get('Sector.Plural')}
+                subtitleCountedName={PowerLocalize.get('Sector.Plural')}
+                tableHeader={SectorsModule.renderHeader()}
             >
-            </CardHeader>
-            <Divider/>
-            <CardMedia expandable={true}>
-                <div className="row">
-                    <div className="col-md-1"/>
-                    <div className="col-md-10">
-                        <List>
-                            {this.props.sectors.map(SectorsModule.renderSingleListElement)}
-                        </List>
-                    </div>
-                    <div className="col-md-1"/>
-                </div>
-            </CardMedia>
-        </Card>
+                {this.props.sectors.map(SectorsModule.renderSingleListElement)}
+            </ProfileElement>
         );
     }
 }
