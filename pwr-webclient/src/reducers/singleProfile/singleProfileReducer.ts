@@ -21,7 +21,8 @@ const initialState: SingleProfile = {
     possibleSectors : ["Luftfahrt", "Schiffahrt", "Logistik", "Autovermiterung", "Presse"],
     possibleLanguageNames: ["Englisch", "Deutsch", "Französisch", "Chinesisch", "Russisch", "Spanisch"],
     possibleLanguageLevels: ["Beginner", "Apprentice", "Expert", "Native"],
-    requestProfileStatus: RequestStatus.Successful
+    requestProfileStatus: RequestStatus.Successful,
+    saveProfileStatus: RequestStatus.Successful
 };
 
 
@@ -81,12 +82,20 @@ export function singleProfile(state : SingleProfile, action: AbstractAction) : S
             return handleChangeLanguageSkill(state, <ChangeLanguageSkillNameAction> action );
         case ActionType.ChangeLanguageSkillLevel:
             return handleChangeLanguageSkillLevel(state, <ChangeLanguageSkillLevelAction> action);
+        // == Profile reeading from API == //
         case ActionType.ReceiveFullProfile:
             return handleReceiveSingleConsultant(state, <ReceiveFullProfileAction> action);
         case ActionType.RequestingFullProfile:
             return handleRequestingFullProfile(state, action);
         case ActionType.FailRequestFullProfile:
             return handleFailRequestFullProfile(state, action);
+        // == Profile saving to API == //
+        case ActionType.SaveFullProfile:
+            return Object.assign({}, state, {saveProfileStatus: RequestStatus.Pending});
+        case ActionType.SaveFullProfileFail:
+            return Object.assign({}, state, {saveProfileStatus: RequestStatus.Failiure});
+        case ActionType.SaveFullProfilSuccess:
+            return Object.assign({}, state, {saveProfileStatus: RequestStatus.Successful});
         default:
             return state;
     }

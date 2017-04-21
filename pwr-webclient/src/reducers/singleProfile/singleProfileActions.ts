@@ -71,6 +71,24 @@ export class ProfileActionCreator {
         return { type: ActionType.FailRequestFullProfile };
     }
 
+    public static saveFullProfile(): AbstractAction {
+        return {
+            type: ActionType.SaveFullProfile
+        }
+    }
+
+    public static saveFullProfileSuccessful() : AbstractAction {
+        return {
+            type: ActionType.SaveFullProfilSuccess
+        }
+    }
+
+    public static saveFullProfileFail() : AbstractAction {
+        return {
+            type: ActionType.SaveFullProfileFail
+        }
+    }
+
 
 
 }
@@ -101,6 +119,18 @@ export class ProfileAsyncActionCreator {
                 dispatch(ProfileActionCreator.failRequestFullProfile())
             });
 
+        }
+    }
+
+    public static saveFullProfile(initials: string, profile: Profile) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            dispatch(ProfileActionCreator.saveFullProfile());
+            axios.put(getProfileAPIString(initials), profile).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.saveFullProfileSuccessful());
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.saveFullProfileFail());
+            });
         }
     }
 }

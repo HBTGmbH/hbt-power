@@ -6,6 +6,9 @@ import {singleProfile} from './singleProfile/singleProfileReducer';
  */
 
 export enum ActionType {
+    SaveFullProfileFail,
+    SaveFullProfilSuccess,
+    SaveFullProfile,
     ChangeLanguageSkillLevel,
     FailRequestFullProfile,
     ReceiveFullProfile,
