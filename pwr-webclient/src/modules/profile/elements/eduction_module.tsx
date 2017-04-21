@@ -1,13 +1,14 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, CareerStep, EducationStep} from '../../../Store';
-import {Card, List, CardMedia, CardHeader, Divider, DatePicker, TextField} from 'material-ui';
+import {AllConsultantsState, ApplicationState} from '../../../Store';
+import {DatePicker, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileElement} from '../profile-element_module';
+import {EducationEntry} from '../../../model/EducationEntry';
 
 interface EducationProps {
-    education: Array<EducationStep>;
+    education: Array<EducationEntry>;
 }
 
 /**
@@ -44,14 +45,14 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         );
     }
 
-    private static renderSingleEducationStep(step: EducationStep, index: number) {
+    private static renderSingleEducationStep(step: EducationEntry, index: number) {
         return (
             <tr key={"Education." + index} >
                 <td>
                     <DatePicker id={"Education.DatePicker." + index} container="inline"  value={step.date}/>
                 </td>
                 <td>
-                    <TextField id={"Education.TextField." + index} value={step.name} fullWidth={true} disabled={true}/>
+                    <TextField id={"Education.TextField." + index} value={step.education.name} fullWidth={true} disabled={true}/>
                 </td>
             </tr>
         );

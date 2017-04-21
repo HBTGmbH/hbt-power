@@ -2,14 +2,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, CareerStep} from '../../../Store';
+import {AllConsultantsState, ApplicationState} from '../../../Store';
 import {CardHeader, CardMedia, DatePicker, List, TableHeader, TableHeaderColumn} from 'material-ui';
 import {Card, Divider, TextField, TableRow, TableRowColumn} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileElement} from '../profile-element_module';
+import {CareerElement} from '../../../model/CareerElement';
 
 interface CareerProps {
-    career: Array<CareerStep>;
+    career: Array<CareerElement>;
 }
 
 /**
@@ -37,7 +38,7 @@ interface CareerDispatch {
 
 class CareerModule extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
 
-    private static renderSingleStep(careerStep: CareerStep, index:number) {
+    private static renderSingleStep(careerStep: CareerElement, index:number) {
         return (
             <tr key={'Career.' + index} >
                 <td>
@@ -47,7 +48,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                     <DatePicker id={'C.DatePick.End' + index} container="inline"  value={careerStep.endDate}/>
                 </td>
                 <td>
-                    <TextField id={'Career.TextField.' + index} value={careerStep.name}  disabled={true}/>
+                    <TextField id={'Career.TextField.' + index} value={careerStep.position.position}  disabled={true}/>
                 </td>
             </tr>
         );
@@ -56,9 +57,9 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     private static renderHeader() : JSX.Element {
         return (
             <tr>
-                <th>Start</th>
-                <th>Ende</th>
-                <th>Bezeichner</th>
+                <th>{PowerLocalize.get("CareerModule.StartDate")}</th>
+                <th>{PowerLocalize.get("CareerModule.EndDate")}</th>
+                <th>{PowerLocalize.get("Qualifier.Singular")}</th>
             </tr>
         );
     }

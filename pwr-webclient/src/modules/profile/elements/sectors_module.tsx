@@ -1,11 +1,11 @@
-
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, Sector} from '../../../Store';
-import {Card, CardHeader, CardMedia, Divider, List, TextField} from 'material-ui';
+import {AllConsultantsState, ApplicationState} from '../../../Store';
+import {TextField} from 'material-ui';
 import {ProfileElement} from '../profile-element_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {Sector} from '../../../model/Sector';
 
 interface SectorsProps {
     sectors: Array<Sector>;

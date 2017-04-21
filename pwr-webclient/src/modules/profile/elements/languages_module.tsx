@@ -1,11 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, LanguageSkill} from '../../../Store';
-import {List, Paper, Card, CardMedia, CardHeader, Divider} from 'material-ui';
+import {AllConsultantsState, ApplicationState} from '../../../Store';
 import {SingleLanguage} from './singleLanguage_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileElement} from '../profile-element_module';
+import {LanguageSkill} from '../../../model/LanguageSkill';
 
 interface LanguageProps {
     languages: LanguageSkill[];
@@ -37,6 +37,7 @@ interface LanguageDispatch {
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
 
     private static renderSingleLanguage(language: LanguageSkill, index: number) {
+
         return(<SingleLanguage index={index} key={index}/>);
     }
 

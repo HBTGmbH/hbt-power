@@ -1,4 +1,5 @@
 import {ConsultantLocalProps, ConsultantProps} from './modules/consultant_module';
+import {Profile} from './model/Profile';
 
 /**
  * State encapsulating all consultants.
@@ -8,66 +9,22 @@ export interface AllConsultantsState {
     requestingConsultants: boolean;
 }
 
-/**
- * Language skill that wraps a language name and its level.
- */
-export interface LanguageSkill {
-    name: string;
-    languageLevel: LanguageLevel;
-}
-
-export enum LanguageLevel {
-    Beginner,
-    Apprentice,
-    Expert,
-    Native
-}
-
-export interface CareerStep {
-    startDate: Date;
-    endDate: Date;
-    name: string;
-}
-
-export interface EducationStep {
-    date: Date;
-    name: string;
-}
-
-export interface Qualification {
-    date: Date;
-    name: string;
-}
-
 export enum RequestStatus {
     Pending,
     Successful,
     Failiure
 }
-
-export interface Sector {
-    name: string;
-}
-
-export interface ConsultantProfile {
-    abstract: string;
-    languages: LanguageSkill[];
-    sectors: Array<Sector>;
-    career: Array<CareerStep>;
-    education: Array<EducationStep>;
-    qualifications: Array<Qualification>;
-}
-
 /**
  * State for a single consultant profile.
  */
 export interface SingleProfile {
-    profile: ConsultantProfile;
+    profile: Profile;
 
     requestProfileStatus: RequestStatus;
 
     possibleSectors: string[]
     possibleLanguageNames: string[];
+    possibleLanguageLevels: Array<string>;
 
 }
 

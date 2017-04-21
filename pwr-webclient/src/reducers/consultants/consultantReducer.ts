@@ -6,6 +6,7 @@ import {
 import {ConsultantLocalProps, ConsultantProps} from '../../modules/consultant_module';
 import {isNullOrUndefined} from 'util';
 import {AbstractAction, ActionType} from '../reducerIndex';
+import {deepFreeze} from '../../utils/ObjectUtil';
 
 
 let cons_data: ConsultantProps[] = [];
@@ -13,24 +14,7 @@ let cons_data: ConsultantProps[] = [];
 var log = require('loglevel');
 log.info("unreasonably simple");
 
-// Um obj vollständig unveränderbar zu machen, friere jedes Objekt in obj ein.
-function deepFreeze(obj: Object) {
 
-    // Ermittle die Namen der für obj definierten Eigenschaften
-    var propNames = Object.getOwnPropertyNames(obj);
-
-    // Friere die Eigenschaften ein, bevor obj selbst eingefroren wird
-    propNames.forEach(function(name) {
-        var prop = obj[name];
-
-        // Friere prop ein wenn es ein Objekt ist
-        if (typeof prop == 'object' && prop !== null)
-            deepFreeze(prop);
-    });
-
-    // Friere obj selbst ein
-    return Object.freeze(obj);
-}
 
 function handleChangeInitialsAction(action: ChangeInitialsAction, state: AllConsultantsState) : AllConsultantsState {
     let consultants: Array<ConsultantProps> = state.consultants;
@@ -93,7 +77,6 @@ function handleReceiveConsultants(action: ReceiveConsultantsAction, state:AllCon
 function handleReceiveSingleConsultant(
     action: ReceiveSingleConsultantAction,
     state: AllConsultantsState) : AllConsultantsState {
-    deepFreeze(state); //FIXME remove
     let newState : AllConsultantsState = Object.assign({}, state);
     let newCList: Array<ConsultantProps> = [];
     for(let i: number = 0; i < newState.consultants.length; i++) {

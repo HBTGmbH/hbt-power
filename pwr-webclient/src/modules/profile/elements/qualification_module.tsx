@@ -1,13 +1,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, Qualification} from '../../../Store';
-import {Card, CardHeader, CardMedia, Divider, List, DatePicker, TextField} from 'material-ui';
+import {AllConsultantsState, ApplicationState} from '../../../Store';
+import {DatePicker, TextField} from 'material-ui';
 import {ProfileElement} from '../profile-element_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {Qualification} from '../../../model/Qualification';
+import {QualificationEntry} from '../../../model/QualificationEntry';
 
 interface QualificationProps {
-    qualifications: Array<Qualification>;
+    qualification: Array<QualificationEntry>;
 }
 
 /**
@@ -38,20 +40,20 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
     private static renderHeader() {
         return (
             <tr>
-                <th>{PowerLocalize.get("Date.Singular")}</th>
-                <th>{PowerLocalize.get("Qualification.Plural")}</th>
+                <th>{PowerLocalize.get('Date.Singular')}</th>
+                <th>{PowerLocalize.get('Qualification.Plural')}</th>
             </tr>
         );
     }
 
-    private static renderSingleQualification(qualification: Qualification, index: number) {
+    private static renderSingleQualification(qualification: QualificationEntry, index: number) {
         return (
-        <tr  key={"qualification." + index}>
+        <tr  key={'qualification.' + index}>
             <td>
-                <DatePicker id={"Qualification.DatePicker." + index } container="inline"  value={qualification.date}/>
+                <DatePicker id={'Qualification.DatePicker.' + index } container="inline"  value={qualification.date}/>
             </td>
             <td>
-                <TextField id={"Qualification.TextField." + index } value={qualification.name} fullWidth={true} disabled={true}/>
+                <TextField id={'Qualification.TextField.' + index } value={qualification.qualification.name} fullWidth={true} disabled={true}/>
             </td>
         </tr>
         );
@@ -59,7 +61,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
 
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
-            qualifications : state.singleProfile.profile.qualifications
+            qualification : state.singleProfile.profile.qualification
         };
     }
 
@@ -76,7 +78,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                 subtitleCountedName={PowerLocalize.get('Qualification.Plural')}
                 tableHeader={QualificationModule.renderHeader()}
             >
-                {this.props.qualifications.map(QualificationModule.renderSingleQualification)}
+                {this.props.qualification.map(QualificationModule.renderSingleQualification)}
             </ProfileElement>
         );
     }

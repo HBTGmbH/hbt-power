@@ -2,34 +2,45 @@
  * Created by nt on 20.04.2017.
  */
 
-import {
-    AllConsultantsState, ConsultantProfile, LanguageLevel, LanguageSkill, RequestStatus,
-    SingleProfile
-} from '../../Store';
+import {AllConsultantsState} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {getProfileAPIString} from '../../API_CONFIG';
-import {LanguageLevelUtil} from '../../utils/LanguageLevelUtil';
+import {Profile} from '../../model/Profile';
 
 export interface ChangeAbstractAction extends AbstractAction {
     newAbstract: string;
 }
 
-export interface ChangeLanguageSkillAction extends AbstractAction {
-    languageSkill: LanguageSkill;
+export interface ChangeLanguageSkillNameAction extends AbstractAction {
+    newName: string;
     index: number;
 }
 
+export interface ChangeLanguageSkillLevelAction extends AbstractAction {
+    newLevel: string;
+    index: number;
+}
+
+
 export interface ReceiveFullProfileAction extends AbstractAction {
-    profile: ConsultantProfile;
+    profile: Profile;
 }
 
 export class ProfileActionCreator {
-    public static changeLanguageSkill(lang: LanguageSkill, index: number) : ChangeLanguageSkillAction {
+    public static changeLanguageSkillName(newName: string, index: number) : ChangeLanguageSkillNameAction {
         return {
-            type: ActionType.ChangeLanguageSkill,
-            languageSkill: lang,
+            type: ActionType.ChangeLanguageSkillName,
+            newName : newName,
+            index: index
+        }
+    }
+
+    public static changeLanguageSkillLevel(newLevel: string, index: number):ChangeLanguageSkillLevelAction {
+        return {
+            type: ActionType.ChangeLanguageSkillLevel,
+            newLevel: newLevel,
             index: index
         }
     }
@@ -49,7 +60,7 @@ export class ProfileActionCreator {
      * the current profile.
      * @param profile
      */
-    public static receiveFullProfile(profile: ConsultantProfile) : ReceiveFullProfileAction {
+    public static receiveFullProfile(profile: Profile) : ReceiveFullProfileAction {
         return {
             type: ActionType.ReceiveFullProfile,
             profile: profile
@@ -61,19 +72,16 @@ export class ProfileActionCreator {
     }
 
 
+
 }
 
 
 export class ProfileAsyncActionCreator {
-    private static parseInfos(profile: ConsultantProfile) {
+    private static parseInfos(profile: Profile) {
+        // Very bad hacking.
         profile.education.forEach(e => e.date = new Date(e.date));
-        profile.qualifications.forEach(e => e.date = new Date(e.date));
+        profile.qualification.forEach(q => q.date = new Date(q.date));
         profile.career.forEach(e => {e.startDate = new Date(e.startDate); e.endDate = new Date(e.endDate)});
-        // Very very bad hacking, but there is no other way to parse it as an enum
-        // The input from the API will be a string, therefor, during runtime, e.languageLevel will be a string
-        // But to typescript, it is a language level. Thats why we treat e.languageLevel in the FromString method
-        // as a string...
-        profile.languages.forEach(e => {e.languageLevel = LanguageLevelUtil.fromString(e.languageLevel)});
 
     }
 
@@ -83,13 +91,13 @@ export class ProfileAsyncActionCreator {
             dispatch(ProfileActionCreator.requestingFullProfile());
             // Perform the actual request
             axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
-                let profile: ConsultantProfile = Object.assign({}, response.data);
-
+                let profile: Profile = Object.assign({}, response.data);
+                console.info("Received profile during API request:", profile);
                 ProfileAsyncActionCreator.parseInfos(profile);
-                console.log("Profile:", profile);
                 // Parse the dates.
                 dispatch(ProfileActionCreator.receiveFullProfile(profile));
             }).catch(function(error:any) {
+                console.error(error);
                 dispatch(ProfileActionCreator.failRequestFullProfile())
             });
 

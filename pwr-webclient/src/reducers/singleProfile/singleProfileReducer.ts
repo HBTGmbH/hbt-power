@@ -1,31 +1,55 @@
-import {LanguageLevel, LanguageSkill, RequestStatus, SingleProfile} from '../../Store';
+import {RequestStatus, SingleProfile} from '../../Store';
 import {isNullOrUndefined} from 'util';
-import {ChangeLanguageSkillAction, ReceiveFullProfileAction} from './singleProfileActions';
+import {
+    ChangeLanguageSkillLevelAction, ChangeLanguageSkillNameAction,
+    ReceiveFullProfileAction
+} from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
-import {ReceiveSingleConsultantAction} from '../consultants/consultant_actions';
+import {LanguageSkill} from '../../model/LanguageSkill';
+import {deepFreeze} from '../../utils/ObjectUtil';
 const initialState: SingleProfile = {
     profile: {
-        abstract: "Lorem Ipsum",
-        languages: [],
         sectors: [],
-        qualifications: [],
+        languages: [],
         career: [],
-        education: []
+        education: [],
+        currentPosition: "Berater",
+        description: "Lorem Ipsum",
+        qualification: [],
+        id: -1
     },
     possibleSectors : ["Luftfahrt", "Schiffahrt", "Logistik", "Autovermiterung", "Presse"],
     possibleLanguageNames: ["Englisch", "Deutsch", "Französisch", "Chinesisch", "Russisch", "Spanisch"],
+    possibleLanguageLevels: ["Beginner", "Apprentice", "Expert", "Native"],
     requestProfileStatus: RequestStatus.Successful
 };
 
 
-function handleChangeLanguageSkill(state: SingleProfile, action: ChangeLanguageSkillAction) : SingleProfile {
+function handleChangeLanguageSkill(state: SingleProfile, action: ChangeLanguageSkillNameAction) : SingleProfile {
+    let newLanguage = Object.assign({},
+        state.profile.languages[action.index],
+        {
+            language: {name: action.newName}
+        }
+        );
     let newLanguages : Array<LanguageSkill>;
     newLanguages = [
         ...state.profile.languages.slice(0, action.index),
-        action.languageSkill,
+        newLanguage,
         ...state.profile.languages.slice(action.index + 1)
     ];
-    return Object.assign({}, state, {languages: newLanguages});
+    return Object.assign({}, state, {profile:{languages: newLanguages}});
+}
+
+function handleChangeLanguageSkillLevel(state: SingleProfile, action: ChangeLanguageSkillLevelAction) {
+    let newLanguage = Object.assign({}, state.profile.languages[action.index], {level: action.newLevel});
+    let newLanguages : Array<LanguageSkill>;
+    newLanguages = [
+        ...state.profile.languages.slice(0, action.index),
+        newLanguage,
+        ...state.profile.languages.slice(action.index + 1)
+    ];
+    return Object.assign({}, state, {profile:{languages: newLanguages}});
 }
 
 
@@ -37,6 +61,9 @@ function handleRequestingFullProfile(state: SingleProfile, action: AbstractActio
     return Object.assign({}, state, {requestProfileStatus: RequestStatus.Pending});
 }
 
+function handleFailRequestFullProfile(state: SingleProfile, action: AbstractAction) {
+    return Object.assign({}, state, {requestProfileStatus: RequestStatus.Failiure});
+}
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -47,14 +74,19 @@ export function singleProfile(state : SingleProfile, action: AbstractAction) : S
     if(isNullOrUndefined(state)) {
         state = initialState;
     }
+    deepFreeze(state);
     console.log("Profile Reducer called for action type " + ActionType[action.type]);
     switch(action.type) {
-        case ActionType.ChangeLanguageSkill:
-            return handleChangeLanguageSkill(state, <ChangeLanguageSkillAction> action );
+        case ActionType.ChangeLanguageSkillName:
+            return handleChangeLanguageSkill(state, <ChangeLanguageSkillNameAction> action );
+        case ActionType.ChangeLanguageSkillLevel:
+            return handleChangeLanguageSkillLevel(state, <ChangeLanguageSkillLevelAction> action);
         case ActionType.ReceiveFullProfile:
             return handleReceiveSingleConsultant(state, <ReceiveFullProfileAction> action);
         case ActionType.RequestingFullProfile:
             return handleRequestingFullProfile(state, action);
+        case ActionType.FailRequestFullProfile:
+            return handleFailRequestFullProfile(state, action);
         default:
             return state;
     }

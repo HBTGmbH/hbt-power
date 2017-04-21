@@ -13,5 +13,7 @@ export const de_locale : any = {
     "Sector.Plural": "Branchen",
     "Action.Save": "Speichern",
     "Action.Update": "Aktualisieren",
-    "Action.Undo": "Zurücksetzen"
+    "Action.Undo": "Zurücksetzen",
+    "CareerModule.StartDate": "von",
+    "CareerModule.EndDate": "bis"
 };

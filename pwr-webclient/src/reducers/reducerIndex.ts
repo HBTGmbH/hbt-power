@@ -6,6 +6,7 @@ import {singleProfile} from './singleProfile/singleProfileReducer';
  */
 
 export enum ActionType {
+    ChangeLanguageSkillLevel,
     FailRequestFullProfile,
     ReceiveFullProfile,
     RequestingFullProfile,
@@ -19,7 +20,7 @@ export enum ActionType {
     ReceiveConsultants,
     // == Single Profile Actions == //
     ChangeAbstract,
-    ChangeLanguageSkill
+    ChangeLanguageSkillName
 }
 
 
