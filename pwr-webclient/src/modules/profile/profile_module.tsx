@@ -80,38 +80,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         };
     }
 
-    private static renderSnackbar(statusName: string, status: RequestStatus) : JSX.Element {
-        let msgSuccess: JSX.Element = (
-            <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'green', fontSize: "45"}}>done</FontIcon>
-            </div>
-        );
-
-        let msgFail: JSX.Element = (
-            <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'red', fontSize: "45"}}>error</FontIcon>
-            </div>
-        );
-
-        let msgPending: JSX.Element = (
-            <div className="row">
-                <div className="col-md-2 col-md-offset-5">
-                    <CircularProgress size={40}/>
-                </div>
-            </div>
-        );
-
-        let msg: JSX.Element;
-        if(status === RequestStatus.Successful) {
-            msg = msgSuccess;
-        } else if(status === RequestStatus.Failiure) {
-            msg = msgFail;
-        } else {
-            msg = msgPending;
-        }
-
-        return (<Snackbar open={true} message={msg}/>);
-    }
 
 
 
@@ -174,8 +142,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleResetProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
                         </Toolbar>
                         <br/>
-                        {ProfileModule.renderSnackbar('Save', this.props.saveProfileStatus)}
-                        {ProfileModule.renderSnackbar('Load', this.props.requestProfileStatus)}
+
                     </Card>
                 </div>
                 <div className="col-md-2"/>

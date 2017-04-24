@@ -4,7 +4,7 @@ import {
     ChangeAbstractAction,
     ChangeLanguageSkillLevelAction,
     ChangeLanguageSkillNameAction,
-    ReceiveFullProfileAction
+    ReceiveFullProfileAction, RequestLanguagesSuccess
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
@@ -77,10 +77,19 @@ function handleFailRequestFullProfile(state: InternalDatabase, action: AbstractA
 function handleChangeAbstract(state: InternalDatabase, action: ChangeAbstractAction): InternalDatabase {
     let newState: InternalDatabase = Object.assign({}, state);
     newState.description = action.newAbstract;
+
+
     return newState;
 }
 
 
+function handleRequestLanguageSuccess(state: InternalDatabase, requestLanguagesSuccess: RequestLanguagesSuccess): InternalDatabase {
+    // Clone state to allow mutation
+    let clonedState: InternalDatabase = $.extend(true,  new InternalDatabase(), state);
+    clonedState.requestLanguagesStatus = RequestStatus.Successful;
+    clonedState.addAPILanguages(requestLanguagesSuccess.languages);
+    return clonedState;
+}
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -115,6 +124,12 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return Object.assign({}, state, {saveProfileStatus: RequestStatus.Failiure});
         case ActionType.SaveFullProfilSuccess:
             return Object.assign({}, state, {saveProfileStatus: RequestStatus.Successful});
+        case ActionType.RequestingLanguages:
+            return Object.assign({}, state, {requestLanguagesStatus: RequestStatus.Pending});
+        case ActionType.RequestingLanguagesFail:
+            return Object.assign({}, state, {requestLanguagesStatus: RequestStatus.Failiure});
+        case ActionType.RequestingLanguagesSuccess:
+            return handleRequestLanguageSuccess(state, <RequestLanguagesSuccess> action);
         default:
             return state;
     }

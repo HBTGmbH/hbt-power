@@ -12,7 +12,8 @@ export interface AllConsultantsState {
 export enum RequestStatus {
     Pending,
     Successful,
-    Failiure
+    Failiure,
+    Inactive
 }
 
 

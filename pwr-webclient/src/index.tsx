@@ -28,7 +28,9 @@ let store = createStore(
 
 PowerLocalize.setLocale(navigator.language);
 
+store.dispatch(ProfileAsyncActionCreator.requestLanguages());
 store.dispatch(ProfileAsyncActionCreator.requestSingleProfile("nt"));
+
 //store.dispatch(AsyncActions.fetchConsultants());
 
 ReactDOM.render(

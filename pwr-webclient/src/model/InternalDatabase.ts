@@ -1,7 +1,3 @@
-/**
- * Created by nt on 24.04.2017.
- */
-
 import {Sector} from './Sector';
 import {Language} from './Language';
 import {Education} from './Education';
@@ -10,11 +6,10 @@ import {CareerPosition} from './CareerPosition';
 import {EducationEntry} from './EducationEntry';
 import {LanguageSkill} from './LanguageSkill';
 import {QualificationEntry} from './QualificationEntry';
-import {isNull, isNullOrUndefined} from 'util';
+import {isNullOrUndefined} from 'util';
 import {CareerElement} from './CareerElement';
 import {RequestStatus} from '../Store';
 import {APICareer, APIEducation, APILanguageSkill, APIProfile, APIQualification} from './APIProfile';
-
 
 
 /**
@@ -71,6 +66,8 @@ export class InternalDatabase {
      */
     saveProfileStatus: RequestStatus;
 
+    requestLanguagesStatus: RequestStatus;
+
 
 
     private readSectors(sectors: Array<{'id': number, 'name': string}>): void {
@@ -87,6 +84,7 @@ export class InternalDatabase {
                 // This adds the sector to the currently known sectors.
                 console.info('Client was missing a sector provided by the API. Missing sector was: ', sectors[i]);
                 this.sectorsById[sectors[i].id] = sectors[i];
+                this.sectorIds.push(sectors[i].id);
             }
         }
     }
@@ -222,6 +220,18 @@ export class InternalDatabase {
         });
     }
 
+    public addAPILanguages(languages: Array<{id: number, name: string}>) {
+        languages.forEach(lang => {
+            if(isNullOrUndefined(this.languageNamesById[lang.id])) {
+                this.languageNamesById[lang.id] = lang;
+                this.languageNameIds.push(lang.id);
+            } else {
+                console.info("Information mismatch for language entity. Updating language with id=" + lang.id + " to:", lang);
+                this.languageNamesById[lang.id] = lang;
+            }
+        })
+    }
+
     /**
      * Attempts to interprete a full consultant profile and parses it into the databaseReducer.
      * @param prevDB previous database used to keep values.
@@ -271,9 +281,6 @@ export class InternalDatabase {
         toSerialize.sectorIds.forEach(id => {
             sectors.push(Sector.toAPISector(toSerialize.sectorsById[id]))
         });
-
-
-
         let res: APIProfile = {
             id: toSerialize.profileId,
             description: toSerialize.description,

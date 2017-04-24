@@ -6,9 +6,9 @@ import {AllConsultantsState} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
-import {getProfileAPIString} from '../../API_CONFIG';
+import {getLangSuggestionAPIString, getProfileAPIString} from '../../API_CONFIG';
 import {isNull, isNullOrUndefined} from 'util';
-import {APIProfile} from '../../model/APIProfile';
+import {APILanguageSkill, APIProfile} from '../../model/APIProfile';
 
 export interface ChangeAbstractAction extends AbstractAction {
     newAbstract: string;
@@ -40,6 +40,10 @@ export interface ChangeLanguageSkillLevelAction extends AbstractAction {
 
 export interface ReceiveFullProfileAction extends AbstractAction {
     apiProfile: APIProfile;
+}
+
+export interface RequestLanguagesSuccess extends AbstractAction {
+    languages: Array<{id: number, name: string}>;
 }
 
 export class ProfileActionCreator {
@@ -116,30 +120,31 @@ export class ProfileActionCreator {
         }
     }
 
+    public static requestingLanguages() : AbstractAction {
+        return {
+            type: ActionType.RequestingLanguages
+        }
+    }
+
+    public static requestingLanguagesFailed() : AbstractAction {
+        return {
+            type: ActionType.RequestingLanguagesFail
+        }
+    }
+
+    public static requestLanguagesSuccess(languages: Array<{id: number, name: string}>): RequestLanguagesSuccess {
+        return {
+            type: ActionType.RequestingLanguagesSuccess,
+            languages: languages
+        }
+    }
+
 
 
 }
 
 
 export class ProfileAsyncActionCreator {
-    /*private static parseInfos(profile: Profile) {
-        // Very bad hacking.
-        profile.education.forEach(e => e.date = new Date(e.date));
-        profile.qualification.forEach(q => q.date = new Date(q.date));
-        profile.career.forEach(e => {e.startDate = new Date(e.startDate); e.endDate = new Date(e.endDate)});
-
-    }
-
-    private static validate(profile: Profile) {
-        if(isNullOrUndefined(profile.languages)) throw new Error("Languages may not be null or undefined.");
-        if(isNullOrUndefined(profile.qualification)) throw new Error("qualification may not be null or undefined.");
-        if(isNullOrUndefined(profile.description)) throw new Error("description may not be null or undefined.");
-        if(isNullOrUndefined(profile.currentPosition)) throw new Error("currentPosition may not be null or undefined.");
-        if(isNullOrUndefined(profile.career)) throw new Error("career may not be null or undefined.");
-        if(isNullOrUndefined(profile.education)) throw new Error("education may not be null or undefined.");
-        if(isNullOrUndefined(profile.sectors)) throw new Error("sectors may not be null or undefined.");
-    }*/
-
     public static requestSingleProfile(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             // Dispatch the action that sets the status to "Request Pendign" or similar
@@ -169,6 +174,18 @@ export class ProfileAsyncActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.saveFullProfileFail());
             });
+        }
+    }
+
+    public static requestLanguages() {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            dispatch(ProfileActionCreator.requestingLanguages());
+            axios.get(getLangSuggestionAPIString()).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.requestLanguagesSuccess(response.data));
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.requestingLanguagesFailed());
+            })
         }
     }
 }

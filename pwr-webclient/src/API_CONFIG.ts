@@ -9,3 +9,7 @@ export const API_SUFFIX_PROFILE = "/profile";
 export function getProfileAPIString(initials: string) : string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + API_SUFFIX_PROFILE;
 }
+
+export function getLangSuggestionAPIString(): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/languages";
+}
