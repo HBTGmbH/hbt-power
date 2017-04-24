@@ -78,7 +78,7 @@ export class ActionCreator {
 
     static requestAllConsultantsFailed() : AbstractAction {
         return {
-            type: ActionType.RequestConsultantsFailed
+            type: null //FIXME
         }
     }
 

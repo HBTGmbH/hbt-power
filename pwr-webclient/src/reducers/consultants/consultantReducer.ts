@@ -114,8 +114,6 @@ export function updateConsultant(state : AllConsultantsState, action: AbstractAc
     }
     console.log("Consultant Reducer called for action type " + ActionType[action.type]);
     switch(action.type) {
-        case ActionType.RequestConsultantsFailed:
-            return handleRequestConsultantFailed(state);
         case ActionType.ReceiveConsultants:
             return handleReceiveConsultants(<ReceiveConsultantsAction> action, state);
         case ActionType.RequestConsultants:

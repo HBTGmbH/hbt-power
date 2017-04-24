@@ -6,8 +6,7 @@ import {AllConsultantsState, ApplicationState, RequestStatus} from '../../Store'
 import {CircularProgress, FontIcon, Snackbar} from 'material-ui';
 
 interface ProfileSnackbarProps {
-    saveProfileStatus: RequestStatus;
-    requestProfileStatus: RequestStatus;
+    APIRequestStatus: RequestStatus;
 }
 
 /**
@@ -37,8 +36,7 @@ class ProfileSnackbarModule extends React.Component<ProfileSnackbarProps & Profi
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileSnackbarLocalProps) : ProfileSnackbarProps {
         return {
-            saveProfileStatus: state.databaseReducer.saveProfileStatus,
-            requestProfileStatus: state.databaseReducer.requestProfileStatus
+            APIRequestStatus: state.databaseReducer.APIRequestStatus
         }
     }
 
@@ -74,17 +72,17 @@ class ProfileSnackbarModule extends React.Component<ProfileSnackbarProps & Profi
             msg = msgSuccess;
         } else if(requestStatus === RequestStatus.Failiure) {
             msg = msgFail;
-        } else {
+        } else if(requestStatus === RequestStatus.Pending) {
             msg = msgPending;
         }
+
 
         return (<Snackbar open={true} message={msg}/>);
     }
 
     render() {
         return(<div>
-            {ProfileSnackbarModule.renderSingleSnackbar(this.props.requestProfileStatus)}
-            {ProfileSnackbarModule.renderSingleSnackbar(this.props.saveProfileStatus)}
+            {ProfileSnackbarModule.renderSingleSnackbar(this.props.APIRequestStatus)}
         </div>)
     }
 }

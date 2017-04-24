@@ -2,7 +2,7 @@
  * Created by nt on 20.04.2017.
  */
 
-import {AllConsultantsState} from '../../Store';
+import {AllConsultantsState, APIRequestType} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
@@ -33,17 +33,13 @@ export interface ChangeLanguageSkillNameAction extends AbstractAction {
  */
 export interface ChangeLanguageSkillLevelAction extends AbstractAction {
     languageSkillId: number;
-
     newLanguageLevel: string;
 }
 
 
-export interface ReceiveFullProfileAction extends AbstractAction {
-    apiProfile: APIProfile;
-}
-
-export interface RequestLanguagesSuccess extends AbstractAction {
-    languages: Array<{id: number, name: string}>;
+export interface ReceiveAPIResponseAction extends AbstractAction {
+    requestType: APIRequestType;
+    payload: any;
 }
 
 export class ProfileActionCreator {
@@ -80,9 +76,9 @@ export class ProfileActionCreator {
      * Creates an action that updates the state so that its profile request status is pending.
      * @returns {{type: ActionType}}
      */
-    public static requestingFullProfile() : AbstractAction {
+    public static APIRequestPending() : AbstractAction {
         return {
-            type: ActionType.RequestingFullProfile
+            type: ActionType.APIRequestPending
         }
     }
 
@@ -91,56 +87,17 @@ export class ProfileActionCreator {
      * the current profile.
      * @param profile
      */
-    public static receiveFullProfile(profile: APIProfile) : ReceiveFullProfileAction {
+    public static APIRequestSuccessfull(payload: any, reqType: APIRequestType) : ReceiveAPIResponseAction {
         return {
-            type: ActionType.ReceiveFullProfile,
-            apiProfile: profile
+            type: ActionType.APIRequestSuccess,
+            payload: payload,
+            requestType: reqType
         }
     }
 
-    public static failRequestFullProfile() : AbstractAction {
-        return { type: ActionType.FailRequestFullProfile };
+    public static APIRequestFailed() : AbstractAction {
+        return { type: ActionType.APIRequestFail };
     }
-
-    public static saveFullProfile(): AbstractAction {
-        return {
-            type: ActionType.SaveFullProfile
-        }
-    }
-
-    public static saveFullProfileSuccessful() : AbstractAction {
-        return {
-            type: ActionType.SaveFullProfilSuccess
-        }
-    }
-
-    public static saveFullProfileFail() : AbstractAction {
-        return {
-            type: ActionType.SaveFullProfileFail
-        }
-    }
-
-    public static requestingLanguages() : AbstractAction {
-        return {
-            type: ActionType.RequestingLanguages
-        }
-    }
-
-    public static requestingLanguagesFailed() : AbstractAction {
-        return {
-            type: ActionType.RequestingLanguagesFail
-        }
-    }
-
-    public static requestLanguagesSuccess(languages: Array<{id: number, name: string}>): RequestLanguagesSuccess {
-        return {
-            type: ActionType.RequestingLanguagesSuccess,
-            languages: languages
-        }
-    }
-
-
-
 }
 
 
@@ -148,18 +105,17 @@ export class ProfileAsyncActionCreator {
     public static requestSingleProfile(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             // Dispatch the action that sets the status to "Request Pendign" or similar
-            dispatch(ProfileActionCreator.requestingFullProfile());
+            dispatch(ProfileActionCreator.APIRequestPending());
             // Perform the actual request
             axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
                 let profile: APIProfile = Object.assign({}, response.data);
-                console.info("Received profile during API request:", profile);
                 //ProfileAsyncActionCreator.validate(profile);
                 //ProfileAsyncActionCreator.parseInfos(profile);
                 // Parse the dates.
-                dispatch(ProfileActionCreator.receiveFullProfile(profile));
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile));
             }).catch(function(error:any) {
                 console.error(error);
-                dispatch(ProfileActionCreator.failRequestFullProfile())
+                dispatch(ProfileActionCreator.APIRequestFailed());
             });
 
         }
@@ -167,24 +123,24 @@ export class ProfileAsyncActionCreator {
 
     public static saveFullProfile(initials: string, profile: APIProfile) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.saveFullProfile());
+            dispatch(ProfileActionCreator.APIRequestPending());
             axios.put(getProfileAPIString(initials), profile).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.saveFullProfileSuccessful());
+                dispatch(ProfileActionCreator.APIRequestSuccessfull({}, APIRequestType.SaveProfile));
             }).catch(function(error:any) {
                 console.error(error);
-                dispatch(ProfileActionCreator.saveFullProfileFail());
+                dispatch(ProfileActionCreator.APIRequestFailed());
             });
         }
     }
 
     public static requestLanguages() {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.requestingLanguages());
+            dispatch(ProfileActionCreator.APIRequestPending());
             axios.get(getLangSuggestionAPIString()).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.requestLanguagesSuccess(response.data));
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestLanguages));
             }).catch(function(error:any) {
                 console.error(error);
-                dispatch(ProfileActionCreator.requestingLanguagesFailed());
+                dispatch(ProfileActionCreator.APIRequestFailed());
             })
         }
     }

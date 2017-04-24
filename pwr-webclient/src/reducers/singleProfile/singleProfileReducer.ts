@@ -1,10 +1,10 @@
-import {RequestStatus} from '../../Store';
+import {APIRequestType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeAbstractAction,
     ChangeLanguageSkillLevelAction,
     ChangeLanguageSkillNameAction,
-    ReceiveFullProfileAction, RequestLanguagesSuccess
+    ReceiveAPIResponseAction
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
@@ -15,8 +15,7 @@ import * as $ from "jquery";
 
 const initialState: InternalDatabase = new InternalDatabase();
 console.log(initialState);
-initialState.saveProfileStatus = RequestStatus.Successful;
-initialState.requestProfileStatus = RequestStatus.Successful;
+initialState.APIRequestStatus = RequestStatus.Successful;
 
 
 function handleChangeLanguageSkill(state: InternalDatabase, action: ChangeLanguageSkillNameAction) : InternalDatabase {
@@ -48,48 +47,40 @@ function handleChangeLanguageSkillLevel(state: InternalDatabase, action: ChangeL
     newState.languageSkillById = newLangSkills;
     return newState;
 }
+function handleChangeAbstract(state: InternalDatabase, action: ChangeAbstractAction): InternalDatabase {
+    let newState: InternalDatabase = Object.assign({}, state);
+    newState.description = action.newAbstract;
+    return newState;
+}
 
-
-function handleReceiveFullProfile(state: InternalDatabase, action: ReceiveFullProfileAction) : InternalDatabase {
+function handleReceiveFullProfile(state: InternalDatabase, action: ReceiveAPIResponseAction) : InternalDatabase {
     // To keep the code in the databaseReducer class itself clean, a full clone of the old databaseReducer is created, on which all
     // further operations are then performed.
     let clonedState: InternalDatabase = $.extend(true,  new InternalDatabase(), state);
     console.log("Cloned state:", clonedState);
-    clonedState.parseFromAPI(action.apiProfile);
-
-    clonedState.requestProfileStatus = RequestStatus.Successful;
+    clonedState.parseFromAPI(action.payload);
     return clonedState;
 }
 
-function handleRequestingFullProfile(state: InternalDatabase, action: AbstractAction) : InternalDatabase {
-
-    let newState: InternalDatabase = Object.assign({}, state);
-    newState.requestProfileStatus = RequestStatus.Pending;
-    return newState;
-}
-
-function handleFailRequestFullProfile(state: InternalDatabase, action: AbstractAction) : InternalDatabase {
-    let newState: InternalDatabase = Object.assign({}, state);
-    newState.requestProfileStatus = RequestStatus.Failiure;
-    return newState;
-}
-
-function handleChangeAbstract(state: InternalDatabase, action: ChangeAbstractAction): InternalDatabase {
-    let newState: InternalDatabase = Object.assign({}, state);
-    newState.description = action.newAbstract;
-
-
-    return newState;
-}
-
-
-function handleRequestLanguageSuccess(state: InternalDatabase, requestLanguagesSuccess: RequestLanguagesSuccess): InternalDatabase {
+function handleRequestLanguageSuccess(state: InternalDatabase, languages: Array<any>): InternalDatabase {
     // Clone state to allow mutation
     let clonedState: InternalDatabase = $.extend(true,  new InternalDatabase(), state);
-    clonedState.requestLanguagesStatus = RequestStatus.Successful;
-    clonedState.addAPILanguages(requestLanguagesSuccess.languages);
+    clonedState.addAPILanguages(languages);
     return clonedState;
 }
+
+function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
+    let newState: InternalDatabase;
+    if(action.requestType === APIRequestType.RequestLanguages) {
+        newState = handleRequestLanguageSuccess(state, action.payload);
+    } else if(action.requestType === APIRequestType.RequestProfile) {
+        newState = handleReceiveFullProfile(state, action);
+    } else if(action.requestType === APIRequestType.SaveProfile) {
+        newState = state;
+    }
+    return Object.assign({}, newState, {APIRequestStatus : RequestStatus.Successful});
+}
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -110,26 +101,14 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleChangeLanguageSkill(state, <ChangeLanguageSkillNameAction> action );
         case ActionType.ChangeLanguageSkillLevel:
             return handleChangeLanguageSkillLevel(state, <ChangeLanguageSkillLevelAction> action);
-        // == Profile reeading from API == //
-        case ActionType.ReceiveFullProfile:
-            return handleReceiveFullProfile(state, <ReceiveFullProfileAction> action);
-        case ActionType.RequestingFullProfile:
-            return handleRequestingFullProfile(state, action);
-        case ActionType.FailRequestFullProfile:
-            return handleFailRequestFullProfile(state, action);
-        // == Profile saving to API == //
-        case ActionType.SaveFullProfile:
-            return Object.assign({}, state, {saveProfileStatus: RequestStatus.Pending});
-        case ActionType.SaveFullProfileFail:
-            return Object.assign({}, state, {saveProfileStatus: RequestStatus.Failiure});
-        case ActionType.SaveFullProfilSuccess:
-            return Object.assign({}, state, {saveProfileStatus: RequestStatus.Successful});
-        case ActionType.RequestingLanguages:
-            return Object.assign({}, state, {requestLanguagesStatus: RequestStatus.Pending});
-        case ActionType.RequestingLanguagesFail:
-            return Object.assign({}, state, {requestLanguagesStatus: RequestStatus.Failiure});
-        case ActionType.RequestingLanguagesSuccess:
-            return handleRequestLanguageSuccess(state, <RequestLanguagesSuccess> action);
+
+        // == Language Suggestion requests == //
+        case ActionType.APIRequestPending:
+            return Object.assign({}, state, {APIRequestStatus: RequestStatus.Pending});
+        case ActionType.APIRequestFail:
+            return Object.assign({}, state, {APIRequestStatus: RequestStatus.Failiure});
+        case ActionType.APIRequestSuccess:
+            return handleRequestAPISuccess(state, <ReceiveAPIResponseAction> action);
         default:
             return state;
     }

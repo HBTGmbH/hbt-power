@@ -55,18 +55,7 @@ export class InternalDatabase {
     public profileId: number;
     public description: string;
 
-    /**
-     * Indicates the current state of the get profile request that has been sent to the API. Used
-     * to indicate the status to the user.
-     */
-    requestProfileStatus: RequestStatus;
-    /**
-     * Indicates the current state of the save profile request that has been sent to the API. Used
-     * to indicate the status to the user.
-     */
-    saveProfileStatus: RequestStatus;
-
-    requestLanguagesStatus: RequestStatus;
+    APIRequestStatus: RequestStatus;
 
 
 

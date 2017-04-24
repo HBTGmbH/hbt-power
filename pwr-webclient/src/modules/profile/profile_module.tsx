@@ -28,8 +28,6 @@ import {InternalDatabase} from '../../model/InternalDatabase';
 
 
 interface ProfileProps {
-    requestProfileStatus: RequestStatus;
-    saveProfileStatus: RequestStatus;
     database: InternalDatabase;
 }
 
@@ -61,8 +59,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps) : ProfileProps {
         return {
-            requestProfileStatus: state.databaseReducer.requestProfileStatus,
-            saveProfileStatus: state.databaseReducer.saveProfileStatus,
             database: state.databaseReducer
         };
     }

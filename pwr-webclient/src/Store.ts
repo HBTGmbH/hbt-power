@@ -16,6 +16,12 @@ export enum RequestStatus {
     Inactive
 }
 
+export enum APIRequestType {
+    RequestProfile,
+    SaveProfile,
+    RequestLanguages
+}
+
 
 
 export interface ApplicationState {

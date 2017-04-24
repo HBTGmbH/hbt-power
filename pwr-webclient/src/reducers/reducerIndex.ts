@@ -6,17 +6,10 @@ import {databaseReducer} from './singleProfile/singleProfileReducer';
  */
 
 export enum ActionType {
-    RequestingLanguagesSuccess,
-    RequestingLanguagesFail,
-    RequestingLanguages,
-    SaveFullProfileFail,
-    SaveFullProfilSuccess,
-    SaveFullProfile,
+    APIRequestSuccess,
+    APIRequestFail,
+    APIRequestPending,
     ChangeLanguageSkillLevel,
-    FailRequestFullProfile,
-    ReceiveFullProfile,
-    RequestingFullProfile,
-    RequestConsultantsFailed,
     ReceiveSingleConsultant,
     ChangeInitials,
     ChangeFirstName,
