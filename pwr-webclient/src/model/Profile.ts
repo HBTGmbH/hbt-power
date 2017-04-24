@@ -14,3 +14,25 @@ export interface Profile {
     education: Array<EducationEntry>;
     sectors: Array<Sector>;
 }
+
+export class NormalizedProfile {
+    public id: number;
+    public description: string;
+    public currentPosition: string;
+    /**
+     * The career elements, referenced by ID. The actual career elements are stored
+     * in the normalized database.
+     */
+    public career: Array<number>;
+    /**
+     * The languages, referenced by ID. The actual career elements are stored
+     * in the normalized database.
+     */
+    public languages: Array<number>;
+
+    public qualification: Array<number>;
+
+    public education: Array<number>;
+
+    public sectors: Array<number>;
+}
