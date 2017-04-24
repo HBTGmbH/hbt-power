@@ -170,7 +170,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <Toolbar style={this.cardToolbarStyle}>
                             <IconButton iconClassName="material-icons" onClick={this.handleSaveProfile} tooltip={PowerLocalize.get('Action.Save')}>done</IconButton>
                             <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Update')}>update</IconButton>
-                            <IconButton iconClassName="material-icons" onClick={this.handleResetProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
+                            <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleResetProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
                         </Toolbar>
                         <br/>
                         {ProfileModule.renderSnackbar('Save', this.props.saveProfileStatus)}

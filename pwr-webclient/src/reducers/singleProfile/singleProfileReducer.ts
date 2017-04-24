@@ -1,12 +1,14 @@
 import {RequestStatus, SingleProfile} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
+    ChangeAbstractAction,
     ChangeLanguageSkillLevelAction, ChangeLanguageSkillNameAction, ProfileAsyncActionCreator,
     ReceiveFullProfileAction
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {deepFreeze} from '../../utils/ObjectUtil';
+import {Profile} from '../../model/Profile';
 const initialState: SingleProfile = {
     profile: {
         sectors: [],
@@ -18,13 +20,31 @@ const initialState: SingleProfile = {
         qualification: [],
         id: -1
     },
-    possibleSectors : ["Luftfahrt", "Schiffahrt", "Logistik", "Autovermiterung", "Presse"],
-    possibleLanguageNames: ["Englisch", "Deutsch", "Französisch", "Chinesisch", "Russisch", "Spanisch"],
+    possibleSectors : [],
+    possibleLanguageNames: [],
     possibleLanguageLevels: ["Beginner", "Apprentice", "Expert", "Native"],
     requestProfileStatus: RequestStatus.Successful,
     saveProfileStatus: RequestStatus.Successful
 };
 
+function initInitialState() {
+    initialState.possibleSectors = [];
+    initialState.possibleSectors[1] = {id:1, name:"Luftfahrt"};
+    initialState.possibleSectors[2] = {id:2, name:"Schiffahrt"};
+    initialState.possibleSectors[3] = {id:3, name:"Logistik"};
+    initialState.possibleSectors[4] = {id:4, name:"Autovermietung"};
+    initialState.possibleSectors[5] = {id:5, name:"Presse"};
+
+    initialState.possibleLanguageNames = [];
+    initialState.possibleLanguageNames[1] = {id:1, name:"Englisch"};
+    initialState.possibleLanguageNames[2] = {id:2, name:"Deutsch"};
+    initialState.possibleLanguageNames[3] = {id:3, name:"Französisch"};
+    initialState.possibleLanguageNames[4] = {id:4, name:"Chinesisch"};
+    initialState.possibleLanguageNames[5] = {id:5, name:"Russisch"};
+    initialState.possibleLanguageNames[6] = {id:6, name:"Spanisch"};
+}
+
+initInitialState();
 
 function handleChangeLanguageSkill(state: SingleProfile, action: ChangeLanguageSkillNameAction) : SingleProfile {
     let newLanguage = Object.assign({},
@@ -68,6 +88,11 @@ function handleFailRequestFullProfile(state: SingleProfile, action: AbstractActi
     return Object.assign({}, state, {requestProfileStatus: RequestStatus.Failiure});
 }
 
+function handleChangeAbstract(state: SingleProfile, action: ChangeAbstractAction): SingleProfile {
+    let newProfile : Profile = Object.assign({}, state.profile, {description: action.newAbstract});
+    return Object.assign({}, state, {profile: newProfile});
+}
+
 
 /**
  * Reducer for the single profile part of the global state.
@@ -82,6 +107,9 @@ export function singleProfile(state : SingleProfile, action: AbstractAction) : S
     deepFreeze(state);
     console.log("ConsultantProfile Reducer called for action type " + ActionType[action.type]);
     switch(action.type) {
+        // == Profile Element modification == //
+        case ActionType.ChangeAbstract:
+            return handleChangeAbstract(state, <ChangeAbstractAction> action);
         case ActionType.ChangeLanguageSkillName:
             return handleChangeLanguageSkill(state, <ChangeLanguageSkillNameAction> action );
         case ActionType.ChangeLanguageSkillLevel:

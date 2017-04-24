@@ -74,6 +74,10 @@ function handleReceiveConsultants(action: ReceiveConsultantsAction, state:AllCon
     return newState;
 }
 
+function parseConsultantProfile(state: AllConsultantsState) {
+    
+}
+
 function handleReceiveSingleConsultant(
     action: ReceiveSingleConsultantAction,
     state: AllConsultantsState) : AllConsultantsState {

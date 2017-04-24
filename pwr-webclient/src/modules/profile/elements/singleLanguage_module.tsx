@@ -10,13 +10,15 @@ import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfil
 import {connect} from 'react-redux';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LanguageSkill} from '../../../model/LanguageSkill';
+import {Language} from '../../../model/Language';
 
 interface SingleLanguageProps {
     languageSkill: LanguageSkill;
     /**
      * Languages used for auto-completion.
      */
-    possibleLanguages: string[];
+    possibleLanguages: Array<Language>;
+    possibleLanguageStrings: Array<String>;
 
     /**
      * Used to create the dropdown menu
@@ -61,7 +63,8 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
         return {
             languageSkill: state.singleProfile.profile.languages[props.index],
             possibleLanguages: state.singleProfile.possibleLanguageNames,
-            possibleLanguageLevels: state.singleProfile.possibleLanguageLevels
+            possibleLanguageLevels: state.singleProfile.possibleLanguageLevels,
+            possibleLanguageStrings: state.singleProfile.possibleLanguageNames.map(x => x.name) // Only the name
         };
     }
 
@@ -78,9 +81,18 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     private handleLanguageRequest = (value: string) => {
         // Make sure the language name exists in the list of allowed languages. .
-        if(this.props.possibleLanguages.indexOf(value) >= 0) {
+        let exists: boolean = false;
+        let lang : Language;
+        for(let i = 0; i < this.props.possibleLanguages.length; i++) {
+            if(this.props.possibleLanguages[i].name === value) {
+                exists = true;
+                lang = this.props.possibleLanguages[i];
+                break;
+            }
+        }
+        if(exists) {
             let newSkill:  LanguageSkill = {
-                language: {name: value},
+                language: lang,
                 level: this.props.languageSkill.level
             };
             this.props.changeLangName(value, this.props.index);
@@ -124,7 +136,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
                 <AutoComplete
                     hintText={PowerLocalize.get("Language.Singular")}
                     value={this.state.nameAutoCompleteValue}
-                    dataSource={this.props.possibleLanguages}
+                    dataSource={this.props.possibleLanguageStrings}
                     onUpdateInput={this.handleAutoCompleteChange}
                     onNewRequest={this.handleLanguageRequest}
                     style={{"backgroundColor":this.state.backgroundColor}}

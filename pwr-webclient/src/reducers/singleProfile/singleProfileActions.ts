@@ -30,6 +30,13 @@ export interface ReceiveFullProfileAction extends AbstractAction {
 }
 
 export class ProfileActionCreator {
+    public static changeAbstract(newAbstract: string): ChangeAbstractAction {
+        return {
+            type: ActionType.ChangeAbstract,
+            newAbstract: newAbstract
+        }
+    }
+
     public static changeLanguageSkillName(newName: string, index: number) : ChangeLanguageSkillNameAction {
         return {
             type: ActionType.ChangeLanguageSkillName,

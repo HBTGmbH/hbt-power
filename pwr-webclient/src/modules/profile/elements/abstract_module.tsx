@@ -1,12 +1,16 @@
+
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {LinearProgress, TextField} from 'material-ui';
-import {Col, Grid, Row} from 'react-flexbox-grid';
+import * as redux from 'redux';
+import {AllConsultantsState, ApplicationState} from '../../../Store';
 import {Color} from '../../../utils/ColorUtil';
-
+import {Col} from 'react-flexbox-grid';
+import {LinearProgress, TextField} from 'material-ui';
+import {Grid, Row} from 'react-flexbox-grid';
+import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfileActions';
 
 interface AbstractTextProps {
-
+    abstractText: string;
 }
 
 /**
@@ -28,7 +32,6 @@ interface AbstractTextLocalProps {
 interface AbstractTextLocalState {
     maxCharacters: number;
     currentCharacters: number;
-    currentText: string;
     currentBarColor: string;
 }
 
@@ -36,7 +39,7 @@ interface AbstractTextLocalState {
  *
  */
 interface AbstractTextDispatch {
-
+    changeAbstract(newAbstract: string) : void;
 }
 
 /**
@@ -44,16 +47,28 @@ interface AbstractTextDispatch {
  * <p>
  *     This text area is within this module is encapsulated in a grid and is, therefor, responsive.
  */
-class AbstractTextModule extends React.Component<AbstractTextLocalProps, AbstractTextLocalState> {
+class AbstractTextModule extends React.Component<AbstractTextLocalProps & AbstractTextProps & AbstractTextDispatch, AbstractTextLocalState> {
 
+    static mapStateToProps(state: ApplicationState, localProps: AbstractTextLocalProps) : AbstractTextProps {
+        return {
+            abstractText: state.singleProfile.profile.description
+        };
+    }
 
-    constructor(props: AbstractTextLocalProps) {
+    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : AbstractTextDispatch {
+        return {
+            changeAbstract : function(newAbstract: string) {
+                dispatch(ProfileActionCreator.changeAbstract(newAbstract));
+            }
+        };
+    }
+
+    constructor(props: AbstractTextLocalProps & AbstractTextProps & AbstractTextDispatch) {
         super(props);
         this.state = {
             maxCharacters: props.initialMaxCharacters,
             currentCharacters: 0,
-            currentText : "",
-            currentBarColor: "green"
+            currentBarColor: 'green'
         };
     }
 
@@ -62,6 +77,7 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps, Abstrac
         let charCount: number = event.currentTarget.value.length;
         let newString: string;
         let color: Color;
+        console.log(event.currentTarget.value.length);
         if(charCount >= this.state.maxCharacters) {
             // Truncate the string so it fits.
             newString = event.currentTarget.value.substring(0, this.state.maxCharacters);
@@ -70,8 +86,9 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps, Abstrac
             newString = event.currentTarget.value;
             color = Color.LERP(Color.Green, Color.Red, charCount / this.state.maxCharacters);
         }
+
+        this.props.changeAbstract(newString);
         this.setState({
-            currentText: newString,
             currentCharacters: newString.length,
             currentBarColor: color.toCSSRGBString()
         });
@@ -86,7 +103,7 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps, Abstrac
                     multiLine={true}
                     rows={10}
                     onChange={this.handleTextChange}
-                    value={this.state.currentText}
+                    value={this.props.abstractText}
                 />
                 <Row>
                     <Col xs={12} sm={8} md={3} lg={3} >
@@ -105,4 +122,4 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps, Abstrac
     }
 }
 
-export const AbstractText: React.ComponentClass<AbstractTextLocalProps> = connect()(AbstractTextModule);
+export const AbstractText: React.ComponentClass<AbstractTextLocalProps> = connect(AbstractTextModule.mapStateToProps, AbstractTextModule.mapDispatchToProps)(AbstractTextModule);
