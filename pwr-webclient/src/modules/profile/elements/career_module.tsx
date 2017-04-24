@@ -8,9 +8,17 @@ import {Card, Divider, TextField, TableRow, TableRowColumn} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileElement} from '../profile-element_module';
 import {CareerElement} from '../../../model/CareerElement';
+import {CareerPosition} from '../../../model/CareerPosition';
 
 interface CareerProps {
-    career: Array<CareerElement>;
+    /**
+     * Associative array that maps an id(number) to a CareerElement
+     */
+    careerById: Array<CareerElement>;
+    /**
+     * Associative array that maps an id(number) to a CareerPosition
+     */
+    careerPositionsById: Array<CareerPosition>;
 }
 
 /**
@@ -38,21 +46,25 @@ interface CareerDispatch {
 
 class CareerModule extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
 
-    private static renderSingleStep(careerStep: CareerElement, index:number) {
+    private renderSingleStep = (careerElement: CareerElement, index:number) => {
+        console.log("index:" + index, careerElement);
         return (
             <tr key={'Career.' + index} >
                 <td>
-                    <DatePicker id={'C.DatePick.Start' + index} container="inline"  value={careerStep.startDate}/>
+                    <DatePicker id={'C.DatePick.Start' + index} container="inline"  value={careerElement.startDate}/>
                 </td>
                 <td>
-                    <DatePicker id={'C.DatePick.End' + index} container="inline"  value={careerStep.endDate}/>
+                    <DatePicker id={'C.DatePick.End' + index} container="inline"  value={careerElement.endDate}/>
                 </td>
                 <td>
-                    <TextField id={'Career.TextField.' + index} value={careerStep.position.position}  disabled={true}/>
+                    <TextField id={'Career.TextField.' + index}
+                               value={this.props.careerPositionsById[careerElement.careerPositionId].position}
+                               disabled={true}
+                    />
                 </td>
             </tr>
         );
-    }
+    };
 
     private static renderHeader() : JSX.Element {
         return (
@@ -66,7 +78,8 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
 
     static mapStateToProps(state: ApplicationState, localProps: CareerLocalProps) : CareerProps {
         return {
-            career: state.singleProfile.profile.career
+            careerById: state.databaseReducer.careerById,
+            careerPositionsById: state.databaseReducer.careerPositionsById
         };
     }
 
@@ -83,7 +96,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 subtitleCountedName={PowerLocalize.get('CareerStep.Qualifier')}
                 tableHeader={CareerModule.renderHeader()}
             >
-                {this.props.career.map(CareerModule.renderSingleStep)}
+                {this.props.careerById.map(this.renderSingleStep)}
             </ProfileElement>
         );
     }

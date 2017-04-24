@@ -1,6 +1,6 @@
 import {updateConsultant} from './consultants/consultantReducer';
 import {combineReducers} from 'redux';
-import {singleProfile} from './singleProfile/singleProfileReducer';
+import {databaseReducer} from './singleProfile/singleProfileReducer';
 /**
  * Created by nt on 12.04.2017.
  */
@@ -34,7 +34,7 @@ export interface AbstractAction {
 
 const ApplicationStore = combineReducers({
     updateConsultant,
-    singleProfile
+    databaseReducer
 });
 
 

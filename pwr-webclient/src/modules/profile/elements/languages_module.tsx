@@ -8,7 +8,7 @@ import {ProfileElement} from '../profile-element_module';
 import {LanguageSkill} from '../../../model/LanguageSkill';
 
 interface LanguageProps {
-    languages: LanguageSkill[];
+    languageSkillsById: Array<LanguageSkill>;
 }
 
 /**
@@ -36,9 +36,9 @@ interface LanguageDispatch {
 
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
 
-    private static renderSingleLanguage(language: LanguageSkill, index: number) {
+    private static renderSingleLanguage(language: LanguageSkill, id: number) {
 
-        return(<SingleLanguage index={index} key={index}/>);
+        return(<SingleLanguage id={id} key={id}/>);
     }
 
     private static renderHeader() {
@@ -52,7 +52,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
 
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps) : LanguageProps {
         return {
-            languages: state.singleProfile.profile.languages
+            languageSkillsById: state.databaseReducer.languageSkillById
         };
     }
 
@@ -69,7 +69,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
                 subtitleCountedName={PowerLocalize.get('Language.Plural')}
                 tableHeader={LanguagesModule.renderHeader()}
             >
-                {this.props.languages.map(LanguagesModule.renderSingleLanguage)}
+                {this.props.languageSkillsById.map(LanguagesModule.renderSingleLanguage)}
             </ProfileElement>
         );
     }

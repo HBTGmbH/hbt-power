@@ -22,7 +22,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
 
 
     private readonly cardHeaderStyle = {
-       'background-color' : Color.HBTSilver.toCSSRGBString()
+       'backgroundColor' : Color.HBTSilver.toCSSRGBString()
     };
 
     render() {

@@ -4,7 +4,7 @@
 
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState, SingleProfile} from '../../../Store';
+import {ApplicationState} from '../../../Store';
 import {AutoComplete, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
 import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfileActions';
 import {connect} from 'react-redux';
@@ -14,29 +14,27 @@ import {Language} from '../../../model/Language';
 
 interface SingleLanguageProps {
     languageSkill: LanguageSkill;
-    /**
-     * Languages used for auto-completion.
-     */
-    possibleLanguages: Array<Language>;
-    possibleLanguageStrings: Array<String>;
+
+    languagesById: Array<Language>;
 
     /**
      * Used to create the dropdown menu
      */
     possibleLanguageLevels: string[];
+
+    possibleLanguageStrings: string[];
 }
 
 interface SingleLanguageLocalProps {
     /**
-     * The index given to this single language module. This is necessary to
-     * get the correct language from the global state.
+     * The ID of the language
      */
-    index: number;
+    id: number;
 }
 
 interface SingleLanguageDispatch {
-    changeLangName: (newName: string, index: number) => void;
-    changeLangLevel: (newLevel: string, index: number) => void;
+    changeLangName: (newLangId: number, langSkillId: number) => void;
+    changeLangLevel: (newLevel: string, langSkillId: number) => void;
 }
 
 interface SingleLanguageLocalState {
@@ -50,7 +48,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     constructor(props: SingleLanguageLocalProps & SingleLanguageProps & SingleLanguageDispatch) {
         super(props);
         this.state = {
-            nameAutoCompleteValue: props.languageSkill.language.name,
+            nameAutoCompleteValue: props.languagesById[props.languageSkill.languageId].name,
             backgroundColor: "initial"
         }
     }
@@ -61,20 +59,20 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     public static mapStateToProps(state: ApplicationState, props: SingleLanguageLocalProps) : SingleLanguageProps {
         return {
-            languageSkill: state.singleProfile.profile.languages[props.index],
-            possibleLanguages: state.singleProfile.possibleLanguageNames,
-            possibleLanguageLevels: state.singleProfile.possibleLanguageLevels,
-            possibleLanguageStrings: state.singleProfile.possibleLanguageNames.map(x => x.name) // Only the name
+            languageSkill: state.databaseReducer.languageSkillById[props.id],
+            languagesById: state.databaseReducer.languageNamesById,
+            possibleLanguageLevels: state.databaseReducer.languageLevels,
+            possibleLanguageStrings: state.databaseReducer.languageNamesById.map(x => x.name) // Only the name
         };
     }
 
-    public static mapDispatchToProps(dispatch: redux.Dispatch<SingleProfile>) : SingleLanguageDispatch {
+    public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : SingleLanguageDispatch {
         return {
-            changeLangName: function(newName: string, index: number): void {
-                dispatch(ProfileActionCreator.changeLanguageSkillName(newName, index));
+            changeLangName: function(newLangId: number, langSkillId: number): void {
+                dispatch(ProfileActionCreator.changeLanguageSkillName(newLangId, langSkillId));
             },
-            changeLangLevel: function(newLevel: string, index: number): void {
-                dispatch(ProfileActionCreator.changeLanguageSkillLevel(newLevel, index));
+            changeLangLevel: function(newLevel: string, langSkillId: number): void {
+                dispatch(ProfileActionCreator.changeLanguageSkillLevel(newLevel, langSkillId));
             }
         };
     }
@@ -83,19 +81,14 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
         // Make sure the language name exists in the list of allowed languages. .
         let exists: boolean = false;
         let lang : Language;
-        for(let i = 0; i < this.props.possibleLanguages.length; i++) {
-            if(this.props.possibleLanguages[i].name === value) {
-                exists = true;
-                lang = this.props.possibleLanguages[i];
-                break;
+        this.props.languagesById.forEach(l => {
+            if(l.name === value) {
+                exists = exists || true;
+                lang = l;
             }
-        }
+        });
         if(exists) {
-            let newSkill:  LanguageSkill = {
-                language: lang,
-                level: this.props.languageSkill.level
-            };
-            this.props.changeLangName(value, this.props.index);
+            this.props.changeLangName(lang.id, this.props.id);
             this.setState({backgroundColor: 'initial'});
         } else {
             // If the language name does not exist, display an error.
@@ -115,7 +108,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     };
 
     private handleLevelChange = (event: TouchTapEvent, index: number, value: string) => {
-        this.props.changeLangLevel(value, this.props.index);
+        this.props.changeLangLevel(value, this.props.id);
     };
 
     render() {

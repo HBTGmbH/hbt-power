@@ -20,16 +20,17 @@ import {AbstractText} from './elements/abstract_module';
 import {LanguageSkills} from './elements/languages_module';
 import {Sectors} from './elements/sectors_module';
 import {Career} from './elements/career_module';
-import {Education} from './elements/eduction_module';
+import {EducationList} from './elements/eduction_module';
 import {Qualifications} from './elements/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
-import {Profile} from '../../model/Profile';
+import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
+import {InternalDatabase} from '../../model/InternalDatabase';
+
 
 interface ProfileProps {
     requestProfileStatus: RequestStatus;
     saveProfileStatus: RequestStatus;
-    profile: Profile;
+    database: InternalDatabase;
 }
 
 /**
@@ -53,16 +54,16 @@ interface ProfileLocalState {
 
 interface ProfileDispatch {
     reloadProfile(): void;
-    saveProfile(initials: string, profile: Profile): void;
+    saveProfile(initials: string, database: InternalDatabase): void;
 }
 
 class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & ProfileDispatch, ProfileLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps) : ProfileProps {
         return {
-            requestProfileStatus: state.singleProfile.requestProfileStatus,
-            saveProfileStatus: state.singleProfile.saveProfileStatus,
-            profile: state.singleProfile.profile
+            requestProfileStatus: state.databaseReducer.requestProfileStatus,
+            saveProfileStatus: state.databaseReducer.saveProfileStatus,
+            database: state.databaseReducer
         };
     }
 
@@ -73,8 +74,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ProfileDispatch {
         return {
             reloadProfile: function() {dispatch(ProfileAsyncActionCreator.requestSingleProfile('nt'));} ,//FIXME no hardcoding
-            saveProfile: function(initials: string, profile: Profile) {
-                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, profile))
+            saveProfile: function(initials: string, database: InternalDatabase) {
+                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, InternalDatabase.serializeToAPI(database)))
             }
         };
     }
@@ -120,8 +121,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {
-        console.log(this.props.profile);
-        this.props.saveProfile("nt", this.props.profile); //FIXME remove hardcoding
+        console.log("Saving: ", this.props.database);
+        this.props.saveProfile("nt", this.props.database); //FIXME remove hardcoding
     };
 
     private handleResetProfile = (event: TouchTapEvent) => {
@@ -162,7 +163,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <Divider/>
                         <Career/>
                         <Divider/>
-                        <Education/>
+                        <EducationList/>
                         <Divider/>
                         <Qualifications/>
                         <Divider/>

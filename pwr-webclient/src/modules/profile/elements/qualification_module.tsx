@@ -9,7 +9,8 @@ import {Qualification} from '../../../model/Qualification';
 import {QualificationEntry} from '../../../model/QualificationEntry';
 
 interface QualificationProps {
-    qualification: Array<QualificationEntry>;
+    qualificationEntriesById: Array<QualificationEntry>;
+    qualifiactionsById: Array<Qualification>;
 }
 
 /**
@@ -46,22 +47,27 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         );
     }
 
-    private static renderSingleQualification(qualification: QualificationEntry, index: number) {
+    private renderSingleQualification = (qualification: QualificationEntry, index: number) => {
         return (
         <tr  key={'qualification.' + index}>
             <td>
                 <DatePicker id={'Qualification.DatePicker.' + index } container="inline"  value={qualification.date}/>
             </td>
             <td>
-                <TextField id={'Qualification.TextField.' + index } value={qualification.qualification.name} fullWidth={true} disabled={true}/>
+                <TextField
+                    id={'Qualification.TextField.' + index }
+                    value={this.props.qualifiactionsById[qualification.qualificationId].name}
+                    fullWidth={true}
+                    disabled={true}/>
             </td>
         </tr>
         );
-    }
+    };
 
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
-            qualification : state.singleProfile.profile.qualification
+            qualificationEntriesById : state.databaseReducer.qualificationEntriesById,
+            qualifiactionsById: state.databaseReducer.qualificationById
         };
     }
 
@@ -78,7 +84,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                 subtitleCountedName={PowerLocalize.get('Qualification.Plural')}
                 tableHeader={QualificationModule.renderHeader()}
             >
-                {this.props.qualification.map(QualificationModule.renderSingleQualification)}
+                {this.props.qualificationEntriesById.map(this.renderSingleQualification)}
             </ProfileElement>
         );
     }

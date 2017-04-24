@@ -8,7 +8,7 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Sector} from '../../../model/Sector';
 
 interface SectorsProps {
-    sectors: Array<Sector>;
+    sectorsById: Array<Sector>;
 }
 
 /**
@@ -47,7 +47,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
 
     static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
         return {
-            sectors: state.singleProfile.profile.sectors
+            sectorsById: state.databaseReducer.sectorsById
         };
     }
 
@@ -68,7 +68,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 subtitleCountedName={PowerLocalize.get('Sector.Plural')}
                 tableHeader={SectorsModule.renderHeader()}
             >
-                {this.props.sectors.map(SectorsModule.renderSingleListElement)}
+                {this.props.sectorsById.map(SectorsModule.renderSingleListElement)}
             </ProfileElement>
         );
     }

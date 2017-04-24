@@ -5,6 +5,7 @@
   "dependencies": {
     "@types/isomorphic-fetch": "0.0.33",
     "@types/jest": "^19.2.2",
+    "@types/jquery": "^2.0.41",
     "@types/material-ui": "^0.17.1",
     "@types/node": "^7.0.12",
     "@types/react": "^15.0.21",
@@ -14,6 +15,7 @@
     "axios": "^0.16.1",
     "es6-promise": "^4.1.0",
     "isomorphic-fetch": "^2.2.1",
+    "jquery": "^3.2.1",
     "loglevel": "^1.4.1",
     "material-ui": "0.17.4",
     "normalizr": "^3.2.2",

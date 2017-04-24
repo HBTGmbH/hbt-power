@@ -16,3 +16,13 @@ export function deepFreeze(obj: Object) {
     // Friere obj selbst ein
     return Object.freeze(obj);
 }
+
+export function deepClone(o: Object): any {
+    let _out, v, _key;
+    _out = Array.isArray(o) ? [] : {};
+    for (_key in o) {
+        v = o[_key];
+        _out[_key] = (typeof v === "object") ? deepClone(v) : v;
+    }
+    return _out;
+}

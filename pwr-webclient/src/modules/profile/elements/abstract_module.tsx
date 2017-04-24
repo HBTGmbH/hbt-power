@@ -51,7 +51,7 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps & Abstra
 
     static mapStateToProps(state: ApplicationState, localProps: AbstractTextLocalProps) : AbstractTextProps {
         return {
-            abstractText: state.singleProfile.profile.description
+            abstractText: state.databaseReducer.description
         };
     }
 

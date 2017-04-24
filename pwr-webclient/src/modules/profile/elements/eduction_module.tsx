@@ -6,9 +6,15 @@ import {DatePicker, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileElement} from '../profile-element_module';
 import {EducationEntry} from '../../../model/EducationEntry';
+import {Education} from '../../../model/Education';
 
 interface EducationProps {
-    education: Array<EducationEntry>;
+    /**
+     * Associative Array of education entries. number => EducationEntry
+     */
+    educationEntriesById: Array<EducationEntry>;
+
+    educationById: Array<Education>;
 }
 
 /**
@@ -45,22 +51,23 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         );
     }
 
-    private static renderSingleEducationStep(step: EducationEntry, index: number) {
+    private renderSingleEducationStep = (step: EducationEntry, index: number) => {
         return (
             <tr key={"Education." + index} >
                 <td>
                     <DatePicker id={"Education.DatePicker." + index} container="inline"  value={step.date}/>
                 </td>
                 <td>
-                    <TextField id={"Education.TextField." + index} value={step.education.name} fullWidth={true} disabled={true}/>
+                    <TextField id={"Education.TextField." + index} value={this.props.educationById[step.educationId].name} fullWidth={true} disabled={true}/>
                 </td>
             </tr>
         );
-    }
+    };
 
     static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps) : EducationProps {
         return {
-            education : state.singleProfile.profile.education
+            educationEntriesById : state.databaseReducer.educationEntriesById,
+            educationById: state.databaseReducer.educationById
         };
     }
 
@@ -77,10 +84,10 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                 subtitleCountedName={PowerLocalize.get('EducationStep.Plural')}
                 tableHeader={EducationModule.renderHeader()}
             >
-                {this.props.education.map(EducationModule.renderSingleEducationStep)}
+                {this.props.educationEntriesById.map(this.renderSingleEducationStep)}
             </ProfileElement>
         );
     }
 }
 
-export const Education: React.ComponentClass<EducationLocalProps> = connect(EducationModule.mapStateToProps, EducationModule.mapDispatchToProps)(EducationModule);
+export const EducationList: React.ComponentClass<EducationLocalProps> = connect(EducationModule.mapStateToProps, EducationModule.mapDispatchToProps)(EducationModule);

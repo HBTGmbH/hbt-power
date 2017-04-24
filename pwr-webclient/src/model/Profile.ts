@@ -4,16 +4,6 @@ import {QualificationEntry} from './QualificationEntry';
 import {EducationEntry} from './EducationEntry';
 import {Sector} from './Sector';
 
-export interface Profile {
-    id: number;
-    description: string;
-    currentPosition: string;
-    career: Array<CareerElement>;
-    languages: Array<LanguageSkill>;
-    qualification: Array<QualificationEntry>;
-    education: Array<EducationEntry>;
-    sectors: Array<Sector>;
-}
 
 export class NormalizedProfile {
     public id: number;
@@ -21,12 +11,12 @@ export class NormalizedProfile {
     public currentPosition: string;
     /**
      * The career elements, referenced by ID. The actual career elements are stored
-     * in the normalized database.
+     * in the normalized databaseReducer.
      */
     public career: Array<number>;
     /**
      * The languages, referenced by ID. The actual career elements are stored
-     * in the normalized database.
+     * in the normalized databaseReducer.
      */
     public languages: Array<number>;
 

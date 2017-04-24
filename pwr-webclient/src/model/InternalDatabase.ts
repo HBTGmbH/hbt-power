@@ -6,84 +6,86 @@ import {Sector} from './Sector';
 import {Language} from './Language';
 import {Education} from './Education';
 import {Qualification} from './Qualification';
-import {NormalizedProfile, Profile} from './Profile';
 import {CareerPosition} from './CareerPosition';
 import {EducationEntry} from './EducationEntry';
 import {LanguageSkill} from './LanguageSkill';
 import {QualificationEntry} from './QualificationEntry';
 import {isNull, isNullOrUndefined} from 'util';
 import {CareerElement} from './CareerElement';
+import {RequestStatus} from '../Store';
+import {APICareer, APIEducation, APILanguageSkill, APIProfile, APIQualification} from './APIProfile';
 
-interface APILanguageSkill {
-    id: number;
-    level: string;
-    language: {
-        id: number;
-        name: string;
-    }
-}
 
-interface APIEducation {
-    id: number;
-    date: string;
-    education: {
-        id: number;
-        name: string;
-    }
-}
-
-interface APIQualification {
-    id: number;
-    date: string;
-    qualification: {
-        id: number;
-        name: string;
-    }
-}
-
-interface APICareer {
-    id: number;
-    startDate: string;
-    endDate: string;
-    position: {
-        id: number;
-        position: string;
-    }
-}
 
 /**
- * Internal database that avoids deeply nested structures by unwrapping them, saving entities in seperate arrays
+ * Internal databaseReducer that avoids deeply nested structures by unwrapping them, saving entities in seperate arrays
  * instead of nested arrays in their respective entities.
+ *
+ * Entities itself are stored in associative arrays, and may be accessed in the following manner: <code>entitiesById[myEntity.id]</code>
+ * To allow fast iteration over all entities in one of these associative arrays, a second array exists for each entity.
+ * This array stores all currently available entity IDs.
  */
-class InternalDatabase {
+export class InternalDatabase {
+    public currentPosition: string;
+
+    public languageLevels: Array<string> = ["Beginner", "Intermediate", "Expert", "Native"];
 
     public sectorsById: Array<Sector> = [];
+    public sectorIds: Array<number> = [];
+
     public languageNamesById: Array<Language> = [];
+    public languageNameIds: Array<number> = [];
+
     public educationById: Array<Education> = [];
+    public educationIds: Array<number> = [];
+
     public qualificationById: Array<Qualification> = [];
+    public qualificationIds: Array<number> = [];
+
     public careerPositionsById: Array<CareerPosition> = [];
+    public careerPositionIds: Array<number> = [];
 
     public careerById : Array<CareerElement> = [];
+    public careerIds: Array<number> = [];
+
     public educationEntriesById: Array<EducationEntry> = [];
+    public educationEntryIds: Array<number> = [];
+
     public languageSkillById: Array<LanguageSkill> = [];
-    public qualificationEntryById: Array<QualificationEntry>;
+    public languageSkillIds: Array<number> = [];
 
-    public profile: NormalizedProfile;
+    public qualificationEntriesById: Array<QualificationEntry> = [];
+    public qualificationEntryIds: Array<number> = [];
+
+    public profileId: number;
+    public description: string;
+
+    /**
+     * Indicates the current state of the get profile request that has been sent to the API. Used
+     * to indicate the status to the user.
+     */
+    requestProfileStatus: RequestStatus;
+    /**
+     * Indicates the current state of the save profile request that has been sent to the API. Used
+     * to indicate the status to the user.
+     */
+    saveProfileStatus: RequestStatus;
 
 
-    private readSectors(sectors: Array<{"id": number, "name": string}>): void {
+
+    private readSectors(sectors: Array<{'id': number, 'name': string}>): void {
         // Possible sectors are provided by a different API.
         for(let i = 0; i < sectors.length; i++) {
-            // Checks if the database already has the given sectors ID present. If thats the case,
+            // Checks if the databaseReducer already has the given sectors ID present. If thats the case,
             // The id may simply be added to the list of sectors in the profile
             if(!isNullOrUndefined(this.sectorsById[sectors[i].id])) {
-                this.profile.sectors.push(sectors[i].id);
+                this.sectorsById[sectors[i].id] = sectors[i];
                 // TODO validate name?
             } else {
                 // We assume that the server that provides the data is always right, which means the
                 // client is missing a data set.
                 // This adds the sector to the currently known sectors.
-                console.info("Client was missing a sector provided by the API. Missing sector was: ", sectors[i]);
+                console.info('Client was missing a sector provided by the API. Missing sector was: ', sectors[i]);
                 this.sectorsById[sectors[i].id] = sectors[i];
             }
         }
@@ -99,7 +101,8 @@ class InternalDatabase {
      */
     private validateLanguage(lang: {id: number, name: string}) {
         if (isNullOrUndefined(this.languageNamesById[lang.id])) {
-            console.info("Client was missing a language provided by the API. Missing language was: ", lang);
+            console.info('Client was missing a language provided by the API. Missing language was: ', lang);
+            this.languageNameIds.push(lang.id);
             this.languageNamesById[lang.id] = lang;
         } else if(this.languageNamesById[lang.id].name != lang.name) {
             this.languageNamesById[lang.id].name = lang.name;
@@ -108,7 +111,8 @@ class InternalDatabase {
 
     private validateEducation(education: {id: number, name:string}): void {
         if (isNullOrUndefined(this.educationById[education.id])) {
-            console.info("Client was missing a education provided by the API. Missing education was: ", education);
+            console.info('Client was missing a education provided by the API. Missing education was: ', education);
+            this.educationIds.push(education.id);
             this.educationById[education.id] = education;
         } else if(this.educationById[education.id].name != education.name) {
             this.educationById[education.id].name = education.name;
@@ -117,7 +121,8 @@ class InternalDatabase {
 
     private validateQualification(qualification: {id: number, name: string}) : void {
         if (isNullOrUndefined(this.qualificationById[qualification.id])) {
-            console.info("Client was missing a qualification provided by the API. Missing qualification was: ", qualification);
+            console.info('Client was missing a qualification provided by the API. Missing qualification was: ', qualification);
+            this.qualificationIds.push(qualification.id);
             this.qualificationById[qualification.id] = qualification;
         } else if(this.qualificationById[qualification.id].name != qualification.name) {
             this.qualificationById[qualification.id].name = qualification.name;
@@ -126,7 +131,8 @@ class InternalDatabase {
 
     private validateCareerPosition(position: {id: number, position: string}) : void {
         if (isNullOrUndefined(this.careerPositionsById[position.id])) {
-            console.info("Client was missing a position provided by the API. Missing position was: ", position);
+            console.info('Client was missing a position provided by the API. Missing position was: ', position);
+            this.careerPositionIds.push(position.id);
             this.careerPositionsById[position.id] = position;
         } else if(this.careerPositionsById[position.id].position != position.position) {
             this.careerPositionsById[position.id].position = position.position;
@@ -136,12 +142,21 @@ class InternalDatabase {
     private readLanguageSkills(langSkills: Array<APILanguageSkill>): void {
         // Clear all existing language skills.
         this.languageSkillById = [];
-        for(let i = 0; i < langSkills.length; i++) {
-            // Check that the language is still correct.
-            this.validateLanguage(langSkills[i].language);
-            // Add the now correct language skill to the profile.
-            this.languageSkillById[langSkills[i].id] = langSkills[i];
-        }
+        let that = this;
+        langSkills.forEach(langSkill => {
+            // In case the API returns something invalid.
+            if(!isNullOrUndefined(langSkill)) {
+                // Check that the language is still correct.
+                that.validateLanguage(langSkill.language);
+                // Add the now correct language skill to the profile.
+                that.languageSkillById[langSkill.id] = {
+                    languageId: langSkill.language.id,
+                    id: langSkill.id,
+                    level: langSkill.level
+                };
+                that.languageSkillIds.push(langSkill.id);
+            }
+        });
     }
 
     /**
@@ -151,57 +166,129 @@ class InternalDatabase {
     private readEducationEntries(educationEntries: Array<APIEducation>): void {
         // Clears all existing data to re-read from the API.
         this.educationEntriesById = [];
-        for(let i = 0; i < educationEntries.length; i++) {
-            this.validateEducation(educationEntries[i].education);
-            this.educationEntriesById[educationEntries[i].id] = Object.assign(
-                educationEntries[i],
-                {date: new Date(educationEntries[i].date)}
+        let that = this;
+        educationEntries.forEach(eductionEntry => {
+            // The API might return something invalid. Ignore that.
+            if(!isNullOrUndefined(eductionEntry)) {
+                that.validateEducation(eductionEntry.education);
+                that.educationEntriesById[eductionEntry.id] = Object.assign(
+                    eductionEntry,
+                    {
+                        educationId: eductionEntry.education.id,
+                        date: new Date(eductionEntry.date)
+                    }
                 );
-        }
+                that.educationEntryIds.push(eductionEntry.id);
+            }
+        });
     }
 
+
     private readQualficiationEntries(qualificationEntries: Array<APIQualification>): void {
-        this.qualificationEntryById = [];
-        for(let i = 0; i < qualificationEntries.length; i++) {
-            this.validateQualification(qualificationEntries[i].qualification);
-            this.qualificationEntryById[qualificationEntries[i].id] = Object.assign(
-                qualificationEntries[i],
-                {date: new Date(qualificationEntries[i].date)}
-            );
-        }
+        this.qualificationEntriesById = [];
+        let that = this;
+        qualificationEntries.forEach(qualificationEntry => {
+            // The API might return something invalid. Ignore.
+            if(!isNullOrUndefined(qualificationEntry)) {
+                that.validateQualification(qualificationEntry.qualification);
+                that.qualificationEntriesById[qualificationEntry.id] = {
+                    id: qualificationEntry.id,
+                    qualificationId: qualificationEntry.qualification.id,
+                    date: new Date(qualificationEntry.date)
+                };
+                that.qualificationEntryIds.push(qualificationEntry.id);
+            }
+        });
     }
 
     private readCareer(career: Array<APICareer>) : void {
         this.careerPositionsById = [];
-        for(let i = 0; i < career.length; i++) {
-            this.validateCareerPosition(career[i].position);
-            this.careerById[career[i].id] = Object.assign(
-                career[i],
-                {
-                    startDate: new Date(career[i].startDate),
-                    endDate: new Date(career[i].endDate)
-                }
-            );
-        }
+        let that = this;
+        career.forEach(careerStep =>{
+            // The API might return something invalid. Ignore.
+            if(!isNullOrUndefined(careerStep)) {
+                that.validateCareerPosition(careerStep.position);
+                that.careerById[careerStep.id] = Object.assign(
+                    careerStep,
+                    {
+                        startDate: new Date(careerStep.startDate),
+                        endDate: new Date(careerStep.endDate),
+                        careerPositionId: careerStep.position.id
+                    }
+                );
+                that.careerIds.push(careerStep.id);
+            }
+
+        });
     }
 
     /**
-     * Attempts to interprete a full consultant profile and parses it into the database.
+     * Attempts to interprete a full consultant profile and parses it into the databaseReducer.
+     * @param prevDB previous database used to keep values.
      * @param profileFromAPI the profile the API provides.
      */
-    public serialize(profileFromAPI: any) {
-        // Shortcut reference to this objects profile
-        let prof = this.profile;
-
-        prof.id = profileFromAPI.id;
-        prof.currentPosition = profileFromAPI.currentPosition;
-        prof.description = profileFromAPI.description;
+    public parseFromAPI(profileFromAPI: any) {
+        console.debug("Parsing Profile data");
+        this.profileId = profileFromAPI.id;
+        this.currentPosition = profileFromAPI.currentPosition;
+        this.description = profileFromAPI.description;
+        console.debug("Parsing sector data");
         this.readSectors(profileFromAPI.sectors);
+        console.debug("Parsing language data");
         this.readLanguageSkills(profileFromAPI.languages);
+        console.debug("Parsing education data");
         this.readEducationEntries(profileFromAPI.education);
+        console.debug("Parsing qualification data");
         this.readQualficiationEntries(profileFromAPI.qualification);
+        console.debug("Parsing career data");
         this.readCareer(profileFromAPI.career);
     }
+
+
+
+    /**
+     * Deserializes this database into an API profile that may be sent back to the server for an
+     * update command.
+     */
+    public static serializeToAPI(toSerialize: InternalDatabase): APIProfile {
+        let career: Array<APICareer> = [];
+        toSerialize.careerIds.forEach(id => {
+            career.push(CareerElement.toAPICareer(toSerialize.careerById[id], toSerialize.careerPositionsById));
+        });
+        let languages: Array<APILanguageSkill> = [];
+        toSerialize.languageSkillIds.forEach(id => {
+            languages.push(LanguageSkill.toAPILanguageSkill(toSerialize.languageSkillById[id], toSerialize.languageNamesById));
+        });
+        let qualifications: Array<APIQualification> = [];
+        toSerialize.qualificationEntryIds.forEach(id => {
+            qualifications.push(QualificationEntry.toAPIQualificationEntry(toSerialize.qualificationEntriesById[id], toSerialize.qualificationById));
+        });
+        let educations: Array<APIEducation> = [];
+        toSerialize.educationEntryIds.forEach(id => {
+            educations.push(EducationEntry.toAPIEducationEntry(toSerialize.educationEntriesById[id], toSerialize.educationById));
+        });
+        let sectors: Array<Sector> = [];
+        toSerialize.sectorIds.forEach(id => {
+            sectors.push(Sector.toAPISector(toSerialize.sectorsById[id]))
+        });
+
+
+
+        let res: APIProfile = {
+            id: toSerialize.profileId,
+            description: toSerialize.description,
+            currentPosition: toSerialize.currentPosition,
+            career: career,
+            languages: languages,
+            qualification: qualifications,
+            education: educations,
+            sectors: sectors
+        };
+        console.log("Serialized profile:", res);
+        return res;
+    }
+
+
 
 
 }

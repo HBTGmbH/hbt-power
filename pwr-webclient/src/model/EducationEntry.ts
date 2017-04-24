@@ -1,6 +1,19 @@
 import {Education} from './Education';
+import {APIEducation} from './APIProfile';
 
-export interface EducationEntry {
+export class EducationEntry {
+    id: number;
     date: Date;
-    education: Education;
+    educationId: number;
+
+    public static toAPIEducationEntry(entry: EducationEntry, educationsById: Array<Education>): APIEducation {
+        return {
+            id: entry.id,
+            date: entry.date.toDateString(),
+            education: {
+                id: entry.educationId,
+                name: educationsById[entry.educationId].name
+            }
+        }
+    }
 }
