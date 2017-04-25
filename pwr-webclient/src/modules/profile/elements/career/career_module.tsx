@@ -82,9 +82,10 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 subtitleCountedName={PowerLocalize.get('CareerStep.Qualifier')}
                 tableHeader={CareerModule.renderHeader()}
             >
-                {this.props.careerById.map(cp => {
+                {this.props.careerById.map((cp, index) => {
                     return (
                         <SingleCareerElement
+                            key={"SingleCareerElement." + index}
                             careerElement={cp}
                             careerPositionsById={this.props.careerPositionsById}
                             onStartDateChange={this.props.changeStartDate}

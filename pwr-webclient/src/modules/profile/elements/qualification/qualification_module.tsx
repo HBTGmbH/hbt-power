@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../Store';
+import {AllConsultantsState, ApplicationState} from '../../../../Store';
 import {DatePicker, TextField} from 'material-ui';
-import {ProfileElement} from '../profile-element_module';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {Qualification} from '../../../model/Qualification';
-import {QualificationEntry} from '../../../model/QualificationEntry';
+import {ProfileElement} from '../../profile-element_module';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {Qualification} from '../../../../model/Qualification';
+import {QualificationEntry} from '../../../../model/QualificationEntry';
 
 interface QualificationProps {
     qualificationEntriesById: Array<QualificationEntry>;

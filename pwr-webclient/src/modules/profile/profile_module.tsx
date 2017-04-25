@@ -17,11 +17,11 @@ import {
     TouchTapEvent
 } from 'material-ui';
 import {AbstractText} from './elements/abstract_module';
-import {LanguageSkills} from './elements/languages_module';
+import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors_module';
 import {Career} from './elements/career/career_module';
 import {EducationList} from './elements/education/eduction_module';
-import {Qualifications} from './elements/qualification_module';
+import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
 import {InternalDatabase} from '../../model/InternalDatabase';

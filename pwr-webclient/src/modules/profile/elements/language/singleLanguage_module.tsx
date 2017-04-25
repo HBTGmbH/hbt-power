@@ -4,13 +4,13 @@
 
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
+import {ApplicationState} from '../../../../Store';
 import {AutoComplete, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
-import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {connect} from 'react-redux';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {LanguageSkill} from '../../../model/LanguageSkill';
-import {Language} from '../../../model/Language';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {LanguageSkill} from '../../../../model/LanguageSkill';
+import {Language} from '../../../../model/Language';
 
 interface SingleLanguageProps {
     languageSkill: LanguageSkill;

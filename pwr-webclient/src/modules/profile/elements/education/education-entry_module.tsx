@@ -56,7 +56,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
 
     render() {
         return(
-            <tr key={"Education." + this.props.educationEntry.id} >
+            <tr>
                 <td>
                     <DatePicker
                         id={"Education.DatePicker." + this.props.educationEntry.id}

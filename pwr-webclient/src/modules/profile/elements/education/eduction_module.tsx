@@ -75,9 +75,10 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                 subtitleCountedName={PowerLocalize.get('EducationStep.Plural')}
                 tableHeader={EducationModule.renderHeader()}
             >
-                {this.props.educationEntriesById.map(e => {
+                {this.props.educationEntriesById.map((e, index) => {
                     return(
                     <SingleEducationElement
+                        key={"SingleEducationElement." + index}
                         educationEntry={e}
                         educationsById={this.props.educationById}
                         onDateChange={this.props.onDateChange}

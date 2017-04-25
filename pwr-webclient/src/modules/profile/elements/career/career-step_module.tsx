@@ -67,7 +67,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
 
     render() {
         return(
-            <tr key={'Career.' + this.props.careerElement.id} >
+            <tr>
                 <td>
                     <DatePicker
                         id={'C.DatePick.Start' +  this.props.careerElement.id}
