@@ -6,6 +6,7 @@ import {databaseReducer} from './singleProfile/singleProfileReducer';
  */
 
 export enum ActionType {
+    ChangeDate,
     APIRequestSuccess,
     APIRequestFail,
     APIRequestPending,

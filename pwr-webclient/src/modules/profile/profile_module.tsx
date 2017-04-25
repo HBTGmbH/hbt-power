@@ -19,8 +19,8 @@ import {
 import {AbstractText} from './elements/abstract_module';
 import {LanguageSkills} from './elements/languages_module';
 import {Sectors} from './elements/sectors_module';
-import {Career} from './elements/career_module';
-import {EducationList} from './elements/eduction_module';
+import {Career} from './elements/career/career_module';
+import {EducationList} from './elements/education/eduction_module';
 import {Qualifications} from './elements/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';

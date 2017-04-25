@@ -1,14 +1,13 @@
-
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../Store';
-import {CardHeader, CardMedia, DatePicker, List, TableHeader, TableHeaderColumn} from 'material-ui';
-import {Card, Divider, TextField, TableRow, TableRowColumn} from 'material-ui';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ProfileElement} from '../profile-element_module';
-import {CareerElement} from '../../../model/CareerElement';
-import {CareerPosition} from '../../../model/CareerPosition';
+import {AllConsultantsState, ApplicationState, DateFieldType} from '../../../../Store';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {ProfileElement} from '../../profile-element_module';
+import {CareerElement} from '../../../../model/CareerElement';
+import {CareerPosition} from '../../../../model/CareerPosition';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {SingleCareerElement} from './career-step_module';
 
 interface CareerProps {
     /**
@@ -41,30 +40,11 @@ interface CareerLocalState {
 }
 
 interface CareerDispatch {
-
+    changeStartDate(newDate: Date, id: number): void;
+    changeEndDate(newDate: Date, id: number): void;
 }
 
 class CareerModule extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
-
-    private renderSingleStep = (careerElement: CareerElement, index:number) => {
-        console.log("index:" + index, careerElement);
-        return (
-            <tr key={'Career.' + index} >
-                <td>
-                    <DatePicker id={'C.DatePick.Start' + index} container="inline"  value={careerElement.startDate}/>
-                </td>
-                <td>
-                    <DatePicker id={'C.DatePick.End' + index} container="inline"  value={careerElement.endDate}/>
-                </td>
-                <td>
-                    <TextField id={'Career.TextField.' + index}
-                               value={this.props.careerPositionsById[careerElement.careerPositionId].position}
-                               disabled={true}
-                    />
-                </td>
-            </tr>
-        );
-    };
 
     private static renderHeader() : JSX.Element {
         return (
@@ -76,6 +56,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
         );
     }
 
+
     static mapStateToProps(state: ApplicationState, localProps: CareerLocalProps) : CareerProps {
         return {
             careerById: state.databaseReducer.careerById,
@@ -85,7 +66,12 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : CareerDispatch {
         return {
-
+            changeStartDate: function(newDate: Date, id: number) {
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerFrom))
+            },
+            changeEndDate: function(newDate: Date, id: number) {
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerTo))
+            }
         };
     }
 
@@ -96,7 +82,16 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 subtitleCountedName={PowerLocalize.get('CareerStep.Qualifier')}
                 tableHeader={CareerModule.renderHeader()}
             >
-                {this.props.careerById.map(this.renderSingleStep)}
+                {this.props.careerById.map(cp => {
+                    return (
+                        <SingleCareerElement
+                            careerElement={cp}
+                            careerPositionsById={this.props.careerPositionsById}
+                            onStartDateChange={this.props.changeStartDate}
+                            onEndDateChange={this.props.changeEndDate}
+                        />
+                    )
+                })}
             </ProfileElement>
         );
     }

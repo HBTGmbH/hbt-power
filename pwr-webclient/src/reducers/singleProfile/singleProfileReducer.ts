@@ -1,7 +1,7 @@
-import {APIRequestType, RequestStatus} from '../../Store';
+import {APIRequestType, DateFieldType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
-    ChangeAbstractAction,
+    ChangeAbstractAction, ChangeDateAction,
     ChangeLanguageSkillLevelAction,
     ChangeLanguageSkillNameAction,
     ReceiveAPIResponseAction
@@ -81,6 +81,33 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
     return Object.assign({}, newState, {APIRequestStatus : RequestStatus.Successful});
 }
 
+function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): InternalDatabase {
+    switch (action.targetField) {
+        case DateFieldType.CareerFrom: {
+            // Copy the array.
+            let newCareers = state.careerById.slice(0);
+            // Copy the references into a new career object and replace it in the new array
+            newCareers[action.targetFieldId] = Object.assign({}, newCareers[action.targetFieldId]);
+            // Replace the start date. This is a typesafe way to do that (Instead of using another object in Object.assign).
+            newCareers[action.targetFieldId].startDate = action.newDate;
+            // Copy all references into a new state object.
+            return Object.assign({}, state, {careerById: newCareers});
+        }
+        case DateFieldType.CareerTo: {
+            // Copy the array.
+            let newCareers = state.careerById.slice(0);
+            // Copy the references into a new career object and replace it in the new array
+            newCareers[action.targetFieldId] = Object.assign({}, newCareers[action.targetFieldId]);
+            // Replace the start date. This is a typesafe way to do that (Instead of using another object in Object.assign).
+            newCareers[action.targetFieldId].endDate = action.newDate;
+            // Copy all references into a new state object.
+            return Object.assign({}, state, {careerById: newCareers});
+        }
+        default:
+            return state;
+    }
+}
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -101,7 +128,8 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleChangeLanguageSkill(state, <ChangeLanguageSkillNameAction> action );
         case ActionType.ChangeLanguageSkillLevel:
             return handleChangeLanguageSkillLevel(state, <ChangeLanguageSkillLevelAction> action);
-
+        case ActionType.ChangeDate:
+            return handleChangeDate(state, <ChangeDateAction> action);
         // == Language Suggestion requests == //
         case ActionType.APIRequestPending:
             return Object.assign({}, state, {APIRequestStatus: RequestStatus.Pending});

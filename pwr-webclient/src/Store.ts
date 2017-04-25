@@ -22,6 +22,11 @@ export enum APIRequestType {
     RequestLanguages
 }
 
+export enum DateFieldType {
+    CareerFrom,
+    CareerTo
+}
+
 
 
 export interface ApplicationState {

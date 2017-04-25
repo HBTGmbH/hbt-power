@@ -2,15 +2,21 @@
  * Created by nt on 20.04.2017.
  */
 
-import {AllConsultantsState, APIRequestType} from '../../Store';
+import {AllConsultantsState, APIRequestType, DateFieldType} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {getLangSuggestionAPIString, getProfileAPIString} from '../../API_CONFIG';
-import {isNull, isNullOrUndefined} from 'util';
-import {APILanguageSkill, APIProfile} from '../../model/APIProfile';
+import {APIProfile} from '../../model/APIProfile';
 
+/**
+ * Actions that invokes modification of the abstract.
+ * The abstract is the text that is associated with a single profile.
+ */
 export interface ChangeAbstractAction extends AbstractAction {
+    /**
+     * The new abstract text.
+     */
     newAbstract: string;
 }
 
@@ -32,7 +38,15 @@ export interface ChangeLanguageSkillNameAction extends AbstractAction {
  * Changes the language level of the language skill associated with the given ID.
  */
 export interface ChangeLanguageSkillLevelAction extends AbstractAction {
+    /**
+     * {@link Language.id} of the language that is supposed to be modified.
+     * the ID is not existent, nothing will happen.
+     */
     languageSkillId: number;
+
+    /**
+     * The new language level. May be an arbitary string. Note that the API performs consistency checks.
+     */
     newLanguageLevel: string;
 }
 
@@ -40,6 +54,31 @@ export interface ChangeLanguageSkillLevelAction extends AbstractAction {
 export interface ReceiveAPIResponseAction extends AbstractAction {
     requestType: APIRequestType;
     payload: any;
+}
+
+/**
+ * Action that invokes a date change on one of the available date fields in various classes.
+ * <p>
+ *     The field which is changed is defined by the {@link ChangeDateAction.targetField} type.
+ *     This allows a more flexible use of a single action for multiple field, moving the logic from the 'dumb'
+ *     action creator to the more 'smart' reducer.
+ */
+export interface ChangeDateAction extends AbstractAction {
+    /**
+     * New date. May be null or undefined for some target fields. The reducer accepting this action
+     * will perform the logic.
+     */
+   newDate: Date;
+
+    /**
+     *  Field that is the target of the date field. The reducer decides which fields gets modified.
+     */
+   targetField: DateFieldType;
+
+    /**
+     * Id of the target field.
+     */
+   targetFieldId: number;
 }
 
 export class ProfileActionCreator {
@@ -97,6 +136,15 @@ export class ProfileActionCreator {
 
     public static APIRequestFailed() : AbstractAction {
         return { type: ActionType.APIRequestFail };
+    }
+
+    public static changeDateField(id: number, newDate: Date, targetField: DateFieldType): ChangeDateAction {
+        return {
+            type: ActionType.ChangeDate,
+            newDate: newDate,
+            targetField: targetField,
+            targetFieldId: id
+        }
     }
 }
 
