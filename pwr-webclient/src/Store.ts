@@ -25,7 +25,8 @@ export enum APIRequestType {
 export enum DateFieldType {
     CareerFrom,
     CareerTo,
-    EducationDate
+    EducationDate,
+    QualificationDate
 }
 
 

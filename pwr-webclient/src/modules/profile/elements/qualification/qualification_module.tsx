@@ -1,16 +1,18 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, DateFieldType} from '../../../../Store';
 import {DatePicker, TextField} from 'material-ui';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Qualification} from '../../../../model/Qualification';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
+import {SingleQualificationEntry} from './qualification-entry_module';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 
 interface QualificationProps {
     qualificationEntriesById: Array<QualificationEntry>;
-    qualifiactionsById: Array<Qualification>;
+    qualificationsById: Array<Qualification>;
 }
 
 /**
@@ -33,7 +35,7 @@ interface QualificationLocalState {
 }
 
 interface QualificationDispatch {
-
+    onDateChange(newDate: Date, id: number): void;
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
@@ -47,33 +49,18 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         );
     }
 
-    private renderSingleQualification = (qualification: QualificationEntry, index: number) => {
-        return (
-        <tr  key={'qualification.' + index}>
-            <td>
-                <DatePicker id={'Qualification.DatePicker.' + index } container="inline"  value={qualification.date}/>
-            </td>
-            <td>
-                <TextField
-                    id={'Qualification.TextField.' + index }
-                    value={this.props.qualifiactionsById[qualification.qualificationId].name}
-                    fullWidth={true}
-                    disabled={true}/>
-            </td>
-        </tr>
-        );
-    };
-
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
             qualificationEntriesById : state.databaseReducer.qualificationEntriesById,
-            qualifiactionsById: state.databaseReducer.qualificationById
+            qualificationsById: state.databaseReducer.qualificationById
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : QualificationDispatch {
         return {
-
+            onDateChange: function(newDate, id: number) {
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.QualificationDate));
+            }
         };
     }
 
@@ -84,7 +71,15 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                 subtitleCountedName={PowerLocalize.get('Qualification.Plural')}
                 tableHeader={QualificationModule.renderHeader()}
             >
-                {this.props.qualificationEntriesById.map(this.renderSingleQualification)}
+                {this.props.qualificationEntriesById.map((q, index) => {
+                    return (
+                        <SingleQualificationEntry
+                            qualificationEntry={q}
+                            qualificationsById={this.props.qualificationsById}
+                            onDateChange={this.props.onDateChange}
+                        />
+                    )
+                })}
             </ProfileElement>
         );
     }

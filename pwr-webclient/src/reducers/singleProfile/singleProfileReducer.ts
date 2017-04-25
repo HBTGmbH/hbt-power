@@ -12,6 +12,7 @@ import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import * as $ from "jquery";
 import {EducationEntry} from '../../model/EducationEntry';
+import {QualificationEntry} from '../../model/QualificationEntry';
 
 
 const initialState: InternalDatabase = new InternalDatabase();
@@ -114,6 +115,18 @@ function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): In
             // Copy all references into a new state object.
             let newState: InternalDatabase = Object.assign({}, state);
             newState.educationEntriesById = newEducation;
+            return newState;
+        }
+        case DateFieldType.QualificationDate: {
+            // Copy the array.
+            let newQualificationsById: Array<QualificationEntry> = state.qualificationEntriesById.slice(0);
+            // Copy the references into a new career object and replace it in the new array
+            newQualificationsById[action.targetFieldId] = Object.assign({}, newQualificationsById[action.targetFieldId]);
+            // Replace the start date. This is a typesafe way to do that (Instead of using another object in Object.assign).
+            newQualificationsById[action.targetFieldId].date = action.newDate;
+            // Copy all references into a new state object.
+            let newState: InternalDatabase = Object.assign({}, state);
+            newState.qualificationEntriesById = newQualificationsById;
             return newState;
         }
         default:
