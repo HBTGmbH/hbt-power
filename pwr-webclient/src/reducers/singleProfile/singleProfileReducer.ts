@@ -105,10 +105,7 @@ function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): In
         case DateFieldType.EducationDate: {
             // Copy the array.
             let newEducation: Array<EducationEntry> = state.educationEntriesById.slice(0);
-            // Copy the references into a new career object and replace it in the new array
-            newEducation[action.targetFieldId] = Object.assign({}, newEducation[action.targetFieldId]);
-            // Replace the start date. This is a typesafe way to do that (Instead of using another object in Object.assign).
-            newEducation[action.targetFieldId].date = action.newDate;
+            newEducation[action.targetFieldId] = newEducation[action.targetFieldId].changeDate(action.newDate);
             // Copy all references into a new state object.
             let newState: InternalDatabase = Object.assign({}, state);
             newState.educationEntriesById = newEducation;

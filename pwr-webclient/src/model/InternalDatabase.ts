@@ -10,10 +10,14 @@ import {isNullOrUndefined} from 'util';
 import {CareerElement} from './CareerElement';
 import {RequestStatus} from '../Store';
 import {
-    APICareerElement, APICareerPosition, APIEducation, APILanguageSkill, APIProfile,
+    APICareerElement,
+    APICareerPosition,
+    APIEducation,
+    APIEducationStep,
+    APILanguageSkill,
+    APIProfile,
     APIQualification
 } from './APIProfile';
-import {Career} from '../modules/profile/elements/career/career_module';
 
 
 /**
@@ -100,14 +104,12 @@ export class InternalDatabase {
         }
     }
 
-    private validateEducation(education: {id: number, name:string}): void {
+    private validateEducation(education: APIEducation): void {
         if (isNullOrUndefined(this.educationById[education.id])) {
             console.info('Client was missing a education provided by the API. Missing education was: ', education);
             this.educationIds.push(education.id);
-            this.educationById[education.id] = education;
-        } else if(this.educationById[education.id].name != education.name) {
-            this.educationById[education.id].name = education.name;
         }
+        this.educationById[education.id] = Education.create(education);
     }
 
     private validateQualification(qualification: {id: number, name: string}) : void {
@@ -152,7 +154,7 @@ export class InternalDatabase {
      *
      * @param educationEntries
      */
-    private readEducationEntries(educationEntries: Array<APIEducation>): void {
+    private readEducationEntries(educationEntries: Array<APIEducationStep>): void {
         // Clears all existing data to re-read from the API.
         this.educationEntriesById = [];
         let that = this;
@@ -160,13 +162,7 @@ export class InternalDatabase {
             // The API might return something invalid. Ignore that.
             if(!isNullOrUndefined(eductionEntry)) {
                 that.validateEducation(eductionEntry.education);
-                that.educationEntriesById[eductionEntry.id] = Object.assign(
-                    eductionEntry,
-                    {
-                        educationId: eductionEntry.education.id,
-                        date: new Date(eductionEntry.date)
-                    }
-                );
+                that.educationEntriesById[eductionEntry.id] = EducationEntry.create(eductionEntry);
                 that.educationEntryIds.push(eductionEntry.id);
             }
         });
@@ -257,7 +253,7 @@ export class InternalDatabase {
         toSerialize.qualificationEntryIds.forEach(id => {
             qualifications.push(QualificationEntry.toAPIQualificationEntry(toSerialize.qualificationEntriesById[id], toSerialize.qualificationById));
         });
-        let educations: Array<APIEducation> = [];
+        let educations: Array<APIEducationStep> = [];
         toSerialize.educationEntryIds.forEach(id => {
             educations.push(EducationEntry.toAPIEducationEntry(toSerialize.educationEntriesById[id], toSerialize.educationById));
         });

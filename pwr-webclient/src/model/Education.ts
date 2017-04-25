@@ -1,18 +1,34 @@
+import {APIEducation} from './APIProfile';
 /**
- * Some sort of education. This may include: School, academic courses and degrees, interships, trainings,..
+ * A single, immutable education. An education is a data object that defines a qualification that is acquired through a process of
+ * government controlled learning. This contains:
+ * - Schools
+ * - Highschools
+ * - Universites
+ * - Training
+ * Education always comes with a form of certificate that the education was successful (e.g. Bachelor's diploma).
  *
- * This element itself may be shared amoing many education entries. Because of this, an education must not be mutated.
- * If the need for a changed name arises, a NEW education is required.
  */
-export interface Education {
+export class Education {
 
     /**
-     * ID provided by the server
+     * ID provided by the server. This ID defines identity in terms of domain driven design. The ID should NEVER
+     * be changed!
      */
-    id: number;
+    readonly id: number;
 
     /**
-     * Name
+     * Name of the education. This is provided by the server. Not that changing this will result in rejections by the
+     * API, as consistency checks may fail.
      */
-    name: string;
+    readonly name: string;
+
+    constructor(id: number, name: string) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public static create(apiEducation: APIEducation) {
+        return new Education(apiEducation.id, apiEducation.name);
+    }
 }
