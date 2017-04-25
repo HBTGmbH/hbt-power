@@ -46,8 +46,6 @@ export class InternalDatabase {
     public sectorsById: Array<Sector> = [];
     public sectorIds: Array<number> = [];
 
-    public languageNamesById: Array<Language> = [];
-    public languageNameIds: Array<number> = [];
 
 
 
@@ -58,13 +56,13 @@ export class InternalDatabase {
     public careerPositions : Immutable.Map<number, CareerPosition> = Immutable.Map<number, CareerPosition>();
     public careerElements: Immutable.Map<number, CareerElement> = Immutable.Map<number, CareerElement>();
 
-
     // == Education == //
     public educationEntries: Immutable.Map<number, EducationEntry> = Immutable.Map<number, EducationEntry>();
     public educations: Immutable.Map<number, Education> = Immutable.Map<number, Education>();
 
-    public languageSkillById: Array<LanguageSkill> = [];
-    public languageSkillIds: Array<number> = [];
+    // == Languages == //
+    public languageSkills: Immutable.Map<number, LanguageSkill> = Immutable.Map<number, LanguageSkill>();
+    public languages: Immutable.Map<number, Language> = Immutable.Map<number, Language>();
 
     public qualificationEntriesById: Array<QualificationEntry> = [];
     public qualificationEntryIds: Array<number> = [];
@@ -79,15 +77,14 @@ export class InternalDatabase {
      * @returns {boolean}
      */
     private validateLanguage(lang: APILanguage) {
-        if (isNullOrUndefined(this.languageNamesById[lang.id])) {
+        if (!this.languages.has(lang.id)) {
             console.info('Client was missing a language provided by the API. Missing language was: ', lang);
-            this.languageNameIds.push(lang.id);
         }
-        this.languageNamesById[lang.id] = Language.create(lang);
+        this.languages = this.languages.set(lang.id, Language.create(lang));
     }
 
     private validateEducation(education: APIEducation): void {
-        if (isNullOrUndefined(this.educations.has(education.id))) {
+        if (!this.educations.has(education.id)) {
             console.info('Client was missing a education provided by the API. Missing education was: ', education);
         }
         this.educations = this.educations.set(education.id, Education.create(education));
@@ -127,7 +124,7 @@ export class InternalDatabase {
 
     private readLanguageSkills(langSkills: Array<APILanguageSkill>): void {
         // Clear all existing language skills.
-        this.languageSkillById = [];
+        this.languageSkills = this.languageSkills.clear();
         let that = this;
         langSkills.forEach(langSkill => {
             // In case the API returns something invalid.
@@ -135,8 +132,7 @@ export class InternalDatabase {
                 // Check that the language is still correct.
                 that.validateLanguage(langSkill.language);
                 // Add the now correct language skill to the profile.
-                that.languageSkillById[langSkill.id] = LanguageSkill.create(langSkill);
-                that.languageSkillIds.push(langSkill.id);
+                that.languageSkills = that.languageSkills.set(langSkill.id, LanguageSkill.create(langSkill));
             }
         });
     }
@@ -186,15 +182,9 @@ export class InternalDatabase {
     }
 
 
-    public addAPILanguages(languages: Array<{id: number, name: string}>) {
+    public addAPILanguages(languages: Array<APILanguage>) {
         languages.forEach(lang => {
-            if(isNullOrUndefined(this.languageNamesById[lang.id])) {
-                this.languageNamesById[lang.id] = lang;
-                this.languageNameIds.push(lang.id);
-            } else {
-                console.info("Information mismatch for language entity. Updating language with id=" + lang.id + " to:", lang);
-                this.languageNamesById[lang.id] = lang;
-            }
+            this.languages = this.languages.set(lang.id, Language.create(lang));
         })
     }
 
@@ -238,12 +228,12 @@ export class InternalDatabase {
             educations.push(EducationEntry.toAPIEducationEntry(educationEntry, toSerialize.educations));
         });
 
-
-
         let languages: Array<APILanguageSkill> = [];
-        toSerialize.languageSkillIds.forEach(id => {
-            languages.push(LanguageSkill.toAPILanguageSkill(toSerialize.languageSkillById[id], toSerialize.languageNamesById));
+        toSerialize.languageSkills.forEach(languageSkill => {
+            languages.push(languageSkill.toAPILanguageSkill(toSerialize.languages));
         });
+
+
         let qualifications: Array<APIQualificationEntry> = [];
         toSerialize.qualificationEntryIds.forEach(id => {
             qualifications.push(QualificationEntry.toAPIQualificationEntry(toSerialize.qualificationEntriesById[id], toSerialize.qualificationById));

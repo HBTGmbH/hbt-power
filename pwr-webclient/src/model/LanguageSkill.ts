@@ -1,5 +1,7 @@
 import {Language} from './Language';
 import {APILanguageSkill} from './APIProfile';
+import * as Immutable from 'immutable';
+
 /**
  * Consist of a language name and a level that rates this language name. Together, they represent a certain language level
  * that is represented by natural language instead of formal definitions.
@@ -56,15 +58,14 @@ export class LanguageSkill {
         return new LanguageSkill(this.id, newLanguageId, this.level);
     }
 
-    public static toAPILanguageSkill(langSkill: LanguageSkill, languagesById: Array<Language>) : APILanguageSkill {
+    public toAPILanguageSkill(languagesById: Immutable.Map<number, Language>) : APILanguageSkill {
         return {
-            id: langSkill.id,
-            level: langSkill.level,
+            id: this.id,
+            level: this.level,
             language: {
-                id: langSkill.languageId,
-                name: languagesById[langSkill.languageId].name
+                id: this.languageId,
+                name: languagesById.get(this.languageId).name
             }
-
         };
     }
 }

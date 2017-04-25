@@ -1,5 +1,5 @@
 /**
- * Created by nt on 20.04.2017.
+ * @author nt | nt@hbt.de
  */
 
 import {AllConsultantsState, APIRequestType, DateFieldType} from '../../Store';
@@ -92,7 +92,7 @@ export class ProfileActionCreator {
     /**
      * Creates an action that invokes a change of language that is associated with the given language skill.
      * @param newLangId
-     * @param langSkilLId
+     * @param langSkillId
      * @returns ChangeLanguageSkillNameAction
      */
     public static changeLanguageSkillName(newLangId: number, langSkillId: number) : ChangeLanguageSkillNameAction {
@@ -124,7 +124,8 @@ export class ProfileActionCreator {
     /**
      * Creates an action that update the state so the received consultant profile is used to replace
      * the current profile.
-     * @param profile
+     * @param payload
+     * @param reqType
      */
     public static APIRequestSuccessfull(payload: any, reqType: APIRequestType) : ReceiveAPIResponseAction {
         return {

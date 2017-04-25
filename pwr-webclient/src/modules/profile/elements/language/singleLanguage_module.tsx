@@ -11,11 +11,12 @@ import {connect} from 'react-redux';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
 import {Language} from '../../../../model/Language';
+import * as Immutable from 'immutable';
 
 interface SingleLanguageProps {
     languageSkill: LanguageSkill;
 
-    languagesById: Array<Language>;
+    languages: Immutable.Map<number, Language>;
 
     /**
      * Used to create the dropdown menu
@@ -48,7 +49,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     constructor(props: SingleLanguageLocalProps & SingleLanguageProps & SingleLanguageDispatch) {
         super(props);
         this.state = {
-            nameAutoCompleteValue: props.languagesById[props.languageSkill.languageId].name,
+            nameAutoCompleteValue: props.languages.get(props.languageSkill.languageId).name,
             backgroundColor: "initial"
         }
     }
@@ -59,10 +60,10 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     public static mapStateToProps(state: ApplicationState, props: SingleLanguageLocalProps) : SingleLanguageProps {
         return {
-            languageSkill: state.databaseReducer.languageSkillById[props.id],
-            languagesById: state.databaseReducer.languageNamesById,
+            languageSkill: state.databaseReducer.languageSkills.get(props.id),
+            languages: state.databaseReducer.languages,
             possibleLanguageLevels: state.databaseReducer.languageLevels,
-            possibleLanguageStrings: state.databaseReducer.languageNamesById.map(x => x.name) // Only the name
+            possibleLanguageStrings: state.databaseReducer.languages.map((k, v) => k.name).toArray()// Only the name
         };
     }
 
@@ -81,7 +82,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
         // Make sure the language name exists in the list of allowed languages. .
         let exists: boolean = false;
         let lang : Language;
-        this.props.languagesById.forEach(l => {
+        this.props.languages.forEach((l, id) => {
             if(l.name === value) {
                 exists = exists || true;
                 lang = l;

@@ -6,9 +6,10 @@ import {SingleLanguage} from './singleLanguage_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
+import * as Immutable from 'immutable';
 
 interface LanguageProps {
-    languageSkillsById: Array<LanguageSkill>;
+    languageSkills: Immutable.Map<number, LanguageSkill>;
 }
 
 /**
@@ -37,7 +38,6 @@ interface LanguageDispatch {
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
 
     private static renderSingleLanguage(language: LanguageSkill, id: number) {
-
         return(<SingleLanguage id={id} key={id}/>);
     }
 
@@ -52,7 +52,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
 
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps) : LanguageProps {
         return {
-            languageSkillsById: state.databaseReducer.languageSkillById
+            languageSkills: state.databaseReducer.languageSkills
         };
     }
 
@@ -69,7 +69,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
                 subtitleCountedName={PowerLocalize.get('Language.Plural')}
                 tableHeader={LanguagesModule.renderHeader()}
             >
-                {this.props.languageSkillsById.map(LanguagesModule.renderSingleLanguage)}
+                {this.props.languageSkills.map(LanguagesModule.renderSingleLanguage).toArray()}
             </ProfileElement>
         );
     }
