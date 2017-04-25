@@ -1,12 +1,14 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, DateFieldType} from '../../../../Store';
 import {DatePicker, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
+import {SingleEducationElement} from './education-entry_module';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 
 interface EducationProps {
     /**
@@ -37,7 +39,7 @@ interface EducationLocalState {
 }
 
 interface EducationDispatch {
-
+    onDateChange(newDate: Date, id: number): void;
 }
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
@@ -51,19 +53,6 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         );
     }
 
-    private renderSingleEducationStep = (step: EducationEntry, index: number) => {
-        return (
-            <tr key={"Education." + index} >
-                <td>
-                    <DatePicker id={"Education.DatePicker." + index} container="inline"  value={step.date}/>
-                </td>
-                <td>
-                    <TextField id={"Education.TextField." + index} value={this.props.educationById[step.educationId].name} fullWidth={true} disabled={true}/>
-                </td>
-            </tr>
-        );
-    };
-
     static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps) : EducationProps {
         return {
             educationEntriesById : state.databaseReducer.educationEntriesById,
@@ -73,7 +62,9 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : EducationDispatch {
         return {
-
+            onDateChange: function(newDate: Date, id: number) {
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationDate));
+            }
         };
     }
 
@@ -84,7 +75,14 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                 subtitleCountedName={PowerLocalize.get('EducationStep.Plural')}
                 tableHeader={EducationModule.renderHeader()}
             >
-                {this.props.educationEntriesById.map(this.renderSingleEducationStep)}
+                {this.props.educationEntriesById.map(e => {
+                    return(
+                    <SingleEducationElement
+                        educationEntry={e}
+                        educationsById={this.props.educationById}
+                        onDateChange={this.props.onDateChange}
+                    />);
+                })}
             </ProfileElement>
         );
     }

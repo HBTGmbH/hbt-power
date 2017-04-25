@@ -1,7 +1,4 @@
-import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../../Store';
 import {DatePicker, TextField} from 'material-ui';
 import {CareerElement} from '../../../../model/CareerElement';
 import {CareerPosition} from '../../../../model/CareerPosition';
@@ -47,20 +44,11 @@ interface CareerStepLocalProps {
  * There is no need for a non-local state, as redux will manage this part.
  */
 interface CareerStepState {
-    startDate: Date;
-    endDate: Date;
+
 }
 
 
 export class SingleCareerElement extends React.Component<CareerStepLocalProps, CareerStepState> {
-
-    constructor(props: CareerStepLocalProps) {
-        super(props);
-        this.state = {
-            startDate: props.careerElement.startDate,
-            endDate: props.careerElement.endDate
-        };
-    }
 
     /**
      * Handles change of the start date DatePicker
@@ -68,18 +56,11 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
      * @param date new date
      */
     private handleStartDateChange = (event: any, date: Date) => {
-        // Modify the state TODO maybe not even necessary, as the component will be re-rendered anyway?
-        this.setState({
-            startDate: date
-        });
         // Hello callback!
         this.props.onStartDateChange(date, this.props.careerElement.id);
     };
 
     private handleEndDateChange = (event: any, date: Date) => {
-        this.setState({
-            endDate: date
-        });
         // Hello Callback!
         this.props.onEndDateChange(date, this.props.careerElement.id);
     };
