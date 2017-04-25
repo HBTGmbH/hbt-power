@@ -14,6 +14,7 @@ import {InternalDatabase} from '../../model/InternalDatabase';
 import * as $ from 'jquery';
 import {EducationEntry} from '../../model/EducationEntry';
 import {QualificationEntry} from '../../model/QualificationEntry';
+import {CareerElement} from '../../model/CareerElement';
 
 
 const initialState: InternalDatabase = new InternalDatabase();
@@ -77,20 +78,13 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
 function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): InternalDatabase {
     switch (action.targetField) {
         case DateFieldType.CareerFrom: {
-            // Copy the array.
-            let newCareers = state.careerById.slice(0);
-            // Copy the references into a new career object and replace it in the new array
-            newCareers[action.targetFieldId] = newCareers[action.targetFieldId].changeStartDate(action.newDate);
-            // Copy all references into a new state object.
-            return Object.assign({}, state, {careerById: newCareers});
+            let element: CareerElement = state.careerElements.get(action.targetFieldId);
+            return Object.assign({}, state, {careerElements: state.careerElements.set(element.id, element.changeStartDate(action.newDate))});
         }
         case DateFieldType.CareerTo: {
-            // Copy the array.
-            let newCareers = state.careerById.slice(0);
-            // Copy the references into a new career object and replace it in the new array
-            newCareers[action.targetFieldId] = newCareers[action.targetFieldId].changeEndDate(action.newDate);
-            // Copy all references into a new state object.
-            return Object.assign({}, state, {careerById: newCareers});
+            let element: CareerElement = state.careerElements.get(action.targetFieldId);
+            console.log(element);
+            return Object.assign({}, state, {careerElements: state.careerElements.set(element.id, element.changeEndDate(action.newDate))});
         }
         case DateFieldType.EducationDate: {
             // Copy the array.

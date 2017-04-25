@@ -9,6 +9,7 @@ import {QualificationEntry} from './QualificationEntry';
 import {isNullOrUndefined} from 'util';
 import {CareerElement} from './CareerElement';
 import {RequestStatus} from '../Store';
+import {Map} from 'immutable';
 import {
     APICareerElement,
     APICareerPosition,
@@ -20,6 +21,7 @@ import {
     APIQualification,
     APIQualificationEntry, APISector
 } from './APIProfile';
+import * as Immutable from 'immutable';
 
 
 /**
@@ -32,6 +34,12 @@ import {
  */
 export class InternalDatabase {
     public currentPosition: string;
+
+    public profileId: number;
+
+    public description: string;
+
+    public APIRequestStatus: RequestStatus;
 
     public languageLevels: Array<string> = ["Beginner", "Intermediate", "Expert", "Native"];
 
@@ -47,11 +55,9 @@ export class InternalDatabase {
     public qualificationById: Array<Qualification> = [];
     public qualificationIds: Array<number> = [];
 
-    public careerPositionsById: Array<CareerPosition> = [];
-    public careerPositionIds: Array<number> = [];
+    public careerPositions : Immutable.Map<number, CareerPosition> = Immutable.Map<number, CareerPosition>();
+    public careerElements: Immutable.Map<number, CareerElement> = Immutable.Map<number, CareerElement>();
 
-    public careerById : Array<CareerElement> = [];
-    public careerIds: Array<number> = [];
 
     public educationEntriesById: Array<EducationEntry> = [];
     public educationEntryIds: Array<number> = [];
@@ -61,12 +67,6 @@ export class InternalDatabase {
 
     public qualificationEntriesById: Array<QualificationEntry> = [];
     public qualificationEntryIds: Array<number> = [];
-
-    public profileId: number;
-    public description: string;
-
-    APIRequestStatus: RequestStatus;
-
 
 
     /**
@@ -102,11 +102,10 @@ export class InternalDatabase {
     }
 
     private validateCareerPosition(position: APICareerPosition) : void {
-        if (isNullOrUndefined(this.careerPositionsById[position.id])) {
+        if (!this.careerPositions.has(position.id)) {
             console.info('Client was missing a position provided by the API. Missing position was: ', position);
-            this.careerPositionIds.push(position.id);
         }
-        this.careerPositionsById[position.id] = CareerPosition.create(position);
+        this.careerPositions = this.careerPositions.set(position.id, position);
     }
 
 
@@ -175,16 +174,14 @@ export class InternalDatabase {
     }
 
     private readCareer(career: Array<APICareerElement>) : void {
-        this.careerById = [];
+        this.careerElements = this.careerElements.clear();
         let that = this;
         career.forEach(careerStep =>{
             // The API might return something invalid. Ignore.
             if(!isNullOrUndefined(careerStep)) {
                 that.validateCareerPosition(careerStep.position);
-                that.careerById[careerStep.id] = CareerElement.create(careerStep);
-                that.careerIds.push(careerStep.id);
+                that.careerElements = this.careerElements.set(careerStep.id, CareerElement.create(careerStep));
             }
-
         });
     }
 
@@ -229,8 +226,8 @@ export class InternalDatabase {
      */
     public static serializeToAPI(toSerialize: InternalDatabase): APIProfile {
         let career: Array<APICareerElement> = [];
-        toSerialize.careerIds.forEach(id => {
-            career.push(CareerElement.toAPICareer(toSerialize.careerById[id], toSerialize.careerPositionsById));
+        toSerialize.careerElements.forEach(careerElement => {
+            career.push(CareerElement.toAPICareer(careerElement, toSerialize.careerPositions));
         });
         let languages: Array<APILanguageSkill> = [];
         toSerialize.languageSkillIds.forEach(id => {

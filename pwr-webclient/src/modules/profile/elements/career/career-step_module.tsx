@@ -2,7 +2,7 @@ import * as React from 'react';
 import {DatePicker, TextField} from 'material-ui';
 import {CareerElement} from '../../../../model/CareerElement';
 import {CareerPosition} from '../../../../model/CareerPosition';
-
+import * as Immutable from 'immutable';
 
 /**
  * Local properties of this module. These properties are used to initialize the local state and to control everything that
@@ -19,7 +19,7 @@ interface CareerStepLocalProps {
     /**
      * Array of possible career positions by their ID.
      */
-    careerPositionsById: Array<CareerPosition>;
+    careerPositions: Immutable.Map<number, CareerPosition>;
 
     /**
      * Callback given to this career step module to be called whenever the start date
@@ -66,6 +66,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
     };
 
     render() {
+
         return(
             <tr>
                 <td>
@@ -86,7 +87,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                 </td>
                 <td>
                     <TextField id={'Career.TextField.' + this.props.careerElement.id}
-                               value={this.props.careerPositionsById[this.props.careerElement.careerPositionId].position}
+                               value={this.props.careerPositions.get(this.props.careerElement.careerPositionId).position}
                                disabled={true}
                     />
                 </td>

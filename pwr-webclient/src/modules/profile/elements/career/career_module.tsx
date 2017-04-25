@@ -8,16 +8,13 @@ import {CareerElement} from '../../../../model/CareerElement';
 import {CareerPosition} from '../../../../model/CareerPosition';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {SingleCareerElement} from './career-step_module';
+import * as Immutable from 'immutable';
 
 interface CareerProps {
-    /**
-     * Associative array that maps an id(number) to a CareerElement
-     */
-    careerById: Array<CareerElement>;
-    /**
-     * Associative array that maps an id(number) to a CareerPosition
-     */
-    careerPositionsById: Array<CareerPosition>;
+
+    careerElements: Immutable.Map<number, CareerElement>;
+
+    careerPositions: Immutable.Map<number, CareerPosition>;
 }
 
 /**
@@ -59,8 +56,8 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
 
     static mapStateToProps(state: ApplicationState, localProps: CareerLocalProps) : CareerProps {
         return {
-            careerById: state.databaseReducer.careerById,
-            careerPositionsById: state.databaseReducer.careerPositionsById
+            careerElements: state.databaseReducer.careerElements,
+            careerPositions: state.databaseReducer.careerPositions
         };
     }
 
@@ -75,6 +72,20 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
         };
     }
 
+    private getMapAsList(): JSX.Element[] {
+       return this.props.careerElements.map((value, key, index) => {
+            return (
+                <SingleCareerElement
+                    key={"SingleCareerElement." + index}
+                    careerElement={value}
+                    careerPositions={this.props.careerPositions}
+                    onStartDateChange={this.props.changeStartDate}
+                    onEndDateChange={this.props.changeEndDate}
+                />)
+        }).toArray();
+
+    }
+
     render() {
         return(
             <ProfileElement
@@ -82,17 +93,9 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 subtitleCountedName={PowerLocalize.get('CareerStep.Qualifier')}
                 tableHeader={CareerModule.renderHeader()}
             >
-                {this.props.careerById.map((cp, index) => {
-                    return (
-                        <SingleCareerElement
-                            key={"SingleCareerElement." + index}
-                            careerElement={cp}
-                            careerPositionsById={this.props.careerPositionsById}
-                            onStartDateChange={this.props.changeStartDate}
-                            onEndDateChange={this.props.changeEndDate}
-                        />
-                    )
-                })}
+                {
+                    this.getMapAsList()
+                }
             </ProfileElement>
         );
     }

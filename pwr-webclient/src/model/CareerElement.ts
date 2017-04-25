@@ -1,5 +1,6 @@
 import {CareerPosition} from './CareerPosition';
 import {APICareerElement} from './APIProfile';
+import * as Immutable from 'immutable';
 /**
  * Immutable representation of a career element. A career element represents a persons single career steps during their
  * professional career.
@@ -54,7 +55,7 @@ export class CareerElement {
      * @returns a new {@link CareerElement} with the modified date.
      */
     public changeStartDate(newDate: Date): CareerElement {
-        return Object.assign({}, this, {startDate: newDate});
+        return new CareerElement(this.id, newDate, this.endDate, this.careerPositionId);
     }
 
     /**
@@ -63,7 +64,7 @@ export class CareerElement {
      * @returns a new {@link CareerElement} with the modified {@link CareerElement.endDate}.
      */
     public changeEndDate(newDate: Date): CareerElement {
-        return Object.assign({}, this, {endDate: newDate});
+        return new CareerElement(this.id, this.startDate, newDate, this.careerPositionId);
     }
 
     /**
@@ -75,14 +76,14 @@ export class CareerElement {
         return Object.assign({}, this, {careerPositionId: newId});
     }
 
-    static toAPICareer(element: CareerElement, careerPositionsById: Array<CareerPosition>): APICareerElement {
+    static toAPICareer(element: CareerElement, careerPositionsById: Immutable.Map<number, CareerPosition>): APICareerElement {
         return {
             id: element.id,
             startDate: element.startDate.toDateString(),
             endDate: element.endDate.toDateString(),
             position: {
                 id: element.careerPositionId,
-                position: careerPositionsById[element.careerPositionId].position
+                position: careerPositionsById.get(element.careerPositionId).position
             }
         }
     }

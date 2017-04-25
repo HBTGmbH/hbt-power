@@ -14,6 +14,7 @@
     "@types/react-tap-event-plugin": "0.0.30",
     "axios": "^0.16.1",
     "es6-promise": "^4.1.0",
+    "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.2.1",
     "loglevel": "^1.4.1",
