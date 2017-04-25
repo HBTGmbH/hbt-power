@@ -9,7 +9,11 @@ import {QualificationEntry} from './QualificationEntry';
 import {isNullOrUndefined} from 'util';
 import {CareerElement} from './CareerElement';
 import {RequestStatus} from '../Store';
-import {APICareer, APIEducation, APILanguageSkill, APIProfile, APIQualification} from './APIProfile';
+import {
+    APICareerElement, APICareerPosition, APIEducation, APILanguageSkill, APIProfile,
+    APIQualification
+} from './APIProfile';
+import {Career} from '../modules/profile/elements/career/career_module';
 
 
 /**
@@ -116,14 +120,12 @@ export class InternalDatabase {
         }
     }
 
-    private validateCareerPosition(position: {id: number, position: string}) : void {
+    private validateCareerPosition(position: APICareerPosition) : void {
         if (isNullOrUndefined(this.careerPositionsById[position.id])) {
             console.info('Client was missing a position provided by the API. Missing position was: ', position);
             this.careerPositionIds.push(position.id);
-            this.careerPositionsById[position.id] = position;
-        } else if(this.careerPositionsById[position.id].position != position.position) {
-            this.careerPositionsById[position.id].position = position.position;
         }
+        this.careerPositionsById[position.id] = CareerPosition.create(position);
     }
 
     private readLanguageSkills(langSkills: Array<APILanguageSkill>): void {
@@ -188,21 +190,14 @@ export class InternalDatabase {
         });
     }
 
-    private readCareer(career: Array<APICareer>) : void {
+    private readCareer(career: Array<APICareerElement>) : void {
         this.careerPositionsById = [];
         let that = this;
         career.forEach(careerStep =>{
             // The API might return something invalid. Ignore.
             if(!isNullOrUndefined(careerStep)) {
                 that.validateCareerPosition(careerStep.position);
-                that.careerById[careerStep.id] = Object.assign(
-                    careerStep,
-                    {
-                        startDate: new Date(careerStep.startDate),
-                        endDate: new Date(careerStep.endDate),
-                        careerPositionId: careerStep.position.id
-                    }
-                );
+                that.careerById[careerStep.id] = CareerElement.create(careerStep);
                 that.careerIds.push(careerStep.id);
             }
 
@@ -250,7 +245,7 @@ export class InternalDatabase {
      * update command.
      */
     public static serializeToAPI(toSerialize: InternalDatabase): APIProfile {
-        let career: Array<APICareer> = [];
+        let career: Array<APICareerElement> = [];
         toSerialize.careerIds.forEach(id => {
             career.push(CareerElement.toAPICareer(toSerialize.careerById[id], toSerialize.careerPositionsById));
         });

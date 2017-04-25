@@ -1,8 +1,22 @@
+import {APICareerPosition} from './APIProfile';
 /**
- * A single career position. This represents one of the company's possible positions.
- * Positions may not be arbitrary, a fixed set of positions exist that may be requested via an API.
+ * A single, immutable career position. These positions are served by an API endpoint and are not to modified.
  */
-export interface CareerPosition {
-    id: number;
-    position: string;
+export class CareerPosition {
+    readonly id: number;
+    readonly position: string;
+
+    constructor(id: number, position: string) {
+        this.id = id;
+        this.position = position;
+    }
+
+    /**
+     * Creates a new {@link CareerPosition} from the given API result.
+     * @param apiCareerPosition
+     * @returns {CareerPosition}
+     */
+    public static create(apiCareerPosition: APICareerPosition) {
+        return new CareerPosition(apiCareerPosition.id, apiCareerPosition.position);
+    }
 }

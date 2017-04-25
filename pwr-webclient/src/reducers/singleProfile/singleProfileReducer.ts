@@ -1,7 +1,8 @@
 import {APIRequestType, DateFieldType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
-    ChangeAbstractAction, ChangeDateAction,
+    ChangeAbstractAction,
+    ChangeDateAction,
     ChangeLanguageSkillLevelAction,
     ChangeLanguageSkillNameAction,
     ReceiveAPIResponseAction
@@ -10,7 +11,7 @@ import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import * as $ from "jquery";
+import * as $ from 'jquery';
 import {EducationEntry} from '../../model/EducationEntry';
 import {QualificationEntry} from '../../model/QualificationEntry';
 
@@ -89,9 +90,7 @@ function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): In
             // Copy the array.
             let newCareers = state.careerById.slice(0);
             // Copy the references into a new career object and replace it in the new array
-            newCareers[action.targetFieldId] = Object.assign({}, newCareers[action.targetFieldId]);
-            // Replace the start date. This is a typesafe way to do that (Instead of using another object in Object.assign).
-            newCareers[action.targetFieldId].startDate = action.newDate;
+            newCareers[action.targetFieldId] = newCareers[action.targetFieldId].changeStartDate(action.newDate);
             // Copy all references into a new state object.
             return Object.assign({}, state, {careerById: newCareers});
         }
@@ -99,9 +98,7 @@ function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): In
             // Copy the array.
             let newCareers = state.careerById.slice(0);
             // Copy the references into a new career object and replace it in the new array
-            newCareers[action.targetFieldId] = Object.assign({}, newCareers[action.targetFieldId]);
-            // Replace the start date. This is a typesafe way to do that (Instead of using another object in Object.assign).
-            newCareers[action.targetFieldId].endDate = action.newDate;
+            newCareers[action.targetFieldId] = newCareers[action.targetFieldId].changeEndDate(action.newDate);
             // Copy all references into a new state object.
             return Object.assign({}, state, {careerById: newCareers});
         }
