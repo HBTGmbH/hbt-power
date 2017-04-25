@@ -74,6 +74,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                 {this.props.qualificationEntriesById.map((q, index) => {
                     return (
                         <SingleQualificationEntry
+                            key={"Qualification.SingleEntry." + index}
                             qualificationEntry={q}
                             qualificationsById={this.props.qualificationsById}
                             onDateChange={this.props.onDateChange}

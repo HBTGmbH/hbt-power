@@ -1,11 +1,29 @@
 import {Qualification} from './Qualification';
-import {APIQualification} from './APIProfile';
+import {APIQualificationEntry} from './APIProfile';
 export class QualificationEntry {
-    id: number;
-    qualificationId: number;
-    date: Date;
+    public readonly id: number;
+    public readonly qualificationId: number;
+    public readonly date: Date;
 
-    public static toAPIQualificationEntry(entry: QualificationEntry, qualificationsById: Array<Qualification>): APIQualification {
+    public constructor(id: number, qualificationId: number, date: Date) {
+        this.id = id;
+        this.qualificationId = qualificationId;
+        this.date = date;
+    }
+
+    public changeDate(newDate: Date): QualificationEntry {
+        return new QualificationEntry(this.id, this.qualificationId, newDate);
+    }
+
+    public static create(apiQualificationEntry: APIQualificationEntry): QualificationEntry {
+        return new QualificationEntry(
+            apiQualificationEntry.id,
+            apiQualificationEntry.qualification.id,
+            new Date(apiQualificationEntry.date)
+        );
+    }
+
+    public static toAPIQualificationEntry(entry: QualificationEntry, qualificationsById: Array<Qualification>): APIQualificationEntry {
         return {
             id: entry.id,
             date: entry.date.toDateString(),

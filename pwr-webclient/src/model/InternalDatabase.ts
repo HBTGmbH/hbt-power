@@ -14,9 +14,11 @@ import {
     APICareerPosition,
     APIEducation,
     APIEducationStep,
+    APILanguage,
     APILanguageSkill,
     APIProfile,
-    APIQualification
+    APIQualification,
+    APIQualificationEntry, APISector
 } from './APIProfile';
 
 
@@ -67,25 +69,6 @@ export class InternalDatabase {
 
 
 
-    private readSectors(sectors: Array<{'id': number, 'name': string}>): void {
-        // Possible sectors are provided by a different API.
-        for(let i = 0; i < sectors.length; i++) {
-            // Checks if the databaseReducer already has the given sectors ID present. If thats the case,
-            // The id may simply be added to the list of sectors in the profile
-            if(!isNullOrUndefined(this.sectorsById[sectors[i].id])) {
-                this.sectorsById[sectors[i].id] = sectors[i];
-                // TODO validate name?
-            } else {
-                // We assume that the server that provides the data is always right, which means the
-                // client is missing a data set.
-                // This adds the sector to the currently known sectors.
-                console.info('Client was missing a sector provided by the API. Missing sector was: ', sectors[i]);
-                this.sectorsById[sectors[i].id] = sectors[i];
-                this.sectorIds.push(sectors[i].id);
-            }
-        }
-    }
-
     /**
      * Checks if the server still has the correct language that is associated with the id of the given language.
      * If the language is not existent, it is created.
@@ -94,7 +77,7 @@ export class InternalDatabase {
      * @param lang
      * @returns {boolean}
      */
-    private validateLanguage(lang: {id: number, name: string}) {
+    private validateLanguage(lang: APILanguage) {
         if (isNullOrUndefined(this.languageNamesById[lang.id])) {
             console.info('Client was missing a language provided by the API. Missing language was: ', lang);
             this.languageNameIds.push(lang.id);
@@ -110,14 +93,12 @@ export class InternalDatabase {
         this.educationById[education.id] = Education.create(education);
     }
 
-    private validateQualification(qualification: {id: number, name: string}) : void {
+    private validateQualification(qualification: APIQualification) : void {
         if (isNullOrUndefined(this.qualificationById[qualification.id])) {
             console.info('Client was missing a qualification provided by the API. Missing qualification was: ', qualification);
             this.qualificationIds.push(qualification.id);
-            this.qualificationById[qualification.id] = qualification;
-        } else if(this.qualificationById[qualification.id].name != qualification.name) {
-            this.qualificationById[qualification.id].name = qualification.name;
         }
+        this.qualificationById[qualification.id] = Qualification.create(qualification);
     }
 
     private validateCareerPosition(position: APICareerPosition) : void {
@@ -126,6 +107,23 @@ export class InternalDatabase {
             this.careerPositionIds.push(position.id);
         }
         this.careerPositionsById[position.id] = CareerPosition.create(position);
+    }
+
+
+
+    private readSectors(sectors: Array<APISector>): void {
+        this.sectorsById = [];
+        sectors.forEach(sector => {
+            // In case the API returns something invalid.
+            if(!isNullOrUndefined(sector)) {
+                // We assume that the server that provides the data is always right, which means the
+                // client is missing a data set.
+                // This adds the sector to the currently known sectors.
+                this.sectorsById[sector.id] = Sector.create(sector);
+                this.sectorIds.push(sector.id);
+            }
+        });
+
     }
 
     private readLanguageSkills(langSkills: Array<APILanguageSkill>): void {
@@ -163,18 +161,14 @@ export class InternalDatabase {
     }
 
 
-    private readQualficiationEntries(qualificationEntries: Array<APIQualification>): void {
+    private readQualficiationEntries(qualificationEntries: Array<APIQualificationEntry>): void {
         this.qualificationEntriesById = [];
         let that = this;
         qualificationEntries.forEach(qualificationEntry => {
             // The API might return something invalid. Ignore.
             if(!isNullOrUndefined(qualificationEntry)) {
                 that.validateQualification(qualificationEntry.qualification);
-                that.qualificationEntriesById[qualificationEntry.id] = {
-                    id: qualificationEntry.id,
-                    qualificationId: qualificationEntry.qualification.id,
-                    date: new Date(qualificationEntry.date)
-                };
+                that.qualificationEntriesById[qualificationEntry.id] = QualificationEntry.create(qualificationEntry);
                 that.qualificationEntryIds.push(qualificationEntry.id);
             }
         });
@@ -208,7 +202,6 @@ export class InternalDatabase {
 
     /**
      * Attempts to interprete a full consultant profile and parses it into the databaseReducer.
-     * @param prevDB previous database used to keep values.
      * @param profileFromAPI the profile the API provides.
      */
     public parseFromAPI(profileFromAPI: any) {
@@ -243,7 +236,7 @@ export class InternalDatabase {
         toSerialize.languageSkillIds.forEach(id => {
             languages.push(LanguageSkill.toAPILanguageSkill(toSerialize.languageSkillById[id], toSerialize.languageNamesById));
         });
-        let qualifications: Array<APIQualification> = [];
+        let qualifications: Array<APIQualificationEntry> = [];
         toSerialize.qualificationEntryIds.forEach(id => {
             qualifications.push(QualificationEntry.toAPIQualificationEntry(toSerialize.qualificationEntriesById[id], toSerialize.qualificationById));
         });
