@@ -76,14 +76,14 @@ export class CareerElement {
         return Object.assign({}, this, {careerPositionId: newId});
     }
 
-    static toAPICareer(element: CareerElement, careerPositionsById: Immutable.Map<number, CareerPosition>): APICareerElement {
+    public toAPICareer(careerPositionsById: Immutable.Map<number, CareerPosition>): APICareerElement {
         return {
-            id: element.id,
-            startDate: element.startDate.toDateString(),
-            endDate: element.endDate.toDateString(),
+            id: this.id,
+            startDate: this.startDate.toDateString(),
+            endDate: this.endDate.toDateString(),
             position: {
-                id: element.careerPositionId,
-                position: careerPositionsById.get(element.careerPositionId).position
+                id: this.careerPositionId,
+                position: careerPositionsById.get(this.careerPositionId).position
             }
         }
     }

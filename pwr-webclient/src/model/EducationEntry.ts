@@ -47,13 +47,13 @@ export class EducationEntry {
             apiEducation.education.id);
     }
 
-    public static toAPIEducationEntry(entry: EducationEntry, educations: Immutable.Map<number, Education>): APIEducationStep {
+    public toAPIEducationEntry(educations: Immutable.Map<number, Education>): APIEducationStep {
         return {
-            id: entry.id,
-            date: entry.date.toDateString(),
+            id: this.id,
+            date: this.date.toDateString(),
             education: {
-                id: entry.educationId,
-                name: educations.get(entry.educationId).name
+                id: this.educationId,
+                name: educations.get(this.educationId).name
             }
         }
     }

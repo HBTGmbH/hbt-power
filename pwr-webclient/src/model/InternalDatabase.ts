@@ -46,12 +46,6 @@ export class InternalDatabase {
     public sectorsById: Array<Sector> = [];
     public sectorIds: Array<number> = [];
 
-
-
-
-    public qualificationById: Array<Qualification> = [];
-    public qualificationIds: Array<number> = [];
-
     // == Career == //
     public careerPositions : Immutable.Map<number, CareerPosition> = Immutable.Map<number, CareerPosition>();
     public careerElements: Immutable.Map<number, CareerElement> = Immutable.Map<number, CareerElement>();
@@ -64,8 +58,9 @@ export class InternalDatabase {
     public languageSkills: Immutable.Map<number, LanguageSkill> = Immutable.Map<number, LanguageSkill>();
     public languages: Immutable.Map<number, Language> = Immutable.Map<number, Language>();
 
-    public qualificationEntriesById: Array<QualificationEntry> = [];
-    public qualificationEntryIds: Array<number> = [];
+    // == Qualifications == //
+    public qualifications: Immutable.Map<number, Qualification> = Immutable.Map<number, Qualification>();
+    public qualificationEntries: Immutable.Map<number, QualificationEntry> = Immutable.Map<number, QualificationEntry>();
 
 
     /**
@@ -91,11 +86,10 @@ export class InternalDatabase {
     }
 
     private validateQualification(qualification: APIQualification) : void {
-        if (isNullOrUndefined(this.qualificationById[qualification.id])) {
+        if (!this.qualifications.has(qualification.id)) {
             console.info('Client was missing a qualification provided by the API. Missing qualification was: ', qualification);
-            this.qualificationIds.push(qualification.id);
         }
-        this.qualificationById[qualification.id] = Qualification.create(qualification);
+        this.qualifications = this.qualifications.set(qualification.id, Qualification.create(qualification));
     }
 
     private validateCareerPosition(position: APICareerPosition) : void {
@@ -140,14 +134,13 @@ export class InternalDatabase {
 
 
     private readQualficiationEntries(qualificationEntries: Array<APIQualificationEntry>): void {
-        this.qualificationEntriesById = [];
+        this.qualifications = this.qualifications.clear();
         let that = this;
         qualificationEntries.forEach(qualificationEntry => {
             // The API might return something invalid. Ignore.
             if(!isNullOrUndefined(qualificationEntry)) {
                 that.validateQualification(qualificationEntry.qualification);
-                that.qualificationEntriesById[qualificationEntry.id] = QualificationEntry.create(qualificationEntry);
-                that.qualificationEntryIds.push(qualificationEntry.id);
+                this.qualificationEntries = this.qualificationEntries.set(qualificationEntry.id, QualificationEntry.create(qualificationEntry));
             }
         });
     }
@@ -219,13 +212,13 @@ export class InternalDatabase {
         // Maps all career elements into an API format
         let career: Array<APICareerElement> = [];
         toSerialize.careerElements.forEach(careerElement => {
-            career.push(CareerElement.toAPICareer(careerElement, toSerialize.careerPositions));
+            career.push(careerElement.toAPICareer(toSerialize.careerPositions));
         });
 
         // Maps all education steps into an API format.
         let educations: Array<APIEducationStep> = [];
         toSerialize.educationEntries.forEach(educationEntry => {
-            educations.push(EducationEntry.toAPIEducationEntry(educationEntry, toSerialize.educations));
+            educations.push(educationEntry.toAPIEducationEntry(toSerialize.educations));
         });
 
         let languages: Array<APILanguageSkill> = [];
@@ -235,8 +228,8 @@ export class InternalDatabase {
 
 
         let qualifications: Array<APIQualificationEntry> = [];
-        toSerialize.qualificationEntryIds.forEach(id => {
-            qualifications.push(QualificationEntry.toAPIQualificationEntry(toSerialize.qualificationEntriesById[id], toSerialize.qualificationById));
+        toSerialize.qualificationEntries.forEach(qualificationEntry => {
+            qualifications.push(qualificationEntry.toAPIQualificationEntry(toSerialize.qualifications));
         });
 
         let sectors: Array<Sector> = [];

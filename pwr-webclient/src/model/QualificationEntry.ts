@@ -1,5 +1,7 @@
 import {Qualification} from './Qualification';
 import {APIQualificationEntry} from './APIProfile';
+import * as Immutable from 'immutable';
+
 export class QualificationEntry {
     public readonly id: number;
     public readonly qualificationId: number;
@@ -23,13 +25,13 @@ export class QualificationEntry {
         );
     }
 
-    public static toAPIQualificationEntry(entry: QualificationEntry, qualificationsById: Array<Qualification>): APIQualificationEntry {
+    public toAPIQualificationEntry(qualifications: Immutable.Map<number, Qualification>): APIQualificationEntry {
         return {
-            id: entry.id,
-            date: entry.date.toDateString(),
+            id: this.id,
+            date: this.date.toDateString(),
             qualification: {
-                id: entry.qualificationId,
-                name: qualificationsById[entry.qualificationId].name
+                id: this.qualificationId,
+                name: qualifications.get(this.qualificationId).name
             }
         }
     }

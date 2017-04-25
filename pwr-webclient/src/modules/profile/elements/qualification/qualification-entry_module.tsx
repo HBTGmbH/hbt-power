@@ -4,6 +4,7 @@ import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {Qualification} from '../../../../model/Qualification';
+import * as Immutable from 'immutable';
 
 
 /**
@@ -21,7 +22,7 @@ interface QualificationEntryLocalProps {
     /**
      * Array of possible educations by their ID.
      */
-    qualificationsById: Array<Qualification>;
+    qualifications: Immutable.Map<number, Qualification>;
 
     /**
      * Callback that is invoked when this modules DatePicker's value changes to a new date.
@@ -71,7 +72,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                 <td>
                     <TextField
                         id={"Education.TextField." + this.props.qualificationEntry.id}
-                        value={this.props.qualificationsById[this.props.qualificationEntry.qualificationId].name}
+                        value={this.props.qualifications.get(this.props.qualificationEntry.qualificationId).name}
                         fullWidth={true}
                         disabled={true}
                     />

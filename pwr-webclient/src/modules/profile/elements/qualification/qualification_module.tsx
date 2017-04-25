@@ -2,17 +2,17 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, DateFieldType} from '../../../../Store';
-import {DatePicker, TextField} from 'material-ui';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Qualification} from '../../../../model/Qualification';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import * as Immutable from 'immutable';
 
 interface QualificationProps {
-    qualificationEntriesById: Array<QualificationEntry>;
-    qualificationsById: Array<Qualification>;
+    qualificationEntries: Immutable.Map<number, QualificationEntry>;
+    qualifications: Immutable.Map<number,Qualification>;
 }
 
 /**
@@ -51,8 +51,8 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
 
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
-            qualificationEntriesById : state.databaseReducer.qualificationEntriesById,
-            qualificationsById: state.databaseReducer.qualificationById
+            qualificationEntries : state.databaseReducer.qualificationEntries,
+            qualifications: state.databaseReducer.qualifications
         };
     }
 
@@ -71,12 +71,12 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                 subtitleCountedName={PowerLocalize.get('Qualification.Plural')}
                 tableHeader={QualificationModule.renderHeader()}
             >
-                {this.props.qualificationEntriesById.map((q, index) => {
+                {this.props.qualificationEntries.map((q, key) => {
                     return (
                         <SingleQualificationEntry
-                            key={"Qualification.SingleEntry." + index}
+                            key={"Qualification.SingleEntry." + key}
                             qualificationEntry={q}
-                            qualificationsById={this.props.qualificationsById}
+                            qualifications={this.props.qualifications}
                             onDateChange={this.props.onDateChange}
                         />
                     )

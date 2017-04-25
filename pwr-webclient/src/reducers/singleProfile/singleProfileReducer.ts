@@ -85,20 +85,12 @@ function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): In
                 );
         }
         case DateFieldType.EducationDate: {
-            // Shortcut to the entry to shorten the call below.
             let educationEntry: EducationEntry = state.educationEntries.get(action.targetFieldId);
-            // Copy all references into a new state object.
             return Object.assign({}, state, {educationEntries: state.educationEntries.set(educationEntry.id, educationEntry.changeDate(action.newDate))});
         }
         case DateFieldType.QualificationDate: {
-            // Copy the array.
-            let newQualificationsById: Array<QualificationEntry> = state.qualificationEntriesById.slice(0);
-            // Replace the start date. This is a typesafe way to do that (Instead of using another object in Object.assign).
-            newQualificationsById[action.targetFieldId] = newQualificationsById[action.targetFieldId].changeDate(action.newDate);
-            // Copy all references into a new state object.
-            let newState: InternalDatabase = Object.assign({}, state);
-            newState.qualificationEntriesById = newQualificationsById;
-            return newState;
+           let qualificationEntry: QualificationEntry = state.qualificationEntries.get(action.targetFieldId);
+           return Object.assign({}, state, {qualificationEntries: state.qualificationEntries.set(qualificationEntry.id, qualificationEntry.changeDate(action.newDate))});
         }
         default:
             return state;
