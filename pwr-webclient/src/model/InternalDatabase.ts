@@ -98,10 +98,8 @@ export class InternalDatabase {
         if (isNullOrUndefined(this.languageNamesById[lang.id])) {
             console.info('Client was missing a language provided by the API. Missing language was: ', lang);
             this.languageNameIds.push(lang.id);
-            this.languageNamesById[lang.id] = lang;
-        } else if(this.languageNamesById[lang.id].name != lang.name) {
-            this.languageNamesById[lang.id].name = lang.name;
         }
+        this.languageNamesById[lang.id] = Language.create(lang);
     }
 
     private validateEducation(education: APIEducation): void {
@@ -140,11 +138,7 @@ export class InternalDatabase {
                 // Check that the language is still correct.
                 that.validateLanguage(langSkill.language);
                 // Add the now correct language skill to the profile.
-                that.languageSkillById[langSkill.id] = {
-                    languageId: langSkill.language.id,
-                    id: langSkill.id,
-                    level: langSkill.level
-                };
+                that.languageSkillById[langSkill.id] = LanguageSkill.create(langSkill);
                 that.languageSkillIds.push(langSkill.id);
             }
         });
@@ -187,7 +181,7 @@ export class InternalDatabase {
     }
 
     private readCareer(career: Array<APICareerElement>) : void {
-        this.careerPositionsById = [];
+        this.careerById = [];
         let that = this;
         career.forEach(careerStep =>{
             // The API might return something invalid. Ignore.

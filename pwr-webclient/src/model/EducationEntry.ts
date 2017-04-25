@@ -1,7 +1,13 @@
 import {Education} from './Education';
 import {APIEducationStep} from './APIProfile';
 
+/**
+ * For notes about immutability, {@see CareerElement}
+ */
 export class EducationEntry {
+    /**
+     * DO NOT CHANGE THIS.NEVER.
+     */
     readonly id: number;
     readonly date: Date;
     readonly educationId: number;

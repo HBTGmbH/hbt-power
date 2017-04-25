@@ -1,10 +1,13 @@
+
+export interface APILanguage {
+    id: number;
+    name: string;
+}
+
 export interface APILanguageSkill {
     id: number;
+    language: APILanguage;
     level: string;
-    language: {
-        id: number;
-        name: string;
-    }
 }
 
 export interface APIEducation {

@@ -22,30 +22,20 @@ initialState.APIRequestStatus = RequestStatus.Successful;
 
 
 function handleChangeLanguageSkill(state: InternalDatabase, action: ChangeLanguageSkillNameAction) : InternalDatabase {
-    let newLanguage : LanguageSkill = Object.assign(
-        {}, // The new object. Has to be a copy, so its empty.
-        state.languageSkillById[action.languageSkillId], // Copy all previous values.
-        {languageId: action.newLanguageId} // Assign the changed id.
-    );
     // Copy the whole array.
     let newLangSkills: Array<LanguageSkill> = state.languageSkillById.slice(0);
     // Replace the skill.
-    newLangSkills[newLanguage.id] = newLanguage;
+    newLangSkills[action.languageSkillId] = newLangSkills[action.languageSkillId].changeLanguageId(action.newLanguageId);
     let newState: InternalDatabase = Object.assign({}, state);
     newState.languageSkillById = newLangSkills;
     return newState;
 }
 
 function handleChangeLanguageSkillLevel(state: InternalDatabase, action: ChangeLanguageSkillLevelAction): InternalDatabase {
-    let newLanguage : LanguageSkill = Object.assign(
-        {}, // The new object. Has to be a copy, so its empty.
-        state.languageSkillById[action.languageSkillId]
-    );
-    newLanguage.level = action.newLanguageLevel;
     // Copy the whole array.
     let newLangSkills: Array<LanguageSkill> = state.languageSkillById.slice(0);
     // Replace the skill.
-    newLangSkills[newLanguage.id] = newLanguage;
+    newLangSkills[action.languageSkillId] = newLangSkills[action.languageSkillId].changeLevel(action.newLanguageLevel);
     let newState: InternalDatabase = Object.assign({}, state);
     newState.languageSkillById = newLangSkills;
     return newState;

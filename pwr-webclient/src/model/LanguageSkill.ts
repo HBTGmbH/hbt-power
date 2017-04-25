@@ -12,19 +12,51 @@ export class LanguageSkill {
     /**
      *
      */
-    id: number;
+    readonly id: number;
     /**
      * The language itself.
      */
-    languageId: number;
+    readonly languageId: number;
 
     /**
      * The language level, represented as a string. On the server side, these levels are enumerated values, but due
      * to bad type-/javascript support of enums, it is kept as a string.
      */
-    level: string;
+    readonly level: string;
 
-    static toAPILanguageSkill(langSkill: LanguageSkill, languagesById: Array<Language>) : APILanguageSkill {
+    public constructor(id: number, languageId: number, level: string) {
+        this.id = id;
+        this.languageId = languageId;
+        this.level = level;
+    }
+
+    /**
+     * FIXME doc
+     * @param apiLanguageSkill
+     */
+    public static create(apiLanguageSkill: APILanguageSkill) {
+        return new LanguageSkill(apiLanguageSkill.id, apiLanguageSkill.language.id, apiLanguageSkill.level);
+    }
+
+    /**
+     * Fixme doc.
+     * @param newLanguageLevel
+     * @returns {LanguageSkill}
+     */
+    public changeLevel(newLanguageLevel: string): LanguageSkill {
+        return new LanguageSkill(this.id, this.languageId, newLanguageLevel);
+    }
+
+    /**
+     * FIXME doc
+     * @param newLanguageId
+     * @returns {LanguageSkill}
+     */
+    public changeLanguageId(newLanguageId: number): LanguageSkill {
+        return new LanguageSkill(this.id, newLanguageId, this.level);
+    }
+
+    public static toAPILanguageSkill(langSkill: LanguageSkill, languagesById: Array<Language>) : APILanguageSkill {
         return {
             id: langSkill.id,
             level: langSkill.level,
