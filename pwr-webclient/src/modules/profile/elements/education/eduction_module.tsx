@@ -9,14 +9,13 @@ import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import {SingleEducationElement} from './education-entry_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import * as Immutable from 'immutable';
 
 interface EducationProps {
-    /**
-     * Associative Array of education entries. number => EducationEntry
-     */
-    educationEntriesById: Array<EducationEntry>;
 
-    educationById: Array<Education>;
+    educationEntries: Immutable.Map<number, EducationEntry>;
+
+    educations: Immutable.Map<number, Education>;
 }
 
 /**
@@ -55,8 +54,8 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps) : EducationProps {
         return {
-            educationEntriesById : state.databaseReducer.educationEntriesById,
-            educationById: state.databaseReducer.educationById
+            educationEntries : state.databaseReducer.educationEntries,
+            educations: state.databaseReducer.educations
         };
     }
 
@@ -75,15 +74,15 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                 subtitleCountedName={PowerLocalize.get('EducationStep.Plural')}
                 tableHeader={EducationModule.renderHeader()}
             >
-                {this.props.educationEntriesById.map((e, index) => {
+                {this.props.educationEntries.map((education, key) => {
                     return(
                     <SingleEducationElement
-                        key={"SingleEducationElement." + index}
-                        educationEntry={e}
-                        educationsById={this.props.educationById}
+                        key={"SingleEducationElement." + key}
+                        educationEntry={education}
+                        educations={this.props.educations}
                         onDateChange={this.props.onDateChange}
                     />);
-                })}
+                }).toList()}
             </ProfileElement>
         );
     }

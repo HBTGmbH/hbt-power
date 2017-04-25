@@ -2,6 +2,7 @@ import * as React from 'react';
 import {DatePicker, TextField} from 'material-ui';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
+import * as Immutable from 'immutable';
 
 
 /**
@@ -17,9 +18,9 @@ interface EducationEntryLocalProps {
     educationEntry: EducationEntry;
 
     /**
-     * Array of possible educations by their ID.
+     * All possible educations by their ids.
      */
-    educationsById: Array<Education>;
+    educations: Immutable.Map<number, Education>;
 
     /**
      * Callback that is invoked when this modules DatePicker's value changes to a new date.
@@ -68,7 +69,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                 <td>
                     <TextField
                         id={"Education.TextField." + this.props.educationEntry.id}
-                        value={this.props.educationsById[this.props.educationEntry.educationId].name}
+                        value={this.props.educations.get(this.props.educationEntry.educationId).name}
                         fullWidth={true}
                         disabled={true}
                     />

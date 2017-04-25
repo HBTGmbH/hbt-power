@@ -1,5 +1,6 @@
 import {Education} from './Education';
 import {APIEducationStep} from './APIProfile';
+import * as Immutable from 'immutable';
 
 /**
  * For notes about immutability, {@see CareerElement}
@@ -46,13 +47,13 @@ export class EducationEntry {
             apiEducation.education.id);
     }
 
-    public static toAPIEducationEntry(entry: EducationEntry, educationsById: Array<Education>): APIEducationStep {
+    public static toAPIEducationEntry(entry: EducationEntry, educations: Immutable.Map<number, Education>): APIEducationStep {
         return {
             id: entry.id,
             date: entry.date.toDateString(),
             education: {
                 id: entry.educationId,
-                name: educationsById[entry.educationId].name
+                name: educations.get(entry.educationId).name
             }
         }
     }
