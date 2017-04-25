@@ -52,7 +52,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
 
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps) : LanguageProps {
         return {
-            languageSkills: state.databaseReducer.languageSkills
+            languageSkills: state.databaseReducer.profile.languageSkills
         };
     }
 

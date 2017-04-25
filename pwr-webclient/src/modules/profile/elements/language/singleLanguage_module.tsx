@@ -60,7 +60,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     public static mapStateToProps(state: ApplicationState, props: SingleLanguageLocalProps) : SingleLanguageProps {
         return {
-            languageSkill: state.databaseReducer.languageSkills.get(props.id),
+            languageSkill: state.databaseReducer.profile.languageSkills.get(props.id),
             languages: state.databaseReducer.languages,
             possibleLanguageLevels: state.databaseReducer.languageLevels,
             possibleLanguageStrings: state.databaseReducer.languages.map((k, v) => k.name).toArray()// Only the name

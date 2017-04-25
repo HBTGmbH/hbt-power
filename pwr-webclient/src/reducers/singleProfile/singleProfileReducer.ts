@@ -11,49 +11,38 @@ import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import * as $ from 'jquery';
 import {EducationEntry} from '../../model/EducationEntry';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {CareerElement} from '../../model/CareerElement';
+import {Profile} from '../../model/Profile';
 
 
-const initialState: InternalDatabase = new InternalDatabase();
-console.log(initialState);
-initialState.APIRequestStatus = RequestStatus.Successful;
+const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
 
 
 function handleChangeLanguageSkill(state: InternalDatabase, action: ChangeLanguageSkillNameAction) : InternalDatabase {
     // New language skill
-    let newLangSkill = state.languageSkills.get(action.languageSkillId).changeLanguageId(action.newLanguageId);
-    let newLangSkillMap = state.languageSkills.set(newLangSkill.id, newLangSkill);
-    return Object.assign({}, state, {languageSkills: newLangSkillMap});
+    let newLangSkill: LanguageSkill = state.profile.languageSkills.get(action.languageSkillId).changeLanguageId(action.newLanguageId);
+    let newProfile: Profile = state.profile.updateLanguageSkill(newLangSkill);
+    return state.changeProfile(newProfile);
 }
 
 function handleChangeLanguageSkillLevel(state: InternalDatabase, action: ChangeLanguageSkillLevelAction): InternalDatabase {
-    let newLangSkill = state.languageSkills.get(action.languageSkillId).changeLevel(action.newLanguageLevel);
-    let newLangSkillMap = state.languageSkills.set(newLangSkill.id, newLangSkill);
-    return Object.assign({}, state, {languageSkills: newLangSkillMap});
+    let newLangSkill: LanguageSkill = state.profile.languageSkills.get(action.languageSkillId).changeLevel(action.newLanguageLevel);
+    let newProfile: Profile = state.profile.updateLanguageSkill(newLangSkill);
+    return state.changeProfile(newProfile);
 }
 function handleChangeAbstract(state: InternalDatabase, action: ChangeAbstractAction): InternalDatabase {
-    let newState: InternalDatabase = Object.assign({}, state);
-    newState.description = action.newAbstract;
-    return newState;
+    let newProfile: Profile = state.profile.changeDescription(action.newAbstract);
+    return state.changeProfile(newProfile);
 }
 
 function handleReceiveFullProfile(state: InternalDatabase, action: ReceiveAPIResponseAction) : InternalDatabase {
-    // To keep the code in the databaseReducer class itself clean, a full clone of the old databaseReducer is created, on which all
-    // further operations are then performed.
-    let clonedState: InternalDatabase = $.extend(true,  new InternalDatabase(), state);
-    console.log("Cloned state:", clonedState);
-    clonedState.parseFromAPI(action.payload);
-    return clonedState;
+    return state.parseProfile(action.payload);
 }
 
 function handleRequestLanguageSuccess(state: InternalDatabase, languages: Array<any>): InternalDatabase {
-    // Clone state to allow mutation
-    let clonedState: InternalDatabase = $.extend(true,  new InternalDatabase(), state);
-    clonedState.addAPILanguages(languages);
-    return clonedState;
+    return state.addAPILanguages(languages);
 }
 
 function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
@@ -65,32 +54,30 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
     } else if(action.requestType === APIRequestType.SaveProfile) {
         newState = state;
     }
-    return Object.assign({}, newState, {APIRequestStatus : RequestStatus.Successful});
+    return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }
 
 function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): InternalDatabase {
     switch (action.targetField) {
         case DateFieldType.CareerFrom: {
-            let element: CareerElement = state.careerElements.get(action.targetFieldId);
-            return Object.assign({}, state, {careerElements: state.careerElements.set(element.id, element.changeStartDate(action.newDate))});
+            let element: CareerElement = state.profile.careerElements.get(action.targetFieldId).changeStartDate(action.newDate);
+            let newProfile: Profile = state.profile.updateCareerElement(element);
+            return state.changeProfile(newProfile);
         }
         case DateFieldType.CareerTo: {
-            let element: CareerElement = state.careerElements.get(action.targetFieldId);
-            return Object.assign(
-                {},
-                state,
-                {
-                    careerElements: state.careerElements.set(element.id, element.changeEndDate(action.newDate))
-                }
-                );
+           let element: CareerElement = state.profile.careerElements.get(action.targetFieldId).changeEndDate(action.newDate);
+           let newProfile: Profile = state.profile.updateCareerElement(element);
+           return state.changeProfile(newProfile);
         }
         case DateFieldType.EducationDate: {
-            let educationEntry: EducationEntry = state.educationEntries.get(action.targetFieldId);
-            return Object.assign({}, state, {educationEntries: state.educationEntries.set(educationEntry.id, educationEntry.changeDate(action.newDate))});
+            let educationEntry: EducationEntry = state.profile.educationEntries.get(action.targetFieldId).changeDate(action.newDate);
+            let newProfile: Profile = state.profile.updateEducationEntry(educationEntry);
+            return state.changeProfile(newProfile);
         }
         case DateFieldType.QualificationDate: {
-           let qualificationEntry: QualificationEntry = state.qualificationEntries.get(action.targetFieldId);
-           return Object.assign({}, state, {qualificationEntries: state.qualificationEntries.set(qualificationEntry.id, qualificationEntry.changeDate(action.newDate))});
+           let qualificationEntry: QualificationEntry = state.profile.qualificationEntries.get(action.targetFieldId).changeDate(action.newDate);
+           let newProfile: Profile= state.profile.updateQualificationEntry(qualificationEntry);
+           return state.changeProfile(newProfile);
         }
         default:
             return state;
@@ -121,9 +108,9 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleChangeDate(state, <ChangeDateAction> action);
         // == Language Suggestion requests == //
         case ActionType.APIRequestPending:
-            return Object.assign({}, state, {APIRequestStatus: RequestStatus.Pending});
+            return state.changeAPIRequestStatus(RequestStatus.Pending);
         case ActionType.APIRequestFail:
-            return Object.assign({}, state, {APIRequestStatus: RequestStatus.Failiure});
+            return state.changeAPIRequestStatus(RequestStatus.Failiure);
         case ActionType.APIRequestSuccess:
             return handleRequestAPISuccess(state, <ReceiveAPIResponseAction> action);
         default:

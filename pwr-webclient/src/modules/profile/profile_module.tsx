@@ -71,7 +71,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return {
             reloadProfile: function() {dispatch(ProfileAsyncActionCreator.requestSingleProfile('nt'));} ,//FIXME no hardcoding
             saveProfile: function(initials: string, database: InternalDatabase) {
-                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, InternalDatabase.serializeToAPI(database)))
+                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()))
             }
         };
     }

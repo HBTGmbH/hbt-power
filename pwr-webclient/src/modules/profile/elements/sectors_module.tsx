@@ -6,9 +6,10 @@ import {TextField} from 'material-ui';
 import {ProfileElement} from '../profile-element_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Sector} from '../../../model/Sector';
+import * as Immutable from 'immutable';
 
 interface SectorsProps {
-    sectorsById: Array<Sector>;
+    sectors: Immutable.Map<number, Sector>;
 }
 
 /**
@@ -47,7 +48,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
 
     static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
         return {
-            sectorsById: state.databaseReducer.sectorsById
+            sectors: state.databaseReducer.profile.sectors
         };
     }
 
@@ -57,8 +58,8 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         };
     }
 
-    static renderSingleListElement(sector: Sector, index:number) {
-        return (<tr  key={"sectors." + index}><td><TextField id={"sectors.textfield." + index} value={sector.name} fullWidth={true} disabled={true}/></td></tr>);
+    static renderSingleListElement(sector: Sector, id:number) {
+        return (<tr  key={"sectors." + id}><td><TextField id={"sectors.textfield." + id} value={sector.name} fullWidth={true} disabled={true}/></td></tr>);
     }
 
     render() {
@@ -68,7 +69,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 subtitleCountedName={PowerLocalize.get('Sector.Plural')}
                 tableHeader={SectorsModule.renderHeader()}
             >
-                {this.props.sectorsById.map(SectorsModule.renderSingleListElement)}
+                {this.props.sectors.map(SectorsModule.renderSingleListElement)}
             </ProfileElement>
         );
     }

@@ -56,7 +56,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
 
     static mapStateToProps(state: ApplicationState, localProps: CareerLocalProps) : CareerProps {
         return {
-            careerElements: state.databaseReducer.careerElements,
+            careerElements: state.databaseReducer.profile.careerElements,
             careerPositions: state.databaseReducer.careerPositions
         };
     }

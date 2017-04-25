@@ -51,7 +51,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
 
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
-            qualificationEntries : state.databaseReducer.qualificationEntries,
+            qualificationEntries : state.databaseReducer.profile.qualificationEntries,
             qualifications: state.databaseReducer.qualifications
         };
     }

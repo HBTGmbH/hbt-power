@@ -12,10 +12,10 @@ export class Sector {
         return new Sector(apiSector.id, apiSector.name);
     }
 
-    public static toAPISector(sector: Sector): APISector {
+    public toAPISector(): APISector {
         return {
-            id: sector.id,
-            name: sector.name
+            id: this.id,
+            name: this.name
         }
     }
 
