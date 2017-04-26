@@ -8,7 +8,6 @@ import {applyMiddleware, createStore} from 'redux';
 import {Provider} from 'react-redux';
 
 import thunkMiddleware from 'redux-thunk';
-import {AsyncActions} from './reducers/consultants/consultant_actions';
 import {PowerClient} from './modules/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from './reducers/singleProfile/singleProfileActions';
@@ -27,8 +26,9 @@ let store = createStore(
 );
 
 PowerLocalize.setLocale(navigator.language);
-
+store.dispatch(ProfileAsyncActionCreator.requestQualifications());
 store.dispatch(ProfileAsyncActionCreator.requestLanguages());
+store.dispatch(ProfileAsyncActionCreator.requestEducations());
 store.dispatch(ProfileAsyncActionCreator.requestSingleProfile("nt"));
 
 //store.dispatch(AsyncActions.fetchConsultants());

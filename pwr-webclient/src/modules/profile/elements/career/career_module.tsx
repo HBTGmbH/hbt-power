@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, DateFieldType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {CareerElement} from '../../../../model/CareerElement';
@@ -39,6 +39,7 @@ interface CareerLocalState {
 interface CareerDispatch {
     changeStartDate(newDate: Date, id: number): void;
     changeEndDate(newDate: Date, id: number): void;
+    changeCareerId(newId: number, id: number): void;
 }
 
 class CareerModule extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
@@ -68,6 +69,9 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
             },
             changeEndDate: function(newDate: Date, id: number) {
                 dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerTo))
+            },
+            changeCareerId: function(newId: number, id: number) {
+                dispatch(ProfileActionCreator.changeItemId(newId, id, ProfileElementType.CareerEntry))
             }
         };
     }
@@ -81,6 +85,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                     careerPositions={this.props.careerPositions}
                     onStartDateChange={this.props.changeStartDate}
                     onEndDateChange={this.props.changeEndDate}
+                    onCareerChange={this.props.changeCareerId}
                 />)
         }).toArray();
 

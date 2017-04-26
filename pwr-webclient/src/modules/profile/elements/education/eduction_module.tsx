@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, DateFieldType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
 import {DatePicker, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
@@ -39,6 +39,7 @@ interface EducationLocalState {
 
 interface EducationDispatch {
     onDateChange(newDate: Date, id: number): void;
+    onEducationEntryEducationChange(newEducationId: number, id: number): void;
 }
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
@@ -63,6 +64,9 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         return {
             onDateChange: function(newDate: Date, id: number) {
                 dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationDate));
+            },
+            onEducationEntryEducationChange: function(newEducationId: number, id: number) {
+                dispatch(ProfileActionCreator.changeItemId(newEducationId, id, ProfileElementType.EducationEntry));
             }
         };
     }
@@ -81,6 +85,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                         educationEntry={education}
                         educations={this.props.educations}
                         onDateChange={this.props.onDateChange}
+                        onEducationChange={this.props.onEducationEntryEducationChange}
                     />);
                 }).toList()}
             </ProfileElement>

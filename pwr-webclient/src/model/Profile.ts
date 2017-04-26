@@ -14,6 +14,8 @@ import {
 } from './APIProfile';
 import {isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
+import {ChangeItemIdAction} from '../reducers/singleProfile/singleProfileActions';
+import {ProfileElementType} from '../Store';
 
 export class Profile {
     public readonly id: number;
@@ -65,7 +67,7 @@ export class Profile {
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries
-        )
+        );
     }
 
     public updateLanguageSkill(languageSkill: LanguageSkill): Profile {
@@ -78,7 +80,7 @@ export class Profile {
             this.educationEntries,
             this.languageSkills.set(languageSkill.id, languageSkill),
             this.qualificationEntries
-        )
+        );
     }
 
     public updateCareerElement(careerElement: CareerElement): Profile {
@@ -91,7 +93,7 @@ export class Profile {
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries
-        )
+        );
     }
 
     public updateEducationEntry(edcuationEntry: EducationEntry): Profile {
@@ -104,7 +106,7 @@ export class Profile {
             this.educationEntries.set(edcuationEntry.id, edcuationEntry),
             this.languageSkills,
             this.qualificationEntries
-        )
+        );
     }
 
     public updateQualificationEntry(qualificationEntry: QualificationEntry): Profile {
@@ -117,7 +119,7 @@ export class Profile {
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries.set(qualificationEntry.id, qualificationEntry)
-        )
+        );
     }
 
     // == Serialization & Deserialization == //
@@ -224,7 +226,7 @@ export class Profile {
             education: educations,
             sectors: sectors
         };
-        console.log("Serialized profile:", res);
+        console.log('Serialized profile:', res);
         return res;
     };
 
@@ -245,8 +247,8 @@ export class Profile {
     public static createDefault(): Profile {
         return new Profile(
             -1,
-            "",
-            "",
+            '',
+            '',
             Immutable.Map<number, Sector>(),
             Immutable.Map<number, CareerElement>(),
             Immutable.Map<number, EducationEntry>(),

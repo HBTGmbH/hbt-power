@@ -1,10 +1,9 @@
 /**
- * Created by nt on 20.04.2017.
+ *
  */
-
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../../Store';
+import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {AutoComplete, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {connect} from 'react-redux';
@@ -70,7 +69,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : SingleLanguageDispatch {
         return {
             changeLangName: function(newLangId: number, langSkillId: number): void {
-                dispatch(ProfileActionCreator.changeLanguageSkillName(newLangId, langSkillId));
+                dispatch(ProfileActionCreator.changeItemId(newLangId, langSkillId, ProfileElementType.LanguageEntry));
             },
             changeLangLevel: function(newLevel: string, langSkillId: number): void {
                 dispatch(ProfileActionCreator.changeLanguageSkillLevel(newLevel, langSkillId));
@@ -110,6 +109,10 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     private handleLevelChange = (event: TouchTapEvent, index: number, value: string) => {
         this.props.changeLangLevel(value, this.props.id);
+    };
+
+    private handleOnClose = () => {
+        console.log("CLOSE!");
     };
 
     render() {

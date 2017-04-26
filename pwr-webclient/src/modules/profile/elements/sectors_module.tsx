@@ -59,7 +59,17 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
     }
 
     static renderSingleListElement(sector: Sector, id:number) {
-        return (<tr  key={"sectors." + id}><td><TextField id={"sectors.textfield." + id} value={sector.name} fullWidth={true} disabled={true}/></td></tr>);
+        return (
+            <tr  key={"sectors." + id}>
+                <td>
+                    <TextField
+                        id={"sectors.textfield." + id}
+                        value={sector.name}
+                        fullWidth={true}
+                        disabled={true}
+                    />
+                </td>
+            </tr>);
     }
 
     render() {
@@ -69,7 +79,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 subtitleCountedName={PowerLocalize.get('Sector.Plural')}
                 tableHeader={SectorsModule.renderHeader()}
             >
-                {this.props.sectors.map(SectorsModule.renderSingleListElement)}
+                {this.props.sectors.map(SectorsModule.renderSingleListElement).toArray()}
             </ProfileElement>
         );
     }

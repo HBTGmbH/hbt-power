@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, DateFieldType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Qualification} from '../../../../model/Qualification';
@@ -36,6 +36,7 @@ interface QualificationLocalState {
 
 interface QualificationDispatch {
     onDateChange(newDate: Date, id: number): void;
+    onQualificationChange(newQualificationId: number, entryId: number): void;
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
@@ -60,6 +61,9 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         return {
             onDateChange: function(newDate, id: number) {
                 dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.QualificationDate));
+            },
+            onQualificationChange: function(newQualificationId: number, entryId: number) {
+                dispatch(ProfileActionCreator.changeItemId(newQualificationId, entryId, ProfileElementType.QualificationEntry));
             }
         };
     }
@@ -78,9 +82,10 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                             qualificationEntry={q}
                             qualifications={this.props.qualifications}
                             onDateChange={this.props.onDateChange}
+                            onQualificationChange={this.props.onQualificationChange}
                         />
                     )
-                })}
+                }).toArray()}
             </ProfileElement>
         );
     }

@@ -4,7 +4,7 @@ import {Qualification} from './Qualification';
 import {CareerPosition} from './CareerPosition';
 import {RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
-import {APIEducation, APILanguage, APIProfile} from './APIProfile';
+import {APIEducation, APILanguage, APIProfile, APIQualification} from './APIProfile';
 import {Profile} from './Profile';
 
 
@@ -95,6 +95,7 @@ export class InternalDatabase {
      * @returns {InternalDatabase} copy of the old {@link InternalDatabase} in which the languages are modified.
      */
     public addAPILanguages(languages: Array<APILanguage>): InternalDatabase {
+        console.info("Receiving additional languages: ", languages);
         let newLangs: Immutable.Map<number, Language> = this.languages;
         languages.forEach(lang => {
             newLangs = newLangs.set(lang.id, Language.create(lang));
@@ -107,6 +108,40 @@ export class InternalDatabase {
             this.educations,
             newLangs,
             this.qualifications
+        )
+    }
+
+    public addAPIEducations(educations: Array<APIEducation>): InternalDatabase {
+        console.info("Receiving additional educations:", educations);
+        let newEducations: Immutable.Map<number, Education> = this.educations;
+        educations.forEach(education => {
+            newEducations = newEducations.set(education.id, Education.create(education));
+        });
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.careerPositions,
+            newEducations,
+            this.languages,
+            this.qualifications
+        )
+    }
+
+    addAPIQualifications(qualifications: Array<APIQualification>) {
+        console.info("Receiving additional qualifications:", qualifications);
+        let newQualifications: Immutable.Map<number, Qualification> = this.qualifications;
+        qualifications.forEach(qualification => {
+            newQualifications = newQualifications.set(qualification.id, Qualification.create(qualification));
+        });
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.careerPositions,
+            this.educations,
+            this.languages,
+            newQualifications
         )
     }
 
@@ -143,6 +178,8 @@ export class InternalDatabase {
             let education: APIEducation = educationEntry.education;
             educations = educations.set(education.id, Education.create(education));
         });
+
+
         console.info("Profile processing done. Result:", profile);
 
         return new InternalDatabase(
@@ -168,7 +205,6 @@ export class InternalDatabase {
         // - Profile has access to database
         return this.profile.serializeToApiProfile(this);
     }
-
 
 
 

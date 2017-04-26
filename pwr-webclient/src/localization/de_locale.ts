@@ -11,9 +11,12 @@ export const de_locale : any = {
     "Qualification.Plural": "Zusatzqualifikationen",
     "Sector.Singular": "Branche",
     "Sector.Plural": "Branchen",
+    "CareerModule.StartDate": "von",
+    "CareerModule.EndDate": "bis",
+
+    // == ACTIONS == //
+    "Action.Edit": "Bearbeiten",
     "Action.Save": "Speichern",
     "Action.Update": "Aktualisieren",
-    "Action.Undo": "Zurücksetzen",
-    "CareerModule.StartDate": "von",
-    "CareerModule.EndDate": "bis"
+    "Action.Undo": "Zurücksetzen"
 };

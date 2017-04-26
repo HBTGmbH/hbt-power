@@ -13,3 +13,11 @@ export function getProfileAPIString(initials: string) : string {
 export function getLangSuggestionAPIString(): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/languages";
 }
+
+export function getEducationSuggestionAPIString(): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/educations";
+}
+
+export function getQualificationSuggestionAPIString(): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/qualifications";
+}

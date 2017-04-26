@@ -2,7 +2,7 @@ import {APIRequestType, DateFieldType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeAbstractAction,
-    ChangeDateAction,
+    ChangeDateAction, ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
     ChangeLanguageSkillNameAction,
     ReceiveAPIResponseAction
@@ -15,17 +15,10 @@ import {EducationEntry} from '../../model/EducationEntry';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {CareerElement} from '../../model/CareerElement';
 import {Profile} from '../../model/Profile';
+import {ProfileReducer} from './profile-reducer';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
-
-
-function handleChangeLanguageSkill(state: InternalDatabase, action: ChangeLanguageSkillNameAction) : InternalDatabase {
-    // New language skill
-    let newLangSkill: LanguageSkill = state.profile.languageSkills.get(action.languageSkillId).changeLanguageId(action.newLanguageId);
-    let newProfile: Profile = state.profile.updateLanguageSkill(newLangSkill);
-    return state.changeProfile(newProfile);
-}
 
 function handleChangeLanguageSkillLevel(state: InternalDatabase, action: ChangeLanguageSkillLevelAction): InternalDatabase {
     let newLangSkill: LanguageSkill = state.profile.languageSkills.get(action.languageSkillId).changeLevel(action.newLanguageLevel);
@@ -37,26 +30,24 @@ function handleChangeAbstract(state: InternalDatabase, action: ChangeAbstractAct
     return state.changeProfile(newProfile);
 }
 
-function handleReceiveFullProfile(state: InternalDatabase, action: ReceiveAPIResponseAction) : InternalDatabase {
-    return state.parseProfile(action.payload);
-}
-
-function handleRequestLanguageSuccess(state: InternalDatabase, languages: Array<any>): InternalDatabase {
-    return state.addAPILanguages(languages);
-}
-
+// FIXME move to database reducer
 function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
     let newState: InternalDatabase;
     if(action.requestType === APIRequestType.RequestLanguages) {
-        newState = handleRequestLanguageSuccess(state, action.payload);
+        newState = state.addAPILanguages(action.payload);
     } else if(action.requestType === APIRequestType.RequestProfile) {
-        newState = handleReceiveFullProfile(state, action);
+        newState = state.parseProfile(action.payload);
     } else if(action.requestType === APIRequestType.SaveProfile) {
         newState = state;
+    } else if(action.requestType === APIRequestType.RequestEducations) {
+        newState = state.addAPIEducations(action.payload);
+    } else if(action.requestType === APIRequestType.RequestQualifications) {
+        newState = state.addAPIQualifications(action.payload);
     }
     return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }
 
+//FIXME move to profile reducer
 function handleChangeDate(state: InternalDatabase, action: ChangeDateAction): InternalDatabase {
     switch (action.targetField) {
         case DateFieldType.CareerFrom: {
@@ -100,12 +91,14 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         // == Profile Element modification == //
         case ActionType.ChangeAbstract:
             return handleChangeAbstract(state, <ChangeAbstractAction> action);
-        case ActionType.ChangeLanguageSkillName:
-            return handleChangeLanguageSkill(state, <ChangeLanguageSkillNameAction> action );
         case ActionType.ChangeLanguageSkillLevel:
             return handleChangeLanguageSkillLevel(state, <ChangeLanguageSkillLevelAction> action);
         case ActionType.ChangeDate:
             return handleChangeDate(state, <ChangeDateAction> action);
+        case ActionType.ChangeItemId: {
+            let newProfile: Profile = ProfileReducer.reducerHandleItemIdChange(state.profile, <ChangeItemIdAction> action);
+            return state.changeProfile(newProfile);
+        }
         // == Language Suggestion requests == //
         case ActionType.APIRequestPending:
             return state.changeAPIRequestStatus(RequestStatus.Pending);

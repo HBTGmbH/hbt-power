@@ -17,6 +17,10 @@ export class QualificationEntry {
         return new QualificationEntry(this.id, this.qualificationId, newDate);
     }
 
+    public changeQualificationId(newQualificationId: number): QualificationEntry {
+        return new QualificationEntry(this.id, newQualificationId, this.date);
+    }
+
     public static create(apiQualificationEntry: APIQualificationEntry): QualificationEntry {
         return new QualificationEntry(
             apiQualificationEntry.id,

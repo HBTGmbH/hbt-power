@@ -2,12 +2,16 @@
  * @author nt | nt@hbt.de
  */
 
-import {AllConsultantsState, APIRequestType, DateFieldType} from '../../Store';
+import {AllConsultantsState, APIRequestType, DateFieldType, ProfileElementType} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
-import {getLangSuggestionAPIString, getProfileAPIString} from '../../API_CONFIG';
+import {
+    getEducationSuggestionAPIString, getLangSuggestionAPIString, getProfileAPIString,
+    getQualificationSuggestionAPIString
+} from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
+import {InternalDatabase} from '../../model/InternalDatabase';
 
 /**
  * Actions that invokes modification of the abstract.
@@ -81,25 +85,26 @@ export interface ChangeDateAction extends AbstractAction {
    targetFieldId: number;
 }
 
+export interface ChangeItemIdAction extends AbstractAction {
+    /**
+     * The type that is changed.
+     */
+    elementType: ProfileElementType;
+    /**
+     * The id that is given to the entry.
+     */
+    newItemId: number;
+    /**
+     * The entry that is changed
+     */
+    entryId: number;
+}
+
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeAbstractAction {
         return {
             type: ActionType.ChangeAbstract,
             newAbstract: newAbstract
-        }
-    }
-
-    /**
-     * Creates an action that invokes a change of language that is associated with the given language skill.
-     * @param newLangId
-     * @param langSkillId
-     * @returns ChangeLanguageSkillNameAction
-     */
-    public static changeLanguageSkillName(newLangId: number, langSkillId: number) : ChangeLanguageSkillNameAction {
-        return {
-            type: ActionType.ChangeLanguageSkillName,
-            newLanguageId: newLangId,
-            languageSkillId: langSkillId
         }
     }
 
@@ -139,12 +144,22 @@ export class ProfileActionCreator {
         return { type: ActionType.APIRequestFail };
     }
 
+
     public static changeDateField(id: number, newDate: Date, targetField: DateFieldType): ChangeDateAction {
         return {
             type: ActionType.ChangeDate,
             newDate: newDate,
             targetField: targetField,
             targetFieldId: id
+        }
+    }
+
+    public static changeItemId(newItemId: number, entryId: number, elementType: ProfileElementType): ChangeItemIdAction {
+        return {
+            type: ActionType.ChangeItemId,
+            elementType: elementType,
+            newItemId: newItemId,
+            entryId: entryId
         }
     }
 }
@@ -191,6 +206,30 @@ export class ProfileAsyncActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             })
+        }
+    }
+
+    public static requestEducations() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.get(getEducationSuggestionAPIString()).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestEducations));
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            })
+        }
+    }
+
+    public static requestQualifications() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.get(getQualificationSuggestionAPIString()).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestQualifications));
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
         }
     }
 }
