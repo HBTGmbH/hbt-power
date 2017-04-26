@@ -40,9 +40,13 @@ interface CareerStepLocalProps {
     onEndDateChange(newDate: Date, elementId: number): void;
 
     /**
-     * FIXME comment
-     * @param newCareerId
-     * @param elementId
+     * Callback given to this career step module to be called whenever the {@link CareerElement.careerPositionId}
+     * should change. This is the case when:
+     * A) The {@link CareerPosition} has been selected in the AutoComplete dropdown
+     * B) The {@link CareerPosition.position} has been correctly typed into the input field and enter was pressed
+     * @param newCareerId the new career id that is supposed to be associated with the {@link CareerElement} represented
+     * by this module.
+     * @param elementId the {@link CareerElement.id} of this module.
      */
     onCareerChange(newCareerId: number, elementId: number): void;
 }
@@ -53,13 +57,39 @@ interface CareerStepLocalProps {
  * There is no need for a non-local state, as redux will manage this part.
  */
 interface CareerStepState {
+    /**
+     * The current value in the autocomplete-input field. This is not the value that is persisted.
+     * FIXME find a way to couple this to redux without introducing it into the state so that the field correctly re-renders when the update is called.
+     */
     autoCompleteValue: string,
+    /**
+     * Autocomplete input on/off.
+     */
     autoCompleteDisabled: boolean
 }
 
 
+/**
+ * Represents a single {@link CareerElement> while providing ways to edit:
+ * - the start date
+ * - the end date
+ * - the career position associated with the element by changing the ID.
+ *
+ * Dates may be changed at any time by usage of the date picker, which already provides a way to avoid unwanted modifications.
+ *
+ * The {@link CareerPosition} may be changing after pressing the edit symbol. Only one of the available {@link CareerPosition} may
+ * be used as a replacement for an existing position.
+ * If an invalid string is entered in the input field, and the input is finalized by pressing enter or disabling the edit mode,
+ * the input fields value will hop back to the original value, and the input field will be disabled.
+ * If a valid value is selected through all available means, the input field will be disabled and the value used as new
+ * {@link CareerPosition}
+ */
 export class SingleCareerElement extends React.Component<CareerStepLocalProps, CareerStepState> {
 
+    /**
+     * TODO remove this once facebook decides to fully support map rendering of JSX Elements.
+     * Values used for autocompletion. This is necessary because map-rendering is not entirely supported.
+     */
     private autoCompleteValues: Array<CareerPosition>;
 
     constructor(props: CareerStepLocalProps) {
@@ -81,15 +111,31 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
         this.props.onStartDateChange(date, this.props.careerElement.id);
     };
 
+    /**
+     * Handles change of the end date DatePicker
+     * @param event is always undefined as to material-ui docs
+     * @param date
+     */
     private handleEndDateChange = (event: any, date: Date) => {
         // Hello Callback!
         this.props.onEndDateChange(date, this.props.careerElement.id);
     };
 
+    /**
+     * Handles all input received from the AutoComplete input field.
+     * @param searchText the current text that is present in the input field
+     * @param dataSource
+     */
     private handleAutoCompleteUpdateInput = (searchText: string, dataSource: Array<string>) => {
         this.setState({autoCompleteValue: searchText});
     };
 
+    /**
+     * Handles an auto complete request. An auto complete request is invoked when pressing enter in
+     * the input field or clicking on one of the suggestions.
+     * @param chosenRequest is the value that had been choosen
+     * @param index of the element, respective to {@link this.autoCompleteValues} (the datasource given to the AutoComplete)
+     */
     private handleAutoCompleteNewRequest = (chosenRequest: string, index: number) => {
         if(index >= 0) {
             this.props.onCareerChange(this.autoCompleteValues[index].id, this.props.careerElement.id);
@@ -103,6 +149,9 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
         }
     };
 
+    /**
+     * Handles button presses on the Edit Button.
+     */
     private handleToggleEdit = () => {
         this.setState({autoCompleteDisabled: !this.state.autoCompleteDisabled});
         if(!this.state.autoCompleteDisabled) {
