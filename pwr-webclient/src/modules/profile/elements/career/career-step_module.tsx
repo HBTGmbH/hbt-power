@@ -72,6 +72,7 @@ interface CareerStepState {
      * Autocomplete input on/off.
      */
     autoCompleteDisabled: boolean
+    showEndDatePicker: boolean
 }
 
 
@@ -101,9 +102,12 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
     constructor(props: CareerStepLocalProps) {
         super(props);
         this.autoCompleteValues = props.careerPositions.map((val, key) => val).toArray();
+        // only show the date picker when there is a date.
+        let showDatePicker = props.careerElement.endDate != null;
         this.state = {
             autoCompleteValue: props.careerPositions.get(props.careerElement.careerPositionId).position,
-            autoCompleteDisabled: true
+            autoCompleteDisabled: true,
+            showEndDatePicker: showDatePicker
         }
     }
 
@@ -174,6 +178,20 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
         this.props.onDelete(this.props.careerElement.id);
     };
 
+    private handleDisableEndDatePicker = () => {
+        this.props.onEndDateChange(null, this.props.careerElement.id);
+        this.setState({
+            showEndDatePicker: false
+        })
+    };
+
+    private handleEnableEndDatePicker = () => {
+        this.props.onEndDateChange(new Date(), this.props.careerElement.id);
+        this.setState({
+            showEndDatePicker: true
+        })
+    };
+
     render() {
 
         return(
@@ -188,13 +206,32 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                     />
                 </td>
                 <td>
-                    <DatePicker
-                        id={'C.DatePick.End' + this.props.careerElement.id}
-                        container="inline"
-                        value={this.props.careerElement.endDate}
-                        onChange={this.handleEndDateChange}
-                        formatDate={formatToShortDisplay}
-                    />
+                    {
+                        this.state.showEndDatePicker?
+                            (
+                                <div className="row">
+                                    <DatePicker
+                                        id={'C.DatePick.End' + this.props.careerElement.id}
+                                        container="inline"
+                                        value={this.props.careerElement.endDate}
+                                        onChange={this.handleEndDateChange}
+                                        formatDate={formatToShortDisplay}
+                                    />
+                                    <IconButton iconClassName="material-icons"
+                                                tooltip={PowerLocalize.get('Action.Remove')}
+                                                onClick={this.handleDisableEndDatePicker}
+                                    >remove</IconButton>
+                                </div>
+                            )
+                        :
+                            (
+                                <IconButton
+                                    iconClassName="material-icons"
+                                    tooltip={PowerLocalize.get('Action.Add')}
+                                    onClick={this.handleEnableEndDatePicker}
+                                >add</IconButton>
+                            )
+                    }
                 </td>
                 <td>
                     <AutoComplete

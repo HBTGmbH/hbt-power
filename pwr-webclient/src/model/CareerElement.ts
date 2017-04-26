@@ -2,6 +2,7 @@ import {CareerPosition} from './CareerPosition';
 import {APICareerElement} from './APIProfile';
 import * as Immutable from 'immutable';
 import {start} from 'repl';
+import {isNullOrUndefined} from 'util';
 /**
  * Immutable representation of a career element. A career element represents a persons single career steps during their
  * professional career.
@@ -46,7 +47,7 @@ export class CareerElement {
         return new CareerElement(
             apiCareerElement.id,
             new Date(apiCareerElement.startDate),
-            new Date(apiCareerElement.endDate),
+            isNullOrUndefined(apiCareerElement.endDate) ? null : new Date(apiCareerElement.endDate),
             apiCareerElement.position.id
         );
     }
@@ -91,7 +92,7 @@ export class CareerElement {
         return {
             id: this.id,
             startDate: this.startDate.toDateString(),
-            endDate: this.endDate.toDateString(),
+            endDate: this.endDate==null ? null : this.endDate.toDateString(),
             position: {
                 id: this.careerPositionId,
                 position: careerPositionsById.get(this.careerPositionId).position

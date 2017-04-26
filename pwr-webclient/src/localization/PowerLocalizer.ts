@@ -2,6 +2,7 @@
  * Created by nt on 20.04.2017.
  */
 import {de_locale} from './de_locale';
+import {isNullOrUndefined} from 'util';
 /**
  *
  */
@@ -23,6 +24,8 @@ export class PowerLocalize {
     }
 
     public static get(field: string) : string {
-        return this.localization[field];
+        let val = this.localization[field];
+        if(isNullOrUndefined(val)) return "FIXME_NO_LOCALE";
+        return val;
     }
 }
