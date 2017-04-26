@@ -1,4 +1,4 @@
-import {APISector} from './APIProfile';
+import {APISector, APISectorEntry} from './APIProfile';
 export class Sector {
     readonly id: number;
     readonly name: string;
@@ -18,5 +18,4 @@ export class Sector {
             name: this.name
         }
     }
-
 }

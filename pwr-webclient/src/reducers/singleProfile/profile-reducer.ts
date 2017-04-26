@@ -1,10 +1,11 @@
 import {Profile} from '../../model/Profile';
-import {ChangeItemIdAction} from './singleProfileActions';
+import {ChangeDateAction, ChangeItemIdAction} from './singleProfileActions';
 import {EducationEntry} from '../../model/EducationEntry';
-import {ProfileElementType} from '../../Store';
+import {DateFieldType, ProfileElementType} from '../../Store';
 import {CareerElement} from '../../model/CareerElement';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
+import {SectorEntry} from '../../model/SectorEntry';
 export class ProfileReducer {
 
     public static reducerHandleItemIdChange(profile: Profile, action: ChangeItemIdAction): Profile {
@@ -28,6 +29,38 @@ export class ProfileReducer {
                 let newQualificationEntry: QualificationEntry = profile.qualificationEntries.get(action.entryId);
                 newQualificationEntry = newQualificationEntry.changeQualificationId(action.newItemId);
                 return profile.updateQualificationEntry(newQualificationEntry);
+            }
+            case ProfileElementType.SectorEntry: {
+                let newSectorEntry: SectorEntry = profile.sectors.get(action.entryId);
+                newSectorEntry = newSectorEntry.changeSectorId(action.newItemId);
+                return profile.updateSectorEntry(newSectorEntry);
+            }
+            default:
+                return profile;
+        }
+    }
+
+    public static reducerHandleChangeDate(profile: Profile, action: ChangeDateAction): Profile {
+        switch (action.targetField) {
+            case DateFieldType.CareerFrom: {
+                let element: CareerElement = profile.careerElements.get(action.targetFieldId);
+                element = element.changeStartDate(action.newDate);
+                return profile.updateCareerElement(element);
+            }
+            case DateFieldType.CareerTo: {
+                let element: CareerElement = profile.careerElements.get(action.targetFieldId);
+                element = element.changeEndDate(action.newDate);
+                return profile.updateCareerElement(element);
+            }
+            case DateFieldType.EducationDate: {
+                let educationEntry: EducationEntry = profile.educationEntries.get(action.targetFieldId);
+                educationEntry = educationEntry.changeDate(action.newDate);
+                return profile.updateEducationEntry(educationEntry);
+            }
+            case DateFieldType.QualificationDate: {
+                let qualificationEntry: QualificationEntry = profile.qualificationEntries.get(action.targetFieldId);
+                qualificationEntry = qualificationEntry.changeDate(action.newDate);
+                return profile.updateQualificationEntry(qualificationEntry);
             }
             default:
                 return profile;

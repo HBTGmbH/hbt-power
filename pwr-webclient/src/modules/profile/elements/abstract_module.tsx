@@ -31,7 +31,6 @@ interface AbstractTextLocalProps {
  */
 interface AbstractTextLocalState {
     maxCharacters: number;
-    currentCharacters: number;
     currentBarColor: string;
 }
 
@@ -49,6 +48,25 @@ interface AbstractTextDispatch {
  */
 class AbstractTextModule extends React.Component<AbstractTextLocalProps & AbstractTextProps & AbstractTextDispatch, AbstractTextLocalState> {
 
+
+    constructor(props: AbstractTextLocalProps & AbstractTextProps & AbstractTextDispatch) {
+        super(props);
+        this.state = {
+            maxCharacters: props.initialMaxCharacters,
+            currentBarColor: AbstractTextModule.calcColor(props.abstractText.length, props.initialMaxCharacters).toCSSRGBString()
+        }
+    }
+
+    private static calcColor(charCount: number, maxChars: number): Color {
+        let color: Color;
+        if(charCount >= maxChars) {
+            color = Color.Red;
+        } else {
+            color = Color.LERP(Color.Green, Color.Red, charCount / maxChars);
+        }
+        return color;
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: AbstractTextLocalProps) : AbstractTextProps {
         return {
             abstractText: state.databaseReducer.profile.description
@@ -63,34 +81,12 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps & Abstra
         };
     }
 
-    constructor(props: AbstractTextLocalProps & AbstractTextProps & AbstractTextDispatch) {
-        super(props);
-        this.state = {
-            maxCharacters: props.initialMaxCharacters,
-            currentCharacters: 0,
-            currentBarColor: 'green'
-        };
-    }
-
-
     handleTextChange = (event: React.FormEvent<HTMLSelectElement>) => {
         let charCount: number = event.currentTarget.value.length;
-        let newString: string;
-        let color: Color;
-        console.log(event.currentTarget.value.length);
-        if(charCount >= this.state.maxCharacters) {
-            // Truncate the string so it fits.
-            newString = event.currentTarget.value.substring(0, this.state.maxCharacters);
-            color = Color.Red;
-        } else {
-            newString = event.currentTarget.value;
-            color = Color.LERP(Color.Green, Color.Red, charCount / this.state.maxCharacters);
-        }
-
+        let newString: string = event.currentTarget.value.substring(0, this.state.maxCharacters);
         this.props.changeAbstract(newString);
         this.setState({
-            currentCharacters: newString.length,
-            currentBarColor: color.toCSSRGBString()
+            currentBarColor: AbstractTextModule.calcColor(newString.length, this.state.maxCharacters).toCSSRGBString()
         });
     };
 
@@ -110,12 +106,12 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps & Abstra
                         <LinearProgress
                             min={0}
                             max={this.state.maxCharacters}
-                            value={this.state.currentCharacters}
+                            value={this.props.abstractText.length}
                             mode="determinate"
                             color={this.state.currentBarColor}
                         />
                     </Col>
-                    <div>Zeichen: {this.state.currentCharacters}/{this.state.maxCharacters}</div>
+                    <div>Zeichen: {this.props.abstractText.length}/{this.state.maxCharacters}</div>
                 </Row>
             </Grid>
         );

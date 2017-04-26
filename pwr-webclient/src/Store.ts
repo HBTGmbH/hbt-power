@@ -17,6 +17,8 @@ export enum RequestStatus {
 }
 
 export enum APIRequestType {
+    RequestSectors,
+    RequestCareers,
     RequestQualifications,
     RequestEducations,
     RequestProfile,
@@ -32,6 +34,7 @@ export enum DateFieldType {
 }
 
 export enum ProfileElementType {
+    SectorEntry,
     CareerEntry,
     EducationEntry,
     QualificationEntry,

@@ -1,6 +1,6 @@
 import {updateConsultant} from './consultants/consultantReducer';
 import {combineReducers} from 'redux';
-import {databaseReducer} from './singleProfile/singleProfileReducer';
+import {databaseReducer} from './singleProfile/database-reducer';
 /**
  * Created by nt on 12.04.2017.
  */

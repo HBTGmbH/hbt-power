@@ -4,6 +4,7 @@ import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../utils/DateUtil';
 
 
 /**
@@ -114,6 +115,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                         container="inline"
                         value={this.props.educationEntry.date}
                         onChange={this.handleDateChange}
+                        formatDate={formatToShortDisplay}
                     />
                 </td>
                 <td>

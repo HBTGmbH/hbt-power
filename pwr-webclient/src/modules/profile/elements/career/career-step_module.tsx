@@ -4,6 +4,7 @@ import {CareerElement} from '../../../../model/CareerElement';
 import {CareerPosition} from '../../../../model/CareerPosition';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../utils/DateUtil';
 
 /**
  * Local properties of this module. These properties are used to initialize the local state and to control everything that
@@ -124,6 +125,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                         container="inline"
                         value={this.props.careerElement.startDate}
                         onChange={this.handleStartDateChange}
+                        formatDate={formatToShortDisplay}
                     />
                 </td>
                 <td>
@@ -132,6 +134,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                         container="inline"
                         value={this.props.careerElement.endDate}
                         onChange={this.handleEndDateChange}
+                        formatDate={formatToShortDisplay}
                     />
                 </td>
                 <td>

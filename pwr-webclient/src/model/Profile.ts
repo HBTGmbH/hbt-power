@@ -10,12 +10,13 @@ import {
     APILanguageSkill,
     APIProfile,
     APIQualificationEntry,
-    APISector
+    APISectorEntry
 } from './APIProfile';
 import {isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
 import {ChangeItemIdAction} from '../reducers/singleProfile/singleProfileActions';
 import {ProfileElementType} from '../Store';
+import {SectorEntry} from './SectorEntry';
 
 export class Profile {
     public readonly id: number;
@@ -24,7 +25,8 @@ export class Profile {
 
     public readonly description: string;
 
-    public readonly sectors: Immutable.Map<number, Sector> = Immutable.Map<number, Sector>();
+    //FIXME refactor to sectorEntries
+    public readonly sectors: Immutable.Map<number, SectorEntry> = Immutable.Map<number, SectorEntry>();
 
     public readonly careerElements: Immutable.Map<number, CareerElement> = Immutable.Map<number, CareerElement>();
 
@@ -38,7 +40,7 @@ export class Profile {
         id: number,
         currentPosition: string,
         description: string,
-        sectors: Immutable.Map<number, Sector>,
+        sectors: Immutable.Map<number, SectorEntry>,
         careerElements: Immutable.Map<number, CareerElement>,
         educationEntries: Immutable.Map<number, EducationEntry>,
         languageSkills: Immutable.Map<number, LanguageSkill>,
@@ -122,17 +124,30 @@ export class Profile {
         );
     }
 
+    public updateSectorEntry(sectorEntry: SectorEntry): Profile {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectors.set(sectorEntry.id, sectorEntry),
+            this.careerElements,
+            this.educationEntries,
+            this.languageSkills,
+            this.qualificationEntries
+        );
+    }
+
     // == Serialization & Deserialization == //
 
-    private static parseSectors(sectors: Array<APISector>): Immutable.Map<number, Sector> {
-        let res: Immutable.Map<number, Sector> = Immutable.Map<number, Sector>();
-        sectors.forEach(sector => {
+    private static parseSectors(sectors: Array<APISectorEntry>): Immutable.Map<number, SectorEntry> {
+        let res: Immutable.Map<number, SectorEntry> = Immutable.Map<number, SectorEntry>();
+        sectors.forEach(sectorEntry => {
             // In case the API returns something invalid.
-            if(!isNullOrUndefined(sector)) {
+            if(!isNullOrUndefined(sectorEntry)) {
                 // We assume that the server that provides the data is always right, which means the
                 // client is missing a data set.
                 // This adds the sector to the currently known sectors.
-                res = res.set(sector.id, Sector.create(sector));
+                res = res.set(sectorEntry.id, SectorEntry.create(sectorEntry));
             }
         });
         return res;
@@ -187,6 +202,8 @@ export class Profile {
         return res;
     }
 
+    // FIXME do not require database anymore, or refactor database so it doesn't contain
+    // FIXME this profile anymore.
     public serializeToApiProfile(database: InternalDatabase): APIProfile {
         // Maps all career elements into an API format
         let career: Array<APICareerElement> = [];
@@ -211,9 +228,9 @@ export class Profile {
             qualifications.push(qualificationEntry.toAPIQualificationEntry(database.qualifications));
         });
 
-        let sectors: Array<APISector> = [];
+        let sectors: Array<APISectorEntry> = [];
         this.sectors.forEach(sector => {
-            sectors.push(sector.toAPISector());
+            sectors.push(sector.toAPISectorEntry(database.sectors));
         });
 
         let res: APIProfile = {
@@ -249,7 +266,7 @@ export class Profile {
             -1,
             '',
             '',
-            Immutable.Map<number, Sector>(),
+            Immutable.Map<number, SectorEntry>(),
             Immutable.Map<number, CareerElement>(),
             Immutable.Map<number, EducationEntry>(),
             Immutable.Map<number, LanguageSkill>(),

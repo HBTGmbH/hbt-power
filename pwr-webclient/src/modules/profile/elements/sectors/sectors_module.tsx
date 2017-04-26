@@ -1,15 +1,18 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../Store';
-import {TextField} from 'material-ui';
-import {ProfileElement} from '../profile-element_module';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {Sector} from '../../../model/Sector';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
+import {ProfileElement} from '../../profile-element_module';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {Sector} from '../../../../model/Sector';
 import * as Immutable from 'immutable';
+import {SectorEntry} from '../../../../model/SectorEntry';
+import {SingleSectorModule} from './sector_module';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 
 interface SectorsProps {
     sectors: Immutable.Map<number, Sector>;
+    sectorEntries: Immutable.Map<number, SectorEntry>;
 }
 
 /**
@@ -32,7 +35,7 @@ interface SectorsLocalState {
 }
 
 interface SectorsDispatch {
-
+    onSectorChange(sectorId: number, sectorEntryId: number): void;
 }
 
 class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & SectorsDispatch, SectorsLocalState> {
@@ -48,29 +51,29 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
 
     static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
         return {
-            sectors: state.databaseReducer.profile.sectors
+            sectors: state.databaseReducer.sectors,
+            sectorEntries: state.databaseReducer.profile.sectors
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : SectorsDispatch {
         return {
-
+            onSectorChange: function(sectorId: number, sectorEntryId: number) {
+                dispatch(ProfileActionCreator.changeItemId(sectorId, sectorEntryId, ProfileElementType.SectorEntry))
+            }
         };
     }
 
-    static renderSingleListElement(sector: Sector, id:number) {
+    private renderSingleListElement = (sectorEntry: SectorEntry, id:number) => {
         return (
-            <tr  key={"sectors." + id}>
-                <td>
-                    <TextField
-                        id={"sectors.textfield." + id}
-                        value={sector.name}
-                        fullWidth={true}
-                        disabled={true}
-                    />
-                </td>
-            </tr>);
-    }
+            <SingleSectorModule
+                key={"Sectors.SingleSector." + id}
+                sectorEntry={sectorEntry}
+                sectors={this.props.sectors}
+                onSectorChange={this.props.onSectorChange}
+            />
+            );
+    };
 
     render() {
         return(
@@ -79,7 +82,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 subtitleCountedName={PowerLocalize.get('Sector.Plural')}
                 tableHeader={SectorsModule.renderHeader()}
             >
-                {this.props.sectors.map(SectorsModule.renderSingleListElement).toArray()}
+                {this.props.sectorEntries.map(this.renderSingleListElement).toArray()}
             </ProfileElement>
         );
     }

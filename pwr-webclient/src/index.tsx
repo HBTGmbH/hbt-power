@@ -29,6 +29,8 @@ PowerLocalize.setLocale(navigator.language);
 store.dispatch(ProfileAsyncActionCreator.requestQualifications());
 store.dispatch(ProfileAsyncActionCreator.requestLanguages());
 store.dispatch(ProfileAsyncActionCreator.requestEducations());
+store.dispatch(ProfileAsyncActionCreator.requestCareers());
+store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestSingleProfile("nt"));
 
 //store.dispatch(AsyncActions.fetchConsultants());

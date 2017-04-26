@@ -7,8 +7,9 @@ import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {
+    getCareerSuggestionAPIString,
     getEducationSuggestionAPIString, getLangSuggestionAPIString, getProfileAPIString,
-    getQualificationSuggestionAPIString
+    getQualificationSuggestionAPIString, getSectorsSuggestionAPIString
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
@@ -226,6 +227,30 @@ export class ProfileAsyncActionCreator {
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.get(getQualificationSuggestionAPIString()).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestQualifications));
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
+
+    public static requestCareers() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.get(getCareerSuggestionAPIString()).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestCareers));
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
+
+    public static requestSectors() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.get(getSectorsSuggestionAPIString()).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestSectors));
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());

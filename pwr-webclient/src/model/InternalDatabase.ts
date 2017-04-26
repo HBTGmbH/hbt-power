@@ -4,8 +4,13 @@ import {Qualification} from './Qualification';
 import {CareerPosition} from './CareerPosition';
 import {RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
-import {APIEducation, APILanguage, APIProfile, APIQualification} from './APIProfile';
+import {
+    APICareerPosition, APIEducation, APILanguage, APIProfile, APIQualification, APISector,
+    APISectorEntry
+} from './APIProfile';
 import {Profile} from './Profile';
+import {Sector} from './Sector';
+import {SectorEntry} from './SectorEntry';
 
 
 /**
@@ -31,6 +36,8 @@ export class InternalDatabase {
 
     public readonly languages: Immutable.Map<number, Language> = Immutable.Map<number, Language>();
 
+    public readonly sectors: Immutable.Map<number, Sector> = Immutable.Map<number, Sector>();
+
     public readonly qualifications: Immutable.Map<number, Qualification> = Immutable.Map<number, Qualification>();
 
 
@@ -41,8 +48,9 @@ export class InternalDatabase {
         careerPositions: Immutable.Map<number, CareerPosition>,
         educations: Immutable.Map<number, Education>,
         languages: Immutable.Map<number, Language>,
-        qualifications: Immutable.Map<number, Qualification>
-    ) {
+        qualifications: Immutable.Map<number, Qualification>,
+        sectors:  Immutable.Map<number, Sector>
+) {
         this.APIRequestStatus = apiRequestStatus;
         this.languageLevels = languageLevels;
         this.profile = profile;
@@ -50,6 +58,7 @@ export class InternalDatabase {
         this.educations = educations;
         this.languages = languages;
         this.qualifications = qualifications;
+        this.sectors = sectors;
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -60,7 +69,8 @@ export class InternalDatabase {
             Immutable.Map<number, CareerPosition>(),
             Immutable.Map<number, Education>(),
             Immutable.Map<number, Language>(),
-            Immutable.Map<number, Qualification>()
+            Immutable.Map<number, Qualification>(),
+            Immutable.Map<number, Sector>()
         )
     }
 
@@ -72,7 +82,8 @@ export class InternalDatabase {
             this.careerPositions,
             this.educations,
             this.languages,
-            this.qualifications
+            this.qualifications,
+            this.sectors
         )
     }
 
@@ -84,7 +95,8 @@ export class InternalDatabase {
             this.careerPositions,
             this.educations,
             this.languages,
-            this.qualifications
+            this.qualifications,
+            this.sectors
         )
     }
 
@@ -107,7 +119,8 @@ export class InternalDatabase {
             this.careerPositions,
             this.educations,
             newLangs,
-            this.qualifications
+            this.qualifications,
+            this.sectors
         )
     }
 
@@ -124,7 +137,8 @@ export class InternalDatabase {
             this.careerPositions,
             newEducations,
             this.languages,
-            this.qualifications
+            this.qualifications,
+            this.sectors
         )
     }
 
@@ -141,7 +155,42 @@ export class InternalDatabase {
             this.careerPositions,
             this.educations,
             this.languages,
-            newQualifications
+            newQualifications,
+            this.sectors
+        )
+    }
+
+    addAPICareers(careers: Array<APICareerPosition>) {
+        console.info("Receiving additional career positions:", careers);
+        let newCareerPositions: Immutable.Map<number, CareerPosition> = this.careerPositions;
+        careers.forEach(careerPos => {
+            newCareerPositions = newCareerPositions.set(careerPos.id, CareerPosition.create(careerPos));
+        });
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            newCareerPositions,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors
+        )
+    }
+
+    addAPISectors(sectors: Array<APISector>) {
+        console.info("Receiving additional sectors:", sectors);
+        let newSectors: Immutable.Map<number, Sector> = this.sectors;
+        sectors.forEach(sector => newSectors = newSectors.set(sector.id, Sector.create(sector)));
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.careerPositions,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            newSectors
         )
     }
 
@@ -179,6 +228,12 @@ export class InternalDatabase {
             educations = educations.set(education.id, Education.create(education));
         });
 
+        let sectors = this.sectors;
+        profileFromAPI.sectors.forEach(sectorEntry => {
+            let sector: APISector = sectorEntry.sector;
+            sectors = sectors.set(sector.id, Sector.create(sector));
+        });
+
 
         console.info("Profile processing done. Result:", profile);
 
@@ -189,7 +244,8 @@ export class InternalDatabase {
             careerPositions,
             educations,
             languages,
-            qualifications
+            qualifications,
+            sectors
         )
     }
 

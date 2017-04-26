@@ -73,7 +73,7 @@ export class CareerElement {
      * @returns a new instance of {@link CareerElement} with the modified {@link CareerElement.careerPositionId}
      */
     public changeCareerPositionId(newId: number) {
-        return Object.assign({}, this, {careerPositionId: newId});
+        return new CareerElement(this.id, this.startDate, this.endDate, newId);
     }
 
     public toAPICareer(careerPositionsById: Immutable.Map<number, CareerPosition>): APICareerElement {

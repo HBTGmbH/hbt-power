@@ -6,6 +6,7 @@ import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {Qualification} from '../../../../model/Qualification';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../utils/DateUtil';
 
 
 /**
@@ -80,11 +81,11 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
             this.props.onQualificationChange(this.autoCompleteValues[index].id, this.props.qualificationEntry.id);
             this.setState({
                 autoCompleteDisabled: true
-            })
+            });
         } else {
             this.setState({
                 autoCompleteValue: this.props.qualifications.get(this.props.qualificationEntry.qualificationId).name
-            })
+            });
         }
     };
 
@@ -96,7 +97,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
             // By using this, confusion on the users end is avoided
             this.setState({
                 autoCompleteValue: this.props.qualifications.get(this.props.qualificationEntry.qualificationId).name
-            })
+            });
         }
     };
 
@@ -105,15 +106,16 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
             <tr>
                 <td>
                     <DatePicker
-                        id={"Education.DatePicker." + this.props.qualificationEntry.id}
+                        id={'Education.DatePicker.' + this.props.qualificationEntry.id}
                         container="inline"
                         value={this.props.qualificationEntry.date}
                         onChange={this.handleDateChange}
+                        formatDate={formatToShortDisplay}
                     />
                 </td>
                 <td>
                     <AutoComplete
-                        id={"Qualification.Autocomplete." + this.props.qualificationEntry.id}
+                        id={'Qualification.Autocomplete.' + this.props.qualificationEntry.id}
                         value={this.state.autoCompleteValue}
                         dataSourceConfig={{text:'name', value:'id'}}
                         dataSource={this.autoCompleteValues}

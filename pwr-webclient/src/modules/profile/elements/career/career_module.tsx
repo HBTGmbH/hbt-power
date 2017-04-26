@@ -80,7 +80,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
        return this.props.careerElements.map((value, key, index) => {
             return (
                 <SingleCareerElement
-                    key={"SingleCareerElement." + index}
+                    key={"SingleCareerElement." + key}
                     careerElement={value}
                     careerPositions={this.props.careerPositions}
                     onStartDateChange={this.props.changeStartDate}

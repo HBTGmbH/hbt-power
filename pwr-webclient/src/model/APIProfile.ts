@@ -44,6 +44,11 @@ export interface APICareerElement {
     position: APICareerPosition;
 }
 
+export interface APISectorEntry {
+    id: number;
+    sector: APISector;
+}
+
 export interface APISector {
     id: number;
     name: string;
@@ -60,5 +65,5 @@ export interface APIProfile {
     languages: Array<APILanguageSkill>;
     qualification: Array<APIQualificationEntry>;
     education: Array<APIEducationStep>;
-    sectors: Array<APISector>;
+    sectors: Array<APISectorEntry>;
 }
