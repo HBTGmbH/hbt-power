@@ -101,6 +101,15 @@ export interface ChangeItemIdAction extends AbstractAction {
     entryId: number;
 }
 
+/**
+ * Action used to represent the removal of an entry in the profile. The entry that is removed
+ * is defined by the elementType and by their id.
+ */
+export interface RemoveEntryAction extends AbstractAction {
+    elementType: ProfileElementType;
+    elementId: number;
+}
+
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeAbstractAction {
         return {
@@ -161,6 +170,14 @@ export class ProfileActionCreator {
             elementType: elementType,
             newItemId: newItemId,
             entryId: entryId
+        }
+    }
+
+    public static removeEntry(id: number, elementType: ProfileElementType): RemoveEntryAction {
+        return {
+            type: ActionType.RemoveEntry,
+            elementType: elementType,
+            elementId: id
         }
     }
 }

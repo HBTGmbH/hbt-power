@@ -98,6 +98,19 @@ export class Profile {
         );
     }
 
+    public removeCareerElement(careerElementId: number): Profile {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectors,
+            this.careerElements.remove(careerElementId),
+            this.educationEntries,
+            this.languageSkills,
+            this.qualificationEntries
+        );
+    }
+
     public updateEducationEntry(edcuationEntry: EducationEntry): Profile {
         return new Profile(
             this.id,

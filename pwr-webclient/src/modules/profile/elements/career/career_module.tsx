@@ -40,6 +40,7 @@ interface CareerDispatch {
     changeStartDate(newDate: Date, id: number): void;
     changeEndDate(newDate: Date, id: number): void;
     changeCareerId(newId: number, id: number): void;
+    removeCareerElement(id: number): void;
 }
 
 class CareerModule extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
@@ -65,13 +66,16 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : CareerDispatch {
         return {
             changeStartDate: function(newDate: Date, id: number) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerFrom))
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerFrom));
             },
             changeEndDate: function(newDate: Date, id: number) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerTo))
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerTo));
             },
             changeCareerId: function(newId: number, id: number) {
-                dispatch(ProfileActionCreator.changeItemId(newId, id, ProfileElementType.CareerEntry))
+                dispatch(ProfileActionCreator.changeItemId(newId, id, ProfileElementType.CareerEntry));
+            },
+            removeCareerElement: function(id: number) {
+                dispatch(ProfileActionCreator.removeEntry(id, ProfileElementType.CareerEntry));
             }
         };
     }
@@ -79,16 +83,16 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     private getMapAsList(): JSX.Element[] {
        return this.props.careerElements.map((value, key, index) => {
             return (
-                <div>
-                    <SingleCareerElement
-                        key={"SingleCareerElement." + key}
-                        careerElement={value}
-                        careerPositions={this.props.careerPositions}
-                        onStartDateChange={this.props.changeStartDate}
-                        onEndDateChange={this.props.changeEndDate}
-                        onCareerChange={this.props.changeCareerId}
-                    />
-                </div>)
+                <SingleCareerElement
+                    key={"SingleCareerElement." + key}
+                    careerElement={value}
+                    careerPositions={this.props.careerPositions}
+                    onStartDateChange={this.props.changeStartDate}
+                    onEndDateChange={this.props.changeEndDate}
+                    onCareerChange={this.props.changeCareerId}
+                    onDelete={this.props.removeCareerElement}
+                />
+              )
         }).toArray();
 
     }

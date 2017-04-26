@@ -49,6 +49,12 @@ interface CareerStepLocalProps {
      * @param elementId the {@link CareerElement.id} of this module.
      */
     onCareerChange(newCareerId: number, elementId: number): void;
+
+    /**
+     * Callback given to this module to be called whenever the delete button is being pressed.
+     * @param elementId the {@link CareerElement.id} of the element associated with this module.
+     */
+    onDelete(elementId: number): void;
 }
 
 /**
@@ -164,6 +170,10 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
         }
     };
 
+    private handleDeleteModule = () => {
+        this.props.onDelete(this.props.careerElement.id);
+    };
+
     render() {
 
         return(
@@ -197,6 +207,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                         disabled={this.state.autoCompleteDisabled}
                     />
                     <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton iconClassName="material-icons" onClick={this.handleDeleteModule} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                 </td>
             </tr>
         );

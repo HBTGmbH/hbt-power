@@ -1,5 +1,5 @@
 import {Profile} from '../../model/Profile';
-import {ChangeDateAction, ChangeItemIdAction} from './singleProfileActions';
+import {ChangeDateAction, ChangeItemIdAction, RemoveEntryAction} from './singleProfileActions';
 import {EducationEntry} from '../../model/EducationEntry';
 import {DateFieldType, ProfileElementType} from '../../Store';
 import {CareerElement} from '../../model/CareerElement';
@@ -35,6 +35,15 @@ export class ProfileReducer {
                 newSectorEntry = newSectorEntry.changeSectorId(action.newItemId);
                 return profile.updateSectorEntry(newSectorEntry);
             }
+            default:
+                return profile;
+        }
+    }
+
+    public static reducerHandleRemoveEntry(profile: Profile, action: RemoveEntryAction): Profile {
+        switch(action.elementType) {
+            case ProfileElementType.CareerEntry:
+                return profile.removeCareerElement(action.elementId);
             default:
                 return profile;
         }

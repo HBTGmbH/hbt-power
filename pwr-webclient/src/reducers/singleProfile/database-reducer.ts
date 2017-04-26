@@ -5,7 +5,7 @@ import {
     ChangeDateAction,
     ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
-    ReceiveAPIResponseAction
+    ReceiveAPIResponseAction, RemoveEntryAction
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
@@ -73,6 +73,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         }
         case ActionType.ChangeItemId: {
             let newProfile: Profile = ProfileReducer.reducerHandleItemIdChange(state.profile, <ChangeItemIdAction> action);
+            return state.changeProfile(newProfile);
+        }
+        case ActionType.RemoveEntry: {
+            let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile, <RemoveEntryAction> action);
             return state.changeProfile(newProfile);
         }
         // == Language Suggestion requests == //
