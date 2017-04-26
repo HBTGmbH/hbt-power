@@ -29,3 +29,7 @@ export function getCareerSuggestionAPIString(): string {
 export function getSectorsSuggestionAPIString(): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/sectors";
 }
+
+export function getSaveCareerElementAPIString(initials: string): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + "/profile/career";
+}

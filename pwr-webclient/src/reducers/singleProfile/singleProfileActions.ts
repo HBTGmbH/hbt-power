@@ -8,11 +8,18 @@ import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {
     getCareerSuggestionAPIString,
-    getEducationSuggestionAPIString, getLangSuggestionAPIString, getProfileAPIString,
-    getQualificationSuggestionAPIString, getSectorsSuggestionAPIString
+    getEducationSuggestionAPIString,
+    getLangSuggestionAPIString,
+    getProfileAPIString,
+    getQualificationSuggestionAPIString,
+    getSaveCareerElementAPIString,
+    getSectorsSuggestionAPIString
 } from '../../API_CONFIG';
-import {APIProfile} from '../../model/APIProfile';
+import {APICareerElement, APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
+import {CareerElement} from '../../model/CareerElement';
+import {CareerPosition} from '../../model/CareerPosition';
+import * as Immutable from 'immutable';
 
 /**
  * Actions that invokes modification of the abstract.
@@ -272,6 +279,25 @@ export class ProfileAsyncActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
+        }
+    }
+
+    /**
+     * Fixme comment
+     * @param initials
+     * @param careerElement
+     * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
+     */
+    public static saveCareerElement(initials: string, careerElement: CareerElement, careers: Immutable.Map<number, CareerPosition>) {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let apiCareerElement: APICareerElement = careerElement.toAPICareer(careers);
+            axios.post(getSaveCareerElementAPIString(initials), apiCareerElement).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveCareerElement));
+            });/*.catch(function(error:any){
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });*/
         }
     }
 }

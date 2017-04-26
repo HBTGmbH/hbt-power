@@ -6,9 +6,10 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {CareerElement} from '../../../../model/CareerElement';
 import {CareerPosition} from '../../../../model/CareerPosition';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {SingleCareerElement} from './career-step_module';
 import * as Immutable from 'immutable';
+import {IconButton} from 'material-ui';
 
 interface CareerProps {
 
@@ -41,6 +42,8 @@ interface CareerDispatch {
     changeEndDate(newDate: Date, id: number): void;
     changeCareerId(newId: number, id: number): void;
     removeCareerElement(id: number): void;
+    addCareerElement(startDate: Date, endDate:Date, positionId: number, careers: Immutable.Map<number, CareerPosition>): void;
+
 }
 
 class CareerModule extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
@@ -76,6 +79,10 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
             },
             removeCareerElement: function(id: number) {
                 dispatch(ProfileActionCreator.removeEntry(id, ProfileElementType.CareerEntry));
+            },
+            addCareerElement: function(startDate: Date, endDate:Date, positionId: number, careers: Immutable.Map<number, CareerPosition>) {
+                let careerElement: CareerElement =  CareerElement.createWithoutId(startDate, endDate, positionId);
+                dispatch(ProfileAsyncActionCreator.saveCareerElement("nt",careerElement, careers)) //FIXME hardcoding
             }
         };
     }
@@ -94,8 +101,13 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 />
               )
         }).toArray();
-
     }
+
+    private handleAddElement = () => {
+        // FIXME this might result in problems when there are no position available
+        let positionId: number = this.props.careerPositions.first().id;
+        this.props.addCareerElement(new Date(), new Date(), positionId, this.props.careerPositions);
+    };
 
     render() {
         return(
@@ -107,7 +119,9 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 {
                     this.getMapAsList()
                 }
+                <IconButton iconClassName="material-icons" onClick={this.handleAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
             </ProfileElement>
+
         );
     }
 }

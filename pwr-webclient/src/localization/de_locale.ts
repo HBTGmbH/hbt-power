@@ -19,5 +19,6 @@ export const de_locale : any = {
     "Action.Save": "Speichern",
     "Action.Update": "Aktualisieren",
     "Action.Undo": "Zurücksetzen",
-    "Action.Delete": "Löschen"
+    "Action.Delete": "Löschen",
+    "Action.New": "Neu"
 };

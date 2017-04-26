@@ -13,6 +13,7 @@ import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
+import {CareerElement} from '../../model/CareerElement';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -44,6 +45,9 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
         newState = state.addAPICareers(action.payload);
     } else if(action.requestType === APIRequestType.RequestSectors) {
         newState = state.addAPISectors(action.payload);
+    } else if(action.requestType === APIRequestType.SaveCareerElement) {
+        console.log(action.payload);
+        newState = state.changeProfile(state.profile.updateCareerElement(CareerElement.create(action.payload)));
     }
     return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }
