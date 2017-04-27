@@ -62,7 +62,9 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                                 {this.props.children}
                                 </tbody>
                             </table>
-                            <IconButton iconClassName="material-icons" onClick={this.props.onAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
+                        </div>
+                        <div style={{textAlign: "center"}}>
+                            <IconButton style={{display:"inline-block"}} iconClassName="material-icons" onClick={this.props.onAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
                         </div>
                     </CardMedia>
                 </Card>
