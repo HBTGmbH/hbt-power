@@ -72,6 +72,20 @@ export class Profile {
         );
     }
 
+    public changeCurrentPosition(newPosition: string): Profile {
+        return new Profile(
+            this.id,
+            newPosition,
+            this.description,
+            this.sectors,
+            this.careerElements,
+            this.educationEntries,
+            this.languageSkills,
+            this.qualificationEntries
+        );
+    }
+
+
     public updateLanguageSkill(languageSkill: LanguageSkill): Profile {
         return new Profile(
             this.id,

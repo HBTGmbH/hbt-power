@@ -19,6 +19,9 @@ export const de_locale : any = {
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
 
+    // == Specific Specific Localizations == //
+    "HBT.CompanyPosition": "HBT Stellung",
+
 
     // == ACTIONS == //
     "Action.Edit": "Bearbeiten",

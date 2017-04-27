@@ -25,6 +25,7 @@ import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
 import {InternalDatabase} from '../../model/InternalDatabase';
+import {CompanyPosition} from './elements/company-position_module';
 
 
 interface ProfileProps {
@@ -71,7 +72,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return {
             reloadProfile: function() {dispatch(ProfileAsyncActionCreator.requestSingleProfile('nt'));} ,//FIXME no hardcoding
             saveProfile: function(initials: string, database: InternalDatabase) {
-                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()))
+                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()));
             }
         };
     }
@@ -85,8 +86,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {
-        console.log("Saving: ", this.props.database);
-        this.props.saveProfile("nt", this.props.database); //FIXME remove hardcoding
+        console.log('Saving: ', this.props.database);
+        this.props.saveProfile('nt', this.props.database); //FIXME remove hardcoding
     };
 
     private handleResetProfile = (event: TouchTapEvent) => {
@@ -120,6 +121,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             hintText="Werbetext"
                             initialMaxCharacters={500}
                         />
+                        <Divider/>
+                        <CompanyPosition/>
                         <Divider/>
                         <LanguageSkills/>
                         <Divider/>

@@ -1,5 +1,5 @@
 import {Profile} from '../../model/Profile';
-import {ChangeDateAction, ChangeItemIdAction, DeleteEntryAction} from './singleProfileActions';
+import {ChangeDateAction, ChangeItemIdAction, ChangeStringValueAction, DeleteEntryAction} from './singleProfileActions';
 import {EducationEntry} from '../../model/EducationEntry';
 import {DateFieldType, ProfileElementType} from '../../Store';
 import {CareerElement} from '../../model/CareerElement';
@@ -7,6 +7,10 @@ import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
 export class ProfileReducer {
+
+    public static reducerHandleChangeCurrentPosition(profile: Profile, action: ChangeStringValueAction) {
+        return profile.changeCurrentPosition(action.value);
+    }
 
     public static reducerHandleItemIdChange(profile: Profile, action: ChangeItemIdAction): Profile {
         switch(action.elementType) {

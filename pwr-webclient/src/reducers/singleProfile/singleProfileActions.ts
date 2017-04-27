@@ -33,15 +33,12 @@ import {Education} from '../../model/Education';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {Qualification} from '../../model/Qualification';
 
-/**
- * Actions that invokes modification of the abstract.
- * The abstract is the text that is associated with a single profile.
- */
-export interface ChangeAbstractAction extends AbstractAction {
+
+export interface ChangeStringValueAction extends AbstractAction {
     /**
      * The new abstract text.
      */
-    newAbstract: string;
+    value: string;
 }
 
 /**
@@ -130,10 +127,10 @@ export interface DeleteEntryAction extends AbstractAction {
 }
 
 export class ProfileActionCreator {
-    public static changeAbstract(newAbstract: string): ChangeAbstractAction {
+    public static changeAbstract(newAbstract: string): ChangeStringValueAction {
         return {
             type: ActionType.ChangeAbstract,
-            newAbstract: newAbstract
+            value: newAbstract
         };
     }
 
@@ -198,6 +195,13 @@ export class ProfileActionCreator {
             elementType: elementType,
             elementId: id
         };
+    }
+
+    public static changeCurrentPosition(newPosition: string): ChangeStringValueAction {
+        return {
+            type: ActionType.ChangeCurrentPosition,
+            value: newPosition
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 import {APIRequestType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
-    ChangeAbstractAction,
+    ChangeStringValueAction,
     ChangeDateAction,
     ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
@@ -26,8 +26,8 @@ function handleChangeLanguageSkillLevel(state: InternalDatabase, action: ChangeL
     let newProfile: Profile = state.profile.updateLanguageSkill(newLangSkill);
     return state.changeProfile(newProfile);
 }
-function handleChangeAbstract(state: InternalDatabase, action: ChangeAbstractAction): InternalDatabase {
-    let newProfile: Profile = state.profile.changeDescription(action.newAbstract);
+function handleChangeAbstract(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
+    let newProfile: Profile = state.profile.changeDescription(action.value);
     return state.changeProfile(newProfile);
 }
 
@@ -80,7 +80,7 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
     switch(action.type) {
         // == Profile Element modification == //
         case ActionType.ChangeAbstract:
-            return handleChangeAbstract(state, <ChangeAbstractAction> action);
+            return handleChangeAbstract(state, <ChangeStringValueAction> action);
         case ActionType.ChangeLanguageSkillLevel:
             return handleChangeLanguageSkillLevel(state, <ChangeLanguageSkillLevelAction> action);
         case ActionType.ChangeDate: {
@@ -93,6 +93,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         }
         case ActionType.DeleteEntry: {
             let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile, <DeleteEntryAction> action);
+            return state.changeProfile(newProfile);
+        }
+        case ActionType.ChangeCurrentPosition: {
+            let newProfile: Profile = ProfileReducer.reducerHandleChangeCurrentPosition(state.profile, <ChangeStringValueAction> action);
             return state.changeProfile(newProfile);
         }
         // == Language Suggestion requests == //
