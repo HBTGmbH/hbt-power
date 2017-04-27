@@ -85,6 +85,19 @@ export class Profile {
         );
     }
 
+    public removeLanguageSkill(id: number): Profile {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectors,
+            this.careerElements,
+            this.educationEntries,
+            this.languageSkills.remove(id),
+            this.qualificationEntries
+        );
+    }
+
     public updateCareerElement(careerElement: CareerElement): Profile {
         return new Profile(
             this.id,
@@ -124,6 +137,19 @@ export class Profile {
         );
     }
 
+    public removeEducationEntry(id: number): Profile {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectors,
+            this.careerElements,
+            this.educationEntries.remove(id),
+            this.languageSkills,
+            this.qualificationEntries
+        );
+    }
+
     public updateQualificationEntry(qualificationEntry: QualificationEntry): Profile {
         return new Profile(
             this.id,
@@ -134,6 +160,19 @@ export class Profile {
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries.set(qualificationEntry.id, qualificationEntry)
+        );
+    }
+
+    removeQualificationEntry(id: number) {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectors,
+            this.careerElements,
+            this.educationEntries,
+            this.languageSkills,
+            this.qualificationEntries.remove(id)
         );
     }
 

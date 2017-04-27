@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, TextField} from 'material-ui';
+import {AutoComplete, DatePicker, IconButton, TextField, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import * as Immutable from 'immutable';
@@ -39,6 +39,12 @@ interface EducationEntryLocalProps {
      * @param id of the education entry initially given to this module.
      */
     onEducationChange(newEducationId: number, id: number): void;
+
+    /**
+     * Fixme document
+     * @param id
+     */
+    onDelete(id: number): void;
 
 }
 
@@ -105,6 +111,9 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         }
     };
 
+    private handleDeleteButtonPress = (event: TouchTapEvent) => {
+        this.props.onDelete(this.props.educationEntry.id);
+    };
 
     render() {
         return(
@@ -129,6 +138,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                         disabled={this.state.autoCompleteDisabled}
                     />
                     <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                 </td>
             </tr>
         );

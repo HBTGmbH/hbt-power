@@ -41,6 +41,7 @@ interface EducationDispatch {
     onDateChange(newDate: Date, id: number): void;
     onEducationEntryEducationChange(newEducationId: number, id: number): void;
     addEducationEntry(educationId: number, educations: Immutable.Map<number, Education>): void;
+    deleteEducationEntry(educationEntryId: number): void;
 }
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
@@ -71,6 +72,9 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
             },
             addEducationEntry: function(educationId: number, educations: Immutable.Map<number, Education>) {
                 dispatch(ProfileAsyncActionCreator.saveEducationEntry("nt", EducationEntry.createEmpty(educationId), educations)); //Fixme hardcoding nt
+            },
+            deleteEducationEntry: function(educationEntryId: number) {
+                dispatch(ProfileActionCreator.deleteEntry(educationEntryId, ProfileElementType.EducationEntry));
             }
         };
     }
@@ -95,6 +99,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                         educations={this.props.educations}
                         onDateChange={this.props.onDateChange}
                         onEducationChange={this.props.onEducationEntryEducationChange}
+                        onDelete={this.props.deleteEducationEntry}
                     />);
                 }).toList()}
             </ProfileElement>

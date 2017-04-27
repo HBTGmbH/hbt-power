@@ -46,6 +46,12 @@ export class ProfileReducer {
                 return profile.removeCareerElement(action.elementId);
             case ProfileElementType.SectorEntry:
                 return profile.removeSectorEntry(action.elementId);
+            case ProfileElementType.EducationEntry:
+                return profile.removeEducationEntry(action.elementId);
+            case ProfileElementType.QualificationEntry:
+                return profile.removeQualificationEntry(action.elementId);
+            case ProfileElementType.LanguageEntry:
+                return profile.removeLanguageSkill(action.elementId);
             default:
                 return profile;
         }
