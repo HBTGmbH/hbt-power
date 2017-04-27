@@ -4,7 +4,7 @@
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
-import {AutoComplete, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
+import {AutoComplete, IconButton, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {connect} from 'react-redux';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
@@ -30,6 +30,8 @@ interface SingleLanguageLocalProps {
      * The ID of the language
      */
     id: number;
+
+    onDelete(id: number): void;
 }
 
 interface SingleLanguageDispatch {
@@ -39,7 +41,7 @@ interface SingleLanguageDispatch {
 
 interface SingleLanguageLocalState {
     nameAutoCompleteValue: string;
-
+    editDisabled: boolean;
     backgroundColor: string;
 }
 
@@ -49,7 +51,8 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
         super(props);
         this.state = {
             nameAutoCompleteValue: props.languages.get(props.languageSkill.languageId).name,
-            backgroundColor: "initial"
+            backgroundColor: "initial",
+            editDisabled: true
         }
     }
 
@@ -111,8 +114,16 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
         this.props.changeLangLevel(value, this.props.id);
     };
 
-    private handleOnClose = () => {
-        console.log("CLOSE!");
+
+
+    private handleToggleEdit = () => {
+        this.setState({
+            editDisabled: !this.state.editDisabled
+        })
+    };
+
+    private handleDeleteButtonPress = () => {
+        this.props.onDelete(this.props.id);
     };
 
     render() {
@@ -123,6 +134,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
                     value={this.props.languageSkill.level}
                     onChange={this.handleLevelChange}
                     style={{"width": "10em"}}
+                    disabled={this.state.editDisabled}
                 >
                     {
                         this.props.possibleLanguageLevels.map(SingleLanguageModule.renderSingleDropDownElement)
@@ -137,7 +149,10 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
                     onUpdateInput={this.handleAutoCompleteChange}
                     onNewRequest={this.handleLanguageRequest}
                     style={{"backgroundColor":this.state.backgroundColor}}
+                    disabled={this.state.editDisabled}
                 />
+                <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
             </td>
         </tr>
         );

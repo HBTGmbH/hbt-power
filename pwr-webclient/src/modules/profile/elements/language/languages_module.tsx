@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
 import {SingleLanguage} from './singleLanguage_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
@@ -9,7 +9,7 @@ import {LanguageSkill} from '../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
 import {Language} from '../../../../model/Language';
-import {ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<number, LanguageSkill>;
@@ -37,13 +37,14 @@ interface LanguageLocalState {
 
 interface LanguageDispatch {
     addLanguageSkill(level: string, languageId: number, languages: Immutable.Map<number, Language>): void;
+    deleteLanguageSkill(id: number): void;
 }
 
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
 
-    private static renderSingleLanguage(language: LanguageSkill, id: number) {
-        return(<SingleLanguage id={id} key={id}/>);
-    }
+    private renderSingleLanguage =(language: LanguageSkill, id: number) => {
+        return(<SingleLanguage id={id} key={id} onDelete={this.props.deleteLanguageSkill}/>);
+    };
 
     private static renderHeader() {
         return (
@@ -65,6 +66,9 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         return {
             addLanguageSkill: function(level: string, languageId: number, languages: Immutable.Map<number, Language>) {
                 dispatch(ProfileAsyncActionCreator.saveLanguageSkill("nt", LanguageSkill.createWithoutId(level,languageId), languages));
+            },
+            deleteLanguageSkill: function(id: number) {
+                dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.LanguageEntry));
             }
         };
     }
@@ -81,7 +85,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
                 tableHeader={LanguagesModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >
-                {this.props.languageSkills.map(LanguagesModule.renderSingleLanguage).toArray()}
+                {this.props.languageSkills.map(this.renderSingleLanguage).toArray()}
             </ProfileElement>
         );
     }

@@ -4,9 +4,10 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../Store';
 import {MenuItem, RaisedButton, Toolbar, ToolbarGroup} from 'material-ui';
+import {PowerLocalize} from '../localization/PowerLocalizer';
 
 interface ToolbarProps {
-
+    userInitials: string;
 }
 
 /**
@@ -36,7 +37,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps) : ToolbarProps {
         return {
-
+            userInitials: state.databaseReducer.loggedInUser
         }
     }
 
@@ -53,6 +54,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     <RaisedButton label="Profil" primary={true}/>
                     <RaisedButton label="Skills" primary={true}/>
                     <RaisedButton label="Logout" primary={true}/>
+                    {PowerLocalize.get("Toolbar.LoggedInAs") + ": " + this.props.userInitials}
                 </ToolbarGroup>
             </Toolbar>
         );

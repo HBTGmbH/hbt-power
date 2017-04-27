@@ -12,10 +12,9 @@ import * as Immutable from 'immutable';
 import {IconButton} from 'material-ui';
 
 interface CareerProps {
-
     careerElements: Immutable.Map<number, CareerElement>;
-
     careerPositions: Immutable.Map<number, CareerPosition>;
+    userInitials: string;
 }
 
 /**
@@ -42,7 +41,7 @@ interface CareerDispatch {
     changeEndDate(newDate: Date, id: number): void;
     changeCareerId(newId: number, id: number): void;
     removeCareerElement(id: number): void;
-    addCareerElement(startDate: Date, endDate:Date, positionId: number, careers: Immutable.Map<number, CareerPosition>): void;
+    addCareerElement(initials: string, positionId: number, careers: Immutable.Map<number, CareerPosition>): void;
 
 }
 
@@ -62,7 +61,8 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     static mapStateToProps(state: ApplicationState, localProps: CareerLocalProps) : CareerProps {
         return {
             careerElements: state.databaseReducer.profile.careerElements,
-            careerPositions: state.databaseReducer.careerPositions
+            careerPositions: state.databaseReducer.careerPositions,
+            userInitials: state.databaseReducer.loggedInUser
         };
     }
 
@@ -80,9 +80,9 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
             removeCareerElement: function(id: number) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.CareerEntry));
             },
-            addCareerElement: function(startDate: Date, endDate:Date, positionId: number, careers: Immutable.Map<number, CareerPosition>) {
-                let careerElement: CareerElement =  CareerElement.createWithoutId(startDate, endDate, positionId);
-                dispatch(ProfileAsyncActionCreator.saveCareerElement("nt",careerElement, careers)) //FIXME hardcoding
+            addCareerElement: function(initials: string, positionId: number, careers: Immutable.Map<number, CareerPosition>) {
+                let careerElement: CareerElement =  CareerElement.createDefault(positionId);
+                dispatch(ProfileAsyncActionCreator.saveCareerElement(initials, careerElement, careers)) //FIXME hardcoding
             }
         };
     }
@@ -106,7 +106,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     private handleAddElement = () => {
         // FIXME this might result in problems when there are no position available
         let positionId: number = this.props.careerPositions.first().id;
-        this.props.addCareerElement(new Date(), new Date(), positionId, this.props.careerPositions);
+        this.props.addCareerElement(this.props.userInitials, positionId, this.props.careerPositions);
     };
 
     render() {

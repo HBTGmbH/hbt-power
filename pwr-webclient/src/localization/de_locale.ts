@@ -1,4 +1,5 @@
 export const de_locale : any = {
+    // == General Wording, Phrasing == //
     "Date.Singular": "Datum",
     "Career.Qualifier" : "Werdegang",
     "CareerStep.Qualifier": "Werdegang-Schritte",
@@ -11,9 +12,12 @@ export const de_locale : any = {
     "Qualification.Plural": "Zusatzqualifikationen",
     "Sector.Singular": "Branche",
     "Sector.Plural": "Branchen",
+    "Today": "Heute",
+
+    // == Component Specific Localizations == //
+    "Toolbar.LoggedInAs": "Eingeloggt als",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
-    "Today": "Heute",
 
 
     // == ACTIONS == //

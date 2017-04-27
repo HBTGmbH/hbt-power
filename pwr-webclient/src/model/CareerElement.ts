@@ -52,11 +52,11 @@ export class CareerElement {
         );
     }
 
-    public static createWithoutId(startDate: Date, endDate: Date, careerPosId: number) {
+    public static createDefault(careerPosId: number) {
         return new CareerElement(
             null,
-            startDate,
-            endDate,
+            new Date(),
+            new Date(),
             careerPosId
         );
     }

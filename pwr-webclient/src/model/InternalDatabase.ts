@@ -28,6 +28,8 @@ export class InternalDatabase {
 
     public languageLevels: Array<string> = ["Beginner", "Intermediate", "Expert", "Native"];
 
+    public readonly loggedInUser: string = "nt";
+
     public readonly profile: Profile;
 
     public readonly careerPositions : Immutable.Map<number, CareerPosition> = Immutable.Map<number, CareerPosition>();
