@@ -18,7 +18,7 @@ export class SectorEntry {
     }
 
     static create(apiSectorEntry: APISectorEntry): SectorEntry {
-        return new SectorEntry(apiSectorEntry.id, apiSectorEntry.sector.id)
+        return new SectorEntry(Number(apiSectorEntry.id), Number(apiSectorEntry.sector.id))
     }
 
     /**

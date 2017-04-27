@@ -37,7 +37,9 @@ export class LanguageSkill {
      * @param apiLanguageSkill
      */
     public static create(apiLanguageSkill: APILanguageSkill) {
-        return new LanguageSkill(apiLanguageSkill.id, apiLanguageSkill.language.id, apiLanguageSkill.level);
+        return new LanguageSkill(
+            Number(apiLanguageSkill.id),
+            Number(apiLanguageSkill.language.id), apiLanguageSkill.level);
     }
 
     public static createWithoutId(level: string, languageId: number): LanguageSkill {

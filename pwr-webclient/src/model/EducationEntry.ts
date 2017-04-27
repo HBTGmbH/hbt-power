@@ -42,9 +42,9 @@ export class EducationEntry {
      */
     public static create(apiEducation: APIEducationStep): EducationEntry {
         return new EducationEntry(
-            apiEducation.id,
+            Number(apiEducation.id),
             new Date(apiEducation.date),
-            apiEducation.education.id);
+            Number(apiEducation.education.id));
     }
 
     public static createEmpty(educationId: number) {

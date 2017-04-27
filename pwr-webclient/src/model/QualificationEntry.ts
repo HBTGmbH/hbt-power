@@ -23,8 +23,8 @@ export class QualificationEntry {
 
     public static create(apiQualificationEntry: APIQualificationEntry): QualificationEntry {
         return new QualificationEntry(
-            apiQualificationEntry.id,
-            apiQualificationEntry.qualification.id,
+            Number(apiQualificationEntry.id),
+            Number(apiQualificationEntry.qualification.id),
             new Date(apiQualificationEntry.date)
         );
     }

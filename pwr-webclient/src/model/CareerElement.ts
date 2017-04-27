@@ -45,10 +45,10 @@ export class CareerElement {
     public static create(apiCareerElement: APICareerElement): CareerElement {
         console.log(apiCareerElement);
         return new CareerElement(
-            apiCareerElement.id,
+            Number(apiCareerElement.id),
             new Date(apiCareerElement.startDate),
             isNullOrUndefined(apiCareerElement.endDate) ? null : new Date(apiCareerElement.endDate),
-            apiCareerElement.position.id
+            Number(apiCareerElement.position.id)
         );
     }
 
