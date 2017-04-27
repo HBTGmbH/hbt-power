@@ -30,6 +30,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
        'backgroundColor' : Color.HBTSilver.toCSSRGBString()
     };
 
+
     render() {
         return(
             <div>
@@ -50,7 +51,9 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                                 {this.props.children}
                                 </tbody>
                             </table>
+
                             <IconButton iconClassName="material-icons" onClick={this.props.onAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
+
                         </div>
 
                     </CardMedia>

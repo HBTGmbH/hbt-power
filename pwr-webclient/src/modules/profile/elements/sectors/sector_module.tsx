@@ -27,7 +27,7 @@ interface SingleSectorLocalProps {
 interface SingleSectorState {
     autoCompleteValue: string;
     autoCompleteValues: Array<Sector>;
-    autoCompleteDisabled: boolean;
+    editDisabled: boolean;
 }
 
 export class SingleSectorModule extends React.Component<SingleSectorLocalProps, SingleSectorState> {
@@ -39,7 +39,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         this.state = {
             autoCompleteValue: props.sectors.get(props.sectorEntry.sectorId).name,
             autoCompleteValues: props.sectors.map((value, key) => value).toArray(),
-            autoCompleteDisabled: true
+            editDisabled: true
         };
     }
 
@@ -51,7 +51,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         if(index >= 0) {
             this.props.onSectorChange(this.state.autoCompleteValues[index].id, this.props.sectorEntry.id);
             this.setState({
-                autoCompleteDisabled: true
+                editDisabled: true
             });
         } else {
             this.setState({
@@ -70,7 +70,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
 
     private handleToggleEdit = () => {
         this.setState({
-            autoCompleteDisabled: !this.state.autoCompleteDisabled
+            editDisabled: !this.state.editDisabled
         });
     };
 
@@ -86,7 +86,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
                         dataSource={this.state.autoCompleteValues}
                         onUpdateInput={this.handleAutoCompleteUpdateInput}
                         onNewRequest={this.handleAutoCompleteNewRequest}
-                        disabled={this.state.autoCompleteDisabled}
+                        disabled={this.state.editDisabled}
                     />
                     <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
                     <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPres} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>

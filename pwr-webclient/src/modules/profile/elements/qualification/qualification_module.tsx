@@ -39,6 +39,7 @@ interface QualificationDispatch {
     onDateChange(newDate: Date, id: number): void;
     onQualificationChange(newQualificationId: number, entryId: number): void;
     addQualificationEntry(qualifications: Immutable.Map<number,Qualification>): void;
+    deleteQualificationEntry(id: number): void;
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
@@ -69,6 +70,9 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
             },
             addQualificationEntry: function(qualifications: Immutable.Map<number,Qualification>) {
                 dispatch(ProfileAsyncActionCreator.saveQualificationEntry("nt", QualificationEntry.createEmpty(qualifications.first().id), qualifications));
+            },
+            deleteQualificationEntry: function(id: number) {
+                dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.QualificationEntry));
             }
         };
     }
@@ -93,6 +97,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                             qualifications={this.props.qualifications}
                             onDateChange={this.props.onDateChange}
                             onQualificationChange={this.props.onQualificationChange}
+                            onDelete={this.props.deleteQualificationEntry}
                         />
                     );
                 }).toArray()}

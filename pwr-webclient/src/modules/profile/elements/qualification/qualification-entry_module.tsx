@@ -36,6 +36,8 @@ interface QualificationEntryLocalProps {
 
     onQualificationChange(newQualificationId: number, entryId: number): void;
 
+    onDelete(qualificationEntryId: number): void;
+
 }
 
 /**
@@ -45,7 +47,7 @@ interface QualificationEntryLocalProps {
  */
 interface QualificationEntryState {
     autoCompleteValue: string;
-    autoCompleteDisabled: boolean;
+    editDisabled: boolean;
 }
 
 
@@ -58,7 +60,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         this.autoCompleteValues = props.qualifications.map((val, key) => val).toArray();
         this.state = {
             autoCompleteValue: props.qualifications.get(props.qualificationEntry.qualificationId).name,
-            autoCompleteDisabled: true
+            editDisabled: true
         };
     }
 
@@ -80,7 +82,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         if(index >= 0) {
             this.props.onQualificationChange(this.autoCompleteValues[index].id, this.props.qualificationEntry.id);
             this.setState({
-                autoCompleteDisabled: true
+                editDisabled: true
             });
         } else {
             this.setState({
@@ -90,8 +92,8 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
     };
 
     private handleToggleEdit = (event: TouchTapEvent) => {
-        this.setState({autoCompleteDisabled: !this.state.autoCompleteDisabled});
-        if(!this.state.autoCompleteDisabled) {
+        this.setState({editDisabled: !this.state.editDisabled});
+        if(!this.state.editDisabled) {
             // Assure that there is no invalid data within the edit field.
             // This is a view-only ensurance, as only validate data will be passed to redux.
             // By using this, confusion on the users end is avoided
@@ -99,6 +101,10 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                 autoCompleteValue: this.props.qualifications.get(this.props.qualificationEntry.qualificationId).name
             });
         }
+    };
+
+    private handleDeleteButtonClick = (event: TouchTapEvent) => {
+        this.props.onDelete(this.props.qualificationEntry.id);
     };
 
     render() {
@@ -111,6 +117,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                         value={this.props.qualificationEntry.date}
                         onChange={this.handleDateChange}
                         formatDate={formatToShortDisplay}
+                        disabled={this.state.editDisabled}
                     />
                 </td>
                 <td>
@@ -121,9 +128,10 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                         dataSource={this.autoCompleteValues}
                         onUpdateInput={this.handleAutoCompleteUpdateInput}
                         onNewRequest={this.handleAutoCompleteRequest}
-                        disabled={this.state.autoCompleteDisabled}
+                        disabled={this.state.editDisabled}
                     />
                     <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                 </td>
             </tr>
         );

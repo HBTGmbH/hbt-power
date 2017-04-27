@@ -55,7 +55,7 @@ interface EducationEntryLocalProps {
  */
 interface EducationEntryState {
     autoCompleteValue: string;
-    autoCompleteDisabled: boolean;
+    editDisabled: boolean;
 }
 
 
@@ -68,7 +68,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         this.autoCompleteValues = props.educations.map((k, v) => {return k}).toArray();
         this.state = {
             autoCompleteValue: this.props.educations.get(this.props.educationEntry.educationId).name,
-            autoCompleteDisabled: true
+            editDisabled: true
         };
     }
 
@@ -90,7 +90,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         if(index >= 0) {
             this.props.onEducationChange(this.autoCompleteValues[index].id, this.props.educationEntry.id);
             this.setState({
-                autoCompleteDisabled: true
+                editDisabled: true
             })
         } else {
             this.setState({
@@ -100,8 +100,8 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
     };
 
     private handleToggleEdit = () => {
-        this.setState({autoCompleteDisabled: !this.state.autoCompleteDisabled});
-        if(!this.state.autoCompleteDisabled) {
+        this.setState({editDisabled: !this.state.editDisabled});
+        if(!this.state.editDisabled) {
             // Assure that there is no invalid data within the edit field.
             // This is a view-only ensurance, as only validate data will be passed to redux.
             // By using this, confusion on the users end is avoided
@@ -125,6 +125,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                         value={this.props.educationEntry.date}
                         onChange={this.handleDateChange}
                         formatDate={formatToShortDisplay}
+                        disabled={this.state.editDisabled}
                     />
                 </td>
                 <td>
@@ -135,7 +136,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                         dataSource={this.autoCompleteValues}
                         onUpdateInput={this.handleAutoCompleteUpdateInput}
                         onNewRequest={this.handleAutoCompleteNewRequest}
-                        disabled={this.state.autoCompleteDisabled}
+                        disabled={this.state.editDisabled}
                     />
                     <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
                     <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
