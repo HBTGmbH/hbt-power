@@ -17,6 +17,8 @@ export enum RequestStatus {
 }
 
 export enum APIRequestType {
+    SaveLanguageSkill,
+    SaveSectorEntry,
     SaveCareerElement,
     RequestSectors,
     RequestCareers,

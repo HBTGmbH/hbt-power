@@ -33,3 +33,11 @@ export function getSectorsSuggestionAPIString(): string {
 export function getSaveCareerElementAPIString(initials: string): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + "/profile/career";
 }
+
+export function getSaveSectorEntryAPIString(initials: string): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + "/profile/sectors";
+}
+
+export function getSaveLangaugeSkillAPIString(initials: string): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + "/profile/languages";
+}

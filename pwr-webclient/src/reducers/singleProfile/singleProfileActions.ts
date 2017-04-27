@@ -12,14 +12,18 @@ import {
     getLangSuggestionAPIString,
     getProfileAPIString,
     getQualificationSuggestionAPIString,
-    getSaveCareerElementAPIString,
-    getSectorsSuggestionAPIString
+    getSaveCareerElementAPIString, getSaveSectorEntryAPIString,
+    getSectorsSuggestionAPIString, getSaveLangaugeSkillAPIString
 } from '../../API_CONFIG';
-import {APICareerElement, APIProfile} from '../../model/APIProfile';
+import {APICareerElement, APILanguageSkill, APIProfile, APISectorEntry} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {CareerElement} from '../../model/CareerElement';
 import {CareerPosition} from '../../model/CareerPosition';
 import * as Immutable from 'immutable';
+import {SectorEntry} from '../../model/SectorEntry';
+import {Sector} from '../../model/Sector';
+import {LanguageSkill} from '../../model/LanguageSkill';
+import {Language} from '../../model/Language';
 
 /**
  * Actions that invokes modification of the abstract.
@@ -112,7 +116,7 @@ export interface ChangeItemIdAction extends AbstractAction {
  * Action used to represent the removal of an entry in the profile. The entry that is removed
  * is defined by the elementType and by their id.
  */
-export interface RemoveEntryAction extends AbstractAction {
+export interface DeleteEntryAction extends AbstractAction {
     elementType: ProfileElementType;
     elementId: number;
 }
@@ -122,7 +126,7 @@ export class ProfileActionCreator {
         return {
             type: ActionType.ChangeAbstract,
             newAbstract: newAbstract
-        }
+        };
     }
 
     public static changeLanguageSkillLevel(newLevel: string, langSkillId: number):ChangeLanguageSkillLevelAction {
@@ -130,7 +134,7 @@ export class ProfileActionCreator {
             type: ActionType.ChangeLanguageSkillLevel,
             newLanguageLevel: newLevel,
             languageSkillId: langSkillId
-        }
+        };
     }
 
     /**
@@ -140,7 +144,7 @@ export class ProfileActionCreator {
     public static APIRequestPending() : AbstractAction {
         return {
             type: ActionType.APIRequestPending
-        }
+        };
     }
 
     /**
@@ -154,7 +158,7 @@ export class ProfileActionCreator {
             type: ActionType.APIRequestSuccess,
             payload: payload,
             requestType: reqType
-        }
+        };
     }
 
     public static APIRequestFailed() : AbstractAction {
@@ -168,7 +172,7 @@ export class ProfileActionCreator {
             newDate: newDate,
             targetField: targetField,
             targetFieldId: id
-        }
+        };
     }
 
     public static changeItemId(newItemId: number, entryId: number, elementType: ProfileElementType): ChangeItemIdAction {
@@ -177,15 +181,15 @@ export class ProfileActionCreator {
             elementType: elementType,
             newItemId: newItemId,
             entryId: entryId
-        }
+        };
     }
 
-    public static removeEntry(id: number, elementType: ProfileElementType): RemoveEntryAction {
+    public static deleteEntry(id: number, elementType: ProfileElementType): DeleteEntryAction {
         return {
-            type: ActionType.RemoveEntry,
+            type: ActionType.DeleteEntry,
             elementType: elementType,
             elementId: id
-        }
+        };
     }
 }
 
@@ -207,7 +211,7 @@ export class ProfileAsyncActionCreator {
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
 
-        }
+        };
     }
 
     public static saveFullProfile(initials: string, profile: APIProfile) {
@@ -219,7 +223,7 @@ export class ProfileAsyncActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
-        }
+        };
     }
 
     public static requestLanguages() {
@@ -230,8 +234,8 @@ export class ProfileAsyncActionCreator {
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
-            })
-        }
+            });
+        };
     }
 
     public static requestEducations() {
@@ -242,8 +246,8 @@ export class ProfileAsyncActionCreator {
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
-            })
-        }
+            });
+        };
     }
 
     public static requestQualifications() {
@@ -255,7 +259,7 @@ export class ProfileAsyncActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
-        }
+        };
     }
 
     public static requestCareers() {
@@ -267,7 +271,7 @@ export class ProfileAsyncActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
-        }
+        };
     }
 
     public static requestSectors() {
@@ -279,7 +283,7 @@ export class ProfileAsyncActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
-        }
+        };
     }
 
     /**
@@ -294,10 +298,43 @@ export class ProfileAsyncActionCreator {
             let apiCareerElement: APICareerElement = careerElement.toAPICareer(careers);
             axios.post(getSaveCareerElementAPIString(initials), apiCareerElement).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveCareerElement));
-            });/*.catch(function(error:any){
+            }).catch(function(error:any){
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
-            });*/
-        }
+            });
+        };
+    }
+
+    /**
+     * FIXME comment
+     * @param initials
+     * @param sectorEntry
+     * @param sectors
+     * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
+     */
+    public static saveSectorEntry(initials:string, sectorEntry: SectorEntry, sectors: Immutable.Map<number, Sector>) {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let apiSectorEntry: APISectorEntry = sectorEntry.toAPISectorEntry(sectors);
+            axios.post(getSaveSectorEntryAPIString(initials), apiSectorEntry).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveSectorEntry));
+            }).catch(function(error: any){
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        };
+    }
+
+    public static saveLanguageSkill(initials: string, languageSkill: LanguageSkill, languages: Immutable.Map<number, Language>){
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let apiLanguageSkill: APILanguageSkill = languageSkill.toAPILanguageSkill(languages);
+            axios.post(getSaveLangaugeSkillAPIString(initials), apiLanguageSkill).then(function(response: AxiosResponse){
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveLanguageSkill));
+            }).catch(function(error: any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        };
     }
 }

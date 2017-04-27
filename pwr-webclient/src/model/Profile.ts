@@ -150,6 +150,19 @@ export class Profile {
         );
     }
 
+    removeSectorEntry(elementId: number): Profile {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectors.remove(elementId),
+            this.careerElements,
+            this.educationEntries,
+            this.languageSkills,
+            this.qualificationEntries
+        );
+    }
+
     // == Serialization & Deserialization == //
 
     private static parseSectors(sectors: Array<APISectorEntry>): Immutable.Map<number, SectorEntry> {
@@ -285,6 +298,7 @@ export class Profile {
             Immutable.Map<number, LanguageSkill>(),
             Immutable.Map<number, QualificationEntry>());
     }
+
 
 
 }

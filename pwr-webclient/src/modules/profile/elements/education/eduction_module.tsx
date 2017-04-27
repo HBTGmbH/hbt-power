@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
-import {DatePicker, TextField} from 'material-ui';
+import {DatePicker, TextField, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {EducationEntry} from '../../../../model/EducationEntry';
@@ -71,12 +71,17 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         };
     }
 
+    private handleAddElement = (event: TouchTapEvent) => {
+        //TODO implement
+    };
+
     render() {
         return(
             <ProfileElement
                 title={PowerLocalize.get('Education.Singular')}
                 subtitleCountedName={PowerLocalize.get('EducationStep.Plural')}
                 tableHeader={EducationModule.renderHeader()}
+                onAddElement={this.handleAddElement}
             >
                 {this.props.educationEntries.map((education, key) => {
                     return(

@@ -13,6 +13,8 @@ export const de_locale : any = {
     "Sector.Plural": "Branchen",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
+    "Today": "Heute",
+
 
     // == ACTIONS == //
     "Action.Edit": "Bearbeiten",

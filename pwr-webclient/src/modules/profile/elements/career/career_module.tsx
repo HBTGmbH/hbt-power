@@ -78,7 +78,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 dispatch(ProfileActionCreator.changeItemId(newId, id, ProfileElementType.CareerEntry));
             },
             removeCareerElement: function(id: number) {
-                dispatch(ProfileActionCreator.removeEntry(id, ProfileElementType.CareerEntry));
+                dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.CareerEntry));
             },
             addCareerElement: function(startDate: Date, endDate:Date, positionId: number, careers: Immutable.Map<number, CareerPosition>) {
                 let careerElement: CareerElement =  CareerElement.createWithoutId(startDate, endDate, positionId);
@@ -115,11 +115,11 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 title={PowerLocalize.get('Career.Qualifier')}
                 subtitleCountedName={PowerLocalize.get('CareerStep.Qualifier')}
                 tableHeader={CareerModule.renderHeader()}
+                onAddElement={this.handleAddElement}
             >
                 {
                     this.getMapAsList()
                 }
-                <IconButton iconClassName="material-icons" onClick={this.handleAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
             </ProfileElement>
 
         );

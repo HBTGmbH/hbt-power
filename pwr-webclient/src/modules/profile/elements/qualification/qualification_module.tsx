@@ -9,6 +9,7 @@ import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
+import {TouchTapEvent} from 'material-ui';
 
 interface QualificationProps {
     qualificationEntries: Immutable.Map<number, QualificationEntry>;
@@ -37,6 +38,7 @@ interface QualificationLocalState {
 interface QualificationDispatch {
     onDateChange(newDate: Date, id: number): void;
     onQualificationChange(newQualificationId: number, entryId: number): void;
+
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
@@ -68,23 +70,29 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         };
     }
 
+    private handleAddElement = (event: TouchTapEvent) => {
+        //TODO implement
+
+    };
+
     render() {
         return(
             <ProfileElement
                 title={PowerLocalize.get('Qualification.Plural')}
                 subtitleCountedName={PowerLocalize.get('Qualification.Plural')}
                 tableHeader={QualificationModule.renderHeader()}
+                onAddElement={this.handleAddElement}
             >
                 {this.props.qualificationEntries.map((q, key) => {
                     return (
                         <SingleQualificationEntry
-                            key={"Qualification.SingleEntry." + key}
+                            key={'Qualification.SingleEntry.' + key}
                             qualificationEntry={q}
                             qualifications={this.props.qualifications}
                             onDateChange={this.props.onDateChange}
                             onQualificationChange={this.props.onQualificationChange}
                         />
-                    )
+                    );
                 }).toArray()}
             </ProfileElement>
         );

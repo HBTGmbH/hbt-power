@@ -6,7 +6,7 @@ import {databaseReducer} from './singleProfile/database-reducer';
  */
 
 export enum ActionType {
-    RemoveEntry,
+    DeleteEntry,
     ChangeItemId,
     ChangeDate,
     APIRequestSuccess,

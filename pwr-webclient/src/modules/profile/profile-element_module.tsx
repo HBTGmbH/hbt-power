@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
     Card, CardHeader, CardMedia, Divider, FontIcon, IconButton, List, Table, TableBody, TableHeader, Toolbar,
-    ToolbarTitle
+    ToolbarTitle, TouchTapEvent
 } from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Color} from '../../utils/ColorUtil';
@@ -11,6 +11,11 @@ interface ProfileElementLocalProps {
     subtitleCountedName: string;
     tableHeader: JSX.Element;
 
+    /**
+     * Callback that is executed when the add button onClick event is invoked.
+     * @param event
+     */
+    onAddElement(event: TouchTapEvent): void;
 }
 
 /**
@@ -45,7 +50,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                                 {this.props.children}
                                 </tbody>
                             </table>
-
+                            <IconButton iconClassName="material-icons" onClick={this.props.onAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
                         </div>
 
                     </CardMedia>

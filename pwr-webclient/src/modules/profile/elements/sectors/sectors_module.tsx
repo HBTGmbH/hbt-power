@@ -8,7 +8,8 @@ import {Sector} from '../../../../model/Sector';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../model/SectorEntry';
 import {SingleSectorModule} from './sector_module';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {TouchTapEvent} from 'material-ui';
 
 interface SectorsProps {
     sectors: Immutable.Map<number, Sector>;
@@ -36,6 +37,12 @@ interface SectorsLocalState {
 
 interface SectorsDispatch {
     onSectorChange(sectorId: number, sectorEntryId: number): void;
+    onSectorDelete(sectorId: number): void;
+    /**
+     * Fixme comment
+     * @param newSectorId
+     */
+    addSectorEntry(newSectorId: number, sectors: Immutable.Map<number, Sector>): void;
 }
 
 class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & SectorsDispatch, SectorsLocalState> {
@@ -44,7 +51,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
     private static renderHeader() {
         return (
             <tr>
-                <th>{PowerLocalize.get("Sector.Singular")}</th>
+                <th>{PowerLocalize.get('Sector.Singular')}</th>
             </tr>
         );
     }
@@ -59,18 +66,29 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : SectorsDispatch {
         return {
             onSectorChange: function(sectorId: number, sectorEntryId: number) {
-                dispatch(ProfileActionCreator.changeItemId(sectorId, sectorEntryId, ProfileElementType.SectorEntry))
+                dispatch(ProfileActionCreator.changeItemId(sectorId, sectorEntryId, ProfileElementType.SectorEntry));
+            },
+            onSectorDelete: function(sectorId: number){
+                dispatch(ProfileActionCreator.deleteEntry(sectorId, ProfileElementType.SectorEntry));
+            },
+            addSectorEntry: function(newSectorId: number, sectors: Immutable.Map<number, Sector>){
+                dispatch(ProfileAsyncActionCreator.saveSectorEntry("nt", SectorEntry.createWithoutId(newSectorId), sectors));//Fixme hardcoded initials
             }
         };
     }
 
+    private handleAddElement = (event: TouchTapEvent) => {
+        this.props.addSectorEntry(this.props.sectors.first().id, this.props.sectors);
+    };
+
     private renderSingleListElement = (sectorEntry: SectorEntry, id:number) => {
         return (
             <SingleSectorModule
-                key={"Sectors.SingleSector." + id}
+                key={'Sectors.SingleSector.' + id}
                 sectorEntry={sectorEntry}
                 sectors={this.props.sectors}
                 onSectorChange={this.props.onSectorChange}
+                onSectorDelete={this.props.onSectorDelete}
             />
             );
     };
@@ -81,6 +99,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 title={PowerLocalize.get('Sector.Plural')}
                 subtitleCountedName={PowerLocalize.get('Sector.Plural')}
                 tableHeader={SectorsModule.renderHeader()}
+                onAddElement={this.handleAddElement}
             >
                 {this.props.sectorEntries.map(this.renderSingleListElement).toArray()}
             </ProfileElement>

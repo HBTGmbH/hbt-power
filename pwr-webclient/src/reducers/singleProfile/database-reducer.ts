@@ -5,7 +5,7 @@ import {
     ChangeDateAction,
     ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
-    ReceiveAPIResponseAction, RemoveEntryAction
+    ReceiveAPIResponseAction, DeleteEntryAction
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
@@ -14,6 +14,7 @@ import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {CareerElement} from '../../model/CareerElement';
+import {SectorEntry} from '../../model/SectorEntry';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -31,6 +32,7 @@ function handleChangeAbstract(state: InternalDatabase, action: ChangeAbstractAct
 // FIXME move to database reducer
 function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
     let newState: InternalDatabase;
+    // FIXME switch-i-fy
     if(action.requestType === APIRequestType.RequestLanguages) {
         newState = state.addAPILanguages(action.payload);
     } else if(action.requestType === APIRequestType.RequestProfile) {
@@ -48,6 +50,10 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
     } else if(action.requestType === APIRequestType.SaveCareerElement) {
         console.log(action.payload);
         newState = state.changeProfile(state.profile.updateCareerElement(CareerElement.create(action.payload)));
+    } else if(action.requestType === APIRequestType.SaveSectorEntry){
+        newState = state.changeProfile(state.profile.updateSectorEntry(SectorEntry.create(action.payload)));
+    } else if(action.requestType === APIRequestType.SaveLanguageSkill) {
+        newState = state.changeProfile(state.profile.updateLanguageSkill(LanguageSkill.create(action.payload)));
     }
     return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }
@@ -79,8 +85,8 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             let newProfile: Profile = ProfileReducer.reducerHandleItemIdChange(state.profile, <ChangeItemIdAction> action);
             return state.changeProfile(newProfile);
         }
-        case ActionType.RemoveEntry: {
-            let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile, <RemoveEntryAction> action);
+        case ActionType.DeleteEntry: {
+            let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile, <DeleteEntryAction> action);
             return state.changeProfile(newProfile);
         }
         // == Language Suggestion requests == //

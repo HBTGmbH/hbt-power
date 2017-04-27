@@ -26,7 +26,7 @@ export class LanguageSkill {
      */
     readonly level: string;
 
-    public constructor(id: number, languageId: number, level: string) {
+    private constructor(id: number, languageId: number, level: string) {
         this.id = id;
         this.languageId = languageId;
         this.level = level;
@@ -38,6 +38,10 @@ export class LanguageSkill {
      */
     public static create(apiLanguageSkill: APILanguageSkill) {
         return new LanguageSkill(apiLanguageSkill.id, apiLanguageSkill.language.id, apiLanguageSkill.level);
+    }
+
+    public static createWithoutId(level: string, languageId: number): LanguageSkill {
+        return new LanguageSkill(null, languageId, level);
     }
 
     /**

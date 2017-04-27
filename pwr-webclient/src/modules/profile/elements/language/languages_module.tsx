@@ -7,9 +7,13 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
+import {TouchTapEvent} from 'material-ui';
+import {Language} from '../../../../model/Language';
+import {ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<number, LanguageSkill>;
+    languages: Immutable.Map<number, Language>;
 }
 
 /**
@@ -32,7 +36,7 @@ interface LanguageLocalState {
 }
 
 interface LanguageDispatch {
-
+    addLanguageSkill(level: string, languageId: number, languages: Immutable.Map<number, Language>): void;
 }
 
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
@@ -52,15 +56,22 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
 
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps) : LanguageProps {
         return {
-            languageSkills: state.databaseReducer.profile.languageSkills
+            languageSkills: state.databaseReducer.profile.languageSkills,
+            languages: state.databaseReducer.languages
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : LanguageDispatch {
         return {
-
+            addLanguageSkill: function(level: string, languageId: number, languages: Immutable.Map<number, Language>) {
+                dispatch(ProfileAsyncActionCreator.saveLanguageSkill("nt", LanguageSkill.createWithoutId(level,languageId), languages));
+            }
         };
     }
+
+    private handleAddElement = (event: TouchTapEvent) => {
+        this.props.addLanguageSkill("", this.props.languages.first().id, this.props.languages);
+    };
 
     render() {
         return(
@@ -68,6 +79,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
                 title={PowerLocalize.get('Language.Singular')}
                 subtitleCountedName={PowerLocalize.get('Language.Plural')}
                 tableHeader={LanguagesModule.renderHeader()}
+                onAddElement={this.handleAddElement}
             >
                 {this.props.languageSkills.map(LanguagesModule.renderSingleLanguage).toArray()}
             </ProfileElement>

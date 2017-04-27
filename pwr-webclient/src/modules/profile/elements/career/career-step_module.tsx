@@ -218,18 +218,22 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                                         formatDate={formatToShortDisplay}
                                     />
                                     <IconButton iconClassName="material-icons"
-                                                tooltip={PowerLocalize.get('Action.Remove')}
+                                                tooltip={PowerLocalize.get('Today')}
                                                 onClick={this.handleDisableEndDatePicker}
-                                    >remove</IconButton>
+                                    >today</IconButton>
                                 </div>
                             )
                         :
                             (
-                                <IconButton
-                                    iconClassName="material-icons"
-                                    tooltip={PowerLocalize.get('Action.Add')}
-                                    onClick={this.handleEnableEndDatePicker}
-                                >add</IconButton>
+                                <div>
+                                    <TextField value= {PowerLocalize.get("Today")}/>
+
+                                    <IconButton
+                                        iconClassName="material-icons"
+                                        tooltip={PowerLocalize.get('Date.Singular')}
+                                        onClick={this.handleEnableEndDatePicker}
+                                    >date_range</IconButton>
+                                </div>
                             )
                     }
                 </td>
