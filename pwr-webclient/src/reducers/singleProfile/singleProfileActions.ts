@@ -207,6 +207,12 @@ export class ProfileActionCreator {
 
 
 export class ProfileAsyncActionCreator {
+
+    /**
+     *
+     * @param initials
+     * @returns {(dispatch:redux.Dispatch<AllConsultantsState>)=>undefined}
+     */
     public static requestSingleProfile(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             // Dispatch the action that sets the status to "Request Pendign" or similar
@@ -214,8 +220,6 @@ export class ProfileAsyncActionCreator {
             // Perform the actual request
             axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
                 let profile: APIProfile = Object.assign({}, response.data);
-                //ProfileAsyncActionCreator.validate(profile);
-                //ProfileAsyncActionCreator.parseInfos(profile);
                 // Parse the dates.
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile));
             }).catch(function(error:any) {
@@ -331,10 +335,17 @@ export class ProfileAsyncActionCreator {
     }
 
     /**
-     * FIXME comment
-     * @param initials
-     * @param sectorEntry
-     * @param sectors
+     * Creates an asynchronous action that saves a single sector entry.
+     *
+     * This invokes a PUT request to the API defined in the API_CONFIG.ts. This operation can be assumed persistent.
+     *
+     * In order to resolve the {@link SectorEntry.sectorId} correctly, the map of all
+     * {@link Sector} elements currently known to the server is needed.This is necessary because the API
+     * expects a nested object, whereas this client stores all information normalized, without nested entities.
+     *
+     * @param initials of the consultant whose profile is updates with the new sector entry
+     * @param sectorEntry is the sector entry that is added to the profile
+     * @param sectors is the immutable map of all possible sectors
      * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
      */
     public static saveSectorEntry(initials:string, sectorEntry: SectorEntry, sectors: Immutable.Map<number, Sector>) {
@@ -349,6 +360,20 @@ export class ProfileAsyncActionCreator {
         };
     }
 
+    /**
+     * Creates an asynchronous action that saves a single language skill to a profile.
+     *
+     * This invokes a PUT request to the API defined in the API_CONFIG.ts. This operation can be assumed persistent.
+     *
+     * In order to resolve the {@link LanguageSkill.languageId} correctly, the map of all
+     * {@link Language} elements currently known to the server is needed.This is necessary because the API
+     * expects a nested object, whereas this client stores all information normalized, without nested entities.
+     *
+     * @param initials of the consultant whose profile is updates with the new sector entry
+     * @param languageSkill is the {@link LanguageSkill} that is added to the profile.
+     * @param languages is the immutable map of all possible {@link Language}s
+     * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
+     */
     public static saveLanguageSkill(initials: string, languageSkill: LanguageSkill, languages: Immutable.Map<number, Language>){
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
@@ -361,6 +386,13 @@ export class ProfileAsyncActionCreator {
         };
     }
 
+    /**
+     * Creates an asynchronous action that saves a single {@link EducationEntry} to a profile.
+     * @param initials are the initials of the consultant whose profile is updated.
+     * @param educationEntry is the {@link EducationEntry} that is added to the profile
+     * @param educations
+     * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
+     */
     public static saveEducationEntry(initials: string, educationEntry: EducationEntry, educations: Immutable.Map<number, Education>) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());

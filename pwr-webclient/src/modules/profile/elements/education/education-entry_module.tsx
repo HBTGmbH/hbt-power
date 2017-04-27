@@ -41,8 +41,8 @@ interface EducationEntryLocalProps {
     onEducationChange(newEducationId: number, id: number): void;
 
     /**
-     * Fixme document
-     * @param id
+     * Invoked when the {@link EducationEntry} associated with this module is supposed to be deleted.
+     * @param id {@link EducationEntry.id} of the entry that is supposed to be deleted.
      */
     onDelete(id: number): void;
 
@@ -82,6 +82,11 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         this.props.onDateChange(date, this.props.educationEntry.id);
     };
 
+    /**
+     * Handles update of the auto complete components input field.
+     * @param searchText the text that had been typed into the autocomplete
+     * @param dataSource useless
+     */
     private handleAutoCompleteUpdateInput = (searchText: string, dataSource: Array<string>) => {
         this.setState({autoCompleteValue: searchText});
     };
