@@ -111,6 +111,19 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
         }
     }
 
+    public componentWillReceiveProps(nextProps: any) {
+        // FIXME
+        let nextPosition = nextProps.careerPositions.get(nextProps.careerElement.careerPositionId).position;
+        let position = this.props.careerPositions.get(this.props.careerElement.careerPositionId).position;
+        let autocomplete = this.state.autoCompleteValue;
+        if(nextProps.careerElement != this.props.careerElement &&
+            this.state.autoCompleteValue == position) {
+            this.setState({
+                autoCompleteValue: nextPosition
+            })
+        }
+    };
+
     /**
      * Handles change of the start date DatePicker
      * @param event is always undefined as to material-ui docs
@@ -228,7 +241,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                         :
                             (
                                 <div>
-                                    <TextField value= {PowerLocalize.get("Today")}/>
+                                    <TextField disabled={true} id={"Career.CareerStep.TextField" + this.props.careerElement.id} value= {PowerLocalize.get("Today")}/>
 
                                     <IconButton
                                         iconClassName="material-icons"

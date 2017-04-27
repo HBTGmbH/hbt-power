@@ -86,8 +86,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {
-        console.log('Saving: ', this.props.database);
-        this.props.saveProfile('nt', this.props.database); //FIXME remove hardcoding
+        this.props.saveProfile(this.props.database.loggedInUser, this.props.database); //FIXME remove hardcoding
     };
 
     private handleResetProfile = (event: TouchTapEvent) => {
@@ -98,18 +97,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return(
             <div className="row">
                 <div className="col-md-1"/>
-                <div className="col-md-2">
-                    <Paper>
-                        <Drawer docked={false}>
-                            <MenuItem primaryText="Werbetext"/>
-                            <MenuItem primaryText="Sprache"/>
-                            <MenuItem primaryText="Branchen"/>
-                            <MenuItem primaryText="Werdegang"/>
-                            <MenuItem primaryText="Ausbildung"/>
-                        </Drawer>
-                    </Paper>
-                </div>
-                <div className="col-md-7">
+                <div className="col-md-10">
                     <Card style={{'padding': '20px'}}>
                         <CardHeader
                             title="John Doe"
@@ -137,14 +125,14 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <br/>
                         <Toolbar style={this.cardToolbarStyle}>
                             <IconButton iconClassName="material-icons" onClick={this.handleSaveProfile} tooltip={PowerLocalize.get('Action.Save')}>done</IconButton>
-                            <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Update')}>update</IconButton>
-                            <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleResetProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
+                            <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Update')}>update</IconButton>
+                            <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
                         </Toolbar>
                         <br/>
 
                     </Card>
                 </div>
-                <div className="col-md-2"/>
+                <div className="col-md-1"/>
             </div>
         );
     }

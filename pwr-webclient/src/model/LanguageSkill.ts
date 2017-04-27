@@ -46,6 +46,10 @@ export class LanguageSkill {
         return new LanguageSkill(null, languageId, level);
     }
 
+    public static createDefault(languageId: number): LanguageSkill {
+        return new LanguageSkill(null, languageId, "");
+    }
+
     /**
      * Fixme doc.
      * @param newLanguageLevel

@@ -14,6 +14,7 @@ import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reduc
 interface LanguageProps {
     languageSkills: Immutable.Map<number, LanguageSkill>;
     languages: Immutable.Map<number, Language>;
+    userInitials: string;
 }
 
 /**
@@ -58,14 +59,15 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps) : LanguageProps {
         return {
             languageSkills: state.databaseReducer.profile.languageSkills,
-            languages: state.databaseReducer.languages
+            languages: state.databaseReducer.languages,
+            userInitials: state.databaseReducer.loggedInUser
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : LanguageDispatch {
         return {
-            addLanguageSkill: function(level: string, languageId: number, languages: Immutable.Map<number, Language>) {
-                dispatch(ProfileAsyncActionCreator.saveLanguageSkill("nt", LanguageSkill.createWithoutId(level,languageId), languages));
+            addLanguageSkill: function(initials: string, languageId: number, languages: Immutable.Map<number, Language>) {
+                dispatch(ProfileAsyncActionCreator.saveLanguageSkill(initials, LanguageSkill.createDefault(languageId), languages));
             },
             deleteLanguageSkill: function(id: number) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.LanguageEntry));
@@ -74,7 +76,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addLanguageSkill("", this.props.languages.first().id, this.props.languages);
+        this.props.addLanguageSkill(this.props.userInitials, this.props.languages.first().id, this.props.languages);
     };
 
     render() {

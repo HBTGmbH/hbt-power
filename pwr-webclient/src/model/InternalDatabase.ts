@@ -4,13 +4,9 @@ import {Qualification} from './Qualification';
 import {CareerPosition} from './CareerPosition';
 import {RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
-import {
-    APICareerPosition, APIEducation, APILanguage, APIProfile, APIQualification, APISector,
-    APISectorEntry
-} from './APIProfile';
+import {APICareerPosition, APIEducation, APILanguage, APIProfile, APIQualification, APISector} from './APIProfile';
 import {Profile} from './Profile';
 import {Sector} from './Sector';
-import {SectorEntry} from './SectorEntry';
 
 
 /**

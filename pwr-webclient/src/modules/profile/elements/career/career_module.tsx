@@ -87,21 +87,6 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
         };
     }
 
-    private getMapAsList(): JSX.Element[] {
-       return this.props.careerElements.map((value, key, index) => {
-            return (
-                <SingleCareerElement
-                    key={"SingleCareerElement." + key}
-                    careerElement={value}
-                    careerPositions={this.props.careerPositions}
-                    onStartDateChange={this.props.changeStartDate}
-                    onEndDateChange={this.props.changeEndDate}
-                    onCareerChange={this.props.changeCareerId}
-                    onDelete={this.props.removeCareerElement}
-                />
-              )
-        }).toArray();
-    }
 
     private handleAddElement = () => {
         // FIXME this might result in problems when there are no position available
@@ -118,7 +103,19 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
                 onAddElement={this.handleAddElement}
             >
                 {
-                    this.getMapAsList()
+                    this.props.careerElements.map((value, key, index) => {
+                        return (
+                            <SingleCareerElement
+                                key={"SingleCareerElement." + key}
+                                careerElement={value}
+                                careerPositions={this.props.careerPositions}
+                                onStartDateChange={this.props.changeStartDate}
+                                onEndDateChange={this.props.changeEndDate}
+                                onCareerChange={this.props.changeCareerId}
+                                onDelete={this.props.removeCareerElement}
+                            />
+                        )
+                    }).toArray()
                 }
             </ProfileElement>
 

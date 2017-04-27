@@ -14,6 +14,7 @@ import {TouchTapEvent} from 'material-ui';
 interface SectorsProps {
     sectors: Immutable.Map<number, Sector>;
     sectorEntries: Immutable.Map<number, SectorEntry>;
+    initials: string;
 }
 
 /**
@@ -42,7 +43,7 @@ interface SectorsDispatch {
      * Fixme comment
      * @param newSectorId
      */
-    addSectorEntry(newSectorId: number, sectors: Immutable.Map<number, Sector>): void;
+    addSectorEntry(initials: string, newSectorId: number, sectors: Immutable.Map<number, Sector>): void;
 }
 
 class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & SectorsDispatch, SectorsLocalState> {
@@ -59,7 +60,8 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
     static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
         return {
             sectors: state.databaseReducer.sectors,
-            sectorEntries: state.databaseReducer.profile.sectors
+            sectorEntries: state.databaseReducer.profile.sectors,
+            initials: state.databaseReducer.loggedInUser
         };
     }
 
@@ -71,14 +73,14 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
             onSectorDelete: function(sectorId: number){
                 dispatch(ProfileActionCreator.deleteEntry(sectorId, ProfileElementType.SectorEntry));
             },
-            addSectorEntry: function(newSectorId: number, sectors: Immutable.Map<number, Sector>){
-                dispatch(ProfileAsyncActionCreator.saveSectorEntry("nt", SectorEntry.createWithoutId(newSectorId), sectors));//Fixme hardcoded initials
+            addSectorEntry: function(initials: string, newSectorId: number, sectors: Immutable.Map<number, Sector>){
+                dispatch(ProfileAsyncActionCreator.saveSectorEntry(initials, SectorEntry.createWithoutId(newSectorId), sectors));//Fixme hardcoded initials
             }
         };
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addSectorEntry(this.props.sectors.first().id, this.props.sectors);
+        this.props.addSectorEntry(this.props.initials, this.props.sectors.first().id, this.props.sectors);
     };
 
     private renderSingleListElement = (sectorEntry: SectorEntry, id:number) => {

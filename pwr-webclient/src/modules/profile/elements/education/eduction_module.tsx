@@ -16,6 +16,8 @@ interface EducationProps {
     educationEntries: Immutable.Map<number, EducationEntry>;
 
     educations: Immutable.Map<number, Education>;
+
+    userInitials: string;
 }
 
 /**
@@ -40,7 +42,7 @@ interface EducationLocalState {
 interface EducationDispatch {
     onDateChange(newDate: Date, id: number): void;
     onEducationEntryEducationChange(newEducationId: number, id: number): void;
-    addEducationEntry(educationId: number, educations: Immutable.Map<number, Education>): void;
+    addEducationEntry(initials: string, educationId: number, educations: Immutable.Map<number, Education>): void;
     deleteEducationEntry(educationEntryId: number): void;
 }
 
@@ -58,7 +60,8 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
     static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps) : EducationProps {
         return {
             educationEntries : state.databaseReducer.profile.educationEntries,
-            educations: state.databaseReducer.educations
+            educations: state.databaseReducer.educations,
+            userInitials: state.databaseReducer.loggedInUser
         };
     }
 
@@ -70,8 +73,8 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
             onEducationEntryEducationChange: function(newEducationId: number, id: number) {
                 dispatch(ProfileActionCreator.changeItemId(newEducationId, id, ProfileElementType.EducationEntry));
             },
-            addEducationEntry: function(educationId: number, educations: Immutable.Map<number, Education>) {
-                dispatch(ProfileAsyncActionCreator.saveEducationEntry("nt", EducationEntry.createEmpty(educationId), educations)); //Fixme hardcoding nt
+            addEducationEntry: function(initials: string, educationId: number, educations: Immutable.Map<number, Education>) {
+                dispatch(ProfileAsyncActionCreator.saveEducationEntry(initials, EducationEntry.createEmpty(educationId), educations)); //Fixme hardcoding nt
             },
             deleteEducationEntry: function(educationEntryId: number) {
                 dispatch(ProfileActionCreator.deleteEntry(educationEntryId, ProfileElementType.EducationEntry));
@@ -80,7 +83,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addEducationEntry(this.props.educations.first().id, this.props.educations);
+        this.props.addEducationEntry(this.props.userInitials, this.props.educations.first().id, this.props.educations);
     };
 
     render() {

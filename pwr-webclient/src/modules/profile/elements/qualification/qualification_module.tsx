@@ -14,6 +14,7 @@ import {TouchTapEvent} from 'material-ui';
 interface QualificationProps {
     qualificationEntries: Immutable.Map<number, QualificationEntry>;
     qualifications: Immutable.Map<number,Qualification>;
+    userInitials: string;
 }
 
 /**
@@ -38,7 +39,7 @@ interface QualificationLocalState {
 interface QualificationDispatch {
     onDateChange(newDate: Date, id: number): void;
     onQualificationChange(newQualificationId: number, entryId: number): void;
-    addQualificationEntry(qualifications: Immutable.Map<number,Qualification>): void;
+    addQualificationEntry(initials: string, qualifications: Immutable.Map<number,Qualification>): void;
     deleteQualificationEntry(id: number): void;
 }
 
@@ -56,7 +57,8 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
             qualificationEntries : state.databaseReducer.profile.qualificationEntries,
-            qualifications: state.databaseReducer.qualifications
+            qualifications: state.databaseReducer.qualifications,
+            userInitials: state.databaseReducer.loggedInUser
         };
     }
 
@@ -68,8 +70,8 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
             onQualificationChange: function(newQualificationId: number, entryId: number) {
                 dispatch(ProfileActionCreator.changeItemId(newQualificationId, entryId, ProfileElementType.QualificationEntry));
             },
-            addQualificationEntry: function(qualifications: Immutable.Map<number,Qualification>) {
-                dispatch(ProfileAsyncActionCreator.saveQualificationEntry("nt", QualificationEntry.createEmpty(qualifications.first().id), qualifications));
+            addQualificationEntry: function(initials: string, qualifications: Immutable.Map<number,Qualification>) {
+                dispatch(ProfileAsyncActionCreator.saveQualificationEntry(initials, QualificationEntry.createEmpty(qualifications.first().id), qualifications));
             },
             deleteQualificationEntry: function(id: number) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.QualificationEntry));
@@ -78,7 +80,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addQualificationEntry(this.props.qualifications);
+        this.props.addQualificationEntry(this.props.userInitials, this.props.qualifications);
     };
 
     render() {
