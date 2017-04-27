@@ -41,3 +41,11 @@ export function getSaveSectorEntryAPIString(initials: string): string {
 export function getSaveLangaugeSkillAPIString(initials: string): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + "/profile/languages";
 }
+
+export function getSaveEducationEntryAPIString(initials: string): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + "/profile/education";
+}
+
+export function getSaveQualificationEntryAPIString(initials: string): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/" + initials + "/profile/qualification";
+}

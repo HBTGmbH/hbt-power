@@ -13,9 +13,13 @@ import {
     getProfileAPIString,
     getQualificationSuggestionAPIString,
     getSaveCareerElementAPIString, getSaveSectorEntryAPIString,
-    getSectorsSuggestionAPIString, getSaveLangaugeSkillAPIString
+    getSectorsSuggestionAPIString, getSaveLangaugeSkillAPIString, getSaveEducationEntryAPIString,
+    getSaveQualificationEntryAPIString
 } from '../../API_CONFIG';
-import {APICareerElement, APILanguageSkill, APIProfile, APISectorEntry} from '../../model/APIProfile';
+import {
+    APICareerElement, APIEducationStep, APILanguageSkill, APIProfile, APIQualificationEntry,
+    APISectorEntry
+} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {CareerElement} from '../../model/CareerElement';
 import {CareerPosition} from '../../model/CareerPosition';
@@ -24,6 +28,10 @@ import {SectorEntry} from '../../model/SectorEntry';
 import {Sector} from '../../model/Sector';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {Language} from '../../model/Language';
+import {EducationEntry} from '../../model/EducationEntry';
+import {Education} from '../../model/Education';
+import {QualificationEntry} from '../../model/QualificationEntry';
+import {Qualification} from '../../model/Qualification';
 
 /**
  * Actions that invokes modification of the abstract.
@@ -286,6 +294,21 @@ export class ProfileAsyncActionCreator {
         };
     }
 
+    private static performAbstractSaveEntryAction(
+        address: string,
+        entry: any,
+        dispatch: redux.Dispatch<InternalDatabase>,
+        requestType: APIRequestType)
+    {
+        dispatch(ProfileActionCreator.APIRequestPending());
+        axios.post(address, entry).then(function(response: AxiosResponse) {
+            dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, requestType));
+        }).catch(function(error:any){
+            console.error(error);
+            dispatch(ProfileActionCreator.APIRequestFailed());
+        });
+    }
+
     /**
      * Fixme comment
      * @param initials
@@ -294,14 +317,12 @@ export class ProfileAsyncActionCreator {
      */
     public static saveCareerElement(initials: string, careerElement: CareerElement, careers: Immutable.Map<number, CareerPosition>) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
             let apiCareerElement: APICareerElement = careerElement.toAPICareer(careers);
-            axios.post(getSaveCareerElementAPIString(initials), apiCareerElement).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveCareerElement));
-            }).catch(function(error:any){
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.performAbstractSaveEntryAction(
+                getSaveCareerElementAPIString(initials),
+                apiCareerElement,
+                dispatch,
+                APIRequestType.SaveCareerElement);
         };
     }
 
@@ -316,12 +337,11 @@ export class ProfileAsyncActionCreator {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             let apiSectorEntry: APISectorEntry = sectorEntry.toAPISectorEntry(sectors);
-            axios.post(getSaveSectorEntryAPIString(initials), apiSectorEntry).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveSectorEntry));
-            }).catch(function(error: any){
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.performAbstractSaveEntryAction(
+                getSaveSectorEntryAPIString(initials),
+                apiSectorEntry,
+                dispatch,
+                APIRequestType.SaveSectorEntry);
         };
     }
 
@@ -329,12 +349,35 @@ export class ProfileAsyncActionCreator {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             let apiLanguageSkill: APILanguageSkill = languageSkill.toAPILanguageSkill(languages);
-            axios.post(getSaveLangaugeSkillAPIString(initials), apiLanguageSkill).then(function(response: AxiosResponse){
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveLanguageSkill));
-            }).catch(function(error: any) {
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.performAbstractSaveEntryAction(
+                getSaveLangaugeSkillAPIString(initials),
+                apiLanguageSkill,
+                dispatch,
+                APIRequestType.SaveLanguageSkill);
+        };
+    }
+
+    public static saveEducationEntry(initials: string, educationEntry: EducationEntry, educations: Immutable.Map<number, Education>) {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let apiEducationEntry: APIEducationStep = educationEntry.toAPIEducationEntry(educations);
+            ProfileAsyncActionCreator.performAbstractSaveEntryAction(
+                getSaveEducationEntryAPIString(initials),
+                apiEducationEntry,
+                dispatch,
+                APIRequestType.SaveEducationStep);
+        };
+    }
+
+    public static saveQualificationEntry(initials: string, qualificationEntry: QualificationEntry, qualifications: Immutable.Map<number, Qualification>) {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let apiQualificationEntry: APIQualificationEntry = qualificationEntry.toAPIQualificationEntry(qualifications);
+            ProfileAsyncActionCreator.performAbstractSaveEntryAction(
+                getSaveQualificationEntryAPIString(initials),
+                apiQualificationEntry,
+                dispatch,
+                APIRequestType.SaveQualificationEntry);
         };
     }
 }

@@ -7,7 +7,7 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Qualification} from '../../../../model/Qualification';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
 
@@ -38,7 +38,7 @@ interface QualificationLocalState {
 interface QualificationDispatch {
     onDateChange(newDate: Date, id: number): void;
     onQualificationChange(newQualificationId: number, entryId: number): void;
-
+    addQualificationEntry(qualifications: Immutable.Map<number,Qualification>): void;
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
@@ -66,13 +66,15 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
             },
             onQualificationChange: function(newQualificationId: number, entryId: number) {
                 dispatch(ProfileActionCreator.changeItemId(newQualificationId, entryId, ProfileElementType.QualificationEntry));
+            },
+            addQualificationEntry: function(qualifications: Immutable.Map<number,Qualification>) {
+                dispatch(ProfileAsyncActionCreator.saveQualificationEntry("nt", QualificationEntry.createEmpty(qualifications.first().id), qualifications));
             }
         };
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        //TODO implement
-
+        this.props.addQualificationEntry(this.props.qualifications);
     };
 
     render() {

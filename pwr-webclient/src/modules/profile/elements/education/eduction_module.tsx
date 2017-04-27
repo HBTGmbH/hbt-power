@@ -8,7 +8,7 @@ import {ProfileElement} from '../../profile-element_module';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import {SingleEducationElement} from './education-entry_module';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
 
 interface EducationProps {
@@ -40,6 +40,7 @@ interface EducationLocalState {
 interface EducationDispatch {
     onDateChange(newDate: Date, id: number): void;
     onEducationEntryEducationChange(newEducationId: number, id: number): void;
+    addEducationEntry(educationId: number, educations: Immutable.Map<number, Education>): void;
 }
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
@@ -67,12 +68,15 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
             },
             onEducationEntryEducationChange: function(newEducationId: number, id: number) {
                 dispatch(ProfileActionCreator.changeItemId(newEducationId, id, ProfileElementType.EducationEntry));
+            },
+            addEducationEntry: function(educationId: number, educations: Immutable.Map<number, Education>) {
+                dispatch(ProfileAsyncActionCreator.saveEducationEntry("nt", EducationEntry.createEmpty(educationId), educations)); //Fixme hardcoding nt
             }
         };
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        //TODO implement
+        this.props.addEducationEntry(this.props.educations.first().id, this.props.educations);
     };
 
     render() {

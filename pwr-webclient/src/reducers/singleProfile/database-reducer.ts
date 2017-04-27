@@ -15,6 +15,8 @@ import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {CareerElement} from '../../model/CareerElement';
 import {SectorEntry} from '../../model/SectorEntry';
+import {EducationEntry} from '../../model/EducationEntry';
+import {QualificationEntry} from '../../model/QualificationEntry';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -54,6 +56,10 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
         newState = state.changeProfile(state.profile.updateSectorEntry(SectorEntry.create(action.payload)));
     } else if(action.requestType === APIRequestType.SaveLanguageSkill) {
         newState = state.changeProfile(state.profile.updateLanguageSkill(LanguageSkill.create(action.payload)));
+    } else if(action.requestType === APIRequestType.SaveEducationStep) {
+        newState = state.changeProfile(state.profile.updateEducationEntry(EducationEntry.create(action.payload)));
+    } else if(action.requestType === APIRequestType.SaveQualificationEntry) {
+        newState = state.changeProfile(state.profile.updateQualificationEntry(QualificationEntry.create(action.payload)));
     }
     return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }

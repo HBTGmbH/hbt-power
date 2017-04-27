@@ -29,6 +29,10 @@ export class QualificationEntry {
         );
     }
 
+    public static createEmpty(qualificationId: number): QualificationEntry {
+        return new QualificationEntry(null, qualificationId, new Date());
+    }
+
     public toAPIQualificationEntry(qualifications: Immutable.Map<number, Qualification>): APIQualificationEntry {
         return {
             id: this.id,

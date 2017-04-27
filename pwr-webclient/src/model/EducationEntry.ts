@@ -47,6 +47,10 @@ export class EducationEntry {
             apiEducation.education.id);
     }
 
+    public static createEmpty(educationId: number) {
+        return new EducationEntry(null, new Date(), educationId);
+    }
+
     public toAPIEducationEntry(educations: Immutable.Map<number, Education>): APIEducationStep {
         return {
             id: this.id,
