@@ -52,6 +52,12 @@ export class CareerElement {
         );
     }
 
+    /**
+     * Creates a default {@link CareerElement} with both dates set to the creation time, a null ID and the given
+     * [@link CareerElement.careerPositionId} set.
+     * @param careerPosId
+     * @returns {CareerElement}
+     */
     public static createDefault(careerPosId: number) {
         return new CareerElement(
             null,
@@ -88,15 +94,17 @@ export class CareerElement {
         return new CareerElement(this.id, this.startDate, this.endDate, newId);
     }
 
+    /**
+     * Converts this {@CareerElement} into it's API specific representation.
+     * @param careerPositionsById
+     * @returns the {@link APICareerElement} that represents this {@link CareerElement}
+     */
     public toAPICareer(careerPositionsById: Immutable.Map<number, CareerPosition>): APICareerElement {
         return {
             id: this.id,
             startDate: this.startDate.toDateString(),
             endDate: this.endDate==null ? null : this.endDate.toDateString(),
-            position: {
-                id: this.careerPositionId,
-                position: careerPositionsById.get(this.careerPositionId).position
-            }
+            position: careerPositionsById.get(this.careerPositionId).toAPI()
         }
     }
 }

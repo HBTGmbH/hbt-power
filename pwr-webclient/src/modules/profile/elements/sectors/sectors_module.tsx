@@ -99,7 +99,6 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         return(
             <ProfileElement
                 title={PowerLocalize.get('Sector.Plural')}
-                subtitleCountedName={PowerLocalize.get('Sector.Plural')}
                 tableHeader={SectorsModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >

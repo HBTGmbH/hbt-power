@@ -16,7 +16,7 @@ import {
     Toolbar,
     TouchTapEvent
 } from 'material-ui';
-import {AbstractText} from './elements/abstract_module';
+import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
 import {Career} from './elements/career/career_module';
@@ -105,7 +105,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         />
                         <br/>
                         <Divider/>
-                        <AbstractText
+                        <ProfileDescription
                             hintText="Werbetext"
                             initialMaxCharacters={500}
                         />

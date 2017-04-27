@@ -98,7 +98,6 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
         return(
             <ProfileElement
                 title={PowerLocalize.get('Career.Qualifier')}
-                subtitleCountedName={PowerLocalize.get('CareerStep.Qualifier')}
                 tableHeader={CareerModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >

@@ -9,7 +9,7 @@ import {LinearProgress, TextField} from 'material-ui';
 import {Grid, Row} from 'react-flexbox-grid';
 import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfileActions';
 
-interface AbstractTextProps {
+interface DescriptionProps {
     abstractText: string;
 }
 
@@ -19,7 +19,7 @@ interface AbstractTextProps {
  * Data that is intended not only for disply, but also for persistence operations has to be placed in the Props interface,
  * and is being managed by redux.
  */
-interface AbstractTextLocalProps {
+interface DescriptionLocalProps {
     initialMaxCharacters: number;
     hintText: string;
 }
@@ -29,7 +29,7 @@ interface AbstractTextLocalProps {
  * flags that indicate if a component is displayed, etc..
  * There is no need for a non-local state, as redux will manage this part.
  */
-interface AbstractTextLocalState {
+interface DescriptionLocalState {
     maxCharacters: number;
     currentBarColor: string;
 }
@@ -37,7 +37,7 @@ interface AbstractTextLocalState {
 /**
  *
  */
-interface AbstractTextDispatch {
+interface DescriptionDispatch {
     changeAbstract(newAbstract: string) : void;
 }
 
@@ -46,14 +46,14 @@ interface AbstractTextDispatch {
  * <p>
  *     This text area is within this module is encapsulated in a grid and is, therefor, responsive.
  */
-class AbstractTextModule extends React.Component<AbstractTextLocalProps & AbstractTextProps & AbstractTextDispatch, AbstractTextLocalState> {
+class DescriptionModule extends React.Component<DescriptionLocalProps & DescriptionProps & DescriptionDispatch, DescriptionLocalState> {
 
 
-    constructor(props: AbstractTextLocalProps & AbstractTextProps & AbstractTextDispatch) {
+    constructor(props: DescriptionLocalProps & DescriptionProps & DescriptionDispatch) {
         super(props);
         this.state = {
             maxCharacters: props.initialMaxCharacters,
-            currentBarColor: AbstractTextModule.calcColor(props.abstractText.length, props.initialMaxCharacters).toCSSRGBString()
+            currentBarColor: DescriptionModule.calcColor(props.abstractText.length, props.initialMaxCharacters).toCSSRGBString()
         }
     }
 
@@ -67,13 +67,13 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps & Abstra
         return color;
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: AbstractTextLocalProps) : AbstractTextProps {
+    public static mapStateToProps(state: ApplicationState, localProps: DescriptionLocalProps) : DescriptionProps {
         return {
             abstractText: state.databaseReducer.profile.description
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : AbstractTextDispatch {
+    public static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : DescriptionDispatch {
         return {
             changeAbstract : function(newAbstract: string) {
                 dispatch(ProfileActionCreator.changeAbstract(newAbstract));
@@ -81,12 +81,12 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps & Abstra
         };
     }
 
-    handleTextChange = (event: React.FormEvent<HTMLSelectElement>) => {
+    private handleTextChange = (event: React.FormEvent<HTMLSelectElement>) => {
         let charCount: number = event.currentTarget.value.length;
         let newString: string = event.currentTarget.value.substring(0, this.state.maxCharacters);
         this.props.changeAbstract(newString);
         this.setState({
-            currentBarColor: AbstractTextModule.calcColor(newString.length, this.state.maxCharacters).toCSSRGBString()
+            currentBarColor: DescriptionModule.calcColor(newString.length, this.state.maxCharacters).toCSSRGBString()
         });
     };
 
@@ -118,4 +118,4 @@ class AbstractTextModule extends React.Component<AbstractTextLocalProps & Abstra
     }
 }
 
-export const AbstractText: React.ComponentClass<AbstractTextLocalProps> = connect(AbstractTextModule.mapStateToProps, AbstractTextModule.mapDispatchToProps)(AbstractTextModule);
+export const ProfileDescription: React.ComponentClass<DescriptionLocalProps> = connect(DescriptionModule.mapStateToProps, DescriptionModule.mapDispatchToProps)(DescriptionModule);

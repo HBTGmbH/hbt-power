@@ -87,7 +87,6 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         return(
             <ProfileElement
                 title={PowerLocalize.get('Qualification.Plural')}
-                subtitleCountedName={PowerLocalize.get('Qualification.Plural')}
                 tableHeader={QualificationModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >

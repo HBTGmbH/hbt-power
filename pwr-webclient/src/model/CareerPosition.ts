@@ -11,6 +11,12 @@ export class CareerPosition {
         this.position = position;
     }
 
+    public toAPI(): APICareerPosition {
+        return {
+            id: this.id,
+            position: this.position
+        }
+    }
     /**
      * Creates a new {@link CareerPosition} from the given API result.
      * @param apiCareerPosition

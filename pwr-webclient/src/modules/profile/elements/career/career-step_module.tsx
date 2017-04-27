@@ -261,6 +261,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                         onUpdateInput={this.handleAutoCompleteUpdateInput}
                         onNewRequest={this.handleAutoCompleteNewRequest}
                         disabled={this.state.editDisabled}
+                        filter={AutoComplete.noFilter}
                     />
                     <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
                     <IconButton iconClassName="material-icons" onClick={this.handleDeleteModule} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>

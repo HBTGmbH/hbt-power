@@ -90,7 +90,6 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         return(
             <ProfileElement
                 title={PowerLocalize.get('Education.Singular')}
-                subtitleCountedName={PowerLocalize.get('EducationStep.Plural')}
                 tableHeader={EducationModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >

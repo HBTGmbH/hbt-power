@@ -83,7 +83,6 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         return(
             <ProfileElement
                 title={PowerLocalize.get('Language.Singular')}
-                subtitleCountedName={PowerLocalize.get('Language.Plural')}
                 tableHeader={LanguagesModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >

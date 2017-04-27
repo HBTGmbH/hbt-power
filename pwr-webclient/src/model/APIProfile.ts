@@ -55,7 +55,8 @@ export interface APISector {
 }
 
 /**
- * Profile the API servers.
+ * Representation of the profile the API returns. Allows type-safe changing of the API response as the compiler will
+ * give notifications.
  */
 export interface APIProfile {
     id: number;
