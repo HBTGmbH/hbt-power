@@ -30,7 +30,7 @@ export class EducationEntry {
      * @returns {EducationEntry}
      */
     public changeEducationId(newId: number): EducationEntry {
-        return new EducationEntry(newId, this.date, this.educationId);
+        return new EducationEntry(this.id, this.date, newId);
     }
 
 

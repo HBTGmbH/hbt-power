@@ -112,7 +112,11 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
     }
 
     public componentWillReceiveProps(nextProps: any) {
-        // FIXME
+        // FIXME nt| This is not a good way to define that the component should re-render, only a test. \
+         // FIXME the problem is that the local state is interfering with the global state(is in concurrency), as
+        // no  element is directly mapped to the glboal state. Rerendering upon update does not take place correctly.
+        // Option A: Write a componentShouldUpdate method
+        // Option B: Attach the global state into the local.
         let nextPosition = nextProps.careerPositions.get(nextProps.careerElement.careerPositionId).position;
         let position = this.props.careerPositions.get(this.props.careerElement.careerPositionId).position;
         let autocomplete = this.state.autoCompleteValue;
@@ -123,6 +127,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
             })
         }
     };
+
 
     /**
      * Handles change of the start date DatePicker
@@ -166,6 +171,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                 editDisabled: true
             })
         } else {
+            console.log(chosenRequest);
             this.setState({
                 autoCompleteValue: this.props.careerPositions.get(this.props.careerElement.careerPositionId).position
             })
@@ -221,7 +227,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                 </td>
                 <td>
                     {
-                        this.state.showEndDatePicker?
+                        this.props.careerElement.endDate != null?
                             (
                                 <div className="row">
                                     <DatePicker
@@ -235,6 +241,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                                     <IconButton iconClassName="material-icons"
                                                 tooltip={PowerLocalize.get('Today')}
                                                 onClick={this.handleDisableEndDatePicker}
+                                                disabled={this.state.editDisabled}
                                     >today</IconButton>
                                 </div>
                             )
@@ -244,6 +251,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                                     <TextField disabled={true} id={"Career.CareerStep.TextField" + this.props.careerElement.id} value= {PowerLocalize.get("Today")}/>
 
                                     <IconButton
+                                        disabled={this.state.editDisabled}
                                         iconClassName="material-icons"
                                         tooltip={PowerLocalize.get('Date.Singular')}
                                         onClick={this.handleEnableEndDatePicker}
@@ -253,6 +261,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                     }
                 </td>
                 <td>
+
                     <AutoComplete
                         id={"Career.Autocomplete." + this.props.careerElement.id}
                         value={this.state.autoCompleteValue}

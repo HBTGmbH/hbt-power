@@ -18,7 +18,7 @@ interface SingleLanguageProps {
     languages: Immutable.Map<number, Language>;
 
     /**
-     * Used to create the dropdown menu
+     * Used to createFromAPI the dropdown menu
      */
     possibleLanguageLevels: string[];
 

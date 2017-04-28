@@ -198,7 +198,7 @@ export class InternalDatabase {
      */
     public parseProfile(profileFromAPI: APIProfile): InternalDatabase {
         console.info("Parsing Profile");
-        let profile: Profile = Profile.create(profileFromAPI);
+        let profile: Profile = Profile.createFromAPI(profileFromAPI);
         console.info("Adding Profile information into suggestion database.");
 
         // references to the readonly property to modify it.

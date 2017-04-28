@@ -106,7 +106,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <br/>
                         <Divider/>
                         <ProfileDescription
-                            hintText="Werbetext"
+                            hintText={PowerLocalize.get("Profile.Description")}
                             initialMaxCharacters={500}
                         />
                         <Divider/>

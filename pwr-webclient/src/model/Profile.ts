@@ -59,19 +59,24 @@ export class Profile {
 
     // == Non-mutating update functions == //
 
+    /**
+     * Non-mutating function that returns a copy of this {@link Profile} with the {@link Profile.description} set to the
+     * given value.
+     * @param newDescription is the description that is set into the new profile.
+     * @returns {Profile} a copy of the old profile with the new {@link Profile.description}
+     */
     public changeDescription(newDescription: string): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            newDescription,
-            this.sectors,
-            this.careerElements,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries
+        return new Profile(this.id, this.currentPosition, newDescription, this.sectors, this.careerElements,
+            this.educationEntries, this.languageSkills, this.qualificationEntries
         );
     }
 
+    /**
+     * Non-mutating function that returns a copy of this {@link Profile] with the {@link Profile.currentPosition} set
+     * to the given value
+     * @param newPosition is set into the new Profile
+     * @returns {Profile} a copy of the old profile with the new {@link Profile.currentPosition}
+     */
     public changeCurrentPosition(newPosition: string): Profile {
         return new Profile(
             this.id,
@@ -326,7 +331,12 @@ export class Profile {
         return res;
     };
 
-    public static create(profile: APIProfile): Profile {
+    /**
+     * Constructs a profile from an API profile.
+     * @param profile
+     * @returns {Profile}
+     */
+    public static createFromAPI(profile: APIProfile): Profile {
         return new Profile(
             profile.id,
             profile.currentPosition,
@@ -340,6 +350,14 @@ export class Profile {
     }
 
 
+    /**
+     * Creates a default, immutable Profile that can be considered as 'empty'
+     *
+     * The default profile has all Immutable.Maps initialized to empty maps, the possible string values initialized
+     * with an empty string, and the ID initialized with -1.
+     *
+     * @returns {Profile} the default profile.
+     */
     public static createDefault(): Profile {
         return new Profile(
             -1,

@@ -21,7 +21,7 @@ export const de_locale : any = {
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
-
+    "Profile.Description": "Werbetext",
 
     // == ACTIONS == //
     "Action.Edit": "Bearbeiten",

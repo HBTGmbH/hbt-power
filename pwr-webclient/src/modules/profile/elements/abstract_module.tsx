@@ -95,6 +95,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
             <Grid fluid>
                 <TextField
                     hintText = {this.props.hintText}
+                    floatingLabelText = {this.props.hintText}
                     fullWidth = {true}
                     multiLine={true}
                     rows={10}
