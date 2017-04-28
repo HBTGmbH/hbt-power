@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, TextField, TouchTapEvent} from 'material-ui';
+import {AutoComplete, DatePicker, IconButton, Paper, TextField, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
@@ -91,16 +91,16 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         }
     };
 
-    private handleToggleEdit = (event: TouchTapEvent) => {
-        this.setState({editDisabled: !this.state.editDisabled});
-        if(!this.state.editDisabled) {
-            // Assure that there is no invalid data within the edit field.
-            // This is a view-only ensurance, as only validate data will be passed to redux.
-            // By using this, confusion on the users end is avoided
-            this.setState({
-                autoCompleteValue: this.props.qualifications.get(this.props.qualificationEntry.qualificationId).name
-            });
-        }
+    private handleSaveButtonClick = (event: TouchTapEvent) => {
+        this.setState({
+            editDisabled: true
+        });
+    };
+
+    private handleFieldTouchClick = (event: TouchTapEvent) => {
+        this.setState({
+            editDisabled: false
+        });
     };
 
     private handleDeleteButtonClick = (event: TouchTapEvent) => {
@@ -111,27 +111,37 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         return(
             <tr>
                 <td>
-                    <DatePicker
-                        id={'Education.DatePicker.' + this.props.qualificationEntry.id}
-                        container="inline"
-                        value={this.props.qualificationEntry.date}
-                        onChange={this.handleDateChange}
-                        formatDate={formatToShortDisplay}
-                        disabled={this.state.editDisabled}
-                    />
-                </td>
-                <td>
-                    <AutoComplete
-                        id={'Qualification.Autocomplete.' + this.props.qualificationEntry.id}
-                        value={this.state.autoCompleteValue}
-                        dataSourceConfig={{text:'name', value:'id'}}
-                        dataSource={this.autoCompleteValues}
-                        onUpdateInput={this.handleAutoCompleteUpdateInput}
-                        onNewRequest={this.handleAutoCompleteRequest}
-                        disabled={this.state.editDisabled}
-                    />
-                    <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <Paper className="row">
+                        <div className="col-md-1">
+                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                            <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                        </div>
+                        <div className="col-md-5">
+                            <div className="fittingContainer" onTouchStart={this.handleFieldTouchClick} onClick={this.handleFieldTouchClick}>
+                                <DatePicker
+                                    id={'Education.DatePicker.' + this.props.qualificationEntry.id}
+                                    container="inline"
+                                    value={this.props.qualificationEntry.date}
+                                    onChange={this.handleDateChange}
+                                    formatDate={formatToShortDisplay}
+                                    disabled={this.state.editDisabled}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="fittingContainer" onTouchStart={this.handleFieldTouchClick} onClick={this.handleFieldTouchClick}>
+                                <AutoComplete
+                                    id={'Qualification.Autocomplete.' + this.props.qualificationEntry.id}
+                                    value={this.state.autoCompleteValue}
+                                    dataSourceConfig={{text:'name', value:'id'}}
+                                    dataSource={this.autoCompleteValues}
+                                    onUpdateInput={this.handleAutoCompleteUpdateInput}
+                                    onNewRequest={this.handleAutoCompleteRequest}
+                                    disabled={this.state.editDisabled}
+                                />
+                            </div>
+                        </div>
+                    </Paper>
                 </td>
             </tr>
         );

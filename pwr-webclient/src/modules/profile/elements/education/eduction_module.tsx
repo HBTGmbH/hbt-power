@@ -50,10 +50,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     private static renderHeader() {
         return (
-            <tr>
-                <th>Datum</th>
-                <th>Bezeichner</th>
-            </tr>
+            <div></div>
         );
     }
 

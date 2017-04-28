@@ -47,10 +47,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
 
     private static renderHeader() {
         return (
-            <tr>
-                <th>{PowerLocalize.get('Date.Singular')}</th>
-                <th>{PowerLocalize.get('Qualification.Plural')}</th>
-            </tr>
+            <div></div>
         );
     }
 

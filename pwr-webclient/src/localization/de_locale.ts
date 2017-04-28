@@ -32,4 +32,5 @@ export const de_locale : any = {
     "Action.New": "Neu",
     "Action.Remove": "Entfernen",
     "Action.Add": "Hinzufügen"
+
 };

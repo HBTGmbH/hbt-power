@@ -3,7 +3,7 @@ import {Sector} from '../../../../model/Sector';
 import {SectorEntry} from '../../../../model/SectorEntry';
 import * as Immutable from 'immutable';
 import * as React from 'react';
-import {AutoComplete, TextField, IconButton, TouchTapEvent} from 'material-ui';
+import {AutoComplete, TextField, IconButton, TouchTapEvent, Paper} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 
 interface SingleSectorLocalProps {
@@ -68,9 +68,15 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         this.props.onSectorDelete(this.props.sectorEntry.id);
     };
 
-    private handleToggleEdit = () => {
+    private handleFieldClickOrTap = (event: TouchTapEvent) => {
         this.setState({
-            editDisabled: !this.state.editDisabled
+            editDisabled: false
+        });
+    };
+
+    private handleSaveButtonClick = (event: TouchTapEvent) => {
+        this.setState({
+            editDisabled: true
         });
     };
 
@@ -79,17 +85,25 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         return(
             <tr>
                 <td>
-                    <AutoComplete
-                        id={'sectors.textfield.' + this.props.sectorEntry.id}
-                        value={this.state.autoCompleteValue}
-                        dataSourceConfig={{text:'name', value:'id'}}
-                        dataSource={this.state.autoCompleteValues}
-                        onUpdateInput={this.handleAutoCompleteUpdateInput}
-                        onNewRequest={this.handleAutoCompleteNewRequest}
-                        disabled={this.state.editDisabled}
-                    />
-                    <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPres} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <Paper className="row">
+                        <div className="col-md-1">
+                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                            <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPres} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                        </div>
+                        <div className="col-md-11">
+                            <div className="fittingContainer" onTouchStart={this.handleFieldClickOrTap} onClick={this.handleFieldClickOrTap}>
+                                <AutoComplete
+                                    id={'sectors.textfield.' + this.props.sectorEntry.id}
+                                    value={this.state.autoCompleteValue}
+                                    dataSourceConfig={{text:'name', value:'id'}}
+                                    dataSource={this.state.autoCompleteValues}
+                                    onUpdateInput={this.handleAutoCompleteUpdateInput}
+                                    onNewRequest={this.handleAutoCompleteNewRequest}
+                                    disabled={this.state.editDisabled}
+                                />
+                            </div>
+                        </div>
+                    </Paper>
                 </td>
             </tr>);
     }

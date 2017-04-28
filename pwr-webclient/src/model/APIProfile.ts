@@ -54,6 +54,7 @@ export interface APISector {
     name: string;
 }
 
+
 /**
  * Representation of the profile the API returns. Allows type-safe changing of the API response as the compiler will
  * give notifications.

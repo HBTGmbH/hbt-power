@@ -49,11 +49,7 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
 
     private static renderHeader() : JSX.Element {
         return (
-            <tr>
-                <th>{PowerLocalize.get("CareerModule.StartDate")}</th>
-                <th>{PowerLocalize.get("CareerModule.EndDate")}</th>
-                <th>{PowerLocalize.get("Qualifier.Singular")}</th>
-            </tr>
+            <div></div>
         );
     }
 

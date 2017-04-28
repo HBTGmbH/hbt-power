@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, TextField} from 'material-ui';
+import {AutoComplete, DatePicker, IconButton, TextField, Paper, Checkbox} from 'material-ui';
 import {CareerElement} from '../../../../model/CareerElement';
 import {CareerPosition} from '../../../../model/CareerPosition';
 import * as Immutable from 'immutable';
@@ -108,7 +108,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
             autoCompleteValue: props.careerPositions.get(props.careerElement.careerPositionId).position,
             editDisabled: true,
             showEndDatePicker: showDatePicker
-        }
+        };
     }
 
     public componentWillReceiveProps(nextProps: any) {
@@ -124,7 +124,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
             this.state.autoCompleteValue == position) {
             this.setState({
                 autoCompleteValue: nextPosition
-            })
+            });
         }
     };
 
@@ -169,111 +169,118 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
             this.props.onCareerChange(this.autoCompleteValues[index].id, this.props.careerElement.id);
             this.setState({
                 editDisabled: true
-            })
+            });
         } else {
             console.log(chosenRequest);
             this.setState({
                 autoCompleteValue: this.props.careerPositions.get(this.props.careerElement.careerPositionId).position
-            })
+            });
         }
     };
 
-    /**
-     * Handles button presses on the Edit Button.
-     */
-    private handleToggleEdit = () => {
-        this.setState({editDisabled: !this.state.editDisabled});
-        if(!this.state.editDisabled) {
-            // Assure that there is no invalid data within the edit field.
-            // This is a view-only ensurance, as only validate data will be passed to redux.
-            // By using this, confusion on the users end is avoided
-            this.setState({
-                autoCompleteValue: this.props.careerPositions.get(this.props.careerElement.careerPositionId).position
-            })
-        }
+    private handleSaveButtonClick = () => {
+        this.setState({
+            editDisabled: true
+        });
+    };
+
+    private handleClickTapField = () => {
+        this.setState({
+            editDisabled: false
+        })
     };
 
     private handleDeleteModule = () => {
         this.props.onDelete(this.props.careerElement.id);
     };
 
-    private handleDisableEndDatePicker = () => {
-        this.props.onEndDateChange(null, this.props.careerElement.id);
+    private handleToggleDatePicker = () => {
+        let show: boolean = !this.state.showEndDatePicker;
         this.setState({
-            showEndDatePicker: false
-        })
+            showEndDatePicker: show
+        });
+        if(show) {
+            this.props.onEndDateChange(new Date(), this.props.careerElement.id);
+        } else {
+            this.props.onEndDateChange(null, this.props.careerElement.id);
+        }
     };
 
-    private handleEnableEndDatePicker = () => {
-        this.props.onEndDateChange(new Date(), this.props.careerElement.id);
-        this.setState({
-            showEndDatePicker: true
-        })
-    };
 
     render() {
 
         return(
             <tr>
                 <td>
-                    <DatePicker
-                        id={'C.DatePick.Start' +  this.props.careerElement.id}
-                        container="inline"
-                        value={this.props.careerElement.startDate}
-                        onChange={this.handleStartDateChange}
-                        formatDate={formatToShortDisplay}
-                        disabled={this.state.editDisabled}
-                    />
-                </td>
-                <td>
-                    {
-                        this.props.careerElement.endDate != null?
-                            (
-                                <div className="row">
-                                    <DatePicker
-                                        id={'C.DatePick.End' + this.props.careerElement.id}
-                                        container="inline"
-                                        value={this.props.careerElement.endDate}
-                                        onChange={this.handleEndDateChange}
-                                        formatDate={formatToShortDisplay}
-                                        disabled={this.state.editDisabled}
-                                    />
-                                    <IconButton iconClassName="material-icons"
-                                                tooltip={PowerLocalize.get('Today')}
-                                                onClick={this.handleDisableEndDatePicker}
+                <Paper className="row">
+                    <div className="col-md-1">
+                        <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                        <IconButton iconClassName="material-icons" onClick={this.handleDeleteModule} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    </div>
+                    <div className="col-md-3">
+                        <div className="fittingContainer" onTouchStart={this.handleClickTapField} onClick={this.handleClickTapField}>
+                            <DatePicker
+                                id={'C.DatePick.Start' +  this.props.careerElement.id}
+                                container="inline"
+                                value={this.props.careerElement.startDate}
+                                onChange={this.handleStartDateChange}
+                                formatDate={formatToShortDisplay}
+                                disabled={this.state.editDisabled}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-md-3">
+                        <div className="fittingContainer" onTouchStart={this.handleClickTapField} onClick={this.handleClickTapField}>
+                            <div className="row">
+                                <div className="col-md-11">
+                            {
+                                this.props.careerElement.endDate != null?
+                                    (
+                                        <div>
+                                            <DatePicker
+                                                id={'C.DatePick.End' + this.props.careerElement.id}
+                                                container="inline"
+                                                value={this.props.careerElement.endDate}
+                                                onChange={this.handleEndDateChange}
+                                                formatDate={formatToShortDisplay}
                                                 disabled={this.state.editDisabled}
-                                    >today</IconButton>
+                                            />
+                                        </div>
+                                    )
+                                :
+                                    (
+                                        <div>
+                                            <TextField disabled={true} id={'Career.CareerStep.TextField' + this.props.careerElement.id} value= {PowerLocalize.get('Today')}/>
+                                        </div>
+                                    )
+                            }
                                 </div>
-                            )
-                        :
-                            (
-                                <div>
-                                    <TextField disabled={true} id={"Career.CareerStep.TextField" + this.props.careerElement.id} value= {PowerLocalize.get("Today")}/>
-
-                                    <IconButton
+                                <div className="col-md-1">
+                                    <Checkbox
                                         disabled={this.state.editDisabled}
-                                        iconClassName="material-icons"
-                                        tooltip={PowerLocalize.get('Date.Singular')}
-                                        onClick={this.handleEnableEndDatePicker}
-                                    >date_range</IconButton>
+                                        checked={this.props.careerElement.endDate != null}
+                                        onCheck={this.handleToggleDatePicker}
+                                        onClick={this.handleClickTapField}
+                                    />
                                 </div>
-                            )
-                    }
-                </td>
-                <td>
-
-                    <AutoComplete
-                        id={"Career.Autocomplete." + this.props.careerElement.id}
-                        value={this.state.autoCompleteValue}
-                        dataSourceConfig={{text:'position', value:'id'}}
-                        dataSource={this.autoCompleteValues}
-                        onUpdateInput={this.handleAutoCompleteUpdateInput}
-                        onNewRequest={this.handleAutoCompleteNewRequest}
-                        disabled={this.state.editDisabled}
-                        filter={AutoComplete.noFilter}
-                    />
-                    <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton iconClassName="material-icons" onClick={this.handleDeleteModule} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-5">
+                        <div className="fittingContainer" onTouchStart={this.handleClickTapField} onClick={this.handleClickTapField}>
+                            <AutoComplete
+                                id={'Career.Autocomplete.' + this.props.careerElement.id}
+                                value={this.state.autoCompleteValue}
+                                dataSourceConfig={{text:'position', value:'id'}}
+                                dataSource={this.autoCompleteValues}
+                                onUpdateInput={this.handleAutoCompleteUpdateInput}
+                                onNewRequest={this.handleAutoCompleteNewRequest}
+                                disabled={this.state.editDisabled}
+                                filter={AutoComplete.noFilter}
+                            />
+                        </div>
+                    </div>
+                </Paper>
                 </td>
             </tr>
         );

@@ -4,7 +4,7 @@
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
-import {AutoComplete, IconButton, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
+import {AutoComplete, IconButton, MenuItem, Paper, SelectField, TouchTapEvent} from 'material-ui';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {connect} from 'react-redux';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
@@ -114,11 +114,15 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
         this.props.changeLangLevel(value, this.props.id);
     };
 
-
-
-    private handleToggleEdit = () => {
+    private handleFieldClicked = (event: TouchTapEvent) => {
         this.setState({
-            editDisabled: !this.state.editDisabled
+            editDisabled: false
+        });
+    };
+
+    private handleSaveButtonClick = (event: TouchTapEvent) => {
+        this.setState({
+            editDisabled: true
         })
     };
 
@@ -130,29 +134,38 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
         return(
         <tr>
             <td>
-                <SelectField
-                    value={this.props.languageSkill.level}
-                    onChange={this.handleLevelChange}
-                    style={{"width": "10em"}}
-                    disabled={this.state.editDisabled}
-                >
-                    {
-                        this.props.possibleLanguageLevels.map(SingleLanguageModule.renderSingleDropDownElement)
-                    }
-                </SelectField>
-            </td>
-            <td>
-                <AutoComplete
-                    hintText={PowerLocalize.get("Language.Singular")}
-                    value={this.state.nameAutoCompleteValue}
-                    dataSource={this.props.possibleLanguageStrings}
-                    onUpdateInput={this.handleAutoCompleteChange}
-                    onNewRequest={this.handleLanguageRequest}
-                    style={{"backgroundColor":this.state.backgroundColor}}
-                    disabled={this.state.editDisabled}
-                />
-                <IconButton iconClassName="material-icons" onClick={this.handleToggleEdit} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                <Paper className="row">
+                    <div className="col-md-1">
+                        <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                        <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    </div>
+                    <div className="col-md-3">
+                        <div onTouchEnd={this.handleFieldClicked} onClick={this.handleFieldClicked} className="fittingContainer">
+                            <SelectField
+                                value={this.props.languageSkill.level}
+                                onChange={this.handleLevelChange}
+                                disabled={this.state.editDisabled}
+                            >
+                                {
+                                    this.props.possibleLanguageLevels.map(SingleLanguageModule.renderSingleDropDownElement)
+                                }
+                            </SelectField>
+                        </div>
+                    </div>
+                    <div className="col-md-6">
+                        <div onTouchEnd={this.handleFieldClicked} onClick={this.handleFieldClicked} className="fittingContainer">
+                            <AutoComplete
+                                hintText={PowerLocalize.get("Language.Singular")}
+                                value={this.state.nameAutoCompleteValue}
+                                dataSource={this.props.possibleLanguageStrings}
+                                onUpdateInput={this.handleAutoCompleteChange}
+                                onNewRequest={this.handleLanguageRequest}
+                                style={{"backgroundColor":this.state.backgroundColor}}
+                                disabled={this.state.editDisabled}
+                            />
+                        </div>
+                    </div>
+                </Paper>
             </td>
         </tr>
         );

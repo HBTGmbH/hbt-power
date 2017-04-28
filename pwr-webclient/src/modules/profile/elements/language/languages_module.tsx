@@ -49,10 +49,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
 
     private static renderHeader() {
         return (
-            <tr>
-                <th>{PowerLocalize.get("Language.Level.Singular")}</th>
-                <th>{PowerLocalize.get("Qualifier.Singular")}</th>
-            </tr>
+            <div></div>
         );
     }
 

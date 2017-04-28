@@ -51,9 +51,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
 
     private static renderHeader() {
         return (
-            <tr>
-                <th>{PowerLocalize.get('Sector.Singular')}</th>
-            </tr>
+            <div/>
         );
     }
 
