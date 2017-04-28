@@ -87,7 +87,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
                 <td>
                     <Paper className="row">
                         <div className="col-md-1">
-                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Lock')}>lock</IconButton>
                             <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPres} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                         </div>
                         <div className="col-md-11">

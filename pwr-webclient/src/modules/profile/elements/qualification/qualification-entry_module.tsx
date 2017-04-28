@@ -113,7 +113,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                 <td>
                     <Paper className="row">
                         <div className="col-md-1">
-                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Lock')}>lock</IconButton>
                             <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                         </div>
                         <div className="col-md-5">

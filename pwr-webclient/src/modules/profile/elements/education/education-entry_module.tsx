@@ -126,7 +126,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                 <td>
                     <Paper className="row">
                         <div className="col-md-1">
-                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Lock')}>lock</IconButton>
                             <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                         </div>
                         <div className="col-md-5">

@@ -31,6 +31,7 @@ export const de_locale : any = {
     "Action.Delete": "Löschen",
     "Action.New": "Neu",
     "Action.Remove": "Entfernen",
-    "Action.Add": "Hinzufügen"
+    "Action.Add": "Hinzufügen",
+    "Action.Lock": "Sperren"
 
 };
