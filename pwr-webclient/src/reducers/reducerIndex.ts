@@ -22,7 +22,8 @@ export enum ActionType {
     RequestConsultants,
     ReceiveConsultants,
     // == Single ConsultantProfile Actions == //
-    ChangeAbstract
+    ChangeAbstract,
+    CreateEntity
 }
 
 

@@ -1,11 +1,11 @@
-import {APIRequestType, RequestStatus} from '../../Store';
+import {APIRequestType, RequestStatus, NameEntityType, ProfileElementType} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeStringValueAction,
     ChangeDateAction,
     ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
-    ReceiveAPIResponseAction, DeleteEntryAction
+    ReceiveAPIResponseAction, DeleteEntryAction, CreateNameEntityAction, ProfileActionCreator
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
@@ -17,6 +17,7 @@ import {CareerElement} from '../../model/CareerElement';
 import {SectorEntry} from '../../model/SectorEntry';
 import {EducationEntry} from '../../model/EducationEntry';
 import {QualificationEntry} from '../../model/QualificationEntry';
+import {Sector} from '../../model/Sector';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -24,11 +25,11 @@ const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
 function handleChangeLanguageSkillLevel(state: InternalDatabase, action: ChangeLanguageSkillLevelAction): InternalDatabase {
     let newLangSkill: LanguageSkill = state.profile.languageSkills.get(action.languageSkillId).changeLevel(action.newLanguageLevel);
     let newProfile: Profile = state.profile.updateLanguageSkill(newLangSkill);
-    return state.changeProfile(newProfile);
+    return state.updateProfile(newProfile);
 }
 function handleChangeAbstract(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
     let newProfile: Profile = state.profile.changeDescription(action.value);
-    return state.changeProfile(newProfile);
+    return state.updateProfile(newProfile);
 }
 
 // FIXME move to database reducer
@@ -51,19 +52,51 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
         newState = state.addAPISectors(action.payload);
     } else if(action.requestType === APIRequestType.SaveCareerElement) {
         console.log(action.payload);
-        newState = state.changeProfile(state.profile.updateCareerElement(CareerElement.create(action.payload)));
+        newState = state.updateProfile(state.profile.updateCareerElement(CareerElement.create(action.payload)));
     } else if(action.requestType === APIRequestType.SaveSectorEntry){
-        newState = state.changeProfile(state.profile.updateSectorEntry(SectorEntry.create(action.payload)));
+        newState = state.updateProfile(state.profile.updateSectorEntry(SectorEntry.create(action.payload)));
     } else if(action.requestType === APIRequestType.SaveLanguageSkill) {
-        newState = state.changeProfile(state.profile.updateLanguageSkill(LanguageSkill.create(action.payload)));
+        newState = state.updateProfile(state.profile.updateLanguageSkill(LanguageSkill.create(action.payload)));
     } else if(action.requestType === APIRequestType.SaveEducationStep) {
-        newState = state.changeProfile(state.profile.updateEducationEntry(EducationEntry.create(action.payload)));
+        newState = state.updateProfile(state.profile.updateEducationEntry(EducationEntry.create(action.payload)));
     } else if(action.requestType === APIRequestType.SaveQualificationEntry) {
-        newState = state.changeProfile(state.profile.updateQualificationEntry(QualificationEntry.create(action.payload)));
+        newState = state.updateProfile(state.profile.updateQualificationEntry(QualificationEntry.create(action.payload)));
     }
     return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }
 
+/**
+ * Handles a potential {@link CreateNameEntityAction}. This validates that a name entity with the given name is not existant, and
+ * then creates it. If an entity with the same name already exists, only the ID update is performed, which then
+ * equals an {@see ChangeItemIdAction}.
+ * @param database
+ * @param action
+ * @returns {InternalDatabase}
+ */
+function handleCreateNameEntity(database: InternalDatabase, action: CreateNameEntityAction): InternalDatabase {
+    switch(action.entityType) {
+        case NameEntityType.Career:
+            return database;
+        case NameEntityType.Education:
+            return database;
+        case NameEntityType.Language:
+            return database;
+        case NameEntityType.Qualification: {
+            return database;
+        }
+        case NameEntityType.Sector: {
+            let sector: Sector = database.getSectorByName(action.name);
+            if(!isNullOrUndefined(sector) && !isNullOrUndefined(action.entryId)) {
+                // Sector already exists. Do not create a new one, only update the ID of the entry.
+                let profile: Profile = ProfileReducer.reducerHandleItemIdChange(database.profile,
+                    ProfileActionCreator.changeItemId(sector.id, action.entryId, ProfileElementType.SectorEntry));
+                return database.updateProfile(profile);
+            } else {
+                return database.createNewSector(new Sector(database.getNextId(), action.name), action.entryId);
+            }
+        }
+    }
+}
 
 /**
  * Reducer for the single profile part of the global state.
@@ -76,7 +109,7 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         state = initialState;
     }
     deepFreeze(state);
-    console.log("ConsultantProfile Reducer called for action type " + ActionType[action.type]);
+    console.log('ConsultantProfile Reducer called for action type ' + ActionType[action.type]);
     switch(action.type) {
         // == Profile Element modification == //
         case ActionType.ChangeAbstract:
@@ -85,20 +118,22 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleChangeLanguageSkillLevel(state, <ChangeLanguageSkillLevelAction> action);
         case ActionType.ChangeDate: {
             let newProfile: Profile = ProfileReducer.reducerHandleChangeDate(state.profile, <ChangeDateAction> action);
-            return state.changeProfile(newProfile);
+            return state.updateProfile(newProfile);
         }
         case ActionType.ChangeItemId: {
             let newProfile: Profile = ProfileReducer.reducerHandleItemIdChange(state.profile, <ChangeItemIdAction> action);
-            return state.changeProfile(newProfile);
+            return state.updateProfile(newProfile);
         }
         case ActionType.DeleteEntry: {
             let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile, <DeleteEntryAction> action);
-            return state.changeProfile(newProfile);
+            return state.updateProfile(newProfile);
         }
         case ActionType.ChangeCurrentPosition: {
             let newProfile: Profile = ProfileReducer.reducerHandleChangeCurrentPosition(state.profile, <ChangeStringValueAction> action);
-            return state.changeProfile(newProfile);
+            return state.updateProfile(newProfile);
         }
+        case ActionType.CreateEntity:
+            return handleCreateNameEntity(state, <CreateNameEntityAction> action);
         // == Language Suggestion requests == //
         case ActionType.APIRequestPending:
             return state.changeAPIRequestStatus(RequestStatus.Pending);

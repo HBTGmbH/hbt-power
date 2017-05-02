@@ -112,7 +112,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
         this.setState({
-            editDisabled: false
+            editDisabled: true
         })
     };
 

@@ -46,6 +46,14 @@ export enum ProfileElementType {
     LanguageEntry
 }
 
+export enum NameEntityType {
+    Sector,
+    Career,
+    Education,
+    Qualification,
+    Language
+}
+
 
 
 export interface ApplicationState {

@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, NameEntityType, ProfileElementType} from '../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Sector} from '../../../../model/Sector';
@@ -44,6 +44,7 @@ interface SectorsDispatch {
      * @param newSectorId
      */
     addSectorEntry(initials: string, newSectorId: number, sectors: Immutable.Map<number, Sector>): void;
+    addSector(name: string, id: number): void;
 }
 
 class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & SectorsDispatch, SectorsLocalState> {
@@ -73,6 +74,9 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
             },
             addSectorEntry: function(initials: string, newSectorId: number, sectors: Immutable.Map<number, Sector>){
                 dispatch(ProfileAsyncActionCreator.saveSectorEntry(initials, SectorEntry.createWithoutId(newSectorId), sectors));//Fixme hardcoded initials
+            },
+            addSector: function(name: string, id: number) {
+                dispatch(ProfileActionCreator.createNameEntity(name, id, NameEntityType.Sector))
             }
         };
     }
@@ -89,6 +93,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 sectors={this.props.sectors}
                 onSectorChange={this.props.onSectorChange}
                 onSectorDelete={this.props.onSectorDelete}
+                onNewSector={this.props.addSector}
             />
             );
     };

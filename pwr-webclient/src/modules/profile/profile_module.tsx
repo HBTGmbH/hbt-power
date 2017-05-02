@@ -1,21 +1,8 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, RequestStatus} from '../../Store';
-import {
-    Card,
-    CardHeader,
-    CircularProgress,
-    Divider,
-    Drawer,
-    FontIcon,
-    IconButton,
-    MenuItem,
-    Paper,
-    Snackbar,
-    Toolbar,
-    TouchTapEvent
-} from 'material-ui';
+import {AllConsultantsState, ApplicationState} from '../../Store';
+import {Card, CardHeader, Divider, IconButton, Toolbar, TouchTapEvent} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -25,7 +12,6 @@ import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {CompanyPosition} from './elements/company-position_module';
 
 
 interface ProfileProps {
@@ -109,8 +95,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             hintText={PowerLocalize.get("Profile.Description")}
                             initialMaxCharacters={500}
                         />
-                        <Divider/>
-                        <CompanyPosition/>
                         <Divider/>
                         <LanguageSkills/>
                         <Divider/>

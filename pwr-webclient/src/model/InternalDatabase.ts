@@ -2,11 +2,14 @@ import {Language} from './Language';
 import {Education} from './Education';
 import {Qualification} from './Qualification';
 import {CareerPosition} from './CareerPosition';
-import {RequestStatus} from '../Store';
+import {ProfileElementType, RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
 import {APICareerPosition, APIEducation, APILanguage, APIProfile, APIQualification, APISector} from './APIProfile';
 import {Profile} from './Profile';
 import {Sector} from './Sector';
+import {ProfileReducer} from '../reducers/singleProfile/profile-reducer';
+import {ProfileActionCreator} from '../reducers/singleProfile/singleProfileActions';
+import {isNullOrUndefined} from 'util';
 
 
 /**
@@ -38,6 +41,7 @@ export class InternalDatabase {
 
     public readonly qualifications: Immutable.Map<number, Qualification> = Immutable.Map<number, Qualification>();
 
+    private static currentId: number = 80000; //FIXME
 
     constructor(
         apiRequestStatus: RequestStatus,
@@ -72,6 +76,23 @@ export class InternalDatabase {
         )
     }
 
+    public getNextId(): number {
+        return InternalDatabase.currentId++;
+    }
+
+
+    public getSectorByName(name: string): Sector {
+        let result: Sector = null;
+        this.sectors.some(((value, key) => {
+            if (value.name === name) {
+                result = value;
+                return true;
+            }
+            return false;
+        }));
+        return result;
+    }
+
     public changeAPIRequestStatus(newStatus: RequestStatus): InternalDatabase {
         return new InternalDatabase(
             newStatus,
@@ -85,7 +106,7 @@ export class InternalDatabase {
         )
     }
 
-    public changeProfile(newProfile: Profile): InternalDatabase {
+    public updateProfile(newProfile: Profile): InternalDatabase {
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -95,6 +116,31 @@ export class InternalDatabase {
             this.languages,
             this.qualifications,
             this.sectors
+        )
+    }
+
+    /**
+     * Creates a new sector and, optionally, adds it to the profile element with the given ID as name entity.
+     * @param newSector
+     * @param entryId
+     * @returns {InternalDatabase}
+     */
+    public createNewSector(newSector: Sector, entryId?: number): InternalDatabase {
+        let profile: Profile = this.profile;
+        if(!isNullOrUndefined(entryId)) {
+            profile = ProfileReducer.reducerHandleItemIdChange(
+                this.profile,
+                ProfileActionCreator.changeItemId(newSector.id, entryId, ProfileElementType.SectorEntry));
+        }
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            profile,
+            this.careerPositions,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors.set(newSector.id, newSector)
         )
     }
 
@@ -140,7 +186,7 @@ export class InternalDatabase {
         )
     }
 
-    addAPIQualifications(qualifications: Array<APIQualification>) {
+    public addAPIQualifications(qualifications: Array<APIQualification>) {
         console.info("Receiving additional qualifications:", qualifications);
         let newQualifications: Immutable.Map<number, Qualification> = this.qualifications;
         qualifications.forEach(qualification => {
@@ -158,7 +204,7 @@ export class InternalDatabase {
         )
     }
 
-    addAPICareers(careers: Array<APICareerPosition>) {
+    public addAPICareers(careers: Array<APICareerPosition>) {
         console.info("Receiving additional career positions:", careers);
         let newCareerPositions: Immutable.Map<number, CareerPosition> = this.careerPositions;
         careers.forEach(careerPos => {
@@ -176,7 +222,7 @@ export class InternalDatabase {
         )
     }
 
-    addAPISectors(sectors: Array<APISector>) {
+    public addAPISectors(sectors: Array<APISector>) {
         console.info("Receiving additional sectors:", sectors);
         let newSectors: Immutable.Map<number, Sector> = this.sectors;
         sectors.forEach(sector => newSectors = newSectors.set(sector.id, Sector.create(sector)));

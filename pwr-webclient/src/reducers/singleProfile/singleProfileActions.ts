@@ -2,7 +2,7 @@
  * @author nt | nt@hbt.de
  */
 
-import {AllConsultantsState, APIRequestType, DateFieldType, ProfileElementType} from '../../Store';
+import {AllConsultantsState, APIRequestType, DateFieldType, NameEntityType, ProfileElementType} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
@@ -117,6 +117,12 @@ export interface ChangeItemIdAction extends AbstractAction {
     entryId: number;
 }
 
+export interface CreateNameEntityAction extends AbstractAction {
+    entityType: NameEntityType;
+    name: string;
+    entryId: number;
+}
+
 /**
  * Action used to represent the removal of an entry in the profile. The entry that is removed
  * is defined by the elementType and by their id.
@@ -195,6 +201,23 @@ export class ProfileActionCreator {
             elementType: elementType,
             elementId: id
         };
+    }
+
+    /**
+     * Creates a name entity({@see Sector}, {@see Language}, etc...) and assigns the newly created
+     * entity to the entry entity with the given id.
+     * @param name
+     * @param id
+     * @param type
+     * @returns {{type: ActionType, entityType: NameEntityType, name: string}}
+     */
+    public static createNameEntity(name: string, id:number, type: NameEntityType): CreateNameEntityAction {
+        return {
+            type: ActionType.CreateEntity,
+            entityType: type,
+            name: name,
+            entryId: id
+        }
     }
 
     public static changeCurrentPosition(newPosition: string): ChangeStringValueAction {

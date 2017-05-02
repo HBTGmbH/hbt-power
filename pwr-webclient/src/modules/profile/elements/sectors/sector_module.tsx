@@ -22,11 +22,20 @@ interface SingleSectorLocalProps {
      * @param sectorEntryId the id of the {@link SectorEntry} associated with this {@link SingleSectorModule}
      */
     onSectorDelete(sectorEntryId: number): void;
+
+    /**
+     * Invoked when the enter key is pressed inside the text field and the value of the text field
+     * is not represented by any of the values provided in {@see SingleSectorLocalProps.sectors}.
+     *
+     * If the value matches a given sector, {@see SingleSectorLocalProps.onSectorChange} is invoked instead.
+     * @param value
+     * @param sectorEntryId the ID of the {@link SectorEntry} to which the new sector is assigned.
+     */
+    onNewSector(value: string, sectorEntryId: number): void;
 }
 
 interface SingleSectorState {
     autoCompleteValue: string;
-    autoCompleteValues: Array<Sector>;
     editDisabled: boolean;
 }
 
@@ -38,26 +47,40 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         super(props);
         this.state = {
             autoCompleteValue: props.sectors.get(props.sectorEntry.sectorId).name,
-            autoCompleteValues: props.sectors.map((value, key) => value).toArray(),
             editDisabled: true
         };
     }
+
+
 
     private handleAutoCompleteUpdateInput = (searchText: string, dataSource: Array<string>) => {
         this.setState({autoCompleteValue: searchText});
     };
 
-    private handleAutoCompleteNewRequest = (chosenRequest: string, index: number) => {
+    /**
+     * One if the very few unfortunate cases where any has to be uses, as the chosenRequest value may either be a
+     * String(when enter is pressed) or a {@see Sector} when a list element is selected.
+     * A list element is selected when index >= 0
+     * @param chosenRequest
+     * @param index
+     */
+    private handleAutoCompleteNewRequest = (chosenRequest: any, index: number) => {
         if(index >= 0) {
-            this.props.onSectorChange(this.state.autoCompleteValues[index].id, this.props.sectorEntry.id);
-            this.setState({
-                editDisabled: true
-            });
+            let chosen: Sector = chosenRequest as Sector;
+            // One of the values from the dropdown list was chosen
+            this.props.onSectorChange(chosen.id, this.props.sectorEntry.id);
         } else {
-            this.setState({
-                autoCompleteValue: this.props.sectors.get(this.props.sectorEntry.sectorId).name
-            });
+            // Request was submitted independent from the dropdown list.
+            let chosen : String = chosenRequest as String;
+            // Although the string MIGHT equal one of the existing sector entries, this is dispatches
+            // as a 'new' sector entry, as in 'The user told me this is something new'.
+            // The reducer function will handle possible conflicts.
+            this.props.onNewSector(chosenRequest, this.props.sectorEntry.id);
         }
+        // Always invokes disabling of the edit field.
+        this.setState({
+            editDisabled: true
+        });
     };
 
     /**
@@ -70,8 +93,12 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
 
     private handleFieldClickOrTap = (event: TouchTapEvent) => {
         this.setState({
-            editDisabled: false
+            editDisabled: false,
+            // After editing has been activated, there might be consistency problems due to async update operations
+            // The value that is supposed to be in the autocomplete field.
+            autoCompleteValue: this.getSectorName()
         });
+
     };
 
     private handleSaveButtonClick = (event: TouchTapEvent) => {
@@ -80,6 +107,17 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         });
     };
 
+    private getSectorName = () => {
+        // Try catch to avoid various undefined exceptions that happen during the
+        // initialization of this component.
+        // For some reason this gets called before props are properly initialized.
+        try {
+            return this.props.sectors.get(this.props.sectorEntry.sectorId).name;
+        } catch(e){
+            return "";
+        }
+
+    };
 
     render() {
         return(
@@ -94,9 +132,9 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
                             <div className="fittingContainer" onTouchStart={this.handleFieldClickOrTap} onClick={this.handleFieldClickOrTap}>
                                 <AutoComplete
                                     id={'sectors.textfield.' + this.props.sectorEntry.id}
-                                    value={this.state.autoCompleteValue}
+                                    value={this.state.editDisabled ? this.getSectorName(): this.state.autoCompleteValue}
                                     dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.state.autoCompleteValues}
+                                    dataSource={this.props.sectors.toArray()}
                                     onUpdateInput={this.handleAutoCompleteUpdateInput}
                                     onNewRequest={this.handleAutoCompleteNewRequest}
                                     disabled={this.state.editDisabled}
