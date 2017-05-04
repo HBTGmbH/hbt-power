@@ -113,6 +113,11 @@ export interface CreateEntryAction extends  AbstractAction {
     entryType: ProfileElementType;
 }
 
+export interface ChangeDegreeAction extends AbstractAction {
+    newDegree: string;
+    id: string;
+}
+
 /**
  * Action used to represent the removal of an entry in the profile. The entry that is removed
  * is defined by the elementType and by their id.
@@ -223,6 +228,14 @@ export class ProfileActionCreator {
             value: newPosition
         }
     }
+
+    public static changeDegree(newDegree: string, id: string): ChangeDegreeAction {
+        return {
+            type: ActionType.ChangeDegree,
+            newDegree: newDegree,
+            id: id
+        }
+    }
 }
 
 
@@ -254,7 +267,8 @@ export class ProfileAsyncActionCreator {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.put(getProfileAPIString(initials), profile).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull({}, APIRequestType.SaveProfile));
+                console.info("Notifications: ", response.data.notifications);
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveProfile));
             }).catch(function(error:any) {
                 if (error.response) {
                     // The request was made and the server responded with a status code

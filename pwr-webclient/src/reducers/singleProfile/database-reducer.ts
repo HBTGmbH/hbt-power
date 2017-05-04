@@ -1,7 +1,7 @@
 import {APIRequestType, NameEntityType, ProfileElementType, RequestStatus} from '../../Store';
-import {isNullOrUndefined} from 'util';
+import {isNull, isNullOrUndefined} from 'util';
 import {
-    ChangeDateAction,
+    ChangeDateAction, ChangeDegreeAction,
     ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
     ChangeStringValueAction, CreateEntryAction,
@@ -17,6 +17,11 @@ import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {Sector} from '../../model/Sector';
+import {Education} from '../../model/Education';
+import {EducationEntry} from '../../model/EducationEntry';
+import {Language} from '../../model/Language';
+import {Qualification} from '../../model/Qualification';
+import {QualificationEntry} from '../../model/QualificationEntry';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -63,14 +68,37 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
  */
 function handleCreateNameEntity(database: InternalDatabase, action: CreateNameEntityAction): InternalDatabase {
     switch(action.entityType) {
-        case NameEntityType.Career:
+        case NameEntityType.Training:
             return database;
-        case NameEntityType.Education:
-            return database;
-        case NameEntityType.Language:
-            return database;
+        case NameEntityType.Education: {
+            let education: Education = database.getEducationByName(action.name);
+            if(isNullOrUndefined(education)) {
+                education = Education.createNew(action.name);
+            }
+            let educationEntry: EducationEntry = database.profile.educationEntries.get(action.entryId);
+            educationEntry = educationEntry.changeEducationId(education.id);
+            let profile: Profile = database.profile.updateEducationEntry(educationEntry);
+            return database.updateProfile(profile).updateEducation(education);
+        }
+        case NameEntityType.Language: {
+            let language: Language = database.getLanguageByName(action.name);
+            if(isNullOrUndefined(language)) {
+                language = Language.createNew(action.name);
+            }
+            let languageSkill: LanguageSkill = database.profile.languageSkills.get(action.entryId);
+            languageSkill.changeLanguageId(language.id);
+            let profile: Profile = database.profile.updateLanguageSkill(languageSkill);
+            return database.updateProfile(profile).updateLanguage(language);
+        }
         case NameEntityType.Qualification: {
-            return database;
+            let qualification: Qualification = database.getQualificationByName(action.name);
+            if(isNullOrUndefined(qualification)) {
+                qualification = Qualification.createNew(action.name);
+            }
+            let qualificationEntry: QualificationEntry = database.profile.qualificationEntries.get(action.entryId);
+            qualificationEntry.changeQualificationId(qualification.id);
+            let profile: Profile = database.profile.updateQualificationEntry(qualificationEntry);
+            return database.updateProfile(profile).updateQualification(qualification);
         }
         case NameEntityType.Sector: {
             let sector: Sector = database.getSectorByName(action.name);
@@ -122,6 +150,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         }
         case ActionType.ChangeCurrentPosition: {
             let newProfile: Profile = ProfileReducer.reducerHandleChangeCurrentPosition(state.profile, <ChangeStringValueAction> action);
+            return state.updateProfile(newProfile);
+        }
+        case ActionType.ChangeDegree: {
+            let newProfile: Profile = ProfileReducer.changeDegree(state.profile, <ChangeDegreeAction> action);
             return state.updateProfile(newProfile);
         }
         case ActionType.CreateEntity:

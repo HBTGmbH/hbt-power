@@ -21,6 +21,7 @@ export interface APIEducationStep {
     id: number;
     startDate: string;
     endDate: string;
+    degree: string;
     education: APIEducation;
 }
 
@@ -74,4 +75,9 @@ export interface APIProfile {
     qualification: Array<APIQualificationEntry>;
     education: Array<APIEducationStep>;
     sectors: Array<APISectorEntry>;
+}
+
+export interface APIProfileUpdateResponse {
+    profile: APIProfile;
+    notifications: Array<any>;
 }

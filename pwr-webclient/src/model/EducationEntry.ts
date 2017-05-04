@@ -14,18 +14,23 @@ export class EducationEntry {
     public readonly startDate: Date;
     public readonly endDate: Date;
     public readonly educationId: string;
+    public readonly degree: string;
     public readonly isNew: boolean;
 
     private static CURRENT_LOCAL_ID: number = 0;
 
-    private constructor(id: string, startDate: Date, endDate: Date, educationId: string, isNew: boolean) {
+    private constructor(id: string, startDate: Date, endDate: Date, educationId: string, degree: string, isNew: boolean) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.degree = degree;
         this.educationId = educationId;
         this.isNew = isNew;
     }
 
+    public changeDegree(newDegree: string): EducationEntry {
+        return new EducationEntry(this.id, this.startDate, this.endDate, this.educationId, newDegree, this.isNew);
+    }
 
     /**
      * Non mutating function that changes the {@link EducationEntry.startDate} field and returns a copy.
@@ -33,7 +38,7 @@ export class EducationEntry {
      * @returns {EducationEntry} copy
      */
     public changeStartDate(date: Date) : EducationEntry {
-        return new EducationEntry(this.id, date, this.endDate, this.educationId, this.isNew);
+        return new EducationEntry(this.id, date, this.endDate, this.educationId, this.degree, this.isNew);
     };
 
 
@@ -43,7 +48,7 @@ export class EducationEntry {
      * @returns {EducationEntry} copy
      */
     public changeEndDate(date: Date) : EducationEntry {
-        return new EducationEntry(this.id, this.startDate, date, this.educationId, this.isNew);
+        return new EducationEntry(this.id, this.startDate, date, this.educationId,this.degree, this.isNew);
     };
 
     /**
@@ -53,7 +58,7 @@ export class EducationEntry {
      * @returns {EducationEntry}
      */
     public changeEducationId(newId: string): EducationEntry {
-        return new EducationEntry(this.id, this.startDate, this.endDate, newId, this.isNew);
+        return new EducationEntry(this.id, this.startDate, this.endDate, newId, this.degree, this.isNew);
     }
 
 
@@ -69,6 +74,7 @@ export class EducationEntry {
             new Date(apiEducation.startDate),
             new Date(apiEducation.endDate),
             String(apiEducation.education.id),
+            String(apiEducation.degree),
             false);
     }
 
@@ -78,16 +84,18 @@ export class EducationEntry {
      * @returns {EducationEntry}
      */
     public static createNew() {
-        return new EducationEntry(NEW_ENTITY_PREFIX + String(EducationEntry.CURRENT_LOCAL_ID++), new Date(), new Date(), UNDEFINED_ID, true);
+        return new EducationEntry(NEW_ENTITY_PREFIX + String(EducationEntry.CURRENT_LOCAL_ID++), new Date(), new Date(), UNDEFINED_ID, "", true);
     }
 
 
     public toAPIEducationEntry(educations: Immutable.Map<string, Education>): APIEducationStep {
+        console.log(this);
         return {
             id: this.isNew ? null : Number.parseInt(this.id),
             startDate: this.startDate.toISOString(),
             endDate: this.endDate.toISOString(),
-            education: this.educationId == null ? null : educations.get(this.educationId).toAPI()
+            education: this.educationId == null ? null : educations.get(this.educationId).toAPI(),
+            degree: this.degree
         }
     }
 }

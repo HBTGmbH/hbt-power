@@ -31,6 +31,8 @@ export class InternalDatabase {
 
     public languageLevels: Array<string> = ["BASIC", "ADVANCED", "BUSINESS_FLUENT", "NATIVE"];
 
+    public readonly degrees: Immutable.List<string> = Immutable.List<string>(["Bachelor", "Master", "Doktor"]);
+
     public readonly loggedInUser: string = "jd";
 
     public readonly profile: Profile;
@@ -82,13 +84,49 @@ export class InternalDatabase {
 
     public getSectorByName(name: string): Sector {
         let result: Sector = null;
-        this.sectors.some(((value, key) => {
+        this.sectors.some((value, key) => {
             if (value.name === name) {
                 result = value;
                 return true;
             }
             return false;
-        }));
+        });
+        return result;
+    }
+
+    public getEducationByName(name: string): Education {
+        let result: Education = null;
+        this.educations.some((value, key) => {
+            if (value.name === name) {
+                result = value;
+                return true;
+            }
+            return false;
+        });
+        return result;
+    }
+
+    public getLanguageByName(name: string) : Language {
+        let result: Language = null;
+        this.languages.some((value, key) => {
+            if(value.name === name) {
+                result = value;
+                return true;
+            }
+            return false;
+        });
+        return result;
+    }
+
+    public getQualificationByName(name: string): Qualification {
+        let result: Qualification = null;
+        this.qualifications.some((value, key) => {
+            if(value.name === name) {
+                result = value;
+                return true;
+            }
+            return false;
+        });
         return result;
     }
 
@@ -118,6 +156,45 @@ export class InternalDatabase {
         )
     }
 
+    public updateEducation(education: Education): InternalDatabase {
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations.set(education.id, education),
+            this.languages,
+            this.qualifications,
+            this.sectors
+        );
+
+    }
+
+    public updateLanguage(language: Language) : InternalDatabase {
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations,
+            this.languages.set(language.id, language),
+            this.qualifications,
+            this.sectors
+        );
+    }
+
+    public updateQualification(qualification: Qualification): InternalDatabase {
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations,
+            this.languages,
+            this.qualifications.set(qualification.id, qualification),
+            this.sectors
+        )
+    };
     /**
      * Creates a new sector and, optionally, adds it to the profile element with the given ID as name entity.
      * FIXME NT

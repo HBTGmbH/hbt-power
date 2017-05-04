@@ -1,4 +1,5 @@
 import {APIQualification} from './APIProfile';
+import {NEW_ENTITY_PREFIX} from './PwrConstants';
 export class Qualification {
     public readonly id: string;
     public readonly name: string;
@@ -17,6 +18,10 @@ export class Qualification {
             String(apiQualification.id),
             apiQualification.name,
             false);
+    }
+
+    public static createNew(name: string) {
+        return new Qualification(NEW_ENTITY_PREFIX + String(Qualification.CURRENT_ID++), name, true);
     }
 
     public toAPI(): APIQualification {

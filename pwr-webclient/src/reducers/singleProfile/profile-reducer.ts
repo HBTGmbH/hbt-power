@@ -1,6 +1,6 @@
 import {Profile} from '../../model/Profile';
 import {
-    ChangeDateAction, ChangeItemIdAction, ChangeStringValueAction, CreateEntryAction,
+    ChangeDateAction, ChangeDegreeAction, ChangeItemIdAction, ChangeStringValueAction, CreateEntryAction,
     DeleteEntryAction
 } from './singleProfileActions';
 import {EducationEntry} from '../../model/EducationEntry';
@@ -13,6 +13,12 @@ export class ProfileReducer {
 
     public static reducerHandleChangeCurrentPosition(profile: Profile, action: ChangeStringValueAction) {
         return profile.changeCurrentPosition(action.value);
+    }
+
+    public static changeDegree(profile: Profile, action: ChangeDegreeAction) {
+        let entry: EducationEntry = profile.educationEntries.get(action.id);
+        entry = entry.changeDegree(action.newDegree);
+        return profile.updateEducationEntry(entry);
     }
 
     public static reducerHandleItemIdChange(profile: Profile, action: ChangeItemIdAction): Profile {

@@ -1,7 +1,10 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
+import {
+    AllConsultantsState, ApplicationState, DateFieldType, NameEntityType,
+    ProfileElementType
+} from '../../../../Store';
 import {TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
@@ -18,6 +21,8 @@ interface EducationProps {
     educations: Immutable.Map<string, Education>;
 
     userInitials: string;
+
+    degrees: Immutable.List<string>;
 }
 
 /**
@@ -42,8 +47,10 @@ interface EducationLocalState {
 interface EducationDispatch {
     changeEndDate(newDate: Date, id: string): void;
     changeStartDate(newDate: Date, id: string): void;
+    changeDegree(newDegree: string, id: string): void;
     onEducationEntryEducationChange(newEducationId: string, id: string): void;
     addEducationEntry(): void;
+    addEducation(name: string, id:string): void;
     deleteEducationEntry(educationEntryId: string): void;
 }
 
@@ -59,7 +66,8 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         return {
             educationEntries : state.databaseReducer.profile.educationEntries,
             educations: state.databaseReducer.educations,
-            userInitials: state.databaseReducer.loggedInUser
+            userInitials: state.databaseReducer.loggedInUser,
+            degrees: state.databaseReducer.degrees
         };
     }
 
@@ -79,6 +87,12 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
             },
             deleteEducationEntry: function(educationEntryId: string) {
                 dispatch(ProfileActionCreator.deleteEntry(educationEntryId, ProfileElementType.EducationEntry));
+            },
+            changeDegree: function(newDegree: string, id: string) {
+                dispatch(ProfileActionCreator.changeDegree(newDegree, id));
+            },
+            addEducation: function(name: string, id: string) {
+                dispatch(ProfileActionCreator.createNameEntity(name, id, NameEntityType.Education));
             }
         };
     }
@@ -98,12 +112,15 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                     return(
                     <SingleEducationElement
                         key={"SingleEducationElement." + key}
+                        degrees={this.props.degrees}
                         educationEntry={education}
                         educations={this.props.educations}
                         onChangeStartDate={this.props.changeStartDate}
                         onChangeEndDate={this.props.changeEndDate}
+                        onChangeDegree={this.props.changeDegree}
                         onEducationChange={this.props.onEducationEntryEducationChange}
                         onDelete={this.props.deleteEducationEntry}
+                        onNewEducation={this.props.addEducation}
                     />);
                 }).toList()}
             </ProfileElement>

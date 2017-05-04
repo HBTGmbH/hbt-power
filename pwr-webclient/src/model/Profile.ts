@@ -218,6 +218,8 @@ export class Profile {
         );
     }
 
+
+
     // == Serialization & Deserialization == //
 
     private static parseSectors(sectors: Array<APISectorEntry>): Immutable.Map<string, SectorEntry> {
@@ -340,7 +342,7 @@ export class Profile {
      */
     public static createFromAPI(profile: APIProfile): Profile {
         return new Profile(
-            profile.id,
+            Number(profile.id),
             profile.currentPosition,
             profile.description,
             Profile.parseSectors(profile.sectors),
@@ -372,7 +374,6 @@ export class Profile {
             Immutable.Map<string, LanguageSkill>(),
             Immutable.Map<string, QualificationEntry>());
     }
-
 
 
 }

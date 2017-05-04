@@ -44,7 +44,7 @@ export enum ProfileElementType {
 
 export enum NameEntityType {
     Sector,
-    Career,
+    Training,
     Education,
     Qualification,
     Language

@@ -6,6 +6,7 @@ import {databaseReducer} from './singleProfile/database-reducer';
  */
 
 export enum ActionType {
+    ChangeDegree,
     CreateEntry,
     ChangeCurrentPosition,
     DeleteEntry,

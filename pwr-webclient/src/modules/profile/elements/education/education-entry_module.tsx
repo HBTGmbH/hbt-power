@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, Paper, TouchTapEvent} from 'material-ui';
+import {AutoComplete, DatePicker, IconButton, MenuItem, Paper, SelectField, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import * as Immutable from 'immutable';
@@ -24,6 +24,8 @@ interface EducationEntryLocalProps {
      */
     educations: Immutable.Map<string, Education>;
 
+    degrees: Immutable.List<string>;
+
     /**
      * Callback that is invoked when this modules DatePicker's value changes to a new date.
      * Also gives back the ID to of the {@link EducationEntry} given to this module.
@@ -32,7 +34,19 @@ interface EducationEntryLocalProps {
      */
     onChangeStartDate(date: Date, id: string): void;
 
+    /**
+     * TODO doc
+     * @param date
+     * @param id
+     */
     onChangeEndDate(date: Date, id: string): void;
+
+    /**
+     * Called when the {@link EducationEntry.degree} of this module has to change.
+     * @param degree is the new degree
+     * @param id of this {@link EducationEntry} of this module.
+     */
+    onChangeDegree(degree: string, id: string): void;
 
     /**
      * Callback that is invoked when thos modules autocomplete value is changed to a valid
@@ -48,6 +62,8 @@ interface EducationEntryLocalProps {
      */
     onDelete(id: string): void;
 
+    onNewEducation(name: string, id: string): void;
+
 }
 
 /**
@@ -56,26 +72,35 @@ interface EducationEntryLocalProps {
  * There is no need for a non-local state, as redux will manage this part.
  */
 interface EducationEntryState {
-    autoCompleteValue: string;
+    educationAutoComplete: string;
     editDisabled: boolean;
 }
 
 
 export class SingleEducationElement extends React.Component<EducationEntryLocalProps, EducationEntryState> {
 
-    private autoCompleteValues: Array<Education>;
-
     constructor(props: EducationEntryLocalProps) {
         super(props);
-        this.autoCompleteValues = props.educations.map((k, v) => {return k}).toArray();
         this.state = {
-            autoCompleteValue: this.getEducationEntryName(this.props.educationEntry.educationId),
+            educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.educationId),
             editDisabled: true
         };
     }
 
     private getEducationEntryName = (id: string) => {
         return id == null ? "" : this.props.educations.get(id).name;
+    };
+
+    private disabledEdit = () => {
+        this.setState({
+            editDisabled: true
+        })
+    };
+
+    private enableEdit = () => {
+        this.setState({
+            editDisabled: false
+        })
     };
 
     /**
@@ -93,37 +118,37 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
      * @param searchText the text that had been typed into the autocomplete
      * @param dataSource useless
      */
-    private handleAutoCompleteUpdateInput = (searchText: string, dataSource: Array<string>) => {
-        this.setState({autoCompleteValue: searchText});
+    private handleEducationFieldInput = (searchText: string, dataSource: Array<string>) => {
+        this.setState({educationAutoComplete: searchText});
     };
 
-    private handleAutoCompleteNewRequest = (chosenRequest: string, index: number) => {
+    private handleEducationFieldRequest = (chosenRequest: any, index: number) => {
         if(index >= 0) {
-            this.props.onEducationChange(this.autoCompleteValues[index].id, this.props.educationEntry.id);
-            this.setState({
-                editDisabled: true
-            })
+            // education here
+            let education: Education = chosenRequest as Education;
+            this.props.onEducationChange(education.id, this.props.educationEntry.id);
         } else {
-            this.setState({
-                autoCompleteValue: this.props.educations.get(this.props.educationEntry.educationId).name
-            })
+            // string here
+            this.props.onNewEducation(chosenRequest, this.props.educationEntry.id);
         }
+        this.disabledEdit();
     };
 
     private handleFieldTouchClick = (event: TouchTapEvent) => {
-        this.setState({
-            editDisabled: false
-        })
+        this.enableEdit();
     };
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
-        this.setState({
-            editDisabled: true
-        })
+        this.disabledEdit();
     };
 
     private handleDeleteButtonPress = (event: TouchTapEvent) => {
         this.props.onDelete(this.props.educationEntry.id);
+    };
+
+    private handleDegreeSelect = (event: TouchTapEvent, index: number, value: string) => {
+        this.props.onChangeDegree(value, this.props.educationEntry.id);
+        this.disabledEdit();
     };
 
     render() {
@@ -135,7 +160,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                             <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Lock')}>lock</IconButton>
                             <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                         </div>
-                        <div className="col-md-5">
+                        <div className="col-md-3">
                             <div className="fittingContainer" onTouchStart={this.handleFieldTouchClick} onClick={this.handleFieldTouchClick}>
                                 <DatePicker
                                     id={"Education.DatePicker." + this.props.educationEntry.id}
@@ -147,15 +172,25 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                                 />
                             </div>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
+                            <div className="fittingContainer" onTouchStart={this.handleFieldTouchClick} onClick={this.handleFieldTouchClick}>
+                                <SelectField value={this.props.educationEntry.degree} onChange={this.handleDegreeSelect}>
+                                    {
+                                        this.props.degrees.map((degree,key) => <MenuItem key={key} value={degree} primaryText={degree}/>)
+                                    }
+                                    <MenuItem value={null} primaryText={PowerLocalize.get("None")}/>
+                                </SelectField>
+                            </div>
+                        </div>
+                        <div className="col-md-4">
                             <div className="fittingContainer" onTouchStart={this.handleFieldTouchClick} onClick={this.handleFieldTouchClick}>
                                 <AutoComplete
-                                    id={"Education.Autocomplete." + this.props.educationEntry.id}
-                                    value={this.state.autoCompleteValue}
+                                    id={"Education.Education." + this.props.educationEntry.id}
+                                    value={this.state.educationAutoComplete}
                                     dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.autoCompleteValues}
-                                    onUpdateInput={this.handleAutoCompleteUpdateInput}
-                                    onNewRequest={this.handleAutoCompleteNewRequest}
+                                    dataSource={this.props.educations.toArray()}
+                                    onUpdateInput={this.handleEducationFieldInput}
+                                    onNewRequest={this.handleEducationFieldRequest}
                                     disabled={this.state.editDisabled}
                                 />
                             </div>

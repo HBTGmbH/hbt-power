@@ -97,7 +97,6 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
         super(props);
         // only show the date picker when there is a date.
         let showDatePicker = props.trainingEntry.endDate != null;
-        console.log(props.trainings);
         this.state = {
             autoCompleteValue: this.getCareerPositionName(),
             editDisabled: true,

@@ -41,7 +41,7 @@ export class Education {
      * the {@link Education} will be translated to an {@link APIEducation} with the id field set to <code>null</code>.
      * @param name
      */
-    public createNew(name: string): Education {
+    public static createNew(name: string): Education {
         return new Education(NEW_ENTITY_PREFIX + String(Education.CURRENT_LOCAL_ID++), name, true);
     }
 
