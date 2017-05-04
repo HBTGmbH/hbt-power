@@ -5,7 +5,7 @@ import {
 } from './singleProfileActions';
 import {EducationEntry} from '../../model/EducationEntry';
 import {DateFieldType, ProfileElementType} from '../../Store';
-import {CareerElement} from '../../model/CareerElement';
+import {TrainingEntry} from '../../model/TrainingEntry';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
@@ -17,8 +17,8 @@ export class ProfileReducer {
 
     public static reducerHandleItemIdChange(profile: Profile, action: ChangeItemIdAction): Profile {
         switch(action.elementType) {
-            case ProfileElementType.CareerEntry: {
-                let newCareerElement: CareerElement = profile.careerElements.get(action.entryId);
+            case ProfileElementType.TrainingEntry: {
+                let newCareerElement: TrainingEntry = profile.trainingEntries.get(action.entryId);
                 newCareerElement = newCareerElement.changeCareerPositionId(action.newItemId);
                 return profile.updateCareerElement(newCareerElement);
             }
@@ -49,7 +49,7 @@ export class ProfileReducer {
 
     public static reducerHandleRemoveEntry(profile: Profile, action: DeleteEntryAction): Profile {
         switch(action.elementType) {
-            case ProfileElementType.CareerEntry:
+            case ProfileElementType.TrainingEntry:
                 return profile.removeCareerElement(action.elementId);
             case ProfileElementType.SectorEntry:
                 return profile.removeSectorEntry(action.elementId);
@@ -72,8 +72,8 @@ export class ProfileReducer {
                 return profile.updateLanguageSkill(LanguageSkill.createNew());
             case ProfileElementType.QualificationEntry:
                 return profile.updateQualificationEntry(QualificationEntry.createNew());
-            case ProfileElementType.CareerEntry:
-                return profile.updateCareerElement(CareerElement.createNew());
+            case ProfileElementType.TrainingEntry:
+                return profile.updateCareerElement(TrainingEntry.createNew());
             case ProfileElementType.EducationEntry:
                 return profile.updateEducationEntry(EducationEntry.createNew());
             default:
@@ -83,19 +83,24 @@ export class ProfileReducer {
 
     public static reducerHandleChangeDate(profile: Profile, action: ChangeDateAction): Profile {
         switch (action.targetField) {
-            case DateFieldType.CareerFrom: {
-                let element: CareerElement = profile.careerElements.get(action.targetFieldId);
+            case DateFieldType.TrainingFrom: {
+                let element: TrainingEntry = profile.trainingEntries.get(action.targetFieldId);
                 element = element.changeStartDate(action.newDate);
                 return profile.updateCareerElement(element);
             }
-            case DateFieldType.CareerTo: {
-                let element: CareerElement = profile.careerElements.get(action.targetFieldId);
+            case DateFieldType.TrainingTo: {
+                let element: TrainingEntry = profile.trainingEntries.get(action.targetFieldId);
                 element = element.changeEndDate(action.newDate);
                 return profile.updateCareerElement(element);
             }
-            case DateFieldType.EducationDate: {
+            case DateFieldType.EducationStartDate: {
                 let educationEntry: EducationEntry = profile.educationEntries.get(action.targetFieldId);
-                educationEntry = educationEntry.changeDate(action.newDate);
+                educationEntry = educationEntry.changeStartDate(action.newDate);
+                return profile.updateEducationEntry(educationEntry);
+            }
+            case DateFieldType.EducationEndDate: {
+                let educationEntry: EducationEntry = profile.educationEntries.get(action.targetFieldId);
+                educationEntry = educationEntry.changeEndDate(action.newDate);
                 return profile.updateEducationEntry(educationEntry);
             }
             case DateFieldType.QualificationDate: {

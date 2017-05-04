@@ -30,7 +30,9 @@ interface EducationEntryLocalProps {
      * @param newDate
      * @param id
      */
-    onDateChange(newDate: Date, id: string): void;
+    onChangeStartDate(date: Date, id: string): void;
+
+    onChangeEndDate(date: Date, id: string): void;
 
     /**
      * Callback that is invoked when thos modules autocomplete value is changed to a valid
@@ -81,9 +83,9 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
      * @param event is always null according to material-ui docs
      * @param date is the new date.
      */
-    private handleDateChange = (event: any, date: Date) => {
+    private handleChangeEndDate = (event: any, date: Date) => {
         // Hello Callback \o/!
-        this.props.onDateChange(date, this.props.educationEntry.id);
+        this.props.onChangeEndDate(date, this.props.educationEntry.id);
     };
 
     /**
@@ -103,7 +105,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
             })
         } else {
             this.setState({
-                autoCompleteValue:  this.getEducationEntryName(this.props.educationEntry.educationId)
+                autoCompleteValue: this.props.educations.get(this.props.educationEntry.educationId).name
             })
         }
     };
@@ -138,8 +140,8 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                                 <DatePicker
                                     id={"Education.DatePicker." + this.props.educationEntry.id}
                                     container="inline"
-                                    value={this.props.educationEntry.date}
-                                    onChange={this.handleDateChange}
+                                    value={this.props.educationEntry.endDate}
+                                    onChange={this.handleChangeEndDate}
                                     formatDate={formatToShortDisplay}
                                     disabled={this.state.editDisabled}
                                 />

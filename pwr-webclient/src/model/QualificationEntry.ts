@@ -51,7 +51,7 @@ export class QualificationEntry {
     public toAPIQualificationEntry(qualifications: Immutable.Map<string, Qualification>): APIQualificationEntry {
         return {
             id: this.isNew ? null : Number.parseInt(this.id),
-            date: this.date.toDateString(),
+            date: this.date.toISOString(),
             qualification: this.qualificationId == UNDEFINED_ID ? null : qualifications.get(this.qualificationId).toAPI()
         }
     }

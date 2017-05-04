@@ -46,7 +46,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         super(props);
         let id: string = props.sectorEntry.sectorId;
         this.state = {
-            autoCompleteValue: props.sectors.get(props.sectorEntry.sectorId).name,
+            autoCompleteValue: this.getSectorName(),
             editDisabled: true
         };
     }

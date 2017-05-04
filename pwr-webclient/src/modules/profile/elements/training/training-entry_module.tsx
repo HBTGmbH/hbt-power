@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {AutoComplete, Checkbox, DatePicker, IconButton, Paper, TextField} from 'material-ui';
-import {CareerElement} from '../../../../model/CareerElement';
-import {CareerPosition} from '../../../../model/CareerPosition';
+import {Training} from '../../../../model/Training';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {TrainingEntry} from '../../../../model/TrainingEntry';
 
 /**
  * Local properties of this module. These properties are used to initialize the local state and to control everything that
@@ -12,47 +12,47 @@ import {formatToShortDisplay} from '../../../../utils/DateUtil';
  * Data that is intended not only for disply, but also for persistence operations has to be placed in the Props interface,
  * and is being managed by redux.
  */
-interface CareerStepLocalProps {
+interface TrainingEntryLocalProps {
     /**
      * The element that is rendered in this module.
      */
-    careerElement: CareerElement;
+    trainingEntry: TrainingEntry;
 
     /**
-     * Array of possible career positions by their ID.
+     * Array of possible {@link Training} by their ID.
      */
-    careerPositions: Immutable.Map<string, CareerPosition>;
+    trainings: Immutable.Map<string, Training>;
 
     /**
      * Callback given to this career step module to be called whenever the start date
-     * value of the provided {@link CareerElement} changes.
+     * value of the provided {@link TrainingEntry} changes.
      * @param newDate the new Date for the startDate field
-     * @param elementId the ID of the {@link CareerElement} that was provided.
+     * @param elementId the ID of the {@link TrainingEntry} that was provided.
      */
     onStartDateChange(newDate: Date, elementId: string): void;
 
     /**
      * Callback given to this career step module to be called whenever the end date
-     * value of the provided {@link CareerElement} changes.
+     * value of the provided {@link TrainingEntry} changes.
      * @param newDate the new Date for the endDate field
-     * @param elementId the ID of the {@link CareerElement} that was provided.
+     * @param elementId the ID of the {@link TrainingEntry} that was provided.
      */
     onEndDateChange(newDate: Date, elementId: string): void;
 
     /**
-     * Callback given to this career step module to be called whenever the {@link CareerElement.careerPositionId}
+     * Callback given to this career step module to be called whenever the {@link TrainingEntry.trainingId}
      * should change. This is the case when:
-     * A) The {@link CareerPosition} has been selected in the AutoComplete dropdown
-     * B) The {@link CareerPosition.position} has been correctly typed into the input field and enter was pressed
-     * @param newCareerId the new career id that is supposed to be associated with the {@link CareerElement} represented
+     * A) The {@link Training} has been selected in the AutoComplete dropdown
+     * B) The {@link Training.name} has been correctly typed into the input field and enter was pressed
+     * @param newCareerId the new career id that is supposed to be associated with the {@link TrainingEntry} represented
      * by this module.
-     * @param elementId the {@link CareerElement.id} of this module.
+     * @param elementId the {@link TrainingEntry.id} of this module.
      */
     onCareerChange(newCareerId: string, elementId: string): void;
 
     /**
      * Callback given to this module to be called whenever the delete button is being pressed.
-     * @param elementId the {@link CareerElement.id} of the element associated with this module.
+     * @param elementId the {@link TrainingEntry.id} of the element associated with this module.
      */
     onDelete(elementId: string): void;
 }
@@ -62,7 +62,7 @@ interface CareerStepLocalProps {
  * flags that indicate if a component is displayed, etc..
  * There is no need for a non-local state, as redux will manage this part.
  */
-interface CareerStepState {
+interface TrainingEntryState {
     /**
      * The current value in the autocomplete-input field. This is not the value that is persisted.
      * FIXME find a way to couple this to redux without introducing it into the state so that the field correctly re-renders when the update is called.
@@ -77,66 +77,44 @@ interface CareerStepState {
 
 
 /**
- * Represents a single {@link CareerElement> while providing ways to edit:
+ * Represents a single {@link TrainingEntry> while providing ways to edit:
  * - the start date
  * - the end date
- * - the career position associated with the element by changing the ID.
+ * - the career name associated with the element by changing the ID.
  *
  * Dates may be changed at any time by usage of the date picker, which already provides a way to avoid unwanted modifications.
  *
- * The {@link CareerPosition} may be changing after pressing the edit symbol. Only one of the available {@link CareerPosition} may
- * be used as a replacement for an existing position.
+ * The {@link Training} may be changing after pressing the edit symbol. Only one of the available {@link Training} may
+ * be used as a replacement for an existing name.
  * If an invalid string is entered in the input field, and the input is finalized by pressing enter or disabling the edit mode,
  * the input fields value will hop back to the original value, and the input field will be disabled.
  * If a valid value is selected through all available means, the input field will be disabled and the value used as new
- * {@link CareerPosition}
+ * {@link Training}
  */
-export class SingleCareerElement extends React.Component<CareerStepLocalProps, CareerStepState> {
+export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps, TrainingEntryState> {
 
-    /**
-     * TODO remove this once facebook decides to fully support map rendering of JSX Elements.
-     * Values used for autocompletion. This is necessary because map-rendering is not entirely supported.
-     */
-    private autoCompleteValues: Array<CareerPosition>;
-
-    constructor(props: CareerStepLocalProps) {
+    constructor(props: TrainingEntryLocalProps) {
         super(props);
-        this.autoCompleteValues = props.careerPositions.map((val, key) => val).toArray();
         // only show the date picker when there is a date.
-        let showDatePicker = props.careerElement.endDate != null;
+        let showDatePicker = props.trainingEntry.endDate != null;
+        console.log(props.trainings);
         this.state = {
-            autoCompleteValue: this.getCareerPositionName(props.careerElement.careerPositionId),
+            autoCompleteValue: this.getCareerPositionName(),
             editDisabled: true,
             showEndDatePicker: showDatePicker
         };
     }
 
-   /* public componentWillReceiveProps(nextProps: any) {
-        // FIXME nt| This is not a good way to define that the component should re-render, only a test. \
-         // FIXME the problem is that the local state is interfering with the global state(is in concurrency), as
-        // no  element is directly mapped to the glboal state. Rerendering upon update does not take place correctly.
-        // Option A: Write a componentShouldUpdate method
-        // Option B: Attach the global state into the local.
-        let nextPosition = nextProps.careerPositions.get(nextProps.careerElement.careerPositionId).position;
-        let position = this.props.careerPositions.get(this.props.careerElement.careerPositionId).position;
-        let autocomplete = this.state.autoCompleteValue;
-        if(nextProps.careerElement != this.props.careerElement &&
-            this.state.autoCompleteValue == position) {
-            this.setState({
-                autoCompleteValue: nextPosition
-            });
-        }
-    };*/
-
 
     /**
-     * Null-tolerant accessor to the {@link CareerPosition.position} field of the career position
-     * that is linked in {@link CareerElement.careerPositionId}
-     * @param id
-     * @returns the position or an empty string when no position exists.
+     * Null-tolerant accessor to the {@link Training.name} field of the career name
+     * that is linked in {@link TrainingEntry.trainingId}
+     * @returns the name or an empty string when no name exists.
      */
-    private getCareerPositionName = (id: string) => {
-        return id == null ? "" : this.props.careerPositions.get(id).position;
+    private getCareerPositionName = () => {
+        return this.props.trainingEntry.trainingId == null
+            ? ""
+            : this.props.trainings.get(this.props.trainingEntry.trainingId).name;
     };
     /**
      * Handles change of the start date DatePicker
@@ -145,7 +123,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
      */
     private handleStartDateChange = (event: any, date: Date) => {
         // Hello callback!
-        this.props.onStartDateChange(date, this.props.careerElement.id);
+        this.props.onStartDateChange(date, this.props.trainingEntry.id);
     };
 
     /**
@@ -155,7 +133,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
      */
     private handleEndDateChange = (event: any, date: Date) => {
         // Hello Callback!
-        this.props.onEndDateChange(date, this.props.careerElement.id);
+        this.props.onEndDateChange(date, this.props.trainingEntry.id);
     };
 
     /**
@@ -173,16 +151,16 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
      * @param chosenRequest is the value that had been choosen
      * @param index of the element, respective to {@link this.autoCompleteValues} (the datasource given to the AutoComplete)
      */
-    private handleAutoCompleteNewRequest = (chosenRequest: string, index: number) => {
+    private handleAutoCompleteNewRequest = (chosenRequest: any, index: number) => {
         if(index >= 0) {
-            this.props.onCareerChange(this.autoCompleteValues[index].id, this.props.careerElement.id);
+            this.props.onCareerChange(chosenRequest.id, this.props.trainingEntry.id);
             this.setState({
                 editDisabled: true
             });
         } else {
             console.log(chosenRequest);
             this.setState({
-                autoCompleteValue: this.getCareerPositionName(this.props.careerElement.careerPositionId)
+                autoCompleteValue: this.getCareerPositionName()
             });
         }
     };
@@ -200,7 +178,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
     };
 
     private handleDeleteModule = () => {
-        this.props.onDelete(this.props.careerElement.id);
+        this.props.onDelete(this.props.trainingEntry.id);
     };
 
     private handleToggleDatePicker = () => {
@@ -209,9 +187,9 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
             showEndDatePicker: show
         });
         if(show) {
-            this.props.onEndDateChange(new Date(), this.props.careerElement.id);
+            this.props.onEndDateChange(new Date(), this.props.trainingEntry.id);
         } else {
-            this.props.onEndDateChange(null, this.props.careerElement.id);
+            this.props.onEndDateChange(null, this.props.trainingEntry.id);
         }
     };
 
@@ -229,9 +207,9 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                     <div className="col-md-3">
                         <div className="fittingContainer" onTouchStart={this.handleClickTapField} onClick={this.handleClickTapField}>
                             <DatePicker
-                                id={'C.DatePick.Start' +  this.props.careerElement.id}
+                                id={'C.DatePick.Start' +  this.props.trainingEntry.id}
                                 container="inline"
-                                value={this.props.careerElement.startDate}
+                                value={this.props.trainingEntry.startDate}
                                 onChange={this.handleStartDateChange}
                                 formatDate={formatToShortDisplay}
                                 disabled={this.state.editDisabled}
@@ -243,13 +221,13 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                             <div className="row">
                                 <div className="col-md-11">
                             {
-                                this.props.careerElement.endDate != null?
+                                this.props.trainingEntry.endDate != null?
                                     (
                                         <div>
                                             <DatePicker
-                                                id={'C.DatePick.End' + this.props.careerElement.id}
+                                                id={'C.DatePick.End' + this.props.trainingEntry.id}
                                                 container="inline"
-                                                value={this.props.careerElement.endDate}
+                                                value={this.props.trainingEntry.endDate}
                                                 onChange={this.handleEndDateChange}
                                                 formatDate={formatToShortDisplay}
                                                 disabled={this.state.editDisabled}
@@ -259,7 +237,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                                 :
                                     (
                                         <div>
-                                            <TextField disabled={true} id={'Career.CareerStep.TextField' + this.props.careerElement.id} value= {PowerLocalize.get('Today')}/>
+                                            <TextField disabled={true} id={'TrainingEntries.CareerStep.TextField' + this.props.trainingEntry.id} value= {PowerLocalize.get('Today')}/>
                                         </div>
                                     )
                             }
@@ -267,7 +245,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                                 <div className="col-md-1">
                                     <Checkbox
                                         disabled={this.state.editDisabled}
-                                        checked={this.props.careerElement.endDate != null}
+                                        checked={this.props.trainingEntry.endDate != null}
                                         onCheck={this.handleToggleDatePicker}
                                         onClick={this.handleClickTapField}
                                     />
@@ -278,10 +256,10 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                     <div className="col-md-5">
                         <div className="fittingContainer" onTouchStart={this.handleClickTapField} onClick={this.handleClickTapField}>
                             <AutoComplete
-                                id={'Career.Autocomplete.' + this.props.careerElement.id}
+                                id={'TrainingEntries.Autocomplete.' + this.props.trainingEntry.id}
                                 value={this.state.autoCompleteValue}
-                                dataSourceConfig={{text:'position', value:'id'}}
-                                dataSource={this.autoCompleteValues}
+                                dataSourceConfig={{text:'name', value:'id'}}
+                                dataSource={new Array(this.props.trainings.values())}
                                 onUpdateInput={this.handleAutoCompleteUpdateInput}
                                 onNewRequest={this.handleAutoCompleteNewRequest}
                                 disabled={this.state.editDisabled}

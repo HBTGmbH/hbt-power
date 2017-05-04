@@ -20,7 +20,7 @@ export class PowerLocalize {
      * String returned when an unknown field name was given to the localizer.
      * @type {string}
      */
-    public static readonly noLocalizationFound = "FIXME_NO_LOCALE";
+    public static readonly noLocalizationFound = "NO_LOCALE";
 
     /**
      * The locale string that is currently used.
@@ -54,7 +54,7 @@ export class PowerLocalize {
      */
     public static get(field: string) : string {
         let val = this.localization[field];
-        if(isNullOrUndefined(val)) return PowerLocalize.noLocalizationFound;
+        if(isNullOrUndefined(val)) return field + "_" + PowerLocalize.noLocalizationFound;
         return String(val);
     }
 }

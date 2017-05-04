@@ -27,15 +27,16 @@ export enum APIRequestType {
 }
 
 export enum DateFieldType {
-    CareerFrom,
-    CareerTo,
-    EducationDate,
+    EducationEndDate,
+    TrainingFrom,
+    TrainingTo,
+    EducationStartDate,
     QualificationDate
 }
 
 export enum ProfileElementType {
     SectorEntry,
-    CareerEntry,
+    TrainingEntry,
     EducationEntry,
     QualificationEntry,
     LanguageEntry

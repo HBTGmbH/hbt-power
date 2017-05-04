@@ -4,15 +4,15 @@ import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
-import {CareerElement} from '../../../../model/CareerElement';
-import {CareerPosition} from '../../../../model/CareerPosition';
+import {TrainingEntry} from '../../../../model/TrainingEntry';
+import {Training} from '../../../../model/Training';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
-import {SingleCareerElement} from './career-step_module';
+import {SingleTrainingEntry} from './training-entry_module';
 import * as Immutable from 'immutable';
 
-interface CareerProps {
-    careerElements: Immutable.Map<string, CareerElement>;
-    careerPositions: Immutable.Map<string, CareerPosition>;
+interface TrainingEntriesProps {
+    trainingEntries: Immutable.Map<string, TrainingEntry>;
+    trainings: Immutable.Map<string, Training>;
     userInitials: string;
 }
 
@@ -22,7 +22,7 @@ interface CareerProps {
  * Data that is intended not only for display, but also for persistence operations has to be placed in the Props interface,
  * and is being managed by redux.
  */
-interface CareerLocalProps {
+interface TrainingEntriesLocalProps {
 
 }
 
@@ -31,11 +31,11 @@ interface CareerLocalProps {
  * flags that indicate if a component is displayed, etc..
  * There is no need for a non-local state, as redux will manage this part.
  */
-interface CareerLocalState {
+interface TrainingEntriesState {
 
 }
 
-interface CareerDispatch {
+interface TrainingEntryDispatch {
     changeStartDate(newDate: Date, id: string): void;
     changeEndDate(newDate: Date, id: string): void;
     changeCareerId(newId: string, id: string): void;
@@ -44,7 +44,7 @@ interface CareerDispatch {
 
 }
 
-class CareerModule extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
+class TrainingEntriesModule extends React.Component<TrainingEntriesProps & TrainingEntriesLocalProps & TrainingEntryDispatch, TrainingEntriesState> {
 
     private static renderHeader() : JSX.Element {
         return (
@@ -53,30 +53,30 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     }
 
 
-    static mapStateToProps(state: ApplicationState, localProps: CareerLocalProps) : CareerProps {
+    static mapStateToProps(state: ApplicationState, localProps: TrainingEntriesProps) : TrainingEntriesProps {
         return {
-            careerElements: state.databaseReducer.profile.careerElements,
-            careerPositions: state.databaseReducer.careerPositions,
+            trainingEntries: state.databaseReducer.profile.trainingEntries,
+            trainings: state.databaseReducer.trainings,
             userInitials: state.databaseReducer.loggedInUser
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : CareerDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : TrainingEntryDispatch {
         return {
             changeStartDate: function(newDate: Date, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerFrom));
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.TrainingFrom));
             },
             changeEndDate: function(newDate: Date, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.CareerTo));
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.TrainingTo));
             },
             changeCareerId: function(newId: string, id: string) {
-                dispatch(ProfileActionCreator.changeItemId(newId, id, ProfileElementType.CareerEntry));
+                dispatch(ProfileActionCreator.changeItemId(newId, id, ProfileElementType.TrainingEntry));
             },
             removeCareerElement: function(id: string) {
-                dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.CareerEntry));
+                dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.TrainingEntry));
             },
             addCareerElement: function() {
-                dispatch(ProfileActionCreator.createEntry(ProfileElementType.CareerEntry));
+                dispatch(ProfileActionCreator.createEntry(ProfileElementType.TrainingEntry));
             }
         };
     }
@@ -89,17 +89,17 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     render() {
         return(
             <ProfileElement
-                title={PowerLocalize.get('Career.Qualifier')}
-                tableHeader={CareerModule.renderHeader()}
+                title={PowerLocalize.get('TrainingEntries.Qualifier')}
+                tableHeader={TrainingEntriesModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >
                 {
-                    this.props.careerElements.map((value, key, index) => {
+                    this.props.trainingEntries.map((value, key, index) => {
                         return (
-                            <SingleCareerElement
-                                key={"SingleCareerElement." + key}
-                                careerElement={value}
-                                careerPositions={this.props.careerPositions}
+                            <SingleTrainingEntry
+                                key={"TrainingEntry." + key}
+                                trainingEntry={value}
+                                trainings={this.props.trainings}
                                 onStartDateChange={this.props.changeStartDate}
                                 onEndDateChange={this.props.changeEndDate}
                                 onCareerChange={this.props.changeCareerId}
@@ -114,4 +114,4 @@ class CareerModule extends React.Component<CareerProps & CareerLocalProps & Care
     }
 }
 
-export const Career: React.ComponentClass<CareerLocalProps> = connect(CareerModule.mapStateToProps, CareerModule.mapDispatchToProps)(CareerModule);
+export const TrainingEntries: React.ComponentClass<TrainingEntriesLocalProps> = connect(TrainingEntriesModule.mapStateToProps, TrainingEntriesModule.mapDispatchToProps)(TrainingEntriesModule);

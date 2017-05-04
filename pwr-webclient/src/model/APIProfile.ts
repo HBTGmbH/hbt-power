@@ -1,4 +1,5 @@
 
+// == LANGUAGES == //
 export interface APILanguage {
     id: number;
     name: string;
@@ -10,6 +11,7 @@ export interface APILanguageSkill {
     level: string;
 }
 
+// == EDUCATIONS == //
 export interface APIEducation {
     id: number;
     name: string;
@@ -17,10 +19,12 @@ export interface APIEducation {
 
 export interface APIEducationStep {
     id: number;
-    date: string;
+    startDate: string;
+    endDate: string;
     education: APIEducation;
 }
 
+// == QUALIFICATIONS == //
 export interface APIQualification {
     id: number;
     name: string;
@@ -32,18 +36,20 @@ export interface APIQualificationEntry {
     qualification: APIQualification;
 }
 
-export interface APICareerPosition {
+// == Training == //
+export interface APITraining {
     id: number;
-    position: string;
+    name: string;
 }
 
-export interface APICareerElement {
+export interface APITrainingEntry {
     id: number;
     startDate: string;
     endDate: string;
-    position: APICareerPosition;
+    training: APITraining;
 }
 
+// SECTORS //
 export interface APISectorEntry {
     id: number;
     sector: APISector;
@@ -63,7 +69,7 @@ export interface APIProfile {
     id: number;
     description: string;
     currentPosition: string;
-    career: Array<APICareerElement>;
+    trainingEntries: Array<APITrainingEntry>;
     languages: Array<APILanguageSkill>;
     qualification: Array<APIQualificationEntry>;
     education: Array<APIEducationStep>;

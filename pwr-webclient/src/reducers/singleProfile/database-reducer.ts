@@ -46,7 +46,7 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
     } else if(action.requestType === APIRequestType.RequestQualifications) {
         newState = state.addAPIQualifications(action.payload);
     } else if(action.requestType === APIRequestType.RequestCareers) {
-        newState = state.addAPICareers(action.payload);
+        newState = state.addAPITrainings(action.payload);
     } else if(action.requestType === APIRequestType.RequestSectors) {
         newState = state.addAPISectors(action.payload);
     }

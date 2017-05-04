@@ -40,7 +40,8 @@ interface EducationLocalState {
 }
 
 interface EducationDispatch {
-    onDateChange(newDate: Date, id: string): void;
+    changeEndDate(newDate: Date, id: string): void;
+    changeStartDate(newDate: Date, id: string): void;
     onEducationEntryEducationChange(newEducationId: string, id: string): void;
     addEducationEntry(): void;
     deleteEducationEntry(educationEntryId: string): void;
@@ -64,8 +65,11 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : EducationDispatch {
         return {
-            onDateChange: function(newDate: Date, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationDate));
+            changeStartDate: function(newDate: Date, id: string) {
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationStartDate));
+            },
+            changeEndDate: function(newDate: Date, id: string) {
+                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationEndDate));
             },
             onEducationEntryEducationChange: function(newEducationId: string, id: string) {
                 dispatch(ProfileActionCreator.changeItemId(newEducationId, id, ProfileElementType.EducationEntry));
@@ -96,7 +100,8 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
                         key={"SingleEducationElement." + key}
                         educationEntry={education}
                         educations={this.props.educations}
-                        onDateChange={this.props.onDateChange}
+                        onChangeStartDate={this.props.changeStartDate}
+                        onChangeEndDate={this.props.changeEndDate}
                         onEducationChange={this.props.onEducationEntryEducationChange}
                         onDelete={this.props.deleteEducationEntry}
                     />);

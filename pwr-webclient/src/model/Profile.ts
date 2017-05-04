@@ -2,9 +2,9 @@ import * as Immutable from 'immutable';
 import {EducationEntry} from './EducationEntry';
 import {LanguageSkill} from './LanguageSkill';
 import {QualificationEntry} from './QualificationEntry';
-import {CareerElement} from './CareerElement';
+import {TrainingEntry} from './TrainingEntry';
 import {
-    APICareerElement,
+    APITrainingEntry,
     APIEducationStep,
     APILanguageSkill,
     APIProfile,
@@ -25,7 +25,7 @@ export class Profile {
     //FIXME refactor to sectorEntries
     public readonly sectors: Immutable.Map<string, SectorEntry> = Immutable.Map<string, SectorEntry>();
 
-    public readonly careerElements: Immutable.Map<string, CareerElement> = Immutable.Map<string, CareerElement>();
+    public readonly trainingEntries: Immutable.Map<string, TrainingEntry> = Immutable.Map<string, TrainingEntry>();
 
     public readonly educationEntries: Immutable.Map<string, EducationEntry> = Immutable.Map<string, EducationEntry>();
 
@@ -38,7 +38,7 @@ export class Profile {
         currentPosition: string,
         description: string,
         sectors: Immutable.Map<string, SectorEntry>,
-        careerElements: Immutable.Map<string, CareerElement>,
+        careerElements: Immutable.Map<string, TrainingEntry>,
         educationEntries: Immutable.Map<string, EducationEntry>,
         languageSkills: Immutable.Map<string, LanguageSkill>,
         qualificationEntries: Immutable.Map<string, QualificationEntry>,
@@ -47,7 +47,7 @@ export class Profile {
         this.currentPosition = currentPosition;
         this.description = description;
         this.sectors = sectors;
-        this.careerElements = careerElements;
+        this.trainingEntries = careerElements;
         this.educationEntries = educationEntries;
         this.languageSkills = languageSkills;
         this.qualificationEntries = qualificationEntries;
@@ -63,7 +63,7 @@ export class Profile {
      * @returns {Profile} a copy of the old profile with the new {@link Profile.description}
      */
     public changeDescription(newDescription: string): Profile {
-        return new Profile(this.id, this.currentPosition, newDescription, this.sectors, this.careerElements,
+        return new Profile(this.id, this.currentPosition, newDescription, this.sectors, this.trainingEntries,
             this.educationEntries, this.languageSkills, this.qualificationEntries
         );
     }
@@ -80,7 +80,7 @@ export class Profile {
             newPosition,
             this.description,
             this.sectors,
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries
@@ -94,7 +94,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries,
             this.languageSkills.set(languageSkill.id, languageSkill),
             this.qualificationEntries
@@ -107,20 +107,20 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries,
             this.languageSkills.remove(id),
             this.qualificationEntries
         );
     }
 
-    public updateCareerElement(careerElement: CareerElement): Profile {
+    public updateCareerElement(careerElement: TrainingEntry): Profile {
         return new Profile(
             this.id,
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements.set(careerElement.id, careerElement),
+            this.trainingEntries.set(careerElement.id, careerElement),
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries
@@ -133,7 +133,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements.remove(careerElementId),
+            this.trainingEntries.remove(careerElementId),
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries
@@ -146,7 +146,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries.set(edcuationEntry.id, edcuationEntry),
             this.languageSkills,
             this.qualificationEntries
@@ -159,7 +159,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries.remove(id),
             this.languageSkills,
             this.qualificationEntries
@@ -172,7 +172,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries.set(qualificationEntry.id, qualificationEntry)
@@ -185,7 +185,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors,
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries.remove(id)
@@ -198,7 +198,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors.set(sectorEntry.id, sectorEntry),
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries
@@ -211,7 +211,7 @@ export class Profile {
             this.currentPosition,
             this.description,
             this.sectors.remove(elementId),
-            this.careerElements,
+            this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries
@@ -259,12 +259,12 @@ export class Profile {
         return res;
     }
 
-    private static parseCareerElements(career: Array<APICareerElement>) : Immutable.Map<string, CareerElement> {
-        let res = Immutable.Map<string, CareerElement>();
-        career.forEach(apiCareerElement =>{
+    private static parseTrainingEntries(career: Array<APITrainingEntry>) : Immutable.Map<string, TrainingEntry> {
+        let res = Immutable.Map<string, TrainingEntry>();
+        career.forEach(apiTrainingEntry =>{
             // The API might return something invalid. Ignore.
-            if(!isNullOrUndefined(apiCareerElement)) {
-                let careerElement: CareerElement = CareerElement.fromAPI(apiCareerElement);
+            if(!isNullOrUndefined(apiTrainingEntry)) {
+                let careerElement: TrainingEntry = TrainingEntry.fromAPI(apiTrainingEntry);
                 res = res.set(careerElement.id, careerElement);
             }
         });
@@ -292,9 +292,9 @@ export class Profile {
     // FIXME this profile anymore.
     public serializeToApiProfile(database: InternalDatabase): APIProfile {
         // Maps all career elements into an API format
-        let career: Array<APICareerElement> = [];
-        this.careerElements.forEach(careerElement => {
-            career.push(careerElement.toAPICareer(database.careerPositions));
+        let training: Array<APITrainingEntry> = [];
+        this.trainingEntries.forEach(trainingEntry => {
+            training.push(trainingEntry.toAPICareer(database.trainings));
         });
 
         // Maps all education steps into an API format.
@@ -323,7 +323,7 @@ export class Profile {
             id: this.id,
             description: this.description,
             currentPosition: this.currentPosition,
-            career: career,
+            trainingEntries: training,
             languages: languages,
             qualification: qualifications,
             education: educations,
@@ -344,7 +344,7 @@ export class Profile {
             profile.currentPosition,
             profile.description,
             Profile.parseSectors(profile.sectors),
-            Profile.parseCareerElements(profile.career),
+            Profile.parseTrainingEntries(profile.trainingEntries),
             Profile.parseEducationEntries(profile.education),
             Profile.parseLanguageSkills(profile.languages),
             Profile.parseQualficiationEntries(profile.qualification)
@@ -367,7 +367,7 @@ export class Profile {
             '',
             '',
             Immutable.Map<string, SectorEntry>(),
-            Immutable.Map<string, CareerElement>(),
+            Immutable.Map<string, TrainingEntry>(),
             Immutable.Map<string, EducationEntry>(),
             Immutable.Map<string, LanguageSkill>(),
             Immutable.Map<string, QualificationEntry>());

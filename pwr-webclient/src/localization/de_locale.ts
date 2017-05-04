@@ -1,8 +1,6 @@
 export const de_locale : any = {
     // == General Wording, Phrasing == //
     "Date.Singular": "Datum",
-    "Career.Qualifier" : "Werdegang",
-    "CareerStep.Qualifier": "Werdegang-Schritte",
     "Language.Singular": "Sprache",
     "Language.Plural": "Sprachen",
     "Language.Level.Singular": "Sprachlevel",
@@ -18,6 +16,7 @@ export const de_locale : any = {
     "Toolbar.LoggedInAs": "Eingeloggt als",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
+    "TrainingEntries.Qualifier": "Weiterbildung",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

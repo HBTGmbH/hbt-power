@@ -7,7 +7,7 @@ import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {
-    getCareerSuggestionAPIString,
+    getTrainingSuggestionAPIString,
     getEducationSuggestionAPIString,
     getLangSuggestionAPIString,
     getProfileAPIString,
@@ -256,7 +256,21 @@ export class ProfileAsyncActionCreator {
             axios.put(getProfileAPIString(initials), profile).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.APIRequestSuccessfull({}, APIRequestType.SaveProfile));
             }).catch(function(error:any) {
-                console.error(error);
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.error(error.response.data);
+                    console.error(error.response.status);
+                    console.error(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    console.error(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.error('Error', error.message);
+                }
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
         };
@@ -301,7 +315,7 @@ export class ProfileAsyncActionCreator {
     public static requestCareers() {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
-            axios.get(getCareerSuggestionAPIString()).then(function(response: AxiosResponse) {
+            axios.get(getTrainingSuggestionAPIString()).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestCareers));
             }).catch(function(error:any) {
                 console.error(error);
@@ -340,12 +354,12 @@ export class ProfileAsyncActionCreator {
     **
      * Fixme comment
      * @param initials
-     * @param careerElement
+     * @param trainingEntry
      * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
      *
-    public static saveCareerElement(initials: string, careerElement: CareerElement, careers: Immutable.Map<number, CareerPosition>) {
+    public static saveCareerElement(initials: string, trainingEntry: TrainingEntry, careers: Immutable.Map<number, Training>) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            let apiCareerElement: APICareerElement = careerElement.toAPICareer(careers);
+            let apiCareerElement: APICareerElement = trainingEntry.toAPICareer(careers);
             ProfileAsyncActionCreator.performAbstractSaveEntryAction(
                 getSaveCareerElementAPIString(initials),
                 apiCareerElement,

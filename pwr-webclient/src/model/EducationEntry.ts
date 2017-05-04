@@ -4,29 +4,47 @@ import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 
 /**
- * For notes about immutability, {@see CareerElement}
+ * For notes about immutability, {@see TrainingEntry}
  */
 export class EducationEntry {
     /**
      * DO NOT CHANGE THIS.NEVER.
      */
     public readonly id: string;
-    public readonly date: Date;
+    public readonly startDate: Date;
+    public readonly endDate: Date;
     public readonly educationId: string;
     public readonly isNew: boolean;
 
     private static CURRENT_LOCAL_ID: number = 0;
 
-    private constructor(id: string, date: Date, educationId: string, isNew: boolean) {
+    private constructor(id: string, startDate: Date, endDate: Date, educationId: string, isNew: boolean) {
         this.id = id;
-        this.date = date;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.educationId = educationId;
         this.isNew = isNew;
     }
 
-    public changeDate(newDate: Date): EducationEntry {
-        return new EducationEntry(this.id, newDate, this.educationId, this.isNew);
-    }
+
+    /**
+     * Non mutating function that changes the {@link EducationEntry.startDate} field and returns a copy.
+     * @param date new start date
+     * @returns {EducationEntry} copy
+     */
+    public changeStartDate(date: Date) : EducationEntry {
+        return new EducationEntry(this.id, date, this.endDate, this.educationId, this.isNew);
+    };
+
+
+    /**
+     * Non mutating function that changes the {@link EducationEntry.endDate} field and returns a copy.
+     * @param date new end date
+     * @returns {EducationEntry} copy
+     */
+    public changeEndDate(date: Date) : EducationEntry {
+        return new EducationEntry(this.id, this.startDate, date, this.educationId, this.isNew);
+    };
 
     /**
      * Non-mutating function that changes the {@link EducationEntry.educationId} by returning a copy with
@@ -35,7 +53,7 @@ export class EducationEntry {
      * @returns {EducationEntry}
      */
     public changeEducationId(newId: string): EducationEntry {
-        return new EducationEntry(this.id, this.date, newId, this.isNew);
+        return new EducationEntry(this.id, this.startDate, this.endDate, newId, this.isNew);
     }
 
 
@@ -48,7 +66,8 @@ export class EducationEntry {
     public static fromAPI(apiEducation: APIEducationStep): EducationEntry {
         return new EducationEntry(
             String(apiEducation.id),
-            new Date(apiEducation.date),
+            new Date(apiEducation.startDate),
+            new Date(apiEducation.endDate),
             String(apiEducation.education.id),
             false);
     }
@@ -59,14 +78,15 @@ export class EducationEntry {
      * @returns {EducationEntry}
      */
     public static createNew() {
-        return new EducationEntry(NEW_ENTITY_PREFIX + String(EducationEntry.CURRENT_LOCAL_ID++), new Date(), UNDEFINED_ID, true);
+        return new EducationEntry(NEW_ENTITY_PREFIX + String(EducationEntry.CURRENT_LOCAL_ID++), new Date(), new Date(), UNDEFINED_ID, true);
     }
 
 
     public toAPIEducationEntry(educations: Immutable.Map<string, Education>): APIEducationStep {
         return {
             id: this.isNew ? null : Number.parseInt(this.id),
-            date: this.date.toDateString(),
+            startDate: this.startDate.toISOString(),
+            endDate: this.endDate.toISOString(),
             education: this.educationId == null ? null : educations.get(this.educationId).toAPI()
         }
     }

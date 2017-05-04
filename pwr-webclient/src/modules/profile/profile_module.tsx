@@ -6,7 +6,7 @@ import {Card, CardHeader, Divider, IconButton, Toolbar, TouchTapEvent} from 'mat
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
-import {Career} from './elements/career/career_module';
+import {TrainingEntries} from './elements/training/training_module';
 import {EducationList} from './elements/education/eduction_module';
 import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
@@ -16,6 +16,7 @@ import {InternalDatabase} from '../../model/InternalDatabase';
 
 interface ProfileProps {
     database: InternalDatabase;
+    loggedInInitials: string;
 }
 
 /**
@@ -38,7 +39,7 @@ interface ProfileLocalState {
 }
 
 interface ProfileDispatch {
-    reloadProfile(): void;
+    reloadProfile(initials: string): void;
     saveProfile(initials: string, database: InternalDatabase): void;
 }
 
@@ -46,7 +47,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps) : ProfileProps {
         return {
-            database: state.databaseReducer
+            database: state.databaseReducer,
+            loggedInInitials: state.databaseReducer.loggedInUser
         };
     }
 
@@ -56,7 +58,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ProfileDispatch {
         return {
-            reloadProfile: function() {dispatch(ProfileAsyncActionCreator.requestSingleProfile('nt'));} ,//FIXME no hardcoding
+            reloadProfile: function(initials: string) {
+                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+            },
             saveProfile: function(initials: string, database: InternalDatabase) {
                 dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()));
             }
@@ -68,11 +72,11 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
 
     private handleReloadProfile = (event: TouchTapEvent) => {
-        this.props.reloadProfile();
+        this.props.reloadProfile(this.props.loggedInInitials);
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {
-        this.props.saveProfile(this.props.database.loggedInUser, this.props.database); //FIXME remove hardcoding
+        this.props.saveProfile(this.props.database.loggedInUser, this.props.database);
     };
 
     private handleResetProfile = (event: TouchTapEvent) => {
@@ -100,7 +104,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <Divider/>
                         <Sectors/>
                         <Divider/>
-                        <Career/>
+                        <TrainingEntries/>
                         <Divider/>
                         <EducationList/>
                         <Divider/>
