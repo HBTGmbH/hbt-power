@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, Paper, TextField, TouchTapEvent} from 'material-ui';
+import {AutoComplete, DatePicker, IconButton, Paper, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
@@ -24,7 +24,7 @@ interface QualificationEntryLocalProps {
     /**
      * Array of possible educations by their ID.
      */
-    qualifications: Immutable.Map<number, Qualification>;
+    qualifications: Immutable.Map<string, Qualification>;
 
     /**
      * Callback that is invoked when this modules DatePicker's value changes to a new date.
@@ -32,11 +32,11 @@ interface QualificationEntryLocalProps {
      * @param newDate
      * @param id
      */
-    onDateChange(newDate: Date, id: number): void;
+    onDateChange(newDate: Date, id: string): void;
 
-    onQualificationChange(newQualificationId: number, entryId: number): void;
+    onQualificationChange(newQualificationId: string, entryId: string): void;
 
-    onDelete(qualificationEntryId: number): void;
+    onDelete(qualificationEntryId: string): void;
 
 }
 
@@ -59,10 +59,15 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         super(props);
         this.autoCompleteValues = props.qualifications.map((val, key) => val).toArray();
         this.state = {
-            autoCompleteValue: props.qualifications.get(props.qualificationEntry.qualificationId).name,
+            autoCompleteValue: this.getQualificationName(),
             editDisabled: true
         };
     }
+
+    private getQualificationName = () => {
+        let id: string = this.props.qualificationEntry.qualificationId;
+        return id == null ? "" : this.props.qualifications.get(id).name;
+    };
 
     /**
      * Callback invokes when the DatePicker's value changes.
@@ -86,7 +91,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
             });
         } else {
             this.setState({
-                autoCompleteValue: this.props.qualifications.get(this.props.qualificationEntry.qualificationId).name
+                autoCompleteValue: this.getQualificationName()
             });
         }
     };

@@ -1,6 +1,7 @@
 import {Education} from './Education';
 import {APIEducationStep} from './APIProfile';
 import * as Immutable from 'immutable';
+import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 
 /**
  * For notes about immutability, {@see CareerElement}
@@ -9,18 +10,22 @@ export class EducationEntry {
     /**
      * DO NOT CHANGE THIS.NEVER.
      */
-    readonly id: number;
-    readonly date: Date;
-    readonly educationId: number;
+    public readonly id: string;
+    public readonly date: Date;
+    public readonly educationId: string;
+    public readonly isNew: boolean;
 
-    constructor(id: number, date: Date, educationId: number) {
+    private static CURRENT_LOCAL_ID: number = 0;
+
+    private constructor(id: string, date: Date, educationId: string, isNew: boolean) {
         this.id = id;
         this.date = date;
         this.educationId = educationId;
+        this.isNew = isNew;
     }
 
     public changeDate(newDate: Date): EducationEntry {
-        return new EducationEntry(this.id, newDate, this.educationId);
+        return new EducationEntry(this.id, newDate, this.educationId, this.isNew);
     }
 
     /**
@@ -29,8 +34,8 @@ export class EducationEntry {
      * @param newId
      * @returns {EducationEntry}
      */
-    public changeEducationId(newId: number): EducationEntry {
-        return new EducationEntry(this.id, this.date, newId);
+    public changeEducationId(newId: string): EducationEntry {
+        return new EducationEntry(this.id, this.date, newId, this.isNew);
     }
 
 
@@ -40,25 +45,29 @@ export class EducationEntry {
      * @param apiEducation
      * @returns {EducationEntry}
      */
-    public static create(apiEducation: APIEducationStep): EducationEntry {
+    public static fromAPI(apiEducation: APIEducationStep): EducationEntry {
         return new EducationEntry(
-            Number(apiEducation.id),
+            String(apiEducation.id),
             new Date(apiEducation.date),
-            Number(apiEducation.education.id));
+            String(apiEducation.education.id),
+            false);
     }
 
-    public static createEmpty(educationId: number) {
-        return new EducationEntry(null, new Date(), educationId);
+    /**
+     * Creates an {@link EducationEntry} that can be considered 'new'. A new education entry will be
+     * persistet during the next profile save operation against the API.
+     * @returns {EducationEntry}
+     */
+    public static createNew() {
+        return new EducationEntry(NEW_ENTITY_PREFIX + String(EducationEntry.CURRENT_LOCAL_ID++), new Date(), UNDEFINED_ID, true);
     }
 
-    public toAPIEducationEntry(educations: Immutable.Map<number, Education>): APIEducationStep {
+
+    public toAPIEducationEntry(educations: Immutable.Map<string, Education>): APIEducationStep {
         return {
-            id: this.id,
+            id: this.isNew ? null : Number.parseInt(this.id),
             date: this.date.toDateString(),
-            education: {
-                id: this.educationId,
-                name: educations.get(this.educationId).name
-            }
+            education: this.educationId == null ? null : educations.get(this.educationId).toAPI()
         }
     }
 }

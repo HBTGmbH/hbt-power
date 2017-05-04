@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, Paper, TextField, TouchTapEvent} from 'material-ui';
+import {AutoComplete, DatePicker, IconButton, Paper, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import * as Immutable from 'immutable';
@@ -22,7 +22,7 @@ interface EducationEntryLocalProps {
     /**
      * All possible educations by their ids.
      */
-    educations: Immutable.Map<number, Education>;
+    educations: Immutable.Map<string, Education>;
 
     /**
      * Callback that is invoked when this modules DatePicker's value changes to a new date.
@@ -30,7 +30,7 @@ interface EducationEntryLocalProps {
      * @param newDate
      * @param id
      */
-    onDateChange(newDate: Date, id: number): void;
+    onDateChange(newDate: Date, id: string): void;
 
     /**
      * Callback that is invoked when thos modules autocomplete value is changed to a valid
@@ -38,13 +38,13 @@ interface EducationEntryLocalProps {
      * @param newEducationId
      * @param id of the education entry initially given to this module.
      */
-    onEducationChange(newEducationId: number, id: number): void;
+    onEducationChange(newEducationId: string, id: string): void;
 
     /**
      * Invoked when the {@link EducationEntry} associated with this module is supposed to be deleted.
      * @param id {@link EducationEntry.id} of the entry that is supposed to be deleted.
      */
-    onDelete(id: number): void;
+    onDelete(id: string): void;
 
 }
 
@@ -67,10 +67,14 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         super(props);
         this.autoCompleteValues = props.educations.map((k, v) => {return k}).toArray();
         this.state = {
-            autoCompleteValue: this.props.educations.get(this.props.educationEntry.educationId).name,
+            autoCompleteValue: this.getEducationEntryName(this.props.educationEntry.educationId),
             editDisabled: true
         };
     }
+
+    private getEducationEntryName = (id: string) => {
+        return id == null ? "" : this.props.educations.get(id).name;
+    };
 
     /**
      * Callback invokes when the DatePicker's value changes.
@@ -99,7 +103,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
             })
         } else {
             this.setState({
-                autoCompleteValue: this.props.educations.get(this.props.educationEntry.educationId).name
+                autoCompleteValue:  this.getEducationEntryName(this.props.educationEntry.educationId)
             })
         }
     };

@@ -55,9 +55,6 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                     <CardMedia expandable={true}>
                         <div className="table-responsive">
                             <table className="table table-striped table-condensed">
-                                <thead>
-                                {this.props.tableHeader}
-                                </thead>
                                 <tbody>
                                 {this.props.children}
                                 </tbody>

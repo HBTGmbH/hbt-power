@@ -1,6 +1,7 @@
 import {Language} from './Language';
 import {APILanguageSkill} from './APIProfile';
 import * as Immutable from 'immutable';
+import {DEFAULT_LANG_LEVEL, NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 
 /**
  * Consist of a language name and a level that rates this language name. Together, they represent a certain language level
@@ -14,40 +15,54 @@ export class LanguageSkill {
     /**
      *
      */
-    readonly id: number;
+    public readonly id: string;
+
+
     /**
      * The language itself.
      */
-    readonly languageId: number;
+    public readonly languageId: string;
 
     /**
      * The language level, represented as a string. On the server side, these levels are enumerated values, but due
      * to bad type-/javascript support of enums, it is kept as a string.
      */
-    readonly level: string;
+    public readonly level: string;
 
-    private constructor(id: number, languageId: number, level: string) {
+    public readonly isNew: boolean;
+
+    private static CURRENT_ID: number = 0;
+
+    private constructor(id: string, languageId: string, level: string, isNew: boolean) {
         this.id = id;
         this.languageId = languageId;
         this.level = level;
+        this.isNew = isNew;
     }
 
     /**
      * FIXME doc
      * @param apiLanguageSkill
      */
-    public static create(apiLanguageSkill: APILanguageSkill) {
+    public static fromAPI(apiLanguageSkill: APILanguageSkill) {
         return new LanguageSkill(
-            Number(apiLanguageSkill.id),
-            Number(apiLanguageSkill.language.id), apiLanguageSkill.level);
+            String(apiLanguageSkill.id),
+            String(apiLanguageSkill.language.id),
+            apiLanguageSkill.level,
+            false);
     }
 
-    public static createWithoutId(level: string, languageId: number): LanguageSkill {
-        return new LanguageSkill(null, languageId, level);
-    }
-
-    public static createDefault(languageId: number): LanguageSkill {
-        return new LanguageSkill(null, languageId, "");
+    /**
+     * Fixme !important document
+     * @returns {LanguageSkill}
+     */
+    public static createNew(): LanguageSkill {
+        return new LanguageSkill(
+            NEW_ENTITY_PREFIX + String(LanguageSkill.CURRENT_ID++),
+            UNDEFINED_ID,
+            DEFAULT_LANG_LEVEL,
+            true
+        )
     }
 
     /**
@@ -56,7 +71,7 @@ export class LanguageSkill {
      * @returns {LanguageSkill}
      */
     public changeLevel(newLanguageLevel: string): LanguageSkill {
-        return new LanguageSkill(this.id, this.languageId, newLanguageLevel);
+        return new LanguageSkill(this.id, this.languageId, newLanguageLevel, this.isNew);
     }
 
     /**
@@ -64,18 +79,15 @@ export class LanguageSkill {
      * @param newLanguageId
      * @returns {LanguageSkill}
      */
-    public changeLanguageId(newLanguageId: number): LanguageSkill {
-        return new LanguageSkill(this.id, newLanguageId, this.level);
+    public changeLanguageId(newLanguageId: string): LanguageSkill {
+        return new LanguageSkill(this.id, newLanguageId, this.level, this.isNew);
     }
 
-    public toAPILanguageSkill(languagesById: Immutable.Map<number, Language>) : APILanguageSkill {
+    public toAPILanguageSkill(languagesById: Immutable.Map<string, Language>) : APILanguageSkill {
         return {
-            id: this.id,
+            id: this.isNew ? null : Number.parseInt(this.id),
             level: this.level,
-            language: {
-                id: this.languageId,
-                name: languagesById.get(this.languageId).name
-            }
+            language: this.languageId == null ? null : languagesById.get(this.languageId).toAPI()
         };
     }
 }

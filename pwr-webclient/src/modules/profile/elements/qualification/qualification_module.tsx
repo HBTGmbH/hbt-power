@@ -7,14 +7,13 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Qualification} from '../../../../model/Qualification';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
-import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
 
 interface QualificationProps {
-    qualificationEntries: Immutable.Map<number, QualificationEntry>;
-    qualifications: Immutable.Map<number,Qualification>;
-    userInitials: string;
+    qualificationEntries: Immutable.Map<string, QualificationEntry>;
+    qualifications: Immutable.Map<string,Qualification>;
 }
 
 /**
@@ -37,10 +36,10 @@ interface QualificationLocalState {
 }
 
 interface QualificationDispatch {
-    onDateChange(newDate: Date, id: number): void;
-    onQualificationChange(newQualificationId: number, entryId: number): void;
-    addQualificationEntry(initials: string, qualifications: Immutable.Map<number,Qualification>): void;
-    deleteQualificationEntry(id: number): void;
+    onDateChange(newDate: Date, id: string): void;
+    onQualificationChange(newQualificationId: string, entryId: string): void;
+    addQualificationEntry(): void;
+    deleteQualificationEntry(id: string): void;
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
@@ -54,30 +53,29 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
             qualificationEntries : state.databaseReducer.profile.qualificationEntries,
-            qualifications: state.databaseReducer.qualifications,
-            userInitials: state.databaseReducer.loggedInUser
+            qualifications: state.databaseReducer.qualifications
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : QualificationDispatch {
         return {
-            onDateChange: function(newDate, id: number) {
+            onDateChange: function(newDate, id: string) {
                 dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.QualificationDate));
             },
-            onQualificationChange: function(newQualificationId: number, entryId: number) {
+            onQualificationChange: function(newQualificationId: string, entryId: string) {
                 dispatch(ProfileActionCreator.changeItemId(newQualificationId, entryId, ProfileElementType.QualificationEntry));
             },
-            addQualificationEntry: function(initials: string, qualifications: Immutable.Map<number,Qualification>) {
-                dispatch(ProfileAsyncActionCreator.saveQualificationEntry(initials, QualificationEntry.createEmpty(qualifications.first().id), qualifications));
+            addQualificationEntry: function() {
+                dispatch(ProfileActionCreator.createEntry(ProfileElementType.QualificationEntry));
             },
-            deleteQualificationEntry: function(id: number) {
+            deleteQualificationEntry: function(id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.QualificationEntry));
             }
         };
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addQualificationEntry(this.props.userInitials, this.props.qualifications);
+        this.props.addQualificationEntry();
     };
 
     render() {

@@ -1,5 +1,4 @@
 import * as Immutable from 'immutable';
-import {Sector} from './Sector';
 import {EducationEntry} from './EducationEntry';
 import {LanguageSkill} from './LanguageSkill';
 import {QualificationEntry} from './QualificationEntry';
@@ -14,8 +13,6 @@ import {
 } from './APIProfile';
 import {isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
-import {ChangeItemIdAction} from '../reducers/singleProfile/singleProfileActions';
-import {ProfileElementType} from '../Store';
 import {SectorEntry} from './SectorEntry';
 
 export class Profile {
@@ -26,25 +23,25 @@ export class Profile {
     public readonly description: string;
 
     //FIXME refactor to sectorEntries
-    public readonly sectors: Immutable.Map<number, SectorEntry> = Immutable.Map<number, SectorEntry>();
+    public readonly sectors: Immutable.Map<string, SectorEntry> = Immutable.Map<string, SectorEntry>();
 
-    public readonly careerElements: Immutable.Map<number, CareerElement> = Immutable.Map<number, CareerElement>();
+    public readonly careerElements: Immutable.Map<string, CareerElement> = Immutable.Map<string, CareerElement>();
 
-    public readonly educationEntries: Immutable.Map<number, EducationEntry> = Immutable.Map<number, EducationEntry>();
+    public readonly educationEntries: Immutable.Map<string, EducationEntry> = Immutable.Map<string, EducationEntry>();
 
-    public readonly languageSkills: Immutable.Map<number, LanguageSkill> = Immutable.Map<number, LanguageSkill>();
+    public readonly languageSkills: Immutable.Map<string, LanguageSkill> = Immutable.Map<string, LanguageSkill>();
 
-    public readonly qualificationEntries: Immutable.Map<number, QualificationEntry> = Immutable.Map<number, QualificationEntry>();
+    public readonly qualificationEntries: Immutable.Map<string, QualificationEntry> = Immutable.Map<string, QualificationEntry>();
 
     constructor(
         id: number,
         currentPosition: string,
         description: string,
-        sectors: Immutable.Map<number, SectorEntry>,
-        careerElements: Immutable.Map<number, CareerElement>,
-        educationEntries: Immutable.Map<number, EducationEntry>,
-        languageSkills: Immutable.Map<number, LanguageSkill>,
-        qualificationEntries: Immutable.Map<number, QualificationEntry>,
+        sectors: Immutable.Map<string, SectorEntry>,
+        careerElements: Immutable.Map<string, CareerElement>,
+        educationEntries: Immutable.Map<string, EducationEntry>,
+        languageSkills: Immutable.Map<string, LanguageSkill>,
+        qualificationEntries: Immutable.Map<string, QualificationEntry>,
     ) {
         this.id = id;
         this.currentPosition = currentPosition;
@@ -104,7 +101,7 @@ export class Profile {
         );
     }
 
-    public removeLanguageSkill(id: number): Profile {
+    public removeLanguageSkill(id: string): Profile {
         return new Profile(
             this.id,
             this.currentPosition,
@@ -130,7 +127,7 @@ export class Profile {
         );
     }
 
-    public removeCareerElement(careerElementId: number): Profile {
+    public removeCareerElement(careerElementId: string): Profile {
         return new Profile(
             this.id,
             this.currentPosition,
@@ -156,7 +153,7 @@ export class Profile {
         );
     }
 
-    public removeEducationEntry(id: number): Profile {
+    public removeEducationEntry(id: string): Profile {
         return new Profile(
             this.id,
             this.currentPosition,
@@ -182,7 +179,7 @@ export class Profile {
         );
     }
 
-    removeQualificationEntry(id: number) {
+    removeQualificationEntry(id: string) {
         return new Profile(
             this.id,
             this.currentPosition,
@@ -208,7 +205,7 @@ export class Profile {
         );
     }
 
-    removeSectorEntry(elementId: number): Profile {
+    removeSectorEntry(elementId: string): Profile {
         return new Profile(
             this.id,
             this.currentPosition,
@@ -223,48 +220,52 @@ export class Profile {
 
     // == Serialization & Deserialization == //
 
-    private static parseSectors(sectors: Array<APISectorEntry>): Immutable.Map<number, SectorEntry> {
-        let res: Immutable.Map<number, SectorEntry> = Immutable.Map<number, SectorEntry>();
-        sectors.forEach(sectorEntry => {
+    private static parseSectors(sectors: Array<APISectorEntry>): Immutable.Map<string, SectorEntry> {
+        let res: Immutable.Map<string, SectorEntry> = Immutable.Map<string, SectorEntry>();
+        sectors.forEach(apiSectorEntry => {
             // In case the API returns something invalid.
-            if(!isNullOrUndefined(sectorEntry)) {
+            if(!isNullOrUndefined(apiSectorEntry)) {
                 // We assume that the server that provides the data is always right, which means the
                 // client is missing a data set.
                 // This adds the sector to the currently known sectors.
-                res = res.set(sectorEntry.id, SectorEntry.create(sectorEntry));
+                let sectorEntry: SectorEntry = SectorEntry.create(apiSectorEntry);
+                res = res.set(sectorEntry.id, sectorEntry);
             }
         });
         return res;
     }
 
-    private static parseLanguageSkills(langSkills: Array<APILanguageSkill>): Immutable.Map<number, LanguageSkill> {
-        let res: Immutable.Map<number, LanguageSkill> = Immutable.Map<number, LanguageSkill>();
-        langSkills.forEach(langSkill => {
+    private static parseLanguageSkills(langSkills: Array<APILanguageSkill>): Immutable.Map<string, LanguageSkill> {
+        let res: Immutable.Map<string, LanguageSkill> = Immutable.Map<string, LanguageSkill>();
+        langSkills.forEach(apiLangSkill => {
             // In case the API returns something invalid.
-            if(!isNullOrUndefined(langSkill)) {
-                res = res.set(langSkill.id, LanguageSkill.create(langSkill));
+            if(!isNullOrUndefined(apiLangSkill)) {
+                let langSkill: LanguageSkill = LanguageSkill.fromAPI(apiLangSkill);
+                res = res.set(langSkill.id, langSkill);
             }
         });
         return res;
     }
 
-    private static parseQualficiationEntries(qualificationEntries: Array<APIQualificationEntry>): Immutable.Map<number, QualificationEntry> {
-        let res: Immutable.Map<number, QualificationEntry> = Immutable.Map<number, QualificationEntry>();
-        qualificationEntries.forEach(qualificationEntry => {
+    private static parseQualficiationEntries(qualificationEntries: Array<APIQualificationEntry>): Immutable.Map<string, QualificationEntry> {
+        let res: Immutable.Map<string, QualificationEntry> = Immutable.Map<string, QualificationEntry>();
+        qualificationEntries.forEach(apiQualificationEntry => {
             // The API might return something invalid. Ignore.
-            if(!isNullOrUndefined(qualificationEntry)) {
-                res = res.set(qualificationEntry.id, QualificationEntry.create(qualificationEntry));
+            if(!isNullOrUndefined(apiQualificationEntry)) {
+                let qualificationEntry: QualificationEntry = QualificationEntry.fromAPI(apiQualificationEntry);
+                res = res.set(qualificationEntry.id, qualificationEntry);
             }
         });
         return res;
     }
 
-    private static parseCareerElements(career: Array<APICareerElement>) : Immutable.Map<number, CareerElement> {
-        let res = Immutable.Map<number, CareerElement>();
-        career.forEach(careerElement =>{
+    private static parseCareerElements(career: Array<APICareerElement>) : Immutable.Map<string, CareerElement> {
+        let res = Immutable.Map<string, CareerElement>();
+        career.forEach(apiCareerElement =>{
             // The API might return something invalid. Ignore.
-            if(!isNullOrUndefined(careerElement)) {
-                res = res.set(careerElement.id, CareerElement.create(careerElement));
+            if(!isNullOrUndefined(apiCareerElement)) {
+                let careerElement: CareerElement = CareerElement.fromAPI(apiCareerElement);
+                res = res.set(careerElement.id, careerElement);
             }
         });
         return res;
@@ -274,13 +275,14 @@ export class Profile {
      *
      * @param educationEntries
      */
-    private static parseEducationEntries(educationEntries: Array<APIEducationStep>): Immutable.Map<number, EducationEntry> {
+    private static parseEducationEntries(educationEntries: Array<APIEducationStep>): Immutable.Map<string, EducationEntry> {
         // TODO in case of performance issues, change the initialization method.
-        let res: Immutable.Map<number, EducationEntry> = Immutable.Map<number, EducationEntry>();
-        educationEntries.forEach(eductionEntry => {
+        let res: Immutable.Map<string, EducationEntry> = Immutable.Map<string, EducationEntry>();
+        educationEntries.forEach(apiEducationEntry => {
             // The API might return something invalid. Ignore that.
-            if(!isNullOrUndefined(eductionEntry)) {
-                res = res.set(eductionEntry.id, EducationEntry.create(eductionEntry));
+            if(!isNullOrUndefined(apiEducationEntry)) {
+                let educationEntry: EducationEntry = EducationEntry.fromAPI(apiEducationEntry);
+                res = res.set(educationEntry.id, educationEntry);
             }
         });
         return res;
@@ -350,6 +352,7 @@ export class Profile {
     }
 
 
+
     /**
      * Creates a default, immutable Profile that can be considered as 'empty'
      *
@@ -363,11 +366,11 @@ export class Profile {
             -1,
             '',
             '',
-            Immutable.Map<number, SectorEntry>(),
-            Immutable.Map<number, CareerElement>(),
-            Immutable.Map<number, EducationEntry>(),
-            Immutable.Map<number, LanguageSkill>(),
-            Immutable.Map<number, QualificationEntry>());
+            Immutable.Map<string, SectorEntry>(),
+            Immutable.Map<string, CareerElement>(),
+            Immutable.Map<string, EducationEntry>(),
+            Immutable.Map<string, LanguageSkill>(),
+            Immutable.Map<string, QualificationEntry>());
     }
 
 

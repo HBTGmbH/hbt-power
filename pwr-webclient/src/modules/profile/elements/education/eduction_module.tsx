@@ -2,20 +2,20 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
-import {DatePicker, TextField, TouchTapEvent} from 'material-ui';
+import {TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {Education} from '../../../../model/Education';
 import {SingleEducationElement} from './education-entry_module';
-import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
 
 interface EducationProps {
 
-    educationEntries: Immutable.Map<number, EducationEntry>;
+    educationEntries: Immutable.Map<string, EducationEntry>;
 
-    educations: Immutable.Map<number, Education>;
+    educations: Immutable.Map<string, Education>;
 
     userInitials: string;
 }
@@ -40,10 +40,10 @@ interface EducationLocalState {
 }
 
 interface EducationDispatch {
-    onDateChange(newDate: Date, id: number): void;
-    onEducationEntryEducationChange(newEducationId: number, id: number): void;
-    addEducationEntry(initials: string, educationId: number, educations: Immutable.Map<number, Education>): void;
-    deleteEducationEntry(educationEntryId: number): void;
+    onDateChange(newDate: Date, id: string): void;
+    onEducationEntryEducationChange(newEducationId: string, id: string): void;
+    addEducationEntry(): void;
+    deleteEducationEntry(educationEntryId: string): void;
 }
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
@@ -64,23 +64,23 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : EducationDispatch {
         return {
-            onDateChange: function(newDate: Date, id: number) {
+            onDateChange: function(newDate: Date, id: string) {
                 dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationDate));
             },
-            onEducationEntryEducationChange: function(newEducationId: number, id: number) {
+            onEducationEntryEducationChange: function(newEducationId: string, id: string) {
                 dispatch(ProfileActionCreator.changeItemId(newEducationId, id, ProfileElementType.EducationEntry));
             },
-            addEducationEntry: function(initials: string, educationId: number, educations: Immutable.Map<number, Education>) {
-                dispatch(ProfileAsyncActionCreator.saveEducationEntry(initials, EducationEntry.createEmpty(educationId), educations)); //Fixme hardcoding nt
+            addEducationEntry: function() {
+                dispatch(ProfileActionCreator.createEntry(ProfileElementType.EducationEntry))
             },
-            deleteEducationEntry: function(educationEntryId: number) {
+            deleteEducationEntry: function(educationEntryId: string) {
                 dispatch(ProfileActionCreator.deleteEntry(educationEntryId, ProfileElementType.EducationEntry));
             }
         };
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addEducationEntry(this.props.userInitials, this.props.educations.first().id, this.props.educations);
+        this.props.addEducationEntry();
     };
 
     render() {

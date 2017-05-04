@@ -31,27 +31,26 @@ export class InternalDatabase {
 
     public readonly profile: Profile;
 
-    public readonly careerPositions : Immutable.Map<number, CareerPosition> = Immutable.Map<number, CareerPosition>();
+    public readonly careerPositions : Immutable.Map<string, CareerPosition> = Immutable.Map<string, CareerPosition>();
 
-    public readonly educations: Immutable.Map<number, Education> = Immutable.Map<number, Education>();
+    public readonly educations: Immutable.Map<string, Education> = Immutable.Map<string, Education>();
 
-    public readonly languages: Immutable.Map<number, Language> = Immutable.Map<number, Language>();
+    public readonly languages: Immutable.Map<string, Language> = Immutable.Map<string, Language>();
 
-    public readonly sectors: Immutable.Map<number, Sector> = Immutable.Map<number, Sector>();
+    public readonly sectors: Immutable.Map<string, Sector> = Immutable.Map<string, Sector>();
 
-    public readonly qualifications: Immutable.Map<number, Qualification> = Immutable.Map<number, Qualification>();
+    public readonly qualifications: Immutable.Map<string, Qualification> = Immutable.Map<string, Qualification>();
 
-    private static currentId: number = 80000; //FIXME
 
     constructor(
         apiRequestStatus: RequestStatus,
         languageLevels: Array<string>,
         profile: Profile,
-        careerPositions: Immutable.Map<number, CareerPosition>,
-        educations: Immutable.Map<number, Education>,
-        languages: Immutable.Map<number, Language>,
-        qualifications: Immutable.Map<number, Qualification>,
-        sectors:  Immutable.Map<number, Sector>
+        careerPositions: Immutable.Map<string, CareerPosition>,
+        educations: Immutable.Map<string, Education>,
+        languages: Immutable.Map<string, Language>,
+        qualifications: Immutable.Map<string, Qualification>,
+        sectors:  Immutable.Map<string, Sector>
 ) {
         this.APIRequestStatus = apiRequestStatus;
         this.languageLevels = languageLevels;
@@ -68,18 +67,13 @@ export class InternalDatabase {
             RequestStatus.Successful,
             ["Beginner", "Intermediate", "Expert", "Native"],
             Profile.createDefault(),
-            Immutable.Map<number, CareerPosition>(),
-            Immutable.Map<number, Education>(),
-            Immutable.Map<number, Language>(),
-            Immutable.Map<number, Qualification>(),
-            Immutable.Map<number, Sector>()
+            Immutable.Map<string, CareerPosition>(),
+            Immutable.Map<string, Education>(),
+            Immutable.Map<string, Language>(),
+            Immutable.Map<string, Qualification>(),
+            Immutable.Map<string, Sector>()
         )
     }
-
-    public getNextId(): number {
-        return InternalDatabase.currentId++;
-    }
-
 
     public getSectorByName(name: string): Sector {
         let result: Sector = null;
@@ -121,11 +115,12 @@ export class InternalDatabase {
 
     /**
      * Creates a new sector and, optionally, adds it to the profile element with the given ID as name entity.
+     * FIXME NT
      * @param newSector
      * @param entryId
      * @returns {InternalDatabase}
      */
-    public createNewSector(newSector: Sector, entryId?: number): InternalDatabase {
+    public createNewSector(newSector: Sector, entryId?: string): InternalDatabase {
         let profile: Profile = this.profile;
         if(!isNullOrUndefined(entryId)) {
             profile = ProfileReducer.reducerHandleItemIdChange(
@@ -152,9 +147,10 @@ export class InternalDatabase {
      */
     public addAPILanguages(languages: Array<APILanguage>): InternalDatabase {
         console.info("Receiving additional languages: ", languages);
-        let newLangs: Immutable.Map<number, Language> = this.languages;
-        languages.forEach(lang => {
-            newLangs = newLangs.set(lang.id, Language.create(lang));
+        let newLangs: Immutable.Map<string, Language> = this.languages;
+        languages.forEach(apiLang => {
+            let lang: Language = Language.fromAPI(apiLang);
+            newLangs = newLangs.set(lang.id, lang);
         });
         return new InternalDatabase(
             this.APIRequestStatus,
@@ -170,9 +166,10 @@ export class InternalDatabase {
 
     public addAPIEducations(educations: Array<APIEducation>): InternalDatabase {
         console.info("Receiving additional educations:", educations);
-        let newEducations: Immutable.Map<number, Education> = this.educations;
-        educations.forEach(education => {
-            newEducations = newEducations.set(education.id, Education.create(education));
+        let newEducations: Immutable.Map<string, Education> = this.educations;
+        educations.forEach(apiEducation => {
+            let education: Education = Education.fromAPI(apiEducation);
+            newEducations = newEducations.set(education.id, education);
         });
         return new InternalDatabase(
             this.APIRequestStatus,
@@ -188,9 +185,10 @@ export class InternalDatabase {
 
     public addAPIQualifications(qualifications: Array<APIQualification>) {
         console.info("Receiving additional qualifications:", qualifications);
-        let newQualifications: Immutable.Map<number, Qualification> = this.qualifications;
-        qualifications.forEach(qualification => {
-            newQualifications = newQualifications.set(qualification.id, Qualification.create(qualification));
+        let newQualifications: Immutable.Map<string, Qualification> = this.qualifications;
+        qualifications.forEach(apiQualification => {
+            let qualification: Qualification = Qualification.fromAPI(apiQualification);
+            newQualifications = newQualifications.set(qualification.id, qualification);
         });
         return new InternalDatabase(
             this.APIRequestStatus,
@@ -206,9 +204,10 @@ export class InternalDatabase {
 
     public addAPICareers(careers: Array<APICareerPosition>) {
         console.info("Receiving additional career positions:", careers);
-        let newCareerPositions: Immutable.Map<number, CareerPosition> = this.careerPositions;
-        careers.forEach(careerPos => {
-            newCareerPositions = newCareerPositions.set(careerPos.id, CareerPosition.create(careerPos));
+        let newCareerPositions: Immutable.Map<string, CareerPosition> = this.careerPositions;
+        careers.forEach(apiCareerPos => {
+            let careerPos: CareerPosition = CareerPosition.fromAPI(apiCareerPos);
+            newCareerPositions = newCareerPositions.set(careerPos.id, careerPos);
         });
         return new InternalDatabase(
             this.APIRequestStatus,
@@ -224,8 +223,11 @@ export class InternalDatabase {
 
     public addAPISectors(sectors: Array<APISector>) {
         console.info("Receiving additional sectors:", sectors);
-        let newSectors: Immutable.Map<number, Sector> = this.sectors;
-        sectors.forEach(sector => newSectors = newSectors.set(sector.id, Sector.create(sector)));
+        let newSectors: Immutable.Map<string, Sector> = this.sectors;
+        sectors.forEach(apiSector => {
+            let sector: Sector = Sector.fromAPI(apiSector);
+            newSectors = newSectors.set(sector.id, sector);
+        });
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -243,41 +245,42 @@ export class InternalDatabase {
      * @param profileFromAPI the profile the API provides.
      */
     public parseProfile(profileFromAPI: APIProfile): InternalDatabase {
-        console.info("Parsing Profile");
-        let profile: Profile = Profile.createFromAPI(profileFromAPI);
+
         console.info("Adding Profile information into suggestion database.");
 
         // references to the readonly property to modify it.
         // This will not affect the original languages, as the original is still immutable.
         let languages = this.languages;
         profileFromAPI.languages.forEach(langSkill => {
-            languages = languages.set(langSkill.language.id, Language.create(langSkill.language));
+            let l: Language = Language.fromAPI(langSkill.language);
+            languages = languages.set(l.id, l);
         });
 
         let qualifications = this.qualifications;
         profileFromAPI.qualification.forEach(qualificationEntry => {
-           let q: Qualification = qualificationEntry.qualification;
-           qualifications = qualifications.set(q.id, Qualification.create(q));
+           let q: Qualification = Qualification.fromAPI(qualificationEntry.qualification);
+           qualifications = qualifications.set(q.id, q);
         });
 
         let careerPositions = this.careerPositions;
         profileFromAPI.career.forEach(careerPosition => {
-            let career = careerPosition.position;
-            careerPositions = careerPositions.set(career.id, CareerPosition.create(career));
+            let career: CareerPosition = CareerPosition.fromAPI(careerPosition.position);
+            careerPositions = careerPositions.set(career.id, career);
         });
 
         let educations = this.educations;
         profileFromAPI.education.forEach(educationEntry => {
-            let education: APIEducation = educationEntry.education;
-            educations = educations.set(education.id, Education.create(education));
+            let education: Education = Education.fromAPI(educationEntry.education);
+            educations = educations.set(education.id, education);
         });
 
         let sectors = this.sectors;
         profileFromAPI.sectors.forEach(sectorEntry => {
-            let sector: APISector = sectorEntry.sector;
-            sectors = sectors.set(sector.id, Sector.create(sector));
+            let sector: Sector = Sector.fromAPI(sectorEntry.sector);
+            sectors = sectors.set(sector.id, sector);
         });
-
+        console.info("Parsing Profile");
+        let profile: Profile = Profile.createFromAPI(profileFromAPI);
 
         console.info("Profile processing done. Result:", profile);
 

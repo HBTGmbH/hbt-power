@@ -1,5 +1,8 @@
 import {Profile} from '../../model/Profile';
-import {ChangeDateAction, ChangeItemIdAction, ChangeStringValueAction, DeleteEntryAction} from './singleProfileActions';
+import {
+    ChangeDateAction, ChangeItemIdAction, ChangeStringValueAction, CreateEntryAction,
+    DeleteEntryAction
+} from './singleProfileActions';
 import {EducationEntry} from '../../model/EducationEntry';
 import {DateFieldType, ProfileElementType} from '../../Store';
 import {CareerElement} from '../../model/CareerElement';
@@ -56,6 +59,23 @@ export class ProfileReducer {
                 return profile.removeQualificationEntry(action.elementId);
             case ProfileElementType.LanguageEntry:
                 return profile.removeLanguageSkill(action.elementId);
+            default:
+                return profile;
+        }
+    }
+
+    public static reducerHandleCreateEntry(profile: Profile, action: CreateEntryAction): Profile {
+        switch(action.entryType) {
+            case ProfileElementType.SectorEntry:
+                return profile.updateSectorEntry(SectorEntry.createNew());
+            case ProfileElementType.LanguageEntry:
+                return profile.updateLanguageSkill(LanguageSkill.createNew());
+            case ProfileElementType.QualificationEntry:
+                return profile.updateQualificationEntry(QualificationEntry.createNew());
+            case ProfileElementType.CareerEntry:
+                return profile.updateCareerElement(CareerElement.createNew());
+            case ProfileElementType.EducationEntry:
+                return profile.updateEducationEntry(EducationEntry.createNew());
             default:
                 return profile;
         }

@@ -12,26 +12,12 @@ import {
     getLangSuggestionAPIString,
     getProfileAPIString,
     getQualificationSuggestionAPIString,
-    getSaveCareerElementAPIString, getSaveSectorEntryAPIString,
-    getSectorsSuggestionAPIString, getSaveLangaugeSkillAPIString, getSaveEducationEntryAPIString,
-    getSaveQualificationEntryAPIString
+    getSectorsSuggestionAPIString
 } from '../../API_CONFIG';
-import {
-    APICareerElement, APIEducationStep, APILanguageSkill, APIProfile, APIQualificationEntry,
-    APISectorEntry
-} from '../../model/APIProfile';
+import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {CareerElement} from '../../model/CareerElement';
-import {CareerPosition} from '../../model/CareerPosition';
-import * as Immutable from 'immutable';
-import {SectorEntry} from '../../model/SectorEntry';
 import {Sector} from '../../model/Sector';
-import {LanguageSkill} from '../../model/LanguageSkill';
 import {Language} from '../../model/Language';
-import {EducationEntry} from '../../model/EducationEntry';
-import {Education} from '../../model/Education';
-import {QualificationEntry} from '../../model/QualificationEntry';
-import {Qualification} from '../../model/Qualification';
 
 
 export interface ChangeStringValueAction extends AbstractAction {
@@ -48,11 +34,11 @@ export interface ChangeLanguageSkillNameAction extends AbstractAction {
     /**
      * The ID of the language that is assigned to the language skill.
      */
-    newLanguageId: number;
+    newLanguageId: string;
     /**
      * The ID of the language skill that is being modified.
      */
-    languageSkillId: number;
+    languageSkillId: string;
 }
 
 /**
@@ -63,7 +49,7 @@ export interface ChangeLanguageSkillLevelAction extends AbstractAction {
      * {@link Language.id} of the language that is supposed to be modified.
      * the ID is not existent, nothing will happen.
      */
-    languageSkillId: number;
+    languageSkillId: string;
 
     /**
      * The new language level. May be an arbitary string. Note that the API performs consistency checks.
@@ -99,7 +85,7 @@ export interface ChangeDateAction extends AbstractAction {
     /**
      * Id of the target field.
      */
-   targetFieldId: number;
+   targetFieldId: string;
 }
 
 export interface ChangeItemIdAction extends AbstractAction {
@@ -110,17 +96,21 @@ export interface ChangeItemIdAction extends AbstractAction {
     /**
      * The id that is given to the entry.
      */
-    newItemId: number;
+    newItemId: string;
     /**
      * The entry that is changed
      */
-    entryId: number;
+    entryId: string;
 }
 
 export interface CreateNameEntityAction extends AbstractAction {
     entityType: NameEntityType;
     name: string;
-    entryId: number;
+    entryId: string;
+}
+
+export interface CreateEntryAction extends  AbstractAction {
+    entryType: ProfileElementType;
 }
 
 /**
@@ -129,7 +119,7 @@ export interface CreateNameEntityAction extends AbstractAction {
  */
 export interface DeleteEntryAction extends AbstractAction {
     elementType: ProfileElementType;
-    elementId: number;
+    elementId: string;
 }
 
 export class ProfileActionCreator {
@@ -140,7 +130,7 @@ export class ProfileActionCreator {
         };
     }
 
-    public static changeLanguageSkillLevel(newLevel: string, langSkillId: number):ChangeLanguageSkillLevelAction {
+    public static changeLanguageSkillLevel(newLevel: string, langSkillId: string):ChangeLanguageSkillLevelAction {
         return {
             type: ActionType.ChangeLanguageSkillLevel,
             newLanguageLevel: newLevel,
@@ -177,7 +167,7 @@ export class ProfileActionCreator {
     }
 
 
-    public static changeDateField(id: number, newDate: Date, targetField: DateFieldType): ChangeDateAction {
+    public static changeDateField(id: string, newDate: Date, targetField: DateFieldType): ChangeDateAction {
         return {
             type: ActionType.ChangeDate,
             newDate: newDate,
@@ -186,7 +176,7 @@ export class ProfileActionCreator {
         };
     }
 
-    public static changeItemId(newItemId: number, entryId: number, elementType: ProfileElementType): ChangeItemIdAction {
+    public static changeItemId(newItemId: string, entryId: string, elementType: ProfileElementType): ChangeItemIdAction {
         return {
             type: ActionType.ChangeItemId,
             elementType: elementType,
@@ -195,12 +185,19 @@ export class ProfileActionCreator {
         };
     }
 
-    public static deleteEntry(id: number, elementType: ProfileElementType): DeleteEntryAction {
+    public static deleteEntry(id: string, elementType: ProfileElementType): DeleteEntryAction {
         return {
             type: ActionType.DeleteEntry,
             elementType: elementType,
             elementId: id
         };
+    }
+
+    public static createEntry(elementType: ProfileElementType): CreateEntryAction {
+        return {
+            type: ActionType.CreateEntry,
+            entryType: elementType
+        }
     }
 
     /**
@@ -211,7 +208,7 @@ export class ProfileActionCreator {
      * @param type
      * @returns {{type: ActionType, entityType: NameEntityType, name: string}}
      */
-    public static createNameEntity(name: string, id:number, type: NameEntityType): CreateNameEntityAction {
+    public static createNameEntity(name: string, id:string, type: NameEntityType): CreateNameEntityAction {
         return {
             type: ActionType.CreateEntity,
             entityType: type,
@@ -324,7 +321,7 @@ export class ProfileAsyncActionCreator {
             });
         };
     }
-
+/*
     private static performAbstractSaveEntryAction(
         address: string,
         entry: any,
@@ -340,12 +337,12 @@ export class ProfileAsyncActionCreator {
         });
     }
 
-    /**
+    **
      * Fixme comment
      * @param initials
      * @param careerElement
      * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
-     */
+     *
     public static saveCareerElement(initials: string, careerElement: CareerElement, careers: Immutable.Map<number, CareerPosition>) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             let apiCareerElement: APICareerElement = careerElement.toAPICareer(careers);
@@ -357,7 +354,7 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    /**
+    **
      * Creates an asynchronous action that saves a single sector entry.
      *
      * This invokes a PUT request to the API defined in the API_CONFIG.ts. This operation can be assumed persistent.
@@ -370,7 +367,7 @@ export class ProfileAsyncActionCreator {
      * @param sectorEntry is the sector entry that is added to the profile
      * @param sectors is the immutable map of all possible sectors
      * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
-     */
+     *
     public static saveSectorEntry(initials:string, sectorEntry: SectorEntry, sectors: Immutable.Map<number, Sector>) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
@@ -383,7 +380,7 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    /**
+    **
      * Creates an asynchronous action that saves a single language skill to a profile.
      *
      * This invokes a PUT request to the API defined in the API_CONFIG.ts. This operation can be assumed persistent.
@@ -396,7 +393,7 @@ export class ProfileAsyncActionCreator {
      * @param languageSkill is the {@link LanguageSkill} that is added to the profile.
      * @param languages is the immutable map of all possible {@link Language}s
      * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
-     */
+     *
     public static saveLanguageSkill(initials: string, languageSkill: LanguageSkill, languages: Immutable.Map<number, Language>){
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
@@ -409,13 +406,13 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    /**
+    **
      * Creates an asynchronous action that saves a single {@link EducationEntry} to a profile.
      * @param initials are the initials of the consultant whose profile is updated.
      * @param educationEntry is the {@link EducationEntry} that is added to the profile
      * @param educations
      * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
-     */
+     *
     public static saveEducationEntry(initials: string, educationEntry: EducationEntry, educations: Immutable.Map<number, Education>) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
@@ -438,5 +435,5 @@ export class ProfileAsyncActionCreator {
                 dispatch,
                 APIRequestType.SaveQualificationEntry);
         };
-    }
+    }*/
 }

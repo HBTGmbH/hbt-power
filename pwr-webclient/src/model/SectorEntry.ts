@@ -1,44 +1,50 @@
 import {APISectorEntry} from './APIProfile';
 import {Sector} from './Sector';
 import * as Immutable from 'immutable';
+import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 
 export class SectorEntry {
-    public readonly id: number;
-    public readonly sectorId: number;
+    public readonly id: string;
+    public readonly sectorId: string;
+    public readonly isNew: boolean;
+
+
+    private static CURRENT_ID: number = 0;
 
     /**
      * Constructor is left private to disallow any manual constructing, enforcing fallback
      * to the factory methods.
      * @param id
+     * @param localId
      * @param sectorId
      */
-    private constructor(id: number, sectorId: number) {
+    private constructor(id: string, sectorId: string, isNew: boolean) {
         this.id = id;
         this.sectorId = sectorId;
+        this.isNew = isNew;
+
     }
 
     static create(apiSectorEntry: APISectorEntry): SectorEntry {
-        return new SectorEntry(Number(apiSectorEntry.id), Number(apiSectorEntry.sector.id))
+        return new SectorEntry(
+            String(apiSectorEntry.id),
+            String(apiSectorEntry.sector.id),
+            false)
     }
 
-    /**
-     * Creates a {@link SectorEntry} without setting it's {@link SectorEntry.id}, leaving it null. The resulting
-     * entry should not be used within the application, but only for API communication.
-     * @param sectorId
-     */
-    static createWithoutId(sectorId: number): SectorEntry {
-        return new SectorEntry(null, sectorId);
+    static createNew(): SectorEntry {
+        return new SectorEntry(NEW_ENTITY_PREFIX + String(SectorEntry.CURRENT_ID++), UNDEFINED_ID, true);
     }
 
-    public changeSectorId(newSectorId: number): SectorEntry {
-        return new SectorEntry(this.id, newSectorId);
+    public changeSectorId(newSectorId: string): SectorEntry {
+        return new SectorEntry(this.id, newSectorId, this.isNew);
     }
 
-    public toAPISectorEntry(sectors: Immutable.Map<number, Sector>): APISectorEntry {
+    public toAPISectorEntry(sectors: Immutable.Map<string, Sector>): APISectorEntry {
         return {
-            id: this.id, //FIXME correct
-            sector: sectors.get(this.sectorId)
-        }
+            id: this.isNew ? null : Number.parseInt(this.id),
+            sector: this.sectorId == UNDEFINED_ID ? null : sectors.get(this.sectorId).toAPISector()
+        };
     }
 
 }

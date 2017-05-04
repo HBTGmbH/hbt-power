@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, TextField, Paper, Checkbox} from 'material-ui';
+import {AutoComplete, Checkbox, DatePicker, IconButton, Paper, TextField} from 'material-ui';
 import {CareerElement} from '../../../../model/CareerElement';
 import {CareerPosition} from '../../../../model/CareerPosition';
 import * as Immutable from 'immutable';
@@ -21,7 +21,7 @@ interface CareerStepLocalProps {
     /**
      * Array of possible career positions by their ID.
      */
-    careerPositions: Immutable.Map<number, CareerPosition>;
+    careerPositions: Immutable.Map<string, CareerPosition>;
 
     /**
      * Callback given to this career step module to be called whenever the start date
@@ -29,7 +29,7 @@ interface CareerStepLocalProps {
      * @param newDate the new Date for the startDate field
      * @param elementId the ID of the {@link CareerElement} that was provided.
      */
-    onStartDateChange(newDate: Date, elementId: number): void;
+    onStartDateChange(newDate: Date, elementId: string): void;
 
     /**
      * Callback given to this career step module to be called whenever the end date
@@ -37,7 +37,7 @@ interface CareerStepLocalProps {
      * @param newDate the new Date for the endDate field
      * @param elementId the ID of the {@link CareerElement} that was provided.
      */
-    onEndDateChange(newDate: Date, elementId: number): void;
+    onEndDateChange(newDate: Date, elementId: string): void;
 
     /**
      * Callback given to this career step module to be called whenever the {@link CareerElement.careerPositionId}
@@ -48,13 +48,13 @@ interface CareerStepLocalProps {
      * by this module.
      * @param elementId the {@link CareerElement.id} of this module.
      */
-    onCareerChange(newCareerId: number, elementId: number): void;
+    onCareerChange(newCareerId: string, elementId: string): void;
 
     /**
      * Callback given to this module to be called whenever the delete button is being pressed.
      * @param elementId the {@link CareerElement.id} of the element associated with this module.
      */
-    onDelete(elementId: number): void;
+    onDelete(elementId: string): void;
 }
 
 /**
@@ -105,13 +105,13 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
         // only show the date picker when there is a date.
         let showDatePicker = props.careerElement.endDate != null;
         this.state = {
-            autoCompleteValue: props.careerPositions.get(props.careerElement.careerPositionId).position,
+            autoCompleteValue: this.getCareerPositionName(props.careerElement.careerPositionId),
             editDisabled: true,
             showEndDatePicker: showDatePicker
         };
     }
 
-    public componentWillReceiveProps(nextProps: any) {
+   /* public componentWillReceiveProps(nextProps: any) {
         // FIXME nt| This is not a good way to define that the component should re-render, only a test. \
          // FIXME the problem is that the local state is interfering with the global state(is in concurrency), as
         // no  element is directly mapped to the glboal state. Rerendering upon update does not take place correctly.
@@ -126,9 +126,18 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
                 autoCompleteValue: nextPosition
             });
         }
+    };*/
+
+
+    /**
+     * Null-tolerant accessor to the {@link CareerPosition.position} field of the career position
+     * that is linked in {@link CareerElement.careerPositionId}
+     * @param id
+     * @returns the position or an empty string when no position exists.
+     */
+    private getCareerPositionName = (id: string) => {
+        return id == null ? "" : this.props.careerPositions.get(id).position;
     };
-
-
     /**
      * Handles change of the start date DatePicker
      * @param event is always undefined as to material-ui docs
@@ -173,7 +182,7 @@ export class SingleCareerElement extends React.Component<CareerStepLocalProps, C
         } else {
             console.log(chosenRequest);
             this.setState({
-                autoCompleteValue: this.props.careerPositions.get(this.props.careerElement.careerPositionId).position
+                autoCompleteValue: this.getCareerPositionName(this.props.careerElement.careerPositionId)
             });
         }
     };

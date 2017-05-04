@@ -1,11 +1,14 @@
-import {APIRequestType, RequestStatus, NameEntityType, ProfileElementType} from '../../Store';
+import {APIRequestType, NameEntityType, ProfileElementType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
-    ChangeStringValueAction,
     ChangeDateAction,
     ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
-    ReceiveAPIResponseAction, DeleteEntryAction, CreateNameEntityAction, ProfileActionCreator
+    ChangeStringValueAction, CreateEntryAction,
+    CreateNameEntityAction,
+    DeleteEntryAction,
+    ProfileActionCreator,
+    ReceiveAPIResponseAction
 } from './singleProfileActions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {LanguageSkill} from '../../model/LanguageSkill';
@@ -13,10 +16,6 @@ import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
-import {CareerElement} from '../../model/CareerElement';
-import {SectorEntry} from '../../model/SectorEntry';
-import {EducationEntry} from '../../model/EducationEntry';
-import {QualificationEntry} from '../../model/QualificationEntry';
 import {Sector} from '../../model/Sector';
 
 
@@ -50,17 +49,6 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
         newState = state.addAPICareers(action.payload);
     } else if(action.requestType === APIRequestType.RequestSectors) {
         newState = state.addAPISectors(action.payload);
-    } else if(action.requestType === APIRequestType.SaveCareerElement) {
-        console.log(action.payload);
-        newState = state.updateProfile(state.profile.updateCareerElement(CareerElement.create(action.payload)));
-    } else if(action.requestType === APIRequestType.SaveSectorEntry){
-        newState = state.updateProfile(state.profile.updateSectorEntry(SectorEntry.create(action.payload)));
-    } else if(action.requestType === APIRequestType.SaveLanguageSkill) {
-        newState = state.updateProfile(state.profile.updateLanguageSkill(LanguageSkill.create(action.payload)));
-    } else if(action.requestType === APIRequestType.SaveEducationStep) {
-        newState = state.updateProfile(state.profile.updateEducationEntry(EducationEntry.create(action.payload)));
-    } else if(action.requestType === APIRequestType.SaveQualificationEntry) {
-        newState = state.updateProfile(state.profile.updateQualificationEntry(QualificationEntry.create(action.payload)));
     }
     return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }
@@ -87,12 +75,12 @@ function handleCreateNameEntity(database: InternalDatabase, action: CreateNameEn
         case NameEntityType.Sector: {
             let sector: Sector = database.getSectorByName(action.name);
             if(!isNullOrUndefined(sector) && !isNullOrUndefined(action.entryId)) {
-                // Sector already exists. Do not create a new one, only update the ID of the entry.
+                // Sector already exists. Do not fromAPI a new one, only update the ID of the entry.
                 let profile: Profile = ProfileReducer.reducerHandleItemIdChange(database.profile,
                     ProfileActionCreator.changeItemId(sector.id, action.entryId, ProfileElementType.SectorEntry));
                 return database.updateProfile(profile);
             } else {
-                return database.createNewSector(new Sector(database.getNextId(), action.name), action.entryId);
+                return database.createNewSector(Sector.create(action.name), action.entryId);
             }
         }
     }
@@ -126,6 +114,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         }
         case ActionType.DeleteEntry: {
             let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile, <DeleteEntryAction> action);
+            return state.updateProfile(newProfile);
+        }
+        case ActionType.CreateEntry: {
+            let newProfile: Profile = ProfileReducer.reducerHandleCreateEntry(state.profile, <CreateEntryAction> action);
             return state.updateProfile(newProfile);
         }
         case ActionType.ChangeCurrentPosition: {

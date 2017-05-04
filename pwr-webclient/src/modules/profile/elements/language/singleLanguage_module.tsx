@@ -15,7 +15,7 @@ import * as Immutable from 'immutable';
 interface SingleLanguageProps {
     languageSkill: LanguageSkill;
 
-    languages: Immutable.Map<number, Language>;
+    languages: Immutable.Map<string, Language>;
 
     /**
      * Used to createFromAPI the dropdown menu
@@ -29,14 +29,14 @@ interface SingleLanguageLocalProps {
     /**
      * The ID of the language
      */
-    id: number;
+    id: string;
 
-    onDelete(id: number): void;
+    onDelete(id: string): void;
 }
 
 interface SingleLanguageDispatch {
-    changeLangName: (newLangId: number, langSkillId: number) => void;
-    changeLangLevel: (newLevel: string, langSkillId: number) => void;
+    changeLangName: (newLangId: string, langSkillId: string) => void;
+    changeLangLevel: (newLevel: string, langSkillId: string) => void;
 }
 
 interface SingleLanguageLocalState {
@@ -49,8 +49,9 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     constructor(props: SingleLanguageLocalProps & SingleLanguageProps & SingleLanguageDispatch) {
         super(props);
+        let langId: string = props.languageSkill.languageId;
         this.state = {
-            nameAutoCompleteValue: props.languages.get(props.languageSkill.languageId).name,
+            nameAutoCompleteValue: langId != null ? props.languages.get(props.languageSkill.languageId).name : "",
             backgroundColor: "initial",
             editDisabled: true
         }
@@ -71,10 +72,10 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
 
     public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : SingleLanguageDispatch {
         return {
-            changeLangName: function(newLangId: number, langSkillId: number): void {
+            changeLangName: function(newLangId: string, langSkillId: string): void {
                 dispatch(ProfileActionCreator.changeItemId(newLangId, langSkillId, ProfileElementType.LanguageEntry));
             },
-            changeLangLevel: function(newLevel: string, langSkillId: number): void {
+            changeLangLevel: function(newLevel: string, langSkillId: string): void {
                 dispatch(ProfileActionCreator.changeLanguageSkillLevel(newLevel, langSkillId));
             }
         };

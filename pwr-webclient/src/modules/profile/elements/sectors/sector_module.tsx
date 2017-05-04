@@ -1,13 +1,12 @@
-
-import {Sector} from '../../../../model/Sector';
 import {SectorEntry} from '../../../../model/SectorEntry';
 import * as Immutable from 'immutable';
 import * as React from 'react';
-import {AutoComplete, TextField, IconButton, TouchTapEvent, Paper} from 'material-ui';
+import {AutoComplete, IconButton, Paper, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {Sector} from '../../../../model/Sector';
 
 interface SingleSectorLocalProps {
-    sectors: Immutable.Map<number, Sector>;
+    sectors: Immutable.Map<string, Sector>;
     sectorEntry: SectorEntry;
 
     /**
@@ -15,13 +14,13 @@ interface SingleSectorLocalProps {
      * @param newSectorId
      * @param sectorEntryId
      */
-    onSectorChange(newSectorId: number, sectorEntryId: number): void;
+    onSectorChange(newSectorId: string, sectorEntryId: string): void;
 
     /**
      * Invoked when the user invokes a deletion of the sector entry.
      * @param sectorEntryId the id of the {@link SectorEntry} associated with this {@link SingleSectorModule}
      */
-    onSectorDelete(sectorEntryId: number): void;
+    onSectorDelete(sectorEntryId: string): void;
 
     /**
      * Invoked when the enter key is pressed inside the text field and the value of the text field
@@ -31,7 +30,7 @@ interface SingleSectorLocalProps {
      * @param value
      * @param sectorEntryId the ID of the {@link SectorEntry} to which the new sector is assigned.
      */
-    onNewSector(value: string, sectorEntryId: number): void;
+    onNewSector(value: string, sectorEntryId: string): void;
 }
 
 interface SingleSectorState {
@@ -45,6 +44,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
 
     constructor(props: SingleSectorLocalProps) {
         super(props);
+        let id: string = props.sectorEntry.sectorId;
         this.state = {
             autoCompleteValue: props.sectors.get(props.sectorEntry.sectorId).name,
             editDisabled: true

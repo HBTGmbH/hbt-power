@@ -12,8 +12,8 @@ import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reduc
 import {TouchTapEvent} from 'material-ui';
 
 interface SectorsProps {
-    sectors: Immutable.Map<number, Sector>;
-    sectorEntries: Immutable.Map<number, SectorEntry>;
+    sectors: Immutable.Map<string, Sector>;
+    sectorEntries: Immutable.Map<string, SectorEntry>;
     initials: string;
 }
 
@@ -37,14 +37,11 @@ interface SectorsLocalState {
 }
 
 interface SectorsDispatch {
-    onSectorChange(sectorId: number, sectorEntryId: number): void;
-    onSectorDelete(sectorId: number): void;
-    /**
-     * Fixme comment
-     * @param newSectorId
-     */
-    addSectorEntry(initials: string, newSectorId: number, sectors: Immutable.Map<number, Sector>): void;
-    addSector(name: string, id: number): void;
+    onSectorChange(sectorId: string, sectorEntryId: string): void;
+    onSectorDelete(sectorId: string): void;
+
+    addSectorEntry(): void;
+    addSector(name: string, id: string): void;
 }
 
 class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & SectorsDispatch, SectorsLocalState> {
@@ -66,26 +63,26 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : SectorsDispatch {
         return {
-            onSectorChange: function(sectorId: number, sectorEntryId: number) {
+            onSectorChange: function(sectorId: string, sectorEntryId: string) {
                 dispatch(ProfileActionCreator.changeItemId(sectorId, sectorEntryId, ProfileElementType.SectorEntry));
             },
-            onSectorDelete: function(sectorId: number){
+            onSectorDelete: function(sectorId: string){
                 dispatch(ProfileActionCreator.deleteEntry(sectorId, ProfileElementType.SectorEntry));
             },
-            addSectorEntry: function(initials: string, newSectorId: number, sectors: Immutable.Map<number, Sector>){
-                dispatch(ProfileAsyncActionCreator.saveSectorEntry(initials, SectorEntry.createWithoutId(newSectorId), sectors));//Fixme hardcoded initials
+            addSectorEntry: function(){
+                dispatch(ProfileActionCreator.createEntry(ProfileElementType.SectorEntry));
             },
-            addSector: function(name: string, id: number) {
+            addSector: function(name: string, id: string) {
                 dispatch(ProfileActionCreator.createNameEntity(name, id, NameEntityType.Sector))
             }
         };
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addSectorEntry(this.props.initials, this.props.sectors.first().id, this.props.sectors);
+        this.props.addSectorEntry();
     };
 
-    private renderSingleListElement = (sectorEntry: SectorEntry, id:number) => {
+    private renderSingleListElement = (sectorEntry: SectorEntry, id:string) => {
         return (
             <SingleSectorModule
                 key={'Sectors.SingleSector.' + id}

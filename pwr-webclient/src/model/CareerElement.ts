@@ -3,6 +3,7 @@ import {APICareerElement} from './APIProfile';
 import * as Immutable from 'immutable';
 import {start} from 'repl';
 import {isNullOrUndefined} from 'util';
+import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 /**
  * Immutable representation of a career element. A career element represents a persons single career steps during their
  * professional career.
@@ -23,18 +24,22 @@ export class CareerElement {
     /**
      * NEVER CHANGE THIS! NOT EVEN NON-MUTATING!
      */
-    readonly id: number;
-    readonly startDate: Date;
-    readonly endDate: Date;
-    readonly careerPositionId: number;
+    public readonly id: string;
+    public readonly startDate: Date;
+    public readonly endDate: Date;
+    public readonly careerPositionId: string;
+    public readonly isNew: boolean;
 
 
+    // Current ID for new entites.
+    private static CURRENT_ID: number = 0;
 
-    private constructor(id: number, startDate: Date, endDate: Date, careerPositionId: number) {
+    private constructor(id: string, startDate: Date, endDate: Date, careerPositionId: string, isNew: boolean) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.careerPositionId = careerPositionId;
+        this.isNew = isNew;
     }
 
     /**
@@ -42,28 +47,30 @@ export class CareerElement {
      * @param apiCareerElement
      * @returns {CareerElement}
      */
-    public static create(apiCareerElement: APICareerElement): CareerElement {
+    public static fromAPI(apiCareerElement: APICareerElement): CareerElement {
         console.log(apiCareerElement);
         return new CareerElement(
-            Number(apiCareerElement.id),
+            String(apiCareerElement.id),
             new Date(apiCareerElement.startDate),
             isNullOrUndefined(apiCareerElement.endDate) ? null : new Date(apiCareerElement.endDate),
-            Number(apiCareerElement.position.id)
+            String(apiCareerElement.position.id),
+            false
         );
     }
 
     /**
-     * Creates a default {@link CareerElement} with both dates set to the creation time, a null ID and the given
-     * [@link CareerElement.careerPositionId} set.
-     * @param careerPosId
+     * Creates a CareerElement that can be considered as 'new'.
+     *
+     * When translated to an API entity, the ID will be replaced with null, which triggers a persistence operation.
      * @returns {CareerElement}
      */
-    public static createDefault(careerPosId: number) {
+    public static createNew() {
         return new CareerElement(
-            null,
+            NEW_ENTITY_PREFIX + String(CareerElement.CURRENT_ID++),
             new Date(),
             new Date(),
-            careerPosId
+            UNDEFINED_ID,
+            true
         );
     }
 
@@ -73,7 +80,7 @@ export class CareerElement {
      * @returns a new {@link CareerElement} with the modified date.
      */
     public changeStartDate(newDate: Date): CareerElement {
-        return new CareerElement(this.id, newDate, this.endDate, this.careerPositionId);
+        return new CareerElement(this.id, newDate, this.endDate, this.careerPositionId, this.isNew);
     }
 
     /**
@@ -82,7 +89,7 @@ export class CareerElement {
      * @returns a new {@link CareerElement} with the modified {@link CareerElement.endDate}.
      */
     public changeEndDate(newDate: Date): CareerElement {
-        return new CareerElement(this.id, this.startDate, newDate, this.careerPositionId);
+        return new CareerElement(this.id, this.startDate, newDate, this.careerPositionId, this.isNew);
     }
 
     /**
@@ -90,8 +97,8 @@ export class CareerElement {
      * @param newId
      * @returns a new instance of {@link CareerElement} with the modified {@link CareerElement.careerPositionId}
      */
-    public changeCareerPositionId(newId: number) {
-        return new CareerElement(this.id, this.startDate, this.endDate, newId);
+    public changeCareerPositionId(newId: string) {
+        return new CareerElement(this.id, this.startDate, this.endDate, newId, this.isNew);
     }
 
     /**
@@ -99,12 +106,12 @@ export class CareerElement {
      * @param careerPositionsById
      * @returns the {@link APICareerElement} that represents this {@link CareerElement}
      */
-    public toAPICareer(careerPositionsById: Immutable.Map<number, CareerPosition>): APICareerElement {
+    public toAPICareer(careerPositionsById: Immutable.Map<String, CareerPosition>): APICareerElement {
         return {
-            id: this.id,
+            id: this.isNew? null : Number.parseInt(this.id),
             startDate: this.startDate.toDateString(),
             endDate: this.endDate==null ? null : this.endDate.toDateString(),
-            position: careerPositionsById.get(this.careerPositionId).toAPI()
+            position: this.careerPositionId == null ? null : careerPositionsById.get(this.careerPositionId).toAPI()
         }
     }
 }

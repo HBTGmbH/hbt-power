@@ -1,46 +1,58 @@
 import {Qualification} from './Qualification';
 import {APIQualificationEntry} from './APIProfile';
 import * as Immutable from 'immutable';
+import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 
 export class QualificationEntry {
-    public readonly id: number;
-    public readonly qualificationId: number;
+    public readonly id: string;
+    public readonly qualificationId: string;
     public readonly date: Date;
+    public readonly isNew: boolean;
 
-    public constructor(id: number, qualificationId: number, date: Date) {
+    private static CURRENT_LOCAL_ID: number = 0;
+
+    private constructor(id: string, qualificationId: string, date: Date, isNew: boolean) {
         this.id = id;
         this.qualificationId = qualificationId;
         this.date = date;
+        this.isNew = isNew;
     }
 
     public changeDate(newDate: Date): QualificationEntry {
-        return new QualificationEntry(this.id, this.qualificationId, newDate);
+        return new QualificationEntry(this.id, this.qualificationId, newDate, this.isNew);
     }
 
-    public changeQualificationId(newQualificationId: number): QualificationEntry {
-        return new QualificationEntry(this.id, newQualificationId, this.date);
+    public changeQualificationId(newQualificationId: string): QualificationEntry {
+        return new QualificationEntry(this.id, newQualificationId, this.date, this.isNew);
     }
 
-    public static create(apiQualificationEntry: APIQualificationEntry): QualificationEntry {
+    public static fromAPI(apiQualificationEntry: APIQualificationEntry): QualificationEntry {
         return new QualificationEntry(
-            Number(apiQualificationEntry.id),
-            Number(apiQualificationEntry.qualification.id),
-            new Date(apiQualificationEntry.date)
+            String(apiQualificationEntry.id),
+            String(apiQualificationEntry.qualification.id),
+            new Date(apiQualificationEntry.date),
+            false
         );
     }
 
-    public static createEmpty(qualificationId: number): QualificationEntry {
-        return new QualificationEntry(null, qualificationId, new Date());
+    /**
+     * FIXME !Important doc
+     * @returns {QualificationEntry}
+     */
+    public static createNew(): QualificationEntry {
+        return new QualificationEntry(NEW_ENTITY_PREFIX + String(QualificationEntry.CURRENT_LOCAL_ID++), UNDEFINED_ID, new Date(), true);
     }
 
-    public toAPIQualificationEntry(qualifications: Immutable.Map<number, Qualification>): APIQualificationEntry {
+    /**
+     * Transl
+     * @param qualifications
+     * @returns {{id: number, date: string, qualification: (APIEducation|APILanguage|APIQualification|APICareerPosition)}}
+     */
+    public toAPIQualificationEntry(qualifications: Immutable.Map<string, Qualification>): APIQualificationEntry {
         return {
-            id: this.id,
+            id: this.isNew ? null : Number.parseInt(this.id),
             date: this.date.toDateString(),
-            qualification: {
-                id: this.qualificationId,
-                name: qualifications.get(this.qualificationId).name
-            }
+            qualification: this.qualificationId == UNDEFINED_ID ? null : qualifications.get(this.qualificationId).toAPI()
         }
     }
 }

@@ -12,8 +12,8 @@ import {Language} from '../../../../model/Language';
 import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 
 interface LanguageProps {
-    languageSkills: Immutable.Map<number, LanguageSkill>;
-    languages: Immutable.Map<number, Language>;
+    languageSkills: Immutable.Map<string, LanguageSkill>;
+    languages: Immutable.Map<string, Language>;
     userInitials: string;
 }
 
@@ -37,14 +37,14 @@ interface LanguageLocalState {
 }
 
 interface LanguageDispatch {
-    addLanguageSkill(level: string, languageId: number, languages: Immutable.Map<number, Language>): void;
-    deleteLanguageSkill(id: number): void;
+    addLanguageSkill(): void;
+    deleteLanguageSkill(id: string): void;
 }
 
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
 
-    private renderSingleLanguage =(language: LanguageSkill, id: number) => {
-        return(<SingleLanguage id={id} key={id} onDelete={this.props.deleteLanguageSkill}/>);
+    private renderSingleLanguage =(language: LanguageSkill, id: string) => {
+        return(<SingleLanguage id={language.id} key={"SingleLanguage." + id} onDelete={this.props.deleteLanguageSkill}/>);
     };
 
     private static renderHeader() {
@@ -63,17 +63,17 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : LanguageDispatch {
         return {
-            addLanguageSkill: function(initials: string, languageId: number, languages: Immutable.Map<number, Language>) {
-                dispatch(ProfileAsyncActionCreator.saveLanguageSkill(initials, LanguageSkill.createDefault(languageId), languages));
+            addLanguageSkill: function() {
+                dispatch(ProfileActionCreator.createEntry(ProfileElementType.LanguageEntry));
             },
-            deleteLanguageSkill: function(id: number) {
+            deleteLanguageSkill: function(id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.LanguageEntry));
             }
         };
     }
 
     private handleAddElement = (event: TouchTapEvent) => {
-        this.props.addLanguageSkill(this.props.userInitials, this.props.languages.first().id, this.props.languages);
+        this.props.addLanguageSkill();
     };
 
     render() {
