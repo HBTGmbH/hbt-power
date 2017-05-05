@@ -6,7 +6,7 @@ import {
     DeleteEntryAction,
     ReceiveAPIResponseAction,
     SaveEntryAction
-} from './singleProfileActions';
+} from './database-actions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';

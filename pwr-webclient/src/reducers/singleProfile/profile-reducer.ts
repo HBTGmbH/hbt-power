@@ -1,5 +1,5 @@
 import {Profile} from '../../model/Profile';
-import {ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction} from './singleProfileActions';
+import {ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction} from './database-actions';
 import {EducationEntry} from '../../model/EducationEntry';
 import {ProfileElementType} from '../../Store';
 import {TrainingEntry} from '../../model/TrainingEntry';

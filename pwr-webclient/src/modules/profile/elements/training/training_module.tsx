@@ -5,10 +5,10 @@ import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../.
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {TrainingEntry} from '../../../../model/TrainingEntry';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {SingleTrainingEntry} from './training-entry_module';
 import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
 
 interface TrainingEntriesProps {
     trainingEntries: Immutable.Map<string, TrainingEntry>;

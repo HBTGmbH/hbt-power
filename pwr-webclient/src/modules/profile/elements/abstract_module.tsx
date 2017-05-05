@@ -5,7 +5,7 @@ import {AllConsultantsState, ApplicationState} from '../../../Store';
 import {Color} from '../../../utils/ColorUtil';
 import {Col, Grid, Row} from 'react-flexbox-grid';
 import {LinearProgress, TextField} from 'material-ui';
-import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator} from '../../../reducers/singleProfile/ProfileActionCreator';
 
 interface DescriptionProps {
     abstractText: string;

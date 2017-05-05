@@ -13,9 +13,9 @@ import {TrainingEntries} from './elements/training/training_module';
 import {EducationList} from './elements/education/eduction_module';
 import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {ProjectCard} from './elements/project/project-module';
+import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/ProfileAsyncActionCreator';
 
 
 interface ProfileProps {

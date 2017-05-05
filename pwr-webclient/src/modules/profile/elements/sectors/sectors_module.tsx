@@ -7,9 +7,9 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../model/SectorEntry';
 import {SingleSectorModule} from './sector-entry_module';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
 
 interface SectorsProps {
     sectors: Immutable.Map<string, NameEntity>;

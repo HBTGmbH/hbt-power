@@ -10,10 +10,8 @@ import {Provider} from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import {PowerClient} from './modules/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from './reducers/singleProfile/singleProfileActions';
 import injectTapEventPlugin = require('react-tap-event-plugin');
-import {Project} from './model/Project';
-import {ProjectCard} from './modules/profile/elements/project/project-module';
+import {ProfileAsyncActionCreator} from './reducers/singleProfile/ProfileAsyncActionCreator';
 
 
 injectTapEventPlugin();

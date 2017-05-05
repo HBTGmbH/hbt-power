@@ -1,9 +1,3 @@
-/**
- * @author nt | nt@hbt.de
- */
-
-import {AllConsultantsState, APIRequestType, ProfileElementType} from '../../Store';
-import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {
@@ -16,103 +10,8 @@ import {
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {NameEntity} from '../../model/NameEntity';
-
-
-export interface ChangeStringValueAction extends AbstractAction {
-    /**
-     * The new abstract text.
-     */
-    value: string;
-}
-
-
-export interface ReceiveAPIResponseAction extends AbstractAction {
-    requestType: APIRequestType;
-    payload: any;
-}
-
-
-export interface CreateEntryAction extends  AbstractAction {
-    entryType: ProfileElementType;
-}
-
-/**
- * Action used to represent the removal of an entry in the profile. The entry that is removed
- * is defined by the elementType and by their id.
- */
-export interface DeleteEntryAction extends AbstractAction {
-    elementType: ProfileElementType;
-    elementId: string;
-}
-
-export interface SaveEntryAction extends AbstractAction {
-    entryType: ProfileElementType;
-    entry: any;
-    nameEntity: NameEntity;
-}
-
-export class ProfileActionCreator {
-    public static changeAbstract(newAbstract: string): ChangeStringValueAction {
-        return {
-            type: ActionType.ChangeAbstract,
-            value: newAbstract
-        };
-    }
-
-    /**
-     * Creates an action that updates the state so that its profile request status is pending.
-     * @returns {{type: ActionType}}
-     */
-    public static APIRequestPending() : AbstractAction {
-        return {
-            type: ActionType.APIRequestPending
-        };
-    }
-
-    /**
-     * Creates an action that update the state so the received consultant profile is used to replace
-     * the current profile.
-     * @param payload
-     * @param reqType
-     */
-    public static APIRequestSuccessfull(payload: any, reqType: APIRequestType) : ReceiveAPIResponseAction {
-        return {
-            type: ActionType.APIRequestSuccess,
-            payload: payload,
-            requestType: reqType
-        };
-    }
-
-    public static APIRequestFailed() : AbstractAction {
-        return { type: ActionType.APIRequestFail };
-    }
-
-    public static deleteEntry(id: string, elementType: ProfileElementType): DeleteEntryAction {
-        return {
-            type: ActionType.DeleteEntry,
-            elementType: elementType,
-            elementId: id
-        };
-    }
-
-    public static createEntry(elementType: ProfileElementType): CreateEntryAction {
-        return {
-            type: ActionType.CreateEntry,
-            entryType: elementType
-        }
-    }
-
-    public static saveEntry(entry: any, nameEntity: NameEntity, elementType: ProfileElementType): SaveEntryAction {
-        return {
-            type: ActionType.SaveEntry,
-            entry: entry,
-            nameEntity: nameEntity,
-            entryType: elementType
-        }
-    }
-}
-
+import {AllConsultantsState, APIRequestType} from '../../Store';
+import {ProfileActionCreator} from './ProfileActionCreator';
 
 export class ProfileAsyncActionCreator {
 

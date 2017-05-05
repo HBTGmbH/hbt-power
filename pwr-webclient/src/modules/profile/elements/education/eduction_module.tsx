@@ -7,9 +7,9 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {SingleEducationElement} from './education-entry_module';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
 
 interface EducationProps {
 
