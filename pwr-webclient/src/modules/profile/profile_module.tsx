@@ -2,7 +2,10 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {Card, CardHeader, Divider, IconButton, Toolbar, TouchTapEvent} from 'material-ui';
+import {
+    Card, CardHeader, CardMedia, Divider, GridList, IconButton, Tab, Tabs, Toolbar,
+    TouchTapEvent
+} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -12,6 +15,7 @@ import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/singleProfileActions';
 import {InternalDatabase} from '../../model/InternalDatabase';
+import {ProjectCard} from './elements/project/project-module';
 
 
 interface ProfileProps {
@@ -89,34 +93,45 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                 <div className="col-md-1"/>
                 <div className="col-md-10">
                     <Card style={{'padding': '20px'}}>
-                        <CardHeader
-                            title="John Doe"
-                            avatar="/img/crazy_lama.jpg"
-                        />
-                        <br/>
-                        <Divider/>
-                        <ProfileDescription
-                            hintText={PowerLocalize.get("Profile.Description")}
-                            initialMaxCharacters={500}
-                        />
-                        <Divider/>
-                        <LanguageSkills/>
-                        <Divider/>
-                        <Sectors/>
-                        <Divider/>
-                        <TrainingEntries/>
-                        <Divider/>
-                        <EducationList/>
-                        <Divider/>
-                        <Qualifications/>
-                        <Divider/>
-                        <br/>
+                        <Tabs>
+                            <Tab label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
+                                <CardHeader
+                                    title="John Doe"
+                                    avatar="/img/crazy_lama.jpg"
+                                />
+                                <Divider/>
+                                <ProfileDescription
+                                    hintText={PowerLocalize.get("Profile.Description")}
+                                    initialMaxCharacters={500}
+                                />
+                                <Divider/>
+                                <LanguageSkills/>
+                                <Divider/>
+                                <Sectors/>
+                                <Divider/>
+                                <TrainingEntries/>
+                                <Divider/>
+                                <EducationList/>
+                                <Divider/>
+                                <Qualifications/>
+                                <Divider/>
+                                <br/>
+                            </Tab>
+                            <Tab label={PowerLocalize.get("ProfileModule.Tabs.Projects.Title")}>
+                                {
+                                    this.props.database.profile.projects.map((value, key) => {
+                                        return <ProjectCard key={key} project={value}/>
+                                    }).toArray()
+                                }
+                            </Tab>
+                            <Tab label="Skills">
+                            </Tab>
+                        </Tabs>
                         <Toolbar style={this.cardToolbarStyle}>
                             <IconButton iconClassName="material-icons" onClick={this.handleSaveProfile} tooltip={PowerLocalize.get('Action.Save')}>done</IconButton>
                             <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Update')}>update</IconButton>
                             <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
                         </Toolbar>
-                        <br/>
 
                     </Card>
                 </div>

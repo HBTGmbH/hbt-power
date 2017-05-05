@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../Store';
-import {RaisedButton, Toolbar, ToolbarGroup} from 'material-ui';
+import {IconButton, RaisedButton, Toolbar, ToolbarGroup, Drawer} from 'material-ui';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 
 interface ToolbarProps {
@@ -25,7 +25,7 @@ interface ToolbarLocalProps {
  * There is no need for a non-local state, as redux will manage this part.
  */
 interface ToolbarLocalState {
-
+    menuOpen: boolean;
 }
 
 interface ToolbarDispatch {
@@ -34,30 +34,45 @@ interface ToolbarDispatch {
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
 
+    constructor(props: ToolbarProps & ToolbarLocalProps & ToolbarDispatch) {
+        super(props);
+        this.state = {menuOpen: false};
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps) : ToolbarProps {
         return {
             userInitials: state.databaseReducer.loggedInUser
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ToolbarDispatch {
         return {
 
-        }
+        };
     }
+
+    private handleMenuClick = () => {
+        this.setState({menuOpen: true});
+    };
 
     render() {
         return(
-            <Toolbar>
-                <ToolbarGroup firstChild={true}>
-                    <RaisedButton label="Profil" primary={true}/>
-                    <RaisedButton label="Skills" primary={true}/>
-                    <RaisedButton label="Logout" primary={true}/>
-                    {PowerLocalize.get("Toolbar.LoggedInAs") + ": " + this.props.userInitials}
-                </ToolbarGroup>
-            </Toolbar>
+            <div>
+                <Drawer
+                    docked={false}
+                    open={this.state.menuOpen}
+                    onRequestChange={(open) => this.setState({menuOpen: open})}
+                >
+                </Drawer>
+                <Toolbar>
+                    <ToolbarGroup firstChild={true}>
+                        <IconButton iconClassName="material-icons" onClick={this.handleMenuClick} tooltip={PowerLocalize.get('Menu.Singular')}>menu</IconButton>
+                        {PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.props.userInitials}
+                    </ToolbarGroup>
+                </Toolbar>
+            </div>
         );
     }
 }
 
-export const PowerToolbar: React.ComponentClass<ToolbarLocalProps> = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(PowerToolbarModule);
+export const PowerToolbar: React.ComponentClass<ToolbarLocalProps> = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(PowerToolbarModule);;

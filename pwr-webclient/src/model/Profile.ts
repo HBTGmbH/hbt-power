@@ -14,6 +14,7 @@ import {
 import {isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
 import {SectorEntry} from './SectorEntry';
+import {Project} from './Project';
 
 export class Profile {
     public readonly id: number;
@@ -32,6 +33,8 @@ export class Profile {
 
     public readonly qualificationEntries: Immutable.Map<string, QualificationEntry> = Immutable.Map<string, QualificationEntry>();
 
+    public readonly projects: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
+
     constructor(
         id: number,
         currentPosition: string,
@@ -41,6 +44,7 @@ export class Profile {
         educationEntries: Immutable.Map<string, EducationEntry>,
         languageSkills: Immutable.Map<string, LanguageSkill>,
         qualificationEntries: Immutable.Map<string, QualificationEntry>,
+        projects: Immutable.Map<string, Project>
     ) {
         this.id = id;
         this.currentPosition = currentPosition;
@@ -50,6 +54,7 @@ export class Profile {
         this.educationEntries = educationEntries;
         this.languageSkills = languageSkills;
         this.qualificationEntries = qualificationEntries;
+        this.projects = projects;
     }
 
 
@@ -63,7 +68,7 @@ export class Profile {
      */
     public changeDescription(newDescription: string): Profile {
         return new Profile(this.id, this.currentPosition, newDescription, this.sectorEntries, this.trainingEntries,
-            this.educationEntries, this.languageSkills, this.qualificationEntries
+            this.educationEntries, this.languageSkills, this.qualificationEntries, this.projects
         );
     }
 
@@ -82,7 +87,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects
         );
     }
 
@@ -96,7 +102,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills.set(languageSkill.id, languageSkill),
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects
         );
     }
 
@@ -109,7 +116,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills.remove(id),
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects
         );
     }
 
@@ -122,7 +130,8 @@ export class Profile {
             this.trainingEntries.set(trainingEntry.id, trainingEntry),
             this.educationEntries,
             this.languageSkills,
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects
         );
     }
 
@@ -135,7 +144,8 @@ export class Profile {
             this.trainingEntries.remove(careerElementId),
             this.educationEntries,
             this.languageSkills,
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects
         );
     }
 
@@ -148,7 +158,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries.set(edcuationEntry.id, edcuationEntry),
             this.languageSkills,
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects
         );
     }
 
@@ -161,7 +172,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries.remove(id),
             this.languageSkills,
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects
         );
     }
 
@@ -174,7 +186,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
-            this.qualificationEntries.set(qualificationEntry.id, qualificationEntry)
+            this.qualificationEntries.set(qualificationEntry.id, qualificationEntry),
+            this.projects
         );
     }
 
@@ -187,7 +200,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
-            this.qualificationEntries.remove(id)
+            this.qualificationEntries.remove(id),
+            this.projects
         );
     }
 
@@ -200,7 +214,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects,
         );
     }
 
@@ -213,7 +228,8 @@ export class Profile {
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
-            this.qualificationEntries
+            this.qualificationEntries,
+            this.projects,
         );
     }
 
@@ -340,6 +356,29 @@ export class Profile {
      * @returns {Profile}
      */
     public static createFromAPI(profile: APIProfile): Profile {
+        let proj: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
+        let project: Project = new Project(
+            "1",
+            "Atomwaffenbau",
+            "KimJongUnInc",
+            new Date(),
+            new Date(),
+            "Waffenbau für den Nordkoreanischen Diktator",
+            "China",
+            "Chefwaffenotto"
+        );
+        let project2: Project = new Project(
+            "2",
+            "Geofox",
+            "Hochbahn AG",
+            new Date(),
+            new Date(),
+            "Züge Entgleisen lassen",
+            "HBT",
+            "Chefentgleiser"
+        );
+        proj = proj.set(project.id(), project);
+        proj = proj.set(project2.id(), project2);
         return new Profile(
             Number(profile.id),
             profile.currentPosition,
@@ -348,7 +387,8 @@ export class Profile {
             Profile.parseTrainingEntries(profile.trainingEntries),
             Profile.parseEducationEntries(profile.education),
             Profile.parseLanguageSkills(profile.languages),
-            Profile.parseQualficiationEntries(profile.qualification)
+            Profile.parseQualficiationEntries(profile.qualification),
+            proj
         );
     }
 
@@ -363,6 +403,29 @@ export class Profile {
      * @returns {Profile} the default profile.
      */
     public static createDefault(): Profile {
+        let proj: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
+        let project: Project = new Project(
+            "1",
+            "Atomwaffenbau",
+            "KimJongUnInc",
+            new Date(),
+            new Date(),
+            "Waffenbau für den Nordkoreanischen Diktator",
+            "China",
+            "Chefwaffenotto"
+        );
+        let project2: Project = new Project(
+            "2",
+            "Geofox",
+            "Hochbahn AG",
+            new Date(),
+            new Date(),
+            "Züge Entgleisen lassen",
+            "HBT",
+            "Chefentgleiser"
+        );
+        proj = proj.set(project.id(), project);
+        proj = proj.set(project2.id(), project2);
         return new Profile(
             -1,
             '',
@@ -371,7 +434,9 @@ export class Profile {
             Immutable.Map<string, TrainingEntry>(),
             Immutable.Map<string, EducationEntry>(),
             Immutable.Map<string, LanguageSkill>(),
-            Immutable.Map<string, QualificationEntry>());
+            Immutable.Map<string, QualificationEntry>(),
+            proj
+        );
     }
 
 

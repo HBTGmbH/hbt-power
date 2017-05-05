@@ -54,7 +54,7 @@ export class InternalDatabase {
         this.educations = educations;
         this.languages = languages;
         this.qualifications = qualifications;
-        this.sectors = sectors;
+        this.sectors = sectors
     }
 
     public static createWithDefaults(): InternalDatabase {

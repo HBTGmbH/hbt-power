@@ -14,6 +14,10 @@ export const de_locale : any = {
     "Begin": "Beginn",
     "End": "Ende",
     "AcademicDegree.Singular": "Akademischer Grad",
+    "Menu.Singular": "Menü",
+    "ProjectName.Singular": "Projektname",
+    "Customer.Singular": "Kunde",
+    "Broker.Singular": "Vermittler",
 
     // == Component Specific Localizations == //
     "Toolbar.LoggedInAs": "Eingeloggt als",
@@ -23,6 +27,10 @@ export const de_locale : any = {
     "EducationEntry.EditEntry.Title": "Ausbildungsschritt bearbeiten",
     "EducationEntry.Dialog.EducationName": "Studiengangs-/Ausbildungsbezeichner",
     "LanguageSkill.EditSkill.Title": "Sprache bearbeiten",
+    "ProfileModule.Tabs.Profile.Title": "Beraterprofil",
+    "ProfileModule.Tabs.Projects.Title": "Projektinformationen",
+    "Project.StartDate": "Projektbeginn",
+    "Project.EndDate":"Projektende",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
