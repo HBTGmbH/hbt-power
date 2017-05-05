@@ -4,15 +4,15 @@ import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, NameEntityType, ProfileElementType} from '../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {Sector} from '../../../../model/Sector';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../model/SectorEntry';
 import {SingleSectorModule} from './sector_module';
-import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {TouchTapEvent} from 'material-ui';
+import {NameEntity} from '../../../../model/NameEntity';
 
 interface SectorsProps {
-    sectors: Immutable.Map<string, Sector>;
+    sectors: Immutable.Map<string, NameEntity>;
     sectorEntries: Immutable.Map<string, SectorEntry>;
     initials: string;
 }

@@ -1,7 +1,7 @@
-import {Qualification} from './Qualification';
 import {APIQualificationEntry} from './APIProfile';
 import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
+import {NameEntity} from './NameEntity';
 
 export class QualificationEntry {
     public readonly id: string;
@@ -48,7 +48,7 @@ export class QualificationEntry {
      * @param qualifications
      * @returns {{id: number, date: string, qualification: (APIEducation|APILanguage|APIQualification|APICareerPosition)}}
      */
-    public toAPIQualificationEntry(qualifications: Immutable.Map<string, Qualification>): APIQualificationEntry {
+    public toAPIQualificationEntry(qualifications: Immutable.Map<string, NameEntity>): APIQualificationEntry {
         return {
             id: this.isNew ? null : Number.parseInt(this.id),
             date: this.date.toISOString(),

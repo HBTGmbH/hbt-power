@@ -3,10 +3,10 @@ import * as Immutable from 'immutable';
 import * as React from 'react';
 import {AutoComplete, IconButton, Paper, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {Sector} from '../../../../model/Sector';
+import {NameEntity} from '../../../../model/NameEntity';
 
 interface SingleSectorLocalProps {
-    sectors: Immutable.Map<string, Sector>;
+    sectors: Immutable.Map<string, NameEntity>;
     sectorEntry: SectorEntry;
 
     /**
@@ -66,7 +66,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
      */
     private handleAutoCompleteNewRequest = (chosenRequest: any, index: number) => {
         if(index >= 0) {
-            let chosen: Sector = chosenRequest as Sector;
+            let chosen: NameEntity = chosenRequest as NameEntity;
             // One of the values from the dropdown list was chosen
             this.props.onSectorChange(chosen.id, this.props.sectorEntry.id);
         } else {

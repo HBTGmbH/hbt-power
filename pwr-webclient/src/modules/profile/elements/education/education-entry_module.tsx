@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {AutoComplete, DatePicker, IconButton, MenuItem, Paper, SelectField, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../model/EducationEntry';
-import {Education} from '../../../../model/Education';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {NameEntity} from '../../../../model/NameEntity';
 
 
 /**
@@ -22,7 +22,7 @@ interface EducationEntryLocalProps {
     /**
      * All possible educations by their ids.
      */
-    educations: Immutable.Map<string, Education>;
+    educations: Immutable.Map<string, NameEntity>;
 
     degrees: Immutable.List<string>;
 
@@ -82,7 +82,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
     constructor(props: EducationEntryLocalProps) {
         super(props);
         this.state = {
-            educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.educationId),
+            educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.nameEntityId),
             editDisabled: true
         };
     }
@@ -125,7 +125,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
     private handleEducationFieldRequest = (chosenRequest: any, index: number) => {
         if(index >= 0) {
             // education here
-            let education: Education = chosenRequest as Education;
+            let education: NameEntity = chosenRequest as NameEntity;
             this.props.onEducationChange(education.id, this.props.educationEntry.id);
         } else {
             // string here

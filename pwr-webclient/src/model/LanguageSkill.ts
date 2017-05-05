@@ -1,7 +1,7 @@
-import {Language} from './Language';
 import {APILanguageSkill} from './APIProfile';
 import * as Immutable from 'immutable';
 import {DEFAULT_LANG_LEVEL, NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
+import {NameEntity} from './NameEntity';
 
 /**
  * Consist of a language name and a level that rates this language name. Together, they represent a certain language level
@@ -83,7 +83,7 @@ export class LanguageSkill {
         return new LanguageSkill(this.id, newLanguageId, this.level, this.isNew);
     }
 
-    public toAPILanguageSkill(languagesById: Immutable.Map<string, Language>) : APILanguageSkill {
+    public toAPILanguageSkill(languagesById: Immutable.Map<string, NameEntity>) : APILanguageSkill {
         return {
             id: this.isNew ? null : Number.parseInt(this.id),
             level: this.level,

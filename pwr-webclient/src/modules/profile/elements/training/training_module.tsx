@@ -5,14 +5,14 @@ import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {TrainingEntry} from '../../../../model/TrainingEntry';
-import {Training} from '../../../../model/Training';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {SingleTrainingEntry} from './training-entry_module';
 import * as Immutable from 'immutable';
+import {NameEntity} from '../../../../model/NameEntity';
 
 interface TrainingEntriesProps {
     trainingEntries: Immutable.Map<string, TrainingEntry>;
-    trainings: Immutable.Map<string, Training>;
+    trainings: Immutable.Map<string, NameEntity>;
     userInitials: string;
 }
 

@@ -9,13 +9,13 @@ import {ProfileActionCreator} from '../../../../reducers/singleProfile/singlePro
 import {connect} from 'react-redux';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
-import {Language} from '../../../../model/Language';
 import * as Immutable from 'immutable';
+import {NameEntity} from '../../../../model/NameEntity';
 
 interface SingleLanguageProps {
     languageSkill: LanguageSkill;
 
-    languages: Immutable.Map<string, Language>;
+    languages: Immutable.Map<string, NameEntity>;
 
     /**
      * Used to createFromAPI the dropdown menu
@@ -84,7 +84,7 @@ class SingleLanguageModule extends React.Component<SingleLanguageLocalProps & Si
     private handleLanguageRequest = (value: string) => {
         // Make sure the language name exists in the list of allowed languages. .
         let exists: boolean = false;
-        let lang : Language;
+        let lang : NameEntity;
         this.props.languages.forEach((l, id) => {
             if(l.name === value) {
                 exists = exists || true;

@@ -1,8 +1,8 @@
-import {Training} from './Training';
 import {APITrainingEntry} from './APIProfile';
 import * as Immutable from 'immutable';
 import {isNullOrUndefined} from 'util';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
+import {NameEntity} from './NameEntity';
 /**
  * Immutable representation of a career element. A career element represents a persons single career steps during their
  * professional career.
@@ -95,7 +95,7 @@ export class TrainingEntry {
      * @param newId
      * @returns a new instance of {@link TrainingEntry} with the modified {@link TrainingEntry.trainingId}
      */
-    public changeCareerPositionId(newId: string) {
+    public changeTrainingId(newId: string) {
         return new TrainingEntry(this.id, this.startDate, this.endDate, newId, this.isNew);
     }
 
@@ -104,7 +104,7 @@ export class TrainingEntry {
      * @param careerPositionsById
      * @returns the {@link APICareerElement} that represents this {@link TrainingEntry}
      */
-    public toAPICareer(careerPositionsById: Immutable.Map<String, Training>): APITrainingEntry {
+    public toAPICareer(careerPositionsById: Immutable.Map<String, NameEntity>): APITrainingEntry {
         return {
             id: this.isNew? null : Number.parseInt(this.id),
             startDate: this.startDate.toISOString(),

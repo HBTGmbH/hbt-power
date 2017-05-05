@@ -1,20 +1,14 @@
-
-// == LANGUAGES == //
-export interface APILanguage {
+export interface APINameEntity {
     id: number;
     name: string;
 }
+
+// == LANGUAGES == //
 
 export interface APILanguageSkill {
     id: number;
-    language: APILanguage;
+    language: APINameEntity;
     level: string;
-}
-
-// == EDUCATIONS == //
-export interface APIEducation {
-    id: number;
-    name: string;
 }
 
 export interface APIEducationStep {
@@ -22,43 +16,28 @@ export interface APIEducationStep {
     startDate: string;
     endDate: string;
     degree: string;
-    education: APIEducation;
+    education: APINameEntity;
 }
 
 // == QUALIFICATIONS == //
-export interface APIQualification {
-    id: number;
-    name: string;
-}
 
 export interface APIQualificationEntry {
     id: number;
     date: string;
-    qualification: APIQualification;
-}
-
-// == Training == //
-export interface APITraining {
-    id: number;
-    name: string;
+    qualification: APINameEntity;
 }
 
 export interface APITrainingEntry {
     id: number;
     startDate: string;
     endDate: string;
-    training: APITraining;
+    training: APINameEntity;
 }
 
 // SECTORS //
 export interface APISectorEntry {
     id: number;
-    sector: APISector;
-}
-
-export interface APISector {
-    id: number;
-    name: string;
+    sector: APINameEntity;
 }
 
 

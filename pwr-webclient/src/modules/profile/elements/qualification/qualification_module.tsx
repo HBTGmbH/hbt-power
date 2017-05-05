@@ -4,16 +4,16 @@ import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {Qualification} from '../../../../model/Qualification';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
+import {NameEntity} from '../../../../model/NameEntity';
 
 interface QualificationProps {
     qualificationEntries: Immutable.Map<string, QualificationEntry>;
-    qualifications: Immutable.Map<string,Qualification>;
+    qualifications: Immutable.Map<string, NameEntity>;
 }
 
 /**

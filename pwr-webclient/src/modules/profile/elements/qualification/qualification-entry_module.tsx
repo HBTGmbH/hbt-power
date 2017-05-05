@@ -1,12 +1,10 @@
 import * as React from 'react';
 import {AutoComplete, DatePicker, IconButton, Paper, TouchTapEvent} from 'material-ui';
-import {EducationEntry} from '../../../../model/EducationEntry';
-import {Education} from '../../../../model/Education';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
-import {Qualification} from '../../../../model/Qualification';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {NameEntity} from '../../../../model/NameEntity';
 
 
 /**
@@ -24,7 +22,7 @@ interface QualificationEntryLocalProps {
     /**
      * Array of possible educations by their ID.
      */
-    qualifications: Immutable.Map<string, Qualification>;
+    qualifications: Immutable.Map<string, NameEntity>;
 
     /**
      * Callback that is invoked when this modules DatePicker's value changes to a new date.
@@ -53,7 +51,7 @@ interface QualificationEntryState {
 
 export class SingleQualificationEntry extends React.Component<QualificationEntryLocalProps, QualificationEntryState> {
 
-    private autoCompleteValues: Array<Qualification>;
+    private autoCompleteValues: Array<NameEntity>;
 
     constructor(props: QualificationEntryLocalProps) {
         super(props);
@@ -66,7 +64,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
 
     private getQualificationName = () => {
         let id: string = this.props.qualificationEntry.qualificationId;
-        return id == null ? "" : this.props.qualifications.get(id).name;
+        return id == null ? '' : this.props.qualifications.get(id).name;
     };
 
     /**

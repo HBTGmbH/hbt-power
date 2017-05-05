@@ -1,19 +1,11 @@
-import {Language} from './Language';
-import {Education} from './Education';
-import {Qualification} from './Qualification';
-import {Training} from './Training';
-import {ProfileElementType, RequestStatus} from '../Store';
+import {NameEntity} from './NameEntity';
+import {NameEntityType, ProfileElementType, RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
-import {
-    APIEducation, APILanguage, APIProfile, APIQualification, APISector, APITraining,
-    APITrainingEntry
-} from './APIProfile';
+import {APINameEntity, APIProfile} from './APIProfile';
 import {Profile} from './Profile';
-import {Sector} from './Sector';
 import {ProfileReducer} from '../reducers/singleProfile/profile-reducer';
 import {ProfileActionCreator} from '../reducers/singleProfile/singleProfileActions';
 import {isNullOrUndefined} from 'util';
-import {TrainingEntry} from './TrainingEntry';
 
 
 /**
@@ -37,26 +29,26 @@ export class InternalDatabase {
 
     public readonly profile: Profile;
 
-    public readonly trainings : Immutable.Map<string, Training> = Immutable.Map<string, Training>();
+    public readonly trainings : Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
 
-    public readonly educations: Immutable.Map<string, Education> = Immutable.Map<string, Education>();
+    public readonly educations: Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
 
-    public readonly languages: Immutable.Map<string, Language> = Immutable.Map<string, Language>();
+    public readonly languages: Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
 
-    public readonly sectors: Immutable.Map<string, Sector> = Immutable.Map<string, Sector>();
+    public readonly sectors: Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
 
-    public readonly qualifications: Immutable.Map<string, Qualification> = Immutable.Map<string, Qualification>();
+    public readonly qualifications: Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
 
 
     constructor(
         apiRequestStatus: RequestStatus,
         languageLevels: Array<string>,
         profile: Profile,
-        careerPositions: Immutable.Map<string, Training>,
-        educations: Immutable.Map<string, Education>,
-        languages: Immutable.Map<string, Language>,
-        qualifications: Immutable.Map<string, Qualification>,
-        sectors:  Immutable.Map<string, Sector>
+        careerPositions: Immutable.Map<string, NameEntity>,
+        educations: Immutable.Map<string, NameEntity>,
+        languages: Immutable.Map<string, NameEntity>,
+        qualifications: Immutable.Map<string, NameEntity>,
+        sectors:  Immutable.Map<string, NameEntity>
 ) {
         this.APIRequestStatus = apiRequestStatus;
         this.languageLevels = languageLevels;
@@ -69,22 +61,42 @@ export class InternalDatabase {
     }
 
     public static createWithDefaults(): InternalDatabase {
-        let langs = Immutable.Map<string, Language>();
+        let langs = Immutable.Map<string, NameEntity>();
         return new InternalDatabase(
             RequestStatus.Successful,
             ["BASIC", "ADVANCED", "BUSINESS_FLUENT", "NATIVE"],
             Profile.createDefault(),
-            Immutable.Map<string, Training>(),
-            Immutable.Map<string, Education>(),
-            Immutable.Map<string, Language>(),
-            Immutable.Map<string, Qualification>(),
-            Immutable.Map<string, Sector>()
+            Immutable.Map<string, NameEntity>(),
+            Immutable.Map<string, NameEntity>(),
+            Immutable.Map<string, NameEntity>(),
+            Immutable.Map<string, NameEntity>(),
+            Immutable.Map<string, NameEntity>()
         )
     }
 
-    public getSectorByName(name: string): Sector {
-        let result: Sector = null;
-        this.sectors.some((value, key) => {
+    public getNameEntityByName(name: string, type: NameEntityType): NameEntity {
+        let lookup: Immutable.Map<string, NameEntity>;
+        switch(type) {
+            case NameEntityType.Sector:
+                lookup = this.sectors;
+                break;
+            case NameEntityType.Qualification:
+                lookup = this.qualifications;
+                break;
+            case NameEntityType.Language:
+                lookup = this.languages;
+                break;
+            case NameEntityType.Education:
+                lookup = this.educations;
+                break;
+            case NameEntityType.Training:
+                lookup = this.trainings;
+                break;
+            default:
+                throw Error("unknown NameEntityType.");
+        }
+        let result: NameEntity = null;
+        lookup.some((value, key, iter) => {
             if (value.name === name) {
                 result = value;
                 return true;
@@ -94,41 +106,6 @@ export class InternalDatabase {
         return result;
     }
 
-    public getEducationByName(name: string): Education {
-        let result: Education = null;
-        this.educations.some((value, key) => {
-            if (value.name === name) {
-                result = value;
-                return true;
-            }
-            return false;
-        });
-        return result;
-    }
-
-    public getLanguageByName(name: string) : Language {
-        let result: Language = null;
-        this.languages.some((value, key) => {
-            if(value.name === name) {
-                result = value;
-                return true;
-            }
-            return false;
-        });
-        return result;
-    }
-
-    public getQualificationByName(name: string): Qualification {
-        let result: Qualification = null;
-        this.qualifications.some((value, key) => {
-            if(value.name === name) {
-                result = value;
-                return true;
-            }
-            return false;
-        });
-        return result;
-    }
 
     public changeAPIRequestStatus(newStatus: RequestStatus): InternalDatabase {
         return new InternalDatabase(
@@ -156,7 +133,7 @@ export class InternalDatabase {
         )
     }
 
-    public updateEducation(education: Education): InternalDatabase {
+    public updateEducation(education: NameEntity): InternalDatabase {
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -170,7 +147,7 @@ export class InternalDatabase {
 
     }
 
-    public updateLanguage(language: Language) : InternalDatabase {
+    public updateLanguage(language: NameEntity) : InternalDatabase {
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -183,7 +160,7 @@ export class InternalDatabase {
         );
     }
 
-    public updateQualification(qualification: Qualification): InternalDatabase {
+    public updateQualification(qualification: NameEntity): InternalDatabase {
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -195,6 +172,33 @@ export class InternalDatabase {
             this.sectors
         )
     };
+
+    public updateSector(sector: NameEntity): InternalDatabase {
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors.set(sector.id, sector)
+        )
+    }
+
+    public updateTraining(training: NameEntity): InternalDatabase {
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings.set(training.id, training),
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors
+        )
+    }
+
     /**
      * Creates a new sector and, optionally, adds it to the profile element with the given ID as name entity.
      * FIXME NT
@@ -202,7 +206,7 @@ export class InternalDatabase {
      * @param entryId
      * @returns {InternalDatabase}
      */
-    public createNewSector(newSector: Sector, entryId?: string): InternalDatabase {
+    public createNewSector(newSector: NameEntity, entryId?: string): InternalDatabase {
         let profile: Profile = this.profile;
         if(!isNullOrUndefined(entryId)) {
             profile = ProfileReducer.reducerHandleItemIdChange(
@@ -222,56 +226,50 @@ export class InternalDatabase {
     }
 
 
+    private static addAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
+        let res: Immutable.Map<string, NameEntity> = reference;
+        names.forEach(apiName => {
+            let name: NameEntity = NameEntity.fromAPI(apiName);
+            res = res.set(name.id, name);
+        });
+        return res;
+    }
+
     /**
      * Non-mutating function that adds all given languages into the {@link InternalDatabase.languages} map.
      * @param languages to add into the map
      * @returns {InternalDatabase} copy of the old {@link InternalDatabase} in which the languages are modified.
      */
-    public addAPILanguages(languages: Array<APILanguage>): InternalDatabase {
+    public addAPILanguages(languages: Array<APINameEntity>): InternalDatabase {
         console.info("Receiving additional languages: ", languages);
-        let newLangs: Immutable.Map<string, Language> = this.languages;
-        languages.forEach(apiLang => {
-            let lang: Language = Language.fromAPI(apiLang);
-            newLangs = newLangs.set(lang.id, lang);
-        });
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
             this.profile,
             this.trainings,
             this.educations,
-            newLangs,
+            InternalDatabase.addAPINameEntities(languages, this.languages),
             this.qualifications,
             this.sectors
         )
     }
 
-    public addAPIEducations(educations: Array<APIEducation>): InternalDatabase {
+    public addAPIEducations(educations: Array<APINameEntity>): InternalDatabase {
         console.info("Receiving additional educations:", educations);
-        let newEducations: Immutable.Map<string, Education> = this.educations;
-        educations.forEach(apiEducation => {
-            let education: Education = Education.fromAPI(apiEducation);
-            newEducations = newEducations.set(education.id, education);
-        });
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
             this.profile,
             this.trainings,
-            newEducations,
+            InternalDatabase.addAPINameEntities(educations, this.educations),
             this.languages,
             this.qualifications,
             this.sectors
         )
     }
 
-    public addAPIQualifications(qualifications: Array<APIQualification>) {
+    public addAPIQualifications(qualifications: Array<APINameEntity>) {
         console.info("Receiving additional qualifications:", qualifications);
-        let newQualifications: Immutable.Map<string, Qualification> = this.qualifications;
-        qualifications.forEach(apiQualification => {
-            let qualification: Qualification = Qualification.fromAPI(apiQualification);
-            newQualifications = newQualifications.set(qualification.id, qualification);
-        });
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -279,23 +277,18 @@ export class InternalDatabase {
             this.trainings,
             this.educations,
             this.languages,
-            newQualifications,
+            InternalDatabase.addAPINameEntities(qualifications, this.qualifications),
             this.sectors
         )
     }
 
-    public addAPITrainings(careers: Array<APITraining>) {
-        console.info("Receiving additional career positions:", careers);
-        let newCareerPositions: Immutable.Map<string, Training> = this.trainings;
-        careers.forEach(apiCareerPos => {
-            let careerPos: Training = Training.fromAPI(apiCareerPos);
-            newCareerPositions = newCareerPositions.set(careerPos.id, careerPos);
-        });
+    public addAPITrainings(trainings: Array<APINameEntity>) {
+        console.info("Receiving additional trainings:", trainings);
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
             this.profile,
-            newCareerPositions,
+            InternalDatabase.addAPINameEntities(trainings, this.trainings),
             this.educations,
             this.languages,
             this.qualifications,
@@ -303,13 +296,8 @@ export class InternalDatabase {
         )
     }
 
-    public addAPISectors(sectors: Array<APISector>) {
+    public addAPISectors(sectors: Array<APINameEntity>) {
         console.info("Receiving additional sectors:", sectors);
-        let newSectors: Immutable.Map<string, Sector> = this.sectors;
-        sectors.forEach(apiSector => {
-            let sector: Sector = Sector.fromAPI(apiSector);
-            newSectors = newSectors.set(sector.id, sector);
-        });
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -318,7 +306,7 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications,
-            newSectors
+            InternalDatabase.addAPINameEntities(sectors, this.sectors)
         )
     }
 
@@ -336,35 +324,35 @@ export class InternalDatabase {
         console.info("Parsing languages...");
         let languages = this.languages;
         profileFromAPI.languages.forEach(langSkill => {
-            let l: Language = Language.fromAPI(langSkill.language);
+            let l: NameEntity = NameEntity.fromAPI(langSkill.language);
             languages = languages.set(l.id, l);
         });
         console.info("...done.");
         console.info("Parsing qualifications...");
         let qualifications = this.qualifications;
         profileFromAPI.qualification.forEach(qualificationEntry => {
-           let q: Qualification = Qualification.fromAPI(qualificationEntry.qualification);
+           let q: NameEntity = NameEntity.fromAPI(qualificationEntry.qualification);
            qualifications = qualifications.set(q.id, q);
         });
         console.info("...done.");
         console.info("Parsing trainings...");
         let trainings = this.trainings;
         profileFromAPI.trainingEntries.forEach(trainingEntry => {
-            let training: Training = Training.fromAPI(trainingEntry.training);
+            let training: NameEntity = NameEntity.fromAPI(trainingEntry.training);
             trainings = trainings.set(training.id, training);
         });
         console.info("...done.");
         console.info("Parsing educations...");
         let educations = this.educations;
         profileFromAPI.education.forEach(educationEntry => {
-            let education: Education = Education.fromAPI(educationEntry.education);
+            let education: NameEntity = NameEntity.fromAPI(educationEntry.education);
             educations = educations.set(education.id, education);
         });
         console.info("...done.");
         console.info("Parsing sectors...");
         let sectors = this.sectors;
         profileFromAPI.sectors.forEach(sectorEntry => {
-            let sector: Sector = Sector.fromAPI(sectorEntry.sector);
+            let sector: NameEntity = NameEntity.fromAPI(sectorEntry.sector);
             sectors = sectors.set(sector.id, sector);
         });
         console.info("...done.");

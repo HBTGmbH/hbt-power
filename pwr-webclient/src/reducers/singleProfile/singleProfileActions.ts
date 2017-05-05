@@ -16,8 +16,6 @@ import {
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {Sector} from '../../model/Sector';
-import {Language} from '../../model/Language';
 
 
 export interface ChangeStringValueAction extends AbstractAction {

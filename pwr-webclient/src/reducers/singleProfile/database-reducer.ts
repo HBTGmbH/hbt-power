@@ -1,10 +1,12 @@
 import {APIRequestType, NameEntityType, ProfileElementType, RequestStatus} from '../../Store';
 import {isNull, isNullOrUndefined} from 'util';
 import {
-    ChangeDateAction, ChangeDegreeAction,
+    ChangeDateAction,
+    ChangeDegreeAction,
     ChangeItemIdAction,
     ChangeLanguageSkillLevelAction,
-    ChangeStringValueAction, CreateEntryAction,
+    ChangeStringValueAction,
+    CreateEntryAction,
     CreateNameEntityAction,
     DeleteEntryAction,
     ProfileActionCreator,
@@ -16,12 +18,11 @@ import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
-import {Sector} from '../../model/Sector';
-import {Education} from '../../model/Education';
 import {EducationEntry} from '../../model/EducationEntry';
-import {Language} from '../../model/Language';
-import {Qualification} from '../../model/Qualification';
 import {QualificationEntry} from '../../model/QualificationEntry';
+import {NameEntity} from '../../model/NameEntity';
+import {SectorEntry} from '../../model/SectorEntry';
+import {TrainingEntry} from '../../model/TrainingEntry';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -67,49 +68,40 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
  * @returns {InternalDatabase}
  */
 function handleCreateNameEntity(database: InternalDatabase, action: CreateNameEntityAction): InternalDatabase {
+    let nameEntity: NameEntity = database.getNameEntityByName(action.name, action.entityType);
+    if(isNullOrUndefined(nameEntity)) {
+        nameEntity = NameEntity.createNew(action.name);
+    }
     switch(action.entityType) {
-        case NameEntityType.Training:
-            return database;
+        case NameEntityType.Training:{
+            let trainingEntry: TrainingEntry = database.profile.trainingEntries.get(action.entryId);
+            trainingEntry = trainingEntry.changeTrainingId(nameEntity.id);
+            let profile: Profile = database.profile.updateTrainingEntry(trainingEntry);
+            return database.updateProfile(profile).updateTraining(nameEntity);
+        }
         case NameEntityType.Education: {
-            let education: Education = database.getEducationByName(action.name);
-            if(isNullOrUndefined(education)) {
-                education = Education.createNew(action.name);
-            }
             let educationEntry: EducationEntry = database.profile.educationEntries.get(action.entryId);
-            educationEntry = educationEntry.changeEducationId(education.id);
+            educationEntry = educationEntry.changeEducationId(nameEntity.id);
             let profile: Profile = database.profile.updateEducationEntry(educationEntry);
-            return database.updateProfile(profile).updateEducation(education);
+            return database.updateProfile(profile).updateEducation(nameEntity);
         }
         case NameEntityType.Language: {
-            let language: Language = database.getLanguageByName(action.name);
-            if(isNullOrUndefined(language)) {
-                language = Language.createNew(action.name);
-            }
             let languageSkill: LanguageSkill = database.profile.languageSkills.get(action.entryId);
-            languageSkill.changeLanguageId(language.id);
+            languageSkill.changeLanguageId(nameEntity.id);
             let profile: Profile = database.profile.updateLanguageSkill(languageSkill);
-            return database.updateProfile(profile).updateLanguage(language);
+            return database.updateProfile(profile).updateLanguage(nameEntity);
         }
         case NameEntityType.Qualification: {
-            let qualification: Qualification = database.getQualificationByName(action.name);
-            if(isNullOrUndefined(qualification)) {
-                qualification = Qualification.createNew(action.name);
-            }
             let qualificationEntry: QualificationEntry = database.profile.qualificationEntries.get(action.entryId);
-            qualificationEntry.changeQualificationId(qualification.id);
+            qualificationEntry.changeQualificationId(nameEntity.id);
             let profile: Profile = database.profile.updateQualificationEntry(qualificationEntry);
-            return database.updateProfile(profile).updateQualification(qualification);
+            return database.updateProfile(profile).updateQualification(nameEntity);
         }
         case NameEntityType.Sector: {
-            let sector: Sector = database.getSectorByName(action.name);
-            if(!isNullOrUndefined(sector) && !isNullOrUndefined(action.entryId)) {
-                // Sector already exists. Do not fromAPI a new one, only update the ID of the entry.
-                let profile: Profile = ProfileReducer.reducerHandleItemIdChange(database.profile,
-                    ProfileActionCreator.changeItemId(sector.id, action.entryId, ProfileElementType.SectorEntry));
-                return database.updateProfile(profile);
-            } else {
-                return database.createNewSector(Sector.create(action.name), action.entryId);
-            }
+            let sectorEntry: SectorEntry = database.profile.sectors.get(action.entryId);
+            sectorEntry.changeSectorId(nameEntity.id);
+            let profile: Profile = database.profile.updateSectorEntry(sectorEntry);
+            return database.updateProfile(profile).updateSector(nameEntity);
         }
     }
 }

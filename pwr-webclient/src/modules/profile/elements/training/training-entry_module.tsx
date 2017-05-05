@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {AutoComplete, Checkbox, DatePicker, IconButton, Paper, TextField} from 'material-ui';
-import {Training} from '../../../../model/Training';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {TrainingEntry} from '../../../../model/TrainingEntry';
+import {NameEntity} from '../../../../model/NameEntity';
 
 /**
  * Local properties of this module. These properties are used to initialize the local state and to control everything that
@@ -21,7 +21,7 @@ interface TrainingEntryLocalProps {
     /**
      * Array of possible {@link Training} by their ID.
      */
-    trainings: Immutable.Map<string, Training>;
+    trainings: Immutable.Map<string, NameEntity>;
 
     /**
      * Callback given to this career step module to be called whenever the start date

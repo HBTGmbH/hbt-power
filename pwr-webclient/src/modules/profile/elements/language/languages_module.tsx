@@ -8,12 +8,12 @@ import {ProfileElement} from '../../profile-element_module';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
-import {Language} from '../../../../model/Language';
 import {ProfileActionCreator, ProfileAsyncActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
+import {NameEntity} from '../../../../model/NameEntity';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;
-    languages: Immutable.Map<string, Language>;
+    languages: Immutable.Map<string, NameEntity>;
     userInitials: string;
 }
 

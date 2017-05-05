@@ -25,8 +25,8 @@ export class ProfileReducer {
         switch(action.elementType) {
             case ProfileElementType.TrainingEntry: {
                 let newCareerElement: TrainingEntry = profile.trainingEntries.get(action.entryId);
-                newCareerElement = newCareerElement.changeCareerPositionId(action.newItemId);
-                return profile.updateCareerElement(newCareerElement);
+                newCareerElement = newCareerElement.changeTrainingId(action.newItemId);
+                return profile.updateTrainingEntry(newCareerElement);
             }
             case ProfileElementType.EducationEntry: {
                 let newEducationEntry: EducationEntry = profile.educationEntries.get(action.entryId);
@@ -79,7 +79,7 @@ export class ProfileReducer {
             case ProfileElementType.QualificationEntry:
                 return profile.updateQualificationEntry(QualificationEntry.createNew());
             case ProfileElementType.TrainingEntry:
-                return profile.updateCareerElement(TrainingEntry.createNew());
+                return profile.updateTrainingEntry(TrainingEntry.createNew());
             case ProfileElementType.EducationEntry:
                 return profile.updateEducationEntry(EducationEntry.createNew());
             default:
@@ -92,12 +92,12 @@ export class ProfileReducer {
             case DateFieldType.TrainingFrom: {
                 let element: TrainingEntry = profile.trainingEntries.get(action.targetFieldId);
                 element = element.changeStartDate(action.newDate);
-                return profile.updateCareerElement(element);
+                return profile.updateTrainingEntry(element);
             }
             case DateFieldType.TrainingTo: {
                 let element: TrainingEntry = profile.trainingEntries.get(action.targetFieldId);
                 element = element.changeEndDate(action.newDate);
-                return profile.updateCareerElement(element);
+                return profile.updateTrainingEntry(element);
             }
             case DateFieldType.EducationStartDate: {
                 let educationEntry: EducationEntry = profile.educationEntries.get(action.targetFieldId);

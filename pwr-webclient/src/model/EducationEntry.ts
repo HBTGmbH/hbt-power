@@ -1,7 +1,7 @@
-import {Education} from './Education';
 import {APIEducationStep} from './APIProfile';
 import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
+import {NameEntity} from './NameEntity';
 
 /**
  * For notes about immutability, {@see TrainingEntry}
@@ -13,23 +13,23 @@ export class EducationEntry {
     public readonly id: string;
     public readonly startDate: Date;
     public readonly endDate: Date;
-    public readonly educationId: string;
+    public readonly nameEntityId: string;
     public readonly degree: string;
     public readonly isNew: boolean;
 
     private static CURRENT_LOCAL_ID: number = 0;
 
-    private constructor(id: string, startDate: Date, endDate: Date, educationId: string, degree: string, isNew: boolean) {
+    private constructor(id: string, startDate: Date, endDate: Date, nameEntityId: string, degree: string, isNew: boolean) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.degree = degree;
-        this.educationId = educationId;
+        this.nameEntityId = nameEntityId;
         this.isNew = isNew;
     }
 
     public changeDegree(newDegree: string): EducationEntry {
-        return new EducationEntry(this.id, this.startDate, this.endDate, this.educationId, newDegree, this.isNew);
+        return new EducationEntry(this.id, this.startDate, this.endDate, this.nameEntityId, newDegree, this.isNew);
     }
 
     /**
@@ -38,7 +38,7 @@ export class EducationEntry {
      * @returns {EducationEntry} copy
      */
     public changeStartDate(date: Date) : EducationEntry {
-        return new EducationEntry(this.id, date, this.endDate, this.educationId, this.degree, this.isNew);
+        return new EducationEntry(this.id, date, this.endDate, this.nameEntityId, this.degree, this.isNew);
     };
 
 
@@ -48,11 +48,11 @@ export class EducationEntry {
      * @returns {EducationEntry} copy
      */
     public changeEndDate(date: Date) : EducationEntry {
-        return new EducationEntry(this.id, this.startDate, date, this.educationId,this.degree, this.isNew);
+        return new EducationEntry(this.id, this.startDate, date, this.nameEntityId,this.degree, this.isNew);
     };
 
     /**
-     * Non-mutating function that changes the {@link EducationEntry.educationId} by returning a copy with
+     * Non-mutating function that changes the {@link EducationEntry.nameEntityId} by returning a copy with
      * the new id set.
      * @param newId
      * @returns {EducationEntry}
@@ -88,13 +88,13 @@ export class EducationEntry {
     }
 
 
-    public toAPIEducationEntry(educations: Immutable.Map<string, Education>): APIEducationStep {
+    public toAPIEducationEntry(educations: Immutable.Map<string, NameEntity>): APIEducationStep {
         console.log(this);
         return {
             id: this.isNew ? null : Number.parseInt(this.id),
             startDate: this.startDate.toISOString(),
             endDate: this.endDate.toISOString(),
-            education: this.educationId == null ? null : educations.get(this.educationId).toAPI(),
+            education: this.nameEntityId == null ? null : educations.get(this.nameEntityId).toAPI(),
             degree: this.degree
         }
     }

@@ -1,7 +1,7 @@
 import {APISectorEntry} from './APIProfile';
-import {Sector} from './Sector';
 import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
+import {NameEntity} from './NameEntity';
 
 export class SectorEntry {
     public readonly id: string;
@@ -40,10 +40,10 @@ export class SectorEntry {
         return new SectorEntry(this.id, newSectorId, this.isNew);
     }
 
-    public toAPISectorEntry(sectors: Immutable.Map<string, Sector>): APISectorEntry {
+    public toAPISectorEntry(sectors: Immutable.Map<string, NameEntity>): APISectorEntry {
         return {
             id: this.isNew ? null : Number.parseInt(this.id),
-            sector: this.sectorId == UNDEFINED_ID ? null : sectors.get(this.sectorId).toAPISector()
+            sector: this.sectorId == UNDEFINED_ID ? null : sectors.get(this.sectorId).toAPI()
         };
     }
 

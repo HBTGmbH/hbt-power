@@ -114,13 +114,13 @@ export class Profile {
         );
     }
 
-    public updateCareerElement(careerElement: TrainingEntry): Profile {
+    public updateTrainingEntry(trainingEntry: TrainingEntry): Profile {
         return new Profile(
             this.id,
             this.currentPosition,
             this.description,
             this.sectors,
-            this.trainingEntries.set(careerElement.id, careerElement),
+            this.trainingEntries.set(trainingEntry.id, trainingEntry),
             this.educationEntries,
             this.languageSkills,
             this.qualificationEntries

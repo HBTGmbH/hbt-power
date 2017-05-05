@@ -2,23 +2,26 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {
-    AllConsultantsState, ApplicationState, DateFieldType, NameEntityType,
+    AllConsultantsState,
+    ApplicationState,
+    DateFieldType,
+    NameEntityType,
     ProfileElementType
 } from '../../../../Store';
 import {TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {EducationEntry} from '../../../../model/EducationEntry';
-import {Education} from '../../../../model/Education';
 import {SingleEducationElement} from './education-entry_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import * as Immutable from 'immutable';
+import {NameEntity} from '../../../../model/NameEntity';
 
 interface EducationProps {
 
     educationEntries: Immutable.Map<string, EducationEntry>;
 
-    educations: Immutable.Map<string, Education>;
+    educations: Immutable.Map<string, NameEntity>;
 
     userInitials: string;
 
