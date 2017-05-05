@@ -26,14 +26,6 @@ export enum APIRequestType {
     RequestLanguages
 }
 
-export enum DateFieldType {
-    EducationEndDate,
-    TrainingFrom,
-    TrainingTo,
-    EducationStartDate,
-    QualificationDate
-}
-
 export enum ProfileElementType {
     SectorEntry,
     TrainingEntry,
@@ -42,13 +34,6 @@ export enum ProfileElementType {
     LanguageEntry
 }
 
-export enum NameEntityType {
-    Sector,
-    Training,
-    Education,
-    Qualification,
-    Language
-}
 
 
 

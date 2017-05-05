@@ -1,8 +1,8 @@
 import {Consultant, ConsultantProps} from './consultant_module';
 import * as React from 'react';
 import {Col, Grid, Row} from 'react-flexbox-grid';
-import {Divider, Drawer, List, ListItem, MenuItem, Subheader} from 'material-ui';
-import {ApplicationState, AllConsultantsState} from '../Store';
+import {Divider, List, ListItem, MenuItem, Subheader} from 'material-ui';
+import {AllConsultantsState, ApplicationState} from '../Store';
 import {connect} from 'react-redux';
 import * as redux from 'redux';
 import {ConsultantReImporter} from './reimport_consultants_module';

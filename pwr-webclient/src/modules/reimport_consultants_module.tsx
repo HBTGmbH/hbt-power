@@ -1,6 +1,6 @@
 import {AsyncActions} from '../reducers/consultants/consultant_actions';
 import * as redux from 'redux';
-import {ApplicationState, AllConsultantsState} from '../Store';
+import {AllConsultantsState, ApplicationState} from '../Store';
 import * as React from 'react';
 import {Col, Grid, Row} from 'react-flexbox-grid';
 import {LinearProgress, RaisedButton} from 'material-ui';

@@ -1,13 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {
-    AllConsultantsState,
-    ApplicationState,
-    DateFieldType,
-    NameEntityType,
-    ProfileElementType
-} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
 import {TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
@@ -48,13 +42,9 @@ interface EducationLocalState {
 }
 
 interface EducationDispatch {
-    changeEndDate(newDate: Date, id: string): void;
-    changeStartDate(newDate: Date, id: string): void;
-    changeDegree(newDegree: string, id: string): void;
-    onEducationEntryEducationChange(newEducationId: string, id: string): void;
     addEducationEntry(): void;
-    addEducation(name: string, id:string): void;
     deleteEducationEntry(educationEntryId: string): void;
+    saveEducationEntry(educationEntry: EducationEntry, education: NameEntity): void;
 }
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
@@ -76,26 +66,14 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : EducationDispatch {
         return {
-            changeStartDate: function(newDate: Date, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationStartDate));
-            },
-            changeEndDate: function(newDate: Date, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.EducationEndDate));
-            },
-            onEducationEntryEducationChange: function(newEducationId: string, id: string) {
-                dispatch(ProfileActionCreator.changeItemId(newEducationId, id, ProfileElementType.EducationEntry));
-            },
             addEducationEntry: function() {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.EducationEntry))
             },
             deleteEducationEntry: function(educationEntryId: string) {
                 dispatch(ProfileActionCreator.deleteEntry(educationEntryId, ProfileElementType.EducationEntry));
             },
-            changeDegree: function(newDegree: string, id: string) {
-                dispatch(ProfileActionCreator.changeDegree(newDegree, id));
-            },
-            addEducation: function(name: string, id: string) {
-                dispatch(ProfileActionCreator.createNameEntity(name, id, NameEntityType.Education));
+            saveEducationEntry: function(educationEntry, education) {
+                dispatch(ProfileActionCreator.saveEntry(educationEntry, education, ProfileElementType.EducationEntry));
             }
         };
     }
@@ -104,27 +82,28 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         this.props.addEducationEntry();
     };
 
+
+    /**
+     *
+     * @returns {any}
+     */
     render() {
         return(
             <ProfileElement
                 title={PowerLocalize.get('Education.Singular')}
-                tableHeader={EducationModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.educationEntries.map((education, key) => {
                     return(
-                    <SingleEducationElement
-                        key={"SingleEducationElement." + key}
-                        degrees={this.props.degrees}
-                        educationEntry={education}
-                        educations={this.props.educations}
-                        onChangeStartDate={this.props.changeStartDate}
-                        onChangeEndDate={this.props.changeEndDate}
-                        onChangeDegree={this.props.changeDegree}
-                        onEducationChange={this.props.onEducationEntryEducationChange}
-                        onDelete={this.props.deleteEducationEntry}
-                        onNewEducation={this.props.addEducation}
-                    />);
+                        <SingleEducationElement
+                            key={"SingleEducationElement." + key}
+                            degrees={this.props.degrees}
+                            educationEntry={education}
+                            educations={this.props.educations}
+                            onDelete={this.props.deleteEducationEntry}
+                            onSave={this.props.saveEducationEntry}
+                        />
+                    );
                 }).toList()}
             </ProfileElement>
         );

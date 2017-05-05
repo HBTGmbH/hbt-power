@@ -1,11 +1,8 @@
 import {NameEntity} from './NameEntity';
-import {NameEntityType, ProfileElementType, RequestStatus} from '../Store';
+import {ProfileElementType, RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
 import {APINameEntity, APIProfile} from './APIProfile';
 import {Profile} from './Profile';
-import {ProfileReducer} from '../reducers/singleProfile/profile-reducer';
-import {ProfileActionCreator} from '../reducers/singleProfile/singleProfileActions';
-import {isNullOrUndefined} from 'util';
 
 
 /**
@@ -74,27 +71,32 @@ export class InternalDatabase {
         )
     }
 
-    public getNameEntityByName(name: string, type: NameEntityType): NameEntity {
+    public getNameEntityByName(name: string, type: ProfileElementType): NameEntity {
         let lookup: Immutable.Map<string, NameEntity>;
         switch(type) {
-            case NameEntityType.Sector:
+            case ProfileElementType.SectorEntry:
                 lookup = this.sectors;
                 break;
-            case NameEntityType.Qualification:
+            case ProfileElementType.QualificationEntry:
                 lookup = this.qualifications;
                 break;
-            case NameEntityType.Language:
+            case ProfileElementType.LanguageEntry:
                 lookup = this.languages;
                 break;
-            case NameEntityType.Education:
+            case ProfileElementType.EducationEntry:
                 lookup = this.educations;
                 break;
-            case NameEntityType.Training:
+            case ProfileElementType.TrainingEntry:
                 lookup = this.trainings;
                 break;
             default:
                 throw Error("unknown NameEntityType.");
         }
+        return InternalDatabase.getNameEntityByName(name, lookup);
+    }
+
+    public static getNameEntityByName(name: string, lookup: Immutable.Map<string, NameEntity>): NameEntity {
+
         let result: NameEntity = null;
         lookup.some((value, key, iter) => {
             if (value.name === name) {
@@ -199,33 +201,6 @@ export class InternalDatabase {
         )
     }
 
-    /**
-     * Creates a new sector and, optionally, adds it to the profile element with the given ID as name entity.
-     * FIXME NT
-     * @param newSector
-     * @param entryId
-     * @returns {InternalDatabase}
-     */
-    public createNewSector(newSector: NameEntity, entryId?: string): InternalDatabase {
-        let profile: Profile = this.profile;
-        if(!isNullOrUndefined(entryId)) {
-            profile = ProfileReducer.reducerHandleItemIdChange(
-                this.profile,
-                ProfileActionCreator.changeItemId(newSector.id, entryId, ProfileElementType.SectorEntry));
-        }
-        return new InternalDatabase(
-            this.APIRequestStatus,
-            this.languageLevels,
-            profile,
-            this.trainings,
-            this.educations,
-            this.languages,
-            this.qualifications,
-            this.sectors.set(newSector.id, newSector)
-        )
-    }
-
-
     private static addAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
         let res: Immutable.Map<string, NameEntity> = reference;
         names.forEach(apiName => {
@@ -297,7 +272,7 @@ export class InternalDatabase {
     }
 
     public addAPISectors(sectors: Array<APINameEntity>) {
-        console.info("Receiving additional sectors:", sectors);
+        console.info("Receiving additional sectorEntries:", sectors);
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -349,7 +324,7 @@ export class InternalDatabase {
             educations = educations.set(education.id, education);
         });
         console.info("...done.");
-        console.info("Parsing sectors...");
+        console.info("Parsing sectorEntries...");
         let sectors = this.sectors;
         profileFromAPI.sectors.forEach(sectorEntry => {
             let sector: NameEntity = NameEntity.fromAPI(sectorEntry.sector);

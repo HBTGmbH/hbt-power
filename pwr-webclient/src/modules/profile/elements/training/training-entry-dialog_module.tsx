@@ -1,0 +1,201 @@
+///<reference path="../../../../../node_modules/immutable/dist/immutable.d.ts"/>
+import * as React from 'react';
+import {InternalDatabase} from '../../../../model/InternalDatabase';
+import {
+    AutoComplete,
+    Card,
+    CardActions,
+    CardHeader,
+    CardMedia,
+    DatePicker,
+    Dialog,
+    IconButton,
+    TouchTapEvent
+} from 'material-ui';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {EducationEntry} from '../../../../model/EducationEntry';
+import {NameEntity} from '../../../../model/NameEntity';
+import * as Immutable from 'immutable';
+import {TrainingEntry} from '../../../../model/TrainingEntry';
+
+
+interface TrainingEntryDialogProps {
+    /**
+     * The element that is rendered in this module.
+     */
+    trainingEntry: TrainingEntry;
+
+    /**
+     * All possible educations by their ids.
+     */
+    trainings: Immutable.Map<string, NameEntity>;
+
+    open: boolean;
+
+    /**
+     * Invoked when the save button is pressed.
+     * @param entry
+     * @param nameEntity
+     */
+    onSave(trainingEntry: TrainingEntry, nameEntity: NameEntity): void;
+
+    /**
+     * Invoked when that thing is supposed to be closed.
+     */
+    onClose(): void;
+}
+
+/**
+ * Local state of the module.
+ *
+ * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
+ */
+interface TrainingEntryDialogState {
+    trainingEntryValue: string;
+    trainingEntry: TrainingEntry;
+    training: NameEntity;
+}
+
+
+
+export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProps, TrainingEntryDialogState> {
+
+    constructor(props: TrainingEntryDialogProps) {
+        super(props);
+        this.state = {
+            trainingEntryValue: this.getEducationEntryName(),
+            trainingEntry: this.props.trainingEntry,
+            training: this.props.trainings.get(this.props.trainingEntry.trainingId)
+        };
+    }
+
+    private getEducationEntryName = () => {
+        let id: string = this.props.trainingEntry.trainingId;
+        return id == null ? '' : this.props.trainings.get(id).name;
+    };
+
+
+    private closeDialog = () => {
+        this.props.onClose();
+    };
+
+    /**
+     * Callback invokes when the DatePicker's value changes.
+     * @param event is always null according to material-ui docs
+     * @param date is the new date.
+     */
+    private handleChangeEndDate = (event: any, date: Date) => {
+        this.setState({
+            trainingEntry: this.state.trainingEntry.changeEndDate(date)
+        });
+    };
+
+    /**
+     * Callback invokes when the DatePicker's value changes.
+     * @param event is always null according to material-ui docs
+     * @param date is the new date.
+     */
+    private handleChangeStartDate = (event: any, date: Date) => {
+        this.setState({
+            trainingEntry: this.state.trainingEntry.changeStartDate(date)
+        });
+    };
+
+    /**
+     * Handles update of the auto complete components input field.
+     * @param searchText the text that had been typed into the autocomplete
+     * @param dataSource useless
+     */
+    private handleEducationFieldInput = (searchText: string, dataSource: Array<string>) => {
+        this.setState({trainingEntryValue: searchText});
+    };
+
+    private handleEducationFieldRequest = (chosenRequest: any, index: number) => {
+        let training: NameEntity;
+        if(index < 0) {
+            training = InternalDatabase.getNameEntityByName(chosenRequest as string, this.props.trainings);
+            if(training == null) {
+                training = NameEntity.createNew(chosenRequest as string);
+            }
+        } else {
+            training = chosenRequest as NameEntity;
+        }
+        let entry: TrainingEntry = this.state.trainingEntry;
+        entry = entry.changeTrainingId(training.id);
+        this.setState({
+            trainingEntry: entry,
+            training: training
+        });
+    };
+
+    private handleCloseButtonPress = (event: TouchTapEvent) => {
+        this.closeDialog();
+    };
+
+
+    private handleSaveButtonPress = (event: TouchTapEvent) => {
+        this.props.onSave(this.state.trainingEntry, this.state.training);
+        this.closeDialog();
+    };
+
+
+    render() {
+        return (
+            <Dialog
+                open={this.props.open}
+                modal={false}
+                onRequestClose={this.closeDialog}
+            >
+                <Card>
+                    <CardHeader
+                        title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
+                    />
+                    <CardMedia>
+                        <div className="row">
+                            <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                                <DatePicker
+                                    floatingLabelText={PowerLocalize.get('Begin')}
+                                    id={'EducationEntry.StartDate' + this.props.trainingEntry.id}
+                                    container="inline"
+                                    value={this.state.trainingEntry.startDate}
+                                    onChange={this.handleChangeStartDate}
+                                    formatDate={formatToShortDisplay}
+                                />
+                            </div>
+                            <div className="col-md-5 col-sm-6">
+                                <DatePicker
+                                    floatingLabelText={PowerLocalize.get('End')}
+                                    id={'EducationEntry.EndDate' + this.props.trainingEntry.id}
+                                    container="inline"
+                                    value={this.state.trainingEntry.endDate}
+                                    onChange={this.handleChangeEndDate}
+                                    formatDate={formatToShortDisplay}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-5 col-sm-6">
+                                <AutoComplete
+                                    floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
+                                    id={'Education.Education.' + this.props.trainingEntry.id}
+                                    value={this.state.trainingEntryValue}
+                                    dataSourceConfig={{text:'name', value:'id'}}
+                                    dataSource={this.props.trainings.toArray()}
+                                    onUpdateInput={this.handleEducationFieldInput}
+                                    onNewRequest={this.handleEducationFieldRequest}
+                                />
+                            </div>
+                        </div>
+                    </CardMedia>
+                    <CardActions>
+                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
+                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
+                    </CardActions>
+                </Card>
+            </Dialog>
+        );
+    }
+}
+

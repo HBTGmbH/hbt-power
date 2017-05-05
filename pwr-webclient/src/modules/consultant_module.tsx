@@ -4,8 +4,7 @@ import {connect} from 'react-redux';
 import {Card} from 'material-ui/Card';
 import {CardHeader, CardMedia, List, ListItem, RaisedButton, TextField} from 'material-ui';
 import {ActionCreator, AsyncActions} from '../reducers/consultants/consultant_actions';
-import {ApplicationState, AllConsultantsState} from '../Store';
-import {Col, Row} from 'react-flexbox-grid';
+import {AllConsultantsState, ApplicationState} from '../Store';
 
 
 export interface ConsultantProps {

@@ -1,12 +1,13 @@
 import {AllConsultantsState} from '../../Store';
 import {
-    ChangeInfoAction, ChangeInitialsAction, ReceiveConsultantsAction,
+    ChangeInfoAction,
+    ChangeInitialsAction,
+    ReceiveConsultantsAction,
     ReceiveSingleConsultantAction
 } from './consultant_actions';
-import {ConsultantLocalProps, ConsultantProps} from '../../modules/consultant_module';
+import {ConsultantProps} from '../../modules/consultant_module';
 import {isNullOrUndefined} from 'util';
 import {AbstractAction, ActionType} from '../reducerIndex';
-import {deepFreeze} from '../../utils/ObjectUtil';
 
 
 let cons_data: ConsultantProps[] = [];

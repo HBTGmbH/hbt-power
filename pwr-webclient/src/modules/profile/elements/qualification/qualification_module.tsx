@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
@@ -36,10 +36,9 @@ interface QualificationLocalState {
 }
 
 interface QualificationDispatch {
-    onDateChange(newDate: Date, id: string): void;
-    onQualificationChange(newQualificationId: string, entryId: string): void;
     addQualificationEntry(): void;
     deleteQualificationEntry(id: string): void;
+    saveQualification(qualificationEntry: QualificationEntry, qualification: NameEntity): void;
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
@@ -59,17 +58,14 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : QualificationDispatch {
         return {
-            onDateChange: function(newDate, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.QualificationDate));
-            },
-            onQualificationChange: function(newQualificationId: string, entryId: string) {
-                dispatch(ProfileActionCreator.changeItemId(newQualificationId, entryId, ProfileElementType.QualificationEntry));
-            },
             addQualificationEntry: function() {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.QualificationEntry));
             },
             deleteQualificationEntry: function(id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.QualificationEntry));
+            },
+            saveQualification: function(qualificationEntry: QualificationEntry, qualification: NameEntity){
+                dispatch(ProfileActionCreator.saveEntry(qualificationEntry, qualification, ProfileElementType.QualificationEntry));
             }
         };
     }
@@ -82,7 +78,6 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         return(
             <ProfileElement
                 title={PowerLocalize.get('Qualification.Plural')}
-                tableHeader={QualificationModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.qualificationEntries.map((q, key) => {
@@ -91,9 +86,8 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
                             key={'Qualification.SingleEntry.' + key}
                             qualificationEntry={q}
                             qualifications={this.props.qualifications}
-                            onDateChange={this.props.onDateChange}
-                            onQualificationChange={this.props.onQualificationChange}
                             onDelete={this.props.deleteQualificationEntry}
+                            onSave={this.props.saveQualification}
                         />
                     );
                 }).toArray()}

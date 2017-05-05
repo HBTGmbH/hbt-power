@@ -1,12 +1,10 @@
-
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../../Store';
 import {Color} from '../../../utils/ColorUtil';
-import {Col} from 'react-flexbox-grid';
+import {Col, Grid, Row} from 'react-flexbox-grid';
 import {LinearProgress, TextField} from 'material-ui';
-import {Grid, Row} from 'react-flexbox-grid';
 import {ProfileActionCreator} from '../../../reducers/singleProfile/singleProfileActions';
 
 interface DescriptionProps {

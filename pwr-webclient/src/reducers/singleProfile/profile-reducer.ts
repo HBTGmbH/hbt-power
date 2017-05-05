@@ -1,10 +1,7 @@
 import {Profile} from '../../model/Profile';
-import {
-    ChangeDateAction, ChangeDegreeAction, ChangeItemIdAction, ChangeStringValueAction, CreateEntryAction,
-    DeleteEntryAction
-} from './singleProfileActions';
+import {ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction} from './singleProfileActions';
 import {EducationEntry} from '../../model/EducationEntry';
-import {DateFieldType, ProfileElementType} from '../../Store';
+import {ProfileElementType} from '../../Store';
 import {TrainingEntry} from '../../model/TrainingEntry';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
@@ -15,39 +12,18 @@ export class ProfileReducer {
         return profile.changeCurrentPosition(action.value);
     }
 
-    public static changeDegree(profile: Profile, action: ChangeDegreeAction) {
-        let entry: EducationEntry = profile.educationEntries.get(action.id);
-        entry = entry.changeDegree(action.newDegree);
-        return profile.updateEducationEntry(entry);
-    }
-
-    public static reducerHandleItemIdChange(profile: Profile, action: ChangeItemIdAction): Profile {
-        switch(action.elementType) {
-            case ProfileElementType.TrainingEntry: {
-                let newCareerElement: TrainingEntry = profile.trainingEntries.get(action.entryId);
-                newCareerElement = newCareerElement.changeTrainingId(action.newItemId);
-                return profile.updateTrainingEntry(newCareerElement);
-            }
-            case ProfileElementType.EducationEntry: {
-                let newEducationEntry: EducationEntry = profile.educationEntries.get(action.entryId);
-                newEducationEntry = newEducationEntry.changeEducationId(action.newItemId);
-                return profile.updateEducationEntry(newEducationEntry);
-            }
-            case ProfileElementType.LanguageEntry: {
-                let newLanguageSkill: LanguageSkill = profile.languageSkills.get(action.entryId);
-                newLanguageSkill = newLanguageSkill.changeLanguageId(action.newItemId);
-                return profile.updateLanguageSkill(newLanguageSkill);
-            }
-            case ProfileElementType.QualificationEntry: {
-                let newQualificationEntry: QualificationEntry = profile.qualificationEntries.get(action.entryId);
-                newQualificationEntry = newQualificationEntry.changeQualificationId(action.newItemId);
-                return profile.updateQualificationEntry(newQualificationEntry);
-            }
-            case ProfileElementType.SectorEntry: {
-                let newSectorEntry: SectorEntry = profile.sectors.get(action.entryId);
-                newSectorEntry = newSectorEntry.changeSectorId(action.newItemId);
-                return profile.updateSectorEntry(newSectorEntry);
-            }
+    public static reducerUpdateEntry(profile: Profile, action: SaveEntryAction): Profile {
+        switch(action.entryType) {
+            case ProfileElementType.TrainingEntry:
+                return profile.updateTrainingEntry(action.entry as TrainingEntry);
+            case ProfileElementType.SectorEntry:
+                return profile.updateSectorEntry(action.entry as SectorEntry);
+            case ProfileElementType.EducationEntry:
+                return profile.updateEducationEntry(action.entry as EducationEntry);
+            case ProfileElementType.QualificationEntry:
+                return profile.updateQualificationEntry(action.entry as QualificationEntry);
+            case ProfileElementType.LanguageEntry:
+                return profile.updateLanguageSkill(action.entry as LanguageSkill);
             default:
                 return profile;
         }
@@ -82,38 +58,6 @@ export class ProfileReducer {
                 return profile.updateTrainingEntry(TrainingEntry.createNew());
             case ProfileElementType.EducationEntry:
                 return profile.updateEducationEntry(EducationEntry.createNew());
-            default:
-                return profile;
-        }
-    }
-
-    public static reducerHandleChangeDate(profile: Profile, action: ChangeDateAction): Profile {
-        switch (action.targetField) {
-            case DateFieldType.TrainingFrom: {
-                let element: TrainingEntry = profile.trainingEntries.get(action.targetFieldId);
-                element = element.changeStartDate(action.newDate);
-                return profile.updateTrainingEntry(element);
-            }
-            case DateFieldType.TrainingTo: {
-                let element: TrainingEntry = profile.trainingEntries.get(action.targetFieldId);
-                element = element.changeEndDate(action.newDate);
-                return profile.updateTrainingEntry(element);
-            }
-            case DateFieldType.EducationStartDate: {
-                let educationEntry: EducationEntry = profile.educationEntries.get(action.targetFieldId);
-                educationEntry = educationEntry.changeStartDate(action.newDate);
-                return profile.updateEducationEntry(educationEntry);
-            }
-            case DateFieldType.EducationEndDate: {
-                let educationEntry: EducationEntry = profile.educationEntries.get(action.targetFieldId);
-                educationEntry = educationEntry.changeEndDate(action.newDate);
-                return profile.updateEducationEntry(educationEntry);
-            }
-            case DateFieldType.QualificationDate: {
-                let qualificationEntry: QualificationEntry = profile.qualificationEntries.get(action.targetFieldId);
-                qualificationEntry = qualificationEntry.changeDate(action.newDate);
-                return profile.updateQualificationEntry(qualificationEntry);
-            }
             default:
                 return profile;
         }

@@ -1,0 +1,99 @@
+import {SectorEntry} from '../../../../model/SectorEntry';
+import * as Immutable from 'immutable';
+import * as React from 'react';
+import {IconButton} from 'material-ui';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {NameEntity} from '../../../../model/NameEntity';
+import {SectorEntryDialog} from './sector-entry-dialog_module';
+
+interface SingleSectorLocalProps {
+    sectors: Immutable.Map<string, NameEntity>;
+    sectorEntry: SectorEntry;
+
+    /**
+     * Invoked when the user invokes a deletion of the sector entry.
+     * @param sectorEntryId the id of the {@link SectorEntry} associated with this {@link SingleSectorModule}
+     */
+    onSectorDelete(sectorEntryId: string): void;
+
+    onSave(sectorEntry: SectorEntry, sector: NameEntity): void;
+}
+
+interface SingleSectorState {
+    dialogOpen: boolean;
+}
+
+export class SingleSectorModule extends React.Component<SingleSectorLocalProps, SingleSectorState> {
+
+
+
+    constructor(props: SingleSectorLocalProps) {
+        super(props);
+        let id: string = props.sectorEntry.sectorId;
+        this.state = {
+            dialogOpen: false
+        };
+    }
+
+    private closeDialog = () => {
+        this.setState({
+            dialogOpen: false
+        });
+    };
+
+    private openDialog = () => {
+        this.setState({
+            dialogOpen: true
+        });
+    };
+
+    private getSectorName = () => {
+        // Try catch to avoid various undefined exceptions that happen during the
+        // initialization of this component.
+        // For some reason this gets called before props are properly initialized.
+        try {
+            return this.props.sectors.get(this.props.sectorEntry.sectorId).name;
+        } catch(e){
+            return "";
+        }
+    };
+
+    private handleEditButtonClick = () => {
+        this.openDialog();
+    };
+
+    private handleDeleteButtonClick = () => {
+        this.props.onSectorDelete(this.props.sectorEntry.id);
+    };
+
+    private handleSaveRequest = (sectorEntry: SectorEntry, sector: NameEntity) => {
+        this.props.onSave(sectorEntry, sector);
+        this.closeDialog();
+    };
+
+    private handleCloseRequest = () => {
+        this.closeDialog();
+    };
+
+    render() {
+        return(
+            <tr>
+                <td>
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <SectorEntryDialog
+                        open={this.state.dialogOpen}
+                        sectorEntry={this.props.sectorEntry}
+                        sectors={this.props.sectors}
+                        onSave={this.handleSaveRequest}
+                        onClose={this.handleCloseRequest}
+                    />
+                </td>
+                <td>
+                    <div className="fittingContainer" onClick={this.openDialog}>
+                        {this.getSectorName()}
+                    </div>
+                </td>
+            </tr>);
+    }
+}

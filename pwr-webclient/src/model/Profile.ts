@@ -4,12 +4,12 @@ import {LanguageSkill} from './LanguageSkill';
 import {QualificationEntry} from './QualificationEntry';
 import {TrainingEntry} from './TrainingEntry';
 import {
-    APITrainingEntry,
     APIEducationStep,
     APILanguageSkill,
     APIProfile,
     APIQualificationEntry,
-    APISectorEntry
+    APISectorEntry,
+    APITrainingEntry
 } from './APIProfile';
 import {isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
@@ -22,8 +22,7 @@ export class Profile {
 
     public readonly description: string;
 
-    //FIXME refactor to sectorEntries
-    public readonly sectors: Immutable.Map<string, SectorEntry> = Immutable.Map<string, SectorEntry>();
+    public readonly sectorEntries: Immutable.Map<string, SectorEntry> = Immutable.Map<string, SectorEntry>();
 
     public readonly trainingEntries: Immutable.Map<string, TrainingEntry> = Immutable.Map<string, TrainingEntry>();
 
@@ -46,7 +45,7 @@ export class Profile {
         this.id = id;
         this.currentPosition = currentPosition;
         this.description = description;
-        this.sectors = sectors;
+        this.sectorEntries = sectors;
         this.trainingEntries = careerElements;
         this.educationEntries = educationEntries;
         this.languageSkills = languageSkills;
@@ -63,7 +62,7 @@ export class Profile {
      * @returns {Profile} a copy of the old profile with the new {@link Profile.description}
      */
     public changeDescription(newDescription: string): Profile {
-        return new Profile(this.id, this.currentPosition, newDescription, this.sectors, this.trainingEntries,
+        return new Profile(this.id, this.currentPosition, newDescription, this.sectorEntries, this.trainingEntries,
             this.educationEntries, this.languageSkills, this.qualificationEntries
         );
     }
@@ -79,7 +78,7 @@ export class Profile {
             this.id,
             newPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
@@ -93,7 +92,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills.set(languageSkill.id, languageSkill),
@@ -106,7 +105,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills.remove(id),
@@ -119,7 +118,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries.set(trainingEntry.id, trainingEntry),
             this.educationEntries,
             this.languageSkills,
@@ -132,7 +131,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries.remove(careerElementId),
             this.educationEntries,
             this.languageSkills,
@@ -145,7 +144,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries,
             this.educationEntries.set(edcuationEntry.id, edcuationEntry),
             this.languageSkills,
@@ -158,7 +157,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries,
             this.educationEntries.remove(id),
             this.languageSkills,
@@ -171,7 +170,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
@@ -184,7 +183,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors,
+            this.sectorEntries,
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
@@ -197,7 +196,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors.set(sectorEntry.id, sectorEntry),
+            this.sectorEntries.set(sectorEntry.id, sectorEntry),
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
@@ -210,7 +209,7 @@ export class Profile {
             this.id,
             this.currentPosition,
             this.description,
-            this.sectors.remove(elementId),
+            this.sectorEntries.remove(elementId),
             this.trainingEntries,
             this.educationEntries,
             this.languageSkills,
@@ -229,7 +228,7 @@ export class Profile {
             if(!isNullOrUndefined(apiSectorEntry)) {
                 // We assume that the server that provides the data is always right, which means the
                 // client is missing a data set.
-                // This adds the sector to the currently known sectors.
+                // This adds the sector to the currently known sectorEntries.
                 let sectorEntry: SectorEntry = SectorEntry.create(apiSectorEntry);
                 res = res.set(sectorEntry.id, sectorEntry);
             }
@@ -317,7 +316,7 @@ export class Profile {
         });
 
         let sectors: Array<APISectorEntry> = [];
-        this.sectors.forEach(sector => {
+        this.sectorEntries.forEach(sector => {
             sectors.push(sector.toAPISectorEntry(database.sectors));
         });
 

@@ -3,7 +3,7 @@ export const de_locale : any = {
     "Date.Singular": "Datum",
     "Language.Singular": "Sprache",
     "Language.Plural": "Sprachen",
-    "Language.Level.Singular": "Sprachlevel",
+    "LanguageLevel.Singular": "Sprachlevel",
     "Qualifier.Singular": "Bezeichner",
     "Education.Singular": "Ausbildung",
     "EducationStep.Plural": "Ausbildungs-Schritte",
@@ -11,12 +11,18 @@ export const de_locale : any = {
     "Sector.Singular": "Branche",
     "Sector.Plural": "Branchen",
     "Today": "Heute",
+    "Begin": "Beginn",
+    "End": "Ende",
+    "AcademicDegree.Singular": "Akademischer Grad",
 
     // == Component Specific Localizations == //
     "Toolbar.LoggedInAs": "Eingeloggt als",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
     "TrainingEntries.Qualifier": "Weiterbildung",
+    "EducationEntry.EditEntry.Title": "Ausbildungsschritt bearbeiten",
+    "EducationEntry.Dialog.EducationName": "Studiengangs-/Ausbildungsbezeichner",
+    "LanguageSkill.EditSkill.Title": "Sprache bearbeiten",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
@@ -32,6 +38,7 @@ export const de_locale : any = {
     "Action.New": "Neu",
     "Action.Remove": "Entfernen",
     "Action.Add": "Hinzufügen",
-    "Action.Lock": "Sperren"
+    "Action.Lock": "Sperren",
+    "Action.Close": "Schließen"
 
 };

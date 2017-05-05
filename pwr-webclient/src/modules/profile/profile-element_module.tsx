@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-    Card, CardHeader, CardMedia, Divider, FontIcon, IconButton, List, Table, TableBody, TableHeader, Toolbar,
-    ToolbarTitle, TouchTapEvent
-} from 'material-ui';
+import {Card, CardHeader, CardMedia, Divider, IconButton, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Color} from '../../utils/ColorUtil';
 
@@ -11,14 +8,6 @@ interface ProfileElementLocalProps {
      * Title of the card header
      */
     title: string;
-
-    /**
-     * Represents the header of the table that is constructed by the child JSX elements.
-     *
-     * The header column and children column count has to be the same: If the children have 2 columns, the header
-     * has to have two columsn, and so on.
-     */
-    tableHeader: JSX.Element;
 
     /**
      * Callback that is executed when the add button onClick event is invoked.

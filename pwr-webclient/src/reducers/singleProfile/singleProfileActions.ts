@@ -2,20 +2,21 @@
  * @author nt | nt@hbt.de
  */
 
-import {AllConsultantsState, APIRequestType, DateFieldType, NameEntityType, ProfileElementType} from '../../Store';
+import {AllConsultantsState, APIRequestType, ProfileElementType} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {
-    getTrainingSuggestionAPIString,
     getEducationSuggestionAPIString,
     getLangSuggestionAPIString,
     getProfileAPIString,
     getQualificationSuggestionAPIString,
-    getSectorsSuggestionAPIString
+    getSectorsSuggestionAPIString,
+    getTrainingSuggestionAPIString
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
+import {NameEntity} from '../../model/NameEntity';
 
 
 export interface ChangeStringValueAction extends AbstractAction {
@@ -25,95 +26,15 @@ export interface ChangeStringValueAction extends AbstractAction {
     value: string;
 }
 
-/**
- * Action that changes the language ID of the given language skill.
- */
-export interface ChangeLanguageSkillNameAction extends AbstractAction {
-    /**
-     * The ID of the language that is assigned to the language skill.
-     */
-    newLanguageId: string;
-    /**
-     * The ID of the language skill that is being modified.
-     */
-    languageSkillId: string;
-}
-
-/**
- * Changes the language level of the language skill associated with the given ID.
- */
-export interface ChangeLanguageSkillLevelAction extends AbstractAction {
-    /**
-     * {@link Language.id} of the language that is supposed to be modified.
-     * the ID is not existent, nothing will happen.
-     */
-    languageSkillId: string;
-
-    /**
-     * The new language level. May be an arbitary string. Note that the API performs consistency checks.
-     */
-    newLanguageLevel: string;
-}
-
 
 export interface ReceiveAPIResponseAction extends AbstractAction {
     requestType: APIRequestType;
     payload: any;
 }
 
-/**
- * Action that invokes a date change on one of the available date fields in various classes.
- * <p>
- *     The field which is changed is defined by the {@link ChangeDateAction.targetField} type.
- *     This allows a more flexible use of a single action for multiple field, moving the logic from the 'dumb'
- *     action creator to the more 'smart' reducer.
- */
-export interface ChangeDateAction extends AbstractAction {
-    /**
-     * New date. May be null or undefined for some target fields. The reducer accepting this action
-     * will perform the logic.
-     */
-   newDate: Date;
-
-    /**
-     *  Field that is the target of the date field. The reducer decides which fields gets modified.
-     */
-   targetField: DateFieldType;
-
-    /**
-     * Id of the target field.
-     */
-   targetFieldId: string;
-}
-
-export interface ChangeItemIdAction extends AbstractAction {
-    /**
-     * The type that is changed.
-     */
-    elementType: ProfileElementType;
-    /**
-     * The id that is given to the entry.
-     */
-    newItemId: string;
-    /**
-     * The entry that is changed
-     */
-    entryId: string;
-}
-
-export interface CreateNameEntityAction extends AbstractAction {
-    entityType: NameEntityType;
-    name: string;
-    entryId: string;
-}
 
 export interface CreateEntryAction extends  AbstractAction {
     entryType: ProfileElementType;
-}
-
-export interface ChangeDegreeAction extends AbstractAction {
-    newDegree: string;
-    id: string;
 }
 
 /**
@@ -125,19 +46,17 @@ export interface DeleteEntryAction extends AbstractAction {
     elementId: string;
 }
 
+export interface SaveEntryAction extends AbstractAction {
+    entryType: ProfileElementType;
+    entry: any;
+    nameEntity: NameEntity;
+}
+
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
         return {
             type: ActionType.ChangeAbstract,
             value: newAbstract
-        };
-    }
-
-    public static changeLanguageSkillLevel(newLevel: string, langSkillId: string):ChangeLanguageSkillLevelAction {
-        return {
-            type: ActionType.ChangeLanguageSkillLevel,
-            newLanguageLevel: newLevel,
-            languageSkillId: langSkillId
         };
     }
 
@@ -169,25 +88,6 @@ export class ProfileActionCreator {
         return { type: ActionType.APIRequestFail };
     }
 
-
-    public static changeDateField(id: string, newDate: Date, targetField: DateFieldType): ChangeDateAction {
-        return {
-            type: ActionType.ChangeDate,
-            newDate: newDate,
-            targetField: targetField,
-            targetFieldId: id
-        };
-    }
-
-    public static changeItemId(newItemId: string, entryId: string, elementType: ProfileElementType): ChangeItemIdAction {
-        return {
-            type: ActionType.ChangeItemId,
-            elementType: elementType,
-            newItemId: newItemId,
-            entryId: entryId
-        };
-    }
-
     public static deleteEntry(id: string, elementType: ProfileElementType): DeleteEntryAction {
         return {
             type: ActionType.DeleteEntry,
@@ -203,35 +103,12 @@ export class ProfileActionCreator {
         }
     }
 
-    /**
-     * Creates a name entity({@see Sector}, {@see Language}, etc...) and assigns the newly created
-     * entity to the entry entity with the given id.
-     * @param name
-     * @param id
-     * @param type
-     * @returns {{type: ActionType, entityType: NameEntityType, name: string}}
-     */
-    public static createNameEntity(name: string, id:string, type: NameEntityType): CreateNameEntityAction {
+    public static saveEntry(entry: any, nameEntity: NameEntity, elementType: ProfileElementType): SaveEntryAction {
         return {
-            type: ActionType.CreateEntity,
-            entityType: type,
-            name: name,
-            entryId: id
-        }
-    }
-
-    public static changeCurrentPosition(newPosition: string): ChangeStringValueAction {
-        return {
-            type: ActionType.ChangeCurrentPosition,
-            value: newPosition
-        }
-    }
-
-    public static changeDegree(newDegree: string, id: string): ChangeDegreeAction {
-        return {
-            type: ActionType.ChangeDegree,
-            newDegree: newDegree,
-            id: id
+            type: ActionType.SaveEntry,
+            entry: entry,
+            nameEntity: nameEntity,
+            entryType: elementType
         }
     }
 }
@@ -391,13 +268,13 @@ export class ProfileAsyncActionCreator {
      *
      * @param initials of the consultant whose profile is updates with the new sector entry
      * @param sectorEntry is the sector entry that is added to the profile
-     * @param sectors is the immutable map of all possible sectors
+     * @param sectorEntries is the immutable map of all possible sectorEntries
      * @returns {(dispatch:redux.Dispatch<InternalDatabase>)=>undefined}
      *
-    public static saveSectorEntry(initials:string, sectorEntry: SectorEntry, sectors: Immutable.Map<number, Sector>) {
+    public static saveSectorEntry(initials:string, sectorEntry: SectorEntry, sectorEntries: Immutable.Map<number, Sector>) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch(ProfileActionCreator.APIRequestPending());
-            let apiSectorEntry: APISectorEntry = sectorEntry.toAPISectorEntry(sectors);
+            let apiSectorEntry: APISectorEntry = sectorEntry.toAPISectorEntry(sectorEntries);
             ProfileAsyncActionCreator.performAbstractSaveEntryAction(
                 getSaveSectorEntryAPIString(initials),
                 apiSectorEntry,

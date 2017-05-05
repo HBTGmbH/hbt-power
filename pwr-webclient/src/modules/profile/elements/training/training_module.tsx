@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, DateFieldType, ProfileElementType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {TrainingEntry} from '../../../../model/TrainingEntry';
@@ -36,9 +36,7 @@ interface TrainingEntriesState {
 }
 
 interface TrainingEntryDispatch {
-    changeStartDate(newDate: Date, id: string): void;
-    changeEndDate(newDate: Date, id: string): void;
-    changeCareerId(newId: string, id: string): void;
+    saveTrainingEntry(trainingEntry: TrainingEntry, training: NameEntity): void;
     removeCareerElement(id: string): void;
     addCareerElement(): void;
 
@@ -63,14 +61,8 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : TrainingEntryDispatch {
         return {
-            changeStartDate: function(newDate: Date, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.TrainingFrom));
-            },
-            changeEndDate: function(newDate: Date, id: string) {
-                dispatch(ProfileActionCreator.changeDateField(id, newDate, DateFieldType.TrainingTo));
-            },
-            changeCareerId: function(newId: string, id: string) {
-                dispatch(ProfileActionCreator.changeItemId(newId, id, ProfileElementType.TrainingEntry));
+            saveTrainingEntry: function(trainingEntry: TrainingEntry, training: NameEntity) {
+                dispatch(ProfileActionCreator.saveEntry(trainingEntry, training, ProfileElementType.TrainingEntry));
             },
             removeCareerElement: function(id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.TrainingEntry));
@@ -90,7 +82,6 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
         return(
             <ProfileElement
                 title={PowerLocalize.get('TrainingEntries.Qualifier')}
-                tableHeader={TrainingEntriesModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >
                 {
@@ -100,10 +91,8 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
                                 key={"TrainingEntry." + key}
                                 trainingEntry={value}
                                 trainings={this.props.trainings}
-                                onStartDateChange={this.props.changeStartDate}
-                                onEndDateChange={this.props.changeEndDate}
-                                onCareerChange={this.props.changeCareerId}
                                 onDelete={this.props.removeCareerElement}
+                                onSave={this.props.saveTrainingEntry}
                             />
                         )
                     }).toArray()

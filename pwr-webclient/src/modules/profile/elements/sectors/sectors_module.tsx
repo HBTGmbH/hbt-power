@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, NameEntityType, ProfileElementType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../model/SectorEntry';
-import {SingleSectorModule} from './sector_module';
+import {SingleSectorModule} from './sector-entry_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/singleProfileActions';
 import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../model/NameEntity';
@@ -37,11 +37,9 @@ interface SectorsLocalState {
 }
 
 interface SectorsDispatch {
-    onSectorChange(sectorId: string, sectorEntryId: string): void;
-    onSectorDelete(sectorId: string): void;
-
+    deleteSectorEntry(sectorId: string): void;
+    saveSectorEntry(sectorEntry: SectorEntry, sector: NameEntity): void;
     addSectorEntry(): void;
-    addSector(name: string, id: string): void;
 }
 
 class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & SectorsDispatch, SectorsLocalState> {
@@ -56,24 +54,21 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
     static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
         return {
             sectors: state.databaseReducer.sectors,
-            sectorEntries: state.databaseReducer.profile.sectors,
+            sectorEntries: state.databaseReducer.profile.sectorEntries,
             initials: state.databaseReducer.loggedInUser
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : SectorsDispatch {
         return {
-            onSectorChange: function(sectorId: string, sectorEntryId: string) {
-                dispatch(ProfileActionCreator.changeItemId(sectorId, sectorEntryId, ProfileElementType.SectorEntry));
-            },
-            onSectorDelete: function(sectorId: string){
+            deleteSectorEntry: function(sectorId: string){
                 dispatch(ProfileActionCreator.deleteEntry(sectorId, ProfileElementType.SectorEntry));
             },
             addSectorEntry: function(){
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.SectorEntry));
             },
-            addSector: function(name: string, id: string) {
-                dispatch(ProfileActionCreator.createNameEntity(name, id, NameEntityType.Sector))
+            saveSectorEntry: function(sectorEntry: SectorEntry, sector: NameEntity) {
+                dispatch(ProfileActionCreator.saveEntry(sectorEntry, sector, ProfileElementType.SectorEntry))
             }
         };
     }
@@ -88,9 +83,8 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 key={'Sectors.SingleSector.' + id}
                 sectorEntry={sectorEntry}
                 sectors={this.props.sectors}
-                onSectorChange={this.props.onSectorChange}
-                onSectorDelete={this.props.onSectorDelete}
-                onNewSector={this.props.addSector}
+                onSectorDelete={this.props.deleteSectorEntry}
+                onSave={this.props.saveSectorEntry}
             />
             );
     };
@@ -99,7 +93,6 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         return(
             <ProfileElement
                 title={PowerLocalize.get('Sector.Plural')}
-                tableHeader={SectorsModule.renderHeader()}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.sectorEntries.map(this.renderSingleListElement).toArray()}

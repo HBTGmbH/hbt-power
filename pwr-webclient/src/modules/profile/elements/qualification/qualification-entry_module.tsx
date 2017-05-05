@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {AutoComplete, DatePicker, IconButton, Paper, TouchTapEvent} from 'material-ui';
+import {IconButton, TouchTapEvent} from 'material-ui';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {NameEntity} from '../../../../model/NameEntity';
+import {QualificationEntryDialog} from './qualification-entry-dialog_module';
 
 
 /**
@@ -30,11 +31,9 @@ interface QualificationEntryLocalProps {
      * @param newDate
      * @param id
      */
-    onDateChange(newDate: Date, id: string): void;
-
-    onQualificationChange(newQualificationId: string, entryId: string): void;
-
     onDelete(qualificationEntryId: string): void;
+
+    onSave(qualificationEntry: QualificationEntry, qualification: NameEntity): void;
 
 }
 
@@ -44,21 +43,17 @@ interface QualificationEntryLocalProps {
  * There is no need for a non-local state, as redux will manage this part.
  */
 interface QualificationEntryState {
-    autoCompleteValue: string;
-    editDisabled: boolean;
+    dialogOpen: boolean;
 }
 
 
 export class SingleQualificationEntry extends React.Component<QualificationEntryLocalProps, QualificationEntryState> {
 
-    private autoCompleteValues: Array<NameEntity>;
 
     constructor(props: QualificationEntryLocalProps) {
         super(props);
-        this.autoCompleteValues = props.qualifications.map((val, key) => val).toArray();
         this.state = {
-            autoCompleteValue: this.getQualificationName(),
-            editDisabled: true
+            dialogOpen: false
         };
     }
 
@@ -67,42 +62,9 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         return id == null ? '' : this.props.qualifications.get(id).name;
     };
 
-    /**
-     * Callback invokes when the DatePicker's value changes.
-     * @param event is always null according to material-ui docs
-     * @param date is the new date.
-     */
-    private handleDateChange = (event: any, date: Date) => {
-        // Hello Callback \o/!
-        this.props.onDateChange(date, this.props.qualificationEntry.id);
-    };
-
-    private handleAutoCompleteUpdateInput = (searchText: string) => {
-        this.setState({autoCompleteValue: searchText});
-    };
-
-    private handleAutoCompleteRequest = (chosenRequest: string, index: number) => {
-        if(index >= 0) {
-            this.props.onQualificationChange(this.autoCompleteValues[index].id, this.props.qualificationEntry.id);
-            this.setState({
-                editDisabled: true
-            });
-        } else {
-            this.setState({
-                autoCompleteValue: this.getQualificationName()
-            });
-        }
-    };
-
-    private handleSaveButtonClick = (event: TouchTapEvent) => {
-        this.setState({
-            editDisabled: true
-        });
-    };
-
     private handleFieldTouchClick = (event: TouchTapEvent) => {
         this.setState({
-            editDisabled: false
+            dialogOpen: true
         });
     };
 
@@ -110,41 +72,48 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         this.props.onDelete(this.props.qualificationEntry.id);
     };
 
+    private handleEditButtonClick = (event: TouchTapEvent) => {
+        this.setState({
+            dialogOpen: true
+        })
+    };
+
+    private handleSaveRequest = (entry: QualificationEntry, name: NameEntity) => {
+        this.props.onSave(entry, name);
+        this.setState({
+            dialogOpen: false
+        })
+    };
+
+    private handleCloseRequest = () => {
+        this.setState({
+            dialogOpen: false
+        });
+    };
+
     render() {
         return(
             <tr>
                 <td>
-                    <Paper className="row">
-                        <div className="col-md-1">
-                            <IconButton iconClassName="material-icons" onClick={this.handleSaveButtonClick} tooltip={PowerLocalize.get('Action.Lock')}>lock</IconButton>
-                            <IconButton iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
-                        </div>
-                        <div className="col-md-5">
-                            <div className="fittingContainer" onTouchStart={this.handleFieldTouchClick} onClick={this.handleFieldTouchClick}>
-                                <DatePicker
-                                    id={'Education.DatePicker.' + this.props.qualificationEntry.id}
-                                    container="inline"
-                                    value={this.props.qualificationEntry.date}
-                                    onChange={this.handleDateChange}
-                                    formatDate={formatToShortDisplay}
-                                    disabled={this.state.editDisabled}
-                                />
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="fittingContainer" onTouchStart={this.handleFieldTouchClick} onClick={this.handleFieldTouchClick}>
-                                <AutoComplete
-                                    id={'Qualification.Autocomplete.' + this.props.qualificationEntry.id}
-                                    value={this.state.autoCompleteValue}
-                                    dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.autoCompleteValues}
-                                    onUpdateInput={this.handleAutoCompleteUpdateInput}
-                                    onNewRequest={this.handleAutoCompleteRequest}
-                                    disabled={this.state.editDisabled}
-                                />
-                            </div>
-                        </div>
-                    </Paper>
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <QualificationEntryDialog
+                        qualificationEntry={this.props.qualificationEntry}
+                        qualifications={this.props.qualifications}
+                        open={this.state.dialogOpen}
+                        onSave={this.handleSaveRequest}
+                        onClose={this.handleCloseRequest}
+                    />
+                </td>
+                <td>
+                    <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
+                    {formatToShortDisplay(this.props.qualificationEntry.date)}
+                    </div>
+                </td>
+                <td>
+                    <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
+                        {this.getQualificationName()}
+                    </div>
                 </td>
             </tr>
         );

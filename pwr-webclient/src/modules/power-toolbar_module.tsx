@@ -1,9 +1,8 @@
-
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../Store';
-import {MenuItem, RaisedButton, Toolbar, ToolbarGroup} from 'material-ui';
+import {RaisedButton, Toolbar, ToolbarGroup} from 'material-ui';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 
 interface ToolbarProps {
