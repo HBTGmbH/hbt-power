@@ -32,7 +32,7 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
     } else if(action.requestType === APIRequestType.RequestProfile) {
         newState = state.parseProfile(action.payload);
     } else if(action.requestType === APIRequestType.SaveProfile) {
-        newState = state;
+        newState = state.parseProfile(action.payload.profile);
     } else if(action.requestType === APIRequestType.RequestEducations) {
         newState = state.addAPIEducations(action.payload);
     } else if(action.requestType === APIRequestType.RequestQualifications) {
