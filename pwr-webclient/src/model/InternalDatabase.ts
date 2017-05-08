@@ -3,6 +3,7 @@ import {ProfileElementType, RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
 import {APINameEntity, APIProfile} from './APIProfile';
 import {Profile} from './Profile';
+import {doop} from 'doop';
 
 
 /**
@@ -14,7 +15,6 @@ import {Profile} from './Profile';
  * This array stores all currently available entity IDs.
  */
 export class InternalDatabase {
-
 
     public readonly APIRequestStatus: RequestStatus;
 
@@ -36,6 +36,10 @@ export class InternalDatabase {
 
     public readonly qualifications: Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
 
+    public readonly companies: Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
+
+    public readonly projectRoles: Immutable.Map<string, NameEntity> = Immutable.Map<string, NameEntity>();
+
 
     constructor(
         apiRequestStatus: RequestStatus,
@@ -45,7 +49,9 @@ export class InternalDatabase {
         educations: Immutable.Map<string, NameEntity>,
         languages: Immutable.Map<string, NameEntity>,
         qualifications: Immutable.Map<string, NameEntity>,
-        sectors:  Immutable.Map<string, NameEntity>
+        sectors:  Immutable.Map<string, NameEntity>,
+        companies: Immutable.Map<string, NameEntity>,
+        projectRoles: Immutable.Map<string, NameEntity>
 ) {
         this.APIRequestStatus = apiRequestStatus;
         this.languageLevels = languageLevels;
@@ -54,7 +60,9 @@ export class InternalDatabase {
         this.educations = educations;
         this.languages = languages;
         this.qualifications = qualifications;
-        this.sectors = sectors
+        this.sectors = sectors;
+        this.companies = companies;
+        this.projectRoles = projectRoles;
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -63,6 +71,8 @@ export class InternalDatabase {
             RequestStatus.Successful,
             ["BASIC", "ADVANCED", "BUSINESS_FLUENT", "NATIVE"],
             Profile.createDefault(),
+            Immutable.Map<string, NameEntity>(),
+            Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
@@ -118,7 +128,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -131,7 +143,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -144,7 +158,9 @@ export class InternalDatabase {
             this.educations.set(education.id, education),
             this.languages,
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         );
 
     }
@@ -158,7 +174,9 @@ export class InternalDatabase {
             this.educations,
             this.languages.set(language.id, language),
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         );
     }
 
@@ -171,7 +189,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications.set(qualification.id, qualification),
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     };
 
@@ -184,7 +204,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications,
-            this.sectors.set(sector.id, sector)
+            this.sectors.set(sector.id, sector),
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -197,7 +219,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -225,7 +249,9 @@ export class InternalDatabase {
             this.educations,
             InternalDatabase.addAPINameEntities(languages, this.languages),
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -239,7 +265,9 @@ export class InternalDatabase {
             InternalDatabase.addAPINameEntities(educations, this.educations),
             this.languages,
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -253,7 +281,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             InternalDatabase.addAPINameEntities(qualifications, this.qualifications),
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -267,7 +297,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications,
-            this.sectors
+            this.sectors,
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -281,7 +313,9 @@ export class InternalDatabase {
             this.educations,
             this.languages,
             this.qualifications,
-            InternalDatabase.addAPINameEntities(sectors, this.sectors)
+            InternalDatabase.addAPINameEntities(sectors, this.sectors),
+            this.companies,
+            this.projectRoles
         )
     }
 
@@ -331,6 +365,22 @@ export class InternalDatabase {
             sectors = sectors.set(sector.id, sector);
         });
         console.info("...done.");
+        console.info("Parsing companies...");
+        let companies = this.companies;
+        profileFromAPI.projects.forEach(project => {
+            let company: NameEntity = NameEntity.fromAPI(project.broker);
+            companies = companies.set(company.id, company);
+        });
+        console.info("...done");
+        console.info("Parsing project roles...");
+        let projectRoles = this.projectRoles;
+        profileFromAPI.projects.forEach(project => {
+            project.projectRole.forEach(apiRole => {
+                let role: NameEntity = NameEntity.fromAPI(apiRole);
+                projectRoles = projectRoles.set(role.id, role);
+            })
+        });
+        console.info("..done");
         console.info("Parsing profile...");
         let profile: Profile = Profile.createFromAPI(profileFromAPI);
         console.info("...done");
@@ -343,7 +393,9 @@ export class InternalDatabase {
             educations,
             languages,
             qualifications,
-            sectors
+            sectors,
+            companies,
+            projectRoles
         )
     }
 

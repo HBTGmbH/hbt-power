@@ -1,3 +1,4 @@
+import {NameEntity} from './NameEntity';
 export interface APINameEntity {
     id: number;
     name: string;
@@ -40,6 +41,16 @@ export interface APISectorEntry {
     sector: APINameEntity;
 }
 
+export interface APIProject {
+    id: number;
+    name: string;
+    description: string;
+    endDate: Date;
+    startDate: Date;
+    broker: APINameEntity;
+    client: APINameEntity;
+    projectRole: Array<APINameEntity>;
+}
 
 /**
  * Representation of the profile the API returns. Allows type-safe changing of the API response as the compiler will
@@ -54,6 +65,7 @@ export interface APIProfile {
     qualification: Array<APIQualificationEntry>;
     education: Array<APIEducationStep>;
     sectors: Array<APISectorEntry>;
+    projects: Array<APIProject>
 }
 
 export interface APIProfileUpdateResponse {

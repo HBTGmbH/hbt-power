@@ -2,10 +2,14 @@ import * as React from 'react';
 import {Card, CardActions, CardHeader, CardMedia, DatePicker, Dialog, IconButton, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Project} from '../../../../model/Project';
+import {NameEntity} from '../../../../model/NameEntity';
+import * as Immutable from 'immutable';
 
 interface ProjectDialogProps {
     open: boolean;
     project: Project;
+    projectRoles: Immutable.Map<string, NameEntity>;
+    companies: Immutable.Map<string, NameEntity>;
     onClose(): void;
     onSave(project: Project): void;
 }
@@ -49,15 +53,15 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
     };
 
     private changeEndCustomer = (event: Object, newValue: string) => {
-        this.updateProject(this.state.project.endCustomer(newValue));
+        //this.updateProject(this.state.project.endCustomer(newValue));
     };
 
     private changeBroker = (event: Object, newValue: string) => {
-        this.updateProject(this.state.project.broker(newValue));
+        //this.updateProject(this.state.project.broker(newValue));
     };
 
     private changeRole = (event: Object, newValue: string) => {
-        this.updateProject(this.state.project.role(newValue));
+        //this.updateProject(this.state.project.role(newValue));
     };
 
     private changeDescription = (event: Object, newValue: string) => {
@@ -98,7 +102,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                             <div className="col-md-5 col-sm-6">
                                 <TextField
                                     floatingLabelText={PowerLocalize.get('Customer.Singular')}
-                                    value={this.state.project.endCustomer()}
+                                    value={this.props.companies.get(this.state.project.endCustomerId()).name}
                                     id={'Project.Customer.' + this.state.project.id()}
                                     onChange={this.changeEndCustomer}
                                     fullWidth={true}
@@ -125,7 +129,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <TextField
                                     floatingLabelText={PowerLocalize.get('Broker.Singular')}
-                                    value={this.state.project.broker()}
+                                    value={this.props.companies.get(this.state.project.brokerId()).name}
                                     id={'Project.Broker.' + this.state.project.id()}
                                     onChange={this.changeBroker}
                                     fullWidth={true}
@@ -135,7 +139,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                             <div className="col-md-5 col-sm-6 ">
                                 <TextField
                                     floatingLabelText={PowerLocalize.get('ProjectRole.Singular')}
-                                    value={this.state.project.role()}
+
                                     id={'Project.Role.' + this.state.project.id()}
                                     onChange={this.changeRole}
                                     fullWidth={true}

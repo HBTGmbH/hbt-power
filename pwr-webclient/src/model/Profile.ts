@@ -6,12 +6,12 @@ import {TrainingEntry} from './TrainingEntry';
 import {
     APIEducationStep,
     APILanguageSkill,
-    APIProfile,
+    APIProfile, APIProject,
     APIQualificationEntry,
     APISectorEntry,
     APITrainingEntry
 } from './APIProfile';
-import {isNullOrUndefined} from 'util';
+import {isNull, isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
 import {SectorEntry} from './SectorEntry';
 import {Project} from './Project';
@@ -319,6 +319,17 @@ export class Profile {
         return res;
     }
 
+    private static parseProjects(projects: Array<APIProject>): Immutable.Map<string, Project> {
+        let res: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
+        projects.forEach(apiProject => {
+            if(!isNullOrUndefined(apiProject)){
+                let project: Project = Project.fromAPI(apiProject);
+                res = res.set(project.id(), project);
+            }
+        });
+        return res;
+    }
+
     // FIXME do not require database anymore, or refactor database so it doesn't contain
     // FIXME this profile anymore.
     public serializeToApiProfile(database: InternalDatabase): APIProfile {
@@ -350,6 +361,11 @@ export class Profile {
             sectors.push(sector.toAPISectorEntry(database.sectors));
         });
 
+        let projects: Array<APIProject> = [];
+        this.projects.forEach(project => {
+            projects.push(project.toAPI(database.companies, database.projectRoles));
+        });
+
         let res: APIProfile = {
             id: this.id,
             description: this.description,
@@ -358,7 +374,8 @@ export class Profile {
             languages: languages,
             qualification: qualifications,
             education: educations,
-            sectors: sectors
+            sectors: sectors,
+            projects: projects 
         };
         console.log('Serialized profile:', res);
         return res;
@@ -370,29 +387,6 @@ export class Profile {
      * @returns {Profile}
      */
     public static createFromAPI(profile: APIProfile): Profile {
-        let proj: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
-        let project: Project = new Project(
-            "1",
-            "Atomwaffenbau",
-            "KimJongUnInc",
-            new Date(),
-            new Date(),
-            "Waffenbau für den Nordkoreanischen Diktator",
-            "China",
-            "Chefwaffenotto"
-        );
-        let project2: Project = new Project(
-            "2",
-            "Geofox",
-            "Hochbahn AG",
-            new Date(),
-            new Date(),
-            "Züge Entgleisen lassen",
-            "HBT",
-            "Chefentgleiser"
-        );
-        proj = proj.set(project.id(), project);
-        proj = proj.set(project2.id(), project2);
         return new Profile(
             Number(profile.id),
             profile.currentPosition,
@@ -402,7 +396,7 @@ export class Profile {
             Profile.parseEducationEntries(profile.education),
             Profile.parseLanguageSkills(profile.languages),
             Profile.parseQualficiationEntries(profile.qualification),
-            proj
+            Profile.parseProjects(profile.projects)
         );
     }
 
@@ -417,29 +411,6 @@ export class Profile {
      * @returns {Profile} the default profile.
      */
     public static createDefault(): Profile {
-        let proj: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
-        let project: Project = new Project(
-            "1",
-            "Atomwaffenbau",
-            "KimJongUnInc",
-            new Date(),
-            new Date(),
-            "Waffenbau für den Nordkoreanischen Diktator",
-            "China",
-            "Chefwaffenotto"
-        );
-        let project2: Project = new Project(
-            "2",
-            "Geofox",
-            "Hochbahn AG",
-            new Date(),
-            new Date(),
-            "Züge Entgleisen lassen",
-            "HBT",
-            "Chefentgleiser"
-        );
-        proj = proj.set(project.id(), project);
-        proj = proj.set(project2.id(), project2);
         return new Profile(
             -1,
             '',
@@ -449,7 +420,7 @@ export class Profile {
             Immutable.Map<string, EducationEntry>(),
             Immutable.Map<string, LanguageSkill>(),
             Immutable.Map<string, QualificationEntry>(),
-            proj
+            Immutable.Map<string, Project>()
         );
     }
 

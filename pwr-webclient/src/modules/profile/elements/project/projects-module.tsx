@@ -6,6 +6,8 @@ import {Project} from '../../../../model/Project';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {ProjectCard} from './project-module';
+import {NameEntity} from '../../../../model/NameEntity';
+import * as Immutable from 'immutable';
 
 /**
  * Properties that are managed by react-redux.
@@ -18,6 +20,8 @@ interface ProjectsProps {
      * Reference to all projects.
      */
     projects: Immutable.Map<string, Project>;
+    projectRoles: Immutable.Map<string, NameEntity>;
+    companies: Immutable.Map<string, NameEntity>;
 }
 
 /**
@@ -53,7 +57,9 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
 
     static mapStateToProps(state: ApplicationState, localProps: ProjectsProps): ProjectsProps {
         return {
-            projects: state.databaseReducer.profile.projects
+            projects: state.databaseReducer.profile.projects,
+            projectRoles: state.databaseReducer.projectRoles,
+            companies: state.databaseReducer.companies
         }
     }
 
@@ -69,7 +75,14 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
     }
 
     private renderSingleProject = (value: Project, key: string) => {
-        return (<ProjectCard project={value} key={key} onSave={this.props.saveProject} onDelete={this.props.deleteProject}/>)
+        return (<ProjectCard
+            project={value}
+            key={key}
+            onSave={this.props.saveProject}
+            onDelete={this.props.deleteProject}
+            companies={this.props.companies}
+            projectRoles={this.props.projectRoles}
+        />)
     };
 
     render() {
