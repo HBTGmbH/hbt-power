@@ -12,7 +12,6 @@ import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
-import {EducationEntry} from '../../model/EducationEntry';
 import {NameEntity} from '../../model/NameEntity';
 
 
@@ -63,7 +62,7 @@ function updateNameEntity(database: InternalDatabase, entity: NameEntity, type: 
 }
 
 function handleSaveEntry(database: InternalDatabase, action: SaveEntryAction): InternalDatabase {
-    if(action.nameEntity.isNew) {
+    if(!isNullOrUndefined(action.nameEntity) && action.nameEntity.isNew) {
         database = updateNameEntity(database, action.nameEntity, action.entryType);
     }
     let profile: Profile = ProfileReducer.reducerUpdateEntry(database.profile, action);

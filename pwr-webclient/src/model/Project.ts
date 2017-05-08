@@ -1,4 +1,4 @@
-import {doop, Doop} from 'doop';
+import {doop} from 'doop';
 
 @doop
 export class Project {

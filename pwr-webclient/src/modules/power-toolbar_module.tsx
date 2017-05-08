@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../Store';
-import {IconButton, RaisedButton, Toolbar, ToolbarGroup, Drawer} from 'material-ui';
+import {Drawer, IconButton, Toolbar, ToolbarGroup} from 'material-ui';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 
 interface ToolbarProps {

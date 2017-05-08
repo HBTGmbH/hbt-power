@@ -2,10 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {
-    Card, CardHeader, CardMedia, Divider, GridList, IconButton, Tab, Tabs, Toolbar,
-    TouchTapEvent
-} from 'material-ui';
+import {Card, CardHeader, Divider, IconButton, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -14,8 +11,8 @@ import {EducationList} from './elements/education/eduction_module';
 import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {ProjectCard} from './elements/project/project-module';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/ProfileAsyncActionCreator';
+import {Projects} from './elements/project/projects-module';
 
 
 interface ProfileProps {
@@ -118,11 +115,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                                 <br/>
                             </Tab>
                             <Tab label={PowerLocalize.get("ProfileModule.Tabs.Projects.Title")}>
-                                {
-                                    this.props.database.profile.projects.map((value, key) => {
-                                        return <ProjectCard key={key} project={value}/>
-                                    }).toArray()
-                                }
+                                <Projects/>
                             </Tab>
                             <Tab label="Skills">
                             </Tab>

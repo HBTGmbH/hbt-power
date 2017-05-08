@@ -107,6 +107,20 @@ export class Profile {
         );
     }
 
+    public updateProject(project: Project): Profile {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectorEntries,
+            this.trainingEntries,
+            this.educationEntries,
+            this.languageSkills,
+            this.qualificationEntries,
+            this.projects.set(project.id(), project)
+        );
+    }
+
     public removeLanguageSkill(id: string): Profile {
         return new Profile(
             this.id,

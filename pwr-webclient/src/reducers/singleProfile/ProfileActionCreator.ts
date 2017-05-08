@@ -1,9 +1,12 @@
-import {AllConsultantsState, APIRequestType, ProfileElementType} from '../../Store';
+import {APIRequestType, ProfileElementType} from '../../Store';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {NameEntity} from '../../model/NameEntity';
 import {
-    ChangeStringValueAction, CreateEntryAction, DeleteEntryAction,
-    ReceiveAPIResponseAction, SaveEntryAction
+    ChangeStringValueAction,
+    CreateEntryAction,
+    DeleteEntryAction,
+    ReceiveAPIResponseAction,
+    SaveEntryAction
 } from './database-actions';
 
 export class ProfileActionCreator {

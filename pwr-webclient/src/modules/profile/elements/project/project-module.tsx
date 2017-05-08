@@ -1,82 +1,68 @@
 import * as React from 'react';
-import {Card, CardHeader, CardMedia, DatePicker, Paper, TextField} from 'material-ui';
+import {Card, CardActions, CardHeader, IconButton} from 'material-ui';
 import {Project} from '../../../../model/Project';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {ProjectDialog} from './project-dialog_module';
 
 interface ProjectModuleProps {
     project: Project;
+    onSave(project: Project): void;
+    onDelete(id: string): void;
 }
 
 interface ProjectModuleState {
-
+    dialogIsOpen: boolean;
 }
 
 export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModuleState> {
+
+    public constructor(props: ProjectModuleProps) {
+        super(props);
+        this.state = {
+            dialogIsOpen: false
+        }
+    }
+
+    private closeDialog = () => {
+        this.setState({
+            dialogIsOpen: false
+        });
+    };
+
+    private openDialog = () => {
+        this.setState({
+            dialogIsOpen: true
+        });
+    };
+
+    private handleSaveRequest = (project: Project) => {
+        this.props.onSave(project);
+        this.closeDialog();
+    };
+
+    private deleteButtonPress = () => {
+        this.props.onDelete(this.props.project.id());
+    };
 
     render () {
         return (
             <Card>
                 <CardHeader
-                    title={this.props.project.name() + " für " + this.props.project.endCustomer()}
-                    subtitle={"Tätig als " + this.props.project.role()}
-                    actAsExpander={true}
+                    title={this.props.project.name() + ' für ' + this.props.project.endCustomer()}
+                    subtitle={'Tätig als ' + this.props.project.role()}
                 />
-                <CardMedia expandable={true}>
-                    <div className="row">
-                        <div className="col-md-3 col-sm-6 col-md-offset-1">
-                            <TextField
-                                floatingLabelText={PowerLocalize.get("ProjectName.Singular")}
-                                value={this.props.project.name()}
-                                id={"Project.Name." + this.props.project.id}
-                            />
-                        </div>
-                        <div className="col-md-3 col-sm-6">
-                            <TextField
-                                floatingLabelText={PowerLocalize.get("Customer.Singular")}
-                                value={this.props.project.endCustomer()}
-                                id={"Project.Customer." + this.props.project.id}
-                            />
-                        </div>
-                        <div className="col-md-3 col-sm-6">
-                            <TextField
-                                floatingLabelText={PowerLocalize.get("Broker.Singular")}
-                                value={this.props.project.broker()}
-                                id={"Project.Broker." + this.props.project.id}
-                            />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-3 col-sm-6 col-md-offset-1">
-                            <DatePicker floatingLabelText={PowerLocalize.get("Project.StartDate")}
-                                        value={this.props.project.startDate()}
-                            />
-                        </div>
-                        <div className="col-md-3 col-sm-6 ">
-                            <DatePicker floatingLabelText={PowerLocalize.get("Project.EndDate")}
-                                        value={this.props.project.endDate()}
-                            />
-                        </div>
-                        <div className="col-md-3 col-sm-6">
-                            <TextField
-                                floatingLabelText={PowerLocalize.get("ProjectRole.Singular")}
-                                value={this.props.project.role()}
-                                id={"Project.Role." + this.props.project.id}
-                            />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-offset-1 col-md-8">
-                            <TextField
-                                floatingLabelText={PowerLocalize.get("Project.Card.Description")}
-                                fullWidth = {true}
-                                multiLine={true}
-                                rows={8}
-                                value={this.props.project.description()}
-                                id={"Project.Description." + this.props.project.id}
-                            />
-                        </div>
-                    </div>
-                </CardMedia>
+                <ProjectDialog key={"projectDialog." + this.props.project.id()}
+                    open={this.state.dialogIsOpen}
+                    project={this.props.project}
+                    onClose={this.closeDialog}
+                    onSave={this.handleSaveRequest}
+                />
+                <CardActions>
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.openDialog}
+                                tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.deleteButtonPress}
+                                tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                </CardActions>
             </Card>
         )
     }

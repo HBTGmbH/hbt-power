@@ -18,6 +18,9 @@ export const de_locale : any = {
     "ProjectName.Singular": "Projektname",
     "Customer.Singular": "Kunde",
     "Broker.Singular": "Vermittler",
+    "ProjectRole.Singular": "Projektrolle",
+    "ProjectDialog.Description.LabelText": "Kurzbeschreibung",
+
 
     // == Component Specific Localizations == //
     "Toolbar.LoggedInAs": "Eingeloggt als",
@@ -31,6 +34,7 @@ export const de_locale : any = {
     "ProfileModule.Tabs.Projects.Title": "Projektinformationen",
     "Project.StartDate": "Projektbeginn",
     "Project.EndDate":"Projektende",
+    "ProjectDialog.Title": "Projektinformationen bearbeiten",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

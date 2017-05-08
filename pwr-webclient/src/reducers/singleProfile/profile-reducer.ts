@@ -6,6 +6,7 @@ import {TrainingEntry} from '../../model/TrainingEntry';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
+import {Project} from '../../model/Project';
 export class ProfileReducer {
 
     public static reducerHandleChangeCurrentPosition(profile: Profile, action: ChangeStringValueAction) {
@@ -24,6 +25,8 @@ export class ProfileReducer {
                 return profile.updateQualificationEntry(action.entry as QualificationEntry);
             case ProfileElementType.LanguageEntry:
                 return profile.updateLanguageSkill(action.entry as LanguageSkill);
+            case ProfileElementType.ProjectEntry:
+                return profile.updateProject(action.entry as Project);
             default:
                 return profile;
         }
