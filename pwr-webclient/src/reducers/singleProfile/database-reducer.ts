@@ -3,9 +3,11 @@ import {isNullOrUndefined} from 'util';
 import {
     ChangeStringValueAction,
     CreateEntryAction,
-    DeleteEntryAction, DeleteProjectAction,
+    DeleteEntryAction,
+    DeleteProjectAction,
     ReceiveAPIResponseAction,
-    SaveEntryAction, SaveProjectAction, UpdateNameEntityAction
+    SaveEntryAction,
+    SaveProjectAction
 } from './database-actions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {deepFreeze} from '../../utils/ObjectUtil';
@@ -14,53 +16,73 @@ import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
+import {APINameEntity} from '../../model/APIProfile';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
 
+function addAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
+    let res: Immutable.Map<string, NameEntity> = reference;
+    names.forEach(apiName => {
+        let name: NameEntity = NameEntity.fromAPI(apiName);
+        res = res.set(name.id, name);
+    });
+    return res;
+}
+
 function handleChangeAbstract(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
-    let newProfile: Profile = state.profile.changeDescription(action.value);
-    return state.updateProfile(newProfile);
+    let newProfile: Profile = state.profile().changeDescription(action.value);
+    return state.profile(newProfile);
 }
 
 // FIXME move to database reducer
 function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
     let newState: InternalDatabase;
-    // FIXME switch-i-fy
-    if(action.requestType === APIRequestType.RequestLanguages) {
-        newState = state.addAPILanguages(action.payload);
-    } else if(action.requestType === APIRequestType.RequestProfile) {
-        newState = state.parseProfile(action.payload);
-    } else if(action.requestType === APIRequestType.SaveProfile) {
-        newState = state.parseProfile(action.payload.profile);
-    } else if(action.requestType === APIRequestType.RequestEducations) {
-        newState = state.addAPIEducations(action.payload);
-    } else if(action.requestType === APIRequestType.RequestQualifications) {
-        newState = state.addAPIQualifications(action.payload);
-    } else if(action.requestType === APIRequestType.RequestCareers) {
-        newState = state.addAPITrainings(action.payload);
-    } else if(action.requestType === APIRequestType.RequestSectors) {
-        newState = state.addAPISectors(action.payload);
-    } else if(action.requestType === APIRequestType.RequestProjectRoles) {
-        newState = state.addAPIProjectRoles(action.payload);
-    } else if(action.requestType === APIRequestType.RequestCompanies) {
-        newState = state.addAPICompanies(action.payload);
+    switch(action.requestType) {
+        case APIRequestType.RequestLanguages:
+            newState = state.languages(addAPINameEntities(action.payload, state.languages()));
+            break;
+        case APIRequestType.RequestProfile:
+            newState = state.parseProfile(action.payload);
+            break;
+        case APIRequestType.SaveProfile:
+            newState = state.parseProfile(action.payload.profile);
+            break;
+        case APIRequestType.RequestEducations:
+            newState = state.educations(addAPINameEntities(action.payload, state.educations()));
+            break;
+        case APIRequestType.RequestQualifications:
+            newState = state.qualifications(addAPINameEntities(action.payload, state.qualifications()));
+            break;
+        case APIRequestType.RequestCareers:
+            newState = state.trainings(addAPINameEntities(action.payload, state.trainings()));
+            break;
+        case APIRequestType.RequestSectors:
+            newState = state.sectors(addAPINameEntities(action.payload, state.sectors()));
+            break;
+        case APIRequestType.RequestProjectRoles:
+            newState = state.projectRoles(addAPINameEntities(action.payload, state.projectRoles()));
+            break;
+        case APIRequestType.RequestCompanies:
+            newState = state.companies(addAPINameEntities(action.payload, state.companies()));
+            break;
+
     }
-    return newState.changeAPIRequestStatus(RequestStatus.Successful);
+    return newState.APIRequestStatus(RequestStatus.Successful);
 }
 
 function updateNameEntity(database: InternalDatabase, entity: NameEntity, type: ProfileElementType): InternalDatabase {
     switch(type) {
         case ProfileElementType.TrainingEntry:
-            return database.updateTraining(entity);
+            return database.trainings(database.trainings().set(entity.id, entity));
         case ProfileElementType.SectorEntry:
-            return database.updateSector(entity);
+            return database.sectors(database.sectors().set(entity.id, entity));
         case ProfileElementType.EducationEntry:
-            return database.updateEducation(entity);
+            return database.educations(database.educations().set(entity.id, entity));
         case ProfileElementType.QualificationEntry:
-            return database.updateQualification(entity);
+            return database.qualifications(database.qualifications().set(entity.id, entity));
         case ProfileElementType.LanguageEntry:
-            return database.updateLanguage(entity);
+            return database.languages(database.languages().set(entity.id, entity));
         default:
             return database;
     }
@@ -70,26 +92,25 @@ function handleSaveEntry(database: InternalDatabase, action: SaveEntryAction): I
     if(!isNullOrUndefined(action.nameEntity) && action.nameEntity.isNew) {
         database = updateNameEntity(database, action.nameEntity, action.entryType);
     }
-    let profile: Profile = ProfileReducer.reducerUpdateEntry(database.profile, action);
-    return database.updateProfile(profile);
+    let profile: Profile = ProfileReducer.reducerUpdateEntry(database.profile(), action);
+    return database.profile(profile);
 }
 
 function handleSaveProject(database: InternalDatabase, action: SaveProjectAction): InternalDatabase {
-    let companies: Immutable.Map<string, NameEntity> = database.companies;
-    let roles: Immutable.Map<string, NameEntity> = database.projectRoles;
+    let companies: Immutable.Map<string, NameEntity> = database.companies();
+    let roles: Immutable.Map<string, NameEntity> = database.projectRoles();
 
     action.newCompanies.forEach(cmp => companies = companies.set(cmp.id, cmp));
     action.newRoles.forEach(role => roles = roles.set(role.id, role));
 
-    let profile: Profile = database.profile.updateProject(action.project);
-    return database.updateCompanies(companies).updateRoles(roles).updateProfile(profile);
+    let profile: Profile = database.profile().updateProject(action.project);
+    return database.companies(companies).projectRoles(roles).profile(profile);
 }
 
 /**
  * Reducer for the single profile part of the global state.
  * @param state
  * @param action
- * @returns {SingleProfile}
  */
 export function databaseReducer(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
     if(isNullOrUndefined(state)) {
@@ -102,36 +123,36 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         case ActionType.ChangeAbstract:
             return handleChangeAbstract(state, <ChangeStringValueAction> action);
         case ActionType.DeleteEntry: {
-            let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile, <DeleteEntryAction> action);
-            return state.updateProfile(newProfile);
+            let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile(), <DeleteEntryAction> action);
+            return state.profile(newProfile);
         }
         case ActionType.CreateEntry: {
-            let newProfile: Profile = ProfileReducer.reducerHandleCreateEntry(state.profile, <CreateEntryAction> action);
-            return state.updateProfile(newProfile);
+            let newProfile: Profile = ProfileReducer.reducerHandleCreateEntry(state.profile(), <CreateEntryAction> action);
+            return state.profile(newProfile);
         }
         case ActionType.SaveEntry: {
             return handleSaveEntry(state, <SaveEntryAction>action);
         }
         case ActionType.ChangeCurrentPosition: {
-            let newProfile: Profile = ProfileReducer.reducerHandleChangeCurrentPosition(state.profile, <ChangeStringValueAction> action);
-            return state.updateProfile(newProfile);
+            let newProfile: Profile = ProfileReducer.reducerHandleChangeCurrentPosition(state.profile(), <ChangeStringValueAction> action);
+            return state.profile(newProfile);
         }
         case ActionType.SaveProject: {
             return handleSaveProject(state, <SaveProjectAction>action);
         }
         case ActionType.DeleteProject: {
-            let newProfile: Profile = state.profile.removeProject((<DeleteProjectAction> action).id);
-            return state.updateProfile(newProfile);
+            let newProfile: Profile = state.profile().removeProject((<DeleteProjectAction> action).id);
+            return state.profile(newProfile);
         }
         case ActionType.CreateProject: {
-            let newProfile: Profile = state.profile.updateProject(Project.createNew());
-            return state.updateProfile(newProfile);
+            let newProfile: Profile = state.profile().updateProject(Project.createNew());
+            return state.profile(newProfile);
         }
         // == Language Suggestion requests == //
         case ActionType.APIRequestPending:
-            return state.changeAPIRequestStatus(RequestStatus.Pending);
+            return state.APIRequestStatus(RequestStatus.Pending);
         case ActionType.APIRequestFail:
-            return state.changeAPIRequestStatus(RequestStatus.Failiure);
+            return state.APIRequestStatus(RequestStatus.Failiure);
         case ActionType.APIRequestSuccess:
             return handleRequestAPISuccess(state, <ReceiveAPIResponseAction> action);
         default:

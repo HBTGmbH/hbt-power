@@ -4,7 +4,7 @@ import {
     Card,
     CardActions,
     CardHeader,
-    CardMedia,
+    CardMedia, Checkbox,
     DatePicker,
     Dialog,
     IconButton,
@@ -184,20 +184,21 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
 
                         </div>
                         <div className="row">
-                            <div className="col-md-5 col-sm-6 col-md-offset-1">
+                            <div className="col-md-5 col-sm-5 col-md-offset-1">
                                 <DatePicker floatingLabelText={PowerLocalize.get('Project.StartDate')}
                                             value={this.state.project.startDate()}
                                             onChange={this.changeStartDate}
                                             fullWidth={true}
                                 />
                             </div>
-                            <div className="col-md-5 col-sm-6 ">
+                            <div className="col-md-5 col-sm-5 ">
                                 <DatePicker floatingLabelText={PowerLocalize.get('Project.EndDate')}
                                             value={this.state.project.endDate()}
                                             onChange={this.changeEndDate}
                                             fullWidth={true}
                                 />
                             </div>
+
                         </div>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">

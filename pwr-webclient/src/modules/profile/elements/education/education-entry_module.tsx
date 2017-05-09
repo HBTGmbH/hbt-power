@@ -6,6 +6,8 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {NameEntity} from '../../../../model/NameEntity';
 import {EducationEntryDialogModule} from './education-entry-dialog_module';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {isNullOrUndefined} from 'util';
 
 
 /**
@@ -58,7 +60,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
 
 
     private getEducationEntryName = () => {
-        return this.props.educationEntry.nameEntityId == null ? '' : this.props.educations.get(this.props.educationEntry.nameEntityId ).name;
+        return NameEntityUtil.getNullTolerantName(this.props.educationEntry.nameEntityId(), this.props.educations);
     };
 
 
@@ -87,7 +89,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
     };
 
     private handleDeleteButtonPress = (event: TouchTapEvent) => {
-        this.props.onDelete(this.props.educationEntry.id);
+        this.props.onDelete(this.props.educationEntry.id());
     };
 
 
@@ -109,17 +111,17 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                        {formatToShortDisplay(this.props.educationEntry.startDate)}
+                        {formatToShortDisplay(this.props.educationEntry.startDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {formatToShortDisplay(this.props.educationEntry.endDate)}
+                    {formatToShortDisplay(this.props.educationEntry.endDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {this.props.educationEntry.degree == null ? ' ' : this.props.educationEntry.degree}
+                    {isNullOrUndefined(this.props.educationEntry.degree()) ? "---": this.props.educationEntry.degree()}
                     </div>
                 </td>
                 <td>

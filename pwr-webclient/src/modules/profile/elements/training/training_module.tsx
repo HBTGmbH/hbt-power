@@ -53,9 +53,9 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
 
     static mapStateToProps(state: ApplicationState, localProps: TrainingEntriesProps) : TrainingEntriesProps {
         return {
-            trainingEntries: state.databaseReducer.profile.trainingEntries,
-            trainings: state.databaseReducer.trainings,
-            userInitials: state.databaseReducer.loggedInUser
+            trainingEntries: state.databaseReducer.profile().trainingEntries,
+            trainings: state.databaseReducer.trainings(),
+            userInitials: state.databaseReducer.loggedInUser()
         };
     }
 

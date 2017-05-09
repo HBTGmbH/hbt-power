@@ -60,9 +60,9 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
 
     static mapStateToProps(state: ApplicationState, localProps: ProjectsProps): ProjectsProps {
         return {
-            projects: state.databaseReducer.profile.projects,
-            projectRoles: state.databaseReducer.projectRoles,
-            companies: state.databaseReducer.companies
+            projects: state.databaseReducer.profile().projects,
+            projectRoles: state.databaseReducer.projectRoles(),
+            companies: state.databaseReducer.companies()
         }
     }
 

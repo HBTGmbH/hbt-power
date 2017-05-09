@@ -19,6 +19,7 @@ import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {EducationEntry} from '../../../../model/EducationEntry';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 
 
 interface EducationEntryDialogLocalProps {
@@ -67,14 +68,14 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
     constructor(props: EducationEntryDialogLocalProps) {
         super(props);
         this.state = {
-            educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.nameEntityId),
+            educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.nameEntityId()),
             entry: this.props.educationEntry,
-            nameEntity: this.props.educations.get(this.props.educationEntry.nameEntityId)
+            nameEntity: this.props.educations.get(this.props.educationEntry.nameEntityId())
         };
     }
 
     private getEducationEntryName = (id: string) => {
-        return id == null ? '' : this.props.educations.get(id).name;
+        return NameEntityUtil.getNullTolerantName(id, this.props.educations);
     };
 
 
@@ -89,7 +90,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
      */
     private handleChangeEndDate = (event: any, date: Date) => {
         let entry = this.state.entry;
-        entry = entry.changeEndDate(date);
+        entry = entry.endDate(date);
         this.setState({
             entry: entry
         });
@@ -102,7 +103,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
      */
     private handleChangeStartDate = (event: any, date: Date) => {
         let entry = this.state.entry;
-        entry = entry.changeStartDate(date);
+        entry = entry.startDate(date);
         this.setState({
             entry: entry
         });
@@ -128,7 +129,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
             education = chosenRequest as NameEntity;
         }
         let entry: EducationEntry = this.state.entry;
-        entry = entry.changeEducationId(education.id);
+        entry = entry.nameEntityId(education.id);
         this.setState({
             entry: entry,
             nameEntity: education
@@ -141,7 +142,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
 
     private handleDegreeSelect = (event: TouchTapEvent, index: number, value: string) => {
         let entry = this.state.entry;
-        entry = entry.changeDegree(value);
+        entry = entry.degree(value);
         this.setState({
             entry: entry
         });
@@ -172,7 +173,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     floatingLabelText={PowerLocalize.get('Begin')}
                                     id={'EducationEntry.StartDate' + this.props.educationEntry.id}
                                     container="inline"
-                                    value={this.state.entry.startDate}
+                                    value={this.state.entry.startDate()}
                                     onChange={this.handleChangeStartDate}
                                     formatDate={formatToShortDisplay}
                                 />
@@ -182,7 +183,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     floatingLabelText={PowerLocalize.get('End')}
                                     id={'EducationEntry.EndDate' + this.props.educationEntry.id}
                                     container="inline"
-                                    value={this.state.entry.endDate}
+                                    value={this.state.entry.endDate()}
                                     onChange={this.handleChangeEndDate}
                                     formatDate={formatToShortDisplay}
                                 />
@@ -192,7 +193,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                                 <SelectField
-                                    value={this.state.entry.degree}
+                                    value={this.state.entry.degree()}
                                     onChange={this.handleDegreeSelect}
                                     hintText={PowerLocalize.get('AcademicDegree.Singular')}
                                     floatingLabelText={PowerLocalize.get('AcademicDegree.Singular')}
@@ -206,7 +207,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                             <div className="col-md-5 col-sm-6">
                                 <AutoComplete
                                     floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
-                                    id={'Education.Education.' + this.props.educationEntry.id}
+                                    id={'Education.Education.' + this.props.educationEntry.id()}
                                     value={this.state.educationAutoComplete}
                                     dataSourceConfig={{text:'name', value:'id'}}
                                     dataSource={this.props.educations.toArray()}

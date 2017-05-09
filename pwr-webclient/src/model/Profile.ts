@@ -6,12 +6,13 @@ import {TrainingEntry} from './TrainingEntry';
 import {
     APIEducationStep,
     APILanguageSkill,
-    APIProfile, APIProject,
+    APIProfile,
+    APIProject,
     APIQualificationEntry,
     APISectorEntry,
     APITrainingEntry
 } from './APIProfile';
-import {isNull, isNullOrUndefined} from 'util';
+import {isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
 import {SectorEntry} from './SectorEntry';
 import {Project} from './Project';
@@ -170,7 +171,7 @@ export class Profile {
             this.description,
             this.sectorEntries,
             this.trainingEntries,
-            this.educationEntries.set(edcuationEntry.id, edcuationEntry),
+            this.educationEntries.set(edcuationEntry.id(), edcuationEntry),
             this.languageSkills,
             this.qualificationEntries,
             this.projects
@@ -327,7 +328,7 @@ export class Profile {
             // The API might return something invalid. Ignore that.
             if(!isNullOrUndefined(apiEducationEntry)) {
                 let educationEntry: EducationEntry = EducationEntry.fromAPI(apiEducationEntry);
-                res = res.set(educationEntry.id, educationEntry);
+                res = res.set(educationEntry.id(), educationEntry);
             }
         });
         return res;
@@ -350,34 +351,34 @@ export class Profile {
         // Maps all career elements into an API format
         let training: Array<APITrainingEntry> = [];
         this.trainingEntries.forEach(trainingEntry => {
-            training.push(trainingEntry.toAPICareer(database.trainings));
+            training.push(trainingEntry.toAPICareer(database.trainings()));
         });
 
         // Maps all education steps into an API format.
         let educations: Array<APIEducationStep> = [];
         this.educationEntries.forEach(educationEntry => {
-            educations.push(educationEntry.toAPIEducationEntry(database.educations));
+            educations.push(educationEntry.toAPIEducationEntry(database.educations()));
         });
 
         let languages: Array<APILanguageSkill> = [];
         this.languageSkills.forEach(languageSkill => {
-            languages.push(languageSkill.toAPILanguageSkill(database.languages));
+            languages.push(languageSkill.toAPILanguageSkill(database.languages()));
         });
 
 
         let qualifications: Array<APIQualificationEntry> = [];
         this.qualificationEntries.forEach(qualificationEntry => {
-            qualifications.push(qualificationEntry.toAPIQualificationEntry(database.qualifications));
+            qualifications.push(qualificationEntry.toAPIQualificationEntry(database.qualifications()));
         });
 
         let sectors: Array<APISectorEntry> = [];
         this.sectorEntries.forEach(sector => {
-            sectors.push(sector.toAPISectorEntry(database.sectors));
+            sectors.push(sector.toAPISectorEntry(database.sectors()));
         });
 
         let projects: Array<APIProject> = [];
         this.projects.forEach(project => {
-            projects.push(project.toAPI(database.companies, database.projectRoles));
+            projects.push(project.toAPI(database.companies(), database.projectRoles()));
         });
 
         let res: APIProfile = {

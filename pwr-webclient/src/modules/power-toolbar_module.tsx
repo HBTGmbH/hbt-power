@@ -41,7 +41,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps) : ToolbarProps {
         return {
-            userInitials: state.databaseReducer.loggedInUser
+            userInitials: state.databaseReducer.loggedInUser()
         };
     }
 

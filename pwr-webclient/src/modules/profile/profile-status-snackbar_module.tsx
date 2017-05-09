@@ -35,7 +35,7 @@ class ProfileSnackbarModule extends React.Component<ProfileSnackbarProps & Profi
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileSnackbarLocalProps) : ProfileSnackbarProps {
         return {
-            APIRequestStatus: state.databaseReducer.APIRequestStatus
+            APIRequestStatus: state.databaseReducer.APIRequestStatus()
         }
     }
 

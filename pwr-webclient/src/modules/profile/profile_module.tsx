@@ -49,7 +49,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps) : ProfileProps {
         return {
             database: state.databaseReducer,
-            loggedInInitials: state.databaseReducer.loggedInUser
+            loggedInInitials: state.databaseReducer.loggedInUser()
         };
     }
 
@@ -77,7 +77,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {
-        this.props.saveProfile(this.props.database.loggedInUser, this.props.database);
+        this.props.saveProfile(this.props.database.loggedInUser(), this.props.database);
     };
 
     private handleResetProfile = (event: TouchTapEvent) => {
