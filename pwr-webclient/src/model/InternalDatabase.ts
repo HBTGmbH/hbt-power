@@ -334,7 +334,7 @@ export class InternalDatabase {
     }
 
     public addAPISectors(sectors: Array<APINameEntity>) {
-        console.info("Receiving additional sectorEntries:", sectors);
+        console.info("Receiving additional sectors:", sectors);
         return new InternalDatabase(
             this.APIRequestStatus,
             this.languageLevels,
@@ -346,6 +346,38 @@ export class InternalDatabase {
             InternalDatabase.addAPINameEntities(sectors, this.sectors),
             this.companies,
             this.projectRoles
+        )
+    }
+
+    public addAPICompanies(companies: Array<APINameEntity>) {
+        console.info("Receiving additional companies:", companies);
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors,
+            InternalDatabase.addAPINameEntities(companies, this.companies),
+            this.projectRoles
+        )
+    }
+
+    public addAPIProjectRoles(roles: Array<APINameEntity>) {
+        console.info("Receiving additional roles:", roles);
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors,
+            this.companies,
+            InternalDatabase.addAPINameEntities(roles, this.projectRoles)
         )
     }
 

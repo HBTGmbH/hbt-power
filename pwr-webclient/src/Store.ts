@@ -17,6 +17,8 @@ export enum RequestStatus {
 }
 
 export enum APIRequestType {
+    RequestProjectRoles,
+    RequestCompanies,
     RequestSectors,
     RequestCareers,
     RequestQualifications,

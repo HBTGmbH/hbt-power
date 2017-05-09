@@ -1,9 +1,10 @@
 import * as redux from 'redux';
 import axios, {AxiosResponse} from 'axios';
 import {
+    getCompanySuggestionsAPIString,
     getEducationSuggestionAPIString,
     getLangSuggestionAPIString,
-    getProfileAPIString,
+    getProfileAPIString, getProjectRolesSuggestionAPIString,
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
     getTrainingSuggestionAPIString
@@ -64,63 +65,74 @@ export class ProfileAsyncActionCreator {
         };
     }
 
+    private static abstractAPISuggestionRequest(dispatch: redux.Dispatch<AllConsultantsState>, apiString: string, type:APIRequestType) {
+        dispatch(ProfileActionCreator.APIRequestPending());
+        axios.get(apiString).then(function(response: AxiosResponse) {
+            dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, type));
+        }).catch(function(error:any) {
+            console.error(error);
+            dispatch(ProfileActionCreator.APIRequestFailed());
+        });
+    }
+
     public static requestLanguages() {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.get(getLangSuggestionAPIString()).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestLanguages));
-            }).catch(function(error:any) {
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(dispatch, getLangSuggestionAPIString(), APIRequestType.RequestLanguages);
         };
     }
 
     public static requestEducations() {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.get(getEducationSuggestionAPIString()).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestEducations));
-            }).catch(function(error:any) {
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getEducationSuggestionAPIString(),
+                APIRequestType.RequestEducations);
         };
     }
 
     public static requestQualifications() {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.get(getQualificationSuggestionAPIString()).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestQualifications));
-            }).catch(function(error:any) {
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getQualificationSuggestionAPIString(),
+                APIRequestType.RequestQualifications);
         };
     }
 
     public static requestCareers() {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.get(getTrainingSuggestionAPIString()).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestCareers));
-            }).catch(function(error:any) {
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getTrainingSuggestionAPIString(),
+                APIRequestType.RequestCareers);
         };
     }
 
     public static requestSectors() {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.get(getSectorsSuggestionAPIString()).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.RequestSectors));
-            }).catch(function(error:any) {
-                console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getSectorsSuggestionAPIString(),
+                APIRequestType.RequestSectors);
         };
     }
+
+    public static requestProjectRoles() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getProjectRolesSuggestionAPIString(),
+                APIRequestType.RequestProjectRoles);
+        };
+    }
+
+    public static requestCompanies() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getCompanySuggestionsAPIString(),
+                APIRequestType.RequestCompanies);
+        };
+    }
+
 }

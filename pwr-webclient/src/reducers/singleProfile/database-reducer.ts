@@ -41,6 +41,10 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
         newState = state.addAPITrainings(action.payload);
     } else if(action.requestType === APIRequestType.RequestSectors) {
         newState = state.addAPISectors(action.payload);
+    } else if(action.requestType === APIRequestType.RequestProjectRoles) {
+        newState = state.addAPIProjectRoles(action.payload);
+    } else if(action.requestType === APIRequestType.RequestCompanies) {
+        newState = state.addAPICompanies(action.payload);
     }
     return newState.changeAPIRequestStatus(RequestStatus.Successful);
 }

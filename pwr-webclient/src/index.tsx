@@ -31,6 +31,8 @@ store.dispatch(ProfileAsyncActionCreator.requestLanguages());
 store.dispatch(ProfileAsyncActionCreator.requestEducations());
 store.dispatch(ProfileAsyncActionCreator.requestCareers());
 store.dispatch(ProfileAsyncActionCreator.requestSectors());
+store.dispatch(ProfileAsyncActionCreator.requestCompanies());
+store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
 store.dispatch(ProfileAsyncActionCreator.requestSingleProfile("jd"));
 
 

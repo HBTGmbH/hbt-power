@@ -130,7 +130,6 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
     };
 
     private handleRemoveRole = (value: string) => {
-        console.log(value);
         this.setState({
             roles: Immutable.List<string>(this.state.roles.filter(val => val != value))
         })

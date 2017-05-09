@@ -29,3 +29,11 @@ export function getTrainingSuggestionAPIString(): string {
 export function getSectorsSuggestionAPIString(): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/sectors";
 }
+
+export function getProjectRolesSuggestionAPIString(): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/projectroles";
+}
+
+export function getCompanySuggestionsAPIString(): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + "/suggestions/companies";
+}
