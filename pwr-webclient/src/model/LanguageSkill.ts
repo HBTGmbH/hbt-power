@@ -2,6 +2,7 @@ import {APILanguageSkill} from './APIProfile';
 import * as Immutable from 'immutable';
 import {DEFAULT_LANG_LEVEL, NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
+import {doop} from 'doop';
 
 /**
  * Consist of a language name and a level that rates this language name. Together, they represent a certain language level
@@ -10,34 +11,34 @@ import {NameEntity} from './NameEntity';
  *
  * </p>
  */
+@doop
 export class LanguageSkill {
 
-    /**
-     *
-     */
-    public readonly id: string;
+
+    @doop
+    public get id() {return doop<string, this>()}
 
 
     /**
      * The language itself.
      */
-    public readonly languageId: string;
+    @doop
+    public get languageId() { return doop<string, this>()}
 
     /**
      * The language level, represented as a string. On the server side, these levels are enumerated values, but due
      * to bad type-/javascript support of enums, it is kept as a string.
      */
-    public readonly level: string;
+    @doop
+    public get level() { return doop<string, this>()}
 
-    public readonly isNew: boolean;
+    @doop
+    public get isNew() { return doop<boolean, this>()}
 
     private static CURRENT_ID: number = 0;
 
     private constructor(id: string, languageId: string, level: string, isNew: boolean) {
-        this.id = id;
-        this.languageId = languageId;
-        this.level = level;
-        this.isNew = isNew;
+        return this.id(id).languageId(languageId).level(level).isNew(isNew);
     }
 
     /**
@@ -65,29 +66,11 @@ export class LanguageSkill {
         )
     }
 
-    /**
-     * Fixme doc.
-     * @param newLanguageLevel
-     * @returns {LanguageSkill}
-     */
-    public changeLevel(newLanguageLevel: string): LanguageSkill {
-        return new LanguageSkill(this.id, this.languageId, newLanguageLevel, this.isNew);
-    }
-
-    /**
-     * FIXME doc
-     * @param newLanguageId
-     * @returns {LanguageSkill}
-     */
-    public changeLanguageId(newLanguageId: string): LanguageSkill {
-        return new LanguageSkill(this.id, newLanguageId, this.level, this.isNew);
-    }
-
     public toAPILanguageSkill(languagesById: Immutable.Map<string, NameEntity>) : APILanguageSkill {
         return {
-            id: this.isNew ? null : Number.parseInt(this.id),
-            level: this.level,
-            language: this.languageId == null ? null : languagesById.get(this.languageId).toAPI()
+            id: this.isNew() ? null : Number.parseInt(this.id()),
+            level: this.level(),
+            language: this.languageId() == null ? null : languagesById.get(this.languageId()).toAPI()
         };
     }
 }

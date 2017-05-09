@@ -102,7 +102,7 @@ export class Profile {
             this.sectorEntries,
             this.trainingEntries,
             this.educationEntries,
-            this.languageSkills.set(languageSkill.id, languageSkill),
+            this.languageSkills.set(languageSkill.id(), languageSkill),
             this.qualificationEntries,
             this.projects
         );
@@ -287,7 +287,7 @@ export class Profile {
             // In case the API returns something invalid.
             if(!isNullOrUndefined(apiLangSkill)) {
                 let langSkill: LanguageSkill = LanguageSkill.fromAPI(apiLangSkill);
-                res = res.set(langSkill.id, langSkill);
+                res = res.set(langSkill.id(), langSkill);
             }
         });
         return res;

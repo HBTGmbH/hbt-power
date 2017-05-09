@@ -62,7 +62,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
         this.state = {
             languageAutoCompleteValue: this.getLanguageName(),
             languageSkill: this.props.languageSkill,
-            nameEntity: this.props.languages.get(this.props.languageSkill.languageId)
+            nameEntity: this.props.languages.get(this.props.languageSkill.languageId())
         };
     }
 
@@ -71,7 +71,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
     }
 
     private getLanguageName = () => {
-        let id: string = this.props.languageSkill.languageId;
+        let id: string = this.props.languageSkill.languageId();
         return id == null ? '' : this.props.languages.get(id).name;
     };
 
@@ -101,7 +101,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
             language = chosenRequest as NameEntity;
         }
         let languageSkill: LanguageSkill = this.state.languageSkill;
-        languageSkill = languageSkill.changeLanguageId(language.id);
+        languageSkill = languageSkill.languageId(language.id);
         this.setState({
             languageSkill: languageSkill,
             nameEntity: language
@@ -120,7 +120,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
 
     private handleLevelChange = (event: TouchTapEvent, index: number, value: string) => {
         let skill: LanguageSkill = this.state.languageSkill;
-        skill = skill.changeLevel(value);
+        skill = skill.level(value);
         this.setState({
             languageSkill: skill
         })
@@ -142,7 +142,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                                 <SelectField
-                                    value={this.state.languageSkill.level}
+                                    value={this.state.languageSkill.level()}
                                     onChange={this.handleLevelChange}
                                     floatingLabelText={PowerLocalize.get("LanguageLevel.Singular")}
                                 >

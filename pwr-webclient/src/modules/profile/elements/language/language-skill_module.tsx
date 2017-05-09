@@ -36,13 +36,13 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
     }
 
     private getLanguageName = () => {
-        let id: string = this.props.languageSkill.languageId;
+        let id: string = this.props.languageSkill.languageId();
         return id == null ? "" : this.props.languages.get(id).name;
     };
 
 
     private handleDeleteButtonPress = () => {
-        this.props.onDelete(this.props.languageSkill.id);
+        this.props.onDelete(this.props.languageSkill.id());
     };
 
     private handleEditButtonPress = () => {
@@ -85,7 +85,7 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
             </td>
             <td>
                 <div className="fittingContainer" onClick={this.openDialog}>
-                    {this.props.languageSkill.level}
+                    {this.props.languageSkill.level()}
                 </div>
             </td>
             <td>
