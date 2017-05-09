@@ -16,252 +16,54 @@ import {isNullOrUndefined} from 'util';
 import {InternalDatabase} from './InternalDatabase';
 import {SectorEntry} from './SectorEntry';
 import {Project} from './Project';
+import {doop} from 'doop/built/doop';
 
+@doop
 export class Profile {
-    public readonly id: number;
 
-    public readonly currentPosition: string;
-
-    public readonly description: string;
-
-    public readonly sectorEntries: Immutable.Map<string, SectorEntry> = Immutable.Map<string, SectorEntry>();
-
-    public readonly trainingEntries: Immutable.Map<string, TrainingEntry> = Immutable.Map<string, TrainingEntry>();
-
-    public readonly educationEntries: Immutable.Map<string, EducationEntry> = Immutable.Map<string, EducationEntry>();
-
-    public readonly languageSkills: Immutable.Map<string, LanguageSkill> = Immutable.Map<string, LanguageSkill>();
-
-    public readonly qualificationEntries: Immutable.Map<string, QualificationEntry> = Immutable.Map<string, QualificationEntry>();
-
-    public readonly projects: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
+    @doop
+    public get id(){ return doop<number, this>();};
+    @doop
+    public get currentPosition(){ return doop<string, this>();}
+    @doop
+    public get description(){ return doop<string, this>();}
+    @doop
+    public get sectorEntries(){ return doop<Immutable.Map<string, SectorEntry>, this>();}
+    @doop
+    public get trainingEntries(){ return doop<Immutable.Map<string, TrainingEntry>, this>();}
+    @doop
+    public get educationEntries(){ return doop<Immutable.Map<string, EducationEntry>, this>();}
+    @doop
+    public get languageSkills(){ return doop<Immutable.Map<string, LanguageSkill>, this>();}
+    @doop
+    public get qualificationEntries(){ return doop<Immutable.Map<string, QualificationEntry>, this>();}
+    @doop
+    public get projects(){ return doop<Immutable.Map<string, Project>, this>();}
 
     constructor(
         id: number,
         currentPosition: string,
         description: string,
-        sectors: Immutable.Map<string, SectorEntry>,
-        careerElements: Immutable.Map<string, TrainingEntry>,
+        sectorEntries: Immutable.Map<string, SectorEntry>,
+        trainingEntries: Immutable.Map<string, TrainingEntry>,
         educationEntries: Immutable.Map<string, EducationEntry>,
         languageSkills: Immutable.Map<string, LanguageSkill>,
         qualificationEntries: Immutable.Map<string, QualificationEntry>,
         projects: Immutable.Map<string, Project>
     ) {
-        this.id = id;
-        this.currentPosition = currentPosition;
-        this.description = description;
-        this.sectorEntries = sectors;
-        this.trainingEntries = careerElements;
-        this.educationEntries = educationEntries;
-        this.languageSkills = languageSkills;
-        this.qualificationEntries = qualificationEntries;
-        this.projects = projects;
+        return this.id(id)
+            .currentPosition(currentPosition)
+            .description(description)
+            .sectorEntries(sectorEntries)
+            .trainingEntries(trainingEntries)
+            .educationEntries(educationEntries)
+            .languageSkills(languageSkills)
+            .qualificationEntries(qualificationEntries)
+            .projects(projects);
     }
 
 
     // == Non-mutating update functions == //
-
-    /**
-     * Non-mutating function that returns a copy of this {@link Profile} with the {@link Profile.description} set to the
-     * given value.
-     * @param newDescription is the description that is set into the new profile.
-     * @returns {Profile} a copy of the old profile with the new {@link Profile.description}
-     */
-    public changeDescription(newDescription: string): Profile {
-        return new Profile(this.id, this.currentPosition, newDescription, this.sectorEntries, this.trainingEntries,
-            this.educationEntries, this.languageSkills, this.qualificationEntries, this.projects
-        );
-    }
-
-    /**
-     * Non-mutating function that returns a copy of this {@link Profile] with the {@link Profile.currentPosition} set
-     * to the given value
-     * @param newPosition is set into the new Profile
-     * @returns {Profile} a copy of the old profile with the new {@link Profile.currentPosition}
-     */
-    public changeCurrentPosition(newPosition: string): Profile {
-        return new Profile(
-            this.id,
-            newPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects
-        );
-    }
-
-
-    public updateLanguageSkill(languageSkill: LanguageSkill): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills.set(languageSkill.id(), languageSkill),
-            this.qualificationEntries,
-            this.projects
-        );
-    }
-
-    public updateProject(project: Project): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects.set(project.id(), project)
-        );
-    }
-
-    public removeLanguageSkill(id: string): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills.remove(id),
-            this.qualificationEntries,
-            this.projects
-        );
-    }
-
-    public updateTrainingEntry(trainingEntry: TrainingEntry): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries.set(trainingEntry.id, trainingEntry),
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects
-        );
-    }
-
-    public removeCareerElement(careerElementId: string): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries.remove(careerElementId),
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects
-        );
-    }
-
-    public updateEducationEntry(edcuationEntry: EducationEntry): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries.set(edcuationEntry.id(), edcuationEntry),
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects
-        );
-    }
-
-    public removeEducationEntry(id: string): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries.remove(id),
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects
-        );
-    }
-
-    public updateQualificationEntry(qualificationEntry: QualificationEntry): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries.set(qualificationEntry.id, qualificationEntry),
-            this.projects
-        );
-    }
-
-    removeQualificationEntry(id: string) {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries.remove(id),
-            this.projects
-        );
-    }
-
-    public updateSectorEntry(sectorEntry: SectorEntry): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries.set(sectorEntry.id, sectorEntry),
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects,
-        );
-    }
-
-    public removeSectorEntry(elementId: string): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries.remove(elementId),
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects,
-        );
-    }
-
-    public removeProject(projectId: string): Profile {
-        return new Profile(
-            this.id,
-            this.currentPosition,
-            this.description,
-            this.sectorEntries,
-            this.trainingEntries,
-            this.educationEntries,
-            this.languageSkills,
-            this.qualificationEntries,
-            this.projects.remove(projectId),
-        );
-    }
-
 
 
     // == Serialization & Deserialization == //
@@ -350,41 +152,41 @@ export class Profile {
     public serializeToApiProfile(database: InternalDatabase): APIProfile {
         // Maps all career elements into an API format
         let training: Array<APITrainingEntry> = [];
-        this.trainingEntries.forEach(trainingEntry => {
+        this.trainingEntries().forEach(trainingEntry => {
             training.push(trainingEntry.toAPICareer(database.trainings()));
         });
 
         // Maps all education steps into an API format.
         let educations: Array<APIEducationStep> = [];
-        this.educationEntries.forEach(educationEntry => {
+        this.educationEntries().forEach(educationEntry => {
             educations.push(educationEntry.toAPIEducationEntry(database.educations()));
         });
 
         let languages: Array<APILanguageSkill> = [];
-        this.languageSkills.forEach(languageSkill => {
+        this.languageSkills().forEach(languageSkill => {
             languages.push(languageSkill.toAPILanguageSkill(database.languages()));
         });
 
 
         let qualifications: Array<APIQualificationEntry> = [];
-        this.qualificationEntries.forEach(qualificationEntry => {
+        this.qualificationEntries().forEach(qualificationEntry => {
             qualifications.push(qualificationEntry.toAPIQualificationEntry(database.qualifications()));
         });
 
         let sectors: Array<APISectorEntry> = [];
-        this.sectorEntries.forEach(sector => {
+        this.sectorEntries().forEach(sector => {
             sectors.push(sector.toAPISectorEntry(database.sectors()));
         });
 
         let projects: Array<APIProject> = [];
-        this.projects.forEach(project => {
+        this.projects().forEach(project => {
             projects.push(project.toAPI(database.companies(), database.projectRoles()));
         });
 
         let res: APIProfile = {
-            id: this.id,
-            description: this.description,
-            currentPosition: this.currentPosition,
+            id: this.id(),
+            description: this.description(),
+            currentPosition: this.currentPosition(),
             trainingEntries: training,
             languages: languages,
             qualification: qualifications,

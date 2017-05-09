@@ -57,7 +57,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
 
     static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps) : EducationProps {
         return {
-            educationEntries : state.databaseReducer.profile().educationEntries,
+            educationEntries : state.databaseReducer.profile().educationEntries(),
             educations: state.databaseReducer.educations(),
             userInitials: state.databaseReducer.loggedInUser(),
             degrees: state.databaseReducer.degrees()

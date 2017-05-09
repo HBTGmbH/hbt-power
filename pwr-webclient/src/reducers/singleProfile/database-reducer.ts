@@ -31,7 +31,7 @@ function addAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Ma
 }
 
 function handleChangeAbstract(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
-    let newProfile: Profile = state.profile().changeDescription(action.value);
+    let newProfile: Profile = state.profile().description(action.value);
     return state.profile(newProfile);
 }
 
@@ -103,7 +103,7 @@ function handleSaveProject(database: InternalDatabase, action: SaveProjectAction
     action.newCompanies.forEach(cmp => companies = companies.set(cmp.id(), cmp));
     action.newRoles.forEach(role => roles = roles.set(role.id(), role));
 
-    let profile: Profile = database.profile().updateProject(action.project);
+    let profile: Profile = database.profile().projects(database.profile().projects().set(action.project.id(), action.project));
     return database.companies(companies).projectRoles(roles).profile(profile);
 }
 
@@ -141,11 +141,15 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleSaveProject(state, <SaveProjectAction>action);
         }
         case ActionType.DeleteProject: {
-            let newProfile: Profile = state.profile().removeProject((<DeleteProjectAction> action).id);
+            let idToRemove: string = (<DeleteProjectAction> action).id;
+            let newProfile: Profile = state.profile();
+            newProfile = newProfile.projects(newProfile.projects().remove(idToRemove));
             return state.profile(newProfile);
         }
         case ActionType.CreateProject: {
-            let newProfile: Profile = state.profile().updateProject(Project.createNew());
+            let newProfile: Profile = state.profile();
+            let proj: Project = Project.createNew();
+            newProfile = newProfile.projects(newProfile.projects().set(proj.id(), proj));
             return state.profile(newProfile);
         }
         // == Language Suggestion requests == //

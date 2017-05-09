@@ -147,7 +147,6 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
 
 
     render() {
-        console.log(this.props.degrees);
         return (
             <Dialog
                 open={this.props.open}

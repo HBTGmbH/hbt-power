@@ -54,7 +54,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
     static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
         return {
             sectors: state.databaseReducer.sectors(),
-            sectorEntries: state.databaseReducer.profile().sectorEntries,
+            sectorEntries: state.databaseReducer.profile().sectorEntries(),
             initials: state.databaseReducer.loggedInUser()
         };
     }

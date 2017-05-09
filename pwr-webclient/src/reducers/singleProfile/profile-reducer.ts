@@ -8,58 +8,79 @@ import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
 export class ProfileReducer {
 
-    public static reducerHandleChangeCurrentPosition(profile: Profile, action: ChangeStringValueAction) {
-        return profile.changeCurrentPosition(action.value);
-    }
-
-    public static reducerUpdateEntry(profile: Profile, action: SaveEntryAction): Profile {
-        switch(action.entryType) {
-            case ProfileElementType.TrainingEntry:
-                return profile.updateTrainingEntry(action.entry as TrainingEntry);
-            case ProfileElementType.SectorEntry:
-                return profile.updateSectorEntry(action.entry as SectorEntry);
-            case ProfileElementType.EducationEntry:
-                return profile.updateEducationEntry(action.entry as EducationEntry);
-            case ProfileElementType.QualificationEntry:
-                return profile.updateQualificationEntry(action.entry as QualificationEntry);
-            case ProfileElementType.LanguageEntry:
-                return profile.updateLanguageSkill(action.entry as LanguageSkill);
+    private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
+        switch(entryType) {
+            case ProfileElementType.TrainingEntry: {
+                let tEntry: TrainingEntry = entry as TrainingEntry;
+                return profile.trainingEntries(profile.trainingEntries().set(tEntry.id, tEntry));
+            }
+            case ProfileElementType.SectorEntry: {
+                let sEntry: SectorEntry = entry as SectorEntry;
+                return profile.sectorEntries(profile.sectorEntries().set(sEntry.id, sEntry));
+            }
+            case ProfileElementType.EducationEntry: {
+                let eEntry: EducationEntry = entry as EducationEntry;
+                return profile.educationEntries(profile.educationEntries().set(eEntry.id(), eEntry));
+            }
+            case ProfileElementType.QualificationEntry: {
+                let qEntry: QualificationEntry = entry as QualificationEntry;
+                return profile.qualificationEntries(profile.qualificationEntries().set(qEntry.id, qEntry));
+            }
+            case ProfileElementType.LanguageEntry: {
+                let lEntry: LanguageSkill = entry as LanguageSkill;
+                return profile.languageSkills(profile.languageSkills().set(lEntry.id(), lEntry));
+            }
             default:
                 return profile;
         }
     }
 
+    public static reducerHandleChangeCurrentPosition(profile: Profile, action: ChangeStringValueAction) {
+        return profile.currentPosition(action.value);
+    }
+
+    public static reducerUpdateEntry(profile: Profile, action: SaveEntryAction): Profile {
+        return ProfileReducer.updateEntry(profile, action.entry, action.entryType);
+    }
+
     public static reducerHandleRemoveEntry(profile: Profile, action: DeleteEntryAction): Profile {
         switch(action.elementType) {
             case ProfileElementType.TrainingEntry:
-                return profile.removeCareerElement(action.elementId);
+                return profile.trainingEntries(profile.trainingEntries().remove(action.elementId));
             case ProfileElementType.SectorEntry:
-                return profile.removeSectorEntry(action.elementId);
+                return profile.sectorEntries(profile.sectorEntries().remove(action.elementId));
             case ProfileElementType.EducationEntry:
-                return profile.removeEducationEntry(action.elementId);
+                return profile.educationEntries(profile.educationEntries().remove(action.elementId));
             case ProfileElementType.QualificationEntry:
-                return profile.removeQualificationEntry(action.elementId);
+                return profile.qualificationEntries(profile.qualificationEntries().remove(action.elementId));
             case ProfileElementType.LanguageEntry:
-                return profile.removeLanguageSkill(action.elementId);
+                return profile.languageSkills(profile.languageSkills().remove(action.elementId));
             default:
                 return profile;
         }
     }
 
     public static reducerHandleCreateEntry(profile: Profile, action: CreateEntryAction): Profile {
+        let entry: any;
         switch(action.entryType) {
             case ProfileElementType.SectorEntry:
-                return profile.updateSectorEntry(SectorEntry.createNew());
+                entry = SectorEntry.createNew();
+                break;
             case ProfileElementType.LanguageEntry:
-                return profile.updateLanguageSkill(LanguageSkill.createNew());
+                entry = LanguageSkill.createNew();
+                break;
             case ProfileElementType.QualificationEntry:
-                return profile.updateQualificationEntry(QualificationEntry.createNew());
+                entry = QualificationEntry.createNew();
+                break;
             case ProfileElementType.TrainingEntry:
-                return profile.updateTrainingEntry(TrainingEntry.createNew());
+                entry = TrainingEntry.createNew();
+                break;
             case ProfileElementType.EducationEntry:
-                return profile.updateEducationEntry(EducationEntry.createNew());
+                entry = EducationEntry.createNew();
+                break;
             default:
-                return profile;
+                break;
         }
+        return ProfileReducer.updateEntry(profile, entry, action.entryType);
     }
 }
