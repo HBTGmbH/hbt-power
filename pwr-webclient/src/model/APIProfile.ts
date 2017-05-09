@@ -49,7 +49,7 @@ export interface APIProject {
     startDate: Date;
     broker: APINameEntity;
     client: APINameEntity;
-    projectRole: Array<APINameEntity>;
+    projectRoles: Array<APINameEntity>;
 }
 
 /**

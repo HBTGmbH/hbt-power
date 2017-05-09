@@ -84,13 +84,13 @@ export class Project {
             startDate: this.startDate(),
             broker: companies.get(this.brokerId()).toAPI(),
             client: companies.get(this.endCustomerId()).toAPI(),
-            projectRole: this.rolesToAPI(roles),
+            projectRoles: this.rolesToAPI(roles),
         }
     }
 
     private static parseRoles(project: APIProject): Immutable.List<string> {
         let res: Immutable.List<string> = Immutable.List<string>();
-        project.projectRole.forEach(p => {
+        project.projectRoles.forEach(p => {
             res = res.push(String(p.id));
         });
         return res;

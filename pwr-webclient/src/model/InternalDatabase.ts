@@ -195,7 +195,7 @@ export class InternalDatabase {
         console.info("Parsing project roles...");
         let projectRoles = this.projectRoles();
         profileFromAPI.projects.forEach(project => {
-            project.projectRole.forEach(apiRole => {
+            project.projectRoles.forEach(apiRole => {
                 let role: NameEntity = NameEntity.fromAPI(apiRole);
                 projectRoles = projectRoles.set(role.id(), role);
             })
