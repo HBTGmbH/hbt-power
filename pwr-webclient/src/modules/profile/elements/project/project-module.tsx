@@ -5,12 +5,14 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProjectDialog} from './project-dialog_module';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
+import {isNullOrUndefined} from 'util';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 
 interface ProjectModuleProps {
     project: Project;
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
-    onSave(project: Project): void;
+    onSave(project: Project, newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>): void;
     onDelete(id: string): void;
 }
 
@@ -39,8 +41,8 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
         });
     };
 
-    private handleSaveRequest = (project: Project) => {
-        this.props.onSave(project);
+    private handleSaveRequest = (project: Project,  newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>) => {
+        this.props.onSave(project, newRoles, newCompanies);
         this.closeDialog();
     };
 
@@ -49,20 +51,16 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     };
 
     private getEndCustomerName = () => {
-        return this.props.companies.get(this.props.project.endCustomerId()).name;
-    };
-
-    private getRoleName = (id: string) => {
-        return this.props.projectRoles.get(id).name;
+        return NameEntityUtil.getNullTolerantName(this.props.project.endCustomerId(), this.props.companies);
     };
 
     private getRoleNameList = () => {
         let res: string = "";
-        let prefix = ", ";
+        let prefix = "";
         this.props.project.roleIds().forEach( id => {
-            res += this.getRoleName(id)
             res += prefix;
-            prefix = "";
+            res += NameEntityUtil.getNullTolerantName(id, this.props.projectRoles)
+            prefix = ", ";
         });
         return res;
     };

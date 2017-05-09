@@ -225,6 +225,36 @@ export class InternalDatabase {
         )
     }
 
+    public updateCompanies(companies: Immutable.Map<string, NameEntity>) {
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors,
+            companies,
+            this.projectRoles
+        )
+    }
+
+    public updateRoles(roles: Immutable.Map<string, NameEntity>) {
+        return new InternalDatabase(
+            this.APIRequestStatus,
+            this.languageLevels,
+            this.profile,
+            this.trainings,
+            this.educations,
+            this.languages,
+            this.qualifications,
+            this.sectors,
+            this.companies,
+            roles
+        )
+    }
+
     private static addAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
         let res: Immutable.Map<string, NameEntity> = reference;
         names.forEach(apiName => {

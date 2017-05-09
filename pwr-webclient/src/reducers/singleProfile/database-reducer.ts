@@ -3,9 +3,9 @@ import {isNullOrUndefined} from 'util';
 import {
     ChangeStringValueAction,
     CreateEntryAction,
-    DeleteEntryAction,
+    DeleteEntryAction, DeleteProjectAction,
     ReceiveAPIResponseAction,
-    SaveEntryAction
+    SaveEntryAction, SaveProjectAction, UpdateNameEntityAction
 } from './database-actions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {deepFreeze} from '../../utils/ObjectUtil';
@@ -13,6 +13,7 @@ import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
+import {Project} from '../../model/Project';
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -69,6 +70,17 @@ function handleSaveEntry(database: InternalDatabase, action: SaveEntryAction): I
     return database.updateProfile(profile);
 }
 
+function handleSaveProject(database: InternalDatabase, action: SaveProjectAction): InternalDatabase {
+    let companies: Immutable.Map<string, NameEntity> = database.companies;
+    let roles: Immutable.Map<string, NameEntity> = database.projectRoles;
+
+    action.newCompanies.forEach(cmp => companies = companies.set(cmp.id, cmp));
+    action.newRoles.forEach(role => roles = roles.set(role.id, role));
+
+    let profile: Profile = database.profile.updateProject(action.project);
+    return database.updateCompanies(companies).updateRoles(roles).updateProfile(profile);
+}
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -98,6 +110,17 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         }
         case ActionType.ChangeCurrentPosition: {
             let newProfile: Profile = ProfileReducer.reducerHandleChangeCurrentPosition(state.profile, <ChangeStringValueAction> action);
+            return state.updateProfile(newProfile);
+        }
+        case ActionType.SaveProject: {
+            return handleSaveProject(state, <SaveProjectAction>action);
+        }
+        case ActionType.DeleteProject: {
+            let newProfile: Profile = state.profile.removeProject((<DeleteProjectAction> action).id);
+            return state.updateProfile(newProfile);
+        }
+        case ActionType.CreateProject: {
+            let newProfile: Profile = state.profile.updateProject(Project.createNew());
             return state.updateProfile(newProfile);
         }
         // == Language Suggestion requests == //

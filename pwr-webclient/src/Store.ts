@@ -27,7 +27,6 @@ export enum APIRequestType {
 }
 
 export enum ProfileElementType {
-    ProjectEntry,
     SectorEntry,
     TrainingEntry,
     EducationEntry,

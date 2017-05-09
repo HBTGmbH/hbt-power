@@ -6,13 +6,13 @@ import {databaseReducer} from './singleProfile/database-reducer';
  */
 
 export enum ActionType {
+    CreateProject,
+    DeleteProject,
+    SaveProject,
     SaveEntry,
-    ChangeDegree,
     CreateEntry,
     ChangeCurrentPosition,
     DeleteEntry,
-    ChangeItemId,
-    ChangeDate,
     APIRequestSuccess,
     APIRequestFail,
     APIRequestPending,
@@ -25,8 +25,7 @@ export enum ActionType {
     RequestConsultants,
     ReceiveConsultants,
     // == Single ConsultantProfile Actions == //
-    ChangeAbstract,
-    CreateEntity
+    ChangeAbstract
 }
 
 

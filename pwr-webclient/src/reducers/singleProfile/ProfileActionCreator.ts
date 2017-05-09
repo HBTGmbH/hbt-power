@@ -4,10 +4,11 @@ import {NameEntity} from '../../model/NameEntity';
 import {
     ChangeStringValueAction,
     CreateEntryAction,
-    DeleteEntryAction,
+    DeleteEntryAction, DeleteProjectAction,
     ReceiveAPIResponseAction,
-    SaveEntryAction
+    SaveEntryAction, SaveProjectAction, UpdateNameEntityAction
 } from './database-actions';
+import {Project} from '../../model/Project';
 
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
@@ -68,6 +69,30 @@ export class ProfileActionCreator {
             entryType: elementType
         };
     }
+
+    public static saveProject(project: Project, newCompanies: Array<NameEntity>, newRoles: Array<NameEntity>): SaveProjectAction {
+        return {
+            type: ActionType.SaveProject,
+            project: project,
+            newCompanies: newCompanies,
+            newRoles: newRoles
+        }
+    }
+
+    public static deleteProject(id: string): DeleteProjectAction {
+        return {
+            type: ActionType.DeleteProject,
+            id: id
+        }
+    }
+
+    public static createProject(): AbstractAction {
+        return {
+            type: ActionType.CreateProject
+        }
+    }
+
+
 }
 
 

@@ -8,6 +8,8 @@ import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
+import {IconButton} from 'material-ui';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 
 /**
  * Properties that are managed by react-redux.
@@ -50,7 +52,8 @@ interface ProjectsLocalState {
  */
 interface ProjectsDispatch {
     deleteProject(id: string): void;
-    saveProject(project: Project): void;
+    saveProject(project: Project, newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>): void;
+    addProject(): void;
 }
 
 class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
@@ -66,10 +69,13 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
     static mapDispatchToProps(dispatch: redux.Dispatch<InternalDatabase>): ProjectsDispatch {
         return {
             deleteProject: function(id: string) {
-                dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.ProjectEntry));
+                dispatch(ProfileActionCreator.deleteProject(id))
             },
-            saveProject: function(project: Project) {
-                dispatch(ProfileActionCreator.saveEntry(project, null,  ProfileElementType.ProjectEntry));
+            saveProject: function(project: Project,  newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>) {
+                dispatch(ProfileActionCreator.saveProject(project, newCompanies, newRoles));
+            },
+            addProject: function() {
+                dispatch(ProfileActionCreator.createProject());
             }
         }
     }
@@ -85,10 +91,18 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         />)
     };
 
+
     render() {
         return (
             <div>
                 {this.props.projects.map(this.renderSingleProject).toArray()}
+                <div style={{textAlign: "center"}}>
+                    <IconButton
+                        style={{display:"inline-block"}}
+                        iconClassName="material-icons"
+                        onClick={this.props.addProject}
+                        tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
+                </div>
             </div>
         );
     }

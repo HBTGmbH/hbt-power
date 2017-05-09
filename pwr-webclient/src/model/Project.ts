@@ -2,6 +2,7 @@ import {doop} from 'doop';
 import {APINameEntity, APIProject} from './APIProfile';
 import * as Immutable from 'immutable';
 import {NameEntity} from './NameEntity';
+import {NEW_ENTITY_PREFIX} from './PwrConstants';
 
 @doop
 export class Project {
@@ -46,8 +47,15 @@ export class Project {
         return doop<Immutable.List<string>, this>();
     }
 
+    @doop
+    public get isNew() {
+        return doop<boolean, this>();
+    }
+
+    private static CURRENT_ID: number = 0;
+
     private constructor(id: string, name: string, endCustomerId: string, startDate: Date, endDate: Date,
-                        description: string, brokerId: string, roleIds: Immutable.List<string>) {
+                        description: string, brokerId: string, roleIds: Immutable.List<string>, isNew: boolean) {
         this.id(id)
             .name(name)
             .endCustomerId(endCustomerId)
@@ -55,7 +63,8 @@ export class Project {
             .endDate(endDate)
             .description(description)
             .brokerId(brokerId)
-            .roleIds(roleIds);
+            .roleIds(roleIds).
+            isNew(isNew);
     }
 
     private rolesToAPI(roles: Immutable.Map<string, NameEntity>): Array<APINameEntity> {
@@ -68,7 +77,7 @@ export class Project {
 
     public toAPI(companies: Immutable.Map<string, NameEntity>, roles: Immutable.Map<string, NameEntity>): APIProject {
         return {
-           id: Number(this.id()),
+            id: this.isNew() ? null : Number(this.id()),
             description: this.description(),
             name: this.name(),
             endDate: this.endDate(),
@@ -87,6 +96,19 @@ export class Project {
         return res;
     }
 
+    public static createNew(): Project {
+        return new Project(
+            String(NEW_ENTITY_PREFIX + (Project.CURRENT_ID++)),
+            "",
+            null,
+            new Date(),
+            new Date(),
+            "",
+            null,
+            Immutable.List<string>(),
+            true);
+    }
+
     public static fromAPI(project: APIProject): Project {
         return new Project(
             String(project.id),
@@ -96,7 +118,8 @@ export class Project {
             new Date(project.endDate),
             project.description,
             String(project.broker.id),
-            Project.parseRoles(project)
+            Project.parseRoles(project),
+            false
         )
     }
 

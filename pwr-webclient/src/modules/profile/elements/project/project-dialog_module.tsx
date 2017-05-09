@@ -1,9 +1,24 @@
 import * as React from 'react';
-import {Card, CardActions, CardHeader, CardMedia, DatePicker, Dialog, IconButton, TextField} from 'material-ui';
+import {
+    AutoComplete,
+    Card,
+    CardActions,
+    CardHeader,
+    CardMedia,
+    DatePicker,
+    Dialog,
+    IconButton,
+    TextField
+} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Project} from '../../../../model/Project';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
+// Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
+import ChipInput from './../../../../../node_modules/material-ui-chip-input/lib/ChipInput.js';
+import {InternalDatabase} from '../../../../model/InternalDatabase';
+import {isNullOrUndefined} from 'util';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 
 interface ProjectDialogProps {
     open: boolean;
@@ -11,11 +26,14 @@ interface ProjectDialogProps {
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
     onClose(): void;
-    onSave(project: Project): void;
+    onSave(project: Project, newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>): void;
 }
 
 interface ProjectDialogState {
     project: Project;
+    roles: Immutable.List<string>;
+    clientACValue: string; // Autocomplete value of the client field
+    brokerACValue: string; // Autocomplete value of the broker field
 }
 
 export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDialogState> {
@@ -23,9 +41,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
 
     public constructor(props: ProjectDialogProps) {
         super(props);
-        this.state = {
-            project: props.project
-        };
+        this.forceReset(props);
     }
 
     private updateProject(project: Project) {
@@ -34,9 +50,22 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         });
     }
 
+    private forceReset(props: ProjectDialogProps) {
+        let roles: Array<string> = [];
+        props.project.roleIds().forEach(id => {
+            roles.push(NameEntityUtil.getNullTolerantName(id, props.projectRoles));
+        });
+        this.state = {
+            project: props.project,
+            roles: Immutable.List<string>(roles),
+            clientACValue: NameEntityUtil.getNullTolerantName(props.project.endCustomerId(), props.companies),
+            brokerACValue: NameEntityUtil.getNullTolerantName(props.project.brokerId(), props.companies)
+        };
+    }
+
     private componentWillReceiveProps(props: ProjectDialogProps) {
         if(this.props.open == false && props.open == true) {
-            this.setState({project: props.project});
+            this.forceReset(props);
         }
     }
 
@@ -52,29 +81,83 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         this.updateProject(this.state.project.name(newValue));
     };
 
-    private changeEndCustomer = (event: Object, newValue: string) => {
-        //this.updateProject(this.state.project.endCustomer(newValue));
-    };
-
-    private changeBroker = (event: Object, newValue: string) => {
-        //this.updateProject(this.state.project.broker(newValue));
-    };
-
-    private changeRole = (event: Object, newValue: string) => {
-        //this.updateProject(this.state.project.role(newValue));
-    };
-
     private changeDescription = (event: Object, newValue: string) => {
         this.updateProject(this.state.project.description(newValue));
     };
 
     private handleSaveButtonPress = () => {
-        this.props.onSave(this.state.project);
+
+        // Fix roles
+        // Array of newley created roles: Roles that did not exist before.
+        let newRoles: Array<NameEntity> = [];
+        // project with role IDs cleared.
+        let project: Project = this.state.project.roleIds(this.state.project.roleIds().clear());
+        this.state.roles.forEach(role => {
+            let projectRole: NameEntity = InternalDatabase.getNameEntityByName(role, this.props.projectRoles);
+            if(isNullOrUndefined(projectRole)) {
+                projectRole = NameEntity.createNew(role);
+                newRoles.push(projectRole);
+            }
+            project = project.roleIds(project.roleIds().push(projectRole.id));
+        });
+        // Fix end customer and broker
+        let newCompanies: Array<NameEntity> = [];
+        let broker: NameEntity = InternalDatabase.getNameEntityByName(this.state.brokerACValue, this.props.companies);
+        if(isNullOrUndefined(broker)) {
+            broker = NameEntity.createNew(this.state.brokerACValue);
+            newCompanies.push(broker);
+        }
+        project = project.brokerId(broker.id);
+        // End customer
+        let endCustomer: NameEntity = InternalDatabase.getNameEntityByName(this.state.clientACValue, this.props.companies);
+        if(isNullOrUndefined(endCustomer)) {
+            endCustomer = NameEntity.createNew(this.state.brokerACValue);
+            newCompanies.push(endCustomer);
+        }
+        project = project.endCustomerId(endCustomer.id);
+        this.props.onSave(project, newRoles, newCompanies);
     };
 
     private handleCloseButtonPress = () => {
         // Revert state to original.
         this.props.onClose();
+    };
+
+    private handleAddRole = (value: string) => {
+        this.setState({
+            roles: this.state.roles.push(value)
+        })
+    };
+
+    private handleRemoveRole = (value: string) => {
+        console.log(value);
+        this.setState({
+            roles: Immutable.List<string>(this.state.roles.filter(val => val != value))
+        })
+    };
+
+    private handleEndCustomerRequest = (chosenRequest: NameEntity|string, index: number) => {
+        this.setState({
+            clientACValue: index >= 0 ? (chosenRequest as NameEntity).name : (chosenRequest as string)
+        })
+    };
+
+    private handleEndCustomerInput = (text: string) => {
+        this.setState({
+            clientACValue: text
+        })
+    };
+
+    private handleBrokerRequest = (chosenRequest: NameEntity|string, index: number) => {
+        this.setState({
+            brokerACValue: index >= 0 ? (chosenRequest as NameEntity).name : (chosenRequest as string)
+        })
+    };
+
+    private handleBrokerInput = (text: string) => {
+        this.setState({
+            brokerACValue: text
+        })
     };
 
     public render () {
@@ -99,15 +182,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                     fullWidth={true}
                                 />
                             </div>
-                            <div className="col-md-5 col-sm-6">
-                                <TextField
-                                    floatingLabelText={PowerLocalize.get('Customer.Singular')}
-                                    value={this.props.companies.get(this.state.project.endCustomerId()).name}
-                                    id={'Project.Customer.' + this.state.project.id()}
-                                    onChange={this.changeEndCustomer}
-                                    fullWidth={true}
-                                />
-                            </div>
+
                         </div>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
@@ -127,27 +202,44 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                         </div>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
-                                <TextField
-                                    floatingLabelText={PowerLocalize.get('Broker.Singular')}
-                                    value={this.props.companies.get(this.state.project.brokerId()).name}
-                                    id={'Project.Broker.' + this.state.project.id()}
-                                    onChange={this.changeBroker}
-                                    fullWidth={true}
-                                />
+                                <div className="col-md-5 col-sm-6">
+                                    <AutoComplete
+                                        id={'ProjectDialog.EndCustomer.' + this.props.project.id}
+                                        floatingLabelText={PowerLocalize.get('Broker.Singular')}
+                                        value={this.state.brokerACValue}
+                                        dataSourceConfig={{text:'name', value:'id'}}
+                                        dataSource={this.props.companies.toArray()}
+                                        onUpdateInput={this.handleBrokerInput}
+                                        onNewRequest={this.handleBrokerRequest}
+                                    />
+                                </div>
                             </div>
-
-                            <div className="col-md-5 col-sm-6 ">
-                                <TextField
-                                    floatingLabelText={PowerLocalize.get('ProjectRole.Singular')}
-
-                                    id={'Project.Role.' + this.state.project.id()}
-                                    onChange={this.changeRole}
-                                    fullWidth={true}
+                            <div className="col-md-5 col-sm-6">
+                                <AutoComplete
+                                    floatingLabelText={PowerLocalize.get('Customer.Singular')}
+                                    id={'ProjectDialog.EndCustomer.' + this.props.project.id}
+                                    value={this.state.clientACValue}
+                                    dataSourceConfig={{text:'name', value:'id'}}
+                                    dataSource={this.props.companies.toArray()}
+                                    onUpdateInput={this.handleEndCustomerInput}
+                                    onNewRequest={this.handleEndCustomerRequest}
                                 />
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-md-offset-1 col-md-8">
+                            <div className="col-md-offset-1 col-md-10">
+                                <ChipInput
+                                    floatingLabelText={PowerLocalize.get('ProjectRole.Singular')}
+                                    value={this.state.roles.toArray()}
+                                    dataSource={this.props.projectRoles.toArray().map(o => o.name)}
+                                    style={{"width": "100%"}}
+                                    onRequestAdd={this.handleAddRole}
+                                    onRequestDelete={this.handleRemoveRole}
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-offset-1 col-md-10">
                                 <TextField
                                     floatingLabelText={PowerLocalize.get('ProjectDialog.Description.LabelText')}
                                     fullWidth = {true}

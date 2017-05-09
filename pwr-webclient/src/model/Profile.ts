@@ -233,7 +233,7 @@ export class Profile {
         );
     }
 
-    removeSectorEntry(elementId: string): Profile {
+    public removeSectorEntry(elementId: string): Profile {
         return new Profile(
             this.id,
             this.currentPosition,
@@ -244,6 +244,20 @@ export class Profile {
             this.languageSkills,
             this.qualificationEntries,
             this.projects,
+        );
+    }
+
+    public removeProject(projectId: string): Profile {
+        return new Profile(
+            this.id,
+            this.currentPosition,
+            this.description,
+            this.sectorEntries,
+            this.trainingEntries,
+            this.educationEntries,
+            this.languageSkills,
+            this.qualificationEntries,
+            this.projects.remove(projectId),
         );
     }
 
@@ -375,7 +389,7 @@ export class Profile {
             qualification: qualifications,
             education: educations,
             sectors: sectors,
-            projects: projects 
+            projects: projects
         };
         console.log('Serialized profile:', res);
         return res;

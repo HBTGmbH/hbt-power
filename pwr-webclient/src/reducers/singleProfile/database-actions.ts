@@ -7,6 +7,7 @@ import {APIRequestType, ProfileElementType} from '../../Store';
 import {AbstractAction} from '../reducerIndex';
 
 import {NameEntity} from '../../model/NameEntity';
+import {Project} from '../../model/Project';
 
 
 export interface ChangeStringValueAction extends AbstractAction {
@@ -19,6 +20,11 @@ export interface ChangeStringValueAction extends AbstractAction {
 export interface ReceiveAPIResponseAction extends AbstractAction {
     requestType: APIRequestType;
     payload: any;
+}
+
+export interface UpdateNameEntityAction extends AbstractAction {
+    entryType: ProfileElementType;
+    nameEntity: NameEntity;
 }
 
 export interface CreateEntryAction extends  AbstractAction {
@@ -45,4 +51,18 @@ export interface SaveEntryAction extends AbstractAction {
     entry: any;
     nameEntity: NameEntity;
 }
+
+/**
+ * FIXME doc
+ */
+export interface SaveProjectAction extends AbstractAction {
+    project: Project;
+    newCompanies: Array<NameEntity>;
+    newRoles: Array<NameEntity>
+}
+
+export interface DeleteProjectAction extends AbstractAction {
+    id: string;
+}
+
 
