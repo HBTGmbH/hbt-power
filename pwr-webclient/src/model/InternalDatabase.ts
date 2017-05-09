@@ -1,7 +1,7 @@
 import {NameEntity} from './NameEntity';
 import {ProfileElementType, RequestStatus} from '../Store';
 import * as Immutable from 'immutable';
-import {APINameEntity, APIProfile} from './APIProfile';
+import {APIProfile} from './APIProfile';
 import {Profile} from './Profile';
 import {doop} from 'doop';
 
@@ -64,7 +64,9 @@ export class InternalDatabase {
         qualifications: Immutable.Map<string, NameEntity>,
         sectors:  Immutable.Map<string, NameEntity>,
         companies: Immutable.Map<string, NameEntity>,
-        projectRoles: Immutable.Map<string, NameEntity>
+        projectRoles: Immutable.Map<string, NameEntity>,
+        loggedInUser: string,
+        degrees: Immutable.List<string>
 ) {
         return this.APIRequestStatus(apiRequestStatus)
             .languageLevels(languageLevels)
@@ -76,6 +78,8 @@ export class InternalDatabase {
             .sectors(sectors)
             .companies(companies)
             .projectRoles(projectRoles)
+            .loggedInUser(loggedInUser)
+            .degrees(degrees)
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -90,11 +94,13 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
-            Immutable.Map<string, NameEntity>()
+            Immutable.Map<string, NameEntity>(),
+            "jd",
+            Immutable.List<string>(["Bachelor", "Master", "Doktor"])
         )
     }
 
-    public getNameEntityByName(name: string, type: ProfileElementType): NameEntity {
+    public findNameEntityByName(name: string, type: ProfileElementType): NameEntity {
         let lookup: Immutable.Map<string, NameEntity>;
         switch(type) {
             case ProfileElementType.SectorEntry:
@@ -115,14 +121,14 @@ export class InternalDatabase {
             default:
                 throw Error("unknown NameEntityType.");
         }
-        return InternalDatabase.getNameEntityByName(name, lookup);
+        return InternalDatabase.findNameEntityByName(name, lookup);
     }
 
-    public static getNameEntityByName(name: string, lookup: Immutable.Map<string, NameEntity>): NameEntity {
+    public static findNameEntityByName(name: string, lookup: Immutable.Map<string, NameEntity>): NameEntity {
 
         let result: NameEntity = null;
         lookup.some((value, key, iter) => {
-            if (value.name === name) {
+            if (value.name() === name) {
                 result = value;
                 return true;
             }
@@ -148,42 +154,42 @@ export class InternalDatabase {
         let languages = this.languages();
         profileFromAPI.languages.forEach(langSkill => {
             let l: NameEntity = NameEntity.fromAPI(langSkill.language);
-            languages = languages.set(l.id, l);
+            languages = languages.set(l.id(), l);
         });
         console.info("...done.");
         console.info("Parsing qualifications...");
         let qualifications = this.qualifications();
         profileFromAPI.qualification.forEach(qualificationEntry => {
            let q: NameEntity = NameEntity.fromAPI(qualificationEntry.qualification);
-           qualifications = qualifications.set(q.id, q);
+           qualifications = qualifications.set(q.id(), q);
         });
         console.info("...done.");
         console.info("Parsing trainings...");
         let trainings = this.trainings();
         profileFromAPI.trainingEntries.forEach(trainingEntry => {
             let training: NameEntity = NameEntity.fromAPI(trainingEntry.training);
-            trainings = trainings.set(training.id, training);
+            trainings = trainings.set(training.id(), training);
         });
         console.info("...done.");
         console.info("Parsing educations...");
         let educations = this.educations();
         profileFromAPI.education.forEach(educationEntry => {
             let education: NameEntity = NameEntity.fromAPI(educationEntry.education);
-            educations = educations.set(education.id, education);
+            educations = educations.set(education.id(), education);
         });
         console.info("...done.");
         console.info("Parsing sectorEntries...");
         let sectors = this.sectors();
         profileFromAPI.sectors.forEach(sectorEntry => {
             let sector: NameEntity = NameEntity.fromAPI(sectorEntry.sector);
-            sectors = sectors.set(sector.id, sector);
+            sectors = sectors.set(sector.id(), sector);
         });
         console.info("...done.");
         console.info("Parsing companies...");
         let companies = this.companies();
         profileFromAPI.projects.forEach(project => {
             let company: NameEntity = NameEntity.fromAPI(project.broker);
-            companies = companies.set(company.id, company);
+            companies = companies.set(company.id(), company);
         });
         console.info("...done");
         console.info("Parsing project roles...");
@@ -191,7 +197,7 @@ export class InternalDatabase {
         profileFromAPI.projects.forEach(project => {
             project.projectRole.forEach(apiRole => {
                 let role: NameEntity = NameEntity.fromAPI(apiRole);
-                projectRoles = projectRoles.set(role.id, role);
+                projectRoles = projectRoles.set(role.id(), role);
             })
         });
         console.info("..done");

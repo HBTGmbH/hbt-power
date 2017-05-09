@@ -25,7 +25,7 @@ function addAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Ma
     let res: Immutable.Map<string, NameEntity> = reference;
     names.forEach(apiName => {
         let name: NameEntity = NameEntity.fromAPI(apiName);
-        res = res.set(name.id, name);
+        res = res.set(name.id(), name);
     });
     return res;
 }
@@ -74,15 +74,15 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
 function updateNameEntity(database: InternalDatabase, entity: NameEntity, type: ProfileElementType): InternalDatabase {
     switch(type) {
         case ProfileElementType.TrainingEntry:
-            return database.trainings(database.trainings().set(entity.id, entity));
+            return database.trainings(database.trainings().set(entity.id(), entity));
         case ProfileElementType.SectorEntry:
-            return database.sectors(database.sectors().set(entity.id, entity));
+            return database.sectors(database.sectors().set(entity.id(), entity));
         case ProfileElementType.EducationEntry:
-            return database.educations(database.educations().set(entity.id, entity));
+            return database.educations(database.educations().set(entity.id(), entity));
         case ProfileElementType.QualificationEntry:
-            return database.qualifications(database.qualifications().set(entity.id, entity));
+            return database.qualifications(database.qualifications().set(entity.id(), entity));
         case ProfileElementType.LanguageEntry:
-            return database.languages(database.languages().set(entity.id, entity));
+            return database.languages(database.languages().set(entity.id(), entity));
         default:
             return database;
     }
@@ -100,8 +100,8 @@ function handleSaveProject(database: InternalDatabase, action: SaveProjectAction
     let companies: Immutable.Map<string, NameEntity> = database.companies();
     let roles: Immutable.Map<string, NameEntity> = database.projectRoles();
 
-    action.newCompanies.forEach(cmp => companies = companies.set(cmp.id, cmp));
-    action.newRoles.forEach(role => roles = roles.set(role.id, role));
+    action.newCompanies.forEach(cmp => companies = companies.set(cmp.id(), cmp));
+    action.newRoles.forEach(role => roles = roles.set(role.id(), role));
 
     let profile: Profile = database.profile().updateProject(action.project);
     return database.companies(companies).projectRoles(roles).profile(profile);
@@ -117,7 +117,7 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         state = initialState;
     }
     deepFreeze(state);
-    console.log('ConsultantProfile Reducer called for action type ' + ActionType[action.type]);
+    console.log('DatabaseReducer called for action type ' + ActionType[action.type]);
     switch(action.type) {
         // == Profile Element modification == //
         case ActionType.ChangeAbstract:

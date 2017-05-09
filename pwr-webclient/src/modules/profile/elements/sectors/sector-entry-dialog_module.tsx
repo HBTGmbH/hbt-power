@@ -7,6 +7,8 @@ import {EducationEntry} from '../../../../model/EducationEntry';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../model/SectorEntry';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {isNull, isNullOrUndefined} from 'util';
 
 
 interface SectorEntryDialogProps {
@@ -42,8 +44,6 @@ interface SectorEntryDialogProps {
  */
 interface SectorEntryDialogState {
     sectorEntryValue: string;
-    sectorEntry: SectorEntry;
-    sector: NameEntity;
 }
 
 
@@ -53,15 +53,12 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
     constructor(props: SectorEntryDialogProps) {
         super(props);
         this.state = {
-            sectorEntryValue: this.getEducationEntryName(),
-            sectorEntry: this.props.sectorEntry,
-            sector: this.props.sectors.get(this.props.sectorEntry.sectorId)
+            sectorEntryValue: this.getEducationEntryName()
         };
     }
 
     private getEducationEntryName = () => {
-        let id: string = this.props.sectorEntry.sectorId;
-        return id == null ? '' : this.props.sectors.get(id).name;
+        return NameEntityUtil.getNullTolerantName(this.props.sectorEntry.sectorId, this.props.sectors);
     };
 
 
@@ -80,21 +77,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
     };
 
     private handleSectorFieldRequest = (chosenRequest: any, index: number) => {
-        let sector: NameEntity;
-        if(index < 0) {
-            sector = InternalDatabase.getNameEntityByName(chosenRequest as string, this.props.sectors);
-            if(sector == null) {
-                sector = NameEntity.createNew(chosenRequest as string);
-            }
-        } else {
-            sector = chosenRequest as NameEntity;
-        }
-        let entry: SectorEntry = this.state.sectorEntry;
-        entry = entry.changeSectorId(sector.id);
-        this.setState({
-            sectorEntry: entry,
-            sector: sector
-        });
+        this.setState({sectorEntryValue: chosenRequest});
     };
 
     private handleCloseButtonPress = (event: TouchTapEvent) => {
@@ -103,7 +86,14 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
 
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
-        this.props.onSave(this.state.sectorEntry, this.state.sector);
+        let sector: NameEntity = InternalDatabase.findNameEntityByName(this.state.sectorEntryValue, this.props.sectors);
+        let sectorEntry: SectorEntry = this.props.sectorEntry;
+        // check if a sector with the name exists. If thats not the case, just create a new run. Server will handle the rest.
+        if(isNullOrUndefined(sector)) {
+            sector = NameEntity.createNew(this.state.sectorEntryValue);
+        }
+        sectorEntry = sectorEntry.changeSectorId(sector.id());
+        this.props.onSave(sectorEntry, sector);
         this.closeDialog();
     };
 
@@ -126,8 +116,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                                     floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                                     id={'Education.Education.' + this.props.sectorEntry.id}
                                     value={this.state.sectorEntryValue}
-                                    dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.props.sectors.toArray()}
+                                    dataSource={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleSectorFieldInput}
                                     onNewRequest={this.handleSectorFieldRequest}
                                 />

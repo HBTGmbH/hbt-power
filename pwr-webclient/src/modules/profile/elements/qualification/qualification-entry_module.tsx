@@ -6,6 +6,7 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {NameEntity} from '../../../../model/NameEntity';
 import {QualificationEntryDialog} from './qualification-entry-dialog_module';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 
 
 /**
@@ -58,8 +59,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
     }
 
     private getQualificationName = () => {
-        let id: string = this.props.qualificationEntry.qualificationId;
-        return id == null ? '' : this.props.qualifications.get(id).name;
+        return NameEntityUtil.getNullTolerantName(this.props.qualificationEntry.qualificationId, this.props.qualifications);
     };
 
     private handleFieldTouchClick = (event: TouchTapEvent) => {

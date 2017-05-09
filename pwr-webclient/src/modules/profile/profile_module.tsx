@@ -73,7 +73,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
 
     private handleReloadProfile = (event: TouchTapEvent) => {
-        this.props.reloadProfile(this.props.loggedInInitials);
+        this.props.reloadProfile(this.props.database.loggedInUser());
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {

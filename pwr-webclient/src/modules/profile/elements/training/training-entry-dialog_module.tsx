@@ -18,6 +18,8 @@ import {EducationEntry} from '../../../../model/EducationEntry';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {TrainingEntry} from '../../../../model/TrainingEntry';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {isNullOrUndefined} from 'util';
 
 
 interface TrainingEntryDialogProps {
@@ -54,7 +56,6 @@ interface TrainingEntryDialogProps {
 interface TrainingEntryDialogState {
     trainingEntryValue: string;
     trainingEntry: TrainingEntry;
-    training: NameEntity;
 }
 
 
@@ -65,14 +66,12 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         super(props);
         this.state = {
             trainingEntryValue: this.getEducationEntryName(),
-            trainingEntry: this.props.trainingEntry,
-            training: this.props.trainings.get(this.props.trainingEntry.trainingId)
+            trainingEntry: props.trainingEntry
         };
     }
 
     private getEducationEntryName = () => {
-        let id: string = this.props.trainingEntry.trainingId;
-        return id == null ? '' : this.props.trainings.get(id).name;
+        return NameEntityUtil.getNullTolerantName(this.props.trainingEntry.trainingId, this.props.trainings);
     };
 
 
@@ -111,22 +110,8 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         this.setState({trainingEntryValue: searchText});
     };
 
-    private handleEducationFieldRequest = (chosenRequest: any, index: number) => {
-        let training: NameEntity;
-        if(index < 0) {
-            training = InternalDatabase.getNameEntityByName(chosenRequest as string, this.props.trainings);
-            if(training == null) {
-                training = NameEntity.createNew(chosenRequest as string);
-            }
-        } else {
-            training = chosenRequest as NameEntity;
-        }
-        let entry: TrainingEntry = this.state.trainingEntry;
-        entry = entry.changeTrainingId(training.id);
-        this.setState({
-            trainingEntry: entry,
-            training: training
-        });
+    private handleEducationFieldRequest = (chosenRequest: string, index: number) => {
+        this.setState({trainingEntryValue: chosenRequest});
     };
 
     private handleCloseButtonPress = (event: TouchTapEvent) => {
@@ -135,7 +120,15 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
 
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
-        this.props.onSave(this.state.trainingEntry, this.state.training);
+        let name: string = this.state.trainingEntryValue;
+        let training: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.trainings);
+        let sectorEntry: TrainingEntry = this.state.trainingEntry;
+        // check if a sector with the name exists. If thats not the case, just create a new run. Server will handle the rest.
+        if(isNullOrUndefined(training)) {
+            training = NameEntity.createNew(name);
+        }
+        sectorEntry = sectorEntry.changeTrainingId(training.id());
+        this.props.onSave(sectorEntry, training);
         this.closeDialog();
     };
 
@@ -181,8 +174,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                                     id={'Education.Education.' + this.props.trainingEntry.id}
                                     value={this.state.trainingEntryValue}
-                                    dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.props.trainings.toArray()}
+                                    dataSource={this.props.trainings.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEducationFieldInput}
                                     onNewRequest={this.handleEducationFieldRequest}
                                 />

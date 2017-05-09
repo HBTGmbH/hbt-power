@@ -20,6 +20,7 @@ import {EducationEntry} from '../../../../model/EducationEntry';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {isNullOrUndefined} from 'util';
 
 
 interface EducationEntryDialogLocalProps {
@@ -58,7 +59,6 @@ interface EducationEntryDialogLocalProps {
 interface EducationEntryDialogLocalState {
     educationAutoComplete: string;
     entry: EducationEntry;
-    nameEntity: NameEntity;
 }
 
 
@@ -70,7 +70,6 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         this.state = {
             educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.nameEntityId()),
             entry: this.props.educationEntry,
-            nameEntity: this.props.educations.get(this.props.educationEntry.nameEntityId())
         };
     }
 
@@ -119,21 +118,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
     };
 
     private handleEducationFieldRequest = (chosenRequest: any, index: number) => {
-        let education: NameEntity;
-        if(index < 0) {
-            education = InternalDatabase.getNameEntityByName(chosenRequest as string, this.props.educations);
-            if(education == null) {
-                education = NameEntity.createNew(chosenRequest as string);
-            }
-        } else {
-            education = chosenRequest as NameEntity;
-        }
-        let entry: EducationEntry = this.state.entry;
-        entry = entry.nameEntityId(education.id);
-        this.setState({
-            entry: entry,
-            nameEntity: education
-        });
+        this.setState({educationAutoComplete: chosenRequest});
     };
 
     private handleCloseButtonPress = (event: TouchTapEvent) => {
@@ -149,13 +134,20 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
     };
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
-        console.log(this.state.entry);
-        this.props.onSave(this.state.entry, this.state.nameEntity);
+        let name: string = this.state.educationAutoComplete;
+        let education: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.educations);
+        let educationEntry: EducationEntry = this.state.entry;
+        if(isNullOrUndefined(name)) {
+            education = NameEntity.createNew(name);
+        }
+        educationEntry = educationEntry.nameEntityId(education.id());
+        this.props.onSave(educationEntry, education);
         this.closeDialog();
     };
 
 
     render() {
+        console.log(this.props.degrees);
         return (
             <Dialog
                 open={this.props.open}
@@ -209,8 +201,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                                     id={'Education.Education.' + this.props.educationEntry.id()}
                                     value={this.state.educationAutoComplete}
-                                    dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.props.educations.toArray()}
+                                    dataSource={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEducationFieldInput}
                                     onNewRequest={this.handleEducationFieldRequest}
                                 />

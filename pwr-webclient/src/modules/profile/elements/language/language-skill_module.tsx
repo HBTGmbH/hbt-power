@@ -8,6 +8,7 @@ import {LanguageSkill} from '../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../model/NameEntity';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 
 interface SingleLanguageState {
     dialogOpen: boolean;
@@ -36,8 +37,7 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
     }
 
     private getLanguageName = () => {
-        let id: string = this.props.languageSkill.languageId();
-        return id == null ? "" : this.props.languages.get(id).name;
+        return NameEntityUtil.getNullTolerantName(this.props.languageSkill.languageId(), this.props.languages);
     };
 
 

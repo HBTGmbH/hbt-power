@@ -12,10 +12,20 @@ export class NameEntityUtil {
         let res: string = "";
         if(!isNullOrUndefined(id)) {
             let name: NameEntity = lookup.get(id);
-            if(!isNullOrUndefined(name) && !isNullOrUndefined(name.name)) {
-                res = name.name;
+            if(!isNullOrUndefined(name) && !isNullOrUndefined(name.name())) {
+                res = name.name();
             }
         }
         return res;
+    }
+
+    /**
+     * Mapping function that maps a {@link NameEntity} to the string represeting
+     * {@link NameEntity#name}
+     * @param nameEntity
+     * @returns {string}
+     */
+    public static mapToName(nameEntity: NameEntity) {
+        return nameEntity.name();
     }
 }

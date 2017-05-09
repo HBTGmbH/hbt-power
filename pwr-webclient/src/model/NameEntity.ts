@@ -1,5 +1,7 @@
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {APINameEntity} from './APIProfile';
+import {doop} from 'doop';
+import {isBoolean} from 'util';
 
 /**
  * Describes an unique name/qualifier.
@@ -20,12 +22,17 @@ import {APINameEntity} from './APIProfile';
  * {@link NameEntity} to choose from, and, as the {@link NameEntity.name} can be considered as identification, no two
  * {@link NameEntity} objects with the same name should exists.
  */
+@doop
 export class NameEntity {
     /**
      * ID of this {@NameEntity}. Represents identity throughout the whole API enviroment. A null ID sent
      * to the API represents a new {@link NameEntity}
      */
-    public readonly id: string;
+    @doop
+    public get id() {
+        return doop<string, this>();
+    }
+
     /**
      * Name of this {@link NameEntity}. Can be considered as unique among all {@link NameEntity} objects
      * <em>for one Profile Entry type only!</em>
@@ -37,7 +44,10 @@ export class NameEntity {
      * the same class in this client. This has practical reasons: The signatures are identical on each {@link NameEntity},
      * which reduces cluttering of classes.
      */
-    public readonly name: string;
+    @doop
+    public get name() {
+        return doop<string, this>();
+    }
 
     /**
      * Defines if this {@link NameEntity} is new: Created by this client, not by the server, and not yet sent to the API
@@ -45,7 +55,10 @@ export class NameEntity {
      *
      * New {@link NameEntity} objects need their ID set to null before persisiting them against the API.
      */
-    public readonly isNew: boolean;
+    @doop
+    public get isNew() {
+        return doop<boolean, this>();
+    }
 
     /**
      * Used whenever a local ID is created. These IDs are not persistent and should be prefixed with {@link NEW_ENTITY_PREFIX}
@@ -55,9 +68,7 @@ export class NameEntity {
     private static CURRENT_LOCAL_ID: number = 0;
 
     protected constructor(id: string, name:string, isNew: boolean) {
-        this.id = id;
-        this.name = name;
-        this.isNew = isNew;
+        return this.id(id).name(name).isNew(isNew);
     }
 
     /**
@@ -79,8 +90,8 @@ export class NameEntity {
      */
     public toAPI(): APINameEntity {
         return {
-            id: this.isNew? null : Number.parseInt(this.id),
-            name: this.name
+            id: this.isNew()? null : Number.parseInt(this.id()),
+            name: this.name()
         }
     }
 

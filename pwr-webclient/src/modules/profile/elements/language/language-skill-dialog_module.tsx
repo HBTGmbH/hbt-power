@@ -17,6 +17,8 @@ import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {isNullOrUndefined} from 'util';
 
 
 interface EducationEntryDialogLocalProps {
@@ -50,7 +52,6 @@ interface EducationEntryDialogLocalProps {
 interface EducationEntryDialogLocalState {
     languageAutoCompleteValue: string;
     languageSkill: LanguageSkill;
-    nameEntity: NameEntity;
 }
 
 
@@ -62,7 +63,6 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
         this.state = {
             languageAutoCompleteValue: this.getLanguageName(),
             languageSkill: this.props.languageSkill,
-            nameEntity: this.props.languages.get(this.props.languageSkill.languageId())
         };
     }
 
@@ -72,7 +72,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
 
     private getLanguageName = () => {
         let id: string = this.props.languageSkill.languageId();
-        return id == null ? '' : this.props.languages.get(id).name;
+        return id == null ? '' : this.props.languages.get(id).name();
     };
 
 
@@ -91,21 +91,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
     };
 
     private handleLanguageFieldRequest = (chosenRequest: any, index: number) => {
-        let language: NameEntity;
-        if(index < 0) {
-            language = InternalDatabase.getNameEntityByName(chosenRequest as string, this.props.languages);
-            if(language == null) {
-                language = NameEntity.createNew(chosenRequest as string);
-            }
-        } else {
-            language = chosenRequest as NameEntity;
-        }
-        let languageSkill: LanguageSkill = this.state.languageSkill;
-        languageSkill = languageSkill.languageId(language.id);
-        this.setState({
-            languageSkill: languageSkill,
-            nameEntity: language
-        });
+        this.setState({languageAutoCompleteValue: chosenRequest});
     };
 
     private handleCloseButtonPress = (event: TouchTapEvent) => {
@@ -114,7 +100,14 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
 
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
-        this.props.onSave(this.state.languageSkill, this.state.nameEntity);
+        let name: string = this.state.languageAutoCompleteValue;
+        let language: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.languages);
+        let languageSkill: LanguageSkill = this.state.languageSkill;
+        if(isNullOrUndefined(language)) {
+            language = NameEntity.createNew(name);
+        }
+        languageSkill = languageSkill.languageId(language.id());
+        this.props.onSave(languageSkill, language);
         this.closeDialog();
     };
 
@@ -123,7 +116,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
         skill = skill.level(value);
         this.setState({
             languageSkill: skill
-        })
+        });
     };
 
 
@@ -144,7 +137,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                 <SelectField
                                     value={this.state.languageSkill.level()}
                                     onChange={this.handleLevelChange}
-                                    floatingLabelText={PowerLocalize.get("LanguageLevel.Singular")}
+                                    floatingLabelText={PowerLocalize.get('LanguageLevel.Singular')}
                                 >
                                     {
                                         this.props.languageLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
@@ -152,10 +145,9 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                 </SelectField>
                             </div>
                                 <AutoComplete
-                                    floatingLabelText={PowerLocalize.get("Language.Singular")}
+                                    floatingLabelText={PowerLocalize.get('Language.Singular')}
                                     value={this.state.languageAutoCompleteValue}
-                                    dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.props.languages.toArray()}
+                                    dataSource={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleLanguageFieldInput}
                                     onNewRequest={this.handleLanguageFieldRequest}
                                 />

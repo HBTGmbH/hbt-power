@@ -18,6 +18,8 @@ import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
 import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {isNullOrUndefined} from 'util';
 
 
 interface QualificationEntryDialogProps {
@@ -49,7 +51,6 @@ interface QualificationEntryDialogProps {
 interface QualificationEntryDialogState {
     qualificationAutoCompleteValue: string;
     qualificationEntry: QualificationEntry;
-    nameEntity: NameEntity;
 }
 
 
@@ -61,13 +62,11 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
         this.state = {
             qualificationAutoCompleteValue: this.getQualificationName(),
             qualificationEntry: this.props.qualificationEntry,
-            nameEntity: this.props.qualifications.get(this.props.qualificationEntry.qualificationId)
         };
     }
 
     private getQualificationName = () => {
-        let id: string = this.props.qualificationEntry.qualificationId;
-        return id == null ? '' : this.props.qualifications.get(id).name;
+        return NameEntityUtil.getNullTolerantName(this.props.qualificationEntry.qualificationId, this.props.qualifications);
     };
 
 
@@ -85,22 +84,8 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
         this.setState({qualificationAutoCompleteValue: searchText});
     };
 
-    private handleLanguageFieldRequest = (chosenRequest: any, index: number) => {
-        let qualification: NameEntity;
-        if(index < 0) {
-            qualification = InternalDatabase.getNameEntityByName(chosenRequest as string, this.props.qualifications);
-            if(qualification == null) {
-                qualification = NameEntity.createNew(chosenRequest as string);
-            }
-        } else {
-            qualification = chosenRequest as NameEntity;
-        }
-        let qualificationEntry: QualificationEntry = this.state.qualificationEntry;
-        qualificationEntry = qualificationEntry.changeQualificationId(qualification.id);
-        this.setState({
-            qualificationEntry: qualificationEntry,
-            nameEntity: qualification
-        });
+    private handleLanguageFieldRequest = (chosenRequest: string, index: number) => {
+        this.setState({qualificationAutoCompleteValue: chosenRequest});
     };
 
     private handleCloseButtonPress = (event: TouchTapEvent) => {
@@ -109,7 +94,14 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
 
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
-        this.props.onSave(this.state.qualificationEntry, this.state.nameEntity);
+        let name: string = this.state.qualificationAutoCompleteValue;
+        let qualification: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.qualifications);
+        let qualificationEntry: QualificationEntry = this.state.qualificationEntry;
+        if(isNullOrUndefined(qualification)) {
+            qualification = NameEntity.createNew(name);
+        }
+        qualificationEntry = qualificationEntry.changeQualificationId(qualification.id());
+        this.props.onSave(qualificationEntry, qualification);
         this.closeDialog();
     };
 
@@ -153,8 +145,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                                     floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                                     id={'Education.Education.' + this.props.qualificationEntry.id}
                                     value={this.state.qualificationAutoCompleteValue}
-                                    dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.props.qualifications.toArray()}
+                                    dataSource={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleQualificationFieldInput}
                                     onNewRequest={this.handleLanguageFieldRequest}
                                 />

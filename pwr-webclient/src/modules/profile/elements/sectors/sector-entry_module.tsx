@@ -5,6 +5,7 @@ import {IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../model/NameEntity';
 import {SectorEntryDialog} from './sector-entry-dialog_module';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 
 interface SingleSectorLocalProps {
     sectors: Immutable.Map<string, NameEntity>;
@@ -48,14 +49,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
     };
 
     private getSectorName = () => {
-        // Try catch to avoid various undefined exceptions that happen during the
-        // initialization of this component.
-        // For some reason this gets called before props are properly initialized.
-        try {
-            return this.props.sectors.get(this.props.sectorEntry.sectorId).name;
-        } catch(e){
-            return "";
-        }
+        return NameEntityUtil.getNullTolerantName(this.props.sectorEntry.sectorId, this.props.sectors);
     };
 
     private handleEditButtonClick = () => {

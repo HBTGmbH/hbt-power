@@ -93,28 +93,28 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         // project with role IDs cleared.
         let project: Project = this.state.project.roleIds(this.state.project.roleIds().clear());
         this.state.roles.forEach(role => {
-            let projectRole: NameEntity = InternalDatabase.getNameEntityByName(role, this.props.projectRoles);
+            let projectRole: NameEntity = InternalDatabase.findNameEntityByName(role, this.props.projectRoles);
             if(isNullOrUndefined(projectRole)) {
                 projectRole = NameEntity.createNew(role);
                 newRoles.push(projectRole);
             }
-            project = project.roleIds(project.roleIds().push(projectRole.id));
+            project = project.roleIds(project.roleIds().push(projectRole.id()));
         });
         // Fix end customer and broker
         let newCompanies: Array<NameEntity> = [];
-        let broker: NameEntity = InternalDatabase.getNameEntityByName(this.state.brokerACValue, this.props.companies);
+        let broker: NameEntity = InternalDatabase.findNameEntityByName(this.state.brokerACValue, this.props.companies);
         if(isNullOrUndefined(broker)) {
             broker = NameEntity.createNew(this.state.brokerACValue);
             newCompanies.push(broker);
         }
-        project = project.brokerId(broker.id);
+        project = project.brokerId(broker.id());
         // End customer
-        let endCustomer: NameEntity = InternalDatabase.getNameEntityByName(this.state.clientACValue, this.props.companies);
+        let endCustomer: NameEntity = InternalDatabase.findNameEntityByName(this.state.clientACValue, this.props.companies);
         if(isNullOrUndefined(endCustomer)) {
             endCustomer = NameEntity.createNew(this.state.brokerACValue);
             newCompanies.push(endCustomer);
         }
-        project = project.endCustomerId(endCustomer.id);
+        project = project.endCustomerId(endCustomer.id());
         this.props.onSave(project, newRoles, newCompanies);
     };
 
@@ -135,9 +135,9 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         })
     };
 
-    private handleEndCustomerRequest = (chosenRequest: NameEntity|string, index: number) => {
+    private handleEndCustomerRequest = (chosenRequest: string, index: number) => {
         this.setState({
-            clientACValue: index >= 0 ? (chosenRequest as NameEntity).name : (chosenRequest as string)
+            clientACValue: chosenRequest
         })
     };
 
@@ -147,9 +147,9 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         })
     };
 
-    private handleBrokerRequest = (chosenRequest: NameEntity|string, index: number) => {
+    private handleBrokerRequest = (chosenRequest: string, index: number) => {
         this.setState({
-            brokerACValue: index >= 0 ? (chosenRequest as NameEntity).name : (chosenRequest as string)
+            brokerACValue: chosenRequest
         })
     };
 
@@ -207,8 +207,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                         id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                         floatingLabelText={PowerLocalize.get('Broker.Singular')}
                                         value={this.state.brokerACValue}
-                                        dataSourceConfig={{text:'name', value:'id'}}
-                                        dataSource={this.props.companies.toArray()}
+                                        dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                         onUpdateInput={this.handleBrokerInput}
                                         onNewRequest={this.handleBrokerRequest}
                                     />
@@ -220,7 +219,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                     id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                     value={this.state.clientACValue}
                                     dataSourceConfig={{text:'name', value:'id'}}
-                                    dataSource={this.props.companies.toArray()}
+                                    dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEndCustomerInput}
                                     onNewRequest={this.handleEndCustomerRequest}
                                 />
@@ -231,7 +230,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                 <ChipInput
                                     floatingLabelText={PowerLocalize.get('ProjectRole.Singular')}
                                     value={this.state.roles.toArray()}
-                                    dataSource={this.props.projectRoles.toArray().map(o => o.name)}
+                                    dataSource={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
                                     style={{"width": "100%"}}
                                     onRequestAdd={this.handleAddRole}
                                     onRequestDelete={this.handleRemoveRole}
