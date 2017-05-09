@@ -78,7 +78,7 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
      * @returns the name or an empty string when no name exists.
      */
     private getTrainingName = () => {
-        return NameEntityUtil.getNullTolerantName(this.props.trainingEntry.trainingId, this.props.trainings);
+        return NameEntityUtil.getNullTolerantName(this.props.trainingEntry.trainingId(), this.props.trainings);
     };
 
 
@@ -95,7 +95,7 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
     };
 
     private handleDeleteButtonClick = () => {
-        this.props.onDelete(this.props.trainingEntry.id);
+        this.props.onDelete(this.props.trainingEntry.id());
     };
 
     private handleSaveRequest = (entry: TrainingEntry, name: NameEntity) => {
@@ -130,12 +130,12 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleClickTapField}>
-                    {formatToShortDisplay(this.props.trainingEntry.startDate)}
+                    {formatToShortDisplay(this.props.trainingEntry.startDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleClickTapField}>
-                    {formatToShortDisplay(this.props.trainingEntry.endDate)}
+                    {formatToShortDisplay(this.props.trainingEntry.endDate())}
                     </div>
                 </td>
                 <td>

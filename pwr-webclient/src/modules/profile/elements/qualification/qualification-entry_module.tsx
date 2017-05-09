@@ -59,7 +59,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
     }
 
     private getQualificationName = () => {
-        return NameEntityUtil.getNullTolerantName(this.props.qualificationEntry.qualificationId, this.props.qualifications);
+        return NameEntityUtil.getNullTolerantName(this.props.qualificationEntry.qualificationId(), this.props.qualifications);
     };
 
     private handleFieldTouchClick = (event: TouchTapEvent) => {
@@ -69,7 +69,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
     };
 
     private handleDeleteButtonClick = (event: TouchTapEvent) => {
-        this.props.onDelete(this.props.qualificationEntry.id);
+        this.props.onDelete(this.props.qualificationEntry.id());
     };
 
     private handleEditButtonClick = (event: TouchTapEvent) => {
@@ -107,7 +107,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {formatToShortDisplay(this.props.qualificationEntry.date)}
+                    {formatToShortDisplay(this.props.qualificationEntry.date())}
                     </div>
                 </td>
                 <td>

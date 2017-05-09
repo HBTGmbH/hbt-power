@@ -30,7 +30,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
 
     constructor(props: SingleSectorLocalProps) {
         super(props);
-        let id: string = props.sectorEntry.sectorId;
+        let id: string = props.sectorEntry.sectorId();
         this.state = {
             dialogOpen: false
         };
@@ -49,7 +49,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
     };
 
     private getSectorName = () => {
-        return NameEntityUtil.getNullTolerantName(this.props.sectorEntry.sectorId, this.props.sectors);
+        return NameEntityUtil.getNullTolerantName(this.props.sectorEntry.sectorId(), this.props.sectors);
     };
 
     private handleEditButtonClick = () => {
@@ -57,7 +57,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
     };
 
     private handleDeleteButtonClick = () => {
-        this.props.onSectorDelete(this.props.sectorEntry.id);
+        this.props.onSectorDelete(this.props.sectorEntry.id());
     };
 
     private handleSaveRequest = (sectorEntry: SectorEntry, sector: NameEntity) => {

@@ -2,28 +2,23 @@ import {APIQualificationEntry} from './APIProfile';
 import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
+import {doop} from 'doop';
 
+@doop
 export class QualificationEntry {
-    public readonly id: string;
-    public readonly qualificationId: string;
-    public readonly date: Date;
-    public readonly isNew: boolean;
+    @doop
+    public get id() {return doop<string, this>();}
+    @doop
+    public get qualificationId() {return doop<string, this>();}
+    @doop
+    public get date() {return doop<Date, this>();}
+    @doop
+    public get isNew() {return doop<boolean, this>();}
 
     private static CURRENT_LOCAL_ID: number = 0;
 
     private constructor(id: string, qualificationId: string, date: Date, isNew: boolean) {
-        this.id = id;
-        this.qualificationId = qualificationId;
-        this.date = date;
-        this.isNew = isNew;
-    }
-
-    public changeDate(newDate: Date): QualificationEntry {
-        return new QualificationEntry(this.id, this.qualificationId, newDate, this.isNew);
-    }
-
-    public changeQualificationId(newQualificationId: string): QualificationEntry {
-        return new QualificationEntry(this.id, newQualificationId, this.date, this.isNew);
+        return this.id(id).qualificationId(qualificationId).date(date).isNew(isNew);
     }
 
     public static fromAPI(apiQualificationEntry: APIQualificationEntry): QualificationEntry {
@@ -44,15 +39,15 @@ export class QualificationEntry {
     }
 
     /**
-     * Transl
+     *
      * @param qualifications
-     * @returns {{id: number, date: string, qualification: (APIEducation|APILanguage|APIQualification|APICareerPosition)}}
+     * @returns {{id: number, date: string, qualification: APINameEntity}}
      */
     public toAPIQualificationEntry(qualifications: Immutable.Map<string, NameEntity>): APIQualificationEntry {
         return {
-            id: this.isNew ? null : Number.parseInt(this.id),
-            date: this.date.toISOString(),
-            qualification: this.qualificationId == UNDEFINED_ID ? null : qualifications.get(this.qualificationId).toAPI()
+            id: this.isNew() ? null : Number.parseInt(this.id()),
+            date: this.date().toISOString(),
+            qualification: this.qualificationId() == UNDEFINED_ID ? null : qualifications.get(this.qualificationId()).toAPI()
         }
     }
 }

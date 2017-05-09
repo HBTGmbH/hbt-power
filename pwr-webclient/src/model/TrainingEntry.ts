@@ -3,6 +3,8 @@ import * as Immutable from 'immutable';
 import {isNullOrUndefined} from 'util';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
+import {doop} from 'doop';
+import {start} from 'repl';
 /**
  * Immutable representation of a career element. A career element represents a persons single career steps during their
  * professional career.
@@ -19,26 +21,28 @@ import {NameEntity} from './NameEntity';
  *      element among all elements and all APIs. The ID, in that case, describes <em>identitiy</em> respective to
  *      domain driven design.
  */
+@doop
 export class TrainingEntry {
     /**
      * NEVER CHANGE THIS! NOT EVEN NON-MUTATING!
      */
-    public readonly id: string;
-    public readonly startDate: Date;
-    public readonly endDate: Date;
-    public readonly trainingId: string;
-    public readonly isNew: boolean;
+    @doop
+    public get id(){ return doop<string, this>()}
+    @doop
+    public get startDate(){ return doop<Date, this>()}
+    @doop
+    public get endDate(){ return doop<Date, this>()}
+    @doop
+    public get trainingId(){ return doop<string, this>()}
+    @doop
+    public get isNew(){ return doop<boolean, this>()}
 
 
     // Current ID for new entities.
     private static CURRENT_ID: number = 0;
 
     private constructor(id: string, startDate: Date, endDate: Date, trainignId: string, isNew: boolean) {
-        this.id = id;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.trainingId = trainignId;
-        this.isNew = isNew;
+        return this.id(id).startDate(startDate).endDate(endDate).trainingId(trainignId).isNew(isNew);
     }
 
     /**
@@ -73,43 +77,16 @@ export class TrainingEntry {
     }
 
     /**
-     * Non-mutating function that changes the start date of this TrainingEntries Element
-     * @param newDate the new date
-     * @returns a new {@link TrainingEntry} with the modified date.
-     */
-    public changeStartDate(newDate: Date): TrainingEntry {
-        return new TrainingEntry(this.id, newDate, this.endDate, this.trainingId, this.isNew);
-    }
-
-    /**
-     * Non-mutating function that changes the {@link TrainingEntry.endDate}
-     * @param newDate the new date
-     * @returns a new {@link TrainingEntry} with the modified {@link TrainingEntry.endDate}.
-     */
-    public changeEndDate(newDate: Date): TrainingEntry {
-        return new TrainingEntry(this.id, this.startDate, newDate, this.trainingId, this.isNew);
-    }
-
-    /**
-     * Non-mutating function that changes the {@link TrainingEntry.trainingId}
-     * @param newId
-     * @returns a new instance of {@link TrainingEntry} with the modified {@link TrainingEntry.trainingId}
-     */
-    public changeTrainingId(newId: string) {
-        return new TrainingEntry(this.id, this.startDate, this.endDate, newId, this.isNew);
-    }
-
-    /**
      * Converts this {@TrainingEntry} into it's API specific representation.
      * @param careerPositionsById
      * @returns the {@link APICareerElement} that represents this {@link TrainingEntry}
      */
     public toAPICareer(careerPositionsById: Immutable.Map<String, NameEntity>): APITrainingEntry {
         return {
-            id: this.isNew? null : Number.parseInt(this.id),
-            startDate: this.startDate.toISOString(),
-            endDate: this.endDate==null ? null : this.endDate.toISOString(),
-            training: this.trainingId == null ? null : careerPositionsById.get(this.trainingId).toAPI()
+            id: this.isNew() ? null : Number.parseInt(this.id()),
+            startDate: this.startDate().toISOString(),
+            endDate: this.endDate() == null ? null : this.endDate().toISOString(),
+            training: this.trainingId() == null ? null : careerPositionsById.get(this.trainingId()).toAPI()
         }
     }
 }

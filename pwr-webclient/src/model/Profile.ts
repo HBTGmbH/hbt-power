@@ -77,7 +77,7 @@ export class Profile {
                 // client is missing a data set.
                 // This adds the sector to the currently known sectorEntries.
                 let sectorEntry: SectorEntry = SectorEntry.create(apiSectorEntry);
-                res = res.set(sectorEntry.id, sectorEntry);
+                res = res.set(sectorEntry.id(), sectorEntry);
             }
         });
         return res;
@@ -101,7 +101,7 @@ export class Profile {
             // The API might return something invalid. Ignore.
             if(!isNullOrUndefined(apiQualificationEntry)) {
                 let qualificationEntry: QualificationEntry = QualificationEntry.fromAPI(apiQualificationEntry);
-                res = res.set(qualificationEntry.id, qualificationEntry);
+                res = res.set(qualificationEntry.id(), qualificationEntry);
             }
         });
         return res;
@@ -113,7 +113,7 @@ export class Profile {
             // The API might return something invalid. Ignore.
             if(!isNullOrUndefined(apiTrainingEntry)) {
                 let careerElement: TrainingEntry = TrainingEntry.fromAPI(apiTrainingEntry);
-                res = res.set(careerElement.id, careerElement);
+                res = res.set(careerElement.id(), careerElement);
             }
         });
         return res;

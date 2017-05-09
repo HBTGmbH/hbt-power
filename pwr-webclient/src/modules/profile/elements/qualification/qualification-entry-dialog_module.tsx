@@ -66,7 +66,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
     }
 
     private getQualificationName = () => {
-        return NameEntityUtil.getNullTolerantName(this.props.qualificationEntry.qualificationId, this.props.qualifications);
+        return NameEntityUtil.getNullTolerantName(this.props.qualificationEntry.qualificationId(), this.props.qualifications);
     };
 
 
@@ -100,7 +100,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
         if(isNullOrUndefined(qualification)) {
             qualification = NameEntity.createNew(name);
         }
-        qualificationEntry = qualificationEntry.changeQualificationId(qualification.id());
+        qualificationEntry = qualificationEntry.qualificationId(qualification.id());
         this.props.onSave(qualificationEntry, qualification);
         this.closeDialog();
     };
@@ -112,7 +112,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
     */
     private handleChangeDate = (event: any, date: Date) => {
         this.setState({
-            qualificationEntry: this.state.qualificationEntry.changeDate(date)
+            qualificationEntry: this.state.qualificationEntry.date(date)
         });
     };
 
@@ -135,7 +135,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                                     floatingLabelText={PowerLocalize.get('Begin')}
                                     id={'EducationEntry.StartDate' + this.props.qualificationEntry.id}
                                     container="inline"
-                                    value={this.state.qualificationEntry.date}
+                                    value={this.state.qualificationEntry.date()}
                                     onChange={this.handleChangeDate}
                                     formatDate={formatToShortDisplay}
                                 />

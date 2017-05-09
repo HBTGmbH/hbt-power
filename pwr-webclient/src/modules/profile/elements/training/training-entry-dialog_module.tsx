@@ -71,7 +71,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
     }
 
     private getEducationEntryName = () => {
-        return NameEntityUtil.getNullTolerantName(this.props.trainingEntry.trainingId, this.props.trainings);
+        return NameEntityUtil.getNullTolerantName(this.props.trainingEntry.trainingId(), this.props.trainings);
     };
 
 
@@ -86,7 +86,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
      */
     private handleChangeEndDate = (event: any, date: Date) => {
         this.setState({
-            trainingEntry: this.state.trainingEntry.changeEndDate(date)
+            trainingEntry: this.state.trainingEntry.endDate(date)
         });
     };
 
@@ -97,7 +97,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
      */
     private handleChangeStartDate = (event: any, date: Date) => {
         this.setState({
-            trainingEntry: this.state.trainingEntry.changeStartDate(date)
+            trainingEntry: this.state.trainingEntry.startDate(date)
         });
     };
 
@@ -127,7 +127,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         if(isNullOrUndefined(training)) {
             training = NameEntity.createNew(name);
         }
-        sectorEntry = sectorEntry.changeTrainingId(training.id());
+        sectorEntry = sectorEntry.trainingId(training.id());
         this.props.onSave(sectorEntry, training);
         this.closeDialog();
     };
@@ -151,7 +151,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     floatingLabelText={PowerLocalize.get('Begin')}
                                     id={'EducationEntry.StartDate' + this.props.trainingEntry.id}
                                     container="inline"
-                                    value={this.state.trainingEntry.startDate}
+                                    value={this.state.trainingEntry.startDate()}
                                     onChange={this.handleChangeStartDate}
                                     formatDate={formatToShortDisplay}
                                 />
@@ -161,7 +161,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     floatingLabelText={PowerLocalize.get('End')}
                                     id={'EducationEntry.EndDate' + this.props.trainingEntry.id}
                                     container="inline"
-                                    value={this.state.trainingEntry.endDate}
+                                    value={this.state.trainingEntry.endDate()}
                                     onChange={this.handleChangeEndDate}
                                     formatDate={formatToShortDisplay}
                                 />

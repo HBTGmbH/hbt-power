@@ -2,11 +2,16 @@ import {APISectorEntry} from './APIProfile';
 import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
+import {doop} from 'doop';
 
+@doop
 export class SectorEntry {
-    public readonly id: string;
-    public readonly sectorId: string;
-    public readonly isNew: boolean;
+    @doop
+    public get id(){ return doop<string,this>()}
+    @doop
+    public get sectorId(){ return doop<string,this>()}
+    @doop
+    public get isNew(){ return doop<boolean,this>()}
 
 
     private static CURRENT_ID: number = 0;
@@ -19,10 +24,7 @@ export class SectorEntry {
      * @param sectorId
      */
     private constructor(id: string, sectorId: string, isNew: boolean) {
-        this.id = id;
-        this.sectorId = sectorId;
-        this.isNew = isNew;
-
+        this.id(id).sectorId(sectorId).isNew(isNew);
     }
 
     static create(apiSectorEntry: APISectorEntry): SectorEntry {
@@ -36,14 +38,10 @@ export class SectorEntry {
         return new SectorEntry(NEW_ENTITY_PREFIX + String(SectorEntry.CURRENT_ID++), UNDEFINED_ID, true);
     }
 
-    public changeSectorId(newSectorId: string): SectorEntry {
-        return new SectorEntry(this.id, newSectorId, this.isNew);
-    }
-
     public toAPISectorEntry(sectors: Immutable.Map<string, NameEntity>): APISectorEntry {
         return {
-            id: this.isNew ? null : Number.parseInt(this.id),
-            sector: this.sectorId == UNDEFINED_ID ? null : sectors.get(this.sectorId).toAPI()
+            id: this.isNew() ? null : Number.parseInt(this.id()),
+            sector: this.sectorId() == UNDEFINED_ID ? null : sectors.get(this.sectorId()).toAPI()
         };
     }
 

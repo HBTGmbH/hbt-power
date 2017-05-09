@@ -12,11 +12,11 @@ export class ProfileReducer {
         switch(entryType) {
             case ProfileElementType.TrainingEntry: {
                 let tEntry: TrainingEntry = entry as TrainingEntry;
-                return profile.trainingEntries(profile.trainingEntries().set(tEntry.id, tEntry));
+                return profile.trainingEntries(profile.trainingEntries().set(tEntry.id(), tEntry));
             }
             case ProfileElementType.SectorEntry: {
                 let sEntry: SectorEntry = entry as SectorEntry;
-                return profile.sectorEntries(profile.sectorEntries().set(sEntry.id, sEntry));
+                return profile.sectorEntries(profile.sectorEntries().set(sEntry.id(), sEntry));
             }
             case ProfileElementType.EducationEntry: {
                 let eEntry: EducationEntry = entry as EducationEntry;
@@ -24,7 +24,7 @@ export class ProfileReducer {
             }
             case ProfileElementType.QualificationEntry: {
                 let qEntry: QualificationEntry = entry as QualificationEntry;
-                return profile.qualificationEntries(profile.qualificationEntries().set(qEntry.id, qEntry));
+                return profile.qualificationEntries(profile.qualificationEntries().set(qEntry.id(), qEntry));
             }
             case ProfileElementType.LanguageEntry: {
                 let lEntry: LanguageSkill = entry as LanguageSkill;

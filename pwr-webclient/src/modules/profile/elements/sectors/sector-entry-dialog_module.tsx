@@ -8,7 +8,7 @@ import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../model/SectorEntry';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
-import {isNull, isNullOrUndefined} from 'util';
+import {isNullOrUndefined} from 'util';
 
 
 interface SectorEntryDialogProps {
@@ -58,7 +58,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
     }
 
     private getEducationEntryName = () => {
-        return NameEntityUtil.getNullTolerantName(this.props.sectorEntry.sectorId, this.props.sectors);
+        return NameEntityUtil.getNullTolerantName(this.props.sectorEntry.sectorId(), this.props.sectors);
     };
 
 
@@ -92,7 +92,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
         if(isNullOrUndefined(sector)) {
             sector = NameEntity.createNew(this.state.sectorEntryValue);
         }
-        sectorEntry = sectorEntry.changeSectorId(sector.id());
+        sectorEntry = sectorEntry.sectorId(sector.id());
         this.props.onSave(sectorEntry, sector);
         this.closeDialog();
     };
