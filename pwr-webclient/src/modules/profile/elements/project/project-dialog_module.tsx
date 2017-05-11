@@ -15,10 +15,11 @@ import {Project} from '../../../../model/Project';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
-import ChipInput from './../../../../../node_modules/material-ui-chip-input/lib/ChipInput.js';
+import ChipInput from './../../../../external_libs/ChipInput';
 import {InternalDatabase} from '../../../../model/InternalDatabase';
 import {isNullOrUndefined} from 'util';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {formatToShortDisplay} from '../../../../utils/DateUtil';
 
 interface ProjectDialogProps {
     open: boolean;
@@ -124,9 +125,11 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
     };
 
     private handleAddRole = (value: string) => {
-        this.setState({
-            roles: this.state.roles.push(value)
-        })
+        if(this.state.roles.size < 3){ // TODO remove hardcoding
+            this.setState({
+                roles: this.state.roles.push(value)
+            })
+        }
     };
 
     private handleRemoveRole = (value: string) => {
@@ -189,6 +192,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                             value={this.state.project.startDate()}
                                             onChange={this.changeStartDate}
                                             fullWidth={true}
+                                            formatDate={formatToShortDisplay}
                                 />
                             </div>
                             <div className="col-md-5 col-sm-5 ">
@@ -196,6 +200,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                             value={this.state.project.endDate()}
                                             onChange={this.changeEndDate}
                                             fullWidth={true}
+                                            formatDate={formatToShortDisplay}
                                 />
                             </div>
 
@@ -228,7 +233,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                         <div className="row">
                             <div className="col-md-offset-1 col-md-10">
                                 <ChipInput
-                                    floatingLabelText={PowerLocalize.get('ProjectRole.Singular')}
+                                    floatingLabelText={PowerLocalize.get("Project.Dialog.Roles.Title")}
                                     value={this.state.roles.toArray()}
                                     dataSource={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
                                     style={{"width": "100%"}}

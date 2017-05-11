@@ -1,5 +1,8 @@
 import * as React from 'react';
-import {Card, CardActions, CardHeader, IconButton} from 'material-ui';
+import {
+    Card, CardActions, CardHeader, CardMedia, CardText, Divider, IconButton, List, ListItem, Paper,
+    TextField
+} from 'material-ui';
 import {Project} from '../../../../model/Project';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ProjectDialog} from './project-dialog_module';
@@ -7,6 +10,7 @@ import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {isNullOrUndefined} from 'util';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {formatToShortDisplay} from '../../../../utils/DateUtil';
 
 interface ProjectModuleProps {
     project: Project;
@@ -26,7 +30,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
         super(props);
         this.state = {
             dialogIsOpen: false
-        }
+        };
     }
 
     private closeDialog = () => {
@@ -53,40 +57,49 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     private getEndCustomerName = () => {
         return NameEntityUtil.getNullTolerantName(this.props.project.endCustomerId(), this.props.companies);
     };
+    private getBrokerName = () => {
+        return NameEntityUtil.getNullTolerantName(this.props.project.brokerId(), this.props.companies);
+    };
 
     private getRoleNameList = () => {
-        let res: string = "";
-        let prefix = "";
+        let res: string = '';
+        let prefix = '';
         this.props.project.roleIds().forEach( id => {
             res += prefix;
-            res += NameEntityUtil.getNullTolerantName(id, this.props.projectRoles)
-            prefix = ", ";
+            res += NameEntityUtil.getNullTolerantName(id, this.props.projectRoles);
+            prefix = ', ';
         });
         return res;
     };
 
     render () {
         return (
-            <Card>
-                <CardHeader
-                    title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
-                    subtitle={'Tätig als ' + this.getRoleNameList()}
-                />
-                <ProjectDialog key={"projectDialog." + this.props.project.id()}
-                    open={this.state.dialogIsOpen}
-                    project={this.props.project}
-                    onClose={this.closeDialog}
-                    onSave={this.handleSaveRequest}
-                    companies={this.props.companies}
-                    projectRoles={this.props.projectRoles}
-                />
-                <CardActions>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.openDialog}
-                                tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.deleteButtonPress}
-                                tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
-                </CardActions>
-            </Card>
-        )
+                <Card>
+                    <CardHeader
+                        title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
+                        subtitle={'Tätig als ' + this.getRoleNameList()}
+                    />
+                    <ProjectDialog key={'projectDialog.' + this.props.project.id()}
+                        open={this.state.dialogIsOpen}
+                        project={this.props.project}
+                        onClose={this.closeDialog}
+                        onSave={this.handleSaveRequest}
+                        companies={this.props.companies}
+                        projectRoles={this.props.projectRoles}
+                    />
+                    <CardText>
+                        <label>Kurzbeschreibung</label><br/>
+                        {this.props.project.description()}
+                    </CardText>
+                    <CardActions>
+                        <IconButton size={20} iconClassName="material-icons" onClick={this.openDialog}
+                                    tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                        <IconButton size={20} iconClassName="material-icons" onClick={this.deleteButtonPress}
+                                    tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    </CardActions>
+                    <br/>
+                    <br/>
+                </Card>
+        );
     }
 }

@@ -18,8 +18,8 @@ export const de_locale : any = {
     "ProjectName.Singular": "Projektname",
     "Customer.Singular": "Kunde",
     "Broker.Singular": "Vermittler",
-    "ProjectRole.Singular": "Projektrolle",
     "ProjectDialog.Description.LabelText": "Kurzbeschreibung",
+    "Training.Singular": "Weiterbildung",
 
 
     // == Component Specific Localizations == //
@@ -29,12 +29,16 @@ export const de_locale : any = {
     "TrainingEntries.Qualifier": "Weiterbildung",
     "EducationEntry.EditEntry.Title": "Ausbildungsschritt bearbeiten",
     "EducationEntry.Dialog.EducationName": "Studiengangs-/Ausbildungsbezeichner",
+    "SectorEntry.Dialog.Title": "Branche bearbeiten",
     "LanguageSkill.EditSkill.Title": "Sprache bearbeiten",
     "ProfileModule.Tabs.Profile.Title": "Beraterprofil",
     "ProfileModule.Tabs.Projects.Title": "Projektinformationen",
     "Project.StartDate": "Projektbeginn",
     "Project.EndDate":"Projektende",
     "ProjectDialog.Title": "Projektinformationen bearbeiten",
+    "TrainingEntry.Dialog.Title":"Weiterbildung bearbeiten",
+    "Qualification.Dialog.Title":"Zusatzqualifikation bearbeiten",
+    "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
@@ -51,6 +55,7 @@ export const de_locale : any = {
     "Action.Remove": "Entfernen",
     "Action.Add": "Hinzufügen",
     "Action.Lock": "Sperren",
-    "Action.Close": "Schließen"
+    "Action.Close": "Schließen",
+    "Action.Exit": "Schließen (Ohne Speichern)"
 
 };

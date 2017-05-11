@@ -142,14 +142,14 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
             >
                 <Card>
                     <CardHeader
-                        title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
+                        title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
                     />
                     <CardMedia>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                                 <DatePicker
                                     floatingLabelText={PowerLocalize.get('Begin')}
-                                    id={'EducationEntry.StartDate' + this.props.trainingEntry.id}
+                                    id={'TrainingEntry.StartDate' + this.props.trainingEntry.id}
                                     container="inline"
                                     value={this.state.trainingEntry.startDate()}
                                     onChange={this.handleChangeStartDate}
@@ -159,7 +159,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                             <div className="col-md-5 col-sm-6">
                                 <DatePicker
                                     floatingLabelText={PowerLocalize.get('End')}
-                                    id={'EducationEntry.EndDate' + this.props.trainingEntry.id}
+                                    id={'TrainingEntry.EndDate' + this.props.trainingEntry.id}
                                     container="inline"
                                     value={this.state.trainingEntry.endDate()}
                                     onChange={this.handleChangeEndDate}
@@ -169,10 +169,10 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                         </div>
 
                         <div className="row">
-                            <div className="col-md-5 col-sm-6">
+                            <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
-                                    id={'Education.Education.' + this.props.trainingEntry.id}
+                                    floatingLabelText={PowerLocalize.get('Training.Singular')}
+                                    id={'TrainingEntry.Dialog.AC.' + this.props.trainingEntry.id}
                                     value={this.state.trainingEntryValue}
                                     dataSource={this.props.trainings.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEducationFieldInput}

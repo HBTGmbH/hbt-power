@@ -12,7 +12,9 @@ import {PowerClient} from './modules/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from './reducers/singleProfile/ProfileAsyncActionCreator';
 import injectTapEventPlugin = require('react-tap-event-plugin');
-
+import {PowerLogin} from './modules/power-login_module';
+import {Route, Router} from 'react-router';
+import { browserHistory } from 'react-router'
 
 injectTapEventPlugin();
 
@@ -33,19 +35,21 @@ store.dispatch(ProfileAsyncActionCreator.requestCareers());
 store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
-store.dispatch(ProfileAsyncActionCreator.requestSingleProfile("jd"));
+store.dispatch(ProfileAsyncActionCreator.requestSingleProfile('jd'));
 
+let Routes = (
+    <MuiThemeProvider>
+        <Provider store={store}>
+            <Router history={browserHistory}>
+                <Route path="/" component={PowerLogin}/>
+                <Route path="/home" component={PowerClient}/>
+            </Router>
+        </Provider>
+    </MuiThemeProvider>
+);
 
-
-//store.dispatch(AsyncActions.fetchConsultants());
 
 ReactDOM.render(
-
-    <MuiThemeProvider>
-
-        <Provider store={store}>
-          <PowerClient/>
-        </Provider>
-    </MuiThemeProvider>,
+    Routes,
   document.getElementById('root')
 );

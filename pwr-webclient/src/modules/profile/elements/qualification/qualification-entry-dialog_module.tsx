@@ -126,14 +126,14 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
             >
                 <Card>
                     <CardHeader
-                        title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
+                        title={PowerLocalize.get('Qualification.Dialog.Title')}
                     />
                     <CardMedia>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                                 <DatePicker
                                     floatingLabelText={PowerLocalize.get('Begin')}
-                                    id={'EducationEntry.StartDate' + this.props.qualificationEntry.id}
+                                    id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
                                     container="inline"
                                     value={this.state.qualificationEntry.date()}
                                     onChange={this.handleChangeDate}
@@ -142,8 +142,8 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                             </div>
                             <div className="col-md-5 col-sm-6">
                                 <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
-                                    id={'Education.Education.' + this.props.qualificationEntry.id}
+                                    floatingLabelText={PowerLocalize.get('Qualification.Singular')}
+                                    id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
                                     value={this.state.qualificationAutoCompleteValue}
                                     dataSource={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleQualificationFieldInput}

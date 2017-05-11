@@ -107,14 +107,14 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
             >
                 <Card>
                     <CardHeader
-                        title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
+                        title={PowerLocalize.get('SectorEntry.Dialog.Title')}
                     />
                     <CardMedia>
                         <div className="row">
                             <div className="col-md-offset-3">
                                 <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
-                                    id={'Education.Education.' + this.props.sectorEntry.id}
+                                    floatingLabelText={PowerLocalize.get('Sector.Singular')}
+                                    id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
                                     value={this.state.sectorEntryValue}
                                     dataSource={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleSectorFieldInput}

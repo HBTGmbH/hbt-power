@@ -8,7 +8,7 @@ import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {IconButton} from 'material-ui';
+import {GridList, IconButton, GridTile} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 
 /**
@@ -58,18 +58,31 @@ interface ProjectsDispatch {
 
 class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
 
+    private styles = {
+        root: {
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-around',
+        },
+        gridList: {
+            width: 500,
+            height: 450,
+            overflowY: 'auto',
+        },
+    };
+
     static mapStateToProps(state: ApplicationState, localProps: ProjectsProps): ProjectsProps {
         return {
             projects: state.databaseReducer.profile().projects(),
             projectRoles: state.databaseReducer.projectRoles(),
             companies: state.databaseReducer.companies()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<InternalDatabase>): ProjectsDispatch {
         return {
             deleteProject: function(id: string) {
-                dispatch(ProfileActionCreator.deleteProject(id))
+                dispatch(ProfileActionCreator.deleteProject(id));
             },
             saveProject: function(project: Project,  newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>) {
                 dispatch(ProfileActionCreator.saveProject(project, newCompanies, newRoles));
@@ -77,28 +90,42 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
             addProject: function() {
                 dispatch(ProfileActionCreator.createProject());
             }
-        }
+        };
     }
 
     private renderSingleProject = (value: Project, key: string) => {
-        return (<ProjectCard
-            project={value}
-            key={key}
-            onSave={this.props.saveProject}
-            onDelete={this.props.deleteProject}
-            companies={this.props.companies}
-            projectRoles={this.props.projectRoles}
-        />)
-    };
+        return (
+            <GridTile
+                cols={1}
+                key={key}
+            >
+                <ProjectCard
+                    project={value}
 
+                    onSave={this.props.saveProject}
+                    onDelete={this.props.deleteProject}
+                    companies={this.props.companies}
+                    projectRoles={this.props.projectRoles}
+                />
+            </GridTile>);
+    };
 
     render() {
         return (
             <div>
-                {this.props.projects.map(this.renderSingleProject).toArray()}
-                <div style={{textAlign: "center"}}>
+                <div>
+                    <GridList
+                    cols={2}
+                    style={this.styles}
+                    cellHeight="auto"
+                    >
+                        {this.props.projects.map(this.renderSingleProject).toArray()}
+                    </GridList>
+                </div>
+                <br/>
+                <div style={{textAlign: 'center'}}>
                     <IconButton
-                        style={{display:"inline-block"}}
+                        style={{display:'inline-block'}}
                         iconClassName="material-icons"
                         onClick={this.props.addProject}
                         tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
