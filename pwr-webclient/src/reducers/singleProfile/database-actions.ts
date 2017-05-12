@@ -65,4 +65,10 @@ export interface DeleteProjectAction extends AbstractAction {
     id: string;
 }
 
+/**
+ * Action that invokes login of a user. Includes async requests to receive an OAuth2 token.
+ */
+export interface LoginAction extends AbstractAction {
+    initials: string;
+}
 

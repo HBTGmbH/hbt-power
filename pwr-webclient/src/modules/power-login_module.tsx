@@ -4,7 +4,8 @@ import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../Store';
 import {Paper, RaisedButton, TextField} from 'material-ui';
-import {browserHistory} from 'react-router'
+import {ProfileAsyncActionCreator} from '../reducers/singleProfile/ProfileAsyncActionCreator';
+import {PowerLocalize} from '../localization/PowerLocalizer';
 /**
  * Properties that are managed by react-redux.
  *
@@ -49,7 +50,7 @@ enum LoginStatus {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface PowerLoginDispatch {
-
+    logInUser(initials: string): void;
 }
 
 class PowerLoginModule extends React.Component<
@@ -71,59 +72,92 @@ class PowerLoginModule extends React.Component<
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerLoginDispatch {
-        return {}
-    }
-
-    private handleInitialsInput = (event:any, value: string) => {
-    this.setState({
-        initials: value
-        })
-    };
-
-    private handleInitialsInputKeyPress = (event: KeyboardEvent<{}>) => {
-        if(event.key === 'Enter') {
-            this.setState({
-                status: LoginStatus.PASSWORD
-            })
+        return {
+            logInUser: function(initials: string) {
+                dispatch(ProfileAsyncActionCreator.logInUser(initials));
+            }
         }
-    };
-
-    private handlePasswordInput = (event:any, value: string) => {
-        this.setState({
-            password: value
-        })
-    };
+    }
 
     private handlePasswordKeyPress = (event: KeyboardEvent<{}>) => {
         if(event.key === 'Enter') {
             this.setState({
                 status: LoginStatus.SUCCESS
             });
-            browserHistory.push("/home");
 
         }
     };
 
-    private renderInputField = () => {
-        if(this.state.status === LoginStatus.INITIALS) {
-            return (<TextField
-                floatingLabelText="Kürzel"
-                value={this.state.initials}
-                onChange={this.handleInitialsInput}
-                onKeyPress={this.handleInitialsInputKeyPress}
-            />)
-        } else if(this.state.status === LoginStatus.PASSWORD) {
-            return (<TextField
-                floatingLabelText="Passwort"
-                value={this.state.password}
-                onChange={this.handlePasswordInput}
-                onKeyPress={this.handlePasswordKeyPress}
-                type="password"
-            />)
-        } else if(this.state.status === LoginStatus.REJECTED) {
-            return (<div/>)
+    private progressState = () => {
+        switch(this.state.status) {
+            case LoginStatus.PASSWORD: {
+                this.setState({
+                    status: LoginStatus.SUCCESS
+                });
+                this.props.logInUser(this.state.initials);
+                break;
+            }
+            case LoginStatus.INITIALS: {
+                this.setState({
+                    status: LoginStatus.PASSWORD,
+                });
+                break;
+            }
+            default:
+                break;
+
         }
-        return (<div/>);
+    };
+
+    private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
+        if(event.key == 'Enter') {
+            this.progressState();
+        }
+
+    };
+
+    private handleProgressButtonClick = () => {
+        this.progressState();
+    };
+
+    private handleFieldValueChange = (irrelevantFormEvent: any, value: string) => {
+        if(this.state.status === LoginStatus.PASSWORD) {
+            this.setState({
+                password: value
+            });
+        } else if(this.state.status === LoginStatus.INITIALS) {
+            this.setState({
+                initials: value
+            })
+        }
+    };
+
+    private getInputFieldValue = () => {
+        if(this.state.status === LoginStatus.INITIALS) {
+            return this.state.initials;
+        } else if(this.state.status === LoginStatus.PASSWORD) {
+            return this.state.password;
+        }
+        return "";
+    };
+
+    private getInputFieldFloatingLabelText = () => {
+        if(this.state.status === LoginStatus.INITIALS) {
+            return PowerLocalize.get("Initials.Singular");
+        } else if(this.state.status === LoginStatus.PASSWORD) {
+            return PowerLocalize.get("Password.Singular");
+        }
+        return "";
+    }
+
+    private renderInputField = () => {
+        return (<TextField
+            floatingLabelText={this.getInputFieldFloatingLabelText()}
+            value={this.getInputFieldValue()}
+            onChange={this.handleFieldValueChange}
+            onKeyPress={this.handleInputFieldKeyPress}
+            type={this.state.status === LoginStatus.PASSWORD ? "password" :""}
+        />)
     };
 
     render() {

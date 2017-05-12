@@ -35,7 +35,7 @@ store.dispatch(ProfileAsyncActionCreator.requestCareers());
 store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
-store.dispatch(ProfileAsyncActionCreator.requestSingleProfile('jd'));
+//store.dispatch(ProfileAsyncActionCreator.requestSingleProfile('jd'));
 
 let Routes = (
     <MuiThemeProvider>

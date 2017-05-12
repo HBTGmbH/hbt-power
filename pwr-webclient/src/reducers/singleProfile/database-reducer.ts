@@ -4,7 +4,7 @@ import {
     ChangeStringValueAction,
     CreateEntryAction,
     DeleteEntryAction,
-    DeleteProjectAction,
+    DeleteProjectAction, LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
     SaveProjectAction
@@ -17,6 +17,8 @@ import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {APINameEntity} from '../../model/APIProfile';
+import {browserHistory} from 'react-router'
+
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -107,6 +109,11 @@ function handleSaveProject(database: InternalDatabase, action: SaveProjectAction
     return database.companies(companies).projectRoles(roles).profile(profile);
 }
 
+function handleLogInUser(state: InternalDatabase, action: LoginAction): InternalDatabase {
+    browserHistory.push('/home');
+    return state.loggedInUser(action.initials); // TODO
+}
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -159,6 +166,8 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return state.APIRequestStatus(RequestStatus.Failiure);
         case ActionType.APIRequestSuccess:
             return handleRequestAPISuccess(state, <ReceiveAPIResponseAction> action);
+        case ActionType.LogInUser:
+            return handleLogInUser(state, <LoginAction> action);
         default:
             return state;
     }

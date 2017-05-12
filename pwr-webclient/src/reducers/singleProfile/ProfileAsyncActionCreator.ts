@@ -13,6 +13,7 @@ import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {AllConsultantsState, APIRequestType} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
+import {ActionType} from '../reducerIndex';
 
 export class ProfileAsyncActionCreator {
 
@@ -133,6 +134,16 @@ export class ProfileAsyncActionCreator {
                 getCompanySuggestionsAPIString(),
                 APIRequestType.RequestCompanies);
         };
+    }
+
+    public static logInUser(initials: string) {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch({
+                type: ActionType.LogInUser,
+                initials: initials
+            });
+            dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+        }
     }
 
 }
