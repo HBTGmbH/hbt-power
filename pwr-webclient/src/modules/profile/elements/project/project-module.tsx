@@ -74,6 +74,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
 
     render () {
         return (
+            <Paper zDepth={4}>
                 <Card>
                     <CardHeader
                         title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
@@ -100,6 +101,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                     <br/>
                     <br/>
                 </Card>
+            </Paper>
         );
     }
 }

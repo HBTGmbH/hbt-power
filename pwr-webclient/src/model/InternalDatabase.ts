@@ -30,6 +30,9 @@ export class InternalDatabase {
     public get loggedInUser() {return doop<string, this>()};
 
     @doop
+    public get authToken() {return doop<string, this>()};
+
+    @doop
     public get profile() {return doop<Profile, this>()};
 
     @doop
@@ -66,7 +69,8 @@ export class InternalDatabase {
         companies: Immutable.Map<string, NameEntity>,
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: string,
-        degrees: Immutable.List<string>
+        degrees: Immutable.List<string>,
+        token: string
 ) {
         return this.APIRequestStatus(apiRequestStatus)
             .languageLevels(languageLevels)
@@ -80,6 +84,7 @@ export class InternalDatabase {
             .projectRoles(projectRoles)
             .loggedInUser(loggedInUser)
             .degrees(degrees)
+            .authToken(token);
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -96,7 +101,8 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             "jd",
-            Immutable.List<string>(["Bachelor", "Master", "Doktor"])
+            Immutable.List<string>(["Bachelor", "Master", "Doktor"]),
+            ""
         )
     }
 

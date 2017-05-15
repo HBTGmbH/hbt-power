@@ -98,6 +98,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
             <GridTile
                 cols={1}
                 key={key}
+                style={{margin: "2 px"}}
             >
                 <ProjectCard
                     project={value}
@@ -116,7 +117,6 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
                 <div>
                     <GridList
                     cols={2}
-                    style={this.styles}
                     cellHeight="auto"
                     >
                         {this.props.projects.map(this.renderSingleProject).toArray()}
