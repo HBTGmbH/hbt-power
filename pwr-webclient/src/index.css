@@ -12,3 +12,7 @@ body {
   vertical-align: middle;
   float: none;
 }
+
+.indentedSkillCategory {
+  margin-left: 20px;
+}

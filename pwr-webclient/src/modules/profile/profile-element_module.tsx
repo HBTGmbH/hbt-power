@@ -14,6 +14,8 @@ interface ProfileElementLocalProps {
      * @param event
      */
     onAddElement(event: TouchTapEvent): void;
+
+    header?: JSX.Element;
 }
 
 /**
@@ -29,7 +31,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
 
 
     private readonly cardHeaderStyle = {
-       'backgroundColor' : Color.HBTSilver.toCSSRGBString()
+       'backgroundColor' : 'rgb(255, 204, 102)'
     };
 
 
@@ -38,12 +40,13 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
             <div>
                 <br/>
                 <Card>
-                    <CardHeader actAsExpander={true} title={this.props.title} style={this.cardHeaderStyle}>
+                    <CardHeader actAsExpander={true} title={this.props.title}>
                     </CardHeader>
                     <Divider/>
                     <CardMedia expandable={true}>
                         <div className="table-responsive">
                             <table className="table table-striped table-condensed">
+                                {this.props.header}
                                 <tbody>
                                 {this.props.children}
                                 </tbody>

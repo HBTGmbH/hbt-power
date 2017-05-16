@@ -87,6 +87,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
      * @param dataSource useless
      */
     private handleLanguageFieldInput = (searchText: string, dataSource: Array<string>) => {
+        console.log("Called");
         this.setState({languageAutoCompleteValue: searchText});
     };
 
@@ -146,6 +147,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                             </div>
                                 <AutoComplete
                                     floatingLabelText={PowerLocalize.get('Language.Singular')}
+                                    id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
                                     value={this.state.languageAutoCompleteValue}
                                     dataSource={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleLanguageFieldInput}

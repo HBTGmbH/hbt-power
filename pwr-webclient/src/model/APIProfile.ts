@@ -52,6 +52,19 @@ export interface APIProject {
     projectRoles: Array<APINameEntity>;
 }
 
+export interface APISkill {
+    id: string,
+    name: string,
+    rating: number
+}
+
+export interface APICategory {
+    id: string,
+    name: string,
+    categories: Array<APICategory>;
+    skills: Array<APISkill>;
+}
+
 /**
  * Representation of the profile the API returns. Allows type-safe changing of the API response as the compiler will
  * give notifications.
@@ -65,7 +78,8 @@ export interface APIProfile {
     qualification: Array<APIQualificationEntry>;
     education: Array<APIEducationStep>;
     sectors: Array<APISectorEntry>;
-    projects: Array<APIProject>
+    projects: Array<APIProject>;
+    rootCategories: Array<APICategory>;
 }
 
 export interface APIProfileUpdateResponse {

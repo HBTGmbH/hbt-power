@@ -4,12 +4,13 @@ import {LanguageSkill} from './LanguageSkill';
 import {QualificationEntry} from './QualificationEntry';
 import {TrainingEntry} from './TrainingEntry';
 import {
+    APICategory,
     APIEducationStep,
     APILanguageSkill,
     APIProfile,
     APIProject,
     APIQualificationEntry,
-    APISectorEntry,
+    APISectorEntry, APISkill,
     APITrainingEntry
 } from './APIProfile';
 import {isNullOrUndefined} from 'util';
@@ -17,6 +18,49 @@ import {InternalDatabase} from './InternalDatabase';
 import {SectorEntry} from './SectorEntry';
 import {Project} from './Project';
 import {doop} from 'doop/built/doop';
+import {SkillCategory} from './SkillCategory';
+import {Skill} from './Skill';
+
+/*
+let c1: SkillCategory = new SkillCategory("1", "Anwendersoftware", Immutable.List<Skill>(), Immutable.List<SkillCategory>());
+let c2: SkillCategory = new SkillCategory("2", "Software", Immutable.List<Skill>(), Immutable.List<SkillCategory>());
+let c3: SkillCategory = new SkillCategory("3", "Entwicklung", Immutable.List<Skill>(), Immutable.List<SkillCategory>());
+let c4: SkillCategory = new SkillCategory("4", "Programmiersprachen", Immutable.List<Skill>(), Immutable.List<SkillCategory>());
+
+c1 = c1.skills(c1.skills().push(new Skill("Google Chrome", "1")));
+c1 = c1.skills(c1.skills().push(new Skill("Firefox", "2")));
+c1 = c1.skills(c1.skills().push(new Skill("Outlook", "3")));
+c1 = c1.skills(c1.skills().push(new Skill("MS Excel", "4")));
+c1 = c1.skills(c1.skills().push(new Skill("MS Office", "5")));
+c1 = c1.skills(c1.skills().push(new Skill("Spotify", "6")));
+c1 = c1.skills(c1.skills().push(new Skill("Postman", "7")));
+
+c2 = c2.skills(c2.skills().push(new Skill("Kaspersky Internet Security", "8")));
+c2 = c2.categories(c2.categories().push(c1));
+
+c3 = c3.skills(c3.skills().push(new Skill("Unit Testing", "8")));
+c3 = c3.skills(c3.skills().push(new Skill("Objektorientierte Programmierung", "9")));
+c3 = c3.skills(c3.skills().push(new Skill("Funktionle Programmierung", "10")));
+c3 = c3.skills(c3.skills().push(new Skill("Lasttests", "11")));
+c3 = c3.skills(c3.skills().push(new Skill("SCRUM", "12")));
+c3 = c3.skills(c3.skills().push(new Skill("Kanboard", "12")));
+c3 = c3.skills(c3.skills().push(new Skill("Agile", "12")));
+
+c4 = c4.skills(c4.skills().push(new Skill("Java EE", "12")));
+c4 = c4.skills(c4.skills().push(new Skill("Java SE", "13")));
+c4 = c4.skills(c4.skills().push(new Skill("Haskell", "14")));
+c4 = c4.skills(c4.skills().push(new Skill("Erlang", "15")));
+c4 = c4.skills(c4.skills().push(new Skill("C", "16")));
+c4 = c4.skills(c4.skills().push(new Skill("C++", "17")));
+c4 = c4.skills(c4.skills().push(new Skill("C#", "18")));
+c4 = c4.skills(c4.skills().push(new Skill("Go", "19")));
+
+root = root.categories(root.categories().push(c2));
+root = root.categories(root.categories().push(c3));
+root = root.categories(root.categories().push(c4));*/
+
+
+
 
 @doop
 export class Profile {
@@ -39,6 +83,12 @@ export class Profile {
     public get qualificationEntries(){ return doop<Immutable.Map<string, QualificationEntry>, this>();}
     @doop
     public get projects(){ return doop<Immutable.Map<string, Project>, this>();}
+    @doop
+    public get skills() { return doop<Immutable.Map<string, Skill>, this>()};
+    @doop
+    public get categories() { return doop<Immutable.Map<string, SkillCategory>, this>()};
+    @doop
+    public get rootCategory() {return doop<SkillCategory, this>()};
 
     constructor(
         id: number,
@@ -49,7 +99,10 @@ export class Profile {
         educationEntries: Immutable.Map<string, EducationEntry>,
         languageSkills: Immutable.Map<string, LanguageSkill>,
         qualificationEntries: Immutable.Map<string, QualificationEntry>,
-        projects: Immutable.Map<string, Project>
+        projects: Immutable.Map<string, Project>,
+        skills: Immutable.Map<string, Skill>,
+        categories: Immutable.Map<string, SkillCategory>,
+        rootCategory: SkillCategory
     ) {
         return this.id(id)
             .currentPosition(currentPosition)
@@ -59,7 +112,11 @@ export class Profile {
             .educationEntries(educationEntries)
             .languageSkills(languageSkills)
             .qualificationEntries(qualificationEntries)
-            .projects(projects);
+            .projects(projects)
+            .skills(skills)
+            .categories(categories)
+            .rootCategory(rootCategory)
+
     }
 
 
@@ -147,6 +204,48 @@ export class Profile {
         return res;
     }
 
+    private static parseSkillFromCategory(category: APICategory, map: Immutable.Map<string, Skill>): Immutable.Map<string, Skill> {
+
+        category.skills.forEach((apiSkill: APISkill) => {
+            let skill: Skill = Skill.fromAPI(apiSkill);
+            map = map.set(skill.id(), skill);
+        });
+        category.categories.forEach((cat: APICategory) => {
+            map = Profile.parseSkillFromCategory(cat, map);
+        });
+        return map;
+        /*
+        category.categories.forEach((cat: APICategory) => {
+            let category: SkillCategory = SkillCategory.fromAPI(cat);
+        })*/
+    }
+
+    private static parseSkills(rootCategories: Array<APICategory>): Immutable.Map<string, Skill> {
+        let res: Immutable.Map<string, Skill> = Immutable.Map<string, Skill>();
+        rootCategories.forEach(apiCategory => {
+            res = Profile.parseSkillFromCategory(apiCategory,res);
+        });
+        return res;
+    }
+
+
+    private static parseSingleCategory(apiCategory: APICategory, map:Immutable.Map<string, SkillCategory>): Immutable.Map<string, SkillCategory>{
+        let category: SkillCategory = SkillCategory.fromAPI(apiCategory);
+        map = map.set(category.id(), category);
+        apiCategory.categories.forEach(apiCat => {
+            map = Profile.parseSingleCategory(apiCat, map);
+        });
+        return map;
+    }
+
+    private static parseCategories(rootCategories: Array<APICategory>): Immutable.Map<string, SkillCategory> {
+        let res: Immutable.Map<string, SkillCategory> = Immutable.Map<string, SkillCategory>();
+        rootCategories.forEach(apiCat => {
+            res = Profile.parseSingleCategory(apiCat, res);
+        });
+        return res;
+    }
+
     // FIXME do not require database anymore, or refactor database so it doesn't contain
     // FIXME this profile anymore.
     public serializeToApiProfile(database: InternalDatabase): APIProfile {
@@ -192,7 +291,8 @@ export class Profile {
             qualification: qualifications,
             education: educations,
             sectors: sectors,
-            projects: projects
+            projects: projects,
+            rootCategories: []
         };
         console.log('Serialized profile:', res);
         return res;
@@ -204,6 +304,13 @@ export class Profile {
      * @returns {Profile}
      */
     public static createFromAPI(profile: APIProfile): Profile {
+        let root: SkillCategory = new SkillCategory("0", "root", Immutable.List<string>(), Immutable.List<string>());
+        // set the root category correctly
+        profile.rootCategories.forEach(rootCat => {
+            root = root.categoryIds(root.categoryIds().push(String(rootCat.id)));
+        });
+        let categories =  Profile.parseCategories(profile.rootCategories);
+        categories = categories.set(root.id(), root);
         return new Profile(
             Number(profile.id),
             profile.currentPosition,
@@ -213,8 +320,21 @@ export class Profile {
             Profile.parseEducationEntries(profile.education),
             Profile.parseLanguageSkills(profile.languages),
             Profile.parseQualficiationEntries(profile.qualification),
-            Profile.parseProjects(profile.projects)
+            Profile.parseProjects(profile.projects),
+            Profile.parseSkills(profile.rootCategories),
+            categories,
+            root
         );
+    }
+
+    public getSkillName(id: string): string {
+        return this.skills().get(id).name();
+    }
+
+    public getCategory(id: string): SkillCategory {
+        console.log("Get category", id);
+        console.log("Get category categories", this.categories());
+        return this.categories().get(id);
     }
 
 
@@ -228,6 +348,7 @@ export class Profile {
      * @returns {Profile} the default profile.
      */
     public static createDefault(): Profile {
+        let root: SkillCategory = new SkillCategory("0", "root", Immutable.List<string>(), Immutable.List<string>());
         return new Profile(
             -1,
             '',
@@ -237,7 +358,10 @@ export class Profile {
             Immutable.Map<string, EducationEntry>(),
             Immutable.Map<string, LanguageSkill>(),
             Immutable.Map<string, QualificationEntry>(),
-            Immutable.Map<string, Project>()
+            Immutable.Map<string, Project>(),
+            Immutable.Map<string, Skill>(),
+            Immutable.Map<string, SkillCategory>().set(root.id(), root),
+            root
         );
     }
 

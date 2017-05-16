@@ -145,6 +145,7 @@ export class InternalDatabase {
 
 
 
+
     /**
      * Attempts to interprete a full consultant profile and parses it into the databaseReducer.
      * @param profileFromAPI the profile the API provides.

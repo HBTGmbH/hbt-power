@@ -13,6 +13,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/ProfileAsyncActionCreator';
 import {Projects} from './elements/project/projects-module';
+import {SkillTree} from './elements/skills/skilltree-module';
 
 
 interface ProfileProps {
@@ -118,6 +119,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                                 <Projects/>
                             </Tab>
                             <Tab label="Skills">
+                                <SkillTree/>
                             </Tab>
                         </Tabs>
                         <Toolbar style={this.cardToolbarStyle}>
