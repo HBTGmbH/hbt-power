@@ -6,6 +6,7 @@ import {databaseReducer} from './singleProfile/database-reducer';
  */
 
 export enum ActionType {
+    UpdateSkillRating,
     LogInUser,
     CreateProject,
     DeleteProject,

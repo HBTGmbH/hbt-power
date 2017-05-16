@@ -5,10 +5,14 @@ import {InternalDatabase} from '../../../../model/InternalDatabase';
 import {SkillCategory} from '../../../../model/SkillCategory';
 import {ApplicationState} from '../../../../Store';
 import {SkillCategoryItem} from './skill-category-item_module';
-import {Chip, List, ListItem} from 'material-ui';
+import {Card, CardHeader, Chip, List, ListItem, Subheader} from 'material-ui';
 import {CSSProperties} from 'react';
 import {Skill} from '../../../../model/Skill';
 import {Profile} from '../../../../model/Profile';
+import {SkillChip} from './skill-chip_module';
+import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {formatString} from '../../../../utils/StringUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -46,7 +50,7 @@ interface SkillTreeLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface SkillTreeDispatch {
-
+    changeSkillRating(rating: number, id: string): void;
 }
 
 class SkillTreeModule extends React.Component<
@@ -74,12 +78,25 @@ class SkillTreeModule extends React.Component<
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<InternalDatabase>): SkillTreeDispatch {
-        return {}
+        return {
+            changeSkillRating: (rating: number, id: string) => {
+                dispatch(ProfileActionCreator.updateSkillRating(rating, id))
+            }
+        }
     }
 
+
     private renderSkillsForSelectedCategory = () => {
-        return this.state.selectedCategory.skillIds().map(skillId => {
-            return <Chip key={skillId} style={{margin: 4}}>{this.props.profile.getSkillName(skillId)}</Chip>
+        let skillIds: Array<string> = this.props.profile.getAllNestedSkillIds(this.state.selectedCategory);
+        return skillIds.map(skillId => {
+            return(
+            <SkillChip  style={{margin:"20px"}}
+                        key={skillId}
+                        skill={this.props.profile.getSkill(skillId)}
+                        onRatingChange={this.props.changeSkillRating}
+            >
+                {this.props.profile.getSkillName(skillId)}
+            </SkillChip>)
         })
     };
 
@@ -94,6 +111,7 @@ class SkillTreeModule extends React.Component<
             <div className="row">
                 <div className="col-md-4">
                     <List>
+                        <Subheader>{PowerLocalize.get("Category.Plural")}</Subheader>
                         <SkillCategoryItem
                             key={this.props.rootCategory.id()}
                             categoryId={this.props.rootCategory.id()}
@@ -102,9 +120,15 @@ class SkillTreeModule extends React.Component<
                     </List>
                 </div>
                 <div className="col-md-8">
-                    <div style={this.chipContainerStyle}>
-                        {this.renderSkillsForSelectedCategory()}
-                    </div>
+                    <Card style={{height: "100%"}}>
+                        <CardHeader
+                            title={formatString(PowerLocalize.get("SkillOverview.Title"), this.state.selectedCategory.name())}
+                        />
+                        <div style={this.chipContainerStyle}>
+                            {this.renderSkillsForSelectedCategory()}
+                        </div>
+                    </Card>
+
                 </div>
             </div>
         );

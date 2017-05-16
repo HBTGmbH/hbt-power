@@ -1,11 +1,15 @@
 import {Profile} from '../../model/Profile';
-import {ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction} from './database-actions';
+import {
+    ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction,
+    UpdateSkillRatingAction
+} from './database-actions';
 import {EducationEntry} from '../../model/EducationEntry';
 import {ProfileElementType} from '../../Store';
 import {TrainingEntry} from '../../model/TrainingEntry';
 import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
+import {Skill} from '../../model/Skill';
 export class ProfileReducer {
 
     private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
@@ -82,5 +86,12 @@ export class ProfileReducer {
                 break;
         }
         return ProfileReducer.updateEntry(profile, entry, action.entryType);
+    }
+
+    public static reducerHandleUpdateSkillRating(profile: Profile, action: UpdateSkillRatingAction): Profile {
+        let skill: Skill = profile.getSkill(action.id);
+        skill = skill.rating(action.rating);
+        return profile.skills(profile.skills().set(skill.id(), skill));
+
     }
 }

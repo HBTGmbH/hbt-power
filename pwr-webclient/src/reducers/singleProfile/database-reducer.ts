@@ -7,7 +7,7 @@ import {
     DeleteProjectAction, LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction
+    SaveProjectAction, UpdateSkillRatingAction
 } from './database-actions';
 import {AbstractAction, ActionType} from '../reducerIndex';
 import {deepFreeze} from '../../utils/ObjectUtil';
@@ -158,6 +158,9 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             let proj: Project = Project.createNew();
             newProfile = newProfile.projects(newProfile.projects().set(proj.id(), proj));
             return state.profile(newProfile);
+        }
+        case ActionType.UpdateSkillRating: {
+            return state.profile(ProfileReducer.reducerHandleUpdateSkillRating(state.profile(), <UpdateSkillRatingAction>action));
         }
         // == Language Suggestion requests == //
         case ActionType.APIRequestPending:

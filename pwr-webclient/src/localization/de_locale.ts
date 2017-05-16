@@ -20,6 +20,7 @@ export const de_locale : any = {
     "Broker.Singular": "Vermittler",
     "ProjectDialog.Description.LabelText": "Kurzbeschreibung",
     "Training.Singular": "Weiterbildung",
+    "Category.Plural": "Kategorien",
 
 
     // == Component Specific Localizations == //
@@ -39,6 +40,7 @@ export const de_locale : any = {
     "TrainingEntry.Dialog.Title":"Weiterbildung bearbeiten",
     "Qualification.Dialog.Title":"Zusatzqualifikation bearbeiten",
     "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
+    "SkillOverview.Title": "Skills für Kategorie {0}",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

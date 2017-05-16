@@ -64,7 +64,7 @@ class SkillCategoryItemModule extends React.Component<
 
     private renderSubCategories = () => {
         return this.props.category.categoryIds().map((value, key) => {
-            return (<SkillCategoryItem onItemSelect={this.props.onItemSelect} categoryId={value}/>)
+            return (<SkillCategoryItem key={"SkillCategoryItem." + value} onItemSelect={this.props.onItemSelect} categoryId={value}/>)
         }).toArray();
     };
 
@@ -72,13 +72,20 @@ class SkillCategoryItemModule extends React.Component<
         this.props.onItemSelect(this.props.category)
     };
 
+    private isLeaf = () => {
+        return this.props.category.categoryIds().size <= 0;
+    };
+
     render() {
         return (
-            <div key={this.props.category.id()} className={"indentedSkillCategory"}>
-                <ListItem   onClick={this.handleListItemClick}
-                            primaryText={this.props.category.name()}
-                            nestedItems={this.renderSubCategories()}
-                            leftIcon={<FontIcon className="material-icons">label</FontIcon>}/>
+            <div key={"SkillCategory.InsetDiv." + this.props.category.id()} className={"indentedSkillCategory"}>
+                <ListItem
+                        key={"SkillCategory.ListItem." + this.props.category.id()}
+                        onClick={this.handleListItemClick}
+                        primaryText={this.props.category.name()}
+                        nestedItems={this.renderSubCategories()}
+                        initiallyOpen={true}
+                        leftIcon={<FontIcon className="material-icons">{this.isLeaf() ? "label_outline" : "label"}</FontIcon>}/>
             </div>);
     }
 }

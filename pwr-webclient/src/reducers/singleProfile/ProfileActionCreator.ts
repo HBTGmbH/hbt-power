@@ -6,9 +6,10 @@ import {
     CreateEntryAction,
     DeleteEntryAction, DeleteProjectAction,
     ReceiveAPIResponseAction,
-    SaveEntryAction, SaveProjectAction, UpdateNameEntityAction
+    SaveEntryAction, SaveProjectAction, UpdateNameEntityAction, UpdateSkillRatingAction
 } from './database-actions';
 import {Project} from '../../model/Project';
+import {Skill} from '../../model/Skill';
 
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
@@ -76,20 +77,28 @@ export class ProfileActionCreator {
             project: project,
             newCompanies: newCompanies,
             newRoles: newRoles
-        }
+        };
     }
 
     public static deleteProject(id: string): DeleteProjectAction {
         return {
             type: ActionType.DeleteProject,
             id: id
-        }
+        };
     }
 
     public static createProject(): AbstractAction {
         return {
             type: ActionType.CreateProject
-        }
+        };
+    }
+
+    public static updateSkillRating(rating: number, id: string): UpdateSkillRatingAction {
+        return {
+            type: ActionType.UpdateSkillRating,
+            id: id,
+            rating: rating
+        };
     }
 
 

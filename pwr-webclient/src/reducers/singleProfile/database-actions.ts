@@ -8,6 +8,7 @@ import {AbstractAction} from '../reducerIndex';
 
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
+import {Skill} from '../../model/Skill';
 
 
 export interface ChangeStringValueAction extends AbstractAction {
@@ -70,5 +71,10 @@ export interface DeleteProjectAction extends AbstractAction {
  */
 export interface LoginAction extends AbstractAction {
     initials: string;
+}
+
+export interface UpdateSkillRatingAction extends AbstractAction {
+    id: string,
+    rating: number
 }
 

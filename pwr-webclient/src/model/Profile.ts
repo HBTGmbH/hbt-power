@@ -282,6 +282,11 @@ export class Profile {
             projects.push(project.toAPI(database.companies(), database.projectRoles()));
         });
 
+        let rootCategories: Array<APICategory> = [];
+        this.rootCategory().categoryIds().forEach(id => {
+            rootCategories.push(this.getCategory(id).toAPI(this));
+        });
+
         let res: APIProfile = {
             id: this.id(),
             description: this.description(),
@@ -292,7 +297,7 @@ export class Profile {
             education: educations,
             sectors: sectors,
             projects: projects,
-            rootCategories: []
+            rootCategories: rootCategories
         };
         console.log('Serialized profile:', res);
         return res;
@@ -331,10 +336,32 @@ export class Profile {
         return this.skills().get(id).name();
     }
 
+    public getSkill(id: string): Skill {
+        return this.skills().get(id);
+    }
+
     public getCategory(id: string): SkillCategory {
-        console.log("Get category", id);
-        console.log("Get category categories", this.categories());
         return this.categories().get(id);
+    }
+
+    private getNestedSkills(category: SkillCategory, skillIds: Array<string>) {
+        category.skillIds().forEach(id => {
+            skillIds.push(id);
+        });
+        category.categoryIds().forEach(id => {
+            let cat: SkillCategory = this.getCategory(id);
+            this.getNestedSkills(cat, skillIds);
+        })
+    }
+
+    /**
+     * Returns a list of skills that are in the category and all sub-categories
+     * @param category
+     */
+    public getAllNestedSkillIds(category: SkillCategory): Array<string> {
+        let res: Array<string> = [];
+        this.getNestedSkills(category, res);
+        return res;
     }
 
 

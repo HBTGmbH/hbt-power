@@ -1,7 +1,8 @@
 import {doop} from 'doop';
 import * as Immutable from 'immutable';
 import {Skill} from './Skill';
-import {APICategory} from './APIProfile';
+import {APICategory, APISkill} from './APIProfile';
+import {Profile} from './Profile';
 
 @doop
 export class SkillCategory {
@@ -28,6 +29,24 @@ export class SkillCategory {
 
     public constructor(id: string, name: string, skillIds: Immutable.List<string>, categoryIds: Immutable.List<string>) {
         return this.id(id).name(name).skillIds(skillIds).categoryIds(categoryIds);
+    }
+
+    public toAPI(profile: Profile): APICategory {
+        let apiCategories: Array<APICategory> = [];
+        let apiSkills: Array<APISkill> = [];
+        this.categoryIds().forEach(id => {
+            apiCategories.push(profile.getCategory(id).toAPI(profile));
+        });
+        this.skillIds().forEach(id => {
+            apiSkills.push(profile.getSkill(id).toAPI())
+        });
+
+        return {
+            id: this.id(),
+            name: this.name(),
+            categories: apiCategories,
+            skills: apiSkills
+        }
     }
 
     public static fromAPI(apiCategory: APICategory): SkillCategory {
