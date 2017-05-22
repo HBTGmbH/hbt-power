@@ -4,7 +4,7 @@ import {
     ChangeStringValueAction,
     CreateEntryAction,
     DeleteEntryAction,
-    DeleteProjectAction, LoginAction,
+    DeleteProjectAction, DeleteSkillAction, LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
     SaveProjectAction, UpdateSkillRatingAction
@@ -183,6 +183,9 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         }
         case ActionType.UpdateSkillRating: {
             return state.profile(ProfileReducer.reducerHandleUpdateSkillRating(state.profile(), <UpdateSkillRatingAction>action));
+        }
+        case ActionType.DeleteSkill: {
+            return state.profile(ProfileReducer.reducerHandleDeleteSkill(state.profile(), <DeleteSkillAction> action));
         }
         // == Language Suggestion requests == //
         case ActionType.APIRequestPending:

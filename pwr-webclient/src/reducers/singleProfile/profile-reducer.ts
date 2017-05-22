@@ -1,6 +1,7 @@
 import {Profile} from '../../model/Profile';
 import {
-    ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction, SaveProjectAction,
+    ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, DeleteSkillAction, SaveEntryAction,
+    SaveProjectAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {EducationEntry} from '../../model/EducationEntry';
@@ -12,6 +13,7 @@ import {SectorEntry} from '../../model/SectorEntry';
 import {Skill} from '../../model/Skill';
 import {isNull, isNullOrUndefined} from 'util';
 import {Project} from '../../model/Project';
+import {SkillCategory} from '../../model/SkillCategory';
 export class ProfileReducer {
 
     private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
@@ -118,6 +120,36 @@ export class ProfileReducer {
         });
         project = project.skillIDs(projectSkillIds);
         return profile.projects(profile.projects().set(project.id(), project));
+    }
+
+    /**
+     * Deletes possible orphan skills that might have been created when a skill has been deleted.
+     * @param profile
+     * @param deletedId
+     * @returns {Profile}
+     */
+    private static deleteOrphanSkills(profile: Profile, deletedId: string): Profile {
+        // Orphans in categories.
+        let categories = profile.categories().map((category, id) => {
+            if(category.skillIds().has(deletedId)) {
+                return category.skillIds(category.skillIds().remove(deletedId))
+            }
+            return category;
+        }).toMap();
+        // Orphans in projects
+        let projects = profile.projects().map((project, id) => {
+            if(project.skillIDs().has(deletedId)) {
+                return project.skillIDs(project.skillIDs().remove(deletedId));
+            }
+            return project;
+        }).toMap();
+        return profile.categories(categories).projects(projects);
+    }
+
+    public static reducerHandleDeleteSkill(profile: Profile, action: DeleteSkillAction): Profile {
+        let skills = profile.skills();
+        skills = skills.remove(action.id);
+        return ProfileReducer.deleteOrphanSkills(profile.skills(skills), action.id);
     }
 
     public static reducerHandleUpdateSkillRating(profile: Profile, action: UpdateSkillRatingAction): Profile {

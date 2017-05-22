@@ -77,3 +77,7 @@ export interface UpdateSkillRatingAction extends AbstractAction {
     rating: number
 }
 
+export interface DeleteSkillAction extends AbstractAction {
+    id: string;
+}
+

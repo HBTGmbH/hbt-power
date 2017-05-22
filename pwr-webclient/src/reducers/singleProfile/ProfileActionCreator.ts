@@ -100,6 +100,12 @@ export class ProfileActionCreator {
         };
     }
 
+    public static deleteSkill(id: string) {
+        return {
+            type: ActionType.DeleteSkill,
+            id: id
+        }
+    }
 
 }
 

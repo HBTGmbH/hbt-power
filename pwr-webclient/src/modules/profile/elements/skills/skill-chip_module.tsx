@@ -4,6 +4,7 @@ import * as redux from 'redux';
 import {Skill} from '../../../../model/Skill';
 import {Avatar, Chip, FontIcon, IconButton} from 'material-ui';
 import {CSSProperties} from 'react';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 
 
 /**
@@ -18,6 +19,7 @@ interface SkillChipLocalProps {
     skill: Skill;
     style?: CSSProperties;
     onRatingChange(newRating: number, id: string): void;
+    onDelete(id: string): void;
 }
 
 /**
@@ -54,9 +56,16 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         this.props.onRatingChange(pos, this.props.skill.id());
     };
 
+    private handleDelete = () => {
+        this.props.onDelete(this.props.skill.id())
+    }
+
     render() {
         return (
-            <Chip key={"Skill."+ this.props.skill.id()} style={this.props.style}>
+            <Chip
+                key={"Skill."+ this.props.skill.id()}
+                style={this.props.style}
+            >
                 {this.props.skill.name()}
                     <IconButton
                         id={"Skill.Star1." + this.props.skill.id()}
@@ -67,6 +76,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                     <IconButton  id={"Skill.Star3." + this.props.skill.id()} onClick={() => this.handleStarPress(3)} iconClassName="material-icons" iconStyle={this.getStyle(3)}>star_rate</IconButton>
                     <IconButton  id={"Skill.Star4." + this.props.skill.id()} onClick={() => this.handleStarPress(4)} iconClassName="material-icons" iconStyle={this.getStyle(4)}>star_rate</IconButton>
                     <IconButton  id={"Skill.Star5." + this.props.skill.id()} onClick={() => this.handleStarPress(5)} iconClassName="material-icons" iconStyle={this.getStyle(5)}>star_rate</IconButton>
+                    <IconButton  id={"Skill.Delete." + this.props.skill.id()} onClick={this.handleDelete} tooltip={PowerLocalize.get("Action.Delete")} iconClassName="material-icons">delete</IconButton>
             </Chip>);
     }
 }

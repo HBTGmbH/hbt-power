@@ -51,6 +51,7 @@ interface SkillTreeLocalState {
  */
 interface SkillTreeDispatch {
     changeSkillRating(rating: number, id: string): void;
+    onSkillDelete(id: string): void;
 }
 
 class SkillTreeModule extends React.Component<
@@ -81,6 +82,9 @@ class SkillTreeModule extends React.Component<
         return {
             changeSkillRating: (rating: number, id: string) => {
                 dispatch(ProfileActionCreator.updateSkillRating(rating, id));
+            },
+            onSkillDelete: (id: string) => {
+                dispatch(ProfileActionCreator.deleteSkill(id));
             }
         };
     }
@@ -108,6 +112,7 @@ class SkillTreeModule extends React.Component<
         });
     };
 
+
     render() {
         return (
             <div className="row">
@@ -118,6 +123,7 @@ class SkillTreeModule extends React.Component<
                             key={this.props.rootCategory.id()}
                             categoryId={this.props.rootCategory.id()}
                             onRatingChange={this.props.changeSkillRating}
+                            onSkillDelete={this.props.onSkillDelete}
                         />
                     </List>
                 </div>

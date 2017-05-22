@@ -30,6 +30,7 @@ interface SkillCategoryItemProps {
 interface SkillCategoryItemLocalProps {
     categoryId: string;
     onRatingChange(rating: number, id: string): void;
+    onSkillDelete(id: string): void;
 }
 
 /**
@@ -66,7 +67,13 @@ class SkillCategoryItemModule extends React.Component<
 
     private renderSubCategories = () => {
         return this.props.category.categoryIds().map((value, key) => {
-            return (<SkillCategoryItem key={"SkillCategoryItem." + value} onRatingChange={this.props.onRatingChange} categoryId={value}/>)
+            return (
+                <SkillCategoryItem
+                    key={"SkillCategoryItem." + value}
+                    onSkillDelete={this.props.onSkillDelete}
+                    onRatingChange={this.props.onRatingChange}
+                    categoryId={value}
+                />)
         }).toArray();
     };
 
@@ -79,6 +86,7 @@ class SkillCategoryItemModule extends React.Component<
                     key={"SkillCategorySkill." + value}
                     skill={skill}
                     onRatingChange={this.props.onRatingChange}
+                    onDelete={this.props.onSkillDelete}
                     style={{margin: "4px"}}
                 />
             </div>)
