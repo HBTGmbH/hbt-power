@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../Store';
-import {Drawer, IconButton, Toolbar, ToolbarGroup} from 'material-ui';
+import {Drawer, IconButton, IconMenu, MenuItem, Toolbar, ToolbarGroup} from 'material-ui';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 
 interface ToolbarProps {
@@ -58,15 +58,17 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     render() {
         return(
             <div>
-                <Drawer
-                    docked={false}
-                    open={this.state.menuOpen}
-                    onRequestChange={(open) => this.setState({menuOpen: open})}
-                >
-                </Drawer>
                 <Toolbar>
                     <ToolbarGroup firstChild={true}>
-                        <IconButton iconClassName="material-icons" onClick={this.handleMenuClick} tooltip={PowerLocalize.get('Menu.Singular')}>menu</IconButton>
+
+                        <IconMenu
+                            iconButtonElement={<IconButton iconClassName="material-icons" onClick={this.handleMenuClick} tooltip={PowerLocalize.get('Menu.Singular')}>menu</IconButton>}
+                        >
+                            <MenuItem primaryText={PowerLocalize.get("Menu.Overview")} />
+                            <MenuItem primaryText={PowerLocalize.get("Menu.Profile")}/>
+                            <MenuItem primaryText={PowerLocalize.get("Menu.Views")} />
+                            <MenuItem primaryText={PowerLocalize.get("Menu.Logout")} />
+                        </IconMenu>
                         {PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.props.userInitials}
                     </ToolbarGroup>
                 </Toolbar>

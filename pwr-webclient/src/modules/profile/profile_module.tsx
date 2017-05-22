@@ -98,22 +98,34 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                                     avatar="/img/crazy_lama.jpg"
                                 />
                                 <Divider/>
-                                <ProfileDescription
-                                    hintText={PowerLocalize.get("Profile.Description")}
-                                    initialMaxCharacters={500}
-                                />
-                                <Divider/>
-                                <LanguageSkills/>
-                                <Divider/>
-                                <Sectors/>
-                                <Divider/>
-                                <TrainingEntries/>
-                                <Divider/>
-                                <EducationList/>
-                                <Divider/>
-                                <Qualifications/>
-                                <Divider/>
-                                <br/>
+
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <ProfileDescription
+                                        hintText={PowerLocalize.get("Profile.Description")}
+                                        initialMaxCharacters={500}
+                                    />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <LanguageSkills/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <TrainingEntries/>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <EducationList/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <Qualifications/>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <Sectors/>
+                                    </div>
+                                </div>
                             </Tab>
                             <Tab label={PowerLocalize.get("ProfileModule.Tabs.Projects.Title")}>
                                 <Projects/>
