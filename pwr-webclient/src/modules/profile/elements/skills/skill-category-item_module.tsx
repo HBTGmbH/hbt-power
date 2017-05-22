@@ -5,6 +5,8 @@ import {ApplicationState} from '../../../../Store';
 import {SkillCategory} from '../../../../model/SkillCategory';
 import {FontIcon, ListItem} from 'material-ui';
 import {Profile} from '../../../../model/Profile';
+import {SkillChip} from './skill-chip_module';
+import {Skill} from '../../../../model/Skill';
 
 /**
  * Properties that are managed by react-redux.
@@ -27,7 +29,7 @@ interface SkillCategoryItemProps {
  */
 interface SkillCategoryItemLocalProps {
     categoryId: string;
-    onItemSelect(category: SkillCategory): void;
+    onRatingChange(rating: number, id: string): void;
 }
 
 /**
@@ -52,6 +54,7 @@ class SkillCategoryItemModule extends React.Component<
     & SkillCategoryItemDispatch, SkillCategoryItemLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: SkillCategoryItemLocalProps): SkillCategoryItemProps {
+        console.log("MapStateToProps", state.databaseReducer.profile().getCategory(localProps.categoryId));
         return {
             profile: state.databaseReducer.profile(),
             category: state.databaseReducer.profile().getCategory(localProps.categoryId)
@@ -64,13 +67,25 @@ class SkillCategoryItemModule extends React.Component<
 
     private renderSubCategories = () => {
         return this.props.category.categoryIds().map((value, key) => {
-            return (<SkillCategoryItem key={"SkillCategoryItem." + value} onItemSelect={this.props.onItemSelect} categoryId={value}/>)
+            return (<SkillCategoryItem key={"SkillCategoryItem." + value} onRatingChange={this.props.onRatingChange} categoryId={value}/>)
         }).toArray();
     };
 
-    private handleListItemClick = () => {
-        this.props.onItemSelect(this.props.category)
+    private renderSkills = () => {
+        return this.props.category.skillIds().map((value,key) => {
+            let skill: Skill = this.props.profile.getSkill(value);
+            return (
+            <div key={"SkillCategory.Skill.InsetDiv." + value} className={"indentedSkillCategory"}>
+                <SkillChip
+                    key={"SkillCategorySkill." + value}
+                    skill={skill}
+                    onRatingChange={this.props.onRatingChange}
+                    style={{margin: "4px"}}
+                />
+            </div>)
+        }).toArray();
     };
+
 
     private isLeaf = () => {
         return this.props.category.categoryIds().size <= 0;
@@ -80,12 +95,11 @@ class SkillCategoryItemModule extends React.Component<
         return (
             <div key={"SkillCategory.InsetDiv." + this.props.category.id()} className={"indentedSkillCategory"}>
                 <ListItem
-                        key={"SkillCategory.ListItem." + this.props.category.id()}
-                        onClick={this.handleListItemClick}
-                        primaryText={this.props.category.name()}
-                        nestedItems={this.renderSubCategories()}
-                        initiallyOpen={true}
-                        leftIcon={<FontIcon className="material-icons">{this.isLeaf() ? "label_outline" : "label"}</FontIcon>}/>
+                    primaryTogglesNestedList={true}
+                    key={"SkillCategory.ListItem." + this.props.category.id()}
+                    primaryText={this.props.category.name()}
+                    nestedItems={this.renderSubCategories().concat(this.renderSkills())}
+                    leftIcon={<FontIcon className="material-icons">{"label"}</FontIcon>}/>
             </div>);
     }
 }

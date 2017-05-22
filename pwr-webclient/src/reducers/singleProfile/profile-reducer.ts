@@ -109,6 +109,8 @@ export class ProfileReducer {
             if(isNullOrUndefined) {
                 skill = Skill.createNew(skillName);
                 profile = profile.skills(profile.skills().set(skill.id(), skill));
+                // Add the new skill to the root category; Let server categorize this.
+                profile = profile.addSkillToRoot(skill);
             }
             // Always add the skill id. IDs are represents by a set, so add can always be performed
             // without creating duplicates.

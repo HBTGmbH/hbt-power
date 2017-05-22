@@ -72,7 +72,7 @@ class SkillTreeModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: SkillTreeLocalProps): SkillTreeProps {
         return {
-            rootCategory: state.databaseReducer.profile().rootCategory(),
+            rootCategory: state.databaseReducer.profile().getCategory(state.databaseReducer.profile().rootCategoryId()),
             profile: state.databaseReducer.profile()
         };
     }
@@ -86,7 +86,7 @@ class SkillTreeModule extends React.Component<
     }
 
 
-    private renderSkillsForSelectedCategory = () => {
+    /*private renderSkillsForSelectedCategory = () => {
         let skillIds: Array<string> = this.props.profile.getAllNestedSkillIds(this.state.selectedCategory);
         return skillIds.map(skillId => {
             return(
@@ -100,7 +100,7 @@ class SkillTreeModule extends React.Component<
                     </SkillChip>
             );
         });
-    };
+    };*/
 
     private showSkillsForCategory = (category: SkillCategory) => {
         this.setState({
@@ -117,17 +117,9 @@ class SkillTreeModule extends React.Component<
                         <SkillCategoryItem
                             key={this.props.rootCategory.id()}
                             categoryId={this.props.rootCategory.id()}
-                            onItemSelect={this.showSkillsForCategory}
+                            onRatingChange={this.props.changeSkillRating}
                         />
                     </List>
-                </div>
-                <div className="col-md-12">
-                    <Subheader>{formatString(PowerLocalize.get('SkillOverview.Title'), this.state.selectedCategory.name())}</Subheader>
-                    <div style={this.chipContainerStyle}>
-                        {this.renderSkillsForSelectedCategory()}
-                    </div>
-                </div>
-                <div className="col-md-12">
                 </div>
             </div>
         );

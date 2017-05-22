@@ -88,7 +88,7 @@ export class Profile {
     @doop
     public get categories() { return doop<Immutable.Map<string, SkillCategory>, this>()};
     @doop
-    public get rootCategory() {return doop<SkillCategory, this>()};
+    public get rootCategoryId() {return doop<string, this>()};
 
     constructor(
         id: number,
@@ -102,7 +102,7 @@ export class Profile {
         projects: Immutable.Map<string, Project>,
         skills: Immutable.Map<string, Skill>,
         categories: Immutable.Map<string, SkillCategory>,
-        rootCategory: SkillCategory
+        rootCategoryId: string
     ) {
         return this.id(id)
             .currentPosition(currentPosition)
@@ -115,7 +115,7 @@ export class Profile {
             .projects(projects)
             .skills(skills)
             .categories(categories)
-            .rootCategory(rootCategory)
+            .rootCategoryId(rootCategoryId)
 
     }
 
@@ -283,7 +283,8 @@ export class Profile {
         });
 
         let rootCategories: Array<APICategory> = [];
-        this.rootCategory().categoryIds().forEach(id => {
+        let rootCategory = this.getCategory(this.rootCategoryId());
+        rootCategory.categoryIds().forEach(id => {
             rootCategories.push(this.getCategory(id).toAPI(this));
         });
 
@@ -309,7 +310,7 @@ export class Profile {
      * @returns {Profile}
      */
     public static createFromAPI(profile: APIProfile): Profile {
-        let root: SkillCategory = new SkillCategory("0", "root", Immutable.List<string>(), Immutable.List<string>());
+        let root: SkillCategory = new SkillCategory("___root", "root", Immutable.List<string>(), Immutable.List<string>());
         // set the root category correctly
         profile.rootCategories.forEach(rootCat => {
             root = root.categoryIds(root.categoryIds().push(String(rootCat.id)));
@@ -328,7 +329,7 @@ export class Profile {
             Profile.parseProjects(profile.projects),
             Profile.parseSkills(profile.rootCategories),
             categories,
-            root
+            root.id()
         );
     }
 
@@ -379,6 +380,16 @@ export class Profile {
         return res;
     }
 
+    /**
+     * Adds a skill to the root categorie and returns a copy of this profile with the changed root.
+     * @param skill
+     */
+    public addSkillToRoot(skill: Skill): Profile {
+        let root: SkillCategory = this.getCategory(this.rootCategoryId());
+        root = root.skillIds(root.skillIds().push(skill.id()));
+        return this.categories(this.categories().set(root.id(), root));
+    }
+
 
 
     /**
@@ -390,7 +401,7 @@ export class Profile {
      * @returns {Profile} the default profile.
      */
     public static createDefault(): Profile {
-        let root: SkillCategory = new SkillCategory("0", "root", Immutable.List<string>(), Immutable.List<string>());
+        let root: SkillCategory = new SkillCategory("__root__", "root", Immutable.List<string>(), Immutable.List<string>());
         return new Profile(
             -1,
             '',
@@ -403,7 +414,7 @@ export class Profile {
             Immutable.Map<string, Project>(),
             Immutable.Map<string, Skill>(),
             Immutable.Map<string, SkillCategory>().set(root.id(), root),
-            root
+            root.id()
         );
     }
 
