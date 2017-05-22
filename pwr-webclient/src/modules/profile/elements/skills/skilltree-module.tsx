@@ -1,18 +1,18 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
+import {CSSProperties} from 'react';
 import * as redux from 'redux';
 import {InternalDatabase} from '../../../../model/InternalDatabase';
 import {SkillCategory} from '../../../../model/SkillCategory';
 import {ApplicationState} from '../../../../Store';
 import {SkillCategoryItem} from './skill-category-item_module';
-import {Card, CardHeader, Chip, List, ListItem, Subheader} from 'material-ui';
-import {CSSProperties} from 'react';
-import {Skill} from '../../../../model/Skill';
+import {List, ListItem, RaisedButton, Subheader, FontIcon, TextField} from 'material-ui';
 import {Profile} from '../../../../model/Profile';
 import {SkillChip} from './skill-chip_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatString} from '../../../../utils/StringUtil';
+import {SkillSearcher} from '../../../general/skill-search_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -62,7 +62,7 @@ class SkillTreeModule extends React.Component<
         super(props);
         this.state = {
             selectedCategory: props.rootCategory
-        }
+        };
     }
 
     private chipContainerStyle: CSSProperties = {
@@ -74,15 +74,15 @@ class SkillTreeModule extends React.Component<
         return {
             rootCategory: state.databaseReducer.profile().rootCategory(),
             profile: state.databaseReducer.profile()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<InternalDatabase>): SkillTreeDispatch {
         return {
             changeSkillRating: (rating: number, id: string) => {
-                dispatch(ProfileActionCreator.updateSkillRating(rating, id))
+                dispatch(ProfileActionCreator.updateSkillRating(rating, id));
             }
-        }
+        };
     }
 
 
@@ -90,28 +90,30 @@ class SkillTreeModule extends React.Component<
         let skillIds: Array<string> = this.props.profile.getAllNestedSkillIds(this.state.selectedCategory);
         return skillIds.map(skillId => {
             return(
-            <SkillChip  style={{margin:"20px"}}
-                        key={skillId}
-                        skill={this.props.profile.getSkill(skillId)}
-                        onRatingChange={this.props.changeSkillRating}
-            >
-                {this.props.profile.getSkillName(skillId)}
-            </SkillChip>)
-        })
+                    <SkillChip
+                            key={skillId}
+                            style={{margin: '5px'}}
+                            skill={this.props.profile.getSkill(skillId)}
+                            onRatingChange={this.props.changeSkillRating}
+                    >
+                        {this.props.profile.getSkillName(skillId)}
+                    </SkillChip>
+            );
+        });
     };
 
     private showSkillsForCategory = (category: SkillCategory) => {
         this.setState({
             selectedCategory: category
-        })
+        });
     };
 
     render() {
         return (
             <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-12">
                     <List>
-                        <Subheader>{PowerLocalize.get("Category.Plural")}</Subheader>
+                        <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
                         <SkillCategoryItem
                             key={this.props.rootCategory.id()}
                             categoryId={this.props.rootCategory.id()}
@@ -119,16 +121,13 @@ class SkillTreeModule extends React.Component<
                         />
                     </List>
                 </div>
-                <div className="col-md-8">
-                    <Card style={{height: "100%"}}>
-                        <CardHeader
-                            title={formatString(PowerLocalize.get("SkillOverview.Title"), this.state.selectedCategory.name())}
-                        />
-                        <div style={this.chipContainerStyle}>
-                            {this.renderSkillsForSelectedCategory()}
-                        </div>
-                    </Card>
-
+                <div className="col-md-12">
+                    <Subheader>{formatString(PowerLocalize.get('SkillOverview.Title'), this.state.selectedCategory.name())}</Subheader>
+                    <div style={this.chipContainerStyle}>
+                        {this.renderSkillsForSelectedCategory()}
+                    </div>
+                </div>
+                <div className="col-md-12">
                 </div>
             </div>
         );

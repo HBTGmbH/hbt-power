@@ -11,6 +11,7 @@ import * as Immutable from 'immutable';
 import {isNullOrUndefined} from 'util';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {Skill} from '../../../../model/Skill';
 
 interface ProjectModuleProps {
     project: Project;

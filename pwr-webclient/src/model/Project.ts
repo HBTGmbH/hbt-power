@@ -47,6 +47,16 @@ export class Project {
         return doop<Immutable.List<string>, this>();
     }
 
+
+    /**
+     * Doops a list of skill ids.
+     * @returns {Doop<Immutable.List<string>, this>}
+     */
+    @doop
+    public get skillIDs() {
+        return doop<Immutable.List<string>, this>();
+    }
+
     @doop
     public get isNew() {
         return doop<boolean, this>();

@@ -1,5 +1,6 @@
 import {doop} from 'doop';
 import {APISkill} from './APIProfile';
+import {NEW_ENTITY_PREFIX} from './PwrConstants';
 @doop
 export class Skill {
     @doop
@@ -17,6 +18,8 @@ export class Skill {
         return doop<number, this>();
     }
 
+    private static CURRENT_ID: number = 0;
+
 
     constructor(name: string, id: string, rating: number) {
         return this.name(name).id(id).rating(rating);
@@ -28,6 +31,10 @@ export class Skill {
             name: this.name(),
             rating: this.rating()
         }
+    }
+
+    public static createNew(qualifier: string): Skill {
+        return new Skill(qualifier, NEW_ENTITY_PREFIX + String(Skill.CURRENT_ID++), 1);
     }
 
     public static fromAPI(apiSkill: APISkill) {

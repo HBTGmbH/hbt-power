@@ -4,7 +4,8 @@ import {
     Card,
     CardActions,
     CardHeader,
-    CardMedia, Checkbox,
+    CardMedia,
+    Chip,
     DatePicker,
     Dialog,
     IconButton,
@@ -20,6 +21,7 @@ import {InternalDatabase} from '../../../../model/InternalDatabase';
 import {isNullOrUndefined} from 'util';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {SkillSearcher} from '../../../general/skill-search_module';
 
 interface ProjectDialogProps {
     open: boolean;
@@ -33,6 +35,7 @@ interface ProjectDialogProps {
 interface ProjectDialogState {
     project: Project;
     roles: Immutable.List<string>;
+    rawSkills: Immutable.Set<string>;
     clientACValue: string; // Autocomplete value of the client field
     brokerACValue: string; // Autocomplete value of the broker field
 }
@@ -56,11 +59,13 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         props.project.roleIds().forEach(id => {
             roles.push(NameEntityUtil.getNullTolerantName(id, props.projectRoles));
         });
+
         this.state = {
             project: props.project,
             roles: Immutable.List<string>(roles),
             clientACValue: NameEntityUtil.getNullTolerantName(props.project.endCustomerId(), props.companies),
-            brokerACValue: NameEntityUtil.getNullTolerantName(props.project.brokerId(), props.companies)
+            brokerACValue: NameEntityUtil.getNullTolerantName(props.project.brokerId(), props.companies),
+            rawSkills: Immutable.Set<string>()
         };
     }
 
@@ -69,6 +74,14 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
             this.forceReset(props);
         }
     }
+
+    private renderSkills = () => {
+        let res: Array<JSX.Element> = [];
+        this.state.rawSkills.forEach(skill => {
+            res.push(<Chip style={{margin: 4}}>{skill}</Chip>)
+        });
+        return res;
+    };
 
     private changeStartDate = (n: undefined, date: Date) => {
         this.updateProject(this.state.project.startDate(date));
@@ -116,6 +129,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
             newCompanies.push(endCustomer);
         }
         project = project.endCustomerId(endCustomer.id());
+
         this.props.onSave(project, newRoles, newCompanies);
     };
 
@@ -162,6 +176,13 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         })
     };
 
+    private handleSkillRequest = (qualifier: string) => {
+        this.setState({
+            rawSkills: this.state.rawSkills.add(qualifier)
+        })
+
+    };
+
     public render () {
         return (
             <Dialog
@@ -173,6 +194,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                     <CardHeader
                         title={PowerLocalize.get('ProjectDialog.Title')}
                     />
+
                     <CardMedia>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
@@ -248,14 +270,32 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                     floatingLabelText={PowerLocalize.get('ProjectDialog.Description.LabelText')}
                                     fullWidth = {true}
                                     multiLine={true}
-                                    rows={8}
+                                    rows={4}
                                     value={this.state.project.description()}
                                     id={'Project.Description.' + this.state.project.id()}
                                     onChange={this.changeDescription}
                                 />
                             </div>
                         </div>
+                        <div className="row">
+                            <div className="col-md-offset-1 col-md-10" style={{display: "flex", flexWrap: "wrap"}}>
+                                {
+                                    this.renderSkills()
+                                }
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-10  col-md-offset-1">
+                                <SkillSearcher
+                                    id={"ProjectDialog.SkillSearcher." + this.props.project.id()}
+                                    onNewRequest={this.handleSkillRequest}
+                                />
+                            </div>
+                        </div>
                     </CardMedia>
+
+
+
                     <CardActions>
                         <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
                         <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>

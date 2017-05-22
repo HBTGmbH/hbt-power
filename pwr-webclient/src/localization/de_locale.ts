@@ -40,7 +40,7 @@ export const de_locale : any = {
     "TrainingEntry.Dialog.Title":"Weiterbildung bearbeiten",
     "Qualification.Dialog.Title":"Zusatzqualifikation bearbeiten",
     "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
-    "SkillOverview.Title": "Skills für Kategorie {0}",
+    "SkillOverview.Title": "Skills für Kategorie {0} (und Unterkategorien)",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

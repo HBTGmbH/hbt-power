@@ -4,11 +4,11 @@ import * as redux from 'redux';
 import {InternalDatabase} from '../../../../model/InternalDatabase';
 import {Project} from '../../../../model/Project';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
-import {ApplicationState, ProfileElementType} from '../../../../Store';
+import {ApplicationState} from '../../../../Store';
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {GridList, IconButton, GridTile} from 'material-ui';
+import {GridList, GridTile, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 
 /**
@@ -102,7 +102,6 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
             >
                 <ProjectCard
                     project={value}
-
                     onSave={this.props.saveProject}
                     onDelete={this.props.deleteProject}
                     companies={this.props.companies}

@@ -340,8 +340,23 @@ export class Profile {
         return this.skills().get(id);
     }
 
+    public static getSkillByName(name: string, skills: Immutable.Map<string, Skill>): Skill {
+        let res: Skill = null;
+        skills.some((skill: Skill, key: string) => {
+            if(skill.name() == name) {
+                res = skill;
+                return true;
+            }
+            return false;
+        });
+        return res;
+    }
     public getCategory(id: string): SkillCategory {
         return this.categories().get(id);
+    }
+
+    public getProject(id: string): Project {
+        return this.projects().get(id);
     }
 
     private getNestedSkills(category: SkillCategory, skillIds: Array<string>) {
