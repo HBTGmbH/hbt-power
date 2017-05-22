@@ -340,9 +340,9 @@ export class Profile {
         return this.skills().get(id);
     }
 
-    public static getSkillByName(name: string, skills: Immutable.Map<string, Skill>): Skill {
+    public getSkillByName(name: string): Skill {
         let res: Skill = null;
-        skills.some((skill: Skill, key: string) => {
+        this.skills().some((skill: Skill, key: string) => {
             if(skill.name() == name) {
                 res = skill;
                 return true;

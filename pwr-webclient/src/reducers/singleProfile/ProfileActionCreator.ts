@@ -10,6 +10,7 @@ import {
 } from './database-actions';
 import {Project} from '../../model/Project';
 import {Skill} from '../../model/Skill';
+import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
 
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
@@ -71,12 +72,10 @@ export class ProfileActionCreator {
         };
     }
 
-    public static saveProject(project: Project, newCompanies: Array<NameEntity>, newRoles: Array<NameEntity>): SaveProjectAction {
+    public static saveProject(state: ProjectDialogState): SaveProjectAction {
         return {
             type: ActionType.SaveProject,
-            project: project,
-            newCompanies: newCompanies,
-            newRoles: newRoles
+            state: state
         };
     }
 

@@ -10,6 +10,8 @@ import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {GridList, GridTile, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {ProjectDialogState} from './project-dialog_module';
+import {Profile} from '../../../../model/Profile';
 
 /**
  * Properties that are managed by react-redux.
@@ -24,6 +26,7 @@ interface ProjectsProps {
     projects: Immutable.Map<string, Project>;
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
+    profile: Profile;
 }
 
 /**
@@ -52,7 +55,7 @@ interface ProjectsLocalState {
  */
 interface ProjectsDispatch {
     deleteProject(id: string): void;
-    saveProject(project: Project, newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>): void;
+    saveProject(state: ProjectDialogState): void;
     addProject(): void;
 }
 
@@ -75,7 +78,8 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         return {
             projects: state.databaseReducer.profile().projects(),
             projectRoles: state.databaseReducer.projectRoles(),
-            companies: state.databaseReducer.companies()
+            companies: state.databaseReducer.companies(),
+            profile: state.databaseReducer.profile()
         };
     }
 
@@ -84,8 +88,8 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
             deleteProject: function(id: string) {
                 dispatch(ProfileActionCreator.deleteProject(id));
             },
-            saveProject: function(project: Project,  newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>) {
-                dispatch(ProfileActionCreator.saveProject(project, newCompanies, newRoles));
+            saveProject: function(state: ProjectDialogState) {
+                dispatch(ProfileActionCreator.saveProject(state));
             },
             addProject: function() {
                 dispatch(ProfileActionCreator.createProject());
@@ -106,6 +110,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
                     onDelete={this.props.deleteProject}
                     companies={this.props.companies}
                     projectRoles={this.props.projectRoles}
+                    profile={this.props.profile}
                 />
             </GridTile>);
     };

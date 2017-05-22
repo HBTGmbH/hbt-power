@@ -5,19 +5,21 @@ import {
 } from 'material-ui';
 import {Project} from '../../../../model/Project';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {ProjectDialog} from './project-dialog_module';
+import {ProjectDialog, ProjectDialogState} from './project-dialog_module';
 import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {isNullOrUndefined} from 'util';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {Skill} from '../../../../model/Skill';
+import {Profile} from '../../../../model/Profile';
 
 interface ProjectModuleProps {
     project: Project;
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
-    onSave(project: Project, newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>): void;
+    profile: Profile;
+    onSave(state: ProjectDialogState): void;
     onDelete(id: string): void;
 }
 
@@ -46,8 +48,8 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
         });
     };
 
-    private handleSaveRequest = (project: Project,  newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>) => {
-        this.props.onSave(project, newRoles, newCompanies);
+    private handleSaveRequest = (state: ProjectDialogState) => {
+        this.props.onSave(state);
         this.closeDialog();
     };
 
@@ -88,6 +90,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         onSave={this.handleSaveRequest}
                         companies={this.props.companies}
                         projectRoles={this.props.projectRoles}
+                                   profile={this.props.profile}
                     />
                     <CardText>
                         <label>Kurzbeschreibung</label><br/>

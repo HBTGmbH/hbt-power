@@ -9,6 +9,7 @@ import {AbstractAction} from '../reducerIndex';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {Skill} from '../../model/Skill';
+import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
 
 
 export interface ChangeStringValueAction extends AbstractAction {
@@ -57,9 +58,7 @@ export interface SaveEntryAction extends AbstractAction {
  * FIXME doc
  */
 export interface SaveProjectAction extends AbstractAction {
-    project: Project;
-    newCompanies: Array<NameEntity>;
-    newRoles: Array<NameEntity>
+    state: ProjectDialogState
 }
 
 export interface DeleteProjectAction extends AbstractAction {

@@ -99,14 +99,36 @@ function handleSaveEntry(database: InternalDatabase, action: SaveEntryAction): I
 }
 
 function handleSaveProject(database: InternalDatabase, action: SaveProjectAction): InternalDatabase {
-    let companies: Immutable.Map<string, NameEntity> = database.companies();
-    let roles: Immutable.Map<string, NameEntity> = database.projectRoles();
+    // project with role IDs cleared.
+    let project: Project = action.state.project.roleIds(action.state.project.roleIds().clear());
+    project = project.roleIds(project.roleIds().clear());
+    action.state.roles.forEach(role => {
+        let projectRole: NameEntity = InternalDatabase.findNameEntityByName(role, database.projectRoles());
+        if(isNullOrUndefined(projectRole)) {
+            projectRole = NameEntity.createNew(role);
+            database = database.projectRoles(database.projectRoles().set(projectRole.id(), projectRole));
+        }
+        project = project.roleIds(project.roleIds().push(projectRole.id()));
+    });
 
-    action.newCompanies.forEach(cmp => companies = companies.set(cmp.id(), cmp));
-    action.newRoles.forEach(role => roles = roles.set(role.id(), role));
+    // Fix end customer and broker
+    let broker: NameEntity = InternalDatabase.findNameEntityByName(action.state.brokerACValue, database.companies());
+    if(isNullOrUndefined(broker)) {
+        broker = NameEntity.createNew(action.state.brokerACValue);
+        database = database.companies(database.companies().set(broker.id(), broker));
+    }
+    project = project.brokerId(broker.id());
 
-    let profile: Profile = database.profile().projects(database.profile().projects().set(action.project.id(), action.project));
-    return database.companies(companies).projectRoles(roles).profile(profile);
+    // End customer
+    let endCustomer: NameEntity = InternalDatabase.findNameEntityByName(action.state.clientACValue, database.companies());
+    if(isNullOrUndefined(endCustomer)) {
+        endCustomer = NameEntity.createNew(action.state.brokerACValue);
+        database = database.companies(database.companies().set(endCustomer.id(), endCustomer));
+    }
+    project = project.endCustomerId(endCustomer.id());
+
+    let profile: Profile = ProfileReducer.reducerHandleSaveProject(database.profile(), project, action.state.rawSkills);
+    return database.profile(profile);
 }
 
 function handleLogInUser(state: InternalDatabase, action: LoginAction): InternalDatabase {

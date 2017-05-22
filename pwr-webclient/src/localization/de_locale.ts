@@ -41,7 +41,7 @@ export const de_locale : any = {
     "Qualification.Dialog.Title":"Zusatzqualifikation bearbeiten",
     "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
     "SkillOverview.Title": "Skills für Kategorie {0} (und Unterkategorien)",
-
+    "ProjectSkills.Label": "Projektspezifische Skills",
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
     "Profile.Description": "Werbetext",

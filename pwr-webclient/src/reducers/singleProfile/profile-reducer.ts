@@ -1,6 +1,6 @@
 import {Profile} from '../../model/Profile';
 import {
-    ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction,
+    ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, SaveEntryAction, SaveProjectAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {EducationEntry} from '../../model/EducationEntry';
@@ -10,6 +10,8 @@ import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
 import {Skill} from '../../model/Skill';
+import {isNull, isNullOrUndefined} from 'util';
+import {Project} from '../../model/Project';
 export class ProfileReducer {
 
     private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
@@ -86,6 +88,34 @@ export class ProfileReducer {
                 break;
         }
         return ProfileReducer.updateEntry(profile, entry, action.entryType);
+    }
+
+    /**
+     * Saves a project.
+     * - Checks skills for existence and creates new skills if none are found.
+     * - adds skill ids to the project.
+     * - updates the project in the profiles project list with the project given in action
+     * and the skill ids of that project updates (but nothing else)
+     * @param profile
+     * @param project
+     * @param rawSkills
+     * @returns {Profile}
+     */
+    public static reducerHandleSaveProject(profile: Profile, project: Project, rawSkills: Immutable.Set<string>): Profile {
+        // Check raw skills. If no skill with the name exists, add it to profile.
+        let projectSkillIds = project.skillIDs();
+       rawSkills.forEach(skillName => {
+            let skill: Skill = profile.getSkillByName(skillName);
+            if(isNullOrUndefined) {
+                skill = Skill.createNew(skillName);
+                profile = profile.skills(profile.skills().set(skill.id(), skill));
+            }
+            // Always add the skill id. IDs are represents by a set, so add can always be performed
+            // without creating duplicates.
+            projectSkillIds = projectSkillIds.add(skill.id());
+        });
+        project = project.skillIDs(projectSkillIds);
+        return profile.projects(profile.projects().set(project.id(), project));
     }
 
     public static reducerHandleUpdateSkillRating(profile: Profile, action: UpdateSkillRatingAction): Profile {

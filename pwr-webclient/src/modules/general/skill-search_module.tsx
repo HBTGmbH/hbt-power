@@ -44,9 +44,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         let reqParams = {
             maxResults: this.props.maxResults
         };
-        console.log("Requesting skills");
         axios.get(this.props.apiUrl + searchText, {params: reqParams}).then((response: AxiosResponse) => {
-            console.log("Skills", response.data);
             if(response.status === 200) {
                 this.setState({
                     skills: response.data

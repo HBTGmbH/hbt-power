@@ -54,7 +54,7 @@ export class Project {
      */
     @doop
     public get skillIDs() {
-        return doop<Immutable.List<string>, this>();
+        return doop<Immutable.Set<string>, this>();
     }
 
     @doop
@@ -65,7 +65,8 @@ export class Project {
     private static CURRENT_ID: number = 0;
 
     private constructor(id: string, name: string, endCustomerId: string, startDate: Date, endDate: Date,
-                        description: string, brokerId: string, roleIds: Immutable.List<string>, isNew: boolean) {
+                        description: string, brokerId: string, roleIds: Immutable.List<string>, isNew: boolean,
+                        skillIds: Immutable.Set<string>) {
         this.id(id)
             .name(name)
             .endCustomerId(endCustomerId)
@@ -73,8 +74,9 @@ export class Project {
             .endDate(endDate)
             .description(description)
             .brokerId(brokerId)
-            .roleIds(roleIds).
-            isNew(isNew);
+            .roleIds(roleIds)
+            .isNew(isNew)
+            .skillIDs(skillIds);
     }
 
     private rolesToAPI(roles: Immutable.Map<string, NameEntity>): Array<APINameEntity> {
@@ -116,7 +118,8 @@ export class Project {
             "",
             null,
             Immutable.List<string>(),
-            true);
+            true,
+            Immutable.Set<string>());
     }
 
     public static fromAPI(project: APIProject): Project {
@@ -129,7 +132,8 @@ export class Project {
             project.description,
             String(project.broker.id),
             Project.parseRoles(project),
-            false
+            false,
+            Immutable.Set<string>()
         )
     }
 

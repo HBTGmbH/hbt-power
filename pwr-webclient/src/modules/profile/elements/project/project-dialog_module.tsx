@@ -7,9 +7,9 @@ import {
     CardMedia,
     Chip,
     DatePicker,
-    Dialog,
+    Dialog, Divider,
     IconButton,
-    TextField
+    TextField, Subheader
 } from 'material-ui';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {Project} from '../../../../model/Project';
@@ -22,17 +22,20 @@ import {isNullOrUndefined} from 'util';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {SkillSearcher} from '../../../general/skill-search_module';
+import {Skill} from '../../../../model/Skill';
+import {Profile} from '../../../../model/Profile';
 
 interface ProjectDialogProps {
     open: boolean;
     project: Project;
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
+    profile: Profile;
     onClose(): void;
-    onSave(project: Project, newRoles: Array<NameEntity>, newCompanies: Array<NameEntity>): void;
+    onSave(state: ProjectDialogState): void;
 }
 
-interface ProjectDialogState {
+export interface ProjectDialogState {
     project: Project;
     roles: Immutable.List<string>;
     rawSkills: Immutable.Set<string>;
@@ -59,13 +62,16 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         props.project.roleIds().forEach(id => {
             roles.push(NameEntityUtil.getNullTolerantName(id, props.projectRoles));
         });
-
+        let rawSkills = Immutable.Set<string>();
+        props.project.skillIDs().forEach(id => {
+            rawSkills = rawSkills.add(this.props.profile.getSkillName(id));
+        });
         this.state = {
             project: props.project,
             roles: Immutable.List<string>(roles),
             clientACValue: NameEntityUtil.getNullTolerantName(props.project.endCustomerId(), props.companies),
             brokerACValue: NameEntityUtil.getNullTolerantName(props.project.brokerId(), props.companies),
-            rawSkills: Immutable.Set<string>()
+            rawSkills: rawSkills
         };
     }
 
@@ -76,11 +82,9 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
     }
 
     private renderSkills = () => {
-        let res: Array<JSX.Element> = [];
-        this.state.rawSkills.forEach(skill => {
-            res.push(<Chip style={{margin: 4}}>{skill}</Chip>)
+        return this.state.rawSkills.map(skill => {
+           return (<Chip key={'SkillChip_' + skill} style={{margin: 4}}>{skill}</Chip>);
         });
-        return res;
     };
 
     private changeStartDate = (n: undefined, date: Date) => {
@@ -100,37 +104,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
     };
 
     private handleSaveButtonPress = () => {
-
-        // Fix roles
-        // Array of newley created roles: Roles that did not exist before.
-        let newRoles: Array<NameEntity> = [];
-        // project with role IDs cleared.
-        let project: Project = this.state.project.roleIds(this.state.project.roleIds().clear());
-        this.state.roles.forEach(role => {
-            let projectRole: NameEntity = InternalDatabase.findNameEntityByName(role, this.props.projectRoles);
-            if(isNullOrUndefined(projectRole)) {
-                projectRole = NameEntity.createNew(role);
-                newRoles.push(projectRole);
-            }
-            project = project.roleIds(project.roleIds().push(projectRole.id()));
-        });
-        // Fix end customer and broker
-        let newCompanies: Array<NameEntity> = [];
-        let broker: NameEntity = InternalDatabase.findNameEntityByName(this.state.brokerACValue, this.props.companies);
-        if(isNullOrUndefined(broker)) {
-            broker = NameEntity.createNew(this.state.brokerACValue);
-            newCompanies.push(broker);
-        }
-        project = project.brokerId(broker.id());
-        // End customer
-        let endCustomer: NameEntity = InternalDatabase.findNameEntityByName(this.state.clientACValue, this.props.companies);
-        if(isNullOrUndefined(endCustomer)) {
-            endCustomer = NameEntity.createNew(this.state.brokerACValue);
-            newCompanies.push(endCustomer);
-        }
-        project = project.endCustomerId(endCustomer.id());
-
-        this.props.onSave(project, newRoles, newCompanies);
+        this.props.onSave(this.state);
     };
 
     private handleCloseButtonPress = () => {
@@ -142,44 +116,44 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         if(this.state.roles.size < 3){ // TODO remove hardcoding
             this.setState({
                 roles: this.state.roles.push(value)
-            })
+            });
         }
     };
 
     private handleRemoveRole = (value: string) => {
         this.setState({
             roles: Immutable.List<string>(this.state.roles.filter(val => val != value))
-        })
+        });
     };
 
     private handleEndCustomerRequest = (chosenRequest: string, index: number) => {
         this.setState({
             clientACValue: chosenRequest
-        })
+        });
     };
 
     private handleEndCustomerInput = (text: string) => {
         this.setState({
             clientACValue: text
-        })
+        });
     };
 
     private handleBrokerRequest = (chosenRequest: string, index: number) => {
         this.setState({
             brokerACValue: chosenRequest
-        })
+        });
     };
 
     private handleBrokerInput = (text: string) => {
         this.setState({
             brokerACValue: text
-        })
+        });
     };
 
     private handleSkillRequest = (qualifier: string) => {
         this.setState({
             rawSkills: this.state.rawSkills.add(qualifier)
-        })
+        });
 
     };
 
@@ -255,10 +229,10 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                         <div className="row">
                             <div className="col-md-offset-1 col-md-10">
                                 <ChipInput
-                                    floatingLabelText={PowerLocalize.get("Project.Dialog.Roles.Title")}
+                                    floatingLabelText={PowerLocalize.get('Project.Dialog.Roles.Title')}
                                     value={this.state.roles.toArray()}
                                     dataSource={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
-                                    style={{"width": "100%"}}
+                                    style={{'width': '100%'}}
                                     onRequestAdd={this.handleAddRole}
                                     onRequestDelete={this.handleRemoveRole}
                                 />
@@ -277,19 +251,23 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                 />
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-md-offset-1 col-md-10" style={{display: "flex", flexWrap: "wrap"}}>
-                                {
-                                    this.renderSkills()
-                                }
-                            </div>
-                        </div>
+
                         <div className="row">
                             <div className="col-md-10  col-md-offset-1">
                                 <SkillSearcher
-                                    id={"ProjectDialog.SkillSearcher." + this.props.project.id()}
+                                    floatingLabelText={PowerLocalize.get('ProjectSkills.Label')}
+                                    id={'ProjectDialog.SkillSearcher.' + this.props.project.id()}
                                     onNewRequest={this.handleSkillRequest}
                                 />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-offset-1 col-md-10">
+                                <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                    {
+                                        this.renderSkills()
+                                    }
+                                </div>
                             </div>
                         </div>
                     </CardMedia>
