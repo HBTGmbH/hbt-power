@@ -310,7 +310,7 @@ export class Profile {
      * @returns {Profile}
      */
     public static createFromAPI(profile: APIProfile): Profile {
-        let root: SkillCategory = new SkillCategory("___root", "root", Immutable.List<string>(), Immutable.List<string>());
+        let root: SkillCategory = new SkillCategory("___root", "root", Immutable.Set<string>(), Immutable.List<string>());
         // set the root category correctly
         profile.rootCategories.forEach(rootCat => {
             root = root.categoryIds(root.categoryIds().push(String(rootCat.id)));
@@ -386,7 +386,7 @@ export class Profile {
      */
     public addSkillToRoot(skill: Skill): Profile {
         let root: SkillCategory = this.getCategory(this.rootCategoryId());
-        root = root.skillIds(root.skillIds().push(skill.id()));
+        root = root.skillIds(root.skillIds().add(skill.id()));
         return this.categories(this.categories().set(root.id(), root));
     }
 
@@ -401,7 +401,7 @@ export class Profile {
      * @returns {Profile} the default profile.
      */
     public static createDefault(): Profile {
-        let root: SkillCategory = new SkillCategory("__root__", "root", Immutable.List<string>(), Immutable.List<string>());
+        let root: SkillCategory = new SkillCategory("__root__", "root", Immutable.Set<string>(), Immutable.List<string>());
         return new Profile(
             -1,
             '',

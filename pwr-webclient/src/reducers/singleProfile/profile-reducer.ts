@@ -103,10 +103,10 @@ export class ProfileReducer {
      */
     public static reducerHandleSaveProject(profile: Profile, project: Project, rawSkills: Immutable.Set<string>): Profile {
         // Check raw skills. If no skill with the name exists, add it to profile.
-        let projectSkillIds = project.skillIDs();
+        let projectSkillIds = project.skillIDs().clear();
        rawSkills.forEach(skillName => {
             let skill: Skill = profile.getSkillByName(skillName);
-            if(isNullOrUndefined) {
+            if(isNullOrUndefined(skill)) {
                 skill = Skill.createNew(skillName);
                 profile = profile.skills(profile.skills().set(skill.id(), skill));
                 // Add the new skill to the root category; Let server categorize this.

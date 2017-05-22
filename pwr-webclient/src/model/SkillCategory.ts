@@ -19,7 +19,7 @@ export class SkillCategory {
 
     @doop
     public get skillIds() {
-        return doop<Immutable.List<string>, this>();
+        return doop<Immutable.Set<string>, this>();
     }
 
     @doop
@@ -27,7 +27,7 @@ export class SkillCategory {
         return doop<Immutable.List<string>, this>();
     }
 
-    public constructor(id: string, name: string, skillIds: Immutable.List<string>, categoryIds: Immutable.List<string>) {
+    public constructor(id: string, name: string, skillIds: Immutable.Set<string>, categoryIds: Immutable.List<string>) {
         return this.id(id).name(name).skillIds(skillIds).categoryIds(categoryIds);
     }
 
@@ -50,13 +50,13 @@ export class SkillCategory {
     }
 
     public static fromAPI(apiCategory: APICategory): SkillCategory {
-        let skillIds: Immutable.List<string> = Immutable.List<string>();
+        let skillIds: Immutable.Set<string> = Immutable.Set<string>();
         let categoryIds: Immutable.List<string> = Immutable.List<string>();
         apiCategory.categories.forEach(apiCategory => {
             categoryIds = categoryIds.push(String(apiCategory.id));
         });
         apiCategory.skills.forEach(apiSkill => {
-            skillIds = skillIds.push(String(apiSkill.id));
+            skillIds = skillIds.add(String(apiSkill.id));
         });
         return new SkillCategory(
             String(apiCategory.id),
