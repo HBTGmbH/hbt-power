@@ -20,6 +20,7 @@ import * as Immutable from 'immutable';
 import {TrainingEntry} from '../../../../model/TrainingEntry';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
 
 
 interface TrainingEntryDialogProps {
@@ -177,6 +178,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     dataSource={this.props.trainings.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEducationFieldInput}
                                     onNewRequest={this.handleEducationFieldRequest}
+                                    filter={AutoComplete.fuzzyFilter}
                                 />
                             </div>
                         </div>

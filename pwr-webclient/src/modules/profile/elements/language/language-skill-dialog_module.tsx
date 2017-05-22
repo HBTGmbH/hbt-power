@@ -19,6 +19,7 @@ import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../model/LanguageSkill';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
 
 
 interface EducationEntryDialogLocalProps {
@@ -152,6 +153,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                     dataSource={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleLanguageFieldInput}
                                     onNewRequest={this.handleLanguageFieldRequest}
+                                    filter={AutoComplete.fuzzyFilter}
                                 />
                         </div>
                     </CardMedia>

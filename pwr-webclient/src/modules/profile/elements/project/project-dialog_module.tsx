@@ -24,6 +24,7 @@ import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {SkillSearcher} from '../../../general/skill-search_module';
 import {Skill} from '../../../../model/Skill';
 import {Profile} from '../../../../model/Profile';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
 
 interface ProjectDialogProps {
     open: boolean;
@@ -211,6 +212,8 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                         dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                         onUpdateInput={this.handleBrokerInput}
                                         onNewRequest={this.handleBrokerRequest}
+                                        filter={AutoComplete.levenshteinDistanceFilter(LEVENSHTEIN_FILTER_LEVEL)}
+
                                     />
                                 </div>
                             </div>
@@ -223,6 +226,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                     dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEndCustomerInput}
                                     onNewRequest={this.handleEndCustomerRequest}
+                                    filter={AutoComplete.fuzzyFilter}
                                 />
                             </div>
                         </div>
@@ -235,6 +239,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                     style={{'width': '100%'}}
                                     onRequestAdd={this.handleAddRole}
                                     onRequestDelete={this.handleRemoveRole}
+                                    filter={AutoComplete.fuzzyFilter}
                                 />
                             </div>
                         </div>

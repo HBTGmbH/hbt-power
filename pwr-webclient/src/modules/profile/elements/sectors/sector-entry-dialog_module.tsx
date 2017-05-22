@@ -9,6 +9,7 @@ import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../model/SectorEntry';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
 
 
 interface SectorEntryDialogProps {
@@ -119,6 +120,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                                     dataSource={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleSectorFieldInput}
                                     onNewRequest={this.handleSectorFieldRequest}
+                                    filter={AutoComplete.fuzzyFilter}
                                 />
                             </div>
                         </div>

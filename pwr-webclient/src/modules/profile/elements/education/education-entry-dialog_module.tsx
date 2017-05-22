@@ -21,6 +21,7 @@ import {NameEntity} from '../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
 
 
 interface EducationEntryDialogLocalProps {
@@ -203,6 +204,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     dataSource={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEducationFieldInput}
                                     onNewRequest={this.handleEducationFieldRequest}
+                                    filter={AutoComplete.fuzzyFilter}
                                 />
                             </div>
                         </div>

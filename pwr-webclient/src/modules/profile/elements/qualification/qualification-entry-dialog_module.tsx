@@ -20,6 +20,7 @@ import {QualificationEntry} from '../../../../model/QualificationEntry';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
 
 
 interface QualificationEntryDialogProps {
@@ -148,6 +149,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                                     dataSource={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleQualificationFieldInput}
                                     onNewRequest={this.handleLanguageFieldRequest}
+                                    filter={AutoComplete.fuzzyFilter}
                                 />
                             </div>
                         </div>
