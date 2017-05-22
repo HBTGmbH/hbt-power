@@ -54,7 +54,6 @@ class SkillCategoryItemModule extends React.Component<
     & SkillCategoryItemDispatch, SkillCategoryItemLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: SkillCategoryItemLocalProps): SkillCategoryItemProps {
-        console.log("MapStateToProps", state.databaseReducer.profile().getCategory(localProps.categoryId));
         return {
             profile: state.databaseReducer.profile(),
             category: state.databaseReducer.profile().getCategory(localProps.categoryId)

@@ -82,9 +82,22 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         }
     }
 
+    private handleDeleteSkill = (skill : string) => {
+        this.setState({
+            rawSkills: this.state.rawSkills.remove(skill)
+        })
+    };
+
     private renderSkills = () => {
         return this.state.rawSkills.map(skill => {
-           return (<Chip key={'SkillChip_' + skill} style={{margin: 4}}>{skill}</Chip>);
+           return (
+               <Chip
+                   key={'SkillChip_' + skill}
+                   style={{margin: 4}}
+                   onRequestDelete={() => {this.handleDeleteSkill(skill)}}
+               >
+               {skill}
+               </Chip>);
         });
     };
 

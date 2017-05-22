@@ -59,8 +59,11 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         });
     };
 
-    private handleRequest = () => {
-
+    private handleRequest = (request: string) => {
+        this.setState({
+            searchText: " "
+        });
+        this.props.onNewRequest(request)
     };
     render() {
         return (
@@ -69,7 +72,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 floatingLabelText={this.props.floatingLabelText}
                 dataSource={this.state.skills}
                 searchText={this.state.searchText}
-                onNewRequest={this.props.onNewRequest}
+                onNewRequest={this.handleRequest}
                 onUpdateInput={this.requestSkills}
                 filter={AutoComplete.noFilter}
             />)
