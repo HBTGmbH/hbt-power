@@ -45,6 +45,10 @@ export const de_locale : any = {
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
     "Profile.Description": "Werbetext",
+    "Tooolbar.LogOut": "Ausloggen",
+    "Menu.BaseData": "Stammdaten",
+    "Menu.Views": "Views",
+    "Menu.Reports": "Exportdokumente",
 
     "None": "Kein",
     // == ACTIONS == //

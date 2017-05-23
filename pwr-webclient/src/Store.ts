@@ -1,11 +1,9 @@
-import {ConsultantProps} from './modules/consultant_module';
 import {InternalDatabase} from './model/InternalDatabase';
 
 /**
  * State encapsulating all consultants.
  */
 export interface AllConsultantsState {
-    consultants: Array<ConsultantProps>;
     requestingConsultants: boolean;
 }
 

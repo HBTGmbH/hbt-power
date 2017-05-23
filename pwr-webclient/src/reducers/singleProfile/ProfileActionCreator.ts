@@ -4,12 +4,13 @@ import {NameEntity} from '../../model/NameEntity';
 import {
     ChangeStringValueAction,
     CreateEntryAction,
-    DeleteEntryAction, DeleteProjectAction,
+    DeleteEntryAction,
+    DeleteProjectAction,
     ReceiveAPIResponseAction,
-    SaveEntryAction, SaveProjectAction, UpdateNameEntityAction, UpdateSkillRatingAction
+    SaveEntryAction,
+    SaveProjectAction,
+    UpdateSkillRatingAction
 } from './database-actions';
-import {Project} from '../../model/Project';
-import {Skill} from '../../model/Skill';
 import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
 
 export class ProfileActionCreator {

@@ -132,7 +132,7 @@ function handleSaveProject(database: InternalDatabase, action: SaveProjectAction
 }
 
 function handleLogInUser(state: InternalDatabase, action: LoginAction): InternalDatabase {
-    browserHistory.push('/home');
+    browserHistory.push('/app/profile');
     return state.loggedInUser(action.initials); // TODO
 }
 
@@ -145,7 +145,6 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
     if(isNullOrUndefined(state)) {
         state = initialState;
     }
-    deepFreeze(state);
     console.log('DatabaseReducer called for action type ' + ActionType[action.type]);
     switch(action.type) {
         // == Profile Element modification == //

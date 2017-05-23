@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {Card, CardHeader, Divider, IconButton, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
+import {Card, CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -87,63 +87,56 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     render() {
         return(
-            <div className="row">
-                <div className="col-md-1"/>
-                <div className="col-md-10">
-                    <Card style={{'padding': '20px'}}>
-                        <Tabs>
-                            <Tab label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
-                                <CardHeader
-                                    title="John Doe"
-                                    avatar="/img/crazy_lama.jpg"
-                                />
-                                <Divider/>
+           <Paper>
+                <Tabs>
+                    <Tab label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
+                        <CardHeader
+                            title="John Doe"
+                            avatar="/img/crazy_lama.jpg"
+                        />
+                        <Divider/>
 
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <ProfileDescription
-                                        hintText={PowerLocalize.get("Profile.Description")}
-                                        initialMaxCharacters={500}
-                                    />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <LanguageSkills/>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <TrainingEntries/>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <EducationList/>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <Qualifications/>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <Sectors/>
-                                    </div>
-                                </div>
-                            </Tab>
-                            <Tab label={PowerLocalize.get("ProfileModule.Tabs.Projects.Title")}>
-                                <Projects/>
-                            </Tab>
-                            <Tab label="Skills">
-                                <SkillTree/>
-                            </Tab>
-                        </Tabs>
-                        <Toolbar style={this.cardToolbarStyle}>
-                            <IconButton iconClassName="material-icons" onClick={this.handleSaveProfile} tooltip={PowerLocalize.get('Action.Save')}>done</IconButton>
-                            <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Update')}>update</IconButton>
-                            <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
-                        </Toolbar>
-
-                    </Card>
-                </div>
-                <div className="col-md-1"/>
-            </div>
+                        <div className="row">
+                            <div className="col-md-6">
+                                <ProfileDescription
+                                hintText={PowerLocalize.get("Profile.Description")}
+                                initialMaxCharacters={500}
+                            />
+                            </div>
+                            <div className="col-md-6">
+                                <LanguageSkills/>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-6">
+                                <TrainingEntries/>
+                            </div>
+                            <div className="col-md-6">
+                                <EducationList/>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-6">
+                                <Qualifications/>
+                            </div>
+                            <div className="col-md-6">
+                                <Sectors/>
+                            </div>
+                        </div>
+                    </Tab>
+                    <Tab label={PowerLocalize.get("ProfileModule.Tabs.Projects.Title")}>
+                        <Projects/>
+                    </Tab>
+                    <Tab label="Skills">
+                        <SkillTree/>
+                    </Tab>
+                </Tabs>
+                <Toolbar style={this.cardToolbarStyle}>
+                    <IconButton iconClassName="material-icons" onClick={this.handleSaveProfile} tooltip={PowerLocalize.get('Action.Save')}>done</IconButton>
+                    <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Update')}>update</IconButton>
+                    <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
+                </Toolbar>
+           </Paper>
         );
     }
 }

@@ -4,7 +4,8 @@ import {
     getCompanySuggestionsAPIString,
     getEducationSuggestionAPIString,
     getLangSuggestionAPIString,
-    getProfileAPIString, getProjectRolesSuggestionAPIString,
+    getProfileAPIString,
+    getProjectRolesSuggestionAPIString,
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
     getTrainingSuggestionAPIString
