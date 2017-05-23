@@ -8,6 +8,12 @@ import {Link} from 'react-router';
 
 export class PowerClient extends React.Component<{}, {}> {
 
+
+    private iDontCareAboutDesign = () => {
+        alert("Das ist mir sowas von egal.");
+        alert("Kauf einen Designer ein.");
+    };
+
     render() {
         return <div>
             <PowerToolbar/>
@@ -19,6 +25,7 @@ export class PowerClient extends React.Component<{}, {}> {
                             <Link to="/app/profile"><ListItem primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
                             <Link to="/app/views"><ListItem primaryText={PowerLocalize.get("Menu.Views")} /></Link>
                             <Link to="/app/reports"><ListItem primaryText={PowerLocalize.get("Menu.Reports")} /></Link>
+                            <ListItem onClick={this.iDontCareAboutDesign} primaryText="Das Design ist doof!" />
                         </List>
                     </Paper>
                 </div>

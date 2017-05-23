@@ -148,7 +148,7 @@ class PowerLoginModule extends React.Component<
             return PowerLocalize.get("Password.Singular");
         }
         return "";
-    }
+    };
 
     private renderInputField = () => {
         return (<TextField
@@ -184,7 +184,7 @@ class PowerLoginModule extends React.Component<
                     </div>
                     <div className="row">
                         <div className="col-md-offset-1">
-                            <RaisedButton label="Weiter" primary={true}/>
+                            <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
                         </div>
                     </div>
 

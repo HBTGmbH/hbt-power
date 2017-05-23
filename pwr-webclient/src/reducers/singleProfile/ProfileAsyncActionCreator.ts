@@ -18,6 +18,7 @@ import {ActionType} from '../reducerIndex';
 
 export class ProfileAsyncActionCreator {
 
+
     /**
      *
      * @param initials
@@ -148,11 +149,19 @@ export class ProfileAsyncActionCreator {
 
     public static logInUser(initials: string) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            dispatch({
-                type: ActionType.LogInUser,
-                initials: initials
+            axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
+                let profile: APIProfile = Object.assign({}, response.data);
+                // Parse the dates.
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile));
+                dispatch({
+                    type: ActionType.LogInUser,
+                    initials: initials
+                });
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
             });
-            dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+
         }
     }
 

@@ -35,7 +35,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     public static defaultProps: Partial<SkillSearcherProps> = {
         floatingLabelText: "",
-        apiUrl: "http://localhost:8080/skill/search/",
+        apiUrl: "http://power02.corp.hbt.de:9000/api/skills/skill/search/",
         maxResults: 10,
         onNewRequest: request => {}
     };

@@ -132,7 +132,7 @@ function handleSaveProject(database: InternalDatabase, action: SaveProjectAction
 }
 
 function handleLogInUser(state: InternalDatabase, action: LoginAction): InternalDatabase {
-    browserHistory.push('/app/profile');
+    browserHistory.push('/app/home');
     return state.loggedInUser(action.initials); // TODO
 }
 
@@ -198,6 +198,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         case ActionType.ShowProfile: {
             browserHistory.push('/app/profile');
             return state;
+        }
+        case ActionType.LogOutUser: {
+            browserHistory.push('/');
+            return state.profile(Profile.createDefault());
         }
         default:
             return state;

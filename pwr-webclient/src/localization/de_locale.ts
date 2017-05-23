@@ -52,6 +52,7 @@ export const de_locale : any = {
     "Menu.BaseData": "Stammdaten",
     "Menu.Views": "Views",
     "Menu.Reports": "Exportdokumente",
+    "Menu.Home": "Übersicht",
 
     "None": "Kein",
     // == ACTIONS == //

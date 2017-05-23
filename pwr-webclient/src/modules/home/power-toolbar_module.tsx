@@ -1,4 +1,4 @@
-import {connect} from 'react-redux';
+import {ActionCreator, connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
@@ -7,6 +7,7 @@ import {
     ToolbarTitle
 } from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {ProfileActionCreator} from '../../reducers/singleProfile/ProfileActionCreator';
 
 interface ToolbarProps {
     userInitials: string;
@@ -32,7 +33,7 @@ interface ToolbarLocalState {
 }
 
 interface ToolbarDispatch {
-
+    logOutUser(): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -50,7 +51,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ToolbarDispatch {
         return {
-
+            logOutUser: function() {
+                dispatch(ProfileActionCreator.logOutUser());
+            }
         };
     }
 
@@ -88,7 +91,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         <div style={{marginRight: "30px", textAlign: "right", color:"white"}} >
                             <span style={{paddingRight:"15px"}}>{PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.props.userInitials}</span>
                             <br/>
-                            <FlatButton label={PowerLocalize.get("Tooolbar.LogOut")} />
+                            <FlatButton onClick={this.props.logOutUser} label={PowerLocalize.get("Tooolbar.LogOut")} />
                         </div>
                         <div style={{marginRight: "50px"}}>
                             <Avatar size={70} src="/img/crazy_lama.jpg" />

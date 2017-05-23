@@ -2,9 +2,8 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
-import {Divider, FlatButton, Paper, RaisedButton, Subheader, TextField} from 'material-ui';
+import {FlatButton, FontIcon, Paper, TextField} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {FontIcon} from 'material-ui';
 
 
 /**

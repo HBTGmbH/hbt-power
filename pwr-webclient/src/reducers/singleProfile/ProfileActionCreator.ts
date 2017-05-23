@@ -108,6 +108,12 @@ export class ProfileActionCreator {
         }
     }
 
+    public static logOutUser(): AbstractAction {
+        return {
+            type: ActionType.LogOutUser
+        }
+    }
+
 }
 
 
