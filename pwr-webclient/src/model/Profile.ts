@@ -89,6 +89,10 @@ export class Profile {
     public get categories() { return doop<Immutable.Map<string, SkillCategory>, this>()};
     @doop
     public get rootCategoryId() {return doop<string, this>()};
+    @doop
+    public get lastEdited() { return doop<Date, this>();}
+    @doop
+    public get lastEditedBy() {return doop<string, this>();}
 
     constructor(
         id: number,
@@ -102,7 +106,9 @@ export class Profile {
         projects: Immutable.Map<string, Project>,
         skills: Immutable.Map<string, Skill>,
         categories: Immutable.Map<string, SkillCategory>,
-        rootCategoryId: string
+        rootCategoryId: string,
+        lastEdited: Date,
+        lastEditedBy: string
     ) {
         return this.id(id)
             .currentPosition(currentPosition)
@@ -116,6 +122,8 @@ export class Profile {
             .skills(skills)
             .categories(categories)
             .rootCategoryId(rootCategoryId)
+            .lastEdited(lastEdited)
+            .lastEditedBy(lastEditedBy)
 
     }
 
@@ -329,7 +337,9 @@ export class Profile {
             Profile.parseProjects(profile.projects),
             Profile.parseSkills(profile.rootCategories),
             categories,
-            root.id()
+            root.id(),
+            new Date(), //FIXME,
+            ""
         );
     }
 
@@ -414,7 +424,9 @@ export class Profile {
             Immutable.Map<string, Project>(),
             Immutable.Map<string, Skill>(),
             Immutable.Map<string, SkillCategory>().set(root.id(), root),
-            root.id()
+            root.id(),
+            new Date(), //FIXME
+            ""
         );
     }
 

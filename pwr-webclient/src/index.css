@@ -13,6 +13,10 @@ body {
   float: none;
 }
 
+.margin-2px {
+  margin: 2px;
+}
+
 .vertical-align {
   display: flex !important;
   align-items: center;

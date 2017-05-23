@@ -42,6 +42,9 @@ export const de_locale : any = {
     "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
     "SkillOverview.Title": "Skills für Kategorie {0} (und Unterkategorien)",
     "ProjectSkills.Label": "Projektspezifische Skills",
+    "ViewCard.Name": "View-Name",
+    "ViewCard.Description": "Beschreibung",
+
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
     "Profile.Description": "Werbetext",
@@ -62,6 +65,7 @@ export const de_locale : any = {
     "Action.Add": "Hinzufügen",
     "Action.Lock": "Sperren",
     "Action.Close": "Schließen",
-    "Action.Exit": "Schließen (Ohne Speichern)"
+    "Action.Exit": "Schließen (Ohne Speichern)",
+    "Action.Generate": "Generieren"
 
 };

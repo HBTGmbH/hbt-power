@@ -195,6 +195,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleRequestAPISuccess(state, <ReceiveAPIResponseAction> action);
         case ActionType.LogInUser:
             return handleLogInUser(state, <LoginAction> action);
+        case ActionType.ShowProfile: {
+            browserHistory.push('/app/profile');
+            return state;
+        }
         default:
             return state;
     }

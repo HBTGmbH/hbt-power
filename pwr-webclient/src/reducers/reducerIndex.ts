@@ -8,6 +8,7 @@ export enum ActionType {
     DeleteSkill,
     UpdateSkillRating,
     LogInUser,
+    ShowProfile,
     CreateProject,
     DeleteProject,
     SaveProject,

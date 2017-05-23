@@ -137,6 +137,15 @@ export class ProfileAsyncActionCreator {
         };
     }
 
+    public static editProfile(initials: string) {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            dispatch({
+                type: ActionType.ShowProfile
+            });
+            dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+        }
+    }
+
     public static logInUser(initials: string) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             dispatch({
