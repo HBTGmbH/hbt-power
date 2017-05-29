@@ -44,6 +44,8 @@ export const de_locale : any = {
     "ProjectSkills.Label": "Projektspezifische Skills",
     "ViewCard.Name": "View-Name",
     "ViewCard.Description": "Beschreibung",
+    "Overview.NewView": "Neues View-Profil",
+    "Overview.NewView.Dialog.Title": "View Profil Erstellen",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

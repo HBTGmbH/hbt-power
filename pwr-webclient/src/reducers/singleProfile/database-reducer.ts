@@ -1,16 +1,15 @@
 import {APIRequestType, ProfileElementType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
+    AbstractAction,
     ChangeStringValueAction,
     CreateEntryAction,
     DeleteEntryAction,
-    DeleteProjectAction, DeleteSkillAction, LoginAction,
+    DeleteProjectAction, DeleteSkillAction, DeleteViewProfileAction, LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction, UpdateSkillRatingAction
+    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetViewElements, UpdateSkillRatingAction
 } from './database-actions';
-import {AbstractAction, ActionType} from '../reducerIndex';
-import {deepFreeze} from '../../utils/ObjectUtil';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
@@ -18,6 +17,7 @@ import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {APINameEntity} from '../../model/APIProfile';
 import {browserHistory} from 'react-router'
+import {ActionType} from './ActionType';
 
 
 
@@ -136,6 +136,48 @@ function handleLogInUser(state: InternalDatabase, action: LoginAction): Internal
     return state.loggedInUser(action.initials); // TODO
 }
 
+function handleSaveViewProfiles(state: InternalDatabase, action: SaveViewProfileAction): InternalDatabase {
+    return state.viewProfiles(state.viewProfiles().set(action.viewProfile.id(), action.viewProfile));
+}
+
+function handleDeleteViewProfile(state: InternalDatabase, action: DeleteViewProfileAction): InternalDatabase {
+    return state.viewProfiles(state.viewProfiles().remove(action.id));
+}
+
+function handleSelectViewProfile(state: InternalDatabase, action: SelectViewProfileAction): InternalDatabase {
+    browserHistory.push("/app/view");
+    return state.activeViewProfileId(action.id);
+}
+
+function handleSetSelectedIds(state: InternalDatabase, action: SetViewElements): InternalDatabase {
+    let viewProfile = state.viewProfiles().get(state.activeViewProfileId());
+    switch(action.elementType){
+        case ProfileElementType.EducationEntry: {
+            viewProfile = viewProfile.viewEducationEntries(action.viewElements);
+            break;
+        }
+        case ProfileElementType.LanguageEntry: {
+            viewProfile = viewProfile.viewLanguageEntries(action.viewElements);
+            break;
+        }
+        case ProfileElementType.TrainingEntry: {
+            viewProfile = viewProfile.viewTrainingEntries(action.viewElements);
+            break;
+        }
+        case ProfileElementType.QualificationEntry: {
+            viewProfile = viewProfile.viewQualificationEntries(action.viewElements);
+            break;
+        }
+        case ProfileElementType.SectorEntry: {
+            viewProfile = viewProfile.viewSectorEntries(action.viewElements);
+            break;
+        }
+        default:
+            break;
+    }
+    return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
+}
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -203,6 +245,14 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             browserHistory.push('/');
             return state.profile(Profile.createDefault());
         }
+        case ActionType.SaveViewProfile:
+            return handleSaveViewProfiles(state, action as SaveViewProfileAction);
+        case ActionType.DeleteViewProfile:
+            return handleDeleteViewProfile(state, action as DeleteViewProfileAction);
+        case ActionType.SelectViewProfile:
+            return handleSelectViewProfile(state, action as SelectViewProfileAction);
+        case ActionType.SetSelectedIds:
+            return handleSetSelectedIds(state, action as SetViewElements);
         default:
             return state;
     }

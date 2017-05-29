@@ -1,17 +1,21 @@
 import {APIRequestType, ProfileElementType} from '../../Store';
-import {AbstractAction, ActionType} from '../reducerIndex';
 import {NameEntity} from '../../model/NameEntity';
 import {
+    AbstractAction,
     ChangeStringValueAction,
     CreateEntryAction,
     DeleteEntryAction,
-    DeleteProjectAction,
+    DeleteProjectAction, DeleteViewProfileAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction,
+    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetViewElements,
     UpdateSkillRatingAction
 } from './database-actions';
 import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
+import {ActionType} from './ActionType';
+import {ViewProfile} from '../../model/viewprofile/ViewProfile';
+import * as Immutable from 'immutable';
+import {ViewElement} from '../../model/viewprofile/ViewElement';
 
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
@@ -111,6 +115,35 @@ export class ProfileActionCreator {
     public static logOutUser(): AbstractAction {
         return {
             type: ActionType.LogOutUser
+        }
+    }
+
+    public static SaveViewProfile(viewProfile: ViewProfile): SaveViewProfileAction {
+        return {
+            type: ActionType.SaveViewProfile,
+            viewProfile: viewProfile
+        }
+    }
+
+    public static DeleteViewProfile(id: string): DeleteViewProfileAction {
+        return {
+            type: ActionType.DeleteViewProfile,
+            id: id
+        }
+    }
+
+    public static SelectViewProfile(id: string): SelectViewProfileAction {
+        return {
+            type: ActionType.SelectViewProfile,
+            id: id
+        }
+    }
+
+    public static SetSelectedIds(elementType: ProfileElementType ,viewElements: Immutable.Map<string, ViewElement>): SetViewElements {
+        return {
+            type: ActionType.SetSelectedIds,
+            elementType: elementType,
+            viewElements: viewElements
         }
     }
 

@@ -5,6 +5,7 @@ import {APIProfile} from './APIProfile';
 import {Profile} from './Profile';
 import {doop} from 'doop';
 import {LoginStatus} from './LoginStatus';
+import {ViewProfile} from './viewprofile/ViewProfile';
 
 
 /**
@@ -40,6 +41,9 @@ export class InternalDatabase {
     public get profile() {return doop<Profile, this>();};
 
     @doop
+    public get viewProfiles() {return doop<Immutable.Map<string, ViewProfile>, this>();}
+
+    @doop
     public get trainings() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
@@ -60,11 +64,18 @@ export class InternalDatabase {
     @doop
     public get projectRoles() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
+    /**
+     * The profile that is currently being views and edited.
+     * @returns {Doop<string, this>}
+     */
+    @doop
+    public get activeViewProfileId() {return doop<string, this>();};
 
     constructor(
         apiRequestStatus: RequestStatus,
         languageLevels: Array<string>,
         profile: Profile,
+        viewProfiles: Immutable.Map<string, ViewProfile>,
         trainings: Immutable.Map<string, NameEntity>,
         educations: Immutable.Map<string, NameEntity>,
         languages: Immutable.Map<string, NameEntity>,
@@ -74,11 +85,11 @@ export class InternalDatabase {
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: string,
         degrees: Immutable.List<string>,
-        token: string
 ) {
         return this.APIRequestStatus(apiRequestStatus)
             .languageLevels(languageLevels)
             .profile(profile)
+            .viewProfiles(viewProfiles)
             .trainings(trainings)
             .educations(educations)
             .languages(languages)
@@ -88,7 +99,6 @@ export class InternalDatabase {
             .projectRoles(projectRoles)
             .loggedInUser(loggedInUser)
             .degrees(degrees)
-            .authToken(token);
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -97,6 +107,7 @@ export class InternalDatabase {
             RequestStatus.Successful,
             ['BASIC', 'ADVANCED', 'BUSINESS_FLUENT', 'NATIVE'],
             Profile.createDefault(),
+            Immutable.Map<string, ViewProfile>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
@@ -105,8 +116,7 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             'jd',
-            Immutable.List<string>(['Bachelor', 'Master', 'Doktor']),
-            ''
+            Immutable.List<string>(['Bachelor', 'Master', 'Doktor'])
         );
     }
 

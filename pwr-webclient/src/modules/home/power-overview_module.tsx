@@ -5,18 +5,22 @@ import {ApplicationState} from '../../Store';
 import {
     Card,
     CardActions,
-    CardHeader,
-    CardText,
+    CardHeader, CardMedia,
+    CardText, Dialog,
     FontIcon,
     GridList,
     GridTile,
     RaisedButton,
-    Subheader
+    Subheader, TextField, IconButton
 } from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/ProfileAsyncActionCreator';
 import {ViewCard} from '../view/view-card_module';
 import {Profile} from '../../model/Profile';
+import {ViewProfile} from '../../model/viewprofile/ViewProfile';
+import * as Immutable from 'immutable';
+import {SingleTrainingEntry} from '../profile/elements/training/training-entry_module';
+import {ProfileActionCreator} from '../../reducers/singleProfile/ProfileActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -27,6 +31,7 @@ import {Profile} from '../../model/Profile';
 interface PowerOverviewProps {
     loggedInInitials: string;
     profile: Profile;
+    viewProfiles: Immutable.Map<string, ViewProfile>;
 }
 
 /**
@@ -47,7 +52,8 @@ interface PowerOverviewLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface PowerOverviewLocalState {
-
+    showCreateViewDialog: boolean;
+    viewProfile: ViewProfile;
 }
 
 /**
@@ -55,6 +61,7 @@ interface PowerOverviewLocalState {
  */
 interface PowerOverviewDispatch {
     editProfile(initials: string): void;
+    saveViewProfile(viewProfile: ViewProfile): void;
 }
 
 class PowerOverviewModule extends React.Component<
@@ -62,10 +69,21 @@ class PowerOverviewModule extends React.Component<
     & PowerOverviewLocalProps
     & PowerOverviewDispatch, PowerOverviewLocalState> {
 
+
+
+    constructor(props: PowerOverviewProps & PowerOverviewLocalProps & PowerOverviewDispatch) {
+        super(props);
+        this.state = {
+            viewProfile: ViewProfile.createNewEmpty(props.profile),
+            showCreateViewDialog: false
+        };
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
         return {
             loggedInInitials: state.databaseReducer.loggedInUser(),
-            profile: state.databaseReducer.profile()
+            profile: state.databaseReducer.profile(),
+            viewProfiles: state.databaseReducer.viewProfiles()
         };
     }
 
@@ -73,12 +91,44 @@ class PowerOverviewModule extends React.Component<
         return {
             editProfile: function(initials: string) {
                 dispatch(ProfileAsyncActionCreator.editProfile(initials));
-            }
-        };
+            },
+            saveViewProfile: (viewProfile) => dispatch(ProfileActionCreator.SaveViewProfile(viewProfile))
+        }
     }
 
     private handleEditButtonClick = () => {
         this.props.editProfile(this.props.loggedInInitials);
+    };
+
+    private changeViewProfileName(newName: string) {
+        this.setState({
+            viewProfile: this.state.viewProfile.name(newName)
+        });
+    }
+
+    private changeViewProfileDescription(newDesc: string) {
+        this.setState({
+            viewProfile: this.state.viewProfile.description(newDesc)
+        });
+    }
+
+    private showCreateViewDialog = () => {
+        this.setState({
+            viewProfile: ViewProfile.createNewEmpty(this.props.profile),
+            showCreateViewDialog: true
+        });
+    };
+
+    private exitCreateViewDialog = () => {
+        this.setState({
+            viewProfile: ViewProfile.createNewEmpty(this.props.profile),
+            showCreateViewDialog: false
+        });
+    };
+
+    private saveViewProfile = () => {
+        this.props.saveViewProfile(this.state.viewProfile);
+        this.exitCreateViewDialog();
     };
 
     render() {
@@ -112,25 +162,48 @@ class PowerOverviewModule extends React.Component<
                                 title="Views"
                                 subtitle="Übersicht"
                             />
+                            <RaisedButton
+                                primary={true}
+                                label={PowerLocalize.get('Overview.NewView')}
+                                onClick={this.showCreateViewDialog}
+                            />
+                            <Dialog
+                                title={PowerLocalize.get('Overview.NewView.Dialog.Title')}
+                                open={this.state.showCreateViewDialog}
+                            >
+                                <TextField
+                                    floatingLabelText={PowerLocalize.get('ViewCard.Name')}
+                                    value={this.state.viewProfile.name()}
+                                    onChange={(evt, val) => this.changeViewProfileName(val)}
+                                />
+                                <br/>
+                                <TextField
+                                    floatingLabelText={PowerLocalize.get('ViewCard.Description')}
+                                    value={this.state.viewProfile.description()}
+                                    onChange={(evt, val) => this.changeViewProfileDescription(val)}
+                                />
+                                <br/>
+                                <IconButton iconClassName="material-icons"
+                                            onClick={this.saveViewProfile}
+                                            tooltip={PowerLocalize.get('Action.Save')}>
+                                    done
+                                </IconButton>
+                                <IconButton iconClassName="material-icons"
+                                            onClick={this.exitCreateViewDialog}
+                                            tooltip={PowerLocalize.get('Action.Undo')}>
+                                    undo
+                                </IconButton>
+                            </Dialog>
                             <GridList cols={3} cellHeight="auto">
-                                <GridTile cols={1}>
-                                    <ViewCard/>
-                                </GridTile>
-                                <GridTile cols={1}>
-                                    <ViewCard/>
-                                </GridTile>
-                                <GridTile cols={1}>
-                                    <ViewCard/>
-                                </GridTile>
-                                <GridTile cols={1}>
-                                    <ViewCard/>
-                                </GridTile>
-                                <GridTile cols={1}>
-                                    <ViewCard/>
-                                </GridTile>
-                                <GridTile cols={1}>
-                                    <ViewCard/>
-                                </GridTile>
+                                {
+                                    this.props.viewProfiles.map(viewProfile => {
+                                        return (
+                                            <GridTile cols={1} key={"ViewProfileCard." + viewProfile.id()}>
+                                                <ViewCard viewProfileId={viewProfile.id()}/>
+                                            </GridTile>
+                                                );
+                                    }).toArray()
+                                }
                             </GridList>
                         </Card>
                 </div>

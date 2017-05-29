@@ -4,6 +4,8 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
 import {FlatButton, FontIcon, Paper, TextField} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {ViewProfile} from '../../model/viewprofile/ViewProfile';
+import {ProfileActionCreator} from '../../reducers/singleProfile/ProfileActionCreator';
 
 
 /**
@@ -13,7 +15,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
  * otherwise the component will not render and update correctly.
  */
 interface ViewCardProps {
-
+    viewProfile: ViewProfile;
 }
 
 /**
@@ -25,6 +27,7 @@ interface ViewCardProps {
  * managed by redux.
  */
 interface ViewCardLocalProps {
+    viewProfileId: string;
 }
 
 /**
@@ -40,17 +43,23 @@ interface ViewCardLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface ViewCardDispatch {
-
+    deleteViewProfile(id: string): void;
+    selectViewProfile(id: string): void;
 }
 
 class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps & ViewCardDispatch, ViewCardLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: ViewCardLocalProps): ViewCardProps {
-        return {};
+        return {
+            viewProfile: state.databaseReducer.viewProfiles().get(localProps.viewProfileId)
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewCardDispatch {
-        return {};
+        return {
+            deleteViewProfile: id => dispatch(ProfileActionCreator.DeleteViewProfile(id)),
+            selectViewProfile: id => dispatch(ProfileActionCreator.SelectViewProfile(id))
+        };
     }
 
     render() {
@@ -59,18 +68,12 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
                 <div style={{padding:"30px"}}>
                     <div className="row">
                         <div className="col-md-12">
-                            <TextField
-                                fullWidth={true}
-                                floatingLabelText={PowerLocalize.get("ViewCard.Name")}
-                            />
+                            <h4>{PowerLocalize.get("ViewCard.Name")}</h4> {this.props.viewProfile.name()}
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-12">
-                            <TextField
-                                fullWidth={true}
-                                floatingLabelText={PowerLocalize.get("ViewCard.Description")}
-                            />
+                            <h4>{PowerLocalize.get("ViewCard.Description")}</h4> {this.props.viewProfile.description()}
                         </div>
                     </div>
 
@@ -80,6 +83,7 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
                                 label={PowerLocalize.get('Action.Edit')}
                                 labelPosition="before"
                                 icon={ <FontIcon className="material-icons">edit</FontIcon>}
+                                onClick={() => this.props.selectViewProfile(this.props.viewProfileId)}
                             />
                         </div>
                         <div className="col-md-4">
@@ -96,6 +100,7 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
                                 labelPosition="before"
                                 secondary={true}
                                 icon={ <FontIcon className="material-icons">delete</FontIcon>}
+                                onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
                             />
                         </div>
                     </div>

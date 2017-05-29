@@ -14,7 +14,7 @@ import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {AllConsultantsState, APIRequestType} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
-import {ActionType} from '../reducerIndex';
+import {ActionType} from './ActionType';
 
 export class ProfileAsyncActionCreator {
 

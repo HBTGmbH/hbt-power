@@ -17,6 +17,7 @@ import {Route, Router} from 'react-router';
 import { browserHistory } from 'react-router'
 import {PowerOverview} from './modules/home/power-overview_module';
 import {ConsultantProfile} from './modules/profile/profile_module';
+import {ViewProfileCard} from './modules/view/view-profile_module';
 
 injectTapEventPlugin();
 
@@ -48,6 +49,7 @@ let Routes = (
                     <Route path="/app/home" component={PowerOverview}/>
                     <Route path="/app/" component={ConsultantProfile}/>
                     <Route path="/app/profile" component={ConsultantProfile}/>
+                    <Route path="/app/view" component={ViewProfileCard}/>
                 </Route>
             </Router>
         </Provider>

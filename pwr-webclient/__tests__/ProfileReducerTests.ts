@@ -1,6 +1,6 @@
 import {ProfileReducer} from '../src/reducers/singleProfile/profile-reducer';
 import {Profile} from '../src/model/Profile';
-import {AbstractAction} from '../src/reducers/reducerIndex';
+import {AbstractAction} from '../src/reducers/singleProfile/database-actions';
 import {ProfileActionCreator} from '../src/reducers/singleProfile/ProfileActionCreator';
 import {ProfileElementType} from '../src/Store';
 import {CreateEntryAction, SaveEntryAction} from '../src/reducers/singleProfile/database-actions';

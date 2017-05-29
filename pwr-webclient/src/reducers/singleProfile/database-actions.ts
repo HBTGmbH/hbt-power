@@ -4,13 +4,19 @@
  */
 
 import {APIRequestType, ProfileElementType} from '../../Store';
-import {AbstractAction} from '../reducerIndex';
 
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {Skill} from '../../model/Skill';
 import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
+import {ViewProfile} from '../../model/viewprofile/ViewProfile';
+import {ActionType} from './ActionType';
+import * as Immutable from 'immutable'
+import {ViewElement} from '../../model/viewprofile/ViewElement';
 
+export interface AbstractAction {
+    type: ActionType;
+}
 
 export interface ChangeStringValueAction extends AbstractAction {
     /**
@@ -80,4 +86,25 @@ export interface UpdateSkillRatingAction extends AbstractAction {
 export interface DeleteSkillAction extends AbstractAction {
     id: string;
 }
+
+/**
+ * Saves (or creates) a view profile.
+ */
+export interface SaveViewProfileAction extends AbstractAction {
+    viewProfile: ViewProfile;
+}
+
+export interface DeleteViewProfileAction extends AbstractAction {
+    id: string;
+}
+
+export interface SelectViewProfileAction extends AbstractAction {
+    id: string;
+}
+
+export interface SetViewElements extends AbstractAction {
+    elementType: ProfileElementType;
+    viewElements: Immutable.Map<string, ViewElement>;
+}
+
 
