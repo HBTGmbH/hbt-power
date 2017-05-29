@@ -6,6 +6,7 @@ import {ApplicationState} from '../Store';
 import {Paper, RaisedButton, TextField} from 'material-ui';
 import {ProfileAsyncActionCreator} from '../reducers/singleProfile/ProfileAsyncActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
+import {LoginStatus} from '../model/LoginStatus';
 /**
  * Properties that are managed by react-redux.
  *
@@ -39,12 +40,7 @@ interface PowerLoginLocalState {
     status: LoginStatus;
 }
 
-enum LoginStatus {
-    INITIALS,
-    PASSWORD,
-    SUCCESS,
-    REJECTED
-}
+
 
 /**
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.

@@ -55,7 +55,7 @@ export class TrainingEntry {
             String(apiTraining.id),
             new Date(apiTraining.startDate),
             isNullOrUndefined(apiTraining.endDate) ? null : new Date(apiTraining.endDate),
-            String(apiTraining.training.id),
+            String(apiTraining.nameEntity.id),
             false
         );
     }
@@ -86,7 +86,7 @@ export class TrainingEntry {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             startDate: this.startDate().toISOString(),
             endDate: this.endDate() == null ? null : this.endDate().toISOString(),
-            training: this.trainingId() == null ? null : careerPositionsById.get(this.trainingId()).toAPI()
+            nameEntity: this.trainingId() == null ? null : careerPositionsById.get(this.trainingId()).toAPI()
         }
     }
 }

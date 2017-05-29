@@ -3,16 +3,12 @@ import * as React from 'react';
 import {CSSProperties} from 'react';
 import * as redux from 'redux';
 import {InternalDatabase} from '../../../../model/InternalDatabase';
-import {SkillCategory} from '../../../../model/SkillCategory';
 import {ApplicationState} from '../../../../Store';
-import {SkillCategoryItem} from './skill-category-item_module';
-import {List, ListItem, RaisedButton, Subheader, FontIcon, TextField} from 'material-ui';
+import {List, Subheader} from 'material-ui';
 import {Profile} from '../../../../model/Profile';
-import {SkillChip} from './skill-chip_module';
 import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {formatString} from '../../../../utils/StringUtil';
-import {SkillSearcher} from '../../../general/skill-search_module';
+import {SkillChip} from './skill-chip_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -21,7 +17,6 @@ import {SkillSearcher} from '../../../general/skill-search_module';
  * otherwise the component will not render and update correctly.
  */
 interface SkillTreeProps {
-    rootCategory: SkillCategory;
     profile: Profile;
 }
 
@@ -43,7 +38,6 @@ interface SkillTreeLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface SkillTreeLocalState {
-    selectedCategory: SkillCategory;
 }
 
 /**
@@ -62,7 +56,6 @@ class SkillTreeModule extends React.Component<
     constructor(props: SkillTreeProps& SkillTreeLocalProps& SkillTreeDispatch) {
         super(props);
         this.state = {
-            selectedCategory: props.rootCategory
         };
     }
 
@@ -73,7 +66,6 @@ class SkillTreeModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: SkillTreeLocalProps): SkillTreeProps {
         return {
-            rootCategory: state.databaseReducer.profile().getCategory(state.databaseReducer.profile().rootCategoryId()),
             profile: state.databaseReducer.profile()
         };
     }
@@ -89,29 +81,16 @@ class SkillTreeModule extends React.Component<
         };
     }
 
-
-    /*private renderSkillsForSelectedCategory = () => {
-        let skillIds: Array<string> = this.props.profile.getAllNestedSkillIds(this.state.selectedCategory);
-        return skillIds.map(skillId => {
-            return(
-                    <SkillChip
-                            key={skillId}
-                            style={{margin: '5px'}}
-                            skill={this.props.profile.getSkill(skillId)}
-                            onRatingChange={this.props.changeSkillRating}
-                    >
-                        {this.props.profile.getSkillName(skillId)}
-                    </SkillChip>
-            );
-        });
-    };*/
-
-    private showSkillsForCategory = (category: SkillCategory) => {
-        this.setState({
-            selectedCategory: category
-        });
+    private renderSkills = () => {
+        return this.props.profile.skills().map(skill => {
+            return (<SkillChip
+                key={skill.id()}
+                skill={skill}
+                onDelete={this.props.onSkillDelete}
+                onRatingChange={this.props.changeSkillRating}
+            />)
+        }).toArray();
     };
-
 
     render() {
         return (
@@ -119,12 +98,7 @@ class SkillTreeModule extends React.Component<
                 <div className="col-md-12">
                     <List>
                         <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
-                        <SkillCategoryItem
-                            key={this.props.rootCategory.id()}
-                            categoryId={this.props.rootCategory.id()}
-                            onRatingChange={this.props.changeSkillRating}
-                            onSkillDelete={this.props.onSkillDelete}
-                        />
+                        {this.renderSkills()}
                     </List>
                 </div>
             </div>

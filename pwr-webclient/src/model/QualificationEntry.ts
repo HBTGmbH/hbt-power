@@ -24,7 +24,7 @@ export class QualificationEntry {
     public static fromAPI(apiQualificationEntry: APIQualificationEntry): QualificationEntry {
         return new QualificationEntry(
             String(apiQualificationEntry.id),
-            String(apiQualificationEntry.qualification.id),
+            String(apiQualificationEntry.nameEntity.id),
             new Date(apiQualificationEntry.date),
             false
         );
@@ -47,7 +47,7 @@ export class QualificationEntry {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             date: this.date().toISOString(),
-            qualification: this.qualificationId() == UNDEFINED_ID ? null : qualifications.get(this.qualificationId()).toAPI()
+            nameEntity: this.qualificationId() == UNDEFINED_ID ? null : qualifications.get(this.qualificationId()).toAPI()
         }
     }
 }

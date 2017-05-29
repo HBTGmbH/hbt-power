@@ -53,7 +53,7 @@ export class EducationEntry {
             String(apiEducation.id),
             new Date(apiEducation.startDate),
             new Date(apiEducation.endDate),
-            String(apiEducation.education.id),
+            String(apiEducation.nameEntity.id),
             String(apiEducation.degree),
             false);
     }
@@ -74,7 +74,7 @@ export class EducationEntry {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             startDate: this.startDate().toISOString(),
             endDate: this.endDate().toISOString(),
-            education: this.nameEntityId() == null ? null : educations.get(this.nameEntityId()).toAPI(),
+            nameEntity: this.nameEntityId() == null ? null : educations.get(this.nameEntityId()).toAPI(),
             degree: this.degree()
         }
     }

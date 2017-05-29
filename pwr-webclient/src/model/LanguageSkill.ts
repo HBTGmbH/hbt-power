@@ -48,7 +48,7 @@ export class LanguageSkill {
     public static fromAPI(apiLanguageSkill: APILanguageSkill) {
         return new LanguageSkill(
             String(apiLanguageSkill.id),
-            String(apiLanguageSkill.language.id),
+            String(apiLanguageSkill.nameEntity.id),
             apiLanguageSkill.level,
             false);
     }
@@ -70,7 +70,7 @@ export class LanguageSkill {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             level: this.level(),
-            language: this.languageId() == null ? null : languagesById.get(this.languageId()).toAPI()
+            nameEntity: this.languageId() == null ? null : languagesById.get(this.languageId()).toAPI()
         };
     }
 }

@@ -30,7 +30,7 @@ export class SectorEntry {
     static create(apiSectorEntry: APISectorEntry): SectorEntry {
         return new SectorEntry(
             String(apiSectorEntry.id),
-            String(apiSectorEntry.sector.id),
+            String(apiSectorEntry.nameEntity.id),
             false)
     }
 
@@ -41,7 +41,7 @@ export class SectorEntry {
     public toAPISectorEntry(sectors: Immutable.Map<string, NameEntity>): APISectorEntry {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
-            sector: this.sectorId() == UNDEFINED_ID ? null : sectors.get(this.sectorId()).toAPI()
+            nameEntity: this.sectorId() == UNDEFINED_ID ? null : sectors.get(this.sectorId()).toAPI()
         };
     }
 

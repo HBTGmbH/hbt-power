@@ -1,8 +1,9 @@
 import {doop} from 'doop';
-import {APINameEntity, APIProject} from './APIProfile';
+import {APINameEntity, APIProject, APISkill} from './APIProfile';
 import * as Immutable from 'immutable';
 import {NameEntity} from './NameEntity';
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
+import {Skill} from './Skill';
 
 @doop
 export class Project {
@@ -87,7 +88,13 @@ export class Project {
         return res;
     }
 
-    public toAPI(companies: Immutable.Map<string, NameEntity>, roles: Immutable.Map<string, NameEntity>): APIProject {
+    private skillsToAPI(skills: Immutable.Map<string, Skill>): Array<APISkill> {
+        return this.skillIDs().map(skillId => skills.get(skillId).toAPI()).toArray();
+    }
+
+    public toAPI(companies: Immutable.Map<string, NameEntity>,
+                 roles: Immutable.Map<string, NameEntity>,
+                 skills: Immutable.Map<string, Skill>): APIProject {
         return {
             id: this.isNew() ? null : Number(this.id()),
             description: this.description(),
@@ -97,6 +104,7 @@ export class Project {
             broker: companies.get(this.brokerId()).toAPI(),
             client: companies.get(this.endCustomerId()).toAPI(),
             projectRoles: this.rolesToAPI(roles),
+            skills: this.skillsToAPI(skills)
         }
     }
 

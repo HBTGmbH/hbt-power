@@ -1,7 +1,6 @@
 import {Profile} from '../../model/Profile';
 import {
     ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, DeleteSkillAction, SaveEntryAction,
-    SaveProjectAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {EducationEntry} from '../../model/EducationEntry';
@@ -13,7 +12,6 @@ import {SectorEntry} from '../../model/SectorEntry';
 import {Skill} from '../../model/Skill';
 import {isNull, isNullOrUndefined} from 'util';
 import {Project} from '../../model/Project';
-import {SkillCategory} from '../../model/SkillCategory';
 export class ProfileReducer {
 
     private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
@@ -37,6 +35,7 @@ export class ProfileReducer {
             case ProfileElementType.LanguageEntry: {
                 let lEntry: LanguageSkill = entry as LanguageSkill;
                 return profile.languageSkills(profile.languageSkills().set(lEntry.id(), lEntry));
+
             }
             default:
                 return profile;
@@ -111,8 +110,6 @@ export class ProfileReducer {
             if(isNullOrUndefined(skill)) {
                 skill = Skill.createNew(skillName);
                 profile = profile.skills(profile.skills().set(skill.id(), skill));
-                // Add the new skill to the root category; Let server categorize this.
-                profile = profile.addSkillToRoot(skill);
             }
             // Always add the skill id. IDs are represents by a set, so add can always be performed
             // without creating duplicates.
@@ -129,13 +126,6 @@ export class ProfileReducer {
      * @returns {Profile}
      */
     private static deleteOrphanSkills(profile: Profile, deletedId: string): Profile {
-        // Orphans in categories.
-        let categories = profile.categories().map((category, id) => {
-            if(category.skillIds().has(deletedId)) {
-                return category.skillIds(category.skillIds().remove(deletedId))
-            }
-            return category;
-        }).toMap();
         // Orphans in projects
         let projects = profile.projects().map((project, id) => {
             if(project.skillIDs().has(deletedId)) {
@@ -143,7 +133,7 @@ export class ProfileReducer {
             }
             return project;
         }).toMap();
-        return profile.categories(categories).projects(projects);
+        return profile.projects(projects);
     }
 
     public static reducerHandleDeleteSkill(profile: Profile, action: DeleteSkillAction): Profile {

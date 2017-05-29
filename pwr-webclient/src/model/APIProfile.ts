@@ -8,7 +8,7 @@ export interface APINameEntity {
 
 export interface APILanguageSkill {
     id: number;
-    language: APINameEntity;
+    nameEntity: APINameEntity;
     level: string;
 }
 
@@ -17,7 +17,7 @@ export interface APIEducationStep {
     startDate: string;
     endDate: string;
     degree: string;
-    education: APINameEntity;
+    nameEntity: APINameEntity;
 }
 
 // == QUALIFICATIONS == //
@@ -25,20 +25,20 @@ export interface APIEducationStep {
 export interface APIQualificationEntry {
     id: number;
     date: string;
-    qualification: APINameEntity;
+    nameEntity: APINameEntity;
 }
 
 export interface APITrainingEntry {
     id: number;
     startDate: string;
     endDate: string;
-    training: APINameEntity;
+    nameEntity: APINameEntity;
 }
 
 // SECTORS //
 export interface APISectorEntry {
     id: number;
-    sector: APINameEntity;
+    nameEntity: APINameEntity;
 }
 
 export interface APIProject {
@@ -49,6 +49,7 @@ export interface APIProject {
     startDate: Date;
     broker: APINameEntity;
     client: APINameEntity;
+    skills: Array<APISkill>;
     projectRoles: Array<APINameEntity>;
 }
 
@@ -56,13 +57,6 @@ export interface APISkill {
     id: string,
     name: string,
     rating: number
-}
-
-export interface APICategory {
-    id: string,
-    name: string,
-    categories: Array<APICategory>;
-    skills: Array<APISkill>;
 }
 
 /**
@@ -79,7 +73,7 @@ export interface APIProfile {
     education: Array<APIEducationStep>;
     sectors: Array<APISectorEntry>;
     projects: Array<APIProject>;
-    rootCategories: Array<APICategory>;
+    skills: Array<APISkill>;
 }
 
 export interface APIProfileUpdateResponse {

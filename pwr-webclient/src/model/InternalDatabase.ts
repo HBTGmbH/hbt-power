@@ -4,6 +4,7 @@ import * as Immutable from 'immutable';
 import {APIProfile} from './APIProfile';
 import {Profile} from './Profile';
 import {doop} from 'doop';
+import {LoginStatus} from './LoginStatus';
 
 
 /**
@@ -18,43 +19,46 @@ import {doop} from 'doop';
 export class InternalDatabase {
 
     @doop
-    public get APIRequestStatus() {return doop<RequestStatus, this>()}
+    public get APIRequestStatus() {return doop<RequestStatus, this>();}
 
     @doop
-    public get languageLevels() {return doop<Array<string>, this>()};
+    public get languageLevels() {return doop<Array<string>, this>();};
 
     @doop
-    public get degrees() {return doop<Immutable.List<string>, this>()}
+    public get degrees() {return doop<Immutable.List<string>, this>();}
 
     @doop
-    public get loggedInUser() {return doop<string, this>()};
+    public get loggedInUser() {return doop<string, this>();};
 
     @doop
-    public get authToken() {return doop<string, this>()};
+    public get loginStatus() {return doop<LoginStatus, this>();};
 
     @doop
-    public get profile() {return doop<Profile, this>()};
+    public get authToken() {return doop<string, this>();};
 
     @doop
-    public get trainings() {return doop<Immutable.Map<string, NameEntity>, this>()}
+    public get profile() {return doop<Profile, this>();};
 
     @doop
-    public get educations() {return doop<Immutable.Map<string, NameEntity>, this>()}
+    public get trainings() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
-    public get languages() {return doop<Immutable.Map<string, NameEntity>, this>()}
+    public get educations() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
-    public get sectors() {return doop<Immutable.Map<string, NameEntity>, this>()}
+    public get languages() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
-    public get qualifications() {return doop<Immutable.Map<string, NameEntity>, this>()}
+    public get sectors() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
-    public get companies() {return doop<Immutable.Map<string, NameEntity>, this>()}
+    public get qualifications() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
-    public get projectRoles() {return doop<Immutable.Map<string, NameEntity>, this>()}
+    public get companies() {return doop<Immutable.Map<string, NameEntity>, this>();}
+
+    @doop
+    public get projectRoles() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
 
     constructor(
@@ -91,7 +95,7 @@ export class InternalDatabase {
         let langs = Immutable.Map<string, NameEntity>();
         return new InternalDatabase(
             RequestStatus.Successful,
-            ["BASIC", "ADVANCED", "BUSINESS_FLUENT", "NATIVE"],
+            ['BASIC', 'ADVANCED', 'BUSINESS_FLUENT', 'NATIVE'],
             Profile.createDefault(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
@@ -100,10 +104,10 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
-            "jd",
-            Immutable.List<string>(["Bachelor", "Master", "Doktor"]),
-            ""
-        )
+            'jd',
+            Immutable.List<string>(['Bachelor', 'Master', 'Doktor']),
+            ''
+        );
     }
 
     public findNameEntityByName(name: string, type: ProfileElementType): NameEntity {
@@ -125,7 +129,7 @@ export class InternalDatabase {
                 lookup = this.trainings();
                 break;
             default:
-                throw Error("unknown NameEntityType.");
+                throw Error('unknown NameEntityType.');
         }
         return InternalDatabase.findNameEntityByName(name, lookup);
     }
@@ -152,65 +156,65 @@ export class InternalDatabase {
      */
     public parseProfile(profileFromAPI: APIProfile): InternalDatabase {
 
-        console.info("Parsing received profile: ", profileFromAPI);
-        console.info("Adding Profile information into suggestion database.");
+        console.info('Parsing received profile: ', profileFromAPI);
+        console.info('Adding Profile information into suggestion database.');
 
         // references to the readonly property to modify it.
         // This will not affect the original languages, as the original is still immutable.
-        console.info("Parsing languages...");
+        console.info('Parsing languages...');
         let languages = this.languages();
         profileFromAPI.languages.forEach(langSkill => {
-            let l: NameEntity = NameEntity.fromAPI(langSkill.language);
+            let l: NameEntity = NameEntity.fromAPI(langSkill.nameEntity);
             languages = languages.set(l.id(), l);
         });
-        console.info("...done.");
-        console.info("Parsing qualifications...");
+        console.info('...done.');
+        console.info('Parsing qualifications...');
         let qualifications = this.qualifications();
         profileFromAPI.qualification.forEach(qualificationEntry => {
-           let q: NameEntity = NameEntity.fromAPI(qualificationEntry.qualification);
+           let q: NameEntity = NameEntity.fromAPI(qualificationEntry.nameEntity);
            qualifications = qualifications.set(q.id(), q);
         });
-        console.info("...done.");
-        console.info("Parsing trainings...");
+        console.info('...done.');
+        console.info('Parsing trainings...');
         let trainings = this.trainings();
         profileFromAPI.trainingEntries.forEach(trainingEntry => {
-            let training: NameEntity = NameEntity.fromAPI(trainingEntry.training);
+            let training: NameEntity = NameEntity.fromAPI(trainingEntry.nameEntity);
             trainings = trainings.set(training.id(), training);
         });
-        console.info("...done.");
-        console.info("Parsing educations...");
+        console.info('...done.');
+        console.info('Parsing educations...');
         let educations = this.educations();
         profileFromAPI.education.forEach(educationEntry => {
-            let education: NameEntity = NameEntity.fromAPI(educationEntry.education);
+            let education: NameEntity = NameEntity.fromAPI(educationEntry.nameEntity);
             educations = educations.set(education.id(), education);
         });
-        console.info("...done.");
-        console.info("Parsing sectorEntries...");
+        console.info('...done.');
+        console.info('Parsing sectorEntries...');
         let sectors = this.sectors();
         profileFromAPI.sectors.forEach(sectorEntry => {
-            let sector: NameEntity = NameEntity.fromAPI(sectorEntry.sector);
+            let sector: NameEntity = NameEntity.fromAPI(sectorEntry.nameEntity);
             sectors = sectors.set(sector.id(), sector);
         });
-        console.info("...done.");
-        console.info("Parsing companies...");
+        console.info('...done.');
+        console.info('Parsing companies...');
         let companies = this.companies();
         profileFromAPI.projects.forEach(project => {
             let company: NameEntity = NameEntity.fromAPI(project.broker);
             companies = companies.set(company.id(), company);
         });
-        console.info("...done");
-        console.info("Parsing project roles...");
+        console.info('...done');
+        console.info('Parsing project roles...');
         let projectRoles = this.projectRoles();
         profileFromAPI.projects.forEach(project => {
             project.projectRoles.forEach(apiRole => {
                 let role: NameEntity = NameEntity.fromAPI(apiRole);
                 projectRoles = projectRoles.set(role.id(), role);
-            })
+            });
         });
-        console.info("..done");
-        console.info("Parsing profile...");
+        console.info('..done');
+        console.info('Parsing profile...');
         let profile: Profile = Profile.createFromAPI(profileFromAPI);
-        console.info("...done");
+        console.info('...done');
 
         return this.profile(profile)
             .trainings(trainings)
