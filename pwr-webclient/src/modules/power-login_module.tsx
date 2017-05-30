@@ -4,7 +4,7 @@ import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../Store';
 import {Paper, RaisedButton, TextField} from 'material-ui';
-import {ProfileAsyncActionCreator} from '../reducers/singleProfile/ProfileAsyncActionCreator';
+import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
 /**

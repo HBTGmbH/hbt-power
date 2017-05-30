@@ -7,7 +7,7 @@ import {
     ToolbarTitle
 } from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileActionCreator} from '../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 
 interface ToolbarProps {
     userInitials: string;
@@ -98,8 +98,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </div>
                     </ToolbarGroup>
                 </Toolbar>
-
-
             </Paper>
         );
     }

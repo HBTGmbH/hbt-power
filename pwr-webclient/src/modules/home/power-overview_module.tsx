@@ -14,13 +14,13 @@ import {
     Subheader, TextField, IconButton
 } from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/ProfileAsyncActionCreator';
+import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {ViewCard} from '../view/view-card_module';
 import {Profile} from '../../model/Profile';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';
 import {SingleTrainingEntry} from '../profile/elements/training/training-entry_module';
-import {ProfileActionCreator} from '../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 
 /**
  * Properties that are managed by react-redux.

@@ -9,7 +9,7 @@ import {LanguageSkill} from '../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;

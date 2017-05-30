@@ -1,10 +1,18 @@
-export const API_HOST: string = "http://power02.corp.hbt.de";
+export const API_HOST: string = "http://localhost";
 
-export const API_PORT: string = "9000";
+export const API_PORT: string = "8080";
 
 export const API_SUFFIX: string = "/api";
 
-export const API_SUFFIX_PROFILE = "/profile";
+export const API_SUFFIX_PROFILE = "";//"/profile";
+
+export function getNotificationAPIString(): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/admin/notifications";
+}
+
+export function getNotificationTrashAPIString(): string {
+    return getNotificationAPIString() + "/trash"
+}
 
 export function getProfileAPIString(initials: string) : string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/" + initials;

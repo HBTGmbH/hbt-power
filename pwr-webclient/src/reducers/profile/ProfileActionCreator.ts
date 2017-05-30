@@ -12,7 +12,7 @@ import {
     UpdateSkillRatingAction
 } from './database-actions';
 import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
-import {ActionType} from './ActionType';
+import {ActionType} from '../ActionType';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
@@ -139,11 +139,11 @@ export class ProfileActionCreator {
         }
     }
 
-    public static SetSelectedIds(elementType: ProfileElementType ,viewElements: Immutable.Map<string, ViewElement>): SetViewElements {
+    public static SetSelectedIds(elementType: ProfileElementType ,viewElements: Immutable.OrderedSet<string>): SetViewElements {
         return {
             type: ActionType.SetSelectedIds,
             elementType: elementType,
-            viewElements: viewElements
+            elementIds: viewElements
         }
     }
 

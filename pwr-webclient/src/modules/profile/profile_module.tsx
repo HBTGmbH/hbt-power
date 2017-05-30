@@ -11,7 +11,7 @@ import {EducationList} from './elements/education/eduction_module';
 import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {ProfileAsyncActionCreator} from '../../reducers/singleProfile/ProfileAsyncActionCreator';
+import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Projects} from './elements/project/projects-module';
 import {SkillTree} from './elements/skills/skilltree-module';
 

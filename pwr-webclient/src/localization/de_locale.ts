@@ -21,6 +21,8 @@ export const de_locale : any = {
     "ProjectDialog.Description.LabelText": "Kurzbeschreibung",
     "Training.Singular": "Weiterbildung",
     "Category.Plural": "Kategorien",
+    "Initials.Singular": "Kürzel",
+    "Subject.Singular": "Betreff",
 
 
     // == Component Specific Localizations == //
@@ -46,6 +48,11 @@ export const de_locale : any = {
     "ViewCard.Description": "Beschreibung",
     "Overview.NewView": "Neues View-Profil",
     "Overview.NewView.Dialog.Title": "View Profil Erstellen",
+    "NotificationInbox.AllMessages": "Alle",
+    "NotificationInbox.TrashedMessages": "Gelöscht",
+    "NotificationInbox.NewNameEntity": "Neuer Bezeichner",
+    "NotificationInbox.ProfileUpdates": "Profilaktualisierungen",
+    "NotificationInbox.NameEntityNotification.SubjectTextTemplate": "{0} als neuer Bezeichner für {1} hinzugefügt.",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
@@ -69,6 +76,7 @@ export const de_locale : any = {
     "Action.Lock": "Sperren",
     "Action.Close": "Schließen",
     "Action.Exit": "Schließen (Ohne Speichern)",
-    "Action.Generate": "Generieren"
+    "Action.Generate": "Generieren",
+    "Action.FinalDelete": "Endgültig Löschen"
 
 };

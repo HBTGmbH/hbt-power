@@ -12,9 +12,10 @@ import {
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
-import {ProfileActionCreator} from '../../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
 import * as Immutable from 'immutable';
 import {ViewElement} from '../../../model/viewprofile/ViewElement';
+import {isNullOrUndefined} from 'util';
 
 /**
  * Properties that are managed by react-redux.
@@ -24,8 +25,8 @@ import {ViewElement} from '../../../model/viewprofile/ViewElement';
  */
 interface EducationTableProps {
     profile: Profile;
-    viewEducationEntries: Immutable.Map<string, ViewElement>;
-    educationEntries: Immutable.Map<string, EducationEntry>;
+    educationEntryIds: Immutable.OrderedSet<string>;
+    educationEntryList: Array<EducationEntry>;
     educations: Immutable.Map<string, NameEntity>;
 }
 
@@ -54,7 +55,7 @@ interface EducationTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface EducationTableDispatch {
-    selectIds(ids: Immutable.Map<string, ViewElement>): void;
+    selectIds(ids: Immutable.OrderedSet<string>): void;
 }
 
 class EducationTableModule extends React.Component<
@@ -65,8 +66,8 @@ class EducationTableModule extends React.Component<
     static mapStateToProps(state: ApplicationState, localProps: EducationTableLocalProps): EducationTableProps {
         return {
             profile: state.databaseReducer.profile(),
-            viewEducationEntries: state.databaseReducer.viewProfiles().get(state.databaseReducer.activeViewProfileId()).viewEducationEntries(),
-            educationEntries: state.databaseReducer.profile().educationEntries(),
+            educationEntryIds: state.databaseReducer.viewProfiles().get(state.databaseReducer.activeViewProfileId()).educationEntryIds(),
+            educationEntryList: state.databaseReducer.profile().educationEntries().toArray(),
             educations: state.databaseReducer.educations()
         };
     }
@@ -79,12 +80,17 @@ class EducationTableModule extends React.Component<
 
 
     private isSelected = (entryId: string) => {
-        return this.props.viewEducationEntries.get(entryId).enabled();
+        return this.props.educationEntryIds.contains(entryId);
     };
 
     private renderTableRow = (entry: EducationEntry) => {
+        console.log(entry.degree());
         return (
-            <TableRow key={'EducationTable.EducationRow.' + entry.id()} selected={this.isSelected(entry.id())}>
+            <TableRow
+                key={'EducationTable.EducationRow.' + entry.id()}
+                selected={this.isSelected(entry.id())}
+                onRowClick={() => console.log("Row clicked id=" + entry.id())}
+            >
                 <TableRowColumn>
                     {NameEntityUtil.getNullTolerantName(entry.nameEntityId(), this.props.educations)}
                 </TableRowColumn>
@@ -95,7 +101,7 @@ class EducationTableModule extends React.Component<
                     {formatToShortDisplay(entry.endDate())}
                 </TableRowColumn>
                 <TableRowColumn>
-                    {entry.degree}
+                    {isNullOrUndefined(entry.degree() || entry.degree() == "null") ? "keiner" : entry.degree()}
                 </TableRowColumn>
             </TableRow>
         );
@@ -103,15 +109,25 @@ class EducationTableModule extends React.Component<
 
 
     private handleRowSelection = (selectedRows: Array<number> | string) => {
-        let views = this.props.viewEducationEntries;
+        let views = Immutable.Set<string>();
         if(typeof(selectedRows) == 'string') {
             if(selectedRows == 'none') {
-                views = Immutable.Map<string, ViewElement>(views.map(view => view.enabled(false)));
+                views = Immutable.Set<string>();
             } else if(selectedRows == 'all') {
-                views = Immutable.Map<string, ViewElement>(views.map(view => view.enabled(true)));
+                // To not break up the order, only add potential new elements
+                this.props.profile.educationEntries().forEach(entry => {
+                    if(!views.contains(entry.id())) {
+                        views = views.add(entry.id());
+                    }
+                })
             }
         } else {
-            console.log(selectedRows);
+            selectedRows.forEach(num => {
+                let id = this.props.educationEntryList[num].id();
+                if(!views.contains(id)) {
+                    views = views.add(id);
+                }
+            })
         }
         this.props.selectIds(views);
     };
@@ -132,7 +148,7 @@ class EducationTableModule extends React.Component<
                     </TableHeader>
                     <TableBody deselectOnClickaway={false}>
                         {
-                            this.props.educationEntries.map(entry => this.renderTableRow(entry)).toArray()
+                            this.props.educationEntryList.map(entry => this.renderTableRow(entry))
                         }
                     </TableBody>
                 </Table>

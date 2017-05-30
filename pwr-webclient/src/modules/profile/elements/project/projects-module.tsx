@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {InternalDatabase} from '../../../../model/InternalDatabase';
 import {Project} from '../../../../model/Project';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../Store';
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../model/NameEntity';

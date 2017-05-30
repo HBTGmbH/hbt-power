@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState, RequestStatus} from '../../Store';
 import {CircularProgress, FontIcon, Snackbar} from 'material-ui';
+import {RequestSnackbar} from '../general/request-snackbar_module.';
 
 interface ProfileSnackbarProps {
     APIRequestStatus: RequestStatus;
@@ -45,44 +46,8 @@ class ProfileSnackbarModule extends React.Component<ProfileSnackbarProps & Profi
         }
     }
 
-    private static renderSingleSnackbar(requestStatus: RequestStatus) {
-        let msgSuccess: JSX.Element = (
-            <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'green', fontSize: 45}}>done</FontIcon>
-            </div>
-        );
-
-        let msgFail: JSX.Element = (
-            <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'red', fontSize: 45}}>error</FontIcon>
-            </div>
-        );
-
-        let msgPending: JSX.Element = (
-            <div className="row">
-                <div className="col-md-2 col-md-offset-5">
-                    <CircularProgress size={40}/>
-                </div>
-            </div>
-        );
-
-        let msg: JSX.Element;
-        if(requestStatus === RequestStatus.Successful) {
-            msg = msgSuccess;
-        } else if(requestStatus === RequestStatus.Failiure) {
-            msg = msgFail;
-        } else if(requestStatus === RequestStatus.Pending) {
-            msg = msgPending;
-        }
-
-
-        return (<Snackbar open={true} message={msg}/>);
-    }
-
     render() {
-        return(<div>
-            {ProfileSnackbarModule.renderSingleSnackbar(this.props.APIRequestStatus)}
-        </div>)
+        return(<RequestSnackbar APIRequestStatus={this.props.APIRequestStatus}/>)
     }
 }
 

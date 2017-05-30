@@ -10,7 +10,7 @@ import {Provider} from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import {PowerClient} from './modules/home/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from './reducers/singleProfile/ProfileAsyncActionCreator';
+import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
 import injectTapEventPlugin = require('react-tap-event-plugin');
 import {PowerLogin} from './modules/power-login_module';
 import {Route, Router} from 'react-router';
@@ -18,6 +18,9 @@ import { browserHistory } from 'react-router'
 import {PowerOverview} from './modules/home/power-overview_module';
 import {ConsultantProfile} from './modules/profile/profile_module';
 import {ViewProfileCard} from './modules/view/view-profile_module';
+import {NotificationInbox} from './modules/admin/notification-inbox_module';
+import {AdminClient} from './modules/admin/admin-client_module';
+import {NotificationTrashbox} from './modules/admin/notification-trashbox_module';
 
 injectTapEventPlugin();
 
@@ -40,6 +43,11 @@ store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
 //store.dispatch(ProfileAsyncActionCreator.requestSingleProfile('jd'));
 
+export class Paths {
+    public static readonly ADMIN_INBOX = "/admin/home/inbox";
+    public static readonly ADMIN_TRASHBOX = "/admin/home/trashbox";
+}
+
 let Routes = (
     <MuiThemeProvider>
         <Provider store={store}>
@@ -50,6 +58,10 @@ let Routes = (
                     <Route path="/app/" component={ConsultantProfile}/>
                     <Route path="/app/profile" component={ConsultantProfile}/>
                     <Route path="/app/view" component={ViewProfileCard}/>
+                </Route>
+                <Route path="/admin" component={AdminClient}>
+                    <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
+                    <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
                 </Route>
             </Router>
         </Provider>

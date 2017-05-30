@@ -5,7 +5,7 @@ import {ApplicationState} from '../../Store';
 import {FlatButton, FontIcon, Paper, TextField} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
-import {ProfileActionCreator} from '../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 
 
 /**

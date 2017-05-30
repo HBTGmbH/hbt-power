@@ -17,7 +17,7 @@ import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {APINameEntity} from '../../model/APIProfile';
 import {browserHistory} from 'react-router'
-import {ActionType} from './ActionType';
+import {ActionType} from '../ActionType';
 
 
 
@@ -153,25 +153,25 @@ function handleSetSelectedIds(state: InternalDatabase, action: SetViewElements):
     let viewProfile = state.viewProfiles().get(state.activeViewProfileId());
     switch(action.elementType){
         case ProfileElementType.EducationEntry: {
-            viewProfile = viewProfile.viewEducationEntries(action.viewElements);
+            viewProfile = viewProfile.educationEntryIds(action.elementIds);
             break;
         }
-        case ProfileElementType.LanguageEntry: {
-            viewProfile = viewProfile.viewLanguageEntries(action.viewElements);
+        /*case ProfileElementType.LanguageEntry: {
+            viewProfile = viewProfile.viewLanguageEntries(action.elementIds);
             break;
         }
         case ProfileElementType.TrainingEntry: {
-            viewProfile = viewProfile.viewTrainingEntries(action.viewElements);
+            viewProfile = viewProfile.viewTrainingEntries(action.elementIds);
             break;
         }
         case ProfileElementType.QualificationEntry: {
-            viewProfile = viewProfile.viewQualificationEntries(action.viewElements);
+            viewProfile = viewProfile.viewQualificationEntries(action.elementIds);
             break;
         }
         case ProfileElementType.SectorEntry: {
-            viewProfile = viewProfile.viewSectorEntries(action.viewElements);
+            viewProfile = viewProfile.viewSectorEntries(action.elementIds);
             break;
-        }
+        }*/
         default:
             break;
     }

@@ -1,4 +1,5 @@
 import {InternalDatabase} from './model/InternalDatabase';
+import {AdminState} from './model/admin/AdminState';
 
 /**
  * State encapsulating all consultants.
@@ -38,7 +39,7 @@ export enum ProfileElementType {
 
 
 export interface ApplicationState {
-    updateConsultant: AllConsultantsState;
     databaseReducer: InternalDatabase;
+    adminReducer: AdminState
 }
 

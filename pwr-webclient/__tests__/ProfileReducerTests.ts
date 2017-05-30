@@ -1,9 +1,9 @@
-import {ProfileReducer} from '../src/reducers/singleProfile/profile-reducer';
+import {ProfileReducer} from '../src/reducers/profile/profile-reducer';
 import {Profile} from '../src/model/Profile';
-import {AbstractAction} from '../src/reducers/singleProfile/database-actions';
-import {ProfileActionCreator} from '../src/reducers/singleProfile/ProfileActionCreator';
+import {AbstractAction} from '../src/reducers/profile/database-actions';
+import {ProfileActionCreator} from '../src/reducers/profile/ProfileActionCreator';
 import {ProfileElementType} from '../src/Store';
-import {CreateEntryAction, SaveEntryAction} from '../src/reducers/singleProfile/database-actions';
+import {CreateEntryAction, SaveEntryAction} from '../src/reducers/profile/database-actions';
 import {EducationEntry} from '../src/model/EducationEntry';
 import {NameEntity} from '../src/model/NameEntity';
 /**

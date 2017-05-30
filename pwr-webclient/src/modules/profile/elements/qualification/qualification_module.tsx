@@ -9,7 +9,7 @@ import {SingleQualificationEntry} from './qualification-entry_module';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 
 interface QualificationProps {
     qualificationEntries: Immutable.Map<string, QualificationEntry>;

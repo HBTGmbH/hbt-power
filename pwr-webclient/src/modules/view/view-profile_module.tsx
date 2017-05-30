@@ -5,10 +5,8 @@ import {ApplicationState} from '../../Store';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {isNullOrUndefined} from 'util';
-import {LanguageTable} from './tables/language-table_module';
-import {TrainingTable} from './tables/training-table_module';
 import {EducationTable} from './tables/education-table_module';
-import {QualificationTable} from './tables/qualification-table_module';
+import {Divider, Paper} from 'material-ui';
 
 /**
  * Properties that are managed by react-redux.
@@ -69,10 +67,15 @@ class ViewProfileCardModule extends React.Component<
         if(!isNullOrUndefined(this.props.viewProfile)) {
             return (
                 <div>
-                    <LanguageTable key="LanguageTable"/>
-                    <TrainingTable key="TrainingTable"/>
-                    <EducationTable key="EducationTable"/>
-                    <QualificationTable key="QualificationTable"/>
+                    <Paper className="margin-5px">
+                    </Paper>
+                    <Paper className="margin-5px">
+                    </Paper>
+                    <Paper className="margin-5px">
+                        <EducationTable key="EducationTable"/>
+                    </Paper>
+                    <Paper className="margin-5px">
+                    </Paper>
                 </div>
 
             );

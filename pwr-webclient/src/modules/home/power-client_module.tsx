@@ -10,8 +10,8 @@ export class PowerClient extends React.Component<{}, {}> {
 
 
     private iDontCareAboutDesign = () => {
-        alert("Das ist mir sowas von egal.");
-        alert("Kauf einen Designer ein.");
+        alert("Das Interessiert den Entwickler leider nicht.");
+        alert("Dafür sollte man einen Designer einkaufen.");
     };
 
     render() {

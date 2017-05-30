@@ -9,7 +9,7 @@ import {EducationEntry} from '../../../../model/EducationEntry';
 import {SingleEducationElement} from './education-entry_module';
 import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 
 interface EducationProps {
 

@@ -6,7 +6,7 @@ import {InternalDatabase} from '../../../../model/InternalDatabase';
 import {ApplicationState} from '../../../../Store';
 import {List, Subheader} from 'material-ui';
 import {Profile} from '../../../../model/Profile';
-import {ProfileActionCreator} from '../../../../reducers/singleProfile/ProfileActionCreator';
+import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {SkillChip} from './skill-chip_module';
 

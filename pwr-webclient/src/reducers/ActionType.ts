@@ -31,5 +31,17 @@ export enum ActionType {
     RequestConsultants,
     ReceiveConsultants,
         // == Single ConsultantProfile Actions == //
-    ChangeAbstract
+    ChangeAbstract,
+    // == Admin Actions
+    RequestNotifications,
+    ReceiveNotifications,
+    FailRequestNotifications,
+
+    RequestTrashedNotifications,
+    ReceiveTrashedNotifications,
+    FailRequestTrashedNotifications,
+
+    RequestNotificationTrashing,
+
+    AdminNavigate,
 }

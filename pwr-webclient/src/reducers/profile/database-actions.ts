@@ -10,7 +10,7 @@ import {Project} from '../../model/Project';
 import {Skill} from '../../model/Skill';
 import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
-import {ActionType} from './ActionType';
+import {ActionType} from '../ActionType';
 import * as Immutable from 'immutable'
 import {ViewElement} from '../../model/viewprofile/ViewElement';
 
@@ -104,7 +104,7 @@ export interface SelectViewProfileAction extends AbstractAction {
 
 export interface SetViewElements extends AbstractAction {
     elementType: ProfileElementType;
-    viewElements: Immutable.Map<string, ViewElement>;
+    elementIds: Immutable.OrderedSet<string>;
 }
 
 
