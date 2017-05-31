@@ -108,7 +108,9 @@ class NotificationTrashboxModule extends React.Component<
                         label={PowerLocalize.get("NotificationInbox.TrashedMessages")}
                     >
                         <Table>
-                            <TableBody>
+                            <TableBody
+                                displayRowCheckbox={false}
+                            >
                                 {
                                     this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
                                 }

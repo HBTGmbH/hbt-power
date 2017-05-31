@@ -7,7 +7,7 @@ export interface ReceiveNotifcationsAction extends AbstractAction {
     notifications: Array<APIAdminNotification>;
 }
 
-export interface TrashNotificationAction extends AbstractAction {
+export interface RequestStatusAction extends AbstractAction {
     requestStatus: RequestStatus;
 }
 

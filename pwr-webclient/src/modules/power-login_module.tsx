@@ -3,10 +3,12 @@ import * as React from 'react';
 import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../Store';
-import {Paper, RaisedButton, TextField} from 'material-ui';
+import {FlatButton, Paper, RaisedButton, TextField} from 'material-ui';
 import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
+import {browserHistory} from 'react-router';
+import {Paths} from '../index';
 /**
  * Properties that are managed by react-redux.
  *
@@ -181,6 +183,11 @@ class PowerLoginModule extends React.Component<
                     <div className="row">
                         <div className="col-md-offset-1">
                             <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
+                        </div>
+                    </div>
+                    <div className="row" style={{marginTop: "20px"}}>
+                        <div className="col-md-offset-1">
+                            <FlatButton label="Admin" onClick={() => browserHistory.push(Paths.ADMIN_INBOX)}/>
                         </div>
                     </div>
 

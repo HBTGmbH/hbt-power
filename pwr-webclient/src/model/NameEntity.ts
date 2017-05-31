@@ -61,14 +61,23 @@ export class NameEntity {
     }
 
     /**
+     * "API-Transient", has to be kept the same. On new entites, this is set by the API based on occurrence
+     * @returns {Doop<string, this>}
+     */
+    @doop
+    public get type() {
+        return doop<string, this>();
+    }
+
+    /**
      * Used whenever a local ID is created. These IDs are not persistent and should be prefixed with {@link NEW_ENTITY_PREFIX}
      * to create a seperate namespace for local IDs.
      * @type {number}
      */
     private static CURRENT_LOCAL_ID: number = 0;
 
-    protected constructor(id: string, name:string, isNew: boolean) {
-        return this.id(id).name(name).isNew(isNew);
+    protected constructor(id: string, name:string, isNew: boolean, type: string) {
+        return this.id(id).name(name).isNew(isNew).type(type);
     }
 
     /**
@@ -79,7 +88,7 @@ export class NameEntity {
      * @param name of the new entity.
      */
     public static createNew(name: string): NameEntity {
-        return new NameEntity(NEW_ENTITY_PREFIX + String(NameEntity.CURRENT_LOCAL_ID++), name, true);
+        return new NameEntity(NEW_ENTITY_PREFIX + String(NameEntity.CURRENT_LOCAL_ID++), name, true, null);
     }
 
     /**
@@ -91,7 +100,8 @@ export class NameEntity {
     public toAPI(): APINameEntity {
         return {
             id: this.isNew()? null : Number.parseInt(this.id()),
-            name: this.name()
+            name: this.name(),
+            type: this.type()
         }
     }
 
@@ -104,7 +114,8 @@ export class NameEntity {
         return new NameEntity(
             String(nameEntity.id),
             nameEntity.name,
-            false
+            false,
+            nameEntity.type
         );
     }
 }

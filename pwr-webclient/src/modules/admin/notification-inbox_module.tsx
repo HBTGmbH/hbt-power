@@ -12,6 +12,7 @@ import {formatString} from '../../utils/StringUtil';
 import {formatToMailDisplay, formatToShortDisplay} from '../../utils/DateUtil';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {type} from 'os';
+import {NotificationDialog} from './notification-dialog_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -42,6 +43,8 @@ interface NotificationInboxLocalProps {
  */
 interface NotificationInboxLocalState {
     selectedRows: string | Array<number>;
+    notificationDialogOpen: boolean;
+    selectedNotification: number;
 }
 
 /**
@@ -60,7 +63,9 @@ class NotificationInboxModule extends React.Component<
     constructor(props: NotificationInboxProps & NotificationInboxLocalProps & NotificationInboxDispatch) {
         super(props);
         this.state = {
-            selectedRows: []
+            selectedRows: [],
+            notificationDialogOpen: false,
+            selectedNotification: -1
         }
     }
 
@@ -77,14 +82,25 @@ class NotificationInboxModule extends React.Component<
         };
     }
 
-
-    private deleteSelectedItems = () => {
-
+    private showNotificationDialog = (index: number) => {
+        console.log("show", index);
+        this.setState({
+            notificationDialogOpen: true,
+            selectedNotification: index
+        })
     };
 
-    private renderNotificationAsTableRow = (notification: AdminNotification) => {
+    private hideNotificationDialog = () => {
+        this.setState({
+            notificationDialogOpen: false
+        })
+    };
+
+    private renderNotificationAsTableRow = (notification: AdminNotification, key: number) => {
         return (
-            <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()}>
+            <TableRow
+                key={"NotificationInbox.TableRow.Not." + notification.id()}
+            >
                 <TableRowColumn>{notification.initials()}</TableRowColumn>
                 <TableRowColumn>
                     {formatString(
@@ -133,6 +149,11 @@ class NotificationInboxModule extends React.Component<
     render() {
         return (
             <div>
+                <NotificationDialog
+                    index={this.state.selectedNotification}
+                    open={this.state.notificationDialogOpen}
+                    onRequestClose={this.hideNotificationDialog}
+                />
                 <div className="row">
                     <div className="col-md-9">
                         <RaisedButton
@@ -157,6 +178,7 @@ class NotificationInboxModule extends React.Component<
                         <Table
                             multiSelectable={true}
                             onRowSelection={this.handleAllMessagesRowSelection}
+                            onCellClick={this.showNotificationDialog}
                         >
                             {this.renderTableHeader()}
                             <TableBody deselectOnClickaway={false}>

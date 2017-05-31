@@ -1,7 +1,7 @@
 import {AdminState} from '../../model/admin/AdminState';
 import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
-import {NavigateAction, ReceiveNotifcationsAction, TrashNotificationAction} from './admin-actions';
+import {NavigateAction, ReceiveNotifcationsAction, RequestStatusAction} from './admin-actions';
 import {AdminNotification} from '../../model/admin/AdminNotification';
 import {ActionType} from '../ActionType';
 import {RequestStatus} from '../../Store';
@@ -19,7 +19,7 @@ export class AdminReducer {
         return state.trashedNotifications(Immutable.List<AdminNotification>(notifications)).requestStatus(RequestStatus.Successful);
     }
 
-    public static RequestNotificationTrashing(state: AdminState, action: TrashNotificationAction) {
+    public static RequestNotificationTrashing(state: AdminState, action: RequestStatusAction) {
         return state.requestStatus(action.requestStatus);
     }
 
@@ -53,9 +53,11 @@ export class AdminReducer {
             case ActionType.ReceiveTrashedNotifications:
                 return AdminReducer.ReceiveTrashedNotifications(state, action as ReceiveNotifcationsAction);
             case ActionType.RequestNotificationTrashing:
-                return AdminReducer.RequestNotificationTrashing(state, action as TrashNotificationAction);
+                return AdminReducer.RequestNotificationTrashing(state, action as RequestStatusAction);
             case ActionType.AdminNavigate:
                 return AdminReducer.NaviagateTo(state, action as NavigateAction);
+            case ActionType.AdminRequestStatus:
+                return state.requestStatus((action as RequestStatusAction).requestStatus);
             default:
                 return state;
         }

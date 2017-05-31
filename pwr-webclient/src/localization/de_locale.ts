@@ -53,7 +53,10 @@ export const de_locale : any = {
     "NotificationInbox.NewNameEntity": "Neuer Bezeichner",
     "NotificationInbox.ProfileUpdates": "Profilaktualisierungen",
     "NotificationInbox.NameEntityNotification.SubjectTextTemplate": "{0} als neuer Bezeichner für {1} hinzugefügt.",
-
+    "NotificationDialog.Stepper.Label.Step0": "Informationen",
+    "NotificationDialog.Stepper.Label.Step1": "Aktionen",
+    "NotificationDialog.Stepper.Label.Step2": "Bezeichner bearbeiten",
+    "NotificationDialog.EditNameEntity": "Neuer Bezeichner",
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
     "Profile.Description": "Werbetext",
@@ -65,6 +68,8 @@ export const de_locale : any = {
 
     "None": "Kein",
     // == ACTIONS == //
+    "Action.OK": "OK",
+    "Action.Keep": "Behalten",
     "Action.Edit": "Bearbeiten",
     "Action.Save": "Speichern",
     "Action.Update": "Aktualisieren",
@@ -77,6 +82,9 @@ export const de_locale : any = {
     "Action.Close": "Schließen",
     "Action.Exit": "Schließen (Ohne Speichern)",
     "Action.Generate": "Generieren",
-    "Action.FinalDelete": "Endgültig Löschen"
+    "Action.FinalDelete": "Endgültig Löschen",
+    "Action.Previous": "Zurück",
+    "Action.Next": "Weiter",
+    "Action.Execute": "Ausführen"
 
 };

@@ -1,7 +1,7 @@
 import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
-import {APIAdminNotification} from '../../model/admin/AdminNotification';
-import {NavigateAction, ReceiveNotifcationsAction, TrashNotificationAction} from './admin-actions';
+import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNotification';
+import {NavigateAction, ReceiveNotifcationsAction, RequestStatusAction} from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
 import {getNotificationAPIString, getNotificationTrashAPIString, getProfileAPIString} from '../../API_CONFIG';
@@ -48,21 +48,21 @@ export class AdminActionCreator {
         }
     }
 
-    public static RequestNotificationTrashing(): TrashNotificationAction {
+    public static RequestNotificationTrashing(): RequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Pending
         }
     }
 
-    public static RequestNotificationTrashingSuccess(): TrashNotificationAction {
+    public static RequestNotificationTrashingSuccess(): RequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Successful
         }
     }
 
-    public static RequestNotificationTrashingFail(): TrashNotificationAction {
+    public static RequestNotificationTrashingFail(): RequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Failiure
@@ -73,6 +73,13 @@ export class AdminActionCreator {
         return {
             type: ActionType.AdminNavigate,
             location: to
+        }
+    }
+
+    public static ChangeRequestStatus(to: RequestStatus): RequestStatusAction {
+        return {
+            type: ActionType.AdminRequestStatus,
+            requestStatus: to
         }
     }
 
@@ -145,5 +152,44 @@ export class AdminActionCreator {
             dispatch(AdminActionCreator.AsyncRequestTrashedNotifications());
             dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_TRASHBOX))
         }
+    }
+
+    public static AsyncNotificationInvokeDelete(notificationId: number) {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.delete(getNotificationAPIString() + "/" + notificationId).then(function(response: AxiosResponse) {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                dispatch(AdminActionCreator.AsyncRequestNotifications());
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
+        };
+    }
+
+    public static AsyncNotificationInvokeOK(notificationId: number) {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.put(getNotificationAPIString() + "/" + notificationId).then(function(response: AxiosResponse) {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                dispatch(AdminActionCreator.AsyncRequestNotifications());
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
+        };
+    }
+
+    public static AsyncNotificationInvokeEdit(notification: AdminNotification) {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.patch(getNotificationAPIString(), notification.toApi()).then(function(response: AxiosResponse) {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                dispatch(AdminActionCreator.AsyncRequestNotifications());
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
+        };
     }
 }
