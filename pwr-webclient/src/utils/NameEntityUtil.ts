@@ -1,5 +1,6 @@
 import {NameEntity} from '../model/NameEntity';
 import {isNull, isNullOrUndefined} from 'util';
+import {PowerLocalize} from '../localization/PowerLocalizer';
 export class NameEntityUtil {
 
     /**
@@ -27,5 +28,9 @@ export class NameEntityUtil {
      */
     public static mapToName(nameEntity: NameEntity) {
         return nameEntity.name();
+    }
+
+    public static typeToLocalizedType(nameEntity: NameEntity) {
+        return PowerLocalize.get("NameEntityType." + nameEntity.type());
     }
 }

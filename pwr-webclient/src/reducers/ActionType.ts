@@ -45,4 +45,10 @@ export enum ActionType {
 
     AdminNavigate,
     AdminRequestStatus,
+
+    ChangeUsername,
+    ChangePassword,
+
+    ChangeAdminLoginStatus,
+    LogInAdmin
 }

@@ -8,6 +8,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Stepper} from 'material-ui/Stepper';
+import {NameEntityUtil} from '../../utils/NameEntityUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -196,7 +197,7 @@ class NotificationDialogModule extends React.Component<
             <div>
                 Im Profil von <strong>{this.props.notification.initials()}</strong> wurde der neue Bezeichner <strong>
                 {this.props.notification.nameEntity().name()}</strong> hinzugefügt.
-                Dies betrifft den Eintragstyp <strong>{this.props.notification.nameEntity().type()}</strong>
+                Dies betrifft den Eintragstyp <strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity())}</strong>
                 <br/>
                 Bitte wählen sie im nächsten Schritt eine Aktion.
             </div>);

@@ -1,12 +1,13 @@
 import {AdminState} from '../../model/admin/AdminState';
-import {AbstractAction} from '../profile/database-actions';
+import {AbstractAction, ChangeStringValueAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
-import {NavigateAction, ReceiveNotifcationsAction, RequestStatusAction} from './admin-actions';
+import {ChangeLoginStatusAction, NavigateAction, ReceiveNotifcationsAction, RequestStatusAction} from './admin-actions';
 import {AdminNotification} from '../../model/admin/AdminNotification';
 import {ActionType} from '../ActionType';
 import {RequestStatus} from '../../Store';
 import * as Immutable from 'immutable';
 import {browserHistory} from 'react-router'
+import {Paths} from '../../index';
 
 export class AdminReducer {
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotifcationsAction): AdminState {
@@ -36,6 +37,22 @@ export class AdminReducer {
         return state;
     }
 
+    public static ChangeUsername(state: AdminState, action: ChangeStringValueAction) {
+        return state.adminName(action.value);
+    }
+
+    public static ChangePassword(state: AdminState, action: ChangeStringValueAction) {
+        return state.adminPass(action.value);
+    }
+
+    public static ChangeLoginStatus(state: AdminState, action: ChangeLoginStatusAction) {
+        return state.loginStatus(action.status);
+    }
+
+    public static LogInAdmin(state: AdminState, action: AbstractAction): AdminState {
+        browserHistory.push(Paths.ADMIN_INBOX);
+        return state;
+    }
 
     public static reduce(state : AdminState, action: AbstractAction) : AdminState {
         if(isNullOrUndefined(state)) {
@@ -58,6 +75,14 @@ export class AdminReducer {
                 return AdminReducer.NaviagateTo(state, action as NavigateAction);
             case ActionType.AdminRequestStatus:
                 return state.requestStatus((action as RequestStatusAction).requestStatus);
+            case ActionType.ChangeAdminLoginStatus:
+                return AdminReducer.ChangeLoginStatus(state, action as ChangeLoginStatusAction);
+            case ActionType.ChangeUsername:
+                return AdminReducer.ChangeUsername(state, action as ChangeStringValueAction);
+            case ActionType.ChangePassword:
+                return AdminReducer.ChangePassword(state, action as ChangeStringValueAction);
+            case ActionType.LogInAdmin:
+                return AdminReducer.LogInAdmin(state, action);
             default:
                 return state;
         }

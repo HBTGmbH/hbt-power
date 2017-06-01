@@ -21,6 +21,7 @@ import {ViewProfileCard} from './modules/view/view-profile_module';
 import {NotificationInbox} from './modules/admin/notification-inbox_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {NotificationTrashbox} from './modules/admin/notification-trashbox_module';
+import {AdminLogin} from './modules/admin/admin-login_module';
 
 injectTapEventPlugin();
 
@@ -46,6 +47,7 @@ store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
 export class Paths {
     public static readonly ADMIN_INBOX = "/admin/home/inbox";
     public static readonly ADMIN_TRASHBOX = "/admin/home/trashbox";
+    public static readonly ADMIN_LOGIN = "/login";
 }
 
 let Routes = (
@@ -53,6 +55,7 @@ let Routes = (
         <Provider store={store}>
             <Router history={browserHistory}>
                 <Route path="/" component={PowerLogin}/>
+                <Route path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
                 <Route path="/app" component={PowerClient}>
                     <Route path="/app/home" component={PowerOverview}/>
                     <Route path="/app/" component={ConsultantProfile}/>

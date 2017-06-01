@@ -23,6 +23,7 @@ export const de_locale : any = {
     "Category.Plural": "Kategorien",
     "Initials.Singular": "Kürzel",
     "Subject.Singular": "Betreff",
+    "Password.Singular": "Passwort",
 
 
     // == Component Specific Localizations == //
@@ -57,6 +58,7 @@ export const de_locale : any = {
     "NotificationDialog.Stepper.Label.Step1": "Aktionen",
     "NotificationDialog.Stepper.Label.Step2": "Bezeichner bearbeiten",
     "NotificationDialog.EditNameEntity": "Neuer Bezeichner",
+
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
     "Profile.Description": "Werbetext",
@@ -65,6 +67,13 @@ export const de_locale : any = {
     "Menu.Views": "Views",
     "Menu.Reports": "Exportdokumente",
     "Menu.Home": "Übersicht",
+    "NameEntityType.EDUCATION" : "Ausbildung",
+    "NameEntityType.LANGUAGE" : "Sprache",
+    "NameEntityType.QUALIFICATION" : "Zusatzqualifikation",
+    "NameEntityType.SECTOR" : "Branche",
+    "NameEntityType.TRAINING" : "Weiterbildung",
+    "NameEntityType.PROJECT_ROLE" : "Projektrolle",
+    "NameEntityType.COMPANY" : "Unternehmen",
 
     "None": "Kein",
     // == ACTIONS == //

@@ -13,6 +13,7 @@ import {formatToMailDisplay, formatToShortDisplay} from '../../utils/DateUtil';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {type} from 'os';
 import {NotificationDialog} from './notification-dialog_module';
+import {NameEntityUtil} from '../../utils/NameEntityUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -90,6 +91,13 @@ class NotificationInboxModule extends React.Component<
         })
     };
 
+    private handleCellClick = (rowNum: number, colNum: number) => {
+        // Ignore the checkboxes.
+        if(colNum >= 0) {
+            this.showNotificationDialog(rowNum);
+        }
+    }
+
     private hideNotificationDialog = () => {
         this.setState({
             notificationDialogOpen: false
@@ -106,7 +114,7 @@ class NotificationInboxModule extends React.Component<
                     {formatString(
                         PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
                         notification.nameEntity().name(),
-                        "TODO")
+                        NameEntityUtil.typeToLocalizedType(notification.nameEntity()))
                     }
                 </TableRowColumn>
                 <TableRowColumn>{formatToMailDisplay(notification.occurrence())}</TableRowColumn>
@@ -125,7 +133,6 @@ class NotificationInboxModule extends React.Component<
     };
 
     private handleAllMessagesRowSelection = (rows: string | Array<number>) => {
-        console.log("Selected rows:", rows);
         this.setState({
             selectedRows: rows
         });
@@ -178,7 +185,7 @@ class NotificationInboxModule extends React.Component<
                         <Table
                             multiSelectable={true}
                             onRowSelection={this.handleAllMessagesRowSelection}
-                            onCellClick={this.showNotificationDialog}
+                            onCellClick={this.handleCellClick}
                         >
                             {this.renderTableHeader()}
                             <TableBody deselectOnClickaway={false}>
@@ -192,9 +199,13 @@ class NotificationInboxModule extends React.Component<
                         icon={<FontIcon className="material-icons">add_box</FontIcon>}
                         label={PowerLocalize.get("NotificationInbox.NewNameEntity")}
                     >
-                        <Table multiSelectable={true}>
+                        <Table multiSelectable={true}
+                               onRowSelection={this.handleAllMessagesRowSelection}
+                               onCellClick={this.handleCellClick}
+                        >
                             {this.renderTableHeader()}
-                            <TableBody deselectOnClickaway={false}>
+                            <TableBody deselectOnClickaway={false}
+                            >
                                 {
                                     this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
                                 }

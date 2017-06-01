@@ -40,6 +40,7 @@ interface PowerLoginLocalState {
     initials: string;
     password: string;
     status: LoginStatus;
+    isAdmin: boolean;
 }
 
 
@@ -61,7 +62,8 @@ class PowerLoginModule extends React.Component<
         this.state = {
             initials: "",
             password: "",
-            status: LoginStatus.INITIALS
+            status: LoginStatus.INITIALS,
+            isAdmin: false
         }
     }
 
@@ -87,31 +89,24 @@ class PowerLoginModule extends React.Component<
     };
 
     private progressState = () => {
-        switch(this.state.status) {
-            case LoginStatus.PASSWORD: {
+
+        if(this.state.isAdmin) {
+
+        } else {
+            if(this.state.status == LoginStatus.INITIALS) {
                 this.setState({
-                    status: LoginStatus.SUCCESS
+                    status: LoginStatus.SUCCESS,
                 });
                 this.props.logInUser(this.state.initials);
-                break;
             }
-            case LoginStatus.INITIALS: {
-                this.setState({
-                    status: LoginStatus.PASSWORD,
-                });
-                break;
-            }
-            default:
-                break;
-
         }
+
     };
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
         if(event.key == 'Enter') {
             this.progressState();
         }
-
     };
 
     private handleProgressButtonClick = () => {
@@ -171,7 +166,7 @@ class PowerLoginModule extends React.Component<
                     </div>
                     <div className="row">
                         <div className="col-md-offset-1">
-                            <h1>Anmeldung</h1>
+                            <h1>Profilauswahl</h1>
                             <h4>Weiter zu HBT Power</h4>
                         </div>
                     </div>
@@ -187,7 +182,7 @@ class PowerLoginModule extends React.Component<
                     </div>
                     <div className="row" style={{marginTop: "20px"}}>
                         <div className="col-md-offset-1">
-                            <FlatButton label="Admin" onClick={() => browserHistory.push(Paths.ADMIN_INBOX)}/>
+                            <FlatButton label="Admin" onClick={() => browserHistory.push(Paths.ADMIN_LOGIN)}/>
                         </div>
                     </div>
 

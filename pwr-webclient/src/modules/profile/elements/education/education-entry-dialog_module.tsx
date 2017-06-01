@@ -138,7 +138,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         let name: string = this.state.educationAutoComplete;
         let education: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.educations);
         let educationEntry: EducationEntry = this.state.entry;
-        if(isNullOrUndefined(name)) {
+        if(isNullOrUndefined(education)) {
             education = NameEntity.createNew(name);
         }
         educationEntry = educationEntry.nameEntityId(education.id());
