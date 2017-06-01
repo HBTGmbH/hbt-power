@@ -18,6 +18,8 @@ import {NameEntityUtil} from '../../utils/NameEntityUtil';
  */
 interface NotificationDialogProps {
     notification: AdminNotification;
+    username: string;
+    password: string;
 }
 
 /**
@@ -51,9 +53,9 @@ interface NotificationDialogLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface NotificationDialogDispatch {
-    executeDeleteAction(id: number): void;
-    executeOkAction(id: number): void;
-    executePatchAction(notification: AdminNotification): void;
+    executeDeleteAction(id: number, user: string, pass:string): void;
+    executeOkAction(id: number, user: string, pass:string): void;
+    executePatchAction(notification: AdminNotification, user: string, pass:string): void;
 }
 
 class NotificationDialogModule extends React.Component<
@@ -78,15 +80,17 @@ class NotificationDialogModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: NotificationDialogLocalProps): NotificationDialogProps {
         return {
-            notification: state.adminReducer.notifications().get(localProps.index)
+            notification: state.adminReducer.notifications().get(localProps.index),
+            username: state.adminReducer.adminName(),
+            password: state.adminReducer.adminPass()
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationDialogDispatch {
         return {
-            executeDeleteAction: id => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id)),
-            executePatchAction:  notification => dispatch(AdminActionCreator.AsyncNotificationInvokeEdit(notification)),
-            executeOkAction: id => dispatch(AdminActionCreator.AsyncNotificationInvokeOK(id))
+            executeDeleteAction: (id, user, pass) => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id, user, pass)),
+            executePatchAction:  (notification, user, pass) => dispatch(AdminActionCreator.AsyncNotificationInvokeEdit(notification, user, pass)),
+            executeOkAction: (id, user, pass) => dispatch(AdminActionCreator.AsyncNotificationInvokeOK(id, user, pass))
         };
     }
 
@@ -127,17 +131,17 @@ class NotificationDialogModule extends React.Component<
     private executeSelectedAction = () => {
         switch(this.state.selectedAction){
             case 'ok':
-                this.props.executeOkAction(this.props.notification.id());
+                this.props.executeOkAction(this.props.notification.id(), this.props.username, this.props.password);
                 break;
             case 'edit':
                 let notification = this.props.notification;
                 let nameEntity = notification.nameEntity();
                 nameEntity = nameEntity.name(this.state.nameEntityName);
                 notification = notification.nameEntity(nameEntity);
-                this.props.executePatchAction(notification);
+                this.props.executePatchAction(notification, this.props.username, this.props.password);
                 break;
             case 'delete':
-                this.props.executeDeleteAction(this.props.notification.id());
+                this.props.executeDeleteAction(this.props.notification.id(), this.props.username, this.props.password);
                 break;
         }
         this.closeDialog();

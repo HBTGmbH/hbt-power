@@ -23,6 +23,8 @@ import {NameEntityUtil} from '../../utils/NameEntityUtil';
  */
 interface NotificationInboxProps {
     notifications: Immutable.List<AdminNotification>;
+    username: string;
+    password: string;
 }
 
 /**
@@ -52,8 +54,8 @@ interface NotificationInboxLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface NotificationInboxDispatch {
-    getNotifications(): void;
-    trashNotifications(ids: Array<number>): void;
+    getNotifications(user: string, pass:string): void;
+    trashNotifications(ids: Array<number>, user: string, pass:string): void;
 }
 
 class NotificationInboxModule extends React.Component<
@@ -72,14 +74,16 @@ class NotificationInboxModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: NotificationInboxLocalProps): NotificationInboxProps {
         return {
-            notifications: state.adminReducer.notifications()
+            notifications: state.adminReducer.notifications(),
+            username: state.adminReducer.adminName(),
+            password: state.adminReducer.adminPass()
         }
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationInboxDispatch {
         return {
-            getNotifications: () => {dispatch(AdminActionCreator.AsyncRequestNotifications())},
-            trashNotifications: (ids) => {dispatch(AdminActionCreator.AsyncTrashNotifications(ids))}
+            getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass))},
+            trashNotifications: (ids, user, pass) => {dispatch(AdminActionCreator.AsyncTrashNotifications(ids, user, pass))}
         };
     }
 
@@ -150,7 +154,7 @@ class NotificationInboxModule extends React.Component<
                 ids.push(this.props.notifications.get(rowNum).id())
             });
         }
-        this.props.trashNotifications(ids);
+        this.props.trashNotifications(ids, this.props.username, this.props.password);
     };
 
     render() {
@@ -167,7 +171,7 @@ class NotificationInboxModule extends React.Component<
                             style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
                             label={PowerLocalize.get('Action.Update')}
                             icon={<FontIcon className="material-icons">refresh</FontIcon>}
-                            onClick={this.props.getNotifications}
+                            onClick={() => this.props.getNotifications(this.props.username, this.props.password)}
                         />
                         <RaisedButton
                             style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}

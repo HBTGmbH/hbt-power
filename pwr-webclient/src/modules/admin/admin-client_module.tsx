@@ -17,6 +17,8 @@ import {RequestSnackbar} from '../general/request-snackbar_module.';
  */
 interface AdminClientProps {
     requestStatus: RequestStatus;
+    username: string;
+    password: string;
 }
 
 /**
@@ -44,9 +46,9 @@ interface AdminClientLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface AdminClientDispatch {
-    getNotifications(): void;
-    navigateToTrashbox(): void;
-    navigateToInbox(): void;
+    getNotifications(user: string, pass: string): void;
+    navigateToTrashbox(user: string, pass: string): void;
+    navigateToInbox(user: string, pass: string): void;
 }
 
 class AdminClientModule extends React.Component<
@@ -56,24 +58,26 @@ class AdminClientModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: AdminClientLocalProps): AdminClientProps {
         return {
-            requestStatus: state.adminReducer.requestStatus()
+            requestStatus: state.adminReducer.requestStatus(),
+            username: state.adminReducer.adminName(),
+            password: state.adminReducer.adminPass()
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminClientDispatch {
         return {
-            getNotifications: () => {dispatch(AdminActionCreator.AsyncRequestNotifications());},
-            navigateToInbox: () => {dispatch(AdminActionCreator.AsyncNavigateToInbox())},
-            navigateToTrashbox: () => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox())}
+            getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
+            navigateToInbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass))},
+            navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass))}
         };
     }
 
     private handleInboxButtonClick = () => {
-        this.props.navigateToInbox();
+        this.props.navigateToInbox(this.props.username, this.props.password);
     };
 
     private handleTrashboxButtonClick = () => {
-        this.props.navigateToTrashbox();
+        this.props.navigateToTrashbox(this.props.username, this.props.password);
     };
 
     render() {

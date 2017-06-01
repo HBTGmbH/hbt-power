@@ -115,9 +115,13 @@ export class AdminActionCreator {
     }
 
 
-    public static AsyncRequestNotifications() {
+    public static AsyncRequestNotifications(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
+                auth: {
+                    username: username,
+                    password: password
+                },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.RequestNotifications());
@@ -130,9 +134,13 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncRequestTrashedNotifications() {
+    public static AsyncRequestTrashedNotifications(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
+                auth: {
+                    username: username,
+                    password: password
+                },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.RequestTrashedNotifications());
@@ -151,15 +159,19 @@ export class AdminActionCreator {
      * @returns {(dispatch:redux.Dispatch<AdminState>)=>undefined}
      * @constructor
      */
-    public static AsyncTrashNotifications(ids: Array<number>) {
+    public static AsyncTrashNotifications(ids: Array<number>, username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
+                auth: {
+                    username: username,
+                    password: password
+                },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.RequestNotificationTrashing());
             axios.put(getNotificationTrashAPIString(), ids, config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.RequestNotificationTrashingSuccess());
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
+                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(AdminActionCreator.RequestNotificationTrashingFail());
@@ -167,15 +179,19 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncDeleteTrashed() {
+    public static AsyncDeleteTrashed(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
+                auth: {
+                    username: username,
+                    password: password
+                },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.RequestNotificationTrashing());
             axios.delete(getNotificationTrashAPIString(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.RequestNotificationTrashingSuccess());
-                dispatch(AdminActionCreator.AsyncRequestTrashedNotifications());
+                dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(AdminActionCreator.RequestNotificationTrashingFail());
@@ -183,29 +199,33 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncNavigateToInbox() {
+    public static AsyncNavigateToInbox(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>){
-            dispatch(AdminActionCreator.AsyncRequestNotifications());
+            dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_INBOX))
         }
     }
 
-    public static AsyncNavigateToTrashbox() {
+    public static AsyncNavigateToTrashbox(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>){
-            dispatch(AdminActionCreator.AsyncRequestTrashedNotifications());
+            dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
             dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_TRASHBOX))
         }
     }
 
-    public static AsyncNotificationInvokeDelete(notificationId: number) {
+    public static AsyncNotificationInvokeDelete(notificationId: number, username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
+                auth: {
+                    username: username,
+                    password: password
+                },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
             axios.delete(getNotificationAPIString() + "/" + notificationId, config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
+                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
@@ -213,15 +233,19 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncNotificationInvokeOK(notificationId: number) {
+    public static AsyncNotificationInvokeOK(notificationId: number, username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
             let config = {
+                auth: {
+                    username: username,
+                    password: password
+                },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             axios.put(getNotificationAPIString() + "/" + notificationId, null, config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
+                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
@@ -229,15 +253,19 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncNotificationInvokeEdit(notification: AdminNotification) {
+    public static AsyncNotificationInvokeEdit(notification: AdminNotification, username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
+                auth: {
+                    username: username,
+                    password: password
+                },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
             axios.patch(getNotificationAPIString(), notification.toApi(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
+                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
                 console.error(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
@@ -256,7 +284,7 @@ export class AdminActionCreator {
             };
             axios.head(getAdminAuthAPIString(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.INITIALS));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
+                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
                 dispatch(AdminActionCreator.LogInAdmin());
             }).catch(function(error:any) {
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
