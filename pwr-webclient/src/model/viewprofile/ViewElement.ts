@@ -7,11 +7,11 @@ export class ViewElement {
     @doop
     public get elementId() {return doop<string, this>()};
 
-    private constructor(enabled: boolean) {
-        return this.enabled(enabled);
+    private constructor(enabled: boolean, elementId: string) {
+        return this.enabled(enabled).elementId(elementId);
     }
 
-    public static create(enabled: boolean) {
-        return new ViewElement(enabled);
+    public static create(enabled: boolean, elementId: string) {
+        return new ViewElement(enabled, elementId);
     }
 }

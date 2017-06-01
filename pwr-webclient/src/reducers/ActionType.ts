@@ -3,7 +3,7 @@
  */
 
 export enum ActionType {
-    SetSelectedIds,
+    SetSelectedIndexes,
     SelectViewProfile,
     DeleteViewProfile,
     SaveViewProfile,

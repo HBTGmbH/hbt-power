@@ -37,52 +37,42 @@ export class ViewProfile {
      * @returns {Doop<Profile, ViewProfile>}
      */
     @doop
-    public get profileId() {return doop<number, ViewProfile>()};
+    public get profile() {return doop<Profile, ViewProfile>()};
 
     @doop
-    public get viewSectorEntries() {return doop<Immutable.Map<string, ViewElement>, ViewProfile>()};
+    public get viewSectorEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
 
     @doop
-    public get viewTrainingEntries() {return doop<Immutable.Map<string, ViewElement>, ViewProfile>()};
+    public get viewTrainingEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
 
     @doop
-    public get educationEntryIds() {return doop<Immutable.OrderedSet<string>, ViewProfile>()};
+    public get viewEducationEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
 
     /**
      * Ordered List of language IDs referencing {@link Profile#languageSkills}
      * @returns {Doop<Immutable.List<string>, ViewProfile>}
      */
     @doop
-    public get viewLanguageEntries() {return doop<Immutable.Map<string, ViewElement>, ViewProfile>()};
+    public get viewLanguageEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
 
     @doop
-    public get viewQualificationEntries() {return doop<Immutable.Map<string, ViewElement>, ViewProfile>()};
-
-    @doop
-    public get viewProjectIds() {return doop<Immutable.Map<string, ViewElement>, ViewProfile>()};
-
-    @doop
-    public get viewSkillIds() {return doop<Immutable.Map<string, ViewElement>, ViewProfile>()};
+    public get viewQualificationEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
 
     private static currentId: number = 0;
 
 
-    private constructor(id: string, isNew: boolean, name: string, description: string, profileId: number,
-                sectorEntryIds: Immutable.Map<string, ViewElement>,
-                trainingEntryIds:Immutable.Map<string, ViewElement>,
-                educationEntryIds:Immutable.OrderedSet<string>,
-                languageSkillIds: Immutable.Map<string, ViewElement>,
-                qualificationEntryIds: Immutable.Map<string, ViewElement>,
-                projectIds: Immutable.Map<string, ViewElement>,
-                skillIds: Immutable.Map<string, ViewElement>
+    private constructor(id: string, isNew: boolean, name: string, description: string, profile: Profile,
+                viewSectorEntries: Immutable.List<ViewElement>,
+                viewTrainignEntries:Immutable.List<ViewElement>,
+                viewEducationEntries:Immutable.List<ViewElement>,
+                viewLanguageSkills: Immutable.List<ViewElement>,
+                viewQualificationEntries: Immutable.List<ViewElement>,
     ) {
-        return this.id(id).isNew(isNew).name(name).description(description).profileId(profileId).viewSectorEntries(sectorEntryIds)
-            .viewTrainingEntries(trainingEntryIds)
-            .educationEntryIds(educationEntryIds)
-            .viewLanguageEntries(languageSkillIds)
-            .viewQualificationEntries(qualificationEntryIds)
-            .viewProjectIds(projectIds)
-            .viewSkillIds(skillIds)
+        return this.id(id).isNew(isNew).name(name).description(description).profile(profile).viewSectorEntries(viewSectorEntries)
+            .viewTrainingEntries(viewTrainignEntries)
+            .viewEducationEntries(viewEducationEntries)
+            .viewLanguageEntries(viewLanguageSkills)
+            .viewQualificationEntries(viewQualificationEntries)
     }
 
     public static createNewEmpty(profile: Profile) {
@@ -92,14 +82,12 @@ export class ViewProfile {
             true,
             "",
             "",
-            profile.id(),
-            Immutable.Map<string, ViewElement>(profile.sectorEntries().map(val => ViewElement.create(true))),
-            Immutable.Map<string, ViewElement>(profile.trainingEntries().map(val => ViewElement.create(true))),
-            Immutable.OrderedSet<string>(profile.educationEntries().map(val => val.id())),
-            Immutable.Map<string, ViewElement>(profile.languageSkills().map(val => ViewElement.create(true))),
-            Immutable.Map<string, ViewElement>(profile.qualificationEntries().map(val => ViewElement.create(true))),
-            Immutable.Map<string, ViewElement>(profile.projects().map(val => ViewElement.create(true))),
-            Immutable.Map<string, ViewElement>(profile.skills().map(val => ViewElement.create(true)))
+            profile,
+            Immutable.List<ViewElement>(profile.sectorEntries().map(val => ViewElement.create(true, val.id())).values()),
+            Immutable.List<ViewElement>(profile.trainingEntries().map(val => ViewElement.create(true, val.id())).values()),
+            Immutable.List<ViewElement>(profile.educationEntries().map(val => ViewElement.create(true, val.id())).values()),
+            Immutable.List<ViewElement>(profile.languageSkills().map(val => ViewElement.create(true, val.id())).values()),
+            Immutable.List<ViewElement>(profile.qualificationEntries().map(val => ViewElement.create(true, val.id())).values()),
         )
     }
 

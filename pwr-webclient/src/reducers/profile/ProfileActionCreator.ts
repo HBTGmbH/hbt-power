@@ -8,7 +8,7 @@ import {
     DeleteProjectAction, DeleteViewProfileAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetViewElements,
+    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
@@ -16,6 +16,7 @@ import {ActionType} from '../ActionType';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
+import {Profile} from '../../model/Profile';
 
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
@@ -139,14 +140,28 @@ export class ProfileActionCreator {
         }
     }
 
-    public static SetSelectedIds(elementType: ProfileElementType ,viewElements: Immutable.OrderedSet<string>): SetViewElements {
+    public static SelectIndexes(elementType: ProfileElementType, selectedIndexes: Array<number> | string, viewProfileId: string): SetSelectedIndexesAction {
         return {
-            type: ActionType.SetSelectedIds,
+            type: ActionType.SetSelectedIndexes,
             elementType: elementType,
-            elementIds: viewElements
+            viewProfileId: viewProfileId,
+            selectedIndexes: selectedIndexes
         }
     }
 
+    public static SortViewProfile(
+        elementType: ProfileElementType,
+        entryField: 'start' | 'end' | 'name' | 'level' | 'degree',
+        naturalSortOrder: 'asc' | 'desc',
+        viewProfileId: string
+    ) {
+        return {
+            elementType: elementType,
+            entryField: entryField,
+            naturalSortOrder: naturalSortOrder,
+            viewProfileId: viewProfileId
+        }
+    }
 }
 
 

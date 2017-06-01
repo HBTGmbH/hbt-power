@@ -102,9 +102,35 @@ export interface SelectViewProfileAction extends AbstractAction {
     id: string;
 }
 
-export interface SetViewElements extends AbstractAction {
+/**
+ * Sets the selected indexes for the given view profile
+ */
+export interface SetSelectedIndexesAction extends AbstractAction {
+    viewProfileId: string;
     elementType: ProfileElementType;
-    elementIds: Immutable.OrderedSet<string>;
+    // may be 'all', 'none' or an array of the indexes
+    selectedIndexes: Array<number> | string;
+}
+
+export interface ViewProfileSortAction extends AbstractAction {
+    /**
+     * defines the table that is to be sorted.
+     */
+    elementType: ProfileElementType;
+
+    /**
+     * defines the index that is to be sorted. The reducer defines what happens
+     * with this value. A structure like this allows moving most parts of the logic into
+     * the reducer.
+     */
+    entryField: 'start' | 'end' | 'name' | 'level' | 'degree';
+
+    /**
+     * This varies per type of entry
+     */
+    naturalSortOrder: 'asc' | 'desc';
+
+    viewProfileId: string;
 }
 
 

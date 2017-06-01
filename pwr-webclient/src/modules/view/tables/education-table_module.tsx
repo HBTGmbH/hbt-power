@@ -7,7 +7,7 @@ import {EducationEntry} from '../../../model/EducationEntry';
 import {NameEntity} from '../../../model/NameEntity';
 import {
     Table, TableRow, TableBody, TableRowColumn, TableHeader,
-    TableHeaderColumn
+    TableHeaderColumn, IconMenu, IconButton, MenuItem
 } from 'material-ui';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -16,6 +16,8 @@ import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreat
 import * as Immutable from 'immutable';
 import {ViewElement} from '../../../model/viewprofile/ViewElement';
 import {isNullOrUndefined} from 'util';
+import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
+import {AscDescButton} from '../../general/asc-desc-button_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -24,9 +26,7 @@ import {isNullOrUndefined} from 'util';
  * otherwise the component will not render and update correctly.
  */
 interface EducationTableProps {
-    profile: Profile;
-    educationEntryIds: Immutable.OrderedSet<string>;
-    educationEntryList: Array<EducationEntry>;
+    viewProfile: ViewProfile;
     educations: Immutable.Map<string, NameEntity>;
 }
 
@@ -39,7 +39,7 @@ interface EducationTableProps {
  * managed by redux.
  */
 interface EducationTableLocalProps {
-
+    viewProfileId: string;
 }
 
 /**
@@ -55,7 +55,7 @@ interface EducationTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface EducationTableDispatch {
-    selectIds(ids: Immutable.OrderedSet<string>): void;
+    selectIndexes(indexes: Array<number>|string, viewProfileId: string): void;
 }
 
 class EducationTableModule extends React.Component<
@@ -65,31 +65,34 @@ class EducationTableModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: EducationTableLocalProps): EducationTableProps {
         return {
-            profile: state.databaseReducer.profile(),
-            educationEntryIds: state.databaseReducer.viewProfiles().get(state.databaseReducer.activeViewProfileId()).educationEntryIds(),
-            educationEntryList: state.databaseReducer.profile().educationEntries().toArray(),
+            viewProfile: state.databaseReducer.viewProfiles().get(localProps.viewProfileId),
             educations: state.databaseReducer.educations()
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EducationTableDispatch {
         return {
-            selectIds: (ids) => dispatch(ProfileActionCreator.SetSelectedIds(ProfileElementType.EducationEntry, ids))
+            selectIndexes: (indexes, viewProfileId) => {
+                dispatch(ProfileActionCreator.SelectIndexes(ProfileElementType.EducationEntry, indexes, viewProfileId))
+            }
         };
     }
 
 
-    private isSelected = (entryId: string) => {
-        return this.props.educationEntryIds.contains(entryId);
+    private isSelected = (index: number) => {
+        return this.props.viewProfile.viewEducationEntries().get(index).enabled();
     };
 
-    private renderTableRow = (entry: EducationEntry) => {
-        console.log(entry.degree());
+    private getEntry = (viewElement: ViewElement) => {
+        return this.props.viewProfile.profile().educationEntries().get(viewElement.elementId());
+    };
+
+    private renderTableRow = (viewElement: ViewElement, index: number) => {
+        let entry = this.getEntry(viewElement);
         return (
             <TableRow
-                key={'EducationTable.EducationRow.' + entry.id()}
-                selected={this.isSelected(entry.id())}
-                onRowClick={() => console.log("Row clicked id=" + entry.id())}
+                key={'EducationTable.EducationRow.' + index}
+                selected={this.isSelected(index)}
             >
                 <TableRowColumn>
                     {NameEntityUtil.getNullTolerantName(entry.nameEntityId(), this.props.educations)}
@@ -109,27 +112,7 @@ class EducationTableModule extends React.Component<
 
 
     private handleRowSelection = (selectedRows: Array<number> | string) => {
-        let views = Immutable.Set<string>();
-        if(typeof(selectedRows) == 'string') {
-            if(selectedRows == 'none') {
-                views = Immutable.Set<string>();
-            } else if(selectedRows == 'all') {
-                // To not break up the order, only add potential new elements
-                this.props.profile.educationEntries().forEach(entry => {
-                    if(!views.contains(entry.id())) {
-                        views = views.add(entry.id());
-                    }
-                })
-            }
-        } else {
-            selectedRows.forEach(num => {
-                let id = this.props.educationEntryList[num].id();
-                if(!views.contains(id)) {
-                    views = views.add(id);
-                }
-            })
-        }
-        this.props.selectIds(views);
+        this.props.selectIndexes(selectedRows, this.props.viewProfileId);
     };
 
     render() {
@@ -140,7 +123,10 @@ class EducationTableModule extends React.Component<
                 >
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderColumn>{PowerLocalize.get('Sector.Singular')}</TableHeaderColumn>
+                            <TableHeaderColumn>
+                                {PowerLocalize.get('Education.Singular')}
+                                <AscDescButton/>
+                            </TableHeaderColumn>
                             <TableHeaderColumn>{PowerLocalize.get('Begin')}</TableHeaderColumn>
                             <TableHeaderColumn>{PowerLocalize.get('End')}</TableHeaderColumn>
                             <TableHeaderColumn>{PowerLocalize.get('AcademicDegree.Singular')}</TableHeaderColumn>
@@ -148,7 +134,7 @@ class EducationTableModule extends React.Component<
                     </TableHeader>
                     <TableBody deselectOnClickaway={false}>
                         {
-                            this.props.educationEntryList.map(entry => this.renderTableRow(entry))
+                            this.props.viewProfile.viewEducationEntries().map(this.renderTableRow)
                         }
                     </TableBody>
                 </Table>

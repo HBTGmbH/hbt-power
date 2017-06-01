@@ -7,6 +7,10 @@ import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {isNullOrUndefined} from 'util';
 import {EducationTable} from './tables/education-table_module';
 import {Divider, Paper} from 'material-ui';
+import {TrainingTable} from './tables/training-table_module';
+import {QualificationTable} from './tables/qualification-table_module';
+import {LanguageTable} from './tables/language-table_module';
+import {SectorTable} from './tables/sector-table_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -68,13 +72,19 @@ class ViewProfileCardModule extends React.Component<
             return (
                 <div>
                     <Paper className="margin-5px">
+                        <EducationTable key="EducationTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
                     <Paper className="margin-5px">
+                        <QualificationTable key="QualificationTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
                     <Paper className="margin-5px">
-                        <EducationTable key="EducationTable"/>
+                        <TrainingTable key="EducationTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
                     <Paper className="margin-5px">
+                        <LanguageTable key="LanguageTable" viewProfileId={this.props.viewProfile.id()}/>
+                    </Paper>
+                    <Paper className="margin-5px">
+                        <SectorTable key="SectorTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
                 </div>
 

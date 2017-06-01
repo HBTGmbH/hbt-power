@@ -8,7 +8,8 @@ import {
     DeleteProjectAction, DeleteSkillAction, DeleteViewProfileAction, LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetViewElements, UpdateSkillRatingAction
+    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction,
+    UpdateSkillRatingAction, ViewProfileSortAction
 } from './database-actions';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
@@ -18,6 +19,8 @@ import {Project} from '../../model/Project';
 import {APINameEntity} from '../../model/APIProfile';
 import {browserHistory} from 'react-router'
 import {ActionType} from '../ActionType';
+import {ViewElement} from '../../model/viewprofile/ViewElement';
+import * as Immutable from 'immutable';
 
 
 
@@ -149,33 +152,61 @@ function handleSelectViewProfile(state: InternalDatabase, action: SelectViewProf
     return state.activeViewProfileId(action.id);
 }
 
-function handleSetSelectedIds(state: InternalDatabase, action: SetViewElements): InternalDatabase {
-    let viewProfile = state.viewProfiles().get(state.activeViewProfileId());
-    switch(action.elementType){
-        case ProfileElementType.EducationEntry: {
-            viewProfile = viewProfile.educationEntryIds(action.elementIds);
+function handleSetSelectedIndexes(state: InternalDatabase, action: SetSelectedIndexesAction): InternalDatabase {
+    let viewProfile = state.viewProfiles().get(action.viewProfileId);
+    let ref: Immutable.List<ViewElement> = null;
+    switch(action.elementType) {
+        case ProfileElementType.SectorEntry:
+            ref = viewProfile.viewSectorEntries();
             break;
-        }
-        /*case ProfileElementType.LanguageEntry: {
-            viewProfile = viewProfile.viewLanguageEntries(action.elementIds);
+        case ProfileElementType.EducationEntry:
+            ref = viewProfile.viewEducationEntries();
             break;
-        }
-        case ProfileElementType.TrainingEntry: {
-            viewProfile = viewProfile.viewTrainingEntries(action.elementIds);
+        case ProfileElementType.QualificationEntry:
+            ref = viewProfile.viewQualificationEntries();
             break;
-        }
-        case ProfileElementType.QualificationEntry: {
-            viewProfile = viewProfile.viewQualificationEntries(action.elementIds);
+        case ProfileElementType.TrainingEntry:
+            ref = viewProfile.viewTrainingEntries();
             break;
-        }
-        case ProfileElementType.SectorEntry: {
-            viewProfile = viewProfile.viewSectorEntries(action.elementIds);
+        case ProfileElementType.LanguageEntry:
+            ref = viewProfile.viewLanguageEntries();
             break;
-        }*/
-        default:
+    }
+    if(action.selectedIndexes == 'all') {
+        ref = Immutable.List<ViewElement>(ref.map(view => view.enabled(true)));
+    } else if(action.selectedIndexes == 'none') {
+        ref = Immutable.List<ViewElement>(ref.map(view => view.enabled(false)));
+        console.log(ref);
+    } else {
+        ref = Immutable.List<ViewElement>(ref.map(view => view.enabled(false)));
+        let array: Array<number> = action.selectedIndexes as Array<number>;
+        array.forEach(index => {
+            ref = ref.set(index, ref.get(index).enabled(true))
+        });
+        ref = ref.asImmutable();
+    }
+    switch(action.elementType) {
+        case ProfileElementType.SectorEntry:
+            viewProfile = viewProfile.viewSectorEntries(ref);
+            break;
+        case ProfileElementType.EducationEntry:
+            viewProfile = viewProfile.viewEducationEntries(ref);
+            break;
+        case ProfileElementType.QualificationEntry:
+            viewProfile = viewProfile.viewQualificationEntries(ref);
+            break;
+        case ProfileElementType.TrainingEntry:
+            viewProfile = viewProfile.viewTrainingEntries(ref);
+            break;
+        case ProfileElementType.LanguageEntry:
+            viewProfile = viewProfile.viewLanguageEntries(ref);
             break;
     }
     return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
+}
+
+function handleSortViewProfile(state: InternalDatabase, action: ViewProfileSortAction): InternalDatabase {
+    return state;
 }
 
 /**
@@ -251,8 +282,8 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleDeleteViewProfile(state, action as DeleteViewProfileAction);
         case ActionType.SelectViewProfile:
             return handleSelectViewProfile(state, action as SelectViewProfileAction);
-        case ActionType.SetSelectedIds:
-            return handleSetSelectedIds(state, action as SetViewElements);
+        case ActionType.SetSelectedIndexes:
+            return handleSetSelectedIndexes(state, action as SetSelectedIndexesAction);
         default:
             return state;
     }
