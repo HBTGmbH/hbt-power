@@ -112,6 +112,7 @@ export interface SetSelectedIndexesAction extends AbstractAction {
     selectedIndexes: Array<number> | string;
 }
 
+
 export interface ViewProfileSortAction extends AbstractAction {
     /**
      * defines the table that is to be sorted.

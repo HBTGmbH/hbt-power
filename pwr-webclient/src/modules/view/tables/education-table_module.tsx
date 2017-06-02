@@ -18,6 +18,7 @@ import {ViewElement} from '../../../model/viewprofile/ViewElement';
 import {isNullOrUndefined} from 'util';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {AscDescButton} from '../../general/asc-desc-button_module';
+import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -56,6 +57,7 @@ interface EducationTableLocalState {
  */
 interface EducationTableDispatch {
     selectIndexes(indexes: Array<number>|string, viewProfileId: string): void;
+    sortTable(entryField: 'DATE' | 'DATE_START' | 'DATE_END' | 'NAME' | 'LEVEL' | 'DEGREE', order: 'ASC' | 'DESC', id: string): void;
 }
 
 class EducationTableModule extends React.Component<
@@ -74,6 +76,9 @@ class EducationTableModule extends React.Component<
         return {
             selectIndexes: (indexes, viewProfileId) => {
                 dispatch(ProfileActionCreator.SelectIndexes(ProfileElementType.EducationEntry, indexes, viewProfileId))
+            },
+            sortTable: (entryField, order, id) => {
+                dispatch(ProfileAsyncActionCreator.sortView(ProfileElementType.EducationEntry, entryField, order, id));
             }
         };
     }
@@ -115,6 +120,18 @@ class EducationTableModule extends React.Component<
         this.props.selectIndexes(selectedRows, this.props.viewProfileId);
     };
 
+    private handleNameAscDescChange = (state: "ASC" | "DESC") => {
+        this.props.sortTable('NAME', state, this.props.viewProfileId);
+    };
+
+    private handleStartDateAscDescChange =  (state: "ASC" | "DESC") => {
+        this.props.sortTable('DATE_START', state, this.props.viewProfileId);
+    };
+
+    private handleEndDateAscDescChange =  (state: "ASC" | "DESC") => {
+        this.props.sortTable('DATE_END', state, this.props.viewProfileId);
+    };
+
     render() {
         return (
             <div id="ViewTable.EducationTable">
@@ -124,11 +141,14 @@ class EducationTableModule extends React.Component<
                     <TableHeader>
                         <TableRow>
                             <TableHeaderColumn>
-                                {PowerLocalize.get('Education.Singular')}
-                                <AscDescButton/>
+                                <AscDescButton label={PowerLocalize.get('Education.Singular')} onAscDescChange={this.handleNameAscDescChange}/>
                             </TableHeaderColumn>
-                            <TableHeaderColumn>{PowerLocalize.get('Begin')}</TableHeaderColumn>
-                            <TableHeaderColumn>{PowerLocalize.get('End')}</TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <AscDescButton label= {PowerLocalize.get('Begin')} onAscDescChange={this.handleStartDateAscDescChange}/>
+                            </TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <AscDescButton label= {PowerLocalize.get('End')} onAscDescChange={this.handleEndDateAscDescChange}/>
+                            </TableHeaderColumn>
                             <TableHeaderColumn>{PowerLocalize.get('AcademicDegree.Singular')}</TableHeaderColumn>
                         </TableRow>
                     </TableHeader>

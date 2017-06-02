@@ -6,6 +6,7 @@ import {Profile} from '../Profile';
 import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX} from '../PwrConstants';
 import {ViewElement} from './ViewElement';
+import {APIViewProfile} from './APIViewProfile';
 /**
  * References a {@link Profile}, but stores only a subset of its data in an ordered way.
  */
@@ -93,6 +94,21 @@ export class ViewProfile {
 
     public static createNew(name: string, description: string, profile: Profile) {
         return ViewProfile.createNewEmpty(profile).name(name).description(description);
+    }
+
+    public static fromAPI(apiViewProfile: APIViewProfile) {
+            return new ViewProfile(
+                String(apiViewProfile.id),
+                false,
+                apiViewProfile.name,
+                apiViewProfile.description,
+                Profile.createFromAPI(apiViewProfile.profileSnapshot),
+                Immutable.List<ViewElement>(apiViewProfile.sectorViewEntries.map(ViewElement.fromAPIViewSector)),
+                Immutable.List<ViewElement>(apiViewProfile.trainingViewEntries.map(ViewElement.fromAPIViewTraining)),
+                Immutable.List<ViewElement>(apiViewProfile.educationViewEntries.map(ViewElement.fromAPIViewEducation)),
+                Immutable.List<ViewElement>(apiViewProfile.languageViewEntries.map(ViewElement.fromAPIViewLanguage)),
+                Immutable.List<ViewElement>(apiViewProfile.qualificationViewEntries.map(ViewElement.fromAPIViewQualification)),
+            )
     }
 
 

@@ -1,6 +1,6 @@
 import {EducationEntry} from '../model/EducationEntry';
+import {ViewElement} from '../model/viewprofile/ViewElement';
+import {NameEntity} from '../model/NameEntity';
 export class Comparators {
-    public static educationEntryDefaultComparator(e1: EducationEntry, e2: EducationEntry) {
 
-    }
 }

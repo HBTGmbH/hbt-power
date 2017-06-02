@@ -21,6 +21,8 @@ import {browserHistory} from 'react-router'
 import {ActionType} from '../ActionType';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
 import * as Immutable from 'immutable';
+import {ViewProfile} from '../../model/viewprofile/ViewProfile';
+import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 
 
 
@@ -38,6 +40,11 @@ function addAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Ma
 function handleChangeAbstract(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
     let newProfile: Profile = state.profile().description(action.value);
     return state.profile(newProfile);
+}
+
+function handleReceiveViewProfile(state: InternalDatabase, apiViewProfile:APIViewProfile): InternalDatabase {
+    let viewProfile: ViewProfile = ViewProfile.fromAPI(apiViewProfile);
+    return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
 }
 
 // FIXME move to database reducer
@@ -70,6 +77,9 @@ function handleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResp
             break;
         case APIRequestType.RequestCompanies:
             newState = state.companies(addAPINameEntities(action.payload, state.companies()));
+            break;
+        case APIRequestType.RequestCreateViewProfile:
+            newState = handleReceiveViewProfile(state, action.payload);
             break;
 
     }
@@ -205,9 +215,6 @@ function handleSetSelectedIndexes(state: InternalDatabase, action: SetSelectedIn
     return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
 }
 
-function handleSortViewProfile(state: InternalDatabase, action: ViewProfileSortAction): InternalDatabase {
-    return state;
-}
 
 /**
  * Reducer for the single profile part of the global state.

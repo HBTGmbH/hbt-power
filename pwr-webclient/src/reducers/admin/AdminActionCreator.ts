@@ -260,7 +260,7 @@ export class AdminActionCreator {
                     username: username,
                     password: password
                 },
-                headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
             axios.patch(getNotificationAPIString(), notification.toApi(), config).then(function(response: AxiosResponse) {

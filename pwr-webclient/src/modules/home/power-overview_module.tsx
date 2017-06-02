@@ -53,7 +53,8 @@ interface PowerOverviewLocalProps {
  */
 interface PowerOverviewLocalState {
     showCreateViewDialog: boolean;
-    viewProfile: ViewProfile;
+    viewProfileName: string;
+    viewProfileDescription: string;
 }
 
 /**
@@ -61,7 +62,7 @@ interface PowerOverviewLocalState {
  */
 interface PowerOverviewDispatch {
     editProfile(initials: string): void;
-    saveViewProfile(viewProfile: ViewProfile): void;
+    createViewProfile(name: string, description: string, initials: string): void;
 }
 
 class PowerOverviewModule extends React.Component<
@@ -74,9 +75,10 @@ class PowerOverviewModule extends React.Component<
     constructor(props: PowerOverviewProps & PowerOverviewLocalProps & PowerOverviewDispatch) {
         super(props);
         this.state = {
-            viewProfile: ViewProfile.createNewEmpty(props.profile),
-            showCreateViewDialog: false
-        };
+            showCreateViewDialog: false,
+            viewProfileName: "" ,
+            viewProfileDescription: ""
+        }
     }
 
     static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
@@ -92,9 +94,19 @@ class PowerOverviewModule extends React.Component<
             editProfile: function(initials: string) {
                 dispatch(ProfileAsyncActionCreator.editProfile(initials));
             },
-            saveViewProfile: (viewProfile) => dispatch(ProfileActionCreator.SaveViewProfile(viewProfile))
+            createViewProfile: (name, description, initials) => {
+                dispatch(ProfileAsyncActionCreator.createView(initials, name, description))
+            }
         }
     }
+
+    private resetLocalState = () => {
+        this.setState({
+            showCreateViewDialog: false,
+            viewProfileName: "",
+            viewProfileDescription: ""
+        });
+    };
 
     private handleEditButtonClick = () => {
         this.props.editProfile(this.props.loggedInInitials);
@@ -102,32 +114,29 @@ class PowerOverviewModule extends React.Component<
 
     private changeViewProfileName(newName: string) {
         this.setState({
-            viewProfile: this.state.viewProfile.name(newName)
+            viewProfileName: newName
         });
     }
 
     private changeViewProfileDescription(newDesc: string) {
         this.setState({
-            viewProfile: this.state.viewProfile.description(newDesc)
+            viewProfileDescription: newDesc
         });
     }
 
     private showCreateViewDialog = () => {
         this.setState({
-            viewProfile: ViewProfile.createNewEmpty(this.props.profile),
             showCreateViewDialog: true
-        });
+        })
     };
 
     private exitCreateViewDialog = () => {
-        this.setState({
-            viewProfile: ViewProfile.createNewEmpty(this.props.profile),
-            showCreateViewDialog: false
-        });
+        this.resetLocalState();
     };
 
     private saveViewProfile = () => {
-        this.props.saveViewProfile(this.state.viewProfile);
+        this.props.createViewProfile(this.state.viewProfileName, this.state.viewProfileDescription,
+            this.props.loggedInInitials);
         this.exitCreateViewDialog();
     };
 
@@ -173,13 +182,13 @@ class PowerOverviewModule extends React.Component<
                             >
                                 <TextField
                                     floatingLabelText={PowerLocalize.get('ViewCard.Name')}
-                                    value={this.state.viewProfile.name()}
+                                    value={this.state.viewProfileName}
                                     onChange={(evt, val) => this.changeViewProfileName(val)}
                                 />
                                 <br/>
                                 <TextField
                                     floatingLabelText={PowerLocalize.get('ViewCard.Description')}
-                                    value={this.state.viewProfile.description()}
+                                    value={this.state.viewProfileDescription}
                                     onChange={(evt, val) => this.changeViewProfileDescription(val)}
                                 />
                                 <br/>

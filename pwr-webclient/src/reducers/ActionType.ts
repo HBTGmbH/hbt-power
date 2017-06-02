@@ -3,6 +3,8 @@
  */
 
 export enum ActionType {
+    ReceiveViewProfile,
+    SortViewProfile,
     SetSelectedIndexes,
     SelectViewProfile,
     DeleteViewProfile,

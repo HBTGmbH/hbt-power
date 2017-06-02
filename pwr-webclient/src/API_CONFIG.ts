@@ -1,4 +1,4 @@
-//*
+/*
 export const API_HOST: string = "http://power02.corp.hbt.de";
 
 export const API_PORT: string = "9000";
@@ -58,4 +58,16 @@ export function getProjectRolesSuggestionAPIString(): string {
 
 export function getCompanySuggestionsAPIString(): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE  + "/suggestions/companies";
+}
+
+export function getPostViewProfileAPIString(initials: string): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
+}
+
+export function getPostSortViewAPIString(id: string) : string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/views/" + id;
+}
+
+export function getAllViewProfilesString(initials: string): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
 }

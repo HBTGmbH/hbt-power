@@ -1,6 +1,7 @@
 import {NameEntity} from '../model/NameEntity';
 import {isNull, isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
+import {ProfileElementType} from '../Store';
 export class NameEntityUtil {
 
     /**
@@ -32,5 +33,20 @@ export class NameEntityUtil {
 
     public static typeToLocalizedType(nameEntity: NameEntity) {
         return PowerLocalize.get("NameEntityType." + nameEntity.type());
+    }
+
+    public static typeToViewAPIString(profileElementType: ProfileElementType) {
+        switch(profileElementType) {
+            case ProfileElementType.LanguageEntry:
+                return "LANGUAGE";
+            case ProfileElementType.TrainingEntry:
+                return "TRAINING";
+            case ProfileElementType.QualificationEntry:
+                return "QUALIFICATION";
+            case ProfileElementType.SectorEntry:
+                return "SECTOR";
+            case ProfileElementType.EducationEntry:
+                return "EDUCATION";
+        }
     }
 }

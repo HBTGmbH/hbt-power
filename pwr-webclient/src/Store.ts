@@ -23,6 +23,7 @@ export enum APIRequestType {
     RequestQualifications,
     RequestEducations,
     RequestProfile,
+    RequestCreateViewProfile,
     SaveProfile,
     RequestLanguages
 }
