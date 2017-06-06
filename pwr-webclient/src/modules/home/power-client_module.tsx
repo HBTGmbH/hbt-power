@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {PowerToolbar} from './power-toolbar_module';
-import {ProfileSnackbar} from '../profile/profile-status-snackbar_module';
+import {ProfileSnackbar} from './profile/profile-status-snackbar_module';
 import {List, ListItem, Menu, Paper} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Link} from 'react-router';
