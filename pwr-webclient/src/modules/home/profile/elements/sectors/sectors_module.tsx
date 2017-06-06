@@ -1,15 +1,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
-import {SectorEntry} from '../../../../model/SectorEntry';
+import {SectorEntry} from '../../../../../model/SectorEntry';
 import {SingleSectorModule} from './sector-entry_module';
 import {TouchTapEvent} from 'material-ui';
-import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
+import {NameEntity} from '../../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 
 interface SectorsProps {
     sectors: Immutable.Map<string, NameEntity>;

@@ -1,14 +1,14 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
-import {TrainingEntry} from '../../../../model/TrainingEntry';
+import {TrainingEntry} from '../../../../../model/TrainingEntry';
 import {SingleTrainingEntry} from './training-entry_module';
 import * as Immutable from 'immutable';
-import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
+import {NameEntity} from '../../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 
 interface TrainingEntriesProps {
     trainingEntries: Immutable.Map<string, TrainingEntry>;

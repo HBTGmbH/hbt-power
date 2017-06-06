@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {IconButton, TouchTapEvent} from 'material-ui';
-import {QualificationEntry} from '../../../../model/QualificationEntry';
+import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import * as Immutable from 'immutable';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
-import {NameEntity} from '../../../../model/NameEntity';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {NameEntity} from '../../../../../model/NameEntity';
 import {QualificationEntryDialog} from './qualification-entry-dialog_module';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 
 
 /**

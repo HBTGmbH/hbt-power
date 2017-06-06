@@ -1,17 +1,17 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {InternalDatabase} from '../../../../model/InternalDatabase';
-import {Project} from '../../../../model/Project';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
-import {ApplicationState} from '../../../../Store';
+import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {Project} from '../../../../../model/Project';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {ApplicationState} from '../../../../../Store';
 import {ProjectCard} from './project-module';
-import {NameEntity} from '../../../../model/NameEntity';
+import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {GridList, GridTile, IconButton} from 'material-ui';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialogState} from './project-dialog_module';
-import {Profile} from '../../../../model/Profile';
+import {Profile} from '../../../../../model/Profile';
 
 /**
  * Properties that are managed by react-redux.

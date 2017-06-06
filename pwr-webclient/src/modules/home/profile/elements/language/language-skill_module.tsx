@@ -3,12 +3,12 @@
  */
 import * as React from 'react';
 import {IconButton} from 'material-ui';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {LanguageSkill} from '../../../../model/LanguageSkill';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
-import {NameEntity} from '../../../../model/NameEntity';
+import {NameEntity} from '../../../../../model/NameEntity';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 
 interface SingleLanguageState {
     dialogOpen: boolean;

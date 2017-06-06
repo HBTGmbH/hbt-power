@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../Store';
+import {ApplicationState} from '../../../Store';
 import {FlatButton, FontIcon, Paper, TextField, Subheader} from 'material-ui';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ViewProfile} from '../../model/viewprofile/ViewProfile';
-import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
-import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
+import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
+import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 
 
 /**

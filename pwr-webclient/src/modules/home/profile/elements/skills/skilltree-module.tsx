@@ -2,12 +2,12 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import * as redux from 'redux';
-import {InternalDatabase} from '../../../../model/InternalDatabase';
-import {ApplicationState} from '../../../../Store';
+import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ApplicationState} from '../../../../../Store';
 import {List, Subheader} from 'material-ui';
-import {Profile} from '../../../../model/Profile';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {Profile} from '../../../../../model/Profile';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {SkillChip} from './skill-chip_module';
 
 /**

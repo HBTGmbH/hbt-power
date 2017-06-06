@@ -1,9 +1,9 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../Store';
-import {InternalDatabase} from '../../model/InternalDatabase';
-import {ViewProfile} from '../../model/viewprofile/ViewProfile';
+import {ApplicationState} from '../../../Store';
+import {InternalDatabase} from '../../../model/InternalDatabase';
+import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {isNullOrUndefined} from 'util';
 import {EducationTable} from './tables/education-table_module';
 import {Divider, Paper} from 'material-ui';

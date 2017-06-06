@@ -1,9 +1,8 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, RequestStatus} from '../../Store';
-import {CircularProgress, FontIcon, Snackbar} from 'material-ui';
-import {RequestSnackbar} from '../general/request-snackbar_module.';
+import {AllConsultantsState, ApplicationState, RequestStatus} from '../../../Store';
+import {RequestSnackbar} from '../../general/request-snackbar_module.';
 
 interface ProfileSnackbarProps {
     APIRequestStatus: RequestStatus;

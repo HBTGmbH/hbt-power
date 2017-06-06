@@ -1,11 +1,11 @@
-import {SectorEntry} from '../../../../model/SectorEntry';
+import {SectorEntry} from '../../../../../model/SectorEntry';
 import * as Immutable from 'immutable';
 import * as React from 'react';
 import {IconButton} from 'material-ui';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {NameEntity} from '../../../../model/NameEntity';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {NameEntity} from '../../../../../model/NameEntity';
 import {SectorEntryDialog} from './sector-entry-dialog_module';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 
 interface SingleSectorLocalProps {
     sectors: Immutable.Map<string, NameEntity>;

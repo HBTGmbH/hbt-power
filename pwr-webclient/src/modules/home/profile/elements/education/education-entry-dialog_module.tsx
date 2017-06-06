@@ -1,6 +1,6 @@
-///<reference path="../../../../../node_modules/immutable/dist/immutable.d.ts"/>
+///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
-import {InternalDatabase} from '../../../../model/InternalDatabase';
+import {InternalDatabase} from '../../../../../model/InternalDatabase';
 import {
     AutoComplete,
     Card,
@@ -14,14 +14,14 @@ import {
     SelectField,
     TouchTapEvent
 } from 'material-ui';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
-import {EducationEntry} from '../../../../model/EducationEntry';
-import {NameEntity} from '../../../../model/NameEntity';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {EducationEntry} from '../../../../../model/EducationEntry';
+import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../../model/PwrConstants';
 
 
 interface EducationEntryDialogLocalProps {

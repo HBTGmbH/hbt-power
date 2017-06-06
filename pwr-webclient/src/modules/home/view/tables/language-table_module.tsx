@@ -1,19 +1,16 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState, ProfileElementType} from '../../../Store';
-import {LanguageSkill} from '../../../model/LanguageSkill';
-import {NameEntity} from '../../../model/NameEntity';
+import {ApplicationState, ProfileElementType} from '../../../../Store';
+import {NameEntity} from '../../../../model/NameEntity';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
-import {NameEntityUtil} from '../../../utils/NameEntityUtil';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {Profile} from '../../../model/Profile';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
-import {ViewElement} from '../../../model/viewprofile/ViewElement';
-import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
-import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
+import {ViewElement} from '../../../../model/viewprofile/ViewElement';
+import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
-import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
+import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 
 /**
  * Properties that are managed by react-redux.

@@ -1,15 +1,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
 import {SingleLanguage} from './language-skill_module';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {ProfileElement} from '../../profile-element_module';
-import {LanguageSkill} from '../../../../model/LanguageSkill';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
-import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
+import {NameEntity} from '../../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {ProfileElement} from '../../profile-element_module';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;

@@ -1,17 +1,17 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState, ProfileElementType} from '../../../Store';
-import {TableRowColumn, TableRow, Table, TableHeader, TableHeaderColumn, TableBody} from 'material-ui';
-import {ViewElement} from '../../../model/viewprofile/ViewElement';
-import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
-import {NameEntity} from '../../../model/NameEntity';
-import {NameEntityUtil} from '../../../utils/NameEntityUtil';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
+import {ApplicationState, ProfileElementType} from '../../../../Store';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {ViewElement} from '../../../../model/viewprofile/ViewElement';
+import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
+import {NameEntity} from '../../../../model/NameEntity';
+import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
-import {Project} from '../../../model/Project';
-import {formatToShortDisplay} from '../../../utils/DateUtil';
+import {Project} from '../../../../model/Project';
+import {formatToShortDisplay} from '../../../../utils/DateUtil';
 
 /**
  * Properties that are managed by react-redux.

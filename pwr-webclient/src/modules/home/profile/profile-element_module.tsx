@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Card, CardHeader, CardMedia, Divider, IconButton, TouchTapEvent} from 'material-ui';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {Color} from '../../utils/ColorUtil';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {Color} from '../../../utils/ColorUtil';
 
 interface ProfileElementLocalProps {
     /**

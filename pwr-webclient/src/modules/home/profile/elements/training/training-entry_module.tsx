@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {IconButton} from 'material-ui';
 import * as Immutable from 'immutable';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
-import {TrainingEntry} from '../../../../model/TrainingEntry';
-import {NameEntity} from '../../../../model/NameEntity';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {TrainingEntry} from '../../../../../model/TrainingEntry';
+import {NameEntity} from '../../../../../model/NameEntity';
 import {TrainingEntryDialog} from './training-entry-dialog_module';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 
 /**
  * Local properties of this module. These properties are used to initialize the local state and to control everything that

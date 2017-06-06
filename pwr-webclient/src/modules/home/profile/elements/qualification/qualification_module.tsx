@@ -1,15 +1,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
-import {ProfileElement} from '../../profile-element_module';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {QualificationEntry} from '../../../../model/QualificationEntry';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
 import * as Immutable from 'immutable';
 import {TouchTapEvent} from 'material-ui';
-import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
+import {NameEntity} from '../../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {ProfileElement} from '../../profile-element_module';
 
 interface QualificationProps {
     qualificationEntries: Immutable.Map<string, QualificationEntry>;

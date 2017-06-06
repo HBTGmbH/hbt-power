@@ -1,18 +1,12 @@
 import * as React from 'react';
-import {
-    Card, CardActions, CardHeader, CardMedia, CardText, Divider, IconButton, List, ListItem, Paper,
-    TextField
-} from 'material-ui';
-import {Project} from '../../../../model/Project';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {Card, CardActions, CardHeader, CardText, IconButton, Paper} from 'material-ui';
+import {Project} from '../../../../../model/Project';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialog, ProjectDialogState} from './project-dialog_module';
-import {NameEntity} from '../../../../model/NameEntity';
+import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {isNullOrUndefined} from 'util';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
-import {Skill} from '../../../../model/Skill';
-import {Profile} from '../../../../model/Profile';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
+import {Profile} from '../../../../../model/Profile';
 
 interface ProjectModuleProps {
     project: Project;

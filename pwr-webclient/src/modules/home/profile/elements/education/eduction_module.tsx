@@ -1,15 +1,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../Store';
+import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
 import {TouchTapEvent} from 'material-ui';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {ProfileElement} from '../../profile-element_module';
-import {EducationEntry} from '../../../../model/EducationEntry';
-import {SingleEducationElement} from './education-entry_module';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {EducationEntry} from '../../../../../model/EducationEntry';
 import * as Immutable from 'immutable';
-import {NameEntity} from '../../../../model/NameEntity';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
+import {NameEntity} from '../../../../../model/NameEntity';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {SingleEducationElement} from './education-entry_module';
+import {ProfileElement} from '../../profile-element_module';
 
 interface EducationProps {
 

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {IconButton, TouchTapEvent} from 'material-ui';
-import {EducationEntry} from '../../../../model/EducationEntry';
+import {EducationEntry} from '../../../../../model/EducationEntry';
 import * as Immutable from 'immutable';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
-import {NameEntity} from '../../../../model/NameEntity';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {NameEntity} from '../../../../../model/NameEntity';
 import {EducationEntryDialogModule} from './education-entry-dialog_module';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 
 

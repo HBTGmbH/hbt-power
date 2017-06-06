@@ -7,24 +7,21 @@ import {
     CardMedia,
     Chip,
     DatePicker,
-    Dialog, Divider,
+    Dialog,
     IconButton,
-    TextField, Subheader
+    TextField
 } from 'material-ui';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {Project} from '../../../../model/Project';
-import {NameEntity} from '../../../../model/NameEntity';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {Project} from '../../../../../model/Project';
+import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
-import ChipInput from './../../../../external_libs/ChipInput';
-import {InternalDatabase} from '../../../../model/InternalDatabase';
-import {isNullOrUndefined} from 'util';
-import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
-import {SkillSearcher} from '../../../general/skill-search_module';
-import {Skill} from '../../../../model/Skill';
-import {Profile} from '../../../../model/Profile';
-import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../model/PwrConstants';
+import ChipInput from './../../../../../external_libs/ChipInput';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
+import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {SkillSearcher} from '../../../../general/skill-search_module';
+import {Profile} from '../../../../../model/Profile';
+import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../../model/PwrConstants';
 
 interface ProjectDialogProps {
     open: boolean;

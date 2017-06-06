@@ -1,10 +1,10 @@
-import {ActionCreator, connect} from 'react-redux';
+import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState, ProfileElementType} from '../../../Store';
-import {AscDescButton} from '../../general/asc-desc-button_module';
-import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
-import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
+import {ApplicationState, ProfileElementType} from '../../../../Store';
+import {AscDescButton} from '../../../general/asc-desc-button_module';
+import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
+import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 
 /**
  * Properties that are managed by react-redux.
