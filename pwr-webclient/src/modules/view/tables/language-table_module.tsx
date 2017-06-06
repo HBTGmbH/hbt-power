@@ -12,6 +12,8 @@ import * as Immutable from 'immutable';
 import {ViewElement} from '../../../model/viewprofile/ViewElement';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
+import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
+import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -49,7 +51,7 @@ interface LanguageTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface LanguageTableDispatch {
-    selectIndexes(indexes: Array<number>|string, viewProfileId: string): void;
+    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 export class LanguageTableModule extends React.Component<
@@ -66,9 +68,9 @@ export class LanguageTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): LanguageTableDispatch {
         return {
-            selectIndexes: (indexes, viewProfileId) => {
-                dispatch(ProfileActionCreator.SelectIndexes(ProfileElementType.LanguageEntry, indexes, viewProfileId))
-            }
+            filterTable: (indexes, viewProfileId,lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.LanguageEntry, viewProfileId, indexes, lookup))
+            },
         };
     }
 
@@ -99,7 +101,7 @@ export class LanguageTableModule extends React.Component<
     };
 
     private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.selectIndexes(selectedRows, this.props.viewProfileId);
+        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewLanguageEntries());
     };
 
     render() {
@@ -108,8 +110,16 @@ export class LanguageTableModule extends React.Component<
                 <Table multiSelectable={true} onRowSelection={this.handleRowSelection}>
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderColumn>{PowerLocalize.get("Language.Singular")}</TableHeaderColumn>
-                            <TableHeaderColumn>{PowerLocalize.get("LanguageLevel.Singular")}</TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <ConnectedAscDescButton label={PowerLocalize.get("Language.Singular")}
+                                    viewProfileId={this.props.viewProfileId}
+                                    entryField="NAME"
+                                    elementType={ProfileElementType.LanguageEntry}
+                                />
+                            </TableHeaderColumn>
+                            <TableHeaderColumn>
+                                {PowerLocalize.get("LanguageLevel.Singular")}
+                                </TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody deselectOnClickaway={false}>

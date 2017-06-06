@@ -43,8 +43,11 @@ function handleChangeAbstract(state: InternalDatabase, action: ChangeStringValue
 }
 
 function handleReceiveViewProfile(state: InternalDatabase, apiViewProfile:APIViewProfile): InternalDatabase {
-    let viewProfile: ViewProfile = ViewProfile.fromAPI(apiViewProfile);
-    return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
+    if(!isNullOrUndefined(apiViewProfile)) {
+        let viewProfile: ViewProfile = ViewProfile.fromAPI(apiViewProfile);
+        return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
+    }
+    return state;
 }
 
 // FIXME move to database reducer
@@ -281,6 +284,8 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
         }
         case ActionType.LogOutUser: {
             browserHistory.push('/');
+            state = state.viewProfiles(state.viewProfiles().clear());
+            state = state.loggedInUser(null);
             return state.profile(Profile.createDefault());
         }
         case ActionType.SaveViewProfile:

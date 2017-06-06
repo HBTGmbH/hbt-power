@@ -13,6 +13,8 @@ import {ViewElement} from '../../../model/viewprofile/ViewElement';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
 import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
+import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
+import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 
 
 /**
@@ -51,7 +53,7 @@ interface TrainingTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface TrainingTableDispatch {
-    selectIndexes(indexes: Array<number>|string, viewProfileId: string): void;
+    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 class TrainingTableModule extends React.Component<
@@ -68,8 +70,8 @@ class TrainingTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): TrainingTableDispatch {
         return {
-            selectIndexes: (indexes, viewProfileId) => {
-                dispatch(ProfileActionCreator.SelectIndexes(ProfileElementType.TrainingEntry, indexes, viewProfileId))
+            filterTable: (indexes, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.TrainingEntry, viewProfileId, indexes, lookup))
             }
         };
     }
@@ -104,7 +106,7 @@ class TrainingTableModule extends React.Component<
     };
 
     private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.selectIndexes(selectedRows, this.props.viewProfileId);
+        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewTrainingEntries() );
     };
 
 
@@ -116,9 +118,30 @@ class TrainingTableModule extends React.Component<
                 >
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderColumn>{PowerLocalize.get('Training.Singular')}</TableHeaderColumn>
-                            <TableHeaderColumn>{PowerLocalize.get('Begin')}</TableHeaderColumn>
-                            <TableHeaderColumn>{PowerLocalize.get('End')}</TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <ConnectedAscDescButton
+                                    label={PowerLocalize.get('Training.Singular')}
+                                    viewProfileId={this.props.viewProfileId}
+                                    entryField="NAME"
+                                    elementType={ProfileElementType.TrainingEntry}
+                                />
+                            </TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <ConnectedAscDescButton
+                                    label={PowerLocalize.get('Begin')}
+                                    viewProfileId={this.props.viewProfileId}
+                                    entryField="DATE_START"
+                                    elementType={ProfileElementType.TrainingEntry}
+                                />
+                            </TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <ConnectedAscDescButton
+                                    label={PowerLocalize.get('END')}
+                                    viewProfileId={this.props.viewProfileId}
+                                    entryField="DATE_END"
+                                    elementType={ProfileElementType.TrainingEntry}
+                                />
+                            </TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody deselectOnClickaway={false}>

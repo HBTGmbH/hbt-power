@@ -65,7 +65,11 @@ export function getPostViewProfileAPIString(initials: string): string {
 }
 
 export function getPostSortViewAPIString(id: string) : string {
-    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/views/" + id;
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/view/" + id;
+}
+
+export function getViewProfileString(id: number): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/view/" + id;
 }
 
 export function getAllViewProfilesString(initials: string): string {

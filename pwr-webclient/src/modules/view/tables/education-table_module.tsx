@@ -56,7 +56,7 @@ interface EducationTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface EducationTableDispatch {
-    selectIndexes(indexes: Array<number>|string, viewProfileId: string): void;
+    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
     sortTable(entryField: 'DATE' | 'DATE_START' | 'DATE_END' | 'NAME' | 'LEVEL' | 'DEGREE', order: 'ASC' | 'DESC', id: string): void;
 }
 
@@ -74,8 +74,8 @@ class EducationTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EducationTableDispatch {
         return {
-            selectIndexes: (indexes, viewProfileId) => {
-                dispatch(ProfileActionCreator.SelectIndexes(ProfileElementType.EducationEntry, indexes, viewProfileId))
+            filterTable: (indexes, viewProfileId,lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.EducationEntry, viewProfileId, indexes, lookup))
             },
             sortTable: (entryField, order, id) => {
                 dispatch(ProfileAsyncActionCreator.sortView(ProfileElementType.EducationEntry, entryField, order, id));
@@ -117,7 +117,7 @@ class EducationTableModule extends React.Component<
 
 
     private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.selectIndexes(selectedRows, this.props.viewProfileId);
+        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewEducationEntries());
     };
 
     private handleNameAscDescChange = (state: "ASC" | "DESC") => {

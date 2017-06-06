@@ -9,7 +9,7 @@ import {
     getProjectRolesSuggestionAPIString,
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
-    getTrainingSuggestionAPIString
+    getTrainingSuggestionAPIString, getViewProfileString
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
@@ -18,6 +18,8 @@ import {ProfileActionCreator} from './ProfileActionCreator';
 import {ActionType} from '../ActionType';
 import {ActionCreator} from 'react-redux';
 import {NameEntityUtil} from '../../utils/NameEntityUtil';
+import {ViewProfile} from '../../model/viewprofile/ViewProfile';
+import {ViewElement} from '../../model/viewprofile/ViewElement';
 
 export class ProfileAsyncActionCreator {
 
@@ -163,6 +165,7 @@ export class ProfileAsyncActionCreator {
                     type: ActionType.LogInUser,
                     initials: initials
                 });
+                dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
@@ -188,14 +191,27 @@ export class ProfileAsyncActionCreator {
         };
     }
 
+    public static getViewProfile(id: number) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.get(getViewProfileString(id)).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data))
+            }).catch(function(error:any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        };
+    }
+
     public static getAllViewProfiles(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(getAllViewProfilesString(initials)).then(function(response: AxiosResponse) {
+            axios.get(getAllViewProfilesString(initials)).then(function(response: AxiosResponse) {
                 let ids: Array<number> = response.data;
                 ids.forEach(id => {
-
-                })
+                    dispatch(ProfileAsyncActionCreator.getViewProfile(id))
+                });
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(null, APIRequestType.RequestCreateViewProfile))
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
@@ -219,6 +235,36 @@ export class ProfileAsyncActionCreator {
                 }
             };
             axios.post(getPostSortViewAPIString(viewProfileId), null, config).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
+            }).catch(function(error:any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        };
+    }
+
+    public static filterView(elementType: ProfileElementType,
+                             viewProfileId: string,
+                             selectedIndexes: Array<number> | string,
+                             lookup: Immutable.List<ViewElement>
+    ) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            let indexes: Array<number> = [];
+            if(selectedIndexes == 'all') {
+                indexes = lookup.map((ve, key) => key).toArray();
+            } else if(selectedIndexes == 'none') {
+                indexes = [];
+            } else {
+                indexes = selectedIndexes as Array<number>;
+            }
+            let config: AxiosRequestConfig = {
+                params: {
+                    action: "filter",
+                    entry: NameEntityUtil.typeToViewAPIString(elementType),
+                }
+            };
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.post(getPostSortViewAPIString(viewProfileId), indexes, config).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);

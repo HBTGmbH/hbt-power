@@ -11,6 +11,8 @@ import * as Immutable from 'immutable';
 import {ViewElement} from '../../../model/viewprofile/ViewElement';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
+import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
+import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -48,7 +50,7 @@ interface QualificationTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface QualificationTableDispatch {
-    selectIndexes(indexes: Array<number>|string, viewProfileId: string): void;
+    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 class QualificationTableModule extends React.Component<
@@ -65,8 +67,8 @@ class QualificationTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): QualificationTableDispatch {
         return {
-            selectIndexes: (indexes, viewProfileId) => {
-                dispatch(ProfileActionCreator.SelectIndexes(ProfileElementType.QualificationEntry, indexes, viewProfileId))
+            filterTable: (indexes, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.QualificationEntry, viewProfileId, indexes, lookup))
             }
         };
     }
@@ -97,7 +99,7 @@ class QualificationTableModule extends React.Component<
     };
 
     private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.selectIndexes(selectedRows, this.props.viewProfileId);
+        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewQualificationEntries());
     };
 
 
@@ -109,8 +111,21 @@ class QualificationTableModule extends React.Component<
                 >
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderColumn>{PowerLocalize.get('Qualification.Singular')}</TableHeaderColumn>
-                            <TableHeaderColumn>{PowerLocalize.get('Date.Singular')}</TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <ConnectedAscDescButton
+                                    label={PowerLocalize.get('Qualification.Singular')}
+                                    viewProfileId={this.props.viewProfileId}
+                                    entryField="NAME"
+                                    elementType={ProfileElementType.QualificationEntry}
+                                />
+                            </TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <ConnectedAscDescButton
+                                    label={PowerLocalize.get('Date.Singular')}
+                                    viewProfileId={this.props.viewProfileId}
+                                    entryField="DATE"
+                                    elementType={ProfileElementType.QualificationEntry}
+                            /></TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody deselectOnClickaway={false}>

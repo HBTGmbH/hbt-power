@@ -9,6 +9,8 @@ import {ViewElement} from '../../../model/viewprofile/ViewElement';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
+import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -46,7 +48,7 @@ interface SectorTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface SectorTableDispatch {
-    selectIndexes(indexes: Array<number>|string, viewProfileId: string): void;
+    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 class SectorTableModule extends React.Component<
@@ -63,8 +65,8 @@ class SectorTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SectorTableDispatch {
         return {
-            selectIndexes: (indexes, viewProfileId) => {
-                dispatch(ProfileActionCreator.SelectIndexes(ProfileElementType.SectorEntry, indexes, viewProfileId))
+            filterTable: (indexes, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.SectorEntry, viewProfileId, indexes, lookup))
             }
         }
     }
@@ -92,7 +94,7 @@ class SectorTableModule extends React.Component<
     };
 
     private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.selectIndexes(selectedRows, this.props.viewProfileId);
+        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewSectorEntries());
     };
 
     render() {
@@ -103,7 +105,14 @@ class SectorTableModule extends React.Component<
                 >
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderColumn>{PowerLocalize.get('Sector.Singular')}</TableHeaderColumn>
+                            <TableHeaderColumn>
+                                <ConnectedAscDescButton
+                                    label={PowerLocalize.get('Sector.Singular')}
+                                    viewProfileId={this.props.viewProfileId}
+                                    entryField="NAME"
+                                    elementType={ProfileElementType.SectorEntry}
+                                />
+                            </TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody deselectOnClickaway={false}>

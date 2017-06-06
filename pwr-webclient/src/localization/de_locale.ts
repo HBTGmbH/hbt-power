@@ -49,6 +49,7 @@ export const de_locale : any = {
     "ViewCard.Description": "Beschreibung",
     "Overview.NewView": "Neues View-Profil",
     "Overview.NewView.Dialog.Title": "View Profil Erstellen",
+    "Overview.RefreshViews": "Views Aktualisieren",
     "NotificationInbox.AllMessages": "Alle",
     "NotificationInbox.TrashedMessages": "Gelöscht",
     "NotificationInbox.NewNameEntity": "Neuer Bezeichner",

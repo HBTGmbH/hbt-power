@@ -63,6 +63,7 @@ interface PowerOverviewLocalState {
 interface PowerOverviewDispatch {
     editProfile(initials: string): void;
     createViewProfile(name: string, description: string, initials: string): void;
+    refreshViews(initials: string): void;
 }
 
 class PowerOverviewModule extends React.Component<
@@ -96,6 +97,9 @@ class PowerOverviewModule extends React.Component<
             },
             createViewProfile: (name, description, initials) => {
                 dispatch(ProfileAsyncActionCreator.createView(initials, name, description))
+            },
+            refreshViews: (initials) => {
+                dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials))
             }
         }
     }
@@ -175,6 +179,12 @@ class PowerOverviewModule extends React.Component<
                                 primary={true}
                                 label={PowerLocalize.get('Overview.NewView')}
                                 onClick={this.showCreateViewDialog}
+                                className="margin-5px"
+                            />
+                            <RaisedButton
+                                label={PowerLocalize.get('Overview.RefreshViews')}
+                                onClick={() => this.props.refreshViews(this.props.loggedInInitials)}
+                                className="margin-5px"
                             />
                             <Dialog
                                 title={PowerLocalize.get('Overview.NewView.Dialog.Title')}
