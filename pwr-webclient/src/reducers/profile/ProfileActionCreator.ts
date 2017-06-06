@@ -11,7 +11,7 @@ import {
     SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction,
     UpdateSkillRatingAction, ViewProfileSortAction
 } from './database-actions';
-import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
+import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ActionType} from '../ActionType';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';

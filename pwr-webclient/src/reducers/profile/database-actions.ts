@@ -8,7 +8,7 @@ import {APIRequestType, ProfileElementType} from '../../Store';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {Skill} from '../../model/Skill';
-import {ProjectDialogState} from '../../modules/profile/elements/project/project-dialog_module';
+import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {ActionType} from '../ActionType';
 import * as Immutable from 'immutable'

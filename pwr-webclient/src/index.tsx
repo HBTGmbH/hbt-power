@@ -16,8 +16,8 @@ import {PowerLogin} from './modules/power-login_module';
 import {Route, Router} from 'react-router';
 import { browserHistory } from 'react-router'
 import {PowerOverview} from './modules/home/power-overview_module';
-import {ConsultantProfile} from './modules/profile/profile_module';
-import {ViewProfileCard} from './modules/view/view-profile_module';
+import {ConsultantProfile} from './modules/home/profile/profile_module';
+import {ViewProfileCard} from './modules/home/view/view-profile_module';
 import {NotificationInbox} from './modules/admin/notification-inbox_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {NotificationTrashbox} from './modules/admin/notification-trashbox_module';
