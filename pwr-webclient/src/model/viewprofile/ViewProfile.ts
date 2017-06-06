@@ -41,6 +41,9 @@ export class ViewProfile {
     public get profile() {return doop<Profile, ViewProfile>()};
 
     @doop
+    public get creationDate() {return doop<String, ViewProfile>()};
+
+    @doop
     public get viewSectorEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
 
     @doop
@@ -59,21 +62,27 @@ export class ViewProfile {
     @doop
     public get viewQualificationEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
 
+    @doop
+    public get viewProjects() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
+
     private static currentId: number = 0;
 
 
-    private constructor(id: string, isNew: boolean, name: string, description: string, profile: Profile,
+    private constructor(id: string, isNew: boolean, name: string, description: string, profile: Profile, creationDate: string,
                 viewSectorEntries: Immutable.List<ViewElement>,
                 viewTrainignEntries:Immutable.List<ViewElement>,
                 viewEducationEntries:Immutable.List<ViewElement>,
                 viewLanguageSkills: Immutable.List<ViewElement>,
                 viewQualificationEntries: Immutable.List<ViewElement>,
+                viewProjects: Immutable.List<ViewElement>,
     ) {
         return this.id(id).isNew(isNew).name(name).description(description).profile(profile).viewSectorEntries(viewSectorEntries)
             .viewTrainingEntries(viewTrainignEntries)
             .viewEducationEntries(viewEducationEntries)
             .viewLanguageEntries(viewLanguageSkills)
             .viewQualificationEntries(viewQualificationEntries)
+            .viewProjects(viewProjects)
+            .creationDate(creationDate)
     }
 
     public static createNewEmpty(profile: Profile) {
@@ -84,11 +93,13 @@ export class ViewProfile {
             "",
             "",
             profile,
+            "",
             Immutable.List<ViewElement>(profile.sectorEntries().map(val => ViewElement.create(true, val.id())).values()),
             Immutable.List<ViewElement>(profile.trainingEntries().map(val => ViewElement.create(true, val.id())).values()),
             Immutable.List<ViewElement>(profile.educationEntries().map(val => ViewElement.create(true, val.id())).values()),
             Immutable.List<ViewElement>(profile.languageSkills().map(val => ViewElement.create(true, val.id())).values()),
             Immutable.List<ViewElement>(profile.qualificationEntries().map(val => ViewElement.create(true, val.id())).values()),
+            Immutable.List<ViewElement>(profile.projects().map(val => ViewElement.create(true, val.id())).values()),
         )
     }
 
@@ -97,18 +108,20 @@ export class ViewProfile {
     }
 
     public static fromAPI(apiViewProfile: APIViewProfile) {
-            return new ViewProfile(
-                String(apiViewProfile.id),
-                false,
-                apiViewProfile.name,
-                apiViewProfile.description,
-                Profile.createFromAPI(apiViewProfile.profileSnapshot),
-                Immutable.List<ViewElement>(apiViewProfile.sectorViewEntries.map(ViewElement.fromAPIViewSector)),
-                Immutable.List<ViewElement>(apiViewProfile.trainingViewEntries.map(ViewElement.fromAPIViewTraining)),
-                Immutable.List<ViewElement>(apiViewProfile.educationViewEntries.map(ViewElement.fromAPIViewEducation)),
-                Immutable.List<ViewElement>(apiViewProfile.languageViewEntries.map(ViewElement.fromAPIViewLanguage)),
-                Immutable.List<ViewElement>(apiViewProfile.qualificationViewEntries.map(ViewElement.fromAPIViewQualification)),
-            )
+        return new ViewProfile(
+            String(apiViewProfile.id),
+            false,
+            apiViewProfile.name,
+            apiViewProfile.description,
+            Profile.createFromAPI(apiViewProfile.profileSnapshot),
+            apiViewProfile.creationDate,
+            Immutable.List<ViewElement>(apiViewProfile.sectorViewEntries.map(ViewElement.fromAPIViewSector)),
+            Immutable.List<ViewElement>(apiViewProfile.trainingViewEntries.map(ViewElement.fromAPIViewTraining)),
+            Immutable.List<ViewElement>(apiViewProfile.educationViewEntries.map(ViewElement.fromAPIViewEducation)),
+            Immutable.List<ViewElement>(apiViewProfile.languageViewEntries.map(ViewElement.fromAPIViewLanguage)),
+            Immutable.List<ViewElement>(apiViewProfile.qualificationViewEntries.map(ViewElement.fromAPIViewQualification)),
+            Immutable.List<ViewElement>(apiViewProfile.projectViewEntries.map(ViewElement.fromAPIViewProject)),
+        )
     }
 
 

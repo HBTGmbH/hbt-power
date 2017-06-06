@@ -4,10 +4,7 @@ import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNo
 import {ChangeLoginStatusAction, NavigateAction, ReceiveNotifcationsAction, RequestStatusAction} from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
-import {
-    getAdminAuthAPIString, getNotificationAPIString, getNotificationTrashAPIString,
-    getProfileAPIString
-} from '../../API_CONFIG';
+import {getAdminAuthAPIString, getNotificationAPIString, getNotificationTrashAPIString} from '../../API_CONFIG';
 import axios, {AxiosResponse} from 'axios';
 import {RequestStatus} from '../../Store';
 import {Paths} from '../../index';

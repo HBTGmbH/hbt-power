@@ -1,11 +1,8 @@
-import {ActionCreator, connect} from 'react-redux';
+import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {
-    Avatar, Drawer, DropDownMenu, FlatButton, IconButton, IconMenu, MenuItem, Paper, Toolbar, ToolbarGroup,
-    ToolbarTitle
-} from 'material-ui';
+import {Avatar, FlatButton, Paper, Toolbar, ToolbarGroup} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 

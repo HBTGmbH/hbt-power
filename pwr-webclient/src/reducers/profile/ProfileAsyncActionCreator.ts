@@ -1,6 +1,7 @@
 import * as redux from 'redux';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
+    deleteViewProfileString,
     getAllViewProfilesString,
     getCompanySuggestionsAPIString,
     getEducationSuggestionAPIString,
@@ -168,7 +169,7 @@ export class ProfileAsyncActionCreator {
                 dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
+                dispatch(ProfileActionCreator.FailLogin());
             });
         }
     }
@@ -191,7 +192,7 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    public static getViewProfile(id: number) {
+    public static getViewProfile(id: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.get(getViewProfileString(id)).then(function(response: AxiosResponse) {
@@ -203,15 +204,28 @@ export class ProfileAsyncActionCreator {
         };
     }
 
+    public static deleteViewProfile(id: string, initials: string) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.delete(deleteViewProfileString(id, initials)).then(function(response: AxiosResponse) {
+                dispatch(ProfileActionCreator.DeleteViewProfile(id));
+                dispatch(ProfileActionCreator.SucceedAPIRequest());
+            }).catch(function(error:any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        };
+    }
+
     public static getAllViewProfiles(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.get(getAllViewProfilesString(initials)).then(function(response: AxiosResponse) {
-                let ids: Array<number> = response.data;
+                let ids: Array<string> = response.data;
                 ids.forEach(id => {
                     dispatch(ProfileAsyncActionCreator.getViewProfile(id))
                 });
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(null, APIRequestType.RequestCreateViewProfile))
+                dispatch(ProfileActionCreator.SucceedAPIRequest());
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
@@ -234,7 +248,7 @@ export class ProfileAsyncActionCreator {
                     field: entryField
                 }
             };
-            axios.post(getPostSortViewAPIString(viewProfileId), null, config).then(function(response: AxiosResponse) {
+            axios.post(getPostSortViewAPIString(viewProfileId), [], config).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
@@ -261,10 +275,13 @@ export class ProfileAsyncActionCreator {
                 params: {
                     action: "filter",
                     entry: NameEntityUtil.typeToViewAPIString(elementType),
+                },
+                headers: {
+                    "Content-Type":"application/json"
                 }
             };
             dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(getPostSortViewAPIString(viewProfileId), indexes, config).then(function(response: AxiosResponse) {
+            axios.post(getPostSortViewAPIString(viewProfileId), JSON.stringify(indexes), config).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);

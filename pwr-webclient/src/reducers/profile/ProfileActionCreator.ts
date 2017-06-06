@@ -149,6 +149,18 @@ export class ProfileActionCreator {
         }
     }
 
+    public static SucceedAPIRequest(): AbstractAction {
+        return {
+            type:ActionType.APIRequestSuccess_NoContent
+        }
+    }
+
+    public static FailLogin(): AbstractAction {
+        return {
+            type: ActionType.UserLoginFailed
+        }
+    }
+
     public static SelectIndexes(elementType: ProfileElementType, selectedIndexes: Array<number> | string, viewProfileId: string): SetSelectedIndexesAction {
         return {
             type: ActionType.SetSelectedIndexes,

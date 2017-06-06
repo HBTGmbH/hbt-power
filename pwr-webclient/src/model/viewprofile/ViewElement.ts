@@ -1,6 +1,6 @@
 import {doop} from 'doop';
 import {
-    APIViewEducation, APIViewLanguage, APIViewQualification, APIViewSector,
+    APIViewEducation, APIViewLanguage, APIViewProject, APIViewQualification, APIViewSector,
     APIViewTraining
 } from './APIViewProfile';
 @doop
@@ -37,5 +37,9 @@ export class ViewElement {
 
     public static fromAPIViewLanguage(view: APIViewLanguage) {
         return new ViewElement(view.selected, String(view.languageSkill.id));
+    }
+
+    public static fromAPIViewProject(view: APIViewProject) {
+        return new ViewElement(view.selected, String(view.project.id));
     }
 }

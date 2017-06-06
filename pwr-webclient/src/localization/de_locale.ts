@@ -47,6 +47,7 @@ export const de_locale : any = {
     "ProjectSkills.Label": "Projektspezifische Skills",
     "ViewCard.Name": "View-Name",
     "ViewCard.Description": "Beschreibung",
+    "ViewCard.CreatedOn": "Erstellt am",
     "Overview.NewView": "Neues View-Profil",
     "Overview.NewView.Dialog.Title": "View Profil Erstellen",
     "Overview.RefreshViews": "Views Aktualisieren",
@@ -59,6 +60,7 @@ export const de_locale : any = {
     "NotificationDialog.Stepper.Label.Step1": "Aktionen",
     "NotificationDialog.Stepper.Label.Step2": "Bezeichner bearbeiten",
     "NotificationDialog.EditNameEntity": "Neuer Bezeichner",
+    "UserLogin.LoginFailed": "Login fehlgeschlagen",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

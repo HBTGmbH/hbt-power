@@ -3,6 +3,7 @@
  */
 
 export enum ActionType {
+    UserLoginFailed,
     ReceiveViewProfile,
     SortViewProfile,
     SetSelectedIndexes,
@@ -22,6 +23,7 @@ export enum ActionType {
     ChangeCurrentPosition,
     DeleteEntry,
     APIRequestSuccess,
+    APIRequestSuccess_NoContent,
     APIRequestFail,
     APIRequestPending,
     ChangeLanguageSkillLevel,

@@ -23,6 +23,7 @@ import {ViewElement} from '../../model/viewprofile/ViewElement';
 import * as Immutable from 'immutable';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
+import {LoginStatus} from '../../model/LoginStatus';
 
 
 
@@ -149,6 +150,7 @@ function handleSaveProject(database: InternalDatabase, action: SaveProjectAction
 
 function handleLogInUser(state: InternalDatabase, action: LoginAction): InternalDatabase {
     browserHistory.push('/app/home');
+    state = state.loginStatus(LoginStatus.SUCCESS);
     return state.loggedInUser(action.initials); // TODO
 }
 
@@ -296,6 +298,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return handleSelectViewProfile(state, action as SelectViewProfileAction);
         case ActionType.SetSelectedIndexes:
             return handleSetSelectedIndexes(state, action as SetSelectedIndexesAction);
+        case ActionType.APIRequestSuccess_NoContent:
+            return state.APIRequestStatus(RequestStatus.Successful);
+        case ActionType.UserLoginFailed:
+            return state.loginStatus(LoginStatus.REJECTED);
         default:
             return state;
     }

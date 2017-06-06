@@ -179,11 +179,13 @@ class PowerOverviewModule extends React.Component<
                                 primary={true}
                                 label={PowerLocalize.get('Overview.NewView')}
                                 onClick={this.showCreateViewDialog}
+                                icon={ <FontIcon className="material-icons">add</FontIcon>}
                                 className="margin-5px"
                             />
                             <RaisedButton
                                 label={PowerLocalize.get('Overview.RefreshViews')}
                                 onClick={() => this.props.refreshViews(this.props.loggedInInitials)}
+                                icon={ <FontIcon className="material-icons">autorenew</FontIcon>}
                                 className="margin-5px"
                             />
                             <Dialog

@@ -11,6 +11,7 @@ import {TrainingTable} from './tables/training-table_module';
 import {QualificationTable} from './tables/qualification-table_module';
 import {LanguageTable} from './tables/language-table_module';
 import {SectorTable} from './tables/sector-table_module';
+import {ProjectTable} from './tables/project-table_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -85,6 +86,9 @@ class ViewProfileCardModule extends React.Component<
                     </Paper>
                     <Paper className="margin-5px">
                         <SectorTable key="SectorTable" viewProfileId={this.props.viewProfile.id()}/>
+                    </Paper>
+                    <Paper className="margin-5px">
+                        <ProjectTable key="ProjectTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
                 </div>
 

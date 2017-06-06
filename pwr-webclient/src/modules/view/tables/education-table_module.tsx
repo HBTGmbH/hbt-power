@@ -2,23 +2,18 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../Store';
-import {Profile} from '../../../model/Profile';
-import {EducationEntry} from '../../../model/EducationEntry';
 import {NameEntity} from '../../../model/NameEntity';
-import {
-    Table, TableRow, TableBody, TableRowColumn, TableHeader,
-    TableHeaderColumn, IconMenu, IconButton, MenuItem
-} from 'material-ui';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
-import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
 import * as Immutable from 'immutable';
 import {ViewElement} from '../../../model/viewprofile/ViewElement';
 import {isNullOrUndefined} from 'util';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {AscDescButton} from '../../general/asc-desc-button_module';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
+import {DropTargetSpec} from 'react-dnd';
 
 /**
  * Properties that are managed by react-redux.
@@ -65,6 +60,12 @@ class EducationTableModule extends React.Component<
     & EducationTableLocalProps
     & EducationTableDispatch, EducationTableLocalState> {
 
+    public static spec: DropTargetSpec<any> = {
+        drop(props) {
+            console.log(props);
+        }
+    };
+
     static mapStateToProps(state: ApplicationState, localProps: EducationTableLocalProps): EducationTableProps {
         return {
             viewProfile: state.databaseReducer.viewProfiles().get(localProps.viewProfileId),
@@ -96,7 +97,7 @@ class EducationTableModule extends React.Component<
         let entry = this.getEntry(viewElement);
         return (
             <TableRow
-                key={'EducationTable.EducationRow.' + index}
+                key={"EducationTable.DraggableRow." + index}
                 selected={this.isSelected(index)}
             >
                 <TableRowColumn>
@@ -162,6 +163,7 @@ class EducationTableModule extends React.Component<
         );
     }
 }
+
 
 /**
  * @see EducationTableModule

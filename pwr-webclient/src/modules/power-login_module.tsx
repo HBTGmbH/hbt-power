@@ -16,7 +16,7 @@ import {Paths} from '../index';
  * otherwise the component will not render and update correctly.
  */
 interface PowerLoginProps {
-
+    loginStatus: LoginStatus;
 }
 
 /**
@@ -38,8 +38,6 @@ interface PowerLoginLocalProps {
  */
 interface PowerLoginLocalState {
     initials: string;
-    password: string;
-    status: LoginStatus;
     isAdmin: boolean;
 }
 
@@ -61,14 +59,14 @@ class PowerLoginModule extends React.Component<
         super(props);
         this.state = {
             initials: "",
-            password: "",
-            status: LoginStatus.INITIALS,
             isAdmin: false
         }
     }
 
     static mapStateToProps(state: ApplicationState, localProps: PowerLoginProps): PowerLoginProps {
-        return {}
+        return {
+            loginStatus: state.databaseReducer.loginStatus()
+        }
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerLoginDispatch {
@@ -79,77 +77,32 @@ class PowerLoginModule extends React.Component<
         }
     }
 
-    private handlePasswordKeyPress = (event: KeyboardEvent<{}>) => {
-        if(event.key === 'Enter') {
-            this.setState({
-                status: LoginStatus.SUCCESS
-            });
-
-        }
-    };
-
-    private progressState = () => {
-
-        if(this.state.isAdmin) {
-
-        } else {
-            if(this.state.status == LoginStatus.INITIALS) {
-                this.setState({
-                    status: LoginStatus.SUCCESS,
-                });
-                this.props.logInUser(this.state.initials);
-            }
-        }
-
-    };
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
         if(event.key == 'Enter') {
-            this.progressState();
+            this.props.logInUser(this.state.initials);
         }
     };
 
     private handleProgressButtonClick = () => {
-        this.progressState();
+        this.props.logInUser(this.state.initials);
     };
 
     private handleFieldValueChange = (irrelevantFormEvent: any, value: string) => {
-        if(this.state.status === LoginStatus.PASSWORD) {
-            this.setState({
-                password: value
-            });
-        } else if(this.state.status === LoginStatus.INITIALS) {
-            this.setState({
-                initials: value
-            })
-        }
+        this.setState({
+            initials: value
+        })
     };
 
-    private getInputFieldValue = () => {
-        if(this.state.status === LoginStatus.INITIALS) {
-            return this.state.initials;
-        } else if(this.state.status === LoginStatus.PASSWORD) {
-            return this.state.password;
-        }
-        return "";
-    };
 
-    private getInputFieldFloatingLabelText = () => {
-        if(this.state.status === LoginStatus.INITIALS) {
-            return PowerLocalize.get("Initials.Singular");
-        } else if(this.state.status === LoginStatus.PASSWORD) {
-            return PowerLocalize.get("Password.Singular");
-        }
-        return "";
-    };
 
     private renderInputField = () => {
         return (<TextField
-            floatingLabelText={this.getInputFieldFloatingLabelText()}
-            value={this.getInputFieldValue()}
+            floatingLabelText={PowerLocalize.get("Initials.Singular")}
+            value={this.state.initials}
             onChange={this.handleFieldValueChange}
             onKeyPress={this.handleInputFieldKeyPress}
-            type={this.state.status === LoginStatus.PASSWORD ? "password" :""}
+            errorText={this.props.loginStatus == LoginStatus.REJECTED ? PowerLocalize.get("UserLogin.LoginFailed") : null}
         />)
     };
 

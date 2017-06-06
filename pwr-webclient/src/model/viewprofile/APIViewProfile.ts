@@ -1,5 +1,5 @@
 import {
-    APIEducationStep, APILanguageSkill, APIProfile, APIQualificationEntry, APISectorEntry,
+    APIEducationStep, APILanguageSkill, APIProfile, APIProject, APIQualificationEntry, APISectorEntry,
     APITrainingEntry
 } from '../APIProfile';
 
@@ -28,14 +28,20 @@ export interface APIViewTraining extends APIViewEntry {
     trainingEntry: APITrainingEntry;
 }
 
+export interface APIViewProject extends APIViewEntry {
+    project: APIProject;
+}
+
 export interface APIViewProfile {
     id: number;
     name: string;
     description: string;
     profileSnapshot: APIProfile;
+    creationDate: string;
     educationViewEntries: Array<APIViewEducation>;
     languageViewEntries: Array<APIViewLanguage>;
     qualificationViewEntries: Array<APIViewQualification>;
     sectorViewEntries: Array<APIViewSector>;
     trainingViewEntries: Array<APIViewTraining>;
+    projectViewEntries: Array<APIViewProject>;
 }
