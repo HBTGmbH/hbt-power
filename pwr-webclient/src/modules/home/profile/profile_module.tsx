@@ -14,11 +14,14 @@ import {InternalDatabase} from '../../../model/InternalDatabase';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {Projects} from './elements/project/projects-module';
 import {SkillTree} from './elements/skills/skilltree-module';
+import {getProfileImageLocation} from '../../../API_CONFIG';
+import {ConsultantInfo} from '../../../model/ConsultantInfo';
+import {isNullOrUndefined} from 'util';
 
 
 interface ProfileProps {
     database: InternalDatabase;
-    loggedInInitials: string;
+    loggedInUser: ConsultantInfo;
 }
 
 /**
@@ -50,7 +53,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps) : ProfileProps {
         return {
             database: state.databaseReducer,
-            loggedInInitials: state.databaseReducer.loggedInUser()
+            loggedInUser: state.databaseReducer.loggedInUser()
         };
     }
 
@@ -74,15 +77,19 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
 
     private handleReloadProfile = (event: TouchTapEvent) => {
-        this.props.reloadProfile(this.props.database.loggedInUser());
+        this.props.reloadProfile(this.props.loggedInUser.initials());
     };
 
     private handleSaveProfile = (event: TouchTapEvent) => {
-        this.props.saveProfile(this.props.database.loggedInUser(), this.props.database);
+        this.props.saveProfile(this.props.loggedInUser.initials(), this.props.database);
     };
 
     private handleResetProfile = (event: TouchTapEvent) => {
         // FIXME implement
+    };
+
+    private getInitials = () => {
+        return isNullOrUndefined(this.props.loggedInUser) ? "" : this.props.loggedInUser.initials();
     };
 
     render() {
@@ -92,7 +99,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     <Tab label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
                         <CardHeader
                             title="John Doe"
-                            avatar="/img/crazy_lama.jpg"
+                            avatar={getProfileImageLocation(this.getInitials())}
                         />
                         <Divider/>
 

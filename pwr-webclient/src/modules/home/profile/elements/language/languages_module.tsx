@@ -15,7 +15,6 @@ interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;
     languages: Immutable.Map<string, NameEntity>;
     languageLevels: Array<string>;
-    userInitials: string;
 }
 
 /**
@@ -62,7 +61,6 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         return {
             languageSkills: state.databaseReducer.profile().languageSkills(),
             languages: state.databaseReducer.languages(),
-            userInitials: state.databaseReducer.loggedInUser(),
             languageLevels: state.databaseReducer.languageLevels()
         };
     }

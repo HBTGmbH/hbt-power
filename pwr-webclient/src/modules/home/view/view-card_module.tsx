@@ -11,6 +11,7 @@ import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
+import {ConsultantInfo} from '../../../model/ConsultantInfo';
 
 
 /**
@@ -21,7 +22,7 @@ import {LimitedTextField} from '../../general/limited-text-field-module.';
  */
 interface ViewCardProps {
     viewProfile: ViewProfile;
-    loggedInInitials: string;
+    loggedInUser: ConsultantInfo;
 }
 
 /**
@@ -71,7 +72,7 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
     static mapStateToProps(state: ApplicationState, localProps: ViewCardLocalProps): ViewCardProps {
         return {
             viewProfile: state.databaseReducer.viewProfiles().get(localProps.viewProfileId),
-            loggedInInitials: state.databaseReducer.loggedInUser()
+            loggedInUser: state.databaseReducer.loggedInUser()
         };
     }
 
@@ -171,7 +172,7 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
                                 <MenuItem
                                     primaryText={PowerLocalize.get('Action.Delete')}
                                     leftIcon={ <FontIcon className="material-icons">delete</FontIcon>}
-                                    onClick={() => this.props.deleteViewProfile(this.props.viewProfileId, this.props.loggedInInitials)}
+                                    onClick={() => this.props.deleteViewProfile(this.props.viewProfileId, this.props.loggedInUser.initials())}
                                 />
                                 <MenuItem
                                     primaryText={PowerLocalize.get('Action.Duplicate')}

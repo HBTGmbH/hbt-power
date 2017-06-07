@@ -17,7 +17,6 @@ interface EducationProps {
 
     educations: Immutable.Map<string, NameEntity>;
 
-    userInitials: string;
 
     degrees: Immutable.List<string>;
 }
@@ -49,17 +48,10 @@ interface EducationDispatch {
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
 
-    private static renderHeader() {
-        return (
-            <div></div>
-        );
-    }
-
     static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps) : EducationProps {
         return {
             educationEntries : state.databaseReducer.profile().educationEntries(),
             educations: state.databaseReducer.educations(),
-            userInitials: state.databaseReducer.loggedInUser(),
             degrees: state.databaseReducer.degrees()
         };
     }
@@ -81,7 +73,6 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
     private handleAddElement = (event: TouchTapEvent) => {
         this.props.addEducationEntry();
     };
-
 
     /**
      *

@@ -14,7 +14,6 @@ import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActio
 interface SectorsProps {
     sectors: Immutable.Map<string, NameEntity>;
     sectorEntries: Immutable.Map<string, SectorEntry>;
-    initials: string;
 }
 
 /**
@@ -55,7 +54,6 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         return {
             sectors: state.databaseReducer.sectors(),
             sectorEntries: state.databaseReducer.profile().sectorEntries(),
-            initials: state.databaseReducer.loggedInUser()
         };
     }
 

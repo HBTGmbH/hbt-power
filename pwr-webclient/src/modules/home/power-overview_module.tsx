@@ -5,13 +5,15 @@ import {ApplicationState} from '../../Store';
 import {
     Card,
     CardActions,
-    CardHeader, CardMedia,
-    CardText, Dialog,
+    CardHeader,
+    CardText,
+    Dialog,
     FontIcon,
     GridList,
     GridTile,
+    IconButton,
     RaisedButton,
-    Subheader, TextField, IconButton
+    TextField
 } from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
@@ -19,8 +21,7 @@ import {ViewCard} from './view/view-card_module';
 import {Profile} from '../../model/Profile';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';
-import {SingleTrainingEntry} from './profile/elements/training/training-entry_module';
-import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
 
 /**
  * Properties that are managed by react-redux.
@@ -29,7 +30,7 @@ import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator'
  * otherwise the component will not render and update correctly.
  */
 interface PowerOverviewProps {
-    loggedInInitials: string;
+    loggedInUser: ConsultantInfo;
     profile: Profile;
     viewProfiles: Immutable.Map<string, ViewProfile>;
 }
@@ -84,7 +85,7 @@ class PowerOverviewModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
         return {
-            loggedInInitials: state.databaseReducer.loggedInUser(),
+            loggedInUser: state.databaseReducer.loggedInUser(),
             profile: state.databaseReducer.profile(),
             viewProfiles: state.databaseReducer.viewProfiles()
         };
@@ -113,7 +114,7 @@ class PowerOverviewModule extends React.Component<
     };
 
     private handleEditButtonClick = () => {
-        this.props.editProfile(this.props.loggedInInitials);
+        this.props.editProfile(this.props.loggedInUser.initials());
     };
 
     private changeViewProfileName(newName: string) {
@@ -140,7 +141,7 @@ class PowerOverviewModule extends React.Component<
 
     private saveViewProfile = () => {
         this.props.createViewProfile(this.state.viewProfileName, this.state.viewProfileDescription,
-            this.props.loggedInInitials);
+            this.props.loggedInUser.initials());
         this.exitCreateViewDialog();
     };
 
@@ -182,7 +183,7 @@ class PowerOverviewModule extends React.Component<
                             />
                             <RaisedButton
                                 label={PowerLocalize.get('Overview.RefreshViews')}
-                                onClick={() => this.props.refreshViews(this.props.loggedInInitials)}
+                                onClick={() => this.props.refreshViews(this.props.loggedInUser.initials())}
                                 icon={ <FontIcon className="material-icons">autorenew</FontIcon>}
                                 className="margin-5px"
                             />

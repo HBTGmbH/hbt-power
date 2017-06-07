@@ -24,6 +24,10 @@ import {NotificationTrashbox} from './modules/admin/notification-trashbox_module
 import {AdminLogin} from './modules/admin/admin-login_module';
 import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
+import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from './model/PwrConstants';
+import {isNullOrUndefined} from 'util';
+import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
+import * as Cookies from 'js-cookie';
 
 injectTapEventPlugin();
 
@@ -44,7 +48,16 @@ store.dispatch(ProfileAsyncActionCreator.requestCareers());
 store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
-//store.dispatch(ProfileAsyncActionCreator.requestSingleProfile('jd'));
+
+const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
+if(!isNullOrUndefined(storedInitials)) {
+    console.info("Cookie detected. Performing auto Log-In.");
+    // renew the cookie to hold another fixed period of time.
+    Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
+    store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
+} else {
+    browserHistory.push('/');
+}
 
 export class Paths {
     public static readonly ADMIN_INBOX = "/admin/home/inbox";

@@ -32,6 +32,8 @@ import * as Immutable from 'immutable';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 import {LoginStatus} from '../../model/LoginStatus';
+import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
+import * as Cookies from 'js-cookie';
 
 export class DatabaseReducer {
     private static AddAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
@@ -225,8 +227,9 @@ export class DatabaseReducer {
 
     private static LogInUser(database: InternalDatabase, action: LoginAction): InternalDatabase {
         browserHistory.push('/app/home');
+        Cookies.set(COOKIE_INITIALS_NAME, action.consultantInfo.initials(), {expires: COOKIE_INITIALS_EXPIRATION_TIME});
         database = database.loginStatus(LoginStatus.SUCCESS);
-        return database.loggedInUser(action.initials); // TODO
+        return database.loggedInUser(action.consultantInfo); // TODO
     }
 
     private static ShowProfile(database: InternalDatabase): InternalDatabase {
@@ -236,6 +239,7 @@ export class DatabaseReducer {
 
     private static LogOutUser(database: InternalDatabase): InternalDatabase {
         browserHistory.push('/');
+        Cookies.remove(COOKIE_INITIALS_NAME);
         database = database.viewProfiles(database.viewProfiles().clear());
         database = database.loggedInUser(null);
         return database.profile(Profile.createDefault());

@@ -13,6 +13,7 @@ import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {ActionType} from '../ActionType';
 import * as Immutable from 'immutable'
 import {ViewElement} from '../../model/viewprofile/ViewElement';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
 
 export interface AbstractAction {
     type: ActionType;
@@ -75,7 +76,7 @@ export interface DeleteProjectAction extends AbstractAction {
  * Action that invokes login of a user. Includes async requests to receive an OAuth2 token.
  */
 export interface LoginAction extends AbstractAction {
-    initials: string;
+    consultantInfo: ConsultantInfo;
 }
 
 export interface UpdateSkillRatingAction extends AbstractAction {

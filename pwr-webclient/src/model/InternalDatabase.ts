@@ -6,6 +6,7 @@ import {Profile} from './Profile';
 import {doop} from 'doop';
 import {LoginStatus} from './LoginStatus';
 import {ViewProfile} from './viewprofile/ViewProfile';
+import {ConsultantInfo} from './ConsultantInfo';
 
 
 /**
@@ -29,7 +30,7 @@ export class InternalDatabase {
     public get degrees() {return doop<Immutable.List<string>, this>();}
 
     @doop
-    public get loggedInUser() {return doop<string, this>();};
+    public get loggedInUser() {return doop<ConsultantInfo, this>();};
 
     @doop
     public get loginStatus() {return doop<LoginStatus, this>();};
@@ -83,7 +84,7 @@ export class InternalDatabase {
         sectors:  Immutable.Map<string, NameEntity>,
         companies: Immutable.Map<string, NameEntity>,
         projectRoles: Immutable.Map<string, NameEntity>,
-        loggedInUser: string,
+        loggedInUser: ConsultantInfo,
         degrees: Immutable.List<string>,
 ) {
         return this.APIRequestStatus(apiRequestStatus)
@@ -115,7 +116,7 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
-            'jd',
+            null,
             Immutable.List<string>(['Bachelor', 'Master', 'Doktor'])
         );
     }

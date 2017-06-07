@@ -5,9 +5,12 @@ import {AllConsultantsState, ApplicationState} from '../../Store';
 import {Avatar, FlatButton, Paper, Toolbar, ToolbarGroup} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
+import {getProfileImageLocation} from '../../API_CONFIG';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {isNullOrUndefined} from 'util';
 
 interface ToolbarProps {
-    userInitials: string;
+    loggedInUser: ConsultantInfo;
 }
 
 /**
@@ -42,7 +45,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps) : ToolbarProps {
         return {
-            userInitials: state.databaseReducer.loggedInUser()
+            loggedInUser: state.databaseReducer.loggedInUser()
         };
     }
 
@@ -58,15 +61,11 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         this.setState({menuOpen: true});
     };
 
+    private getInitials = () => {
+        return isNullOrUndefined(this.props.loggedInUser) ? "" : this.props.loggedInUser.initials();
+    }
+
     /**
-     *  <IconMenu
-     iconButtonElement={<IconButton iconClassName="material-icons" onClick={this.handleMenuClick} tooltip={PowerLocalize.get('Menu.Singular')}>menu</IconButton>}
-     >
-     <MenuItem primaryText={PowerLocalize.get("Menu.Overview")} />
-     <MenuItem primaryText={PowerLocalize.get("Menu.Profile")}/>
-     <MenuItem primaryText={PowerLocalize.get("Menu.Views")} />
-     <MenuItem primaryText={PowerLocalize.get("Menu.Logout")} />
-     </IconMenu>
      * @returns {any}
      */
     render() {
@@ -86,12 +85,14 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     </ToolbarGroup>
                     <ToolbarGroup lastChild={true}>
                         <div style={{marginRight: "30px", textAlign: "right", color:"white"}} >
-                            <span style={{paddingRight:"15px"}}>{PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.props.userInitials}</span>
+                            <span style={{paddingRight:"15px"}}>
+                                {PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.getInitials()}
+                            </span>
                             <br/>
                             <FlatButton onClick={this.props.logOutUser} label={PowerLocalize.get("Tooolbar.LogOut")} />
                         </div>
                         <div style={{marginRight: "50px"}}>
-                            <Avatar size={70} src="/img/crazy_lama.jpg" />
+                            <Avatar size={70} src={getProfileImageLocation(this.getInitials())}/>
                         </div>
                     </ToolbarGroup>
                 </Toolbar>

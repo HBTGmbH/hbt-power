@@ -4,23 +4,28 @@ import {
     deleteViewProfileString,
     getAllViewProfilesString,
     getCompanySuggestionsAPIString,
+    getConsultantApiString,
     getEducationSuggestionAPIString,
-    getLangSuggestionAPIString, GetPostMutateViewProfile, getPostViewProfileAPIString,
+    getLangSuggestionAPIString,
+    GetPostMutateViewProfile,
+    getPostViewProfileAPIString,
     getProfileAPIString,
     getProjectRolesSuggestionAPIString,
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
-    getTrainingSuggestionAPIString, getViewProfileString, postDuplicateViewProfile, postEditViewProfileDetails
+    getTrainingSuggestionAPIString,
+    getViewProfileString,
+    postDuplicateViewProfile,
+    postEditViewProfileDetails
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {AllConsultantsState, APIRequestType, ProfileElementType} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
 import {ActionType} from '../ActionType';
-import {ActionCreator} from 'react-redux';
 import {NameEntityUtil} from '../../utils/NameEntityUtil';
-import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
 
 export class ProfileAsyncActionCreator {
 
@@ -68,7 +73,7 @@ export class ProfileAsyncActionCreator {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.put(getProfileAPIString(initials), profile).then(function(response: AxiosResponse) {
-                console.info("Notifications: ", response.data.notifications);
+                console.info('Notifications: ', response.data.notifications);
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveProfile));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
@@ -153,25 +158,23 @@ export class ProfileAsyncActionCreator {
                 type: ActionType.ShowProfile
             });
             dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
-        }
+        };
     }
 
     public static logInUser(initials: string) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
-            axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
-                let profile: APIProfile = Object.assign({}, response.data);
-                // Parse the dates.
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile));
+            axios.get(getConsultantApiString(initials)).then(function(response: AxiosResponse) {
+                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                 dispatch({
                     type: ActionType.LogInUser,
-                    initials: initials
+                    consultantInfo: ConsultantInfo.fromAPI(response.data)
                 });
                 dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.FailLogin());
             });
-        }
+        };
     }
 
     public static createView(initials: string, name: string, description: string) {
@@ -196,7 +199,7 @@ export class ProfileAsyncActionCreator {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.get(getViewProfileString(id)).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data))
+                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
@@ -223,7 +226,7 @@ export class ProfileAsyncActionCreator {
             axios.get(getAllViewProfilesString(initials)).then(function(response: AxiosResponse) {
                 let ids: Array<string> = response.data;
                 ids.forEach(id => {
-                    dispatch(ProfileAsyncActionCreator.getViewProfile(id))
+                    dispatch(ProfileAsyncActionCreator.getViewProfile(id));
                 });
                 dispatch(ProfileActionCreator.SucceedAPIRequest());
             }).catch(function(error:any) {
@@ -242,7 +245,7 @@ export class ProfileAsyncActionCreator {
             dispatch(ProfileActionCreator.APIRequestPending());
             let config: AxiosRequestConfig = {
                 params: {
-                    action: "sort",
+                    action: 'sort',
                     entry: NameEntityUtil.typeToViewAPIString(elementType),
                     order: naturalSortOrder,
                     field: entryField
@@ -274,11 +277,11 @@ export class ProfileAsyncActionCreator {
                 currentIndexes.delete(index);
             let config: AxiosRequestConfig = {
                 params: {
-                    action: "filter",
+                    action: 'filter',
                     entry: NameEntityUtil.typeToViewAPIString(elementType),
                 },
                 headers: {
-                    "Content-Type":"application/json"
+                    'Content-Type':'application/json'
                 }
             };
             dispatch(ProfileActionCreator.APIRequestPending());
@@ -296,11 +299,11 @@ export class ProfileAsyncActionCreator {
             let indexes: Array<number> = [index1, index2];
             let config: AxiosRequestConfig = {
                 params: {
-                    action: "swap",
+                    action: 'swap',
                     entry: NameEntityUtil.typeToViewAPIString(elementType),
                 },
                 headers: {
-                    "Content-Type":"application/json"
+                    'Content-Type':'application/json'
                 }
             };
             dispatch(ProfileActionCreator.SwapIndexes(elementType, viewProfileId, index1, index2));
@@ -310,7 +313,7 @@ export class ProfileAsyncActionCreator {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
-        }
+        };
     }
 
     public static editViewProfileDetails(viewProfileId: string, name: string, description: string) {
@@ -324,7 +327,7 @@ export class ProfileAsyncActionCreator {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
-        }
+        };
     }
 
     /**
@@ -341,7 +344,7 @@ export class ProfileAsyncActionCreator {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
-        }
+        };
     }
 
 }

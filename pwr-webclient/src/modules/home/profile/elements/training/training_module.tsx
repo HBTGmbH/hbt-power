@@ -13,7 +13,6 @@ import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActio
 interface TrainingEntriesProps {
     trainingEntries: Immutable.Map<string, TrainingEntry>;
     trainings: Immutable.Map<string, NameEntity>;
-    userInitials: string;
 }
 
 /**
@@ -55,7 +54,6 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
         return {
             trainingEntries: state.databaseReducer.profile().trainingEntries(),
             trainings: state.databaseReducer.trainings(),
-            userInitials: state.databaseReducer.loggedInUser()
         };
     }
 

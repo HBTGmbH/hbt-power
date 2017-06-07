@@ -82,3 +82,13 @@ export interface APIProfileUpdateResponse {
     profile: APIProfile;
     notifications: Array<any>;
 }
+
+/**
+ * Just the relevant information
+ */
+export interface APIConsultant {
+    initials: string;
+    firstName: string;
+    lastName: string;
+    profile: APIProfile;
+}

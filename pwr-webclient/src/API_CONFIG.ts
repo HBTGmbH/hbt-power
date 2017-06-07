@@ -16,6 +16,10 @@ export const API_SUFFIX: string = "/api";
 export const API_SUFFIX_PROFILE = "";
  //*/
 
+export function getConsultantApiString(initials: string) : string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/consultants/" + initials;
+}
+
 export function getAdminAuthAPIString() : string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/admin";
 }
@@ -86,4 +90,8 @@ export function postEditViewProfileDetails(id: string): string {
 
 export function postDuplicateViewProfile(id: string): string {
     return getViewProfileString(id);
+}
+
+export function getProfileImageLocation(initials: string): string {
+    return "/img/profile_pictures/" + initials + ".png"
 }
