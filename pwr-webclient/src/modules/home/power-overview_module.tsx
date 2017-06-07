@@ -154,10 +154,8 @@ class PowerOverviewModule extends React.Component<
                                 subtitle="Übersicht"
                             />
                             <CardText>
-                                <Subheader>Letzte Aktualisierung:</Subheader>
-                                {this.props.profile.lastEdited().toLocaleDateString()}
-                                <Subheader>Aktualisiert von:</Subheader>
-                                {this.props.profile.lastEditedBy()}
+                                <h5>Letzte Aktualisierung:</h5>
+                                {this.props.profile.lastEdited().toLocaleString()}
                             </CardText>
                             <CardActions>
                                 <RaisedButton

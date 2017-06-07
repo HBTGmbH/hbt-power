@@ -224,7 +224,8 @@ export class Profile {
             education: educations,
             sectors: sectors,
             projects: projects,
-            skills: skills
+            skills: skills,
+            lastEdited: null
         };
         console.log('Serialized profile:', res);
         return res;
@@ -236,7 +237,6 @@ export class Profile {
      * @returns {Profile}
      */
     public static createFromAPI(profile: APIProfile): Profile {
-
         return new Profile(
             Number(profile.id),
             profile.currentPosition,
@@ -248,7 +248,7 @@ export class Profile {
             Profile.parseQualficiationEntries(profile.qualification),
             Profile.parseProjects(profile.projects),
             Profile.parseSkills(profile.skills),
-            new Date(), //FIXME,
+            new Date(profile.lastEdited),
             ""
         );
     }

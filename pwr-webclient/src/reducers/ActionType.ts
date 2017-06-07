@@ -5,12 +5,16 @@
 export enum ActionType {
     SwapIndex,
     UserLoginFailed,
+
+    ChangeViewProfileName,
+    ChangeViewProfileDescription,
     ReceiveViewProfile,
     SortViewProfile,
     SetSelectedIndexes,
     SelectViewProfile,
     DeleteViewProfile,
     SaveViewProfile,
+
     LogOutUser,
     DeleteSkill,
     UpdateSkillRating,

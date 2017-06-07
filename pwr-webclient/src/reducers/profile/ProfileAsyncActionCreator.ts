@@ -5,12 +5,12 @@ import {
     getAllViewProfilesString,
     getCompanySuggestionsAPIString,
     getEducationSuggestionAPIString,
-    getLangSuggestionAPIString, getPostSortViewAPIString, getPostViewProfileAPIString,
+    getLangSuggestionAPIString, GetPostMutateViewProfile, getPostViewProfileAPIString,
     getProfileAPIString,
     getProjectRolesSuggestionAPIString,
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
-    getTrainingSuggestionAPIString, getViewProfileString
+    getTrainingSuggestionAPIString, getViewProfileString, postDuplicateViewProfile, postEditViewProfileDetails
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
@@ -248,7 +248,7 @@ export class ProfileAsyncActionCreator {
                     field: entryField
                 }
             };
-            axios.post(getPostSortViewAPIString(viewProfileId), [], config).then(function(response: AxiosResponse) {
+            axios.post(GetPostMutateViewProfile(viewProfileId), [], config).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
@@ -282,7 +282,7 @@ export class ProfileAsyncActionCreator {
                 }
             };
             dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(getPostSortViewAPIString(viewProfileId), Array.from(currentIndexes.values()), config).then(function(response: AxiosResponse) {
+            axios.post(GetPostMutateViewProfile(viewProfileId), Array.from(currentIndexes.values()), config).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
@@ -304,9 +304,40 @@ export class ProfileAsyncActionCreator {
                 }
             };
             dispatch(ProfileActionCreator.SwapIndexes(elementType, viewProfileId, index1, index2));
-            axios.post(getPostSortViewAPIString(viewProfileId), JSON.stringify(indexes), config).then(function(response: AxiosResponse) {
+            axios.post(GetPostMutateViewProfile(viewProfileId), JSON.stringify(indexes), config).then(function(response: AxiosResponse) {
                 //dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
+
+    public static editViewProfileDetails(viewProfileId: string, name: string, description: string) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            axios.post(postEditViewProfileDetails(viewProfileId), {
+                name: name,
+                description: description
+            }).then(function (response: AxiosResponse) {
+                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
+            }).catch(function (error: any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
+
+    /**
+     * Invokes duplication of a view profile by the API backend and parses the response as view profile, which is
+     * then added to the list of available view profiles.
+     * @param viewProfileId
+     * @returns {(dispatch:redux.Dispatch<AllConsultantsState>)=>undefined}
+     */
+    public static duplicateViewProfile(viewProfileId: string) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            axios.post(postDuplicateViewProfile(viewProfileId)).then(function (response: AxiosResponse) {
+                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
+            }).catch(function (error: any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });

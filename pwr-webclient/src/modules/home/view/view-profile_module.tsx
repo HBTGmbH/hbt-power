@@ -6,7 +6,7 @@ import {InternalDatabase} from '../../../model/InternalDatabase';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {isNullOrUndefined} from 'util';
 import {EducationTable} from './tables/education-table_module';
-import {Paper} from 'material-ui';
+import {Paper, Subheader} from 'material-ui';
 import {TrainingTable} from './tables/training-table_module';
 import {QualificationTable} from './tables/qualification-table_module';
 import {LanguageTable} from './tables/language-table_module';
@@ -73,6 +73,10 @@ class ViewProfileCardModule extends React.Component<
         if(!isNullOrUndefined(this.props.viewProfile)) {
             return (
                 <div>
+                    <Paper className="margin-5px padding-8px">
+                        <h3 style={{marginLeft: "5px"}}>{"View " + this.props.viewProfile.name()}</h3>
+                        <Subheader>{this.props.viewProfile.description()}</Subheader>
+                    </Paper>
                     <Paper className="margin-5px">
                         <EducationTable key="EducationTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>

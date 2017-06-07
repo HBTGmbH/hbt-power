@@ -1,4 +1,4 @@
-//*
+/*
 export const API_HOST: string = "http://power02.corp.hbt.de";
 
 export const API_PORT: string = "9000";
@@ -64,8 +64,8 @@ export function getPostViewProfileAPIString(initials: string): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
 }
 
-export function getPostSortViewAPIString(id: string) : string {
-    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/view/" + id;
+export function GetPostMutateViewProfile(id: string) : string {
+    return getViewProfileString(id) + "/entries";
 }
 
 export function getViewProfileString(id: string): string {
@@ -78,4 +78,12 @@ export function deleteViewProfileString(id: string, initials: string): string {
 
 export function getAllViewProfilesString(initials: string): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
+}
+
+export function postEditViewProfileDetails(id: string): string {
+    return getViewProfileString(id) + "/details";
+}
+
+export function postDuplicateViewProfile(id: string): string {
+    return getViewProfileString(id);
 }

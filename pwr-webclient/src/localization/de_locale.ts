@@ -78,6 +78,7 @@ export const de_locale : any = {
     "NameEntityType.TRAINING" : "Weiterbildung",
     "NameEntityType.PROJECT_ROLE" : "Projektrolle",
     "NameEntityType.COMPANY" : "Unternehmen",
+    "ErrorText.InputTooLong": "Zu viele Zeichen",
 
     "None": "Kein",
     // == ACTIONS == //
@@ -98,6 +99,7 @@ export const de_locale : any = {
     "Action.FinalDelete": "Endgültig Löschen",
     "Action.Previous": "Zurück",
     "Action.Next": "Weiter",
-    "Action.Execute": "Ausführen"
+    "Action.Execute": "Ausführen",
+    "Action.Duplicate": "Duplizieren",
 
 };

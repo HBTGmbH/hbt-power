@@ -68,6 +68,7 @@ export interface APIProfile {
     id: number;
     description: string;
     currentPosition: string;
+    lastEdited: string;
     trainingEntries: Array<APITrainingEntry>;
     languages: Array<APILanguageSkill>;
     qualification: Array<APIQualificationEntry>;

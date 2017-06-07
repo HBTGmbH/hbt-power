@@ -21,6 +21,10 @@ body {
   margin: 5px;
 }
 
+.padding-8px {
+  padding: 8px;
+}
+
 .vertical-align {
   display: flex !important;
   align-items: center;

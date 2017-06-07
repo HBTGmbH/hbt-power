@@ -141,4 +141,9 @@ export interface SwapIndexAction extends AbstractAction {
     index2: number;
 }
 
+export interface ChangeViewProfileAction extends AbstractAction {
+    val: string;
+    viewProfileId: string;
+}
+
 

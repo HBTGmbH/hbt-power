@@ -3,13 +3,21 @@ import {isNullOrUndefined} from 'util';
 import {
     AbstractAction,
     ChangeStringValueAction,
+    ChangeViewProfileAction,
     CreateEntryAction,
     DeleteEntryAction,
-    DeleteProjectAction, DeleteSkillAction, DeleteViewProfileAction, LoginAction,
+    DeleteProjectAction,
+    DeleteSkillAction,
+    DeleteViewProfileAction,
+    LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction, SwapIndexAction,
-    UpdateSkillRatingAction, ViewProfileSortAction
+    SaveProjectAction,
+    SaveViewProfileAction,
+    SelectViewProfileAction,
+    SetSelectedIndexesAction,
+    SwapIndexAction,
+    UpdateSkillRatingAction
 } from './database-actions';
 import {InternalDatabase} from '../../model/InternalDatabase';
 import {Profile} from '../../model/Profile';
@@ -17,14 +25,13 @@ import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {APINameEntity} from '../../model/APIProfile';
-import {browserHistory} from 'react-router'
+import {browserHistory} from 'react-router';
 import {ActionType} from '../ActionType';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
 import * as Immutable from 'immutable';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 import {LoginStatus} from '../../model/LoginStatus';
-
 
 
 const initialState: InternalDatabase = InternalDatabase.createWithDefaults();
@@ -254,6 +261,16 @@ function swapIndexes(state: InternalDatabase, action: SwapIndexAction): Internal
     return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
 }
 
+function changeViewProfileName(state: InternalDatabase, action: ChangeViewProfileAction): InternalDatabase {
+    let vp: ViewProfile = state.viewProfiles().get(action.viewProfileId).name(action.val);
+    return state.viewProfiles(state.viewProfiles().set(vp.id(), vp));
+}
+
+function changeViewProfileDescription(state: InternalDatabase, action: ChangeViewProfileAction): InternalDatabase {
+    let vp: ViewProfile = state.viewProfiles().get(action.viewProfileId).description(action.val);
+    return state.viewProfiles(state.viewProfiles().set(vp.id(), vp));
+}
+
 /**
  * Reducer for the single profile part of the global state.
  * @param state
@@ -337,6 +354,10 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return state.loginStatus(LoginStatus.REJECTED);
         case ActionType.SwapIndex:
             return swapIndexes(state, action as SwapIndexAction);
+        case ActionType.ChangeViewProfileName:
+            return changeViewProfileName(state, action as ChangeViewProfileAction);
+        case ActionType.ChangeViewProfileDescription:
+            return changeViewProfileDescription(state, action as ChangeViewProfileAction);
         default:
             return state;
     }

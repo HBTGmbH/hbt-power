@@ -2,7 +2,7 @@ import {APIRequestType, ProfileElementType} from '../../Store';
 import {NameEntity} from '../../model/NameEntity';
 import {
     AbstractAction,
-    ChangeStringValueAction,
+    ChangeStringValueAction, ChangeViewProfileAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteProjectAction, DeleteViewProfileAction,
@@ -161,15 +161,6 @@ export class ProfileActionCreator {
         }
     }
 
-    public static SelectIndexes(elementType: ProfileElementType, selectedIndexes: Array<number> | string, viewProfileId: string): SetSelectedIndexesAction {
-        return {
-            type: ActionType.SetSelectedIndexes,
-            elementType: elementType,
-            viewProfileId: viewProfileId,
-            selectedIndexes: selectedIndexes
-        }
-    }
-
     public static SwapIndexes(elementType: ProfileElementType, viewProfileId: string, index1: number, index2: number): SwapIndexAction {
         return {
             type: ActionType.SwapIndex,
@@ -177,6 +168,22 @@ export class ProfileActionCreator {
             viewProfileId: viewProfileId,
             index1: index1,
             index2: index2
+        }
+    }
+
+    public static ChangeViewProfileName(id: string, name: string): ChangeViewProfileAction {
+        return {
+            type: ActionType.ChangeViewProfileName,
+            viewProfileId: id,
+            val: name
+        }
+    }
+
+    public static ChangeViewProfileDescription(id: string, description: string): ChangeViewProfileAction {
+        return {
+            type: ActionType.ChangeViewProfileDescription,
+            viewProfileId: id,
+            val: description
         }
     }
 }
