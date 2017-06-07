@@ -25,7 +25,6 @@ export enum ActionType {
     SaveProject,
     SaveEntry,
     CreateEntry,
-    ChangeCurrentPosition,
     DeleteEntry,
     APIRequestSuccess,
     APIRequestSuccess_NoContent,

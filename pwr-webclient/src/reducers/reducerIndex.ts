@@ -1,9 +1,9 @@
 import {combineReducers} from 'redux';
-import {databaseReducer} from './profile/database-reducer';
 import {AdminReducer} from './admin/AdminReducer';
+import {DatabaseReducer} from './profile/DatabaseReducer';
 
 const ApplicationStore = combineReducers({
-    databaseReducer: databaseReducer,
+    databaseReducer: DatabaseReducer.Reduce,
     adminReducer: AdminReducer.reduce
 });
 
