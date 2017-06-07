@@ -134,4 +134,11 @@ export interface ViewProfileSortAction extends AbstractAction {
     viewProfileId: string;
 }
 
+export interface SwapIndexAction extends AbstractAction {
+    elementType: ProfileElementType;
+    viewProfileId: string;
+    index1: number;
+    index2: number;
+}
+
 

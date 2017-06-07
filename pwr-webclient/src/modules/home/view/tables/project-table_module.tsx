@@ -2,7 +2,10 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {
+    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    TableRowColumn
+} from 'material-ui';
 import {ViewElement} from '../../../../model/viewprofile/ViewElement';
 import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {NameEntity} from '../../../../model/NameEntity';
@@ -12,6 +15,7 @@ import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsy
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
 import {Project} from '../../../../model/Project';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -50,7 +54,7 @@ interface ProjectTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface ProjectTableDispatch {
-    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
+    filterTable(indexes: number, enabled: boolean, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 class ProjectTableModule extends React.Component<
@@ -68,12 +72,18 @@ class ProjectTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProjectTableDispatch {
         return {
-            filterTable: (indexes, viewProfileId,lookup) => {
-                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.Project, viewProfileId, indexes, lookup))
+            filterTable: (index, enabled, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterViewElements(ProfileElementType.Project, viewProfileId, index, enabled, lookup));
             }
         };
     }
 
+
+    private getHandleOnCheck = (index: number) => {
+        return (event: any, isInputChecked: boolean) => {
+            this.props.filterTable(index, isInputChecked, this.props.viewProfileId, this.props.viewProfile.viewProjects());
+        };
+    };
 
     private getEntry = (viewElement: ViewElement) => {
 
@@ -84,17 +94,28 @@ class ProjectTableModule extends React.Component<
         return this.props.viewProfile.viewProjects().get(index).enabled();
     };
 
-    private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewProjects());
-    };
-
     private renderTableRow = (viewElement: ViewElement, index: number) => {
         let entry: Project = this.getEntry(viewElement);
         return (
             <TableRow
                 key={'EducationTable.EducationRow.' + index}
-                selected={this.isSelected(index)}
+                selected={false}
+                selectable={false}
             >
+                <TableHeaderColumn
+                    style={{width: "50px"}}>
+                    <Checkbox
+                        checked={this.isSelected(index)}
+                        onCheck={this.getHandleOnCheck(index)}
+                    />
+                </TableHeaderColumn>
+                <TableRowColumn style={{width: '50px'}} >
+                    <ReduxDragIndicator
+                        viewProfileId={this.props.viewProfileId}
+                        elementType={ProfileElementType.Project}
+                        viewElementIndex={index}
+                    />
+                </TableRowColumn>
                 <TableRowColumn>
                     {entry.name()}
                 </TableRowColumn>
@@ -117,9 +138,14 @@ class ProjectTableModule extends React.Component<
     render() {
         return (
             <div id="ViewTable.LanguageTable">
-                <Table multiSelectable={true} onRowSelection={this.handleRowSelection}>
-                    <TableHeader>
+                <Table>
+                    <TableHeader
+                        displaySelectAll={false}
+                        adjustForCheckbox={false}
+                    >
                         <TableRow>
+                            <TableHeaderColumn style={{width: '50px'}}/>
+                            <TableHeaderColumn style={{width: "50px"}}><FontIcon className="material-icons">drag_handle</FontIcon></TableHeaderColumn>
                             <TableHeaderColumn>
                                 {PowerLocalize.get('ProjectName.Singular')}
                             </TableHeaderColumn>
@@ -130,14 +156,14 @@ class ProjectTableModule extends React.Component<
                                 {PowerLocalize.get('Customer.Singular')}
                             </TableHeaderColumn>
                             <TableHeaderColumn>
-                                <ConnectedAscDescButton label={PowerLocalize.get("Project.StartDate")}
+                                <ConnectedAscDescButton label={PowerLocalize.get('Project.StartDate')}
                                                         viewProfileId={this.props.viewProfileId}
                                                         entryField="DATE_START"
                                                         elementType={ProfileElementType.Project}
                                 />
                             </TableHeaderColumn>
                             <TableHeaderColumn>
-                                <ConnectedAscDescButton label={PowerLocalize.get("Project.EndDate")}
+                                <ConnectedAscDescButton label={PowerLocalize.get('Project.EndDate')}
                                                         viewProfileId={this.props.viewProfileId}
                                                         entryField="DATE_END"
                                                         elementType={ProfileElementType.Project}
@@ -145,7 +171,7 @@ class ProjectTableModule extends React.Component<
                             </TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
-                    <TableBody deselectOnClickaway={false}>
+                    <TableBody deselectOnClickaway={false} displayRowCheckbox={false}>
                         {
                             this.props.viewProfile.viewProjects().map(this.renderTableRow)
                         }

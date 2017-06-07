@@ -3,6 +3,7 @@
  */
 
 export enum ActionType {
+    SwapIndex,
     UserLoginFailed,
     ReceiveViewProfile,
     SortViewProfile,

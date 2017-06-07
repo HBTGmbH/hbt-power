@@ -8,7 +8,7 @@ import {
     DeleteProjectAction, DeleteSkillAction, DeleteViewProfileAction, LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction,
+    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction, SwapIndexAction,
     UpdateSkillRatingAction, ViewProfileSortAction
 } from './database-actions';
 import {InternalDatabase} from '../../model/InternalDatabase';
@@ -220,6 +220,39 @@ function handleSetSelectedIndexes(state: InternalDatabase, action: SetSelectedIn
     return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
 }
 
+function swapListIndexes(list: Immutable.List<ViewElement>, index1: number, index2: number): Immutable.List<ViewElement> {
+    let v1 = list.get(index1);
+    let v2 = list.get(index2);
+    list = list.set(index2, v1);
+    list = list.set(index1, v2);
+    return list;
+}
+
+function swapIndexes(state: InternalDatabase, action: SwapIndexAction): InternalDatabase {
+    let viewProfile = state.viewProfiles().get(action.viewProfileId);
+    let list;
+    switch(action.elementType) {
+        case ProfileElementType.Project:
+            viewProfile = viewProfile.viewProjects(swapListIndexes(viewProfile.viewProjects(), action.index1, action.index2));
+            break;
+        case ProfileElementType.EducationEntry:
+            viewProfile = viewProfile.viewEducationEntries(swapListIndexes(viewProfile.viewEducationEntries(), action.index1, action.index2));
+            break;
+        case ProfileElementType.SectorEntry:
+            viewProfile = viewProfile.viewSectorEntries(swapListIndexes(viewProfile.viewSectorEntries(), action.index1, action.index2));
+            break;
+        case ProfileElementType.QualificationEntry:
+            viewProfile = viewProfile.viewQualificationEntries(swapListIndexes(viewProfile.viewQualificationEntries(), action.index1, action.index2));
+            break;
+        case ProfileElementType.TrainingEntry:
+            viewProfile = viewProfile.viewTrainingEntries(swapListIndexes(viewProfile.viewTrainingEntries(), action.index1, action.index2));
+            break;
+        case ProfileElementType.LanguageEntry:
+            viewProfile = viewProfile.viewLanguageEntries(swapListIndexes(viewProfile.viewLanguageEntries(), action.index1, action.index2));
+            break;
+    }
+    return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
+}
 
 /**
  * Reducer for the single profile part of the global state.
@@ -302,6 +335,8 @@ export function databaseReducer(state : InternalDatabase, action: AbstractAction
             return state.APIRequestStatus(RequestStatus.Successful);
         case ActionType.UserLoginFailed:
             return state.loginStatus(LoginStatus.REJECTED);
+        case ActionType.SwapIndex:
+            return swapIndexes(state, action as SwapIndexAction);
         default:
             return state;
     }

@@ -3,7 +3,10 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {NameEntity} from '../../../../model/NameEntity';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {
+    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    TableRowColumn
+} from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
@@ -13,7 +16,8 @@ import {isNullOrUndefined} from 'util';
 import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {AscDescButton} from '../../../general/asc-desc-button_module';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
-import {DropTargetSpec} from 'react-dnd';
+import {DragRowIndicator} from './drag/drag-row-indicator_module.';
+import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -51,20 +55,15 @@ interface EducationTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface EducationTableDispatch {
-    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
+    filterTable(indexes: number, enabled: boolean, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
     sortTable(entryField: 'DATE' | 'DATE_START' | 'DATE_END' | 'NAME' | 'LEVEL' | 'DEGREE', order: 'ASC' | 'DESC', id: string): void;
+    swapElements(viewProfileId: string, index1: number, index2: number): void;
 }
 
 class EducationTableModule extends React.Component<
     EducationTableProps
     & EducationTableLocalProps
     & EducationTableDispatch, EducationTableLocalState> {
-
-    public static spec: DropTargetSpec<any> = {
-        drop(props) {
-            console.log(props);
-        }
-    };
 
     static mapStateToProps(state: ApplicationState, localProps: EducationTableLocalProps): EducationTableProps {
         return {
@@ -75,15 +74,23 @@ class EducationTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EducationTableDispatch {
         return {
-            filterTable: (indexes, viewProfileId,lookup) => {
-                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.EducationEntry, viewProfileId, indexes, lookup))
+            filterTable: (index, enabled, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterViewElements(ProfileElementType.EducationEntry, viewProfileId, index, enabled, lookup));
             },
             sortTable: (entryField, order, id) => {
                 dispatch(ProfileAsyncActionCreator.sortView(ProfileElementType.EducationEntry, entryField, order, id));
-            }
+            },
+            swapElements: ((viewProfileId, index1, index2) => {
+                dispatch(ProfileAsyncActionCreator.swapViewElements(ProfileElementType.EducationEntry, viewProfileId, index1, index2));
+            })
         };
     }
 
+    private getHandleOnCheck = (index: number) => {
+        return (event: any, isInputChecked: boolean) => {
+            this.props.filterTable(index, isInputChecked, this.props.viewProfileId, this.props.viewProfile.viewEducationEntries());
+        };
+    };
 
     private isSelected = (index: number) => {
         return this.props.viewProfile.viewEducationEntries().get(index).enabled();
@@ -93,13 +100,32 @@ class EducationTableModule extends React.Component<
         return this.props.viewProfile.profile().educationEntries().get(viewElement.elementId());
     };
 
+    public shouldComponentUpdate(nextProps: EducationTableProps) {
+        return true;
+    }
+
     private renderTableRow = (viewElement: ViewElement, index: number) => {
         let entry = this.getEntry(viewElement);
         return (
             <TableRow
-                key={"EducationTable.DraggableRow." + index}
-                selected={this.isSelected(index)}
+                key={'EducationTable.DraggableRow.' + viewElement.elementId()}
+                selected={false}
+                selectable={false}
             >
+                <TableHeaderColumn
+                    style={{width: "50px"}}>
+                    <Checkbox
+                        checked={this.isSelected(index)}
+                        onCheck={this.getHandleOnCheck(index)}
+                    />
+                </TableHeaderColumn>
+                <TableRowColumn style={{width: "50px"}} >
+                    <ReduxDragIndicator
+                        viewProfileId={this.props.viewProfileId}
+                        elementType={ProfileElementType.EducationEntry}
+                        viewElementIndex={index}
+                    />
+                </TableRowColumn>
                 <TableRowColumn>
                     {NameEntityUtil.getNullTolerantName(entry.nameEntityId(), this.props.educations)}
                 </TableRowColumn>
@@ -110,37 +136,36 @@ class EducationTableModule extends React.Component<
                     {formatToShortDisplay(entry.endDate())}
                 </TableRowColumn>
                 <TableRowColumn>
-                    {isNullOrUndefined(entry.degree() || entry.degree() == "null") ? "keiner" : entry.degree()}
+                    {isNullOrUndefined(entry.degree() || entry.degree() == 'null') ? 'keiner' : entry.degree()}
                 </TableRowColumn>
             </TableRow>
         );
     };
 
 
-    private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewEducationEntries());
-    };
-
-    private handleNameAscDescChange = (state: "ASC" | "DESC") => {
+    private handleNameAscDescChange = (state: 'ASC' | 'DESC') => {
         this.props.sortTable('NAME', state, this.props.viewProfileId);
     };
 
-    private handleStartDateAscDescChange =  (state: "ASC" | "DESC") => {
+    private handleStartDateAscDescChange =  (state: 'ASC' | 'DESC') => {
         this.props.sortTable('DATE_START', state, this.props.viewProfileId);
     };
 
-    private handleEndDateAscDescChange =  (state: "ASC" | "DESC") => {
+    private handleEndDateAscDescChange =  (state: 'ASC' | 'DESC') => {
         this.props.sortTable('DATE_END', state, this.props.viewProfileId);
     };
 
     render() {
         return (
-            <div id="ViewTable.EducationTable">
-                <Table multiSelectable={true}
-                       onRowSelection={this.handleRowSelection}
-                >
-                    <TableHeader>
+            <div id="ViewTable.EducationTable" key="ViewTable.EducationTable">
+                <Table>
+                    <TableHeader
+                        displaySelectAll={false}
+                        adjustForCheckbox={false}
+                    >
                         <TableRow>
+                            <TableHeaderColumn style={{width: "50px"}}></TableHeaderColumn>
+                            <TableHeaderColumn style={{width: "50px"}}><FontIcon className="material-icons">drag_handle</FontIcon></TableHeaderColumn>
                             <TableHeaderColumn>
                                 <AscDescButton label={PowerLocalize.get('Education.Singular')} onAscDescChange={this.handleNameAscDescChange}/>
                             </TableHeaderColumn>
@@ -151,11 +176,12 @@ class EducationTableModule extends React.Component<
                                 <AscDescButton label= {PowerLocalize.get('End')} onAscDescChange={this.handleEndDateAscDescChange}/>
                             </TableHeaderColumn>
                             <TableHeaderColumn>{PowerLocalize.get('AcademicDegree.Singular')}</TableHeaderColumn>
+
                         </TableRow>
                     </TableHeader>
-                    <TableBody deselectOnClickaway={false}>
+                    <TableBody deselectOnClickaway={false} displayRowCheckbox={false}>
                         {
-                            this.props.viewProfile.viewEducationEntries().map(this.renderTableRow)
+                            this.props.viewProfile.viewEducationEntries().map(this.renderTableRow).toArray()
                         }
                     </TableBody>
                 </Table>

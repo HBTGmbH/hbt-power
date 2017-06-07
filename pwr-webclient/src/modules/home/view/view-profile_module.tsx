@@ -6,12 +6,13 @@ import {InternalDatabase} from '../../../model/InternalDatabase';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {isNullOrUndefined} from 'util';
 import {EducationTable} from './tables/education-table_module';
-import {Divider, Paper} from 'material-ui';
+import {Paper} from 'material-ui';
 import {TrainingTable} from './tables/training-table_module';
 import {QualificationTable} from './tables/qualification-table_module';
 import {LanguageTable} from './tables/language-table_module';
 import {SectorTable} from './tables/sector-table_module';
 import {ProjectTable} from './tables/project-table_module';
+import {DragRowIndicator} from './tables/drag/drag-row-indicator_module.';
 
 /**
  * Properties that are managed by react-redux.
@@ -98,6 +99,7 @@ class ViewProfileCardModule extends React.Component<
 
     }
 }
+
 
 /**
  * @see ViewProfileCardModule

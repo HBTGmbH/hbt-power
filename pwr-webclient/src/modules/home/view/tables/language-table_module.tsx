@@ -3,7 +3,10 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {NameEntity} from '../../../../model/NameEntity';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {
+    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    TableRowColumn
+} from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
@@ -11,6 +14,7 @@ import {ViewElement} from '../../../../model/viewprofile/ViewElement';
 import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
+import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -48,7 +52,7 @@ interface LanguageTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface LanguageTableDispatch {
-    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
+    filterTable(indexes: number, enabled: boolean, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 export class LanguageTableModule extends React.Component<
@@ -65,9 +69,9 @@ export class LanguageTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): LanguageTableDispatch {
         return {
-            filterTable: (indexes, viewProfileId,lookup) => {
-                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.LanguageEntry, viewProfileId, indexes, lookup))
-            },
+            filterTable: (index, enabled, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterViewElements(ProfileElementType.LanguageEntry, viewProfileId, index, enabled, lookup));
+            }
         };
     }
 
@@ -79,14 +83,34 @@ export class LanguageTableModule extends React.Component<
         return this.props.viewProfile.profile().languageSkills().get(viewElement.elementId());
     };
 
+    private getHandleOnCheck = (index: number) => {
+        return (event: any, isInputChecked: boolean) => {
+            this.props.filterTable(index, isInputChecked, this.props.viewProfileId, this.props.viewProfile.viewLanguageEntries());
+        };
+    };
 
     private renderTableRow = (viewElement: ViewElement, index: number) => {
         let entry = this.getEntry(viewElement);
         return (
             <TableRow
                 key={'EducationTable.EducationRow.' + index}
-                selected={this.isSelected(index)}
+                selected={false}
+                selectable={false}
             >
+                <TableHeaderColumn
+                    style={{width: "50px"}}>
+                    <Checkbox
+                        checked={this.isSelected(index)}
+                        onCheck={this.getHandleOnCheck(index)}
+                    />
+                </TableHeaderColumn>
+                <TableRowColumn style={{width: "50px"}} >
+                    <ReduxDragIndicator
+                        viewProfileId={this.props.viewProfileId}
+                        elementType={ProfileElementType.LanguageEntry}
+                        viewElementIndex={index}
+                    />
+                </TableRowColumn>
                 <TableRowColumn>
                     {NameEntityUtil.getNullTolerantName(entry.languageId(), this.props.languages)}
                 </TableRowColumn>
@@ -97,16 +121,18 @@ export class LanguageTableModule extends React.Component<
         );
     };
 
-    private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewLanguageEntries());
-    };
 
     render() {
         return (
             <div id="ViewTable.LanguageTable">
-                <Table multiSelectable={true} onRowSelection={this.handleRowSelection}>
-                    <TableHeader>
+                <Table>
+                    <TableHeader
+                        displaySelectAll={false}
+                        adjustForCheckbox={false}
+                    >
                         <TableRow>
+                            <TableHeaderColumn style={{width: '50px'}}/>
+                            <TableHeaderColumn style={{width: "50px"}}><FontIcon className="material-icons">drag_handle</FontIcon></TableHeaderColumn>
                             <TableHeaderColumn>
                                 <ConnectedAscDescButton label={PowerLocalize.get("Language.Singular")}
                                     viewProfileId={this.props.viewProfileId}
@@ -119,7 +145,7 @@ export class LanguageTableModule extends React.Component<
                                 </TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
-                    <TableBody deselectOnClickaway={false}>
+                    <TableBody deselectOnClickaway={false} displayRowCheckbox={false}>
                         {
                             this.props.viewProfile.viewLanguageEntries().map(this.renderTableRow)
                         }

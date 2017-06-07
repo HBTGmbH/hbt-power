@@ -3,7 +3,10 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {NameEntity} from '../../../../model/NameEntity';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {
+    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    TableRowColumn
+} from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
@@ -12,6 +15,7 @@ import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 
 
 /**
@@ -50,7 +54,7 @@ interface TrainingTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface TrainingTableDispatch {
-    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
+    filterTable(indexes: number, enabled: boolean, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 class TrainingTableModule extends React.Component<
@@ -67,12 +71,17 @@ class TrainingTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): TrainingTableDispatch {
         return {
-            filterTable: (indexes, viewProfileId, lookup) => {
-                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.TrainingEntry, viewProfileId, indexes, lookup))
+            filterTable: (index, enabled, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterViewElements(ProfileElementType.TrainingEntry, viewProfileId, index, enabled, lookup));
             }
         };
     }
 
+    private getHandleOnCheck = (index: number) => {
+        return (event: any, isInputChecked: boolean) => {
+            this.props.filterTable(index, isInputChecked, this.props.viewProfileId, this.props.viewProfile.viewTrainingEntries());
+        };
+    };
 
     private isSelected = (index: number) => {
         return this.props.viewProfile.viewTrainingEntries().get(index).enabled();
@@ -87,8 +96,23 @@ class TrainingTableModule extends React.Component<
         return (
             <TableRow
                 key={'EducationTable.EducationRow.' + index}
-                selected={this.isSelected(index)}
+                selected={false}
+                selectable={false}
             >
+                <TableHeaderColumn
+                    style={{width: "50px"}}>
+                    <Checkbox
+                        checked={this.isSelected(index)}
+                        onCheck={this.getHandleOnCheck(index)}
+                    />
+                </TableHeaderColumn>
+                <TableRowColumn style={{width: "50px"}} >
+                    <ReduxDragIndicator
+                        viewProfileId={this.props.viewProfileId}
+                        elementType={ProfileElementType.TrainingEntry}
+                        viewElementIndex={index}
+                    />
+                </TableRowColumn>
                 <TableRowColumn>
                     {NameEntityUtil.getNullTolerantName(entry.trainingId(), this.props.trainings)}
                 </TableRowColumn>
@@ -102,19 +126,17 @@ class TrainingTableModule extends React.Component<
         );
     };
 
-    private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewTrainingEntries() );
-    };
-
-
     render() {
         return (
             <div id="ViewTable.TrainingTable">
-                <Table multiSelectable={true}
-                       onRowSelection={this.handleRowSelection}
-                >
-                    <TableHeader>
+                <Table>
+                    <TableHeader
+                        displaySelectAll={false}
+                        adjustForCheckbox={false}
+                    >
                         <TableRow>
+                            <TableHeaderColumn style={{width: '50px'}}/>
+                            <TableHeaderColumn style={{width: "50px"}}><FontIcon className="material-icons">drag_handle</FontIcon></TableHeaderColumn>
                             <TableHeaderColumn>
                                 <ConnectedAscDescButton
                                     label={PowerLocalize.get('Training.Singular')}
@@ -141,7 +163,7 @@ class TrainingTableModule extends React.Component<
                             </TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
-                    <TableBody deselectOnClickaway={false}>
+                    <TableBody deselectOnClickaway={false} displayRowCheckbox={false}>
                         {
                             this.props.viewProfile.viewTrainingEntries().map(this.renderTableRow)
                         }

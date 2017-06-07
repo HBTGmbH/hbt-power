@@ -8,7 +8,7 @@ import {
     DeleteProjectAction, DeleteViewProfileAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction,
+    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction, SwapIndexAction,
     UpdateSkillRatingAction, ViewProfileSortAction
 } from './database-actions';
 import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
@@ -167,6 +167,16 @@ export class ProfileActionCreator {
             elementType: elementType,
             viewProfileId: viewProfileId,
             selectedIndexes: selectedIndexes
+        }
+    }
+
+    public static SwapIndexes(elementType: ProfileElementType, viewProfileId: string, index1: number, index2: number): SwapIndexAction {
+        return {
+            type: ActionType.SwapIndex,
+            elementType: elementType,
+            viewProfileId: viewProfileId,
+            index1: index1,
+            index2: index2
         }
     }
 }

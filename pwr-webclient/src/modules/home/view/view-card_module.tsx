@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
-import {FlatButton, FontIcon, Paper, TextField, Subheader} from 'material-ui';
+import {FlatButton, FontIcon, Paper, Subheader} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
@@ -73,7 +73,12 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
                         <div className="col-md-12">
                             <h4>{PowerLocalize.get('ViewCard.Name')}</h4> {this.props.viewProfile.name()}
                             <br/>
-                            <Subheader>{PowerLocalize.get('ViewCard.CreatedOn') + " " + this.props.viewProfile.creationDate()}</Subheader>
+                            <Subheader>
+                                {PowerLocalize.get('ViewCard.CreatedOn') + " "
+                                + this.props.viewProfile.creationDate().toLocaleDateString()
+                                + " um "
+                                + this.props.viewProfile.creationDate().toLocaleTimeString()}
+                            </Subheader>
                         </div>
                     </div>
                     <div className="row">
@@ -114,6 +119,8 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
         );
     }
 }
+
+
 
 /**
  * @see ViewCardModule

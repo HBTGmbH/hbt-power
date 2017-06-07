@@ -3,7 +3,10 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {NameEntity} from '../../../../model/NameEntity';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {
+    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    TableRowColumn
+} from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
@@ -12,6 +15,7 @@ import {ViewElement} from '../../../../model/viewprofile/ViewElement';
 import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
+import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -49,7 +53,7 @@ interface QualificationTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface QualificationTableDispatch {
-    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
+    filterTable(indexes: number, enabled: boolean, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 class QualificationTableModule extends React.Component<
@@ -66,11 +70,17 @@ class QualificationTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): QualificationTableDispatch {
         return {
-            filterTable: (indexes, viewProfileId, lookup) => {
-                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.QualificationEntry, viewProfileId, indexes, lookup))
+            filterTable: (index, enabled, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterViewElements(ProfileElementType.QualificationEntry, viewProfileId, index, enabled, lookup));
             }
         };
     }
+
+    private getHandleOnCheck = (index: number) => {
+        return (event: any, isInputChecked: boolean) => {
+            this.props.filterTable(index, isInputChecked, this.props.viewProfileId, this.props.viewProfile.viewQualificationEntries());
+        };
+    };
 
     private isSelected = (index: number) => {
         return this.props.viewProfile.viewQualificationEntries().get(index).enabled();
@@ -85,8 +95,23 @@ class QualificationTableModule extends React.Component<
         return (
             <TableRow
                 key={'EducationTable.EducationRow.' + index}
-                selected={this.isSelected(index)}
+                selected={false}
+                selectable={false}
             >
+                <TableHeaderColumn
+                    style={{width: "50px"}}>
+                    <Checkbox
+                        checked={this.isSelected(index)}
+                        onCheck={this.getHandleOnCheck(index)}
+                    />
+                </TableHeaderColumn>
+                <TableRowColumn style={{width: "50px"}} >
+                    <ReduxDragIndicator
+                        viewProfileId={this.props.viewProfileId}
+                        elementType={ProfileElementType.QualificationEntry}
+                        viewElementIndex={index}
+                    />
+                </TableRowColumn>
                 <TableRowColumn>
                     {NameEntityUtil.getNullTolerantName(entry.qualificationId(), this.props.qualifications)}
                 </TableRowColumn>
@@ -97,19 +122,17 @@ class QualificationTableModule extends React.Component<
         );
     };
 
-    private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewQualificationEntries());
-    };
-
-
     render() {
         return (
             <div id="ViewTable.TrainingTable">
-                <Table multiSelectable={true}
-                       onRowSelection={this.handleRowSelection}
-                >
-                    <TableHeader>
+                <Table>
+                    <TableHeader
+                        displaySelectAll={false}
+                        adjustForCheckbox={false}
+                    >
                         <TableRow>
+                            <TableHeaderColumn style={{width: '50px'}}/>
+                            <TableHeaderColumn style={{width: "50px"}}><FontIcon className="material-icons">drag_handle</FontIcon></TableHeaderColumn>
                             <TableHeaderColumn>
                                 <ConnectedAscDescButton
                                     label={PowerLocalize.get('Qualification.Singular')}
@@ -127,7 +150,7 @@ class QualificationTableModule extends React.Component<
                             /></TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
-                    <TableBody deselectOnClickaway={false}>
+                    <TableBody deselectOnClickaway={false} displayRowCheckbox={false}>
                         {
                             this.props.viewProfile.viewQualificationEntries().map(this.renderTableRow)
                         }

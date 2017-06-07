@@ -8,6 +8,7 @@ export const de_locale : any = {
     "Education.Singular": "Ausbildung",
     "EducationStep.Plural": "Ausbildungs-Schritte",
     "Qualification.Plural": "Zusatzqualifikationen",
+    "Qualification.Singular": "Zusatzqualifikation",
     "Sector.Singular": "Branche",
     "Sector.Plural": "Branchen",
     "Today": "Heute",

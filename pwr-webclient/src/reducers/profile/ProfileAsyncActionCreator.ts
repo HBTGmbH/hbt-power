@@ -257,20 +257,21 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    public static filterView(elementType: ProfileElementType,
+    public static filterViewElements(elementType: ProfileElementType,
                              viewProfileId: string,
-                             selectedIndexes: Array<number> | string,
+                             index: number,
+                             enabled: boolean,
                              lookup: Immutable.List<ViewElement>
     ) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            let indexes: Array<number> = [];
-            if(selectedIndexes == 'all') {
-                indexes = lookup.map((ve, key) => key).toArray();
-            } else if(selectedIndexes == 'none') {
-                indexes = [];
-            } else {
-                indexes = selectedIndexes as Array<number>;
-            }
+            let currentIndexes: Set<number> = new Set<number>();
+            lookup.forEach((value, key, iter) => {
+                if(value.enabled()) currentIndexes.add(key);
+            });
+            if(enabled)
+                currentIndexes.add(index);
+            else
+                currentIndexes.delete(index);
             let config: AxiosRequestConfig = {
                 params: {
                     action: "filter",
@@ -281,13 +282,35 @@ export class ProfileAsyncActionCreator {
                 }
             };
             dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(getPostSortViewAPIString(viewProfileId), JSON.stringify(indexes), config).then(function(response: AxiosResponse) {
+            axios.post(getPostSortViewAPIString(viewProfileId), Array.from(currentIndexes.values()), config).then(function(response: AxiosResponse) {
                 dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
         };
+    }
+
+    public static swapViewElements(elementType: ProfileElementType, viewProfileId: string, index1: number, index2: number) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            let indexes: Array<number> = [index1, index2];
+            let config: AxiosRequestConfig = {
+                params: {
+                    action: "swap",
+                    entry: NameEntityUtil.typeToViewAPIString(elementType),
+                },
+                headers: {
+                    "Content-Type":"application/json"
+                }
+            };
+            dispatch(ProfileActionCreator.SwapIndexes(elementType, viewProfileId, index1, index2));
+            axios.post(getPostSortViewAPIString(viewProfileId), JSON.stringify(indexes), config).then(function(response: AxiosResponse) {
+                //dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
+            }).catch(function(error:any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
     }
 
 }

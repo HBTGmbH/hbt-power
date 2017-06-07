@@ -5,11 +5,15 @@ import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {NameEntity} from '../../../../model/NameEntity';
 import {ViewElement} from '../../../../model/viewprofile/ViewElement';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {
+    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    TableRowColumn
+} from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
+import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -47,7 +51,7 @@ interface SectorTableLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface SectorTableDispatch {
-    filterTable(indexes: Array<number>|string, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
+    filterTable(indexes: number, enabled: boolean, viewProfileId: string, lookup: Immutable.List<ViewElement>): void;
 }
 
 class SectorTableModule extends React.Component<
@@ -64,11 +68,17 @@ class SectorTableModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SectorTableDispatch {
         return {
-            filterTable: (indexes, viewProfileId, lookup) => {
-                dispatch(ProfileAsyncActionCreator.filterView(ProfileElementType.SectorEntry, viewProfileId, indexes, lookup))
+            filterTable: (index, enabled, viewProfileId, lookup) => {
+                dispatch(ProfileAsyncActionCreator.filterViewElements(ProfileElementType.SectorEntry, viewProfileId, index, enabled, lookup));
             }
         }
     }
+
+    private getHandleOnCheck = (index: number) => {
+        return (event: any, isInputChecked: boolean) => {
+            this.props.filterTable(index, isInputChecked, this.props.viewProfileId, this.props.viewProfile.viewSectorEntries());
+        };
+    };
 
     private isSelected = (index: number) => {
         return this.props.viewProfile.viewSectorEntries().get(index).enabled();
@@ -83,8 +93,23 @@ class SectorTableModule extends React.Component<
         return (
             <TableRow
                 key={'SectorTable.SectorRow.' + index}
-                selected={this.isSelected(index)}
+                selected={false}
+                selectable={false}
             >
+                <TableHeaderColumn
+                    style={{width: "50px"}}>
+                    <Checkbox
+                        checked={this.isSelected(index)}
+                        onCheck={this.getHandleOnCheck(index)}
+                    />
+                </TableHeaderColumn>
+                <TableRowColumn style={{width: "50px"}} >
+                    <ReduxDragIndicator
+                        viewProfileId={this.props.viewProfileId}
+                        elementType={ProfileElementType.SectorEntry}
+                        viewElementIndex={index}
+                    />
+                </TableRowColumn>
                 <TableRowColumn>
                     {NameEntityUtil.getNullTolerantName(entry.sectorId(), this.props.sectors)}
                 </TableRowColumn>
@@ -92,18 +117,17 @@ class SectorTableModule extends React.Component<
         );
     };
 
-    private handleRowSelection = (selectedRows: Array<number> | string) => {
-        this.props.filterTable(selectedRows, this.props.viewProfileId, this.props.viewProfile.viewSectorEntries());
-    };
-
     render() {
         return (
             <div id="ViewTable.SectorTable">
-                <Table multiSelectable={true}
-                       onRowSelection={this.handleRowSelection}
-                >
-                    <TableHeader>
+                <Table>
+                    <TableHeader
+                        displaySelectAll={false}
+                        adjustForCheckbox={false}
+                    >
                         <TableRow>
+                            <TableHeaderColumn style={{width: '50px'}}/>
+                            <TableHeaderColumn style={{width: "50px"}}><FontIcon className="material-icons">drag_handle</FontIcon></TableHeaderColumn>
                             <TableHeaderColumn>
                                 <ConnectedAscDescButton
                                     label={PowerLocalize.get('Sector.Singular')}
@@ -114,7 +138,7 @@ class SectorTableModule extends React.Component<
                             </TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
-                    <TableBody deselectOnClickaway={false}>
+                    <TableBody deselectOnClickaway={false} displayRowCheckbox={false}>
                         {
                             this.props.viewProfile.viewSectorEntries().map(this.renderTableRow)
                         }

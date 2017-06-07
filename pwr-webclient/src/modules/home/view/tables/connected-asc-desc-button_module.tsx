@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {AscDescButton} from '../../../general/asc-desc-button_module';
-import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 
 /**

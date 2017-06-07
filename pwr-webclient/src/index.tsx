@@ -22,6 +22,8 @@ import {NotificationInbox} from './modules/admin/notification-inbox_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {NotificationTrashbox} from './modules/admin/notification-trashbox_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
+import HTML5Backend from 'react-dnd-html5-backend';
+import {DragDropContext} from 'react-dnd';
 
 injectTapEventPlugin();
 
@@ -50,23 +52,31 @@ export class Paths {
     public static readonly ADMIN_LOGIN = "/login";
 }
 
+@DragDropContext(HTML5Backend)
+class MyRouter extends React.Component<any, any> {
+    render() {
+        return (<Router history={browserHistory}>
+            <Route path="/" component={PowerLogin}/>
+            <Route path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
+            <Route path="/app" component={PowerClient}>
+                <Route path="/app/home" component={PowerOverview}/>
+                <Route path="/app/" component={ConsultantProfile}/>
+                <Route path="/app/profile" component={ConsultantProfile}/>
+                <Route path="/app/view" component={ViewProfileCard}/>
+            </Route>
+            <Route path="/admin" component={AdminClient}>
+                <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
+                <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
+            </Route>
+        </Router>)
+    }
+}
+
+
 let Routes = (
     <MuiThemeProvider>
         <Provider store={store}>
-            <Router history={browserHistory}>
-                <Route path="/" component={PowerLogin}/>
-                <Route path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
-                <Route path="/app" component={PowerClient}>
-                    <Route path="/app/home" component={PowerOverview}/>
-                    <Route path="/app/" component={ConsultantProfile}/>
-                    <Route path="/app/profile" component={ConsultantProfile}/>
-                    <Route path="/app/view" component={ViewProfileCard}/>
-                </Route>
-                <Route path="/admin" component={AdminClient}>
-                    <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
-                    <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
-                </Route>
-            </Router>
+            <MyRouter/>
         </Provider>
     </MuiThemeProvider>
 );

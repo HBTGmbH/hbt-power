@@ -41,7 +41,7 @@ export class ViewProfile {
     public get profile() {return doop<Profile, ViewProfile>()};
 
     @doop
-    public get creationDate() {return doop<String, ViewProfile>()};
+    public get creationDate() {return doop<Date, ViewProfile>()};
 
     @doop
     public get viewSectorEntries() {return doop<Immutable.List<ViewElement>, ViewProfile>()};
@@ -68,7 +68,7 @@ export class ViewProfile {
     private static currentId: number = 0;
 
 
-    private constructor(id: string, isNew: boolean, name: string, description: string, profile: Profile, creationDate: string,
+    private constructor(id: string, isNew: boolean, name: string, description: string, profile: Profile, creationDate: Date,
                 viewSectorEntries: Immutable.List<ViewElement>,
                 viewTrainignEntries:Immutable.List<ViewElement>,
                 viewEducationEntries:Immutable.List<ViewElement>,
@@ -93,7 +93,7 @@ export class ViewProfile {
             "",
             "",
             profile,
-            "",
+            new Date(),
             Immutable.List<ViewElement>(profile.sectorEntries().map(val => ViewElement.create(true, val.id())).values()),
             Immutable.List<ViewElement>(profile.trainingEntries().map(val => ViewElement.create(true, val.id())).values()),
             Immutable.List<ViewElement>(profile.educationEntries().map(val => ViewElement.create(true, val.id())).values()),
@@ -114,7 +114,7 @@ export class ViewProfile {
             apiViewProfile.name,
             apiViewProfile.description,
             Profile.createFromAPI(apiViewProfile.profileSnapshot),
-            apiViewProfile.creationDate,
+            new Date(apiViewProfile.creationDate),
             Immutable.List<ViewElement>(apiViewProfile.sectorViewEntries.map(ViewElement.fromAPIViewSector)),
             Immutable.List<ViewElement>(apiViewProfile.trainingViewEntries.map(ViewElement.fromAPIViewTraining)),
             Immutable.List<ViewElement>(apiViewProfile.educationViewEntries.map(ViewElement.fromAPIViewEducation)),
