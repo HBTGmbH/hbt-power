@@ -108,5 +108,6 @@ export const de_locale : any = {
     "Action.Next": "Weiter",
     "Action.Execute": "Ausführen",
     "Action.Duplicate": "Duplizieren",
+    "Action.CreateNewConsultant": "Neuer Berater"
 
 };

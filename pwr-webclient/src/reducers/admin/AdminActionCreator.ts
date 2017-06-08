@@ -338,6 +338,31 @@ export class AdminActionCreator {
         };
     }
 
+    public static AsyncCreateConsultant(consultantInfo: ConsultantInfo) {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            let apiConsultant: APIConsultant = {
+                profile: null,
+                initials: consultantInfo.initials(),
+                firstName: consultantInfo.firstName(),
+                lastName: consultantInfo.lastName(),
+                title: consultantInfo.title()
+            };
+            let config: AxiosRequestConfig = {
+                params: {
+                    action: 'new'
+                }
+            };
+            axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
+                axios.get(response.data).then(function (response: AxiosResponse) {
+                    let res: APIConsultant = response.data;
+                    dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(res)));
+                });
+            }).catch(function (error: any) {
+                console.error(error);
+            });
+        }
+    }
+
     public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let apiConsultant: APIConsultant = {

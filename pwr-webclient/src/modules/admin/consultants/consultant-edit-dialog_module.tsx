@@ -8,6 +8,7 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {isNullOrUndefined} from 'util';
+import {ConsultantEditFields} from './consultant-edit-fields_module.';
 
 /**
  * Properties that are managed by react-redux.
@@ -88,19 +89,19 @@ class ConsultantEditDialogModule extends React.Component<
         });
     };
 
-    private setFirstName = (e: any, val: string) => {
+    private setFirstName = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.firstName(val)
         });
     };
 
-    private setLastName = (e: any, val: string) => {
+    private setLastName = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.lastName(val)
         });
     };
 
-    private setTitle = (e: any, val: string) => {
+    private setTitle = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.title(val)
         })
@@ -141,6 +142,28 @@ class ConsultantEditDialogModule extends React.Component<
         />,
     ];
 
+    /**
+     * <LimitedTextField
+     maxCharacters={100}
+     value={this.state.consultantInfo.firstName()}
+     floatingLabelText={PowerLocalize.get('FirstName')}
+     onChange={this.setFirstName}
+     />
+     <br/>
+     <LimitedTextField
+     maxCharacters={100}
+     value={this.state.consultantInfo.lastName()}
+     floatingLabelText={PowerLocalize.get('LastName')}
+     onChange={this.setLastName}
+     />
+     <LimitedTextField
+     maxCharacters={100}
+     value={isNullOrUndefined(this.state.consultantInfo.title()) ? "" : this.state.consultantInfo.title()}
+     floatingLabelText={PowerLocalize.get('Title.Singular')}
+     onChange={this.setTitle}
+     />
+     * @returns {any}
+     */
     render() {
         return (<div>
             <Dialog
@@ -149,24 +172,13 @@ class ConsultantEditDialogModule extends React.Component<
                 actions={this.dialogActions}
                 onRequestClose={this.closeDialog}
             >
-                <LimitedTextField
-                    maxCharacters={100}
-                    value={this.state.consultantInfo.firstName()}
-                    floatingLabelText={PowerLocalize.get('FirstName')}
-                    onChange={this.setFirstName}
-                />
-                <br/>
-                <LimitedTextField
-                    maxCharacters={100}
-                    value={this.state.consultantInfo.lastName()}
-                    floatingLabelText={PowerLocalize.get('LastName')}
-                    onChange={this.setLastName}
-                />
-                <LimitedTextField
-                    maxCharacters={100}
-                    value={isNullOrUndefined(this.state.consultantInfo.title()) ? "" : this.state.consultantInfo.title()}
-                    floatingLabelText={PowerLocalize.get('Title.Singular')}
-                    onChange={this.setTitle}
+                <ConsultantEditFields
+                    firstName = {this.state.consultantInfo.firstName()}
+                    lastName = {this.state.consultantInfo.lastName()}
+                    title = {this.state.consultantInfo.title()}
+                    onFirstNameChange={this.setFirstName}
+                    onLastNameChange={this.setLastName}
+                    onTitleChange={this.setTitle}
                 />
             </Dialog>
         </div>);

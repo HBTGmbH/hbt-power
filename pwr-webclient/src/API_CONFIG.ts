@@ -1,4 +1,4 @@
-//*
+/*
 export const API_HOST: string = "http://power02.corp.hbt.de";
 
 export const API_PORT: string = "9000";

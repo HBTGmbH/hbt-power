@@ -25,8 +25,18 @@ export class ConsultantInfo {
             !isNullOrUndefined(apiConsultant.profile), apiConsultant.title);
     }
 
+    public static empty() {
+        return new ConsultantInfo("", "", "", false, null);
+    }
+
+    /**
+     * Returns the full name of the consultant, including their title.
+     * (<Title>) <FirstName> <LastName>
+     * @returns {string}
+     */
     public getFullName(): string {
-        let title = !isNullOrUndefined(this.title()) ? this.title().trim() : "";
-        return title + " " + this.firstName() + " " + this.lastName();
+        let title = !isNullOrUndefined(this.title()) ? this.title().trim() + " " : "";
+
+        return title + this.firstName() + " " + this.lastName();
     }
 }
