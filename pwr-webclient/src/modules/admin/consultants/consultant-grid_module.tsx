@@ -63,9 +63,9 @@ class ConsultantGridModule extends React.Component<
     render() {
         return (
             <GridList
-                cols={3}
-                cellHeight={"auto"}
-                padding={1}
+                cols={4}
+                cellHeight={310}
+                padding={5}
             >
                 {
                     this.props.consultantsByInitials.map(consultantInfo => {

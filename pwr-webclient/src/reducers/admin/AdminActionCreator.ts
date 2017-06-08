@@ -17,6 +17,7 @@ import {Paths} from '../../index';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {APIConsultant} from '../../model/APIProfile';
+import {ProfileAsyncActionCreator} from '../profile/ProfileAsyncActionCreator';
 
 export class AdminActionCreator {
     public static RequestNotifications(): AbstractAction {
@@ -116,6 +117,12 @@ export class AdminActionCreator {
     public static LogInAdmin() : AbstractAction {
         return {
             type: ActionType.LogInAdmin
+        }
+    }
+
+    public static LogOutAdmin(): AbstractAction {
+        return {
+            type: ActionType.LogOutAdmin
         }
     }
 
@@ -315,6 +322,12 @@ export class AdminActionCreator {
             }).catch(function(error:any) {
                 console.error(error);
             });
+        };
+    }
+
+    public static AsyncRedirectToUser(initials: string) {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            dispatch(ProfileAsyncActionCreator.logInUser(initials));
         };
     }
 }

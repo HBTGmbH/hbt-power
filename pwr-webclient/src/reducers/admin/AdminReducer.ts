@@ -66,6 +66,11 @@ export class AdminReducer {
         return state.consultantsByInitials(consultants);
     }
 
+    public static LogOutAdmin(state: AdminState): AdminState {
+        browserHistory.push(Paths.APP_ROOT);
+        return AdminState.createDefault();
+    }
+
     public static reduce(state : AdminState, action: AbstractAction) : AdminState {
         if(isNullOrUndefined(state)) {
             return AdminState.createDefault();
@@ -97,6 +102,8 @@ export class AdminReducer {
                 return AdminReducer.LogInAdmin(state, action);
             case ActionType.ReceiveAllConsultants:
                 return AdminReducer.ReceiveAllConsultants(state, action as ReceiveAllConsultantsAction);
+            case ActionType.LogOutAdmin:
+                return AdminReducer.LogOutAdmin(state);
             default:
                 return state;
         }

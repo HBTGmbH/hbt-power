@@ -60,6 +60,7 @@ export enum ActionType {
 
     ChangeAdminLoginStatus,
     LogInAdmin,
+    LogOutAdmin,
 
     ReceiveAllConsultants,
 }

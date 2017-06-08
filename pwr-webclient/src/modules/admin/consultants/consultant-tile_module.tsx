@@ -3,8 +3,9 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {GridTile} from 'material-ui';
+import {GridTile, IconButton} from 'material-ui';
 import {getProfileImageLocation} from '../../../API_CONFIG';
+import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -41,7 +42,7 @@ interface ConsultantTileLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface ConsultantTileDispatch {
-
+    redirectToUser(initials: string): void;
 }
 
 class ConsultantTileModule extends React.Component<
@@ -51,12 +52,14 @@ class ConsultantTileModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: ConsultantTileLocalProps): ConsultantTileProps {
         return {
-            consultantInfo: state.adminReducer.consultantsByInitials().get(localProps.initials)
+            consultantInfo: state.adminReducer.consultantsByInitials().get(localProps.initials),
         }
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantTileDispatch {
-        return {}
+        return {
+            redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials))
+        }
     }
 
     render() {
@@ -64,12 +67,18 @@ class ConsultantTileModule extends React.Component<
         <GridTile
             key={"ConsultantTile." + this.props.initials}
             title={this.props.consultantInfo.getFullName()}
-            actionIcon={null}
-            actionPosition="left"
+            actionIcon={<IconButton
+                iconClassName="material-icons"
+                iconStyle={{color: "white"}}
+                onClick={() => this.props.redirectToUser(this.props.initials)}
+            >edit</IconButton>}
+            actionPosition="right"
             titlePosition="top"
             titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
             cols={1}
             rows={1}
+            style={{width: "300px", height: "300px"}}
+
         >
             <img src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
         </GridTile>);

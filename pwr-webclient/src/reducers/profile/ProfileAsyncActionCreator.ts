@@ -20,7 +20,7 @@ import {
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {AllConsultantsState, APIRequestType, ProfileElementType} from '../../Store';
+import {AllConsultantsState, APIRequestType, ApplicationState, ProfileElementType} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
 import {ActionType} from '../ActionType';
 import {NameEntityUtil} from '../../utils/NameEntityUtil';
@@ -47,6 +47,18 @@ export class ProfileAsyncActionCreator {
         }
     }
 
+
+    public static requestAllNameEntities() {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
+            dispatch(ProfileAsyncActionCreator.requestQualifications());
+            dispatch(ProfileAsyncActionCreator.requestLanguages());
+            dispatch(ProfileAsyncActionCreator.requestEducations());
+            dispatch(ProfileAsyncActionCreator.requestCareers());
+            dispatch(ProfileAsyncActionCreator.requestSectors());
+            dispatch(ProfileAsyncActionCreator.requestCompanies());
+            dispatch(ProfileAsyncActionCreator.requestProjectRoles());
+        }
+    }
     /**
      *
      * @param initials
@@ -170,6 +182,7 @@ export class ProfileAsyncActionCreator {
                     consultantInfo: ConsultantInfo.fromAPI(response.data)
                 });
                 dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
+                dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.FailLogin());

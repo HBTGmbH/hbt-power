@@ -65,13 +65,15 @@ export class Paths {
     public static readonly ADMIN_TRASHBOX = "/admin/home/trashbox";
     public static readonly ADMIN_CONSULTANTS = "/admin/home/consultants";
     public static readonly ADMIN_LOGIN = "/login";
+
+    public static readonly APP_ROOT = "/";
 }
 
 @DragDropContext(HTML5Backend)
 class MyRouter extends React.Component<any, any> {
     render() {
         return (<Router history={browserHistory}>
-            <Route path="/" component={PowerLogin}/>
+            <Route path={Paths.APP_ROOT} component={PowerLogin}/>
             <Route path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
             <Route path="/app" component={PowerClient}>
                 <Route path="/app/home" component={PowerOverview}/>

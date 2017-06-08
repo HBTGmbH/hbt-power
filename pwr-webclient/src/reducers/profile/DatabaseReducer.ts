@@ -58,44 +58,6 @@ export class DatabaseReducer {
         return state;
     }
 
-    private static HandleRequestAPISuccess(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
-        let newState: InternalDatabase;
-        switch(action.requestType) {
-            case APIRequestType.RequestLanguages:
-                newState = state.languages(DatabaseReducer.AddAPINameEntities(action.payload, state.languages()));
-                break;
-            case APIRequestType.RequestProfile:
-                newState = state.parseProfile(action.payload);
-                break;
-            case APIRequestType.SaveProfile:
-                newState = state.parseProfile(action.payload.profile);
-                break;
-            case APIRequestType.RequestEducations:
-                newState = state.educations(DatabaseReducer.AddAPINameEntities(action.payload, state.educations()));
-                break;
-            case APIRequestType.RequestQualifications:
-                newState = state.qualifications(DatabaseReducer.AddAPINameEntities(action.payload, state.qualifications()));
-                break;
-            case APIRequestType.RequestCareers:
-                newState = state.trainings(DatabaseReducer.AddAPINameEntities(action.payload, state.trainings()));
-                break;
-            case APIRequestType.RequestSectors:
-                newState = state.sectors(DatabaseReducer.AddAPINameEntities(action.payload, state.sectors()));
-                break;
-            case APIRequestType.RequestProjectRoles:
-                newState = state.projectRoles(DatabaseReducer.AddAPINameEntities(action.payload, state.projectRoles()));
-                break;
-            case APIRequestType.RequestCompanies:
-                newState = state.companies(DatabaseReducer.AddAPINameEntities(action.payload, state.companies()));
-                break;
-            case APIRequestType.RequestCreateViewProfile:
-                newState = DatabaseReducer.ReceiveViewProfile(state, action.payload);
-                break;
-
-        }
-        return newState.APIRequestStatus(RequestStatus.Successful);
-    }
-
     private static DeleteEntry(state: InternalDatabase, action: DeleteEntryAction):InternalDatabase {
         let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile(), action);
         return state.profile(newProfile);

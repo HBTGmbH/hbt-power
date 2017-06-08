@@ -51,6 +51,7 @@ interface AdminClientDispatch {
     navigateToTrashbox(user: string, pass: string): void;
     navigateToInbox(user: string, pass: string): void;
     navigateToConsultants(): void;
+    logOutAdmin(): void;
 }
 
 class AdminClientModule extends React.Component<
@@ -71,7 +72,8 @@ class AdminClientModule extends React.Component<
             getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
             navigateToInbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass))},
             navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass))},
-            navigateToConsultants: () => {dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS))}
+            navigateToConsultants: () => {dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS))},
+            logOutAdmin: () => {dispatch(AdminActionCreator.LogOutAdmin())}
         };
     }
 
@@ -103,7 +105,10 @@ class AdminClientModule extends React.Component<
                             <div style={{marginRight: '30px', textAlign: 'right', color:'white'}} >
                                 <span style={{paddingRight:'15px'}}>{PowerLocalize.get('Toolbar.LoggedInAs') + ': admin'}</span>
                                 <br/>
-                                <FlatButton label={PowerLocalize.get('Tooolbar.LogOut')} />
+                                <FlatButton
+                                    label={PowerLocalize.get('Tooolbar.LogOut')}
+                                    onClick={this.props.logOutAdmin}
+                                />
                             </div>
                             <div style={{marginRight: '50px'}}>
                                 <Avatar size={70} src="/img/crazy_lama.jpg" />
