@@ -32,7 +32,7 @@ export enum ActionType {
     APIRequestFail,
     APIRequestPending,
     ChangeLanguageSkillLevel,
-    ReceiveSingleConsultant,
+
     ChangeInitials,
     ChangeFirstName,
     ChangeLastName,
@@ -63,4 +63,5 @@ export enum ActionType {
     LogOutAdmin,
 
     ReceiveAllConsultants,
+    ReceiveSingleConsultant,
 }

@@ -24,3 +24,7 @@ export interface ChangeLoginStatusAction extends AbstractAction {
 export interface ReceiveAllConsultantsAction extends AbstractAction {
     consultants: Array<ConsultantInfo>;
 }
+
+export interface ReceiveConsultantAction extends AbstractAction {
+    consultant: ConsultantInfo;
+}

@@ -2,7 +2,8 @@ import {AdminState} from '../../model/admin/AdminState';
 import {AbstractAction, ChangeStringValueAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
-    ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveNotifcationsAction,
+    ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveConsultantAction,
+    ReceiveNotifcationsAction,
     RequestStatusAction
 } from './admin-actions';
 import {AdminNotification} from '../../model/admin/AdminNotification';
@@ -71,6 +72,11 @@ export class AdminReducer {
         return AdminState.createDefault();
     }
 
+    public static ReceiveSingleConsultant(state: AdminState, receiveConsultantAction: ReceiveConsultantAction) {
+        let consultants = state.consultantsByInitials().set(receiveConsultantAction.consultant.initials(), receiveConsultantAction.consultant);
+        return state.consultantsByInitials(consultants);
+    }
+
     public static reduce(state : AdminState, action: AbstractAction) : AdminState {
         if(isNullOrUndefined(state)) {
             return AdminState.createDefault();
@@ -104,8 +110,12 @@ export class AdminReducer {
                 return AdminReducer.ReceiveAllConsultants(state, action as ReceiveAllConsultantsAction);
             case ActionType.LogOutAdmin:
                 return AdminReducer.LogOutAdmin(state);
+            case ActionType.ReceiveSingleConsultant:
+                return AdminReducer.ReceiveSingleConsultant(state, action as ReceiveConsultantAction);
             default:
                 return state;
         }
     }
+
+
 }

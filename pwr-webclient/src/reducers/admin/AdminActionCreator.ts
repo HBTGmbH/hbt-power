@@ -2,16 +2,17 @@ import {AbstractAction, ChangeStringValueAction} from '../profile/database-actio
 import {ActionType} from '../ActionType';
 import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
-    ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveNotifcationsAction,
+    ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveConsultantAction,
+    ReceiveNotifcationsAction,
     RequestStatusAction
 } from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
 import {
     getAdminAuthAPIString, getAllConsultantsString, getNotificationAPIString,
-    getNotificationTrashAPIString
+    getNotificationTrashAPIString, postConsultantActionString
 } from '../../API_CONFIG';
-import axios, {AxiosResponse} from 'axios';
+import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {RequestStatus} from '../../Store';
 import {Paths} from '../../index';
 import {LoginStatus} from '../../model/LoginStatus';
@@ -133,6 +134,12 @@ export class AdminActionCreator {
         }
     }
 
+    public static ReceiveConsultant(consultant: ConsultantInfo): ReceiveConsultantAction {
+        return {
+            type: ActionType.ReceiveSingleConsultant,
+            consultant: consultant
+        }
+    }
 
     public static AsyncRequestNotifications(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
@@ -329,5 +336,32 @@ export class AdminActionCreator {
         return function(dispatch: redux.Dispatch<AdminState>) {
             dispatch(ProfileAsyncActionCreator.logInUser(initials));
         };
+    }
+
+    public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            let apiConsultant: APIConsultant = {
+                profile: null,
+                initials: consultantInfo.initials(),
+                firstName: consultantInfo.firstName(),
+                lastName: consultantInfo.lastName(),
+                title: consultantInfo.title()
+            };
+            let config: AxiosRequestConfig = {
+                params: {
+                    action: 'name'
+                }
+            };
+            axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
+                config.params.action = 'title';
+                axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
+                    dispatch(AdminActionCreator.ReceiveConsultant(consultantInfo));
+                }).catch(function (error: any) {
+                    console.error(error);
+                });
+            }).catch(function (error: any) {
+                console.error(error);
+            });
+        }
     }
 }

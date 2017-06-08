@@ -7,8 +7,15 @@ interface LimitedTextFieldProps {
     value: string;
     onChange(e: FormEvent<{}>, newValue: string): void;
 
+    /**
+     * Text input disabled or not.
+     */
     disabled?: boolean;
 
+    /**
+     * Error text that is displayed when too many characters are present, or the character limit is reached.
+     * <code>null</code> means that no text will be displayed. Note: ""(empty string) will be displayed.
+     */
     errorText?: string;
 
     /**
@@ -22,6 +29,11 @@ interface LimitedTextFieldProps {
 
     floatingLabelText?: string;
 
+    /**
+     * Shows the toggle edit button. Only works as controlled component. Edit button will forward the toggle request
+     * via {@link LimitedTextFieldProps#onToggleEdit}. Consumers of this button will have to set {@link LimitedTextFieldProps#disabled}
+     * manually.
+     */
     useToggleEditButton?: boolean;
 
     onToggleEdit?(disabled: boolean): void;
@@ -82,8 +94,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     render() {
         return (
             <div>
-                <div>
-                    <div style={{width:'85%', float:'left'}}>
+                <div style={{width: this.props.fullWidth ? '100%' : 350}}>
+                    <div style={{width:this.props.fullWidth ? '85%' : 256, float:'left'}}>
                         <TextField
                             value={this.props.value}
                             disabled={this.props.disabled}
@@ -94,9 +106,10 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             floatingLabelText={this.props.floatingLabelText}
                         />
                     </div>
+
                     {
                         this.props.useToggleEditButton ?
-                            <div style={{paddingTop: "30px"}}>
+                            <div style={{width:this.props.fullWidth ? '15%' : 72, paddingTop: "30px", float:'left'}}>
                                 <IconButton tooltip="Font Icon" onClick={this.handleEditButtonPress}>
                                     <FontIcon className="material-icons" size={72} >
                                         {this.props.disabled ? "edit" : "save"}
@@ -107,11 +120,11 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             null
                     }
                 </div>
-                <div>
+                <div style={{width: this.props.fullWidth ? "100%" : 256}}>
                     <div style={{width:'85%', float:'left', marginTop:'7px'}}>
                         <LinearProgress mode="determinate" max={this.props.maxCharacters} value={this.props.value.length}/>
                     </div>
-                    <div style={{width:'10%', float:'right'}}>
+                    <div style={{width: '10%', float:'left'}}>
                         {this.props.value.length + '/' + this.props.maxCharacters}
                     </div>
                 </div>

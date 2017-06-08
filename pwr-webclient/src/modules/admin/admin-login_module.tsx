@@ -102,7 +102,7 @@ class AdminLoginModule extends React.Component<
     private renderInputField = () => {
         if(this.props.loginState == LoginStatus.INITIALS) {
             return <TextField
-                floatingLabelText={PowerLocalize.get("Initials.Singular")}
+                floatingLabelText={PowerLocalize.get("Username.Singular")}
                 value={this.props.username}
                 onChange={(evt,val) => this.props.changeUsername(val)}
                 onKeyPress={this.handleInputFieldKeyPress}

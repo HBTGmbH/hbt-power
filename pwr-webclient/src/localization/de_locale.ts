@@ -25,6 +25,10 @@ export const de_locale : any = {
     "Initials.Singular": "Kürzel",
     "Subject.Singular": "Betreff",
     "Password.Singular": "Passwort",
+    "FirstName": "Vorname",
+    "LastName": "Nachname",
+    "Username.Singular": "Benutzername",
+    "Title.Singular": "Titel",
 
 
     // == Component Specific Localizations == //
@@ -61,7 +65,10 @@ export const de_locale : any = {
     "NotificationDialog.Stepper.Label.Step1": "Aktionen",
     "NotificationDialog.Stepper.Label.Step2": "Bezeichner bearbeiten",
     "NotificationDialog.EditNameEntity": "Neuer Bezeichner",
+    "ConsultantTile.EditProfile": "Profil bearbeiten",
+    "ConsultantTile.EditConsultant": "Berater bearbeiten",
     "UserLogin.LoginFailed": "Login fehlgeschlagen",
+
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

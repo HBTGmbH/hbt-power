@@ -2,10 +2,11 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
-import {GridList} from 'material-ui';
+import {GridList, GridTile} from 'material-ui';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
 import {ConsultantTile} from './consultant-tile_module';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 /**
  * Properties that are managed by react-redux.
@@ -72,7 +73,6 @@ class ConsultantGridModule extends React.Component<
                         return <ConsultantTile key={"ConsultantTile." + consultantInfo.initials()} initials={consultantInfo.initials()}/>
                     }).toArray()
                 }
-
             </GridList>
         );
     }

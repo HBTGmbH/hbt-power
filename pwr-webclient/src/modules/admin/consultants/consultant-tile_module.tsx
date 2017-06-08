@@ -3,9 +3,11 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {GridTile, IconButton} from 'material-ui';
+import {FontIcon, GridTile, IconButton, IconMenu, MenuItem} from 'material-ui';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ConsultantEditDialog} from './consultant-edit-dialog_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -35,7 +37,7 @@ interface ConsultantTileLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface ConsultantTileLocalState {
-
+    dialogOpen: boolean;
 }
 
 /**
@@ -50,6 +52,13 @@ class ConsultantTileModule extends React.Component<
     & ConsultantTileLocalProps
     & ConsultantTileDispatch, ConsultantTileLocalState> {
 
+    constructor(props: ConsultantTileProps & ConsultantTileLocalProps & ConsultantTileDispatch) {
+        super(props);
+        this.state = {
+            dialogOpen: false
+        }
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: ConsultantTileLocalProps): ConsultantTileProps {
         return {
             consultantInfo: state.adminReducer.consultantsByInitials().get(localProps.initials),
@@ -62,30 +71,78 @@ class ConsultantTileModule extends React.Component<
         }
     }
 
-    render() {
-        return (
-        <GridTile
-            key={"ConsultantTile." + this.props.initials}
-            title={this.props.consultantInfo.getFullName()}
-            actionIcon={<IconButton
+
+    private showEditDialog = () => {
+        this.setState({
+            dialogOpen: true
+        });
+    };
+
+    private closeEditDialog = () => {
+        this.setState({
+            dialogOpen: false
+        });
+    };
+
+
+    /**
+     * Renders the menu for this tile
+     * @returns JSX Element that represents the menu.
+     */
+    private renderMenu = () => {
+        return (<IconMenu
+            iconButtonElement={<IconButton
                 iconClassName="material-icons"
                 iconStyle={{color: "white"}}
-                onClick={() => this.props.redirectToUser(this.props.initials)}
-            >edit</IconButton>}
-            actionPosition="right"
-            titlePosition="top"
-            titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
-            cols={1}
-            rows={1}
-            style={{width: "300px", height: "300px"}}
-
+            >menu</IconButton>}
+            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+            targetOrigin={{horizontal: 'right', vertical: 'top'}}
         >
-            <img src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
-        </GridTile>);
+            <MenuItem
+                primaryText={PowerLocalize.get("ConsultantTile.EditProfile")}
+                rightIcon={<FontIcon className="material-icons">edit</FontIcon>}
+                onTouchTap={() => this.props.redirectToUser(this.props.initials)}
+            />
+            <MenuItem
+                primaryText={PowerLocalize.get("ConsultantTile.EditConsultant")}
+                rightIcon={<FontIcon className="material-icons">person</FontIcon>}
+                onTouchTap={this.showEditDialog}
+            />
+        </IconMenu>)
+    };
+
+
+
+    render() {
+        return (
+            <div>
+                <ConsultantEditDialog
+                    initials={this.props.initials}
+                    show={this.state.dialogOpen}
+                    onRequestClose={this.closeEditDialog}
+                />
+                <GridTile
+                    key={"ConsultantTile." + this.props.initials}
+                    title={this.props.consultantInfo.getFullName()}
+                    actionIcon={this.renderMenu()}
+                    actionPosition="right"
+                    titlePosition="top"
+                    titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
+                    cols={1}
+                    rows={1}
+                    style={{width: "300px", height: "300px"}}
+
+                >
+                    <img src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
+                </GridTile>
+            </div>);
     }
 }
 
 /**
+ * Renders a single {@link GridTile} with all necessary information to represent a consultant for a brief overview.
+ * The grid tile contains name, profile pictures and provides ways to edit the consultant details and to quickly
+ * switch to their respective profile.
  * @see ConsultantTileModule
  * @author nt
  * @since 07.06.2017

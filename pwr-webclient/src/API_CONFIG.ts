@@ -28,6 +28,10 @@ export function getAllConsultantsString(): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/consultants";
 }
 
+export function postConsultantActionString() : string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/consultants";
+}
+
 export function getNotificationAPIString(): string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/admin/notifications";
 }

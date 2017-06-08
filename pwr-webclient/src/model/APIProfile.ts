@@ -90,5 +90,6 @@ export interface APIConsultant {
     initials: string;
     firstName: string;
     lastName: string;
+    title: string;
     profile: APIProfile;
 }
