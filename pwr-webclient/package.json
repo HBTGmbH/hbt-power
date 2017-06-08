@@ -21,6 +21,7 @@
     "es6-promise": "4.1.0",
     "immutable": "3.8.1",
     "isomorphic-fetch": "2.2.1",
+    "jaro-winkler": "^0.2.8",
     "jquery": "3.2.1",
     "js-cookie": "^2.1.4",
     "loglevel": "1.4.1",

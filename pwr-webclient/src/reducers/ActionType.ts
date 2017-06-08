@@ -4,6 +4,7 @@
 
 export enum ActionType {
 
+    AddSkill,
     SwapIndex,
     UserLoginFailed,
 

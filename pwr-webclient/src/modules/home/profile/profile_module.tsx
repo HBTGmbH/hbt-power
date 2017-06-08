@@ -98,7 +98,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                 <Tabs>
                     <Tab label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
                         <CardHeader
-                            title={this.props.loggedInUser.getFullName()}
+                            title={isNullOrUndefined(this.props.loggedInUser) ? "" : this.props.loggedInUser.getFullName()}
                             avatar={getProfileImageLocation(this.getInitials())}
                         />
                         <Divider/>

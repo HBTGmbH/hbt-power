@@ -1,7 +1,7 @@
 import {APIRequestType, ProfileElementType, RequestStatus} from '../../Store';
 import {isNullOrUndefined} from 'util';
 import {
-    AbstractAction,
+    AbstractAction, AddSkillAction,
     ChangeStringValueAction,
     ChangeViewProfileAction,
     CreateEntryAction,
@@ -325,6 +325,11 @@ export class DatabaseReducer {
         return state;
     }
 
+    private static AddSkill(state: InternalDatabase, action: AddSkillAction): InternalDatabase {
+        let profile = ProfileReducer.reducerHandleAddSkill(state.profile(), action);
+        return state.profile(profile);
+    }
+
 
     public static Reduce(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
         if(isNullOrUndefined(state)) {
@@ -356,6 +361,7 @@ export class DatabaseReducer {
             case ActionType.SwapIndex:return DatabaseReducer.SwapIndexes(state, action as SwapIndexAction);
             case ActionType.ChangeViewProfileName: return DatabaseReducer.ChangeViewProfileName(state, action as ChangeViewProfileAction);
             case ActionType.ChangeViewProfileDescription: return DatabaseReducer.ChangeViewProfileDescription(state, action as ChangeViewProfileAction);
+            case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
             default:
                 return state;
         }

@@ -68,6 +68,7 @@ export const de_locale : any = {
     "ConsultantTile.EditProfile": "Profil bearbeiten",
     "ConsultantTile.EditConsultant": "Berater bearbeiten",
     "UserLogin.LoginFailed": "Login fehlgeschlagen",
+    "SkillTree.SearchAndAddSkill": "Skill suchen/hinzufügen",
 
 
     // == Specific Specific Localizations == //

@@ -9,6 +9,11 @@ interface SkillSearcherProps {
     maxResults?: number;
     id: string;
     onNewRequest?(request: string): void;
+    /**
+     * Fired everytime the value changes(User input) and returns the value the user typed in.
+     * @param value
+     */
+    onValueChange?(value: string): void;
 }
 
 interface SkillSearcherState {
@@ -37,10 +42,12 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         floatingLabelText: "",
         apiUrl: "http://power02.corp.hbt.de:9000/api/skills/skill/search/",
         maxResults: 10,
-        onNewRequest: request => {}
+        onNewRequest: request => {},
+        onValueChange: val => {}
     };
 
     private requestSkills = (searchText: string, dataSource: any) => {
+        this.props.onValueChange(searchText);
         let reqParams = {
             maxResults: this.props.maxResults
         };

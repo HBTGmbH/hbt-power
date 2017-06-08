@@ -4,11 +4,16 @@ import {CSSProperties} from 'react';
 import * as redux from 'redux';
 import {InternalDatabase} from '../../../../../model/InternalDatabase';
 import {ApplicationState} from '../../../../../Store';
-import {List, Subheader} from 'material-ui';
-import {Profile} from '../../../../../model/Profile';
+import {AutoComplete, List, Subheader} from 'material-ui';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {SkillChip} from './skill-chip_module';
+import {SkillSearcher} from '../../../../general/skill-search_module';
+import {Skill} from '../../../../../model/Skill';
+import * as Immutable from 'immutable';
+import {levenshtein} from '../../../../../utils/ObjectUtil';
+
+const distance = require("jaro-winkler");
 
 /**
  * Properties that are managed by react-redux.
@@ -17,7 +22,7 @@ import {SkillChip} from './skill-chip_module';
  * otherwise the component will not render and update correctly.
  */
 interface SkillTreeProps {
-    profile: Profile;
+    skills: Immutable.Map<string, Skill>;
 }
 
 /**
@@ -38,6 +43,7 @@ interface SkillTreeLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface SkillTreeLocalState {
+    skills: Immutable.Map<string, Skill>;
 }
 
 /**
@@ -46,6 +52,7 @@ interface SkillTreeLocalState {
 interface SkillTreeDispatch {
     changeSkillRating(rating: number, id: string): void;
     onSkillDelete(id: string): void;
+    addSkill(name: string): void;
 }
 
 class SkillTreeModule extends React.Component<
@@ -56,6 +63,7 @@ class SkillTreeModule extends React.Component<
     constructor(props: SkillTreeProps& SkillTreeLocalProps& SkillTreeDispatch) {
         super(props);
         this.state = {
+            skills: props.skills
         };
     }
 
@@ -64,9 +72,16 @@ class SkillTreeModule extends React.Component<
         flexWrap: 'wrap',
     };
 
+    public componentWillReceiveProps(nextProps: SkillTreeProps & SkillTreeLocalProps & SkillTreeDispatch){
+        this.setState({
+            skills: nextProps.skills
+        })
+    }
+
+
     static mapStateToProps(state: ApplicationState, localProps: SkillTreeLocalProps): SkillTreeProps {
         return {
-            profile: state.databaseReducer.profile()
+            skills: state.databaseReducer.profile().skills()
         };
     }
 
@@ -77,12 +92,34 @@ class SkillTreeModule extends React.Component<
             },
             onSkillDelete: (id: string) => {
                 dispatch(ProfileActionCreator.deleteSkill(id));
+            },
+            addSkill: (name: string) => {
+                dispatch(ProfileActionCreator.AddSkill(name));
             }
         };
     }
 
+    private filterSkills = (searchText: string) => {
+        let skills = this.props.skills;
+        if(searchText.trim().length != 0) {
+            skills = Immutable.Map<string, Skill>(skills.filter((skill: Skill, key:string) => {
+                return distance(searchText, skill.name(), { caseSensitive: false }) >= 0.6;
+            }));
+        }
+        this.setState({
+            skills: skills
+        });
+    };
+
+    private handleSkillRequest = (skillString: string) => {
+        this.props.addSkill(skillString);
+        this.setState({
+            skills: this.props.skills
+        });
+    };
+
     private renderSkills = () => {
-        return this.props.profile.skills().map(skill => {
+        return this.state.skills.map(skill => {
             return (<SkillChip
                 key={skill.id()}
                 skill={skill}
@@ -95,12 +132,22 @@ class SkillTreeModule extends React.Component<
     render() {
         return (
             <div className="row">
-                <div className="col-md-12">
+                <div className="col-md-4">
+                    <SkillSearcher
+                        id="SkillTree.SkillSeacher"
+                        floatingLabelText={PowerLocalize.get("SkillTree.SearchAndAddSkill")}
+                        maxResults={20}
+                        onNewRequest={this.handleSkillRequest}
+                        onValueChange={this.filterSkills}
+                    />
+                </div>
+                <div className="col-md-8">
                     <List>
                         <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
                         {this.renderSkills()}
                     </List>
                 </div>
+
             </div>
         );
     }

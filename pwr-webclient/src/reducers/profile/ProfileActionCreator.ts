@@ -1,7 +1,7 @@
 import {APIRequestType, ProfileElementType} from '../../Store';
 import {NameEntity} from '../../model/NameEntity';
 import {
-    AbstractAction,
+    AbstractAction, AddSkillAction,
     ChangeStringValueAction, ChangeViewProfileAction,
     CreateEntryAction,
     DeleteEntryAction,
@@ -117,6 +117,13 @@ export class ProfileActionCreator {
     public static logOutUser(): AbstractAction {
         return {
             type: ActionType.LogOutUser
+        }
+    }
+
+    public static AddSkill(skillName: string): AddSkillAction {
+        return {
+            type: ActionType.AddSkill,
+            skillName: skillName
         }
     }
 

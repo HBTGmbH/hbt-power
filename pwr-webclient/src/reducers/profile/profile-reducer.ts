@@ -1,5 +1,6 @@
 import {Profile} from '../../model/Profile';
 import {
+    AddSkillAction,
     ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, DeleteSkillAction, SaveEntryAction,
     UpdateSkillRatingAction
 } from './database-actions';
@@ -147,5 +148,16 @@ export class ProfileReducer {
         skill = skill.rating(action.rating);
         return profile.skills(profile.skills().set(skill.id(), skill));
 
+    }
+
+    public static reducerHandleAddSkill(profile: Profile, action: AddSkillAction): Profile {
+        if(!profile.getSkillByName(action.skillName)) {
+            let skills = profile.skills();
+            let skill = Skill.createNew(action.skillName);
+            skills = skills.set(skill.id(), skill);
+            return profile.skills(skills);
+        } else {
+            return profile;
+        }
     }
 }
