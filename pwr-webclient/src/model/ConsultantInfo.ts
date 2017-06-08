@@ -17,4 +17,8 @@ export class ConsultantInfo {
     public static fromAPI(apiConsultant: APIConsultant) {
         return new ConsultantInfo(apiConsultant.initials, apiConsultant.firstName, apiConsultant.lastName);
     }
+
+    public getFullName(): string {
+        return this.firstName() + this.lastName();
+    }
 }

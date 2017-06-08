@@ -7,6 +7,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ApplicationState, RequestStatus} from '../../Store';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {RequestSnackbar} from '../general/request-snackbar_module.';
+import {Paths} from '../../index';
 
 
 /**
@@ -49,6 +50,7 @@ interface AdminClientDispatch {
     getNotifications(user: string, pass: string): void;
     navigateToTrashbox(user: string, pass: string): void;
     navigateToInbox(user: string, pass: string): void;
+    navigateToConsultants(): void;
 }
 
 class AdminClientModule extends React.Component<
@@ -68,7 +70,8 @@ class AdminClientModule extends React.Component<
         return {
             getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
             navigateToInbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass))},
-            navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass))}
+            navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass))},
+            navigateToConsultants: () => {dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS))}
         };
     }
 
@@ -129,7 +132,13 @@ class AdminClientModule extends React.Component<
                                                   onClick={this.handleTrashboxButtonClick}
                                               />
                                           ]}
-                              />
+                                />
+                                <ListItem
+                                    primaryText="Berater"
+                                    leftIcon={<FontIcon className="material-icons">people</FontIcon>}
+                                    onClick={this.props.navigateToConsultants}
+                                >
+                                </ListItem>
                             </List>
                         </Paper>
                     </div>

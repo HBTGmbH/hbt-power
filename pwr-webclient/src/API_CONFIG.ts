@@ -1,4 +1,4 @@
-/*
+//*
 export const API_HOST: string = "http://power02.corp.hbt.de";
 
 export const API_PORT: string = "9000";
@@ -22,6 +22,10 @@ export function getConsultantApiString(initials: string) : string {
 
 export function getAdminAuthAPIString() : string {
     return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/admin";
+}
+
+export function getAllConsultantsString(): string {
+    return API_HOST + ":" + API_PORT + API_SUFFIX + API_SUFFIX_PROFILE + "/consultants";
 }
 
 export function getNotificationAPIString(): string {

@@ -1,14 +1,22 @@
 import {AbstractAction, ChangeStringValueAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNotification';
-import {ChangeLoginStatusAction, NavigateAction, ReceiveNotifcationsAction, RequestStatusAction} from './admin-actions';
+import {
+    ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveNotifcationsAction,
+    RequestStatusAction
+} from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
-import {getAdminAuthAPIString, getNotificationAPIString, getNotificationTrashAPIString} from '../../API_CONFIG';
+import {
+    getAdminAuthAPIString, getAllConsultantsString, getNotificationAPIString,
+    getNotificationTrashAPIString
+} from '../../API_CONFIG';
 import axios, {AxiosResponse} from 'axios';
 import {RequestStatus} from '../../Store';
 import {Paths} from '../../index';
 import {LoginStatus} from '../../model/LoginStatus';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {APIConsultant} from '../../model/APIProfile';
 
 export class AdminActionCreator {
     public static RequestNotifications(): AbstractAction {
@@ -108,6 +116,13 @@ export class AdminActionCreator {
     public static LogInAdmin() : AbstractAction {
         return {
             type: ActionType.LogInAdmin
+        }
+    }
+
+    public static ReceiveAllConsultants(consultants: Array<ConsultantInfo>): ReceiveAllConsultantsAction {
+        return {
+            type: ActionType.ReceiveAllConsultants,
+            consultants: consultants
         }
     }
 
@@ -282,9 +297,22 @@ export class AdminActionCreator {
             axios.head(getAdminAuthAPIString(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.INITIALS));
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
+                dispatch(AdminActionCreator.AsyncGetAllConsultants());
                 dispatch(AdminActionCreator.LogInAdmin());
             }).catch(function(error:any) {
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
+                console.error(error);
+            });
+        };
+    }
+
+    public static AsyncGetAllConsultants() {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            axios.get(getAllConsultantsString()).then(function(response: AxiosResponse) {
+                let apiConsultants: Array<APIConsultant> = response.data;
+                let consultants = apiConsultants.map((value, index, array) => ConsultantInfo.fromAPI(value));
+                dispatch(AdminActionCreator.ReceiveAllConsultants(consultants));
+            }).catch(function(error:any) {
                 console.error(error);
             });
         };

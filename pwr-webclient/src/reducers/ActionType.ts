@@ -3,6 +3,7 @@
  */
 
 export enum ActionType {
+
     SwapIndex,
     UserLoginFailed,
 
@@ -58,5 +59,7 @@ export enum ActionType {
     ChangePassword,
 
     ChangeAdminLoginStatus,
-    LogInAdmin
+    LogInAdmin,
+
+    ReceiveAllConsultants,
 }

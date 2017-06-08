@@ -28,6 +28,7 @@ import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from './model/Pwr
 import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import * as Cookies from 'js-cookie';
+import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
 
 injectTapEventPlugin();
 
@@ -62,6 +63,7 @@ if(!isNullOrUndefined(storedInitials)) {
 export class Paths {
     public static readonly ADMIN_INBOX = "/admin/home/inbox";
     public static readonly ADMIN_TRASHBOX = "/admin/home/trashbox";
+    public static readonly ADMIN_CONSULTANTS = "/admin/home/consultants";
     public static readonly ADMIN_LOGIN = "/login";
 }
 
@@ -79,6 +81,7 @@ class MyRouter extends React.Component<any, any> {
             </Route>
             <Route path="/admin" component={AdminClient}>
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
+                <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid} />
                 <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
             </Route>
         </Router>)
