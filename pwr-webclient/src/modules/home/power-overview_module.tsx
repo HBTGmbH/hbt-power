@@ -214,17 +214,17 @@ class PowerOverviewModule extends React.Component<
                                     undo
                                 </IconButton>
                             </Dialog>
-                            <GridList cols={3} cellHeight="auto">
+                            <div className="row">
                                 {
                                     this.props.viewProfiles.map(viewProfile => {
                                         return (
-                                            <GridTile cols={1} key={"ViewProfileCard." + viewProfile.id()}>
+                                            <div className="col-md-4" key={"ViewProfileCard." + viewProfile.id()}>
                                                 <ViewCard viewProfileId={viewProfile.id()}/>
-                                            </GridTile>
-                                                );
+                                            </div>
+                                        );
                                     }).toArray()
                                 }
-                            </GridList>
+                            </div>
                         </Card>
                 </div>
             </div>

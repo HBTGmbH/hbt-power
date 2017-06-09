@@ -6,13 +6,9 @@
 import {APIRequestType, ProfileElementType} from '../../Store';
 
 import {NameEntity} from '../../model/NameEntity';
-import {Project} from '../../model/Project';
-import {Skill} from '../../model/Skill';
 import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {ActionType} from '../ActionType';
-import * as Immutable from 'immutable'
-import {ViewElement} from '../../model/viewprofile/ViewElement';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 
 export interface AbstractAction {

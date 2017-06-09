@@ -2,15 +2,20 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {Avatar, FlatButton, Paper, Toolbar, ToolbarGroup} from 'material-ui';
+import {AppBar, Avatar, FlatButton, IconButton, IconMenu, ListItem, RaisedButton} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
-import {getProfileImageLocation} from '../../API_CONFIG';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
+import {Link} from 'react-router';
+import {getProfileImageLocation} from '../../API_CONFIG';
+import {LoginStatus} from '../../model/LoginStatus';
+import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
+import {Paths} from '../../index';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
+    loggedInAsAdmin: boolean;
 }
 
 /**
@@ -34,6 +39,7 @@ interface ToolbarLocalState {
 
 interface ToolbarDispatch {
     logOutUser(): void;
+    backToAdmin(): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -45,7 +51,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps) : ToolbarProps {
         return {
-            loggedInUser: state.databaseReducer.loggedInUser()
+            loggedInUser: state.databaseReducer.loggedInUser(),
+            loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS
         };
     }
 
@@ -53,6 +60,10 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return {
             logOutUser: function() {
                 dispatch(ProfileActionCreator.logOutUser());
+                dispatch(AdminActionCreator.LogOutAdmin());
+            },
+            backToAdmin: function() {
+                dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS));
             }
         };
     }
@@ -62,41 +73,60 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     };
 
     private getInitials = () => {
-        return isNullOrUndefined(this.props.loggedInUser) ? "" : this.props.loggedInUser.initials();
-    }
+        return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials();
+    };
+
+
+    private renderPower = () => {
+        return (
+        <div>
+                <span>Poooower!   </span>
+                <span>&nbsp;2.0</span>
+        </div>);
+    };
+
+    private renderMenu = () => {
+        return (<IconMenu
+            iconButtonElement={<IconButton iconClassName="material-icons">menu</IconButton>}
+            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+            targetOrigin={{horizontal: 'left', vertical: 'top'}}
+        >
+            <Link to="/app/home"><ListItem primaryText={PowerLocalize.get('Menu.Home')} /></Link>
+            <Link to="/app/profile"><ListItem primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
+            <Link to="/app/view"><ListItem primaryText={PowerLocalize.get('Menu.Views')} /></Link>
+            <Link to="/app/reports"><ListItem primaryText={PowerLocalize.get('Menu.Reports')} /></Link>
+        </IconMenu>);
+    };
 
     /**
      * @returns {any}
      */
     render() {
         return(
-            <Paper zDepth={3}>
-                <Toolbar style={{height: "100px", backgroundColor:"SlateGray"}}>
-                    <ToolbarGroup>
-                        <div className="row">
-                            <div className="col-md-3">
-                                <img className="img-responsive" src="/img/HBTBlueWithText.png"/>
-                            </div>
-                            <div className="col-md-5" style={{paddingTop:"40px"}}>
-                                <span style={{fontSize:"2.3em", fontStyle:"oblique", color: "white"}}>Poooower!   </span>
-                                <span style={{fontSize:"2.3em", color: "white"}}>&nbsp;2.0</span>
-                            </div>
-                        </div>
-                    </ToolbarGroup>
-                    <ToolbarGroup lastChild={true}>
-                        <div style={{marginRight: "30px", textAlign: "right", color:"white"}} >
-                            <span style={{paddingRight:"15px"}}>
-                                {PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.getInitials()}
-                            </span>
-                            <br/>
-                            <FlatButton onClick={this.props.logOutUser} label={PowerLocalize.get("Tooolbar.LogOut")} />
-                        </div>
-                        <div style={{marginRight: "50px"}}>
-                            <Avatar size={70} src={getProfileImageLocation(this.getInitials())}/>
-                        </div>
-                    </ToolbarGroup>
-                </Toolbar>
-            </Paper>
+            <AppBar
+                title={this.renderPower()}
+                iconElementLeft={this.renderMenu()}
+            >
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                    <span style={{marginRight: '20px'}}>
+                    {PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.getInitials()}
+                    </span>
+                    {
+                        this.props.loggedInAsAdmin ?
+                            <Link to={Paths.ADMIN_CONSULTANTS}>
+                                <FlatButton
+                                    label={PowerLocalize.get('Tooolbar.ToAdminOverview')}
+                                />
+                            </Link>
+                            :
+                            null
+                    }
+                    <FlatButton
+                        onClick={this.props.logOutUser}
+                        label={PowerLocalize.get('Tooolbar.LogOut')}
+                    />
+                </div>
+            </AppBar>
         );
     }
 }

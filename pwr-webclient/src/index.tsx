@@ -29,6 +29,7 @@ import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import * as Cookies from 'js-cookie';
 import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
+import {UnderConstruction} from './modules/general/UnderConstruction.';
 
 injectTapEventPlugin();
 
@@ -80,6 +81,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path="/app/" component={ConsultantProfile}/>
                 <Route path="/app/profile" component={ConsultantProfile}/>
                 <Route path="/app/view" component={ViewProfileCard}/>
+                <Route path="/app/reports" component={UnderConstruction}/>
             </Route>
             <Route path="/admin" component={AdminClient}>
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />

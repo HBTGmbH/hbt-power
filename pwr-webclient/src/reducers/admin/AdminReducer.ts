@@ -13,6 +13,7 @@ import * as Immutable from 'immutable';
 import {browserHistory} from 'react-router'
 import {Paths} from '../../index';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {LoginStatus} from '../../model/LoginStatus';
 
 export class AdminReducer {
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotifcationsAction): AdminState {
@@ -56,7 +57,7 @@ export class AdminReducer {
 
     public static LogInAdmin(state: AdminState, action: AbstractAction): AdminState {
         browserHistory.push(Paths.ADMIN_INBOX);
-        return state;
+        return state.loginStatus(LoginStatus.SUCCESS);
     }
 
     public static ReceiveAllConsultants(state: AdminState, action: ReceiveAllConsultantsAction): AdminState {
