@@ -43,7 +43,8 @@
   },
   "devDependencies": {
     "@types/jest": "^19.2.3",
-    "react-scripts-ts": "1.1.8"
+    "react-scripts-ts": "1.1.8",
+    "ts-jest": "^20.0.6"
   },
   "scripts": {
     "start": "react-scripts-ts start",

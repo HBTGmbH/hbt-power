@@ -20,6 +20,7 @@ import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../../model/PwrConstants';
+import {langLevelToLocalizedString} from '../../../../../utils/StringUtil';
 
 
 interface EducationEntryDialogLocalProps {
@@ -68,7 +69,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
     }
 
     private static renderSingleDropDownElement(languageLevel: string, idx: number) {
-        return (<MenuItem value={languageLevel} primaryText={languageLevel} key={languageLevel}/>);
+        return (<MenuItem value={languageLevel} primaryText={langLevelToLocalizedString(languageLevel)} key={languageLevel}/>);
     }
 
     private getLanguageName = () => {
@@ -88,7 +89,6 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
      * @param dataSource useless
      */
     private handleLanguageFieldInput = (searchText: string, dataSource: Array<string>) => {
-        console.log("Called");
         this.setState({languageAutoCompleteValue: searchText});
     };
 

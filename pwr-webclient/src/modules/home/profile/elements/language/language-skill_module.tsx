@@ -9,6 +9,7 @@ import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
+import {langLevelToLocalizedString} from '../../../../../utils/StringUtil';
 
 interface SingleLanguageState {
     dialogOpen: boolean;
@@ -85,7 +86,7 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
             </td>
             <td>
                 <div className="fittingContainer" onClick={this.openDialog}>
-                    {this.props.languageSkill.level()}
+                    {langLevelToLocalizedString(this.props.languageSkill.level())}
                 </div>
             </td>
             <td>

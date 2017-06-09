@@ -63,6 +63,9 @@ export enum ActionType {
     LogInAdmin,
     LogOutAdmin,
 
+        /**
+         * Requests all consultant informations that are available. This should replace the old informations available.
+         */
     ReceiveAllConsultants,
     ReceiveSingleConsultant,
 }

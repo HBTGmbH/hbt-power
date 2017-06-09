@@ -113,6 +113,7 @@ test('Validates that existing education entries with a NameEntity may be aded an
     // That way a good deep equal expectation can be created.
     let expectedEntry: EducationEntry = educationEntry.nameEntityId(nameEntity.id());
     expect(profile.educationEntries().count()).toEqual(1);
+    console.log(JSON.stringify(profile.educationEntries().values()));
     expect(profile.educationEntries().values()).toContainEqual(expectedEntry);
 
 });

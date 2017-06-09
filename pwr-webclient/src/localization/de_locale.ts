@@ -88,6 +88,11 @@ export const de_locale : any = {
     "NameEntityType.PROJECT_ROLE" : "Projektrolle",
     "NameEntityType.COMPANY" : "Unternehmen",
     "ErrorText.InputTooLong": "Zu viele Zeichen",
+    "LanguageLevel.BASIC": "Anfänger",
+    "LanguageLevel.ADVANCED": "Fortgeschritten",
+    "LanguageLevel.BUSINESS_FLUENT": "Verhandlungssicher",
+    "LanguageLevel.NATIVE": "Muttersprache",
+
 
     "None": "Kein",
     // == ACTIONS == //
