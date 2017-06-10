@@ -212,6 +212,8 @@ export class InternalDatabase {
         profileFromAPI.projects.forEach(project => {
             let company: NameEntity = NameEntity.fromAPI(project.broker);
             companies = companies.set(company.id(), company);
+            company = NameEntity.fromAPI(project.client);
+            companies = companies.set(company.id(), company);
         });
         console.info('...done');
         console.info('Parsing project roles...');

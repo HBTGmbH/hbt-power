@@ -125,7 +125,7 @@ export class DatabaseReducer {
         // End customer
         let endCustomer: NameEntity = InternalDatabase.findNameEntityByName(action.state.clientACValue, database.companies());
         if(isNullOrUndefined(endCustomer)) {
-            endCustomer = NameEntity.createNew(action.state.brokerACValue);
+            endCustomer = NameEntity.createNew(action.state.clientACValue);
             database = database.companies(database.companies().set(endCustomer.id(), endCustomer));
         }
         project = project.endCustomerId(endCustomer.id());

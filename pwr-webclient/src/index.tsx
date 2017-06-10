@@ -51,6 +51,8 @@ store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
 
+console.info("Current history location is ", browserHistory.getCurrentLocation());
+
 const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
 if(!isNullOrUndefined(storedInitials)) {
     console.info("Cookie detected. Performing auto Log-In.");
