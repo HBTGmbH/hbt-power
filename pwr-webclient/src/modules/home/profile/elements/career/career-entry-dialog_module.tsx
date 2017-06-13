@@ -85,13 +85,14 @@ class CareerEntryDialogModule extends React.Component<
         this.props.requestClose();
     };
 
-    private changeStartDate = (date: Date) => {
+    private changeStartDate = (evt: any, date: Date) => {
         this.setState({
             careerEntry: this.state.careerEntry.startDate(date)
         })
     };
 
-    private changeEndDate = (date: Date) => {
+    private changeEndDate = (evt: any, date: Date) => {
+        console.log(date);
         this.setState({
             careerEntry: this.state.careerEntry.endDate(date)
         })

@@ -12,7 +12,6 @@ import {QualificationTable} from './tables/qualification-table_module';
 import {LanguageTable} from './tables/language-table_module';
 import {SectorTable} from './tables/sector-table_module';
 import {ProjectTable} from './tables/project-table_module';
-import {DragRowIndicator} from './tables/drag/drag-row-indicator_module.';
 import {KeySkillTable} from './tables/keySkill-table_module';
 import {CareerTable} from './tables/career-table_module';
 
