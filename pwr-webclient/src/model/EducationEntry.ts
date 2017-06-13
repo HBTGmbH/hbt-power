@@ -54,7 +54,7 @@ export class EducationEntry {
             new Date(apiEducation.startDate),
             new Date(apiEducation.endDate),
             String(apiEducation.nameEntity.id),
-            String(apiEducation.degree),
+            apiEducation.degree,
             false);
     }
 
