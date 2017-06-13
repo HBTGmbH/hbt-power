@@ -1,6 +1,8 @@
 import {doop} from 'doop';
 import {
-    APIViewEducation, APIViewLanguage, APIViewProject, APIViewQualification, APIViewSector,
+    APIViewCareer,
+    APIViewEducation, APIViewKeySkill, APIViewLanguage, APIViewProject, APIViewQualification, APIViewSector,
+    APIViewSkill,
     APIViewTraining
 } from './APIViewProfile';
 @doop
@@ -42,4 +44,17 @@ export class ViewElement {
     public static fromAPIViewProject(view: APIViewProject) {
         return new ViewElement(view.selected, String(view.project.id));
     }
+
+    public static fromAPIViewKeySkill(view: APIViewKeySkill) {
+        return new ViewElement(view.selected, String(view.keySkillEntry.id));
+    }
+
+    public static fromAPIViewCareer(view: APIViewCareer) {
+        return new ViewElement(view.selected, String(view.careerEntry.id));
+    }
+
+    public static fromAPIViewSkill(view: APIViewSkill) {
+        return new ViewElement(view.selected, String(view.skill.id));
+    }
+
 }

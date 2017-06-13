@@ -13,6 +13,8 @@ import {LanguageTable} from './tables/language-table_module';
 import {SectorTable} from './tables/sector-table_module';
 import {ProjectTable} from './tables/project-table_module';
 import {DragRowIndicator} from './tables/drag/drag-row-indicator_module.';
+import {KeySkillTable} from './tables/keySkill-table_module';
+import {CareerTable} from './tables/career-table_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -89,11 +91,18 @@ class ViewProfileCardModule extends React.Component<
                     <Paper className="margin-5px">
                         <LanguageTable key="LanguageTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
+
+                    <Paper className="margin-5px">
+                        <ProjectTable key="ProjectTable" viewProfileId={this.props.viewProfile.id()}/>
+                    </Paper>
+                    <Paper className="margin-5px">
+                        <CareerTable key="ProjectTable" viewProfileId={this.props.viewProfile.id()}/>
+                    </Paper>
                     <Paper className="margin-5px">
                         <SectorTable key="SectorTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
                     <Paper className="margin-5px">
-                        <ProjectTable key="ProjectTable" viewProfileId={this.props.viewProfile.id()}/>
+                        <KeySkillTable key="ProjectTable" viewProfileId={this.props.viewProfile.id()}/>
                     </Paper>
                 </div>
 
