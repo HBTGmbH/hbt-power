@@ -14,6 +14,7 @@ import {Skill} from '../../model/Skill';
 import {error, isNull, isNullOrUndefined} from 'util';
 import {Project} from '../../model/Project';
 import {CareerEntry} from '../../model/CareerEntry';
+import {KeySkillEntry} from '../../model/KeySkillEntry';
 export class ProfileReducer {
 
     private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
@@ -41,10 +42,14 @@ export class ProfileReducer {
             }
             case ProfileElementType.CareerEntry: {
                 let cEntry: CareerEntry = entry as CareerEntry;
-                return profile.careerEntries(profile.careerEntries().set(entry.id(), entry));
+                return profile.careerEntries(profile.careerEntries().set(cEntry.id(), cEntry));
+            }
+            case ProfileElementType.KeySkill: {
+                let kEntry: KeySkillEntry = entry as KeySkillEntry;
+                return profile.keySkillEntries(profile.keySkillEntries().set(kEntry.id(), kEntry));
             }
             default:
-                throw error("Unknown switch value " + ProfileElementType[entryType]);
+                throw new TypeError("Unknown switch value " + ProfileElementType[entryType]);
         }
     }
 
@@ -70,8 +75,10 @@ export class ProfileReducer {
                 return profile.languageSkills(profile.languageSkills().remove(action.elementId));
             case ProfileElementType.CareerEntry:
                 return profile.careerEntries(profile.careerEntries().remove(action.elementId));
+            case ProfileElementType.KeySkill:
+                return profile.keySkillEntries(profile.keySkillEntries().remove(action.elementId));
             default:
-                throw error("Unknown switch value " + ProfileElementType[action.elementType]);
+                throw TypeError("Unknown switch value " + ProfileElementType[action.elementType]);
         }
     }
 
@@ -95,6 +102,9 @@ export class ProfileReducer {
                 break;
             case ProfileElementType.CareerEntry:
                 entry = CareerEntry.createNew();
+                break;
+            case ProfileElementType.KeySkill:
+                entry = KeySkillEntry.createNew();
                 break;
             default:
                 throw error("Unknown switch value " + ProfileElementType[action.entryType]);

@@ -48,6 +48,9 @@ export class InternalDatabase {
     public get trainings() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
+    public get keySkills() {return doop<Immutable.Map<string, NameEntity>, this>();}
+
+    @doop
     public get educations() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
@@ -86,6 +89,7 @@ export class InternalDatabase {
         qualifications: Immutable.Map<string, NameEntity>,
         sectors:  Immutable.Map<string, NameEntity>,
         careers: Immutable.Map<string, NameEntity>,
+        keySkills: Immutable.Map<string, NameEntity>,
         companies: Immutable.Map<string, NameEntity>,
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: ConsultantInfo,
@@ -105,6 +109,7 @@ export class InternalDatabase {
             .loggedInUser(loggedInUser)
             .degrees(degrees)
             .careers(careers)
+            .keySkills(keySkills);
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -114,6 +119,7 @@ export class InternalDatabase {
             ['BASIC', 'ADVANCED', 'BUSINESS_FLUENT', 'NATIVE'],
             Profile.createDefault(),
             Immutable.Map<string, ViewProfile>(),
+            Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
@@ -227,6 +233,14 @@ export class InternalDatabase {
         });
         console.info('...done.');
 
+        console.info('Parsing keySkills...');
+        let keySkills = this.keySkills();
+        profileFromAPI.keySkillEntries.forEach(keySkill => {
+            let skill: NameEntity = NameEntity.fromAPI(keySkill.nameEntity);
+            keySkills = keySkills.set(skill.id(), skill);
+        });
+        console.info('...done.');
+
         console.info('Parsing companies...');
         let companies = this.companies();
         profileFromAPI.projects.forEach(project => {
@@ -257,7 +271,8 @@ export class InternalDatabase {
             .sectors(sectors)
             .companies(companies)
             .projectRoles(projectRoles)
-            .careers(careers);
+            .careers(careers)
+            .keySkills(keySkills);
     }
 
 

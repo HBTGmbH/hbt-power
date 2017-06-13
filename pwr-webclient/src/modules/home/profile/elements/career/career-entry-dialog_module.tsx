@@ -6,7 +6,6 @@ import {ApplicationState, ProfileElementType} from '../../../../../Store';
 import {AutoComplete, Card, CardActions, CardHeader, CardMedia, DatePicker, Dialog, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
-import {EducationEntry} from '../../../../../model/EducationEntry';
 import {CareerEntry} from '../../../../../model/CareerEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';

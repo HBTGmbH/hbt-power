@@ -5,7 +5,7 @@ import {QualificationEntry} from './QualificationEntry';
 import {TrainingEntry} from './TrainingEntry';
 import {
     APICareerEntry,
-    APIEducationStep,
+    APIEducationStep, APIKeySkill,
     APILanguageSkill,
     APIProfile,
     APIProject,
@@ -21,6 +21,7 @@ import {Project} from './Project';
 import {doop} from 'doop/built/doop';
 import {Skill} from './Skill';
 import {CareerEntry} from './CareerEntry';
+import {KeySkillEntry} from './KeySkillEntry';
 
 
 @doop
@@ -45,6 +46,8 @@ export class Profile {
     @doop
     public get qualificationEntries(){ return doop<Immutable.Map<string, QualificationEntry>, this>();}
     @doop
+    public get keySkillEntries() {return doop<Immutable.Map<string, KeySkillEntry>, this>();}
+    @doop
     public get projects(){ return doop<Immutable.Map<string, Project>, this>();}
     @doop
     public get skills() { return doop<Immutable.Map<string, Skill>, this>()};
@@ -63,6 +66,7 @@ export class Profile {
         educationEntries: Immutable.Map<string, EducationEntry>,
         languageSkills: Immutable.Map<string, LanguageSkill>,
         qualificationEntries: Immutable.Map<string, QualificationEntry>,
+        keySkillEntries: Immutable.Map<string, KeySkillEntry>,
         projects: Immutable.Map<string, Project>,
         skills: Immutable.Map<string, Skill>,
         lastEdited: Date,
@@ -81,6 +85,7 @@ export class Profile {
             .lastEdited(lastEdited)
             .lastEditedBy(lastEditedBy)
             .careerEntries(careerEntries)
+            .keySkillEntries(keySkillEntries)
 
     }
 
@@ -188,6 +193,17 @@ export class Profile {
         return res;
     }
 
+    private static parseKeySkills(apiKeySkills: Array<APIKeySkill>): Immutable.Map<string, KeySkillEntry> {
+        let res: Immutable.Map<string, KeySkillEntry> = Immutable.Map<string, KeySkillEntry>();
+        apiKeySkills.forEach(apiKeySkill => {
+            if(!isNullOrUndefined(apiKeySkill)) {
+                let keySkill: KeySkillEntry = KeySkillEntry.fromAPI(apiKeySkill);
+                res = res.set(keySkill.id(), keySkill);
+            }
+        });
+        return res;
+    }
+
 
     // FIXME do not require database anymore, or refactor database so it doesn't contain
     // FIXME this profile anymore.
@@ -235,6 +251,11 @@ export class Profile {
             careerEntries.push(careerEntry.toAPI(database.careers()));
         });
 
+        let keySkillEntries: Array<APIKeySkill> = [];
+        this.keySkillEntries().forEach(keySkill => {
+            keySkillEntries.push(keySkill.toAPI(database.keySkills()));
+        });
+
 
         let res: APIProfile = {
             id: this.id(),
@@ -248,7 +269,8 @@ export class Profile {
             projects: projects,
             skills: skills,
             lastEdited: null,
-            careerEntries: careerEntries
+            careerEntries: careerEntries,
+            keySkillEntries: keySkillEntries
         };
         console.log('Serialized profile:', res);
         return res;
@@ -270,6 +292,7 @@ export class Profile {
             Profile.parseEducationEntries(profile.education),
             Profile.parseLanguageSkills(profile.languages),
             Profile.parseQualficiationEntries(profile.qualification),
+            Profile.parseKeySkills(profile.keySkillEntries),
             Profile.parseProjects(profile.projects),
             Profile.parseSkills(profile.skills),
             new Date(profile.lastEdited),
@@ -326,6 +349,7 @@ export class Profile {
             Immutable.Map<string, EducationEntry>(),
             Immutable.Map<string, LanguageSkill>(),
             Immutable.Map<string, QualificationEntry>(),
+            Immutable.Map<string, KeySkillEntry>(),
             Immutable.Map<string, Project>(),
             Immutable.Map<string, Skill>(),
             new Date(), //FIXME

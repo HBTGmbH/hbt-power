@@ -51,6 +51,8 @@ export class NameEntityUtil {
                 return "PROJECT";
             case ProfileElementType.CareerEntry:
                 return "CAREER";
+            case ProfileElementType.KeySkill:
+                return "KEY_SKILL";
         }
     }
 }

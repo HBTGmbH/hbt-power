@@ -18,6 +18,7 @@ import {getProfileImageLocation} from '../../../API_CONFIG';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
 import {Careers} from './elements/career/career_module';
+import {KeySkills} from './elements/keyskill/keySkill_module';
 
 
 interface ProfileProps {
@@ -132,6 +133,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             </div>
                         </div>
                         <div className="row">
+                            <div className="col-md-6">
+                                <KeySkills/>
+                            </div>
                             <div className="col-md-6">
                                 <Careers/>
                             </div>

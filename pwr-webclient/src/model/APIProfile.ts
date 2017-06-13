@@ -43,6 +43,11 @@ export interface APICareerEntry {
     nameEntity: APINameEntity;
 }
 
+export interface APIKeySkill {
+    id: number;
+    nameEntity: APINameEntity;
+}
+
 // SECTORS //
 export interface APISectorEntry {
     id: number;
@@ -78,12 +83,14 @@ export interface APIProfile {
     lastEdited: string;
     trainingEntries: Array<APITrainingEntry>;
     careerEntries: Array<APICareerEntry>;
+    keySkillEntries: Array<APIKeySkill>;
     languages: Array<APILanguageSkill>;
     qualification: Array<APIQualificationEntry>;
     education: Array<APIEducationStep>;
     sectors: Array<APISectorEntry>;
     projects: Array<APIProject>;
     skills: Array<APISkill>;
+
 }
 
 export interface APIProfileUpdateResponse {

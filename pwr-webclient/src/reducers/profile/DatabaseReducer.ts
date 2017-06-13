@@ -82,6 +82,8 @@ export class DatabaseReducer {
                 return database.languages(database.languages().set(entity.id(), entity));
             case ProfileElementType.CareerEntry:
                 return database.careers(database.careers().set(entity.id(), entity));
+            case ProfileElementType.KeySkill:
+                return database.keySkills(database.keySkills().set(entity.id(), entity));
             default:
                 throw error("Unknown switch value " + ProfileElementType[type]);
         }
