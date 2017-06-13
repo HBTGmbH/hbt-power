@@ -49,6 +49,8 @@ export class NameEntityUtil {
                 return "EDUCATION";
             case ProfileElementType.Project:
                 return "PROJECT";
+            case ProfileElementType.CareerEntry:
+                return "CAREER";
         }
     }
 }

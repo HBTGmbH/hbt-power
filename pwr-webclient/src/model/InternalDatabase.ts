@@ -60,6 +60,9 @@ export class InternalDatabase {
     public get qualifications() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
+    public get careers() {return doop<Immutable.Map<string, NameEntity>, this>();}
+
+    @doop
     public get companies() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     @doop
@@ -82,6 +85,7 @@ export class InternalDatabase {
         languages: Immutable.Map<string, NameEntity>,
         qualifications: Immutable.Map<string, NameEntity>,
         sectors:  Immutable.Map<string, NameEntity>,
+        careers: Immutable.Map<string, NameEntity>,
         companies: Immutable.Map<string, NameEntity>,
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: ConsultantInfo,
@@ -100,6 +104,7 @@ export class InternalDatabase {
             .projectRoles(projectRoles)
             .loggedInUser(loggedInUser)
             .degrees(degrees)
+            .careers(careers)
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -109,6 +114,7 @@ export class InternalDatabase {
             ['BASIC', 'ADVANCED', 'BUSINESS_FLUENT', 'NATIVE'],
             Profile.createDefault(),
             Immutable.Map<string, ViewProfile>(),
+            Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
@@ -139,6 +145,8 @@ export class InternalDatabase {
             case ProfileElementType.TrainingEntry:
                 lookup = this.trainings();
                 break;
+            case ProfileElementType.CareerEntry:
+                lookup = this.careers();
             default:
                 throw Error('unknown NameEntityType.');
         }
@@ -186,6 +194,7 @@ export class InternalDatabase {
            qualifications = qualifications.set(q.id(), q);
         });
         console.info('...done.');
+
         console.info('Parsing trainings...');
         let trainings = this.trainings();
         profileFromAPI.trainingEntries.forEach(trainingEntry => {
@@ -193,6 +202,7 @@ export class InternalDatabase {
             trainings = trainings.set(training.id(), training);
         });
         console.info('...done.');
+
         console.info('Parsing educations...');
         let educations = this.educations();
         profileFromAPI.education.forEach(educationEntry => {
@@ -200,6 +210,7 @@ export class InternalDatabase {
             educations = educations.set(education.id(), education);
         });
         console.info('...done.');
+
         console.info('Parsing sectorEntries...');
         let sectors = this.sectors();
         profileFromAPI.sectors.forEach(sectorEntry => {
@@ -207,6 +218,15 @@ export class InternalDatabase {
             sectors = sectors.set(sector.id(), sector);
         });
         console.info('...done.');
+
+        console.info('Parsing careerEntries...');
+        let careers = this.careers();
+        profileFromAPI.careerEntries.forEach(careerEntry => {
+            let career: NameEntity = NameEntity.fromAPI(careerEntry.nameEntity);
+            careers = careers.set(career.id(), career);
+        });
+        console.info('...done.');
+
         console.info('Parsing companies...');
         let companies = this.companies();
         profileFromAPI.projects.forEach(project => {
@@ -236,7 +256,8 @@ export class InternalDatabase {
             .qualifications(qualifications)
             .sectors(sectors)
             .companies(companies)
-            .projectRoles(projectRoles);
+            .projectRoles(projectRoles)
+            .careers(careers);
     }
 
 

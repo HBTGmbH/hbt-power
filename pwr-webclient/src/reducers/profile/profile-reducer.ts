@@ -11,8 +11,9 @@ import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
 import {Skill} from '../../model/Skill';
-import {isNull, isNullOrUndefined} from 'util';
+import {error, isNull, isNullOrUndefined} from 'util';
 import {Project} from '../../model/Project';
+import {CareerEntry} from '../../model/CareerEntry';
 export class ProfileReducer {
 
     private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
@@ -38,8 +39,12 @@ export class ProfileReducer {
                 return profile.languageSkills(profile.languageSkills().set(lEntry.id(), lEntry));
 
             }
+            case ProfileElementType.CareerEntry: {
+                let cEntry: CareerEntry = entry as CareerEntry;
+                return profile.careerEntries(profile.careerEntries().set(entry.id(), entry));
+            }
             default:
-                return profile;
+                throw error("Unknown switch value " + ProfileElementType[entryType]);
         }
     }
 
@@ -63,8 +68,10 @@ export class ProfileReducer {
                 return profile.qualificationEntries(profile.qualificationEntries().remove(action.elementId));
             case ProfileElementType.LanguageEntry:
                 return profile.languageSkills(profile.languageSkills().remove(action.elementId));
+            case ProfileElementType.CareerEntry:
+                return profile.careerEntries(profile.careerEntries().remove(action.elementId));
             default:
-                return profile;
+                throw error("Unknown switch value " + ProfileElementType[action.elementType]);
         }
     }
 
@@ -86,8 +93,11 @@ export class ProfileReducer {
             case ProfileElementType.EducationEntry:
                 entry = EducationEntry.createNew();
                 break;
-            default:
+            case ProfileElementType.CareerEntry:
+                entry = CareerEntry.createNew();
                 break;
+            default:
+                throw error("Unknown switch value " + ProfileElementType[action.entryType]);
         }
         return ProfileReducer.updateEntry(profile, entry, action.entryType);
     }

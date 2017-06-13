@@ -17,6 +17,7 @@ import {SkillTree} from './elements/skills/skilltree-module';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
+import {Careers} from './elements/career/career_module';
 
 
 interface ProfileProps {
@@ -128,6 +129,11 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             </div>
                             <div className="col-md-6">
                                 <Sectors/>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-6">
+                                <Careers/>
                             </div>
                         </div>
                     </Tab>

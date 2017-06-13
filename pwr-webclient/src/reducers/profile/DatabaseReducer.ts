@@ -1,5 +1,5 @@
 import {APIRequestType, ProfileElementType, RequestStatus} from '../../Store';
-import {isNullOrUndefined} from 'util';
+import {error, isNullOrUndefined} from 'util';
 import {
     AbstractAction, AddSkillAction,
     ChangeStringValueAction,
@@ -80,8 +80,10 @@ export class DatabaseReducer {
                 return database.qualifications(database.qualifications().set(entity.id(), entity));
             case ProfileElementType.LanguageEntry:
                 return database.languages(database.languages().set(entity.id(), entity));
+            case ProfileElementType.CareerEntry:
+                return database.careers(database.careers().set(entity.id(), entity));
             default:
-                return database;
+                throw error("Unknown switch value " + ProfileElementType[type]);
         }
     }
 

@@ -36,6 +36,13 @@ export interface APITrainingEntry {
     nameEntity: APINameEntity;
 }
 
+export interface APICareerEntry {
+    id: number;
+    startDate: string;
+    endDate: string;
+    nameEntity: APINameEntity;
+}
+
 // SECTORS //
 export interface APISectorEntry {
     id: number;
@@ -70,6 +77,7 @@ export interface APIProfile {
     currentPosition: string;
     lastEdited: string;
     trainingEntries: Array<APITrainingEntry>;
+    careerEntries: Array<APICareerEntry>;
     languages: Array<APILanguageSkill>;
     qualification: Array<APIQualificationEntry>;
     education: Array<APIEducationStep>;

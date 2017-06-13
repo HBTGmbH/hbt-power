@@ -34,7 +34,8 @@ export enum ProfileElementType {
     EducationEntry,
     QualificationEntry,
     LanguageEntry,
-    Project
+    Project,
+    CareerEntry
 }
 
 
