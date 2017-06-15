@@ -94,6 +94,7 @@ export class InternalDatabase {
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: ConsultantInfo,
         degrees: Immutable.List<string>,
+        activeViewProfileId: string
 ) {
         return this.APIRequestStatus(apiRequestStatus)
             .languageLevels(languageLevels)
@@ -109,7 +110,8 @@ export class InternalDatabase {
             .loggedInUser(loggedInUser)
             .degrees(degrees)
             .careers(careers)
-            .keySkills(keySkills);
+            .keySkills(keySkills)
+            .activeViewProfileId(activeViewProfileId)
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -129,7 +131,8 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             null,
-            Immutable.List<string>(['Bachelor', 'Master', 'Doktor'])
+            Immutable.List<string>(['Bachelor', 'Master', 'Doktor', 'Diplom']),
+            null
         );
     }
 

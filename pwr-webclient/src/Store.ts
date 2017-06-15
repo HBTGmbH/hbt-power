@@ -1,5 +1,6 @@
 import {InternalDatabase} from './model/InternalDatabase';
 import {AdminState} from './model/admin/AdminState';
+import {StatisticsStore} from './model/statistics/StatisticsStore';
 
 /**
  * State encapsulating all consultants.
@@ -44,6 +45,7 @@ export enum ProfileElementType {
 
 export interface ApplicationState {
     databaseReducer: InternalDatabase;
-    adminReducer: AdminState
+    adminReducer: AdminState;
+    statisticsReducer: StatisticsStore;
 }
 

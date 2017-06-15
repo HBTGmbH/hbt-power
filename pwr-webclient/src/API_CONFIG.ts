@@ -93,3 +93,11 @@ export function postDuplicateViewProfile(id: string): string {
 export function getProfileImageLocation(initials: string): string {
     return "/img/profile_pictures/" + initials + ".png"
 }
+
+export function getSkillUsages(): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/metrics/skill/most_used";
+}
+
+export function getProfileStatistics(initials: string): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/metrics/skill/common/" + initials;
+}

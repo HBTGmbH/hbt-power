@@ -26,6 +26,7 @@ import {ActionType} from '../ActionType';
 import {NameEntityUtil} from '../../utils/NameEntityUtil';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 
 export class ProfileAsyncActionCreator {
 
@@ -183,6 +184,7 @@ export class ProfileAsyncActionCreator {
                 });
                 dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
                 dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
+                dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.FailLogin());

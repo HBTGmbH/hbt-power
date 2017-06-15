@@ -3,7 +3,10 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ApplicationState, ProfileElementType} from '../../../../../Store';
-import {AutoComplete, Card, CardActions, CardHeader, CardMedia, DatePicker, Dialog, IconButton} from 'material-ui';
+import {
+    AutoComplete, Card, CardActions, CardHeader, CardMedia, DatePicker, Dialog, FontIcon,
+    IconButton, TextField
+} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {CareerEntry} from '../../../../../model/CareerEntry';
@@ -121,6 +124,42 @@ class CareerEntryDialogModule extends React.Component<
         this.closeDialog();
     };
 
+    private getEndDateButtonIconName = () => {
+        if(isNullOrUndefined(this.state.careerEntry.endDate())) {
+            return "date_range";
+        }
+        return "today";
+    };
+
+    private handleEndDateButtonClick = () => {
+        if(isNullOrUndefined(this.state.careerEntry.endDate())) {
+            this.changeEndDate(null, this.props.careerEntry.endDate());
+        } else {
+            this.changeEndDate(null, null);
+        }
+    };
+
+    private renderEndDateChoice = () => {
+        if(isNullOrUndefined(this.state.careerEntry.endDate())) {
+            return <TextField
+                style={{width: "80%", float: "left"}}
+                floatingLabelText={PowerLocalize.get('End')}
+                disabled={true}
+                value={PowerLocalize.get("Today")}
+            />
+        } else {
+            return <DatePicker
+                style={{width: "80%", float: "left"}}
+                floatingLabelText={PowerLocalize.get('End')}
+                id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
+                container="inline"
+                value={this.state.careerEntry.endDate()}
+                onChange={this.changeEndDate}
+                formatDate={formatToShortDisplay}
+            />
+        }
+    };
+
     render() {
         return (<Dialog
             open={this.props.open}
@@ -144,19 +183,21 @@ class CareerEntryDialogModule extends React.Component<
                             />
                         </div>
                         <div className="col-md-5 col-sm-6">
-                            <DatePicker
-                                floatingLabelText={PowerLocalize.get('End')}
-                                id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
-                                container="inline"
-                                value={this.state.careerEntry.endDate()}
-                                onChange={this.changeEndDate}
-                                formatDate={formatToShortDisplay}
-                            />
+                            <IconButton
+                                style={{width: "20%", float:"left", marginTop: "20px"}}
+                                iconClassName="material-icons"
+                                onClick={this.handleEndDateButtonClick}
+                            >
+                                {this.getEndDateButtonIconName()}
+                            </IconButton>
+                            {this.renderEndDateChoice()}
+
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+
                             <AutoComplete
                                 floatingLabelText={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
                                 id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}

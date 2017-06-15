@@ -4,6 +4,7 @@ import {APICareerEntry, APIEducationStep} from './APIProfile';
 import {EducationEntry} from './EducationEntry';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
+import {isNullOrUndefined} from 'util';
 @doop
 export class CareerEntry {
     /**
@@ -51,7 +52,7 @@ export class CareerEntry {
         return new CareerEntry(
             String(apiCareer.id),
             new Date(apiCareer.startDate),
-            new Date(apiCareer.endDate),
+            isNullOrUndefined(apiCareer.endDate) ? null : new Date(apiCareer.endDate),
             String(apiCareer.nameEntity.id),
             false);
     }
@@ -70,7 +71,7 @@ export class CareerEntry {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             startDate: this.startDate().toISOString(),
-            endDate: this.endDate().toISOString(),
+            endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate().toISOString(),
             nameEntity: this.nameEntityId() == null ? null : careers.get(this.nameEntityId()).toAPI()
         }
     }

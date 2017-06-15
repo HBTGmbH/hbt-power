@@ -1,4 +1,6 @@
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
+import {isNullOrUndefined} from 'util';
+import {PowerLocalize} from '../localization/PowerLocalizer';
 const optionsShortDisplay: DateTimeFormatOptions = {
     year: "numeric",
     month: "short"
@@ -7,12 +9,13 @@ const optionsShortDisplay: DateTimeFormatOptions = {
 const optionsTimeOnly: DateTimeFormatOptions = {
     hour: "numeric",
     minute: "numeric"
-}
+};
 
 const format: Intl.DateTimeFormat = new Intl.DateTimeFormat("de-De", optionsShortDisplay);
 const formatTimeOnly:Intl.DateTimeFormat = new Intl.DateTimeFormat("de-DE", optionsTimeOnly);
 
 export function formatToShortDisplay(date: Date) {
+    if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
     return format.format(date);
 }
 

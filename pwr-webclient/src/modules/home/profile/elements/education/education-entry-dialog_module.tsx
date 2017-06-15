@@ -72,6 +72,11 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
             educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.nameEntityId()),
             entry: this.props.educationEntry,
         };
+        if(isNullOrUndefined(this.state.entry.degree())) {
+            this.setState({
+                entry: this.state.entry.degree(PowerLocalize.get("None"))
+            })
+        }
     }
 
     private getEducationEntryName = (id: string) => {
@@ -138,6 +143,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         let name: string = this.state.educationAutoComplete;
         let education: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.educations);
         let educationEntry: EducationEntry = this.state.entry;
+        if(educationEntry.degree() == PowerLocalize.get("None")) educationEntry.degree(null);
         if(isNullOrUndefined(education)) {
             education = NameEntity.createNew(name);
         }
@@ -193,7 +199,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     {
                                         this.props.degrees.map((degree,key) => <MenuItem key={key} value={degree} primaryText={degree}/>)
                                     }
-                                    <MenuItem value={null} primaryText={PowerLocalize.get('None')}/>
+                                    <MenuItem value={PowerLocalize.get('None')} primaryText={PowerLocalize.get('None')}/>
                                 </SelectField>
                             </div>
                             <div className="col-md-5 col-sm-6">

@@ -30,6 +30,7 @@ import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import * as Cookies from 'js-cookie';
 import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
 import {UnderConstruction} from './modules/general/UnderConstruction.';
+import {SkillStatistics} from './modules/admin/statistics/skill-statistics_module';
 
 injectTapEventPlugin();
 
@@ -68,7 +69,7 @@ export class Paths {
     public static readonly ADMIN_TRASHBOX = "/admin/home/trashbox";
     public static readonly ADMIN_CONSULTANTS = "/admin/home/consultants";
     public static readonly ADMIN_LOGIN = "/login";
-
+    public static readonly ADMIN_STATISTICS_SKILL = "/admin/home/statistics/skills";
     public static readonly APP_ROOT = "/";
 }
 
@@ -89,6 +90,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
                 <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid} />
                 <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
+                <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics} />
             </Route>
         </Router>)
     }

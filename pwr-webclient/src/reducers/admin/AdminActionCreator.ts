@@ -13,12 +13,15 @@ import {
     getNotificationTrashAPIString, postConsultantActionString
 } from '../../API_CONFIG';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
-import {RequestStatus} from '../../Store';
+import {ApplicationState, RequestStatus} from '../../Store';
 import {Paths} from '../../index';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {APIConsultant} from '../../model/APIProfile';
 import {ProfileAsyncActionCreator} from '../profile/ProfileAsyncActionCreator';
+import {StatisticsReducer} from '../statistics/StatisticsReducer';
+import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
+import {AdminReducer} from './AdminReducer';
 
 export class AdminActionCreator {
     public static RequestNotifications(): AbstractAction {
@@ -138,6 +141,13 @@ export class AdminActionCreator {
         return {
             type: ActionType.ReceiveSingleConsultant,
             consultant: consultant
+        }
+    }
+
+    public static AsyncNavigateToStatistics() {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
+            dispatch(StatisticsActionCreator.AsyncRequestSkillUsages());
+            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_STATISTICS_SKILL));
         }
     }
 

@@ -13,6 +13,11 @@ body {
   float: none;
 }
 
+.wordCloudContainer {
+  border-radius: 25px;
+  width: 400px;
+}
+
 .margin-2px {
   margin: 2px;
 }
@@ -28,6 +33,7 @@ body {
 .vertical-align {
   display: flex !important;
   align-items: center;
+  justify-content: center;
 }
 .indentedSkillCategory {
   margin-left: 20px;

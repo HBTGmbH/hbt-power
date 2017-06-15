@@ -7,7 +7,7 @@ import {
     CardActions,
     CardHeader,
     CardText,
-    Dialog,
+    Dialog, Divider,
     FontIcon,
     GridList,
     GridTile,
@@ -22,6 +22,8 @@ import {Profile} from '../../model/Profile';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {ProfileElement} from './profile/profile-element_module';
+import {ProfileStatistics} from './profile-statistics_module';
 
 /**
  * Properties that are managed by react-redux.
@@ -150,13 +152,15 @@ class PowerOverviewModule extends React.Component<
             <div className="row">
                 <div className="col-md-12">
                         <Card>
-                            <CardHeader
-                                title="Stammdaten"
-                                subtitle="Übersicht"
-                            />
                             <CardText>
-                                <h5>Letzte Aktualisierung:</h5>
+                                <h3>Stammdaten</h3>
+                            </CardText>
+                            <CardText>
+                                <h4>Letzte Aktualisierung:</h4>
                                 {this.props.profile.lastEdited().toLocaleString()}
+                            </CardText>
+                            <CardText>
+                                <ProfileStatistics/>
                             </CardText>
                             <CardActions>
                                 <RaisedButton

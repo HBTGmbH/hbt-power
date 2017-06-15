@@ -51,6 +51,7 @@ interface AdminClientDispatch {
     navigateToTrashbox(user: string, pass: string): void;
     navigateToInbox(user: string, pass: string): void;
     navigateToConsultants(): void;
+    navigateToSkillStatistics(): void;
     logOutAdmin(): void;
 }
 
@@ -73,6 +74,7 @@ class AdminClientModule extends React.Component<
             navigateToInbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass))},
             navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass))},
             navigateToConsultants: () => {dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS))},
+            navigateToSkillStatistics: () => {dispatch(AdminActionCreator.AsyncNavigateToStatistics())},
             logOutAdmin: () => {dispatch(AdminActionCreator.LogOutAdmin())}
         };
     }
@@ -142,6 +144,20 @@ class AdminClientModule extends React.Component<
                                     primaryText="Berater"
                                     leftIcon={<FontIcon className="material-icons">people</FontIcon>}
                                     onClick={this.props.navigateToConsultants}
+                                >
+                                </ListItem>
+                                <ListItem
+                                    primaryText={PowerLocalize.get("AdminClient.Menu.Statistics")}
+                                    leftIcon={<FontIcon className="material-icons">insert_chart</FontIcon>}
+                                    open={true}
+                                    nestedItems={[
+                                        <ListItem
+                                            primaryText={PowerLocalize.get("AdminClient.Menu.Statistics.Skills")}
+                                            leftIcon={<FontIcon className="material-icons">palette</FontIcon>}
+                                            key="AdminClient.Menu.Statistics.Skills"
+                                            onClick={this.props.navigateToSkillStatistics}
+                                        />
+                                    ]}
                                 >
                                 </ListItem>
                             </List>

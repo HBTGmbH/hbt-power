@@ -2,13 +2,12 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {AppBar, Avatar, FlatButton, IconButton, IconMenu, ListItem, RaisedButton} from 'material-ui';
+import {AppBar, FlatButton, IconButton, IconMenu, ListItem} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
 import {Link} from 'react-router';
-import {getProfileImageLocation} from '../../API_CONFIG';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Paths} from '../../index';
@@ -16,6 +15,7 @@ import {Paths} from '../../index';
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
     loggedInAsAdmin: boolean;
+    viewSelected: boolean;
 }
 
 /**
@@ -52,7 +52,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps) : ToolbarProps {
         return {
             loggedInUser: state.databaseReducer.loggedInUser(),
-            loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS
+            loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
+            viewSelected: !isNullOrUndefined(state.databaseReducer.activeViewProfileId())
         };
     }
 
@@ -93,7 +94,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         >
             <Link to="/app/home"><ListItem primaryText={PowerLocalize.get('Menu.Home')} /></Link>
             <Link to="/app/profile"><ListItem primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
-            <Link to="/app/view"><ListItem primaryText={PowerLocalize.get('Menu.Views')} /></Link>
+            {
+                this.props.viewSelected ? <Link to="/app/view"><ListItem primaryText={PowerLocalize.get('Menu.View')} /></Link> : null
+            }
             <Link to="/app/reports"><ListItem primaryText={PowerLocalize.get('Menu.Reports')} /></Link>
         </IconMenu>);
     };

@@ -40,7 +40,7 @@ export enum ActionType {
     ChangeBirthDate,
     RequestConsultants,
     ReceiveConsultants,
-        // == Single ConsultantProfile Actions == //
+    // == Single ConsultantProfile Actions == //
     ChangeAbstract,
     // == Admin Actions
     RequestNotifications,
@@ -68,4 +68,8 @@ export enum ActionType {
          */
     ReceiveAllConsultants,
     ReceiveSingleConsultant,
+    // == Statistics
+    ReceiveSkillUsageMetrics,
+    ReceiveRelativeSkillUsageMetrics,
+    ReceiveProfileSkillMetrics
 }

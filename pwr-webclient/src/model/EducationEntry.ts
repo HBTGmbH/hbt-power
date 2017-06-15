@@ -3,6 +3,7 @@ import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {doop} from 'doop';
+import {isNullOrUndefined} from 'util';
 
 
 @doop
@@ -73,7 +74,7 @@ export class EducationEntry {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             startDate: this.startDate().toISOString(),
-            endDate: this.endDate().toISOString(),
+            endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate().toISOString(),
             nameEntity: this.nameEntityId() == null ? null : educations.get(this.nameEntityId()).toAPI(),
             degree: this.degree()
         }
