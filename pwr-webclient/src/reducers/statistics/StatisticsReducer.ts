@@ -1,7 +1,7 @@
 import {StatisticsStore} from '../../model/statistics/StatisticsStore';
 import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
-import {ReceiveProfileSkillMetrics, ReceiveSkillUsageMetricsAction} from './statistics-actions';
+import {ReceiveNetworkAction, ReceiveProfileSkillMetrics, ReceiveSkillUsageMetricsAction} from './statistics-actions';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import * as Immutable from 'immutable';
 import {ActionType} from '../ActionType';
@@ -22,6 +22,10 @@ export class StatisticsReducer {
         return store.activeProfileMetric(action.metrics);
     }
 
+    public static ReceiveNetwork(store: StatisticsStore, action: ReceiveNetworkAction): StatisticsStore {
+        return store.network(action.network);
+    }
+
     public static reduce(store: StatisticsStore, action: AbstractAction) : StatisticsStore {
         console.log("Statistics Reducer called with action type " + ActionType[action.type]);
         if(isNullOrUndefined(store)) return StatisticsStore.createEmpty();
@@ -32,6 +36,8 @@ export class StatisticsReducer {
                 return StatisticsReducer.ReceiveSkillUsageMetrics(store, action as ReceiveSkillUsageMetricsAction);
             case ActionType.ReceiveProfileSkillMetrics:
                 return StatisticsReducer.ReceiveProfileSkillMetrics(store, action as ReceiveProfileSkillMetrics);
+            case ActionType.ReceiveNetwork:
+                return StatisticsReducer.ReceiveNetwork(store, action as ReceiveNetworkAction);
             default:
                 return store;
         }

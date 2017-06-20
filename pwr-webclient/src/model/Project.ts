@@ -4,6 +4,7 @@ import * as Immutable from 'immutable';
 import {NameEntity} from './NameEntity';
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {Skill} from './Skill';
+import {isNullOrUndefined} from 'util';
 
 @doop
 export class Project {
@@ -99,7 +100,7 @@ export class Project {
             id: this.isNew() ? null : Number(this.id()),
             description: this.description(),
             name: this.name(),
-            endDate: this.endDate(),
+            endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate(),
             startDate: this.startDate(),
             broker: companies.get(this.brokerId()).toAPI(),
             client: companies.get(this.endCustomerId()).toAPI(),
@@ -112,6 +113,14 @@ export class Project {
         let res: Immutable.List<string> = Immutable.List<string>();
         project.projectRoles.forEach(p => {
             res = res.push(String(p.id));
+        });
+        return res;
+    }
+
+    private static parseSkills(project: APIProject): Immutable.Set<string> {
+        let res = Immutable.Set<string>();
+        project.skills.forEach(skill => {
+            res = res.add(String(skill.id))
         });
         return res;
     }
@@ -136,12 +145,12 @@ export class Project {
             project.name,
             String(project.client.id),
             new Date(project.startDate),
-            new Date(project.endDate),
+            isNullOrUndefined(project.endDate) ? null : new Date(project.endDate),
             project.description,
             String(project.broker.id),
             Project.parseRoles(project),
             false,
-            Immutable.Set<string>()
+            Project.parseSkills(project)
         )
     }
 

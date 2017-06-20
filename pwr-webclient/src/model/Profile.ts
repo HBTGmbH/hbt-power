@@ -175,6 +175,7 @@ export class Profile {
     }
 
     private static parseSkills(skills: Array<APISkill>): Immutable.Map<string, Skill> {
+        skills.sort((a, b) => a.name.localeCompare(b.name));
         let res: Immutable.Map<string, Skill> = Immutable.Map<string, Skill>();
         skills.forEach(skill => {
             res = res.set(String(skill.id), Skill.fromAPI(skill));

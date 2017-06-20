@@ -63,7 +63,7 @@ class SkillTreeModule extends React.Component<
     constructor(props: SkillTreeProps& SkillTreeLocalProps& SkillTreeDispatch) {
         super(props);
         this.state = {
-            skills: props.skills
+            skills: this.props.skills
         };
     }
 

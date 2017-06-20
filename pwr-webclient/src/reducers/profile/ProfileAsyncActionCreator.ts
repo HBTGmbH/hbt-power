@@ -2,10 +2,10 @@ import * as redux from 'redux';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
     deleteViewProfileString,
-    getAllViewProfilesString,
+    getAllViewProfilesString, getCareerSuggestionAPIString,
     getCompanySuggestionsAPIString,
     getConsultantApiString,
-    getEducationSuggestionAPIString,
+    getEducationSuggestionAPIString, getKeySkillsSuggestionAPIString,
     getLangSuggestionAPIString,
     GetPostMutateViewProfile,
     getPostViewProfileAPIString,
@@ -54,10 +54,12 @@ export class ProfileAsyncActionCreator {
             dispatch(ProfileAsyncActionCreator.requestQualifications());
             dispatch(ProfileAsyncActionCreator.requestLanguages());
             dispatch(ProfileAsyncActionCreator.requestEducations());
-            dispatch(ProfileAsyncActionCreator.requestCareers());
+            dispatch(ProfileAsyncActionCreator.requestTrainings());
             dispatch(ProfileAsyncActionCreator.requestSectors());
             dispatch(ProfileAsyncActionCreator.requestCompanies());
             dispatch(ProfileAsyncActionCreator.requestProjectRoles());
+            dispatch(ProfileAsyncActionCreator.requestKeySkills());
+            dispatch(ProfileAsyncActionCreator.requestCareers());
         }
     }
     /**
@@ -129,12 +131,12 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    public static requestCareers() {
+    public static requestTrainings() {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getTrainingSuggestionAPIString(),
-                APIRequestType.RequestCareers);
+                APIRequestType.RequestTrainings);
         };
     }
 
@@ -144,6 +146,25 @@ export class ProfileAsyncActionCreator {
                 dispatch,
                 getSectorsSuggestionAPIString(),
                 APIRequestType.RequestSectors);
+        };
+    }
+
+    public static requestKeySkills() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getKeySkillsSuggestionAPIString(),
+                APIRequestType.RequestKeySkills);
+        };
+    }
+
+
+    public static requestCareers() {
+        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
+                dispatch,
+                getCareerSuggestionAPIString(),
+                APIRequestType.RequestCareers);
         };
     }
 

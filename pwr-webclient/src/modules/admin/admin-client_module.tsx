@@ -52,6 +52,7 @@ interface AdminClientDispatch {
     navigateToInbox(user: string, pass: string): void;
     navigateToConsultants(): void;
     navigateToSkillStatistics(): void;
+    navigateToNetwork(): void;
     logOutAdmin(): void;
 }
 
@@ -75,7 +76,8 @@ class AdminClientModule extends React.Component<
             navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass))},
             navigateToConsultants: () => {dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS))},
             navigateToSkillStatistics: () => {dispatch(AdminActionCreator.AsyncNavigateToStatistics())},
-            logOutAdmin: () => {dispatch(AdminActionCreator.LogOutAdmin())}
+            logOutAdmin: () => {dispatch(AdminActionCreator.LogOutAdmin())},
+            navigateToNetwork: () => {dispatch(AdminActionCreator.AsyncNavigateToNetwork())}
         };
     }
 
@@ -156,6 +158,12 @@ class AdminClientModule extends React.Component<
                                             leftIcon={<FontIcon className="material-icons">palette</FontIcon>}
                                             key="AdminClient.Menu.Statistics.Skills"
                                             onClick={this.props.navigateToSkillStatistics}
+                                        />,
+                                        <ListItem
+                                            primaryText={PowerLocalize.get("AdminClient.Menu.Statistics.Network")}
+                                            leftIcon={<FontIcon className="material-icons">collections</FontIcon>}
+                                            key="AdminClient.Menu.Statistics.Network"
+                                            onClick={this.props.navigateToNetwork}
                                         />
                                     ]}
                                 >

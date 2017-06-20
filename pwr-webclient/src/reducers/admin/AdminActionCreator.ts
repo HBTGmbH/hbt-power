@@ -151,6 +151,13 @@ export class AdminActionCreator {
         }
     }
 
+    public static AsyncNavigateToNetwork() {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
+            dispatch(StatisticsActionCreator.AsyncRequestNetwork());
+            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_STATISTICS_NETWORK));
+        }
+    }
+
     public static AsyncRequestNotifications(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
@@ -363,7 +370,8 @@ export class AdminActionCreator {
                 }
             };
             axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
-                axios.get(response.data).then(function (response: AxiosResponse) {
+                console.log(response);
+                axios.get(response.headers.location).then(function (response: AxiosResponse) {
                     let res: APIConsultant = response.data;
                     dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(res)));
                 });

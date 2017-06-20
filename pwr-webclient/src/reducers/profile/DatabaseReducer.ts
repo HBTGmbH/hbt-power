@@ -171,11 +171,17 @@ export class DatabaseReducer {
             case APIRequestType.RequestQualifications:
                 newState = state.qualifications(DatabaseReducer.AddAPINameEntities(action.payload, state.qualifications()));
                 break;
-            case APIRequestType.RequestCareers:
+            case APIRequestType.RequestTrainings:
                 newState = state.trainings(DatabaseReducer.AddAPINameEntities(action.payload, state.trainings()));
                 break;
             case APIRequestType.RequestSectors:
                 newState = state.sectors(DatabaseReducer.AddAPINameEntities(action.payload, state.sectors()));
+                break;
+            case APIRequestType.RequestKeySkills:
+                newState = state.keySkills(DatabaseReducer.AddAPINameEntities(action.payload, state.keySkills()));
+                break;
+            case APIRequestType.RequestCareers:
+                newState = state.careers(DatabaseReducer.AddAPINameEntities(action.payload, state.careers()));
                 break;
             case APIRequestType.RequestProjectRoles:
                 newState = state.projectRoles(DatabaseReducer.AddAPINameEntities(action.payload, state.projectRoles()));

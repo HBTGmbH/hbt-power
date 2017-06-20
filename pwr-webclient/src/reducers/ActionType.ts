@@ -71,5 +71,6 @@ export enum ActionType {
     // == Statistics
     ReceiveSkillUsageMetrics,
     ReceiveRelativeSkillUsageMetrics,
-    ReceiveProfileSkillMetrics
+    ReceiveProfileSkillMetrics,
+    ReceiveNetwork
 }

@@ -11,8 +11,14 @@ const optionsTimeOnly: DateTimeFormatOptions = {
     minute: "numeric"
 };
 
+const optionsDayAndMonth : DateTimeFormatOptions = {
+    month: "short",
+    day: "2-digit"
+};
+
 const format: Intl.DateTimeFormat = new Intl.DateTimeFormat("de-De", optionsShortDisplay);
 const formatTimeOnly:Intl.DateTimeFormat = new Intl.DateTimeFormat("de-DE", optionsTimeOnly);
+const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat("de-DE", optionsDayAndMonth);
 
 export function formatToShortDisplay(date: Date) {
     if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
@@ -28,6 +34,6 @@ export function formatToMailDisplay(date: Date) {
     if(isOnSameDay(new Date(), date)) {
         return formatTimeOnly.format(date);
     } else {
-        return formatToShortDisplay(date);
+        return formatDayAndMonth.format(date);
     }
 }

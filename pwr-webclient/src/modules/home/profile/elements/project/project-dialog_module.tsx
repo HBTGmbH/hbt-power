@@ -22,6 +22,7 @@ import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Profile} from '../../../../../model/Profile';
 import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../../model/PwrConstants';
+import {isNullOrUndefined} from 'util';
 
 interface ProjectDialogProps {
     open: boolean;
@@ -168,12 +169,48 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
 
     };
 
+    private renderEndDateChoice = () => {
+        if(isNullOrUndefined(this.state.project.endDate())) {
+            return <TextField
+                style={{width: "80%", float: "left"}}
+                floatingLabelText={PowerLocalize.get('End')}
+                disabled={true}
+                value={PowerLocalize.get("Today")}
+            />
+        } else {
+            return <DatePicker floatingLabelText={PowerLocalize.get('Project.EndDate')}
+                               style={{width: "80%", float: "left"}}
+                               value={this.state.project.endDate()}
+                               onChange={this.changeEndDate}
+                               fullWidth={true}
+                               formatDate={formatToShortDisplay}
+            />
+        }
+    };
+
+    private getEndDateButtonIconName = () => {
+        if(isNullOrUndefined(this.state.project.endDate())) {
+            return "date_range";
+        }
+        return "today";
+    };
+
+    private handleEndDateButtonClick = () => {
+        if(isNullOrUndefined(this.state.project.endDate())) {
+            this.changeEndDate(null, new Date());
+        } else {
+            this.changeEndDate(null, null);
+        }
+    };
+
+
     public render () {
         return (
             <Dialog
                 open={this.props.open}
                 modal={false}
                 onRequestClose={this.props.onClose}
+                autoScrollBodyContent={true}
             >
                 <Card>
                     <CardHeader
@@ -203,12 +240,14 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                 />
                             </div>
                             <div className="col-md-5 col-sm-5 ">
-                                <DatePicker floatingLabelText={PowerLocalize.get('Project.EndDate')}
-                                            value={this.state.project.endDate()}
-                                            onChange={this.changeEndDate}
-                                            fullWidth={true}
-                                            formatDate={formatToShortDisplay}
-                                />
+                                <IconButton
+                                    style={{width: "20%", float:"left", marginTop: "20px"}}
+                                    iconClassName="material-icons"
+                                    onClick={this.handleEndDateButtonClick}
+                                >
+                                    {this.getEndDateButtonIconName()}
+                                </IconButton>
+                                {this.renderEndDateChoice()}
                             </div>
 
                         </div>

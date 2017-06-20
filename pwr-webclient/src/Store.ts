@@ -17,10 +17,12 @@ export enum RequestStatus {
 }
 
 export enum APIRequestType {
+    RequestCareers,
+    RequestKeySkills,
     RequestProjectRoles,
     RequestCompanies,
     RequestSectors,
-    RequestCareers,
+    RequestTrainings,
     RequestQualifications,
     RequestEducations,
     RequestProfile,

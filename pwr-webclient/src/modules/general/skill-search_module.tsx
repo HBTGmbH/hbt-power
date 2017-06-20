@@ -76,6 +76,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         return (
             <AutoComplete
                 id={this.props.id}
+                anchorOrigin={{horizontal: 'middle', vertical: 'top'}}
                 floatingLabelText={this.props.floatingLabelText}
                 dataSource={this.state.skills}
                 searchText={this.state.searchText}

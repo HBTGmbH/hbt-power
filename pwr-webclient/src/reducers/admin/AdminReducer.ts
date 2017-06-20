@@ -17,7 +17,11 @@ import {LoginStatus} from '../../model/LoginStatus';
 
 export class AdminReducer {
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotifcationsAction): AdminState {
-        let notifications = action.notifications.map(an => AdminNotification.fromAPI(an));
+        let notifications = action.notifications.map(an => AdminNotification.fromAPI(an)).sort((a, b) => {
+            if(a.occurrence() > b.occurrence()) return -1;
+            if(a.occurrence() == b.occurrence()) return 0;
+            return 1;
+        });
         return state.notifications(Immutable.List<AdminNotification>(notifications)).requestStatus(RequestStatus.Successful);
     }
 

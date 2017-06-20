@@ -54,6 +54,15 @@ export function getSectorsSuggestionAPIString(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/sectors";
 }
 
+export function getKeySkillsSuggestionAPIString(): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/keyskills";
+}
+
+export function getCareerSuggestionAPIString(): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/career";
+}
+
+
 export function getProjectRolesSuggestionAPIString(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/projectroles";
 }
@@ -100,4 +109,8 @@ export function getSkillUsages(): string {
 
 export function getProfileStatistics(initials: string): string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/metrics/skill/common/" + initials;
+}
+
+export function getProfileNetwork(): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/metrics/network";
 }

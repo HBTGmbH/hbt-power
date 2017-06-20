@@ -133,7 +133,7 @@ class CareerEntryDialogModule extends React.Component<
 
     private handleEndDateButtonClick = () => {
         if(isNullOrUndefined(this.state.careerEntry.endDate())) {
-            this.changeEndDate(null, this.props.careerEntry.endDate());
+            this.changeEndDate(null, new Date());
         } else {
             this.changeEndDate(null, null);
         }
