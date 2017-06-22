@@ -15,7 +15,7 @@ export class PowerClient extends React.Component<{}, {}> {
         return <div>
             <PowerToolbar/>
             <div className="row" style={{marginTop: "30px"}}>
-                <div className="col-md-9 col-md-offset-2">
+                <div className="col-md-10 col-md-offset-1">
                     {this.props.children}
                 </div>
             </div>

@@ -3,7 +3,7 @@ import {IconButton, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../../model/EducationEntry';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {formatToShortDisplay, formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {EducationEntryDialogModule} from './education-entry-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
@@ -111,12 +111,12 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                        {formatToShortDisplay(this.props.educationEntry.startDate())}
+                        {formatToYear(this.props.educationEntry.startDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {formatToShortDisplay(this.props.educationEntry.endDate())}
+                    {formatToYear(this.props.educationEntry.endDate())}
                     </div>
                 </td>
                 <td>

@@ -14,7 +14,7 @@ import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCr
 import injectTapEventPlugin = require('react-tap-event-plugin');
 import {PowerLogin} from './modules/power-login_module';
 import {Route, Router} from 'react-router';
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router';
 import {PowerOverview} from './modules/home/power-overview_module';
 import {ConsultantProfile} from './modules/home/profile/profile_module';
 import {ViewProfileCard} from './modules/home/view/view-profile_module';
@@ -32,6 +32,9 @@ import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module
 import {UnderConstruction} from './modules/general/UnderConstruction.';
 import {SkillStatistics} from './modules/admin/statistics/skill-statistics_module';
 import {ProfileNetwork} from './modules/admin/statistics/profile-network_module';
+import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
+import {PersonalizedNetwork} from './modules/home/statistics/personalized-network_module';
+import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_module';
 
 injectTapEventPlugin();
 
@@ -52,12 +55,13 @@ store.dispatch(ProfileAsyncActionCreator.requestTrainings());
 store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
+store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
-console.info("Current history location is ", browserHistory.getCurrentLocation());
+console.info('Current history location is ', browserHistory.getCurrentLocation());
 
 const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
 if(!isNullOrUndefined(storedInitials)) {
-    console.info("Cookie detected. Performing auto Log-In.");
+    console.info('Cookie detected. Performing auto Log-In.');
     // renew the cookie to hold another fixed period of time.
     Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
     store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
@@ -66,13 +70,13 @@ if(!isNullOrUndefined(storedInitials)) {
 }
 
 export class Paths {
-    public static readonly ADMIN_INBOX = "/admin/home/inbox";
-    public static readonly ADMIN_TRASHBOX = "/admin/home/trashbox";
-    public static readonly ADMIN_CONSULTANTS = "/admin/home/consultants";
-    public static readonly ADMIN_LOGIN = "/login";
-    public static readonly ADMIN_STATISTICS_SKILL = "/admin/home/statistics/skills";
-    public static readonly ADMIN_STATISTICS_NETWORK = "/admin/home/statistics/network";
-    public static readonly APP_ROOT = "/";
+    public static readonly ADMIN_INBOX = '/admin/home/inbox';
+    public static readonly ADMIN_TRASHBOX = '/admin/home/trashbox';
+    public static readonly ADMIN_CONSULTANTS = '/admin/home/consultants';
+    public static readonly ADMIN_LOGIN = '/login';
+    public static readonly ADMIN_STATISTICS_SKILL = '/admin/home/statistics/skills';
+    public static readonly ADMIN_STATISTICS_NETWORK = '/admin/home/statistics/network';
+    public static readonly APP_ROOT = '/';
 }
 
 @DragDropContext(HTML5Backend)
@@ -87,6 +91,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path="/app/profile" component={ConsultantProfile}/>
                 <Route path="/app/view" component={ViewProfileCard}/>
                 <Route path="/app/reports" component={UnderConstruction}/>
+                <Route path="/app/statistics/network" component={ProfileNetworkGraph}/>
             </Route>
             <Route path="/admin" component={AdminClient}>
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
@@ -95,7 +100,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics} />
                 <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork} />
             </Route>
-        </Router>)
+        </Router>);
     }
 }
 

@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {AppBar, FlatButton, IconButton, IconMenu, ListItem} from 'material-ui';
+import {AppBar, FlatButton, FontIcon, IconButton, IconMenu, ListItem, MenuItem} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -11,11 +11,13 @@ import {Link} from 'react-router';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Paths} from '../../index';
+import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
     loggedInAsAdmin: boolean;
     viewSelected: boolean;
+    statisticsAvailable: boolean;
 }
 
 /**
@@ -40,6 +42,7 @@ interface ToolbarLocalState {
 interface ToolbarDispatch {
     logOutUser(): void;
     backToAdmin(): void;
+    loadNetworkGraph(): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -53,7 +56,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return {
             loggedInUser: state.databaseReducer.loggedInUser(),
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
-            viewSelected: !isNullOrUndefined(state.databaseReducer.activeViewProfileId())
+            viewSelected: !isNullOrUndefined(state.databaseReducer.activeViewProfileId()),
+            statisticsAvailable: state.statisticsReducer.available()
         };
     }
 
@@ -65,7 +69,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             },
             backToAdmin: function() {
                 dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS));
-            }
+            },
+            loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork())
         };
     }
 
@@ -92,12 +97,36 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             anchorOrigin={{horizontal: 'left', vertical: 'top'}}
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
         >
-            <Link to="/app/home"><ListItem primaryText={PowerLocalize.get('Menu.Home')} /></Link>
-            <Link to="/app/profile"><ListItem primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
+            <Link to="/app/home"><MenuItem  primaryText={PowerLocalize.get('Menu.Home')} /></Link>
+            <Link to="/app/profile"><MenuItem  primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
             {
-                this.props.viewSelected ? <Link to="/app/view"><ListItem primaryText={PowerLocalize.get('Menu.View')} /></Link> : null
+                this.props.viewSelected ? <Link to="/app/view"><MenuItem  primaryText={PowerLocalize.get('Menu.View')} /></Link> : null
             }
-            <Link to="/app/reports"><ListItem primaryText={PowerLocalize.get('Menu.Reports')} /></Link>
+            <Link to="/app/reports"><MenuItem  primaryText={PowerLocalize.get('Menu.Reports')}/></Link>
+            {
+                this.props.statisticsAvailable ?
+                    <MenuItem
+                        primaryText={PowerLocalize.get('Menu.Statistics')}
+                        rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
+                        menuItems={[
+                            <Link to="/app/statistics/network">
+                                <MenuItem
+                                    key="Menu.Statistics.Network"
+                                    primaryText={PowerLocalize.get('Menu.Statistics.Network')}
+                                    onClick={this.props.loadNetworkGraph}
+                                />
+                            </Link>,
+                            <Link to="/app/statistics/clusterinfo">
+                                <MenuItem
+                                    key="Menu.Statistics.Network"
+                                    primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
+                                />
+                            </Link>
+                        ]}
+                    />
+                :
+                null
+            }
         </IconMenu>);
     };
 

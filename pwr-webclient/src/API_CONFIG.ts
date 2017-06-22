@@ -2,28 +2,32 @@ declare const POWER_API_HOST: string;
 
 declare const POWER_API_PORT: string;
 
-declare const POWER_API_SUFFIX: string;
-
 declare const POWER_API_SUFFIX_PROFILE: string;
 
+declare const POWER_API_HOST_STATISTICS: string;
+
+declare const POWER_API_SUFFIX_STATISTICS: string;
+
+declare const POWER_API_PORT_STATISTICS: string;
+
 export function getConsultantApiString(initials: string) : string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials;
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials;
 }
 
 export function getAdminAuthAPIString() : string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/admin";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/admin";
 }
 
 export function getAllConsultantsString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/consultants";
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants";
 }
 
 export function postConsultantActionString() : string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/consultants";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/consultants";
 }
 
 export function getNotificationAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/admin/notifications";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/admin/notifications";
 }
 
 export function getNotificationTrashAPIString(): string {
@@ -31,48 +35,48 @@ export function getNotificationTrashAPIString(): string {
 }
 
 export function getProfileAPIString(initials: string) : string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials;
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials;
 }
 
 export function getLangSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/suggestions/languages";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/suggestions/languages";
 }
 
 export function getEducationSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/educations";
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE  + "/suggestions/educations";
 }
 
 export function getQualificationSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/qualifications";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/qualifications";
 }
 
 export function getTrainingSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/trainings";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/trainings";
 }
 
 export function getSectorsSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/sectors";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/sectors";
 }
 
 export function getKeySkillsSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/keyskills";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/keyskills";
 }
 
 export function getCareerSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/career";
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE  + "/suggestions/career";
 }
 
 
 export function getProjectRolesSuggestionAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/projectroles";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/projectroles";
 }
 
 export function getCompanySuggestionsAPIString(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/suggestions/companies";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/companies";
 }
 
 export function getPostViewProfileAPIString(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
 }
 
 export function GetPostMutateViewProfile(id: string) : string {
@@ -80,15 +84,15 @@ export function GetPostMutateViewProfile(id: string) : string {
 }
 
 export function getViewProfileString(id: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/profiles/view/" + id;
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/view/" + id;
 }
 
 export function deleteViewProfileString(id: string, initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view/" + id;
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view/" + id;
 }
 
 export function getAllViewProfilesString(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
 }
 
 export function postEditViewProfileDetails(id: string): string {
@@ -99,18 +103,38 @@ export function postDuplicateViewProfile(id: string): string {
     return getViewProfileString(id);
 }
 
+export function postCreatePDFProfile(initials: string): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
+}
+
 export function getProfileImageLocation(initials: string): string {
     return "/img/profile_pictures/" + initials + ".png"
 }
 
-export function getSkillUsages(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE  + "/metrics/skill/most_used";
+export function getSkillUsagesAbsolute(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS +  "/statistics/skill/usage/absolute";
+}
+
+export function getSkillUsageRelative(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS +  "/statistics/skill/usage/relative";
 }
 
 export function getProfileStatistics(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/metrics/skill/common/" + initials;
+    return  POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/skill/common/" + initials;
 }
 
-export function getProfileNetwork(): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX + POWER_API_SUFFIX_PROFILE + "/metrics/network";
+export function getKMeansProfileNetwork(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/network/kmeans";
+}
+
+export function getKMedProfileNetwork(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/network/kmed";
+}
+
+export function headStatisticsServiceAvailable(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics";
+}
+
+export function getConsultantClusterInfo(initials: string): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/network/consultant/" + initials;
 }

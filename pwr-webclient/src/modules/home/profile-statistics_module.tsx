@@ -7,12 +7,14 @@ import {isNullOrUndefined} from 'util';
 import {Subheader} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Profile} from '../../model/Profile';
+import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 
 const Recharts = require('recharts');
 
 interface ProfileStatisticsProps {
     profileSkillMetrics: ProfileSkillMetrics;
     profile: Profile;
+    available: boolean;
 }
 
 interface ProfileStatisticsLocalProps {
@@ -35,33 +37,34 @@ class ProfileStatisticsModule extends React.Component<
     static mapStateToProps(state: ApplicationState, localProps: ProfileStatisticsLocalProps): ProfileStatisticsProps {
         return {
             profileSkillMetrics: state.statisticsReducer.activeProfileMetric(),
-            profile: state.databaseReducer.profile()
-        }
+            profile: state.databaseReducer.profile(),
+            available: state.statisticsReducer.available()
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileStatisticsDispatch {
-        return {}
+        return {};
     }
 
     private renderCommonSkills = () => {
-        let commonSkills: String = "";
-        let prefix = "";
+        let commonSkills: String = '';
+        let prefix = '';
         this.props.profileSkillMetrics.commonSkills().forEach(com => {
             commonSkills += prefix;
             commonSkills += com;
-            prefix = " ,";
+            prefix = ' ,';
         });
         return commonSkills;
     };
 
     private renderMissingSkills = () => {
-        if(this.props.profileSkillMetrics.missingSkills().size == 0) return PowerLocalize.get("None");
-        let missingSkills: String = "";
-        let prefix = "";
+        if(this.props.profileSkillMetrics.missingSkills().size == 0) return PowerLocalize.get('None');
+        let missingSkills: String = '';
+        let prefix = '';
         this.props.profileSkillMetrics.missingSkills().forEach(com => {
             missingSkills += prefix;
             missingSkills += com;
-            prefix = " ,";
+            prefix = ' ,';
         });
         return missingSkills;
     };
@@ -75,17 +78,17 @@ class ProfileStatisticsModule extends React.Component<
         let careerCount = this.props.profile.careerEntries().count();
         let keySkillCount = this.props.profile.keySkillEntries().count();
         const data = [
-            {name: PowerLocalize.get("Language.Abbreviation"),value: langCount},
-            {name: PowerLocalize.get("Sector.Abbreviation"),value: secCount},
-            {name: PowerLocalize.get("Qualification.Abbreviation"),value: qualCount},
-            {name: PowerLocalize.get("Education.Abbreviation"),value: edCount},
-            {name: PowerLocalize.get("Training.Abbreviation"),value: trainCount},
-            {name: PowerLocalize.get("Career.Abbreviation"),value: careerCount},
-            {name: PowerLocalize.get("KeySkill.Abbreviation"),value: keySkillCount},
+            {name: PowerLocalize.get('Language.Abbreviation'),value: langCount},
+            {name: PowerLocalize.get('Sector.Abbreviation'),value: secCount},
+            {name: PowerLocalize.get('Qualification.Abbreviation'),value: qualCount},
+            {name: PowerLocalize.get('Education.Abbreviation'),value: edCount},
+            {name: PowerLocalize.get('Training.Abbreviation'),value: trainCount},
+            {name: PowerLocalize.get('Career.Abbreviation'),value: careerCount},
+            {name: PowerLocalize.get('KeySkill.Abbreviation'),value: keySkillCount},
         ];
 
         return(
-            <Recharts.BarChart style={{width: "100% !important"}} width={700} height={200} layout="horizontal" data={data}>
+            <Recharts.BarChart style={{width: '100% !important'}} width={700} height={200} layout="horizontal" data={data}>
                 <Recharts.XAxis dataKey="name"/>
                 <Recharts.YAxis />
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
@@ -97,10 +100,13 @@ class ProfileStatisticsModule extends React.Component<
                     layout="horizontal"
                 />
             </Recharts.BarChart>
-        )
+        );
     };
 
     render() {
+        if(!this.props.available) {
+            return <NoStatisticsAvailable/>;
+        }
         if(isNullOrUndefined(this.props.profileSkillMetrics))
             return <div/>;
         return (<div>

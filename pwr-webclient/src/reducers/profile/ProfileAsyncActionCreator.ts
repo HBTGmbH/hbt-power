@@ -14,7 +14,7 @@ import {
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
     getTrainingSuggestionAPIString,
-    getViewProfileString,
+    getViewProfileString, postCreatePDFProfile,
     postDuplicateViewProfile,
     postEditViewProfileDetails
 } from '../../API_CONFIG';
@@ -206,6 +206,7 @@ export class ProfileAsyncActionCreator {
                 dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
                 dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
+                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.FailLogin());
@@ -381,6 +382,28 @@ export class ProfileAsyncActionCreator {
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
         };
+    }
+
+    public static generatePDFProfile(initials: string, viewProfileId: string) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            let config: AxiosRequestConfig = {
+                params: {
+                    viewid: viewProfileId
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            axios.post(postCreatePDFProfile(initials), null, config).then((response: AxiosResponse) => {
+                let location = response.data.filelocation;
+                console.log(location);
+                window.open(location, "_blank");
+            }).catch(function (error: any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+
     }
 
 }

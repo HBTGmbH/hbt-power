@@ -34,7 +34,8 @@ export class NetworkNodeDetails extends React.Component<NetworkNodeDetailsProps,
 
 
     render() {
-        return (<Card>
+        return (
+        <Card>
             <CardHeader
                 title={PowerLocalize.get('ProfileNetwork.NodeDetails.Title') + ' ' + this.getInitialsByNodeId(this.props.selectedNodeProperties.nodes[0])}
             />

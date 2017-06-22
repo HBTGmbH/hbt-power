@@ -5,7 +5,7 @@ import {CareerEntry} from '../../../../../model/CareerEntry';
 import {ApplicationState, ProfileElementType} from '../../../../../Store';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {IconButton} from 'material-ui';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {formatToShortDisplay, formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -109,12 +109,12 @@ class SingleCareerEntryModule extends React.Component<
             </td>
             <td>
                 <div className="fittingContainer" onClick={this.openDialog}>
-                    {formatToShortDisplay(this.props.careerEntry.startDate())}
+                    {formatToYear(this.props.careerEntry.startDate())}
                 </div>
             </td>
             <td>
                 <div className="fittingContainer" onClick={this.openDialog}>
-                    {formatToShortDisplay(this.props.careerEntry.endDate())}
+                    {formatToYear(this.props.careerEntry.endDate())}
                 </div>
             </td>
             <td>

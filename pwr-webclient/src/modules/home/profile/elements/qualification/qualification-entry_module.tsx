@@ -3,7 +3,7 @@ import {IconButton, TouchTapEvent} from 'material-ui';
 import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {formatToShortDisplay, formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {QualificationEntryDialog} from './qualification-entry-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
@@ -107,7 +107,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {formatToShortDisplay(this.props.qualificationEntry.date())}
+                    {formatToYear(this.props.qualificationEntry.date())}
                     </div>
                 </td>
                 <td>

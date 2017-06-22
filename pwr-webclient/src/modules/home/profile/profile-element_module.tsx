@@ -37,7 +37,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
 
     render() {
         return(
-            <div>
+            <div  style={{width:"100%"}}>
                 <br/>
                 <Card>
                     <CardHeader actAsExpander={true} title={this.props.title}>

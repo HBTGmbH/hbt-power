@@ -14,6 +14,8 @@ export interface APIProfileSkillMetric {
     missing: Array<string>;
 }
 
+// == API Network == //
+
 export interface APINode {
     id: number;
     initials: string;
@@ -30,4 +32,22 @@ export interface APIEdge {
 export interface APINetwork {
     nodes:Array<APINode>;
     edges: Array<APIEdge>;
+}
+
+// == API consultant Info == //
+
+export interface APIAveragedSkill {
+    name: string;
+    numOccurances: number;
+    average: number;
+    relativeOccurance: number;
+
+}
+
+export interface APIConsultantClusterInfo {
+    clusterId: number;
+    clusterInitials: Array<string>;
+    clusterSkills: Array<APIAveragedSkill>;
+    commonSkills: Array<string>;
+    recommendations: Array<string>;
 }

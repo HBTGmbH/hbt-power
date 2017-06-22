@@ -16,9 +16,17 @@ const optionsDayAndMonth : DateTimeFormatOptions = {
     day: "2-digit"
 };
 
-const format: Intl.DateTimeFormat = new Intl.DateTimeFormat("de-De", optionsShortDisplay);
-const formatTimeOnly:Intl.DateTimeFormat = new Intl.DateTimeFormat("de-DE", optionsTimeOnly);
-const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat("de-DE", optionsDayAndMonth);
+const optionsOnlyYear: DateTimeFormatOptions = {
+    year: "numeric"
+};
+
+let language = navigator.language;
+if(isNullOrUndefined(language)) language = "de";
+
+const format: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsShortDisplay);
+const formatTimeOnly:Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsTimeOnly);
+const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsDayAndMonth);
+const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsOnlyYear);
 
 export function formatToShortDisplay(date: Date) {
     if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
@@ -36,4 +44,8 @@ export function formatToMailDisplay(date: Date) {
     } else {
         return formatDayAndMonth.format(date);
     }
+}
+
+export function formatToYear(date: Date) {
+    return formatOnlyYear.format(date);
 }

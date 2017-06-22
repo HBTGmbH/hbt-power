@@ -57,6 +57,7 @@ interface ViewCardDispatch {
     changeViewProfileDescription(id: string, description: string): void;
     saveViewProfileChanges(id: string, name: string, description: string): void;
     duplicateViewProfile(id: string): void;
+    generatePdf(initials: string, viewProfileId: string): void;
 }
 
 class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps & ViewCardDispatch, ViewCardLocalState> {
@@ -83,7 +84,8 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
             changeViewProfileDescription: (id, description) => dispatch(ProfileActionCreator.ChangeViewProfileDescription(id, description)),
             changeViewProfileName: (id, val) => dispatch(ProfileActionCreator.ChangeViewProfileName(id, val)),
             saveViewProfileChanges:(id, name2, description) => dispatch(ProfileAsyncActionCreator.editViewProfileDetails(id, name2, description)),
-            duplicateViewProfile: (id) => dispatch(ProfileAsyncActionCreator.duplicateViewProfile(id))
+            duplicateViewProfile: (id) => dispatch(ProfileAsyncActionCreator.duplicateViewProfile(id)),
+            generatePdf: (initials, id) => dispatch(ProfileAsyncActionCreator.generatePDFProfile(initials, id))
         };
     }
 
@@ -104,6 +106,10 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
             descriptionInputDisabled: disabled
         });
         if(disabled) this.invokeUpdate();
+    };
+
+    private invokePDFGeneration = () => {
+        this.props.generatePdf(this.props.loggedInUser.initials(), this.props.viewProfileId);
     };
 
     render() {
@@ -161,6 +167,7 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
                                 labelPosition="before"
                                 primary={true}
                                 icon={ <FontIcon className="material-icons">picture_as_pdf</FontIcon>}
+                                onClick={this.invokePDFGeneration}
                             />
                         </div>
                         <div className="col-md-4">

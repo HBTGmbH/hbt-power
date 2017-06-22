@@ -1,7 +1,10 @@
 import {StatisticsStore} from '../../model/statistics/StatisticsStore';
 import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
-import {ReceiveNetworkAction, ReceiveProfileSkillMetrics, ReceiveSkillUsageMetricsAction} from './statistics-actions';
+import {
+    ReceiveConsultantClusterInfoAction, ReceiveNetworkAction, ReceiveProfileSkillMetrics,
+    ReceiveSkillUsageMetricsAction
+} from './statistics-actions';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import * as Immutable from 'immutable';
 import {ActionType} from '../ActionType';
@@ -26,6 +29,10 @@ export class StatisticsReducer {
         return store.network(action.network);
     }
 
+    public static ReceiveConsultantClusterInfo(store: StatisticsStore, action: ReceiveConsultantClusterInfoAction): StatisticsStore {
+        return store.consultantClusterInfo(action.consultantClusterInfo);
+    }
+
     public static reduce(store: StatisticsStore, action: AbstractAction) : StatisticsStore {
         console.log("Statistics Reducer called with action type " + ActionType[action.type]);
         if(isNullOrUndefined(store)) return StatisticsStore.createEmpty();
@@ -38,6 +45,12 @@ export class StatisticsReducer {
                 return StatisticsReducer.ReceiveProfileSkillMetrics(store, action as ReceiveProfileSkillMetrics);
             case ActionType.ReceiveNetwork:
                 return StatisticsReducer.ReceiveNetwork(store, action as ReceiveNetworkAction);
+            case ActionType.StatisticsAvailable:
+                return store.available(true);
+            case ActionType.StatisticsNotAvailable:
+                return store.available(false);
+            case ActionType.ReceiveConsultantClusterInfo:
+                return StatisticsReducer.ReceiveConsultantClusterInfo(store,action as ReceiveConsultantClusterInfoAction);
             default:
                 return store;
         }
