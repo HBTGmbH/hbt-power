@@ -1,0 +1,29 @@
+server:
+  port: 9007
+spring:
+  application:
+    name: pwr-statistics-service
+feign:
+  hystrix:
+    enabled: true
+---
+spring:
+  profiles: development
+eureka:
+  client:
+    enabled: false
+pwr-profile-service:
+  ribbon:
+    listOfServers: localhost:9004
+---
+spring:
+  profiles: integration
+eureka:
+ client:
+   enabled: true
+---
+spring:
+  profiles: production
+eureka:
+ client:
+   enabled: true
