@@ -1,22 +1,25 @@
 import {APIRequestType, ProfileElementType} from '../../Store';
 import {NameEntity} from '../../model/NameEntity';
 import {
-    AbstractAction, AddSkillAction,
-    ChangeStringValueAction, ChangeViewProfileAction,
+    AbstractAction,
+    AddSkillAction,
+    ChangeStringValueAction,
+    ChangeViewProfileAction,
     CreateEntryAction,
     DeleteEntryAction,
-    DeleteProjectAction, DeleteViewProfileAction,
+    DeleteProjectAction,
+    DeleteViewProfileAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
-    SaveProjectAction, SaveViewProfileAction, SelectViewProfileAction, SetSelectedIndexesAction, SwapIndexAction,
-    UpdateSkillRatingAction, ViewProfileSortAction
+    SaveProjectAction,
+    SaveViewProfileAction,
+    SelectViewProfileAction,
+    SwapIndexAction,
+    UpdateSkillRatingAction
 } from './database-actions';
 import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ActionType} from '../ActionType';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
-import * as Immutable from 'immutable';
-import {ViewElement} from '../../model/viewprofile/ViewElement';
-import {Profile} from '../../model/Profile';
 import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 
 export class ProfileActionCreator {
@@ -191,6 +194,12 @@ export class ProfileActionCreator {
             type: ActionType.ChangeViewProfileDescription,
             viewProfileId: id,
             val: description
+        }
+    }
+
+    public static ClearViewProfiles(): AbstractAction {
+        return {
+            type: ActionType.ClearViewProfiles
         }
     }
 }

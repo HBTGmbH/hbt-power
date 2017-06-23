@@ -136,5 +136,5 @@ export function headStatisticsServiceAvailable(): string {
 }
 
 export function getConsultantClusterInfo(initials: string): string {
-    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/network/consultant/" + initials;
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/network/consultant/" + initials;
 }

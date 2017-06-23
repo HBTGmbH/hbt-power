@@ -106,6 +106,16 @@ export const de_locale : any = {
     "SkillStatistics.SkillCount.Absolute.Description": "Beschreibt die absolute Verteilung der 10 beliebtesten Skills, beschränkt auf die Stammdaten aller Berater.",
     "SkillStatistics.SkillCount.Relative.Title": "Relative Verteilung der Skills",
     "SkillStatistics.SkillCount.Relative.Description": "Beschreibt die relative Verteilung der 10 beliebtesten Skills in Bezug auf den Prozentsatz der Profile, in denen der Skill zu finden ist.",
+    "ClusterInfo.ClusterInitials.Title": "Berater",
+    "ClusterInfo.ClusterInitials.Subtitle": "Berater in diesem Cluster",
+    "ClusterInfo.CommonSkills.Title": "Übliche Skills",
+    "ClusterInfo.CommonSkills.Subtitle": "{0} übliche Skills in diesem Cluster",
+    "ClusterInfo.Skills.Title": "Skills",
+    "ClusterInfo.Skills.Subtitle": "{0} Skills in diesem Cluster",
+    "ClusterInfo.Recommendations.Title": "Vorschläge",
+    "ClusterInfo.Recommendations.Subtitle": "Berater in diesem Cluster konnten auch oft...",
+
+
 
 
 

@@ -35,6 +35,7 @@ import {ProfileNetwork} from './modules/admin/statistics/profile-network_module'
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
 import {PersonalizedNetwork} from './modules/home/statistics/personalized-network_module';
 import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_module';
+import {ClusterResult} from './modules/home/statistics/cluster-result_module';
 
 injectTapEventPlugin();
 
@@ -92,6 +93,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path="/app/view" component={ViewProfileCard}/>
                 <Route path="/app/reports" component={UnderConstruction}/>
                 <Route path="/app/statistics/network" component={ProfileNetworkGraph}/>
+                <Route path="/app/statistics/clusterinfo" component={ClusterResult}/>
             </Route>
             <Route path="/admin" component={AdminClient}>
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />

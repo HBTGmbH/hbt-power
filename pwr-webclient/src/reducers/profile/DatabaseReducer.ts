@@ -372,6 +372,7 @@ export class DatabaseReducer {
             case ActionType.ChangeViewProfileName: return DatabaseReducer.ChangeViewProfileName(state, action as ChangeViewProfileAction);
             case ActionType.ChangeViewProfileDescription: return DatabaseReducer.ChangeViewProfileDescription(state, action as ChangeViewProfileAction);
             case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
+            case ActionType.ClearViewProfiles: return state.viewProfiles(state.viewProfiles().clear());
             default:
                 return state;
         }

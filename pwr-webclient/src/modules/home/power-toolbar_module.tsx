@@ -43,6 +43,7 @@ interface ToolbarDispatch {
     logOutUser(): void;
     backToAdmin(): void;
     loadNetworkGraph(): void;
+    loadConsultantClusterInfo(initials: string): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -70,7 +71,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             backToAdmin: function() {
                 dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS));
             },
-            loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork())
+            loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
+            loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials))
         };
     }
 
@@ -120,6 +122,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 <MenuItem
                                     key="Menu.Statistics.Network"
                                     primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
+                                    onClick={() => this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials())}
                                 />
                             </Link>
                         ]}

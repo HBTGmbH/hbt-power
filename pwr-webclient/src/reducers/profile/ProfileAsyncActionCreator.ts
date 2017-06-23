@@ -260,6 +260,7 @@ export class ProfileAsyncActionCreator {
     public static getAllViewProfiles(initials: string) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
+            dispatch(ProfileActionCreator.ClearViewProfiles());
             axios.get(getAllViewProfilesString(initials)).then(function(response: AxiosResponse) {
                 let ids: Array<string> = response.data;
                 ids.forEach(id => {

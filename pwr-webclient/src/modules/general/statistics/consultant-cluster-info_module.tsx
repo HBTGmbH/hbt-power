@@ -1,45 +1,199 @@
-import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
+import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantClusterInfo';
+import {Card, CardHeader, CardText, List, ListItem, Paper, Popover} from 'material-ui';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {formatString} from '../../../utils/StringUtil';
+import {AveragedSkill} from '../../../model/statistics/AveragedSkill';
+
+const randomColor = require('randomcolor');
+const TagCloud = require('react-tagcloud');
+const TCloud: any = TagCloud.TagCloud;
 
 interface ConsultantClusterInfoProps {
-
+    info: ConsultantClusterInfo;
 }
 
-interface ConsultantClusterInfoLocalProps {
-
+interface ConsultantClusterInfoState {
+    skillInfoPopoverOpen: boolean;
+    skillInfoPopoverAnchor:  React.ReactInstance;
+    tags: Array<any>;
+    selectedSkillName: string;
 }
 
-interface ConsultantClusterInfoLocalState {
+export class ConsultantClusterOverview extends React.Component<ConsultantClusterInfoProps, ConsultantClusterInfoState> {
 
-}
 
-interface ConsultantClusterInfoDispatch {
 
-}
+    private infoPaperStyle = {
+        margin: "1px",
+        padding: "5px"
+    };
 
-class ConsultantClusterInfoModule extends React.Component<
-    ConsultantClusterInfoProps
-    & ConsultantClusterInfoLocalProps
-    & ConsultantClusterInfoDispatch, ConsultantClusterInfoLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: ConsultantClusterInfoLocalProps): ConsultantClusterInfoProps {
-        return {}
+    private readonly customTagStyles = {
+        margin: '0px 3px',
+        verticalAlign: 'middle',
+        display: 'inline-block'
+    };
+
+    constructor(props: ConsultantClusterInfoProps) {
+        super(props);
+        this.state = {
+            skillInfoPopoverOpen: false,
+            skillInfoPopoverAnchor: null,
+            tags: this.renderTags(props),
+            selectedSkillName: null
+        }
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantClusterInfoDispatch {
-        return {}
+    public componentWillReceiveProps(nextProps: ConsultantClusterInfoProps) {
+        console.log(nextProps.info !== this.props.info);
+        if(nextProps.info !== this.props.info) {
+            this.setState({
+                tags: this.renderTags(nextProps)
+            })
+        }
+    }
+
+
+    private renderInitials = () => {
+        return this.props.info.clusterInitials().map(initials => <ListItem disabled={true} key={initials}>{initials}</ListItem>).toArray();
+    };
+
+    private renderCommonSkills = () => {
+        return this.props.info.commonSkills().map(skillName =>
+        {
+            const color = randomColor();
+            return(<div
+                disabled={true}
+                key={skillName}
+                style={{color: color, borderRadius: "20px", margin: "5px", padding: "5px", border: "1px solid " + color}}
+            >
+                {skillName}
+            </div>)
+        }).toArray();
+    };
+
+    private renderRecommendations = () => {
+        return this.props.info.recommendations().map(skillName => <ListItem disabled={true} key={skillName}>{skillName}</ListItem>).toArray();
+    };
+
+    private renderTags = (props: ConsultantClusterInfoProps) => {
+        return props.info.clusterSkills().map(skill => {
+            return {
+                value: skill.name(),
+                count: skill.numberOfOccurrences(),
+                key: skill.name()
+            };
+        }).toArray();
+    };
+
+    private handleTagClick = (evt: React.SyntheticEvent<any>, tagName: string) => {
+        console.log(tagName + ' clicked');
+        this.setState({
+            skillInfoPopoverAnchor: evt.currentTarget,
+            skillInfoPopoverOpen: true,
+            selectedSkillName: tagName
+        })
+    };
+
+    private customTagRenderer = (tag: any, size: number, color: any) => {
+        const fontSize = size + 'px';
+        const key = tag.key || tag.value;
+        const style = Object.assign({}, this.customTagStyles, {color, fontSize});
+        return <span className='tag-cloud-tag cursor-pointer' style={style} key={key} onClick={(evt) => this.handleTagClick(evt, tag.value)}>{tag.value}</span>;
+    };
+
+    private getSkill = (skillName: string) => {
+        return this.props.info.clusterSkills().find(skill => skill.name() == skillName);
+    };
+
+    private getSkillInfo() {
+
+        if(this.state.selectedSkillName != null) {
+            let skill: AveragedSkill = this.getSkill(this.state.selectedSkillName);
+            return (<Card>
+                <CardHeader
+                    title={skill.name()}
+                />
+                <CardText>
+                    {formatString("Der Skill {0} tritt {1} mal im Cluster auf.", skill.name(), String(skill.numberOfOccurrences()))}<br/>
+                    {formatString("Damit haben {0}% der Berater in diesem Cluster diesen Skill.", (skill.relativeOccurrences() * 100).toFixed(2))}<br/>
+                    {formatString("Das Durchschnittliche Skill-Level beträgt {0}/5.0.", skill.averageSkillLevel().toFixed(2))}<br/>
+                </CardText>
+            </Card>)
+        }
+        return null;
     }
 
     render() {
-        return (<div></div>);
+        return (
+
+            <div className="row">
+                <Popover
+                    open={this.state.skillInfoPopoverOpen}
+                    anchorEl={this.state.skillInfoPopoverAnchor}
+                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                    onRequestClose={() => this.setState({skillInfoPopoverOpen: false})}
+                >
+                    {this.getSkillInfo()}
+                </Popover>
+                <div className="col-md-3" style={{padding: '10px'}}>
+                    <Card>
+                        <CardHeader
+                            title={PowerLocalize.get('ClusterInfo.ClusterInitials.Title')}
+                            subtitle={PowerLocalize.get('ClusterInfo.ClusterInitials.Subtitle')}
+                        />
+                        <CardText>
+                            <List>
+                                {this.renderInitials()}
+                            </List>
+                        </CardText>
+                    </Card>
+                </div>
+                <div className="col-md-3" style={{padding: '10px'}}>
+                    <Card>
+                        <CardHeader
+                            title={PowerLocalize.get('ClusterInfo.Recommendations.Title')}
+                            subtitle={PowerLocalize.get('ClusterInfo.Recommendations.Subtitle')}
+                        />
+                        <CardText>
+                            <List>
+                                {this.renderRecommendations()}
+                            </List>
+                        </CardText>
+                    </Card>
+                </div>
+                <div className="col-md-6" style={{padding: '10px'}}>
+                    <Card>
+                        <CardHeader
+                            title={PowerLocalize.get('ClusterInfo.Skills.Title')}
+                            subtitle={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills().size))}
+                        />
+                        <CardText>
+                            <TCloud
+                                style={{width: '100% !important'}}
+                                minSize={12}
+                                maxSize={35}
+                                tags={this.state.tags}
+                                renderer={this.customTagRenderer}
+                            />
+                        </CardText>
+                    </Card>
+                </div>
+                <div className="col-md-6" style={{padding: '10px'}}>
+                    <Card>
+                        <CardHeader
+                            title={PowerLocalize.get('ClusterInfo.CommonSkills.Title')}
+                            subtitle={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills().size))}
+                        />
+                        <CardText className="row">
+                            {this.renderCommonSkills()}
+                        </CardText>
+                    </Card>
+                </div>
+
+            </div>);
     }
 }
-
-/**
- * @see ConsultantClusterInfoModule
- * @author nt
- * @since 22.06.2017
- */
-export const ConsultantClusterInfo: React.ComponentClass<ConsultantClusterInfoLocalProps> = connect(ConsultantClusterInfoModule.mapStateToProps, ConsultantClusterInfoModule.mapDispatchToProps)(ConsultantClusterInfoModule);
