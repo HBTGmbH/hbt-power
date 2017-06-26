@@ -47,5 +47,6 @@ export function formatToMailDisplay(date: Date) {
 }
 
 export function formatToYear(date: Date) {
+    if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
     return formatOnlyYear.format(date);
 }

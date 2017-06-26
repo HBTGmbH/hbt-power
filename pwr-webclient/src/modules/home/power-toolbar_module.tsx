@@ -12,6 +12,7 @@ import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Paths} from '../../index';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
+import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -44,6 +45,7 @@ interface ToolbarDispatch {
     backToAdmin(): void;
     loadNetworkGraph(): void;
     loadConsultantClusterInfo(initials: string): void;
+    loadExportDocuments(initials: string): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -58,7 +60,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             loggedInUser: state.databaseReducer.loggedInUser(),
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
             viewSelected: !isNullOrUndefined(state.databaseReducer.activeViewProfileId()),
-            statisticsAvailable: state.statisticsReducer.available()
+            statisticsAvailable: state.statisticsReducer.available(),
         };
     }
 
@@ -72,7 +74,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS));
             },
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
-            loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials))
+            loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
+            loadExportDocuments: (initials) => dispatch(ProfileAsyncActionCreator.getAllExportDocuments(initials))
         };
     }
 
@@ -93,6 +96,10 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         </div>);
     };
 
+    private loadExportDocuments = () => {
+        this.props.loadExportDocuments(this.props.loggedInUser.initials());
+    };
+
     private renderMenu = () => {
         return (<IconMenu
             iconButtonElement={<IconButton iconClassName="material-icons">menu</IconButton>}
@@ -104,7 +111,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             {
                 this.props.viewSelected ? <Link to="/app/view"><MenuItem  primaryText={PowerLocalize.get('Menu.View')} /></Link> : null
             }
-            <Link to="/app/reports"><MenuItem  primaryText={PowerLocalize.get('Menu.Reports')}/></Link>
+            <Link to="/app/reports"><MenuItem  primaryText={PowerLocalize.get('Menu.Reports')} onClick={this.loadExportDocuments}/></Link>
             {
                 this.props.statisticsAvailable ?
                     <MenuItem
@@ -130,6 +137,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 :
                 null
             }
+            <Link to="/app/search"><MenuItem  primaryText={PowerLocalize.get('Menu.Search')}/></Link>
         </IconMenu>);
     };
 

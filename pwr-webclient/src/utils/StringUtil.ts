@@ -12,3 +12,7 @@ export function formatString(val: string, ...args: string[]): string {
 export function langLevelToLocalizedString(level: string): string {
     return PowerLocalize.get("LanguageLevel." + level);
 }
+
+export function trimURL(url: string) {
+    return url.substring(url.lastIndexOf('/') + 1);
+}

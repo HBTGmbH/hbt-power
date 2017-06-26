@@ -7,6 +7,7 @@ import {doop} from 'doop';
 import {LoginStatus} from './LoginStatus';
 import {ViewProfile} from './viewprofile/ViewProfile';
 import {ConsultantInfo} from './ConsultantInfo';
+import {ExportDocument} from './ExportDocument';
 
 
 /**
@@ -43,6 +44,9 @@ export class InternalDatabase {
 
     @doop
     public get viewProfiles() {return doop<Immutable.Map<string, ViewProfile>, this>();}
+
+    @doop
+    public get exportDocuments() {return doop<Immutable.List<ExportDocument>, this>();}
 
     @doop
     public get trainings() {return doop<Immutable.Map<string, NameEntity>, this>();}
@@ -94,7 +98,8 @@ export class InternalDatabase {
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: ConsultantInfo,
         degrees: Immutable.List<string>,
-        activeViewProfileId: string
+        activeViewProfileId: string,
+        exportDocuments: Immutable.List<ExportDocument>
 ) {
         return this.APIRequestStatus(apiRequestStatus)
             .languageLevels(languageLevels)
@@ -112,6 +117,7 @@ export class InternalDatabase {
             .careers(careers)
             .keySkills(keySkills)
             .activeViewProfileId(activeViewProfileId)
+            .exportDocuments(exportDocuments)
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -132,7 +138,8 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             null,
             Immutable.List<string>(['Bachelor', 'Master', 'Doktor', 'Diplom']),
-            null
+            null,
+            Immutable.List<ExportDocument>(),
         );
     }
 

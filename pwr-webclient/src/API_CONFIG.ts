@@ -107,6 +107,10 @@ export function postCreatePDFProfile(initials: string): string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
 }
 
+export function getExportDocuments(initials: string): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
+}
+
 export function getProfileImageLocation(initials: string): string {
     return "/img/profile_pictures/" + initials + ".png"
 }
@@ -137,4 +141,8 @@ export function headStatisticsServiceAvailable(): string {
 
 export function getConsultantClusterInfo(initials: string): string {
     return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/network/consultant/" + initials;
+}
+
+export function postFindConsultantBySkills(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/consultant/find/skills";
 }

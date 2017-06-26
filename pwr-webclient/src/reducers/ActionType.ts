@@ -18,6 +18,7 @@ export enum ActionType {
     SaveViewProfile,
     /* Clears all cached view profiles from the client */
     ClearViewProfiles,
+    ReplaceExportDocuments,
 
     LogOutUser,
     DeleteSkill,

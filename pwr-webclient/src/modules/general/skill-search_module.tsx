@@ -43,7 +43,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         apiUrl: "http://power02.corp.hbt.de:9000/api/skills/skill/search/",
         maxResults: 10,
         onNewRequest: request => {},
-        onValueChange: val => {}
+        onValueChange: val => {},
     };
 
     private requestSkills = (searchText: string, dataSource: any) => {

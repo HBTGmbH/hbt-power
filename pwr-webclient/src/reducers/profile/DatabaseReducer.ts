@@ -34,6 +34,7 @@ import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 import {LoginStatus} from '../../model/LoginStatus';
 import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
+import {ExportDocument} from '../../model/ExportDocument';
 
 export class DatabaseReducer {
     private static AddAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
@@ -192,6 +193,9 @@ export class DatabaseReducer {
             case APIRequestType.RequestCreateViewProfile:
                 newState = DatabaseReducer.ReceiveViewProfile(state, action.payload);
                 break;
+            case APIRequestType.RequestExportDocs:
+                newState = state.exportDocuments(Immutable.List<ExportDocument>(action.payload));
+                break;
 
         }
         return newState.APIRequestStatus(RequestStatus.Successful);
@@ -339,7 +343,6 @@ export class DatabaseReducer {
         let profile = ProfileReducer.reducerHandleAddSkill(state.profile(), action);
         return state.profile(profile);
     }
-
 
     public static Reduce(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
         if(isNullOrUndefined(state)) {

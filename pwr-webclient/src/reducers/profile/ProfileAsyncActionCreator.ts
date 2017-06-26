@@ -5,7 +5,7 @@ import {
     getAllViewProfilesString, getCareerSuggestionAPIString,
     getCompanySuggestionsAPIString,
     getConsultantApiString,
-    getEducationSuggestionAPIString, getKeySkillsSuggestionAPIString,
+    getEducationSuggestionAPIString, getExportDocuments, getKeySkillsSuggestionAPIString,
     getLangSuggestionAPIString,
     GetPostMutateViewProfile,
     getPostViewProfileAPIString,
@@ -27,6 +27,7 @@ import {NameEntityUtil} from '../../utils/NameEntityUtil';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
+import {APIExportDocument, ExportDocument} from '../../model/ExportDocument';
 
 export class ProfileAsyncActionCreator {
 
@@ -397,14 +398,24 @@ export class ProfileAsyncActionCreator {
             };
             axios.post(postCreatePDFProfile(initials), null, config).then((response: AxiosResponse) => {
                 let location = response.data.filelocation;
-                console.log(location);
                 window.open(location, "_blank");
             }).catch(function (error: any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
         }
-
     }
 
+    public static getAllExportDocuments(initials: string) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            axios.get(getExportDocuments(initials)).then((response: AxiosResponse) => {
+                let apiExportDocs: Array<APIExportDocument> = response.data;
+                let exportDocs = apiExportDocs.map(value => ExportDocument.fromAPI(value));
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(exportDocs, APIRequestType.RequestExportDocs));
+            }).catch(function (error: any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
 }

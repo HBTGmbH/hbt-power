@@ -28,7 +28,8 @@ export enum APIRequestType {
     RequestProfile,
     RequestCreateViewProfile,
     SaveProfile,
-    RequestLanguages
+    RequestLanguages,
+    RequestExportDocs
 }
 
 export enum ProfileElementType {

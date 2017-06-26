@@ -114,6 +114,7 @@ export const de_locale : any = {
     "ClusterInfo.Skills.Subtitle": "{0} Skills in diesem Cluster",
     "ClusterInfo.Recommendations.Title": "Vorschläge",
     "ClusterInfo.Recommendations.Subtitle": "Berater in diesem Cluster konnten auch oft...",
+    "Search.Consultant.BySkill.Label": "Im Profil enthaltene Skills",
 
 
 
@@ -131,6 +132,7 @@ export const de_locale : any = {
     "Menu.Statistics": "Statistiken",
     "Menu.Statistics.Network": "Profil-Netzwerk",
     "Menu.Statistics.Network.Clusterinfo": "Cluster-Infos",
+    "Menu.Search": "Suchen",
     "NameEntityType.EDUCATION" : "Ausbildung",
     "NameEntityType.LANGUAGE" : "Sprache",
     "NameEntityType.QUALIFICATION" : "Zusatzqualifikation",

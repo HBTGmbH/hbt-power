@@ -36,6 +36,8 @@ import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCre
 import {PersonalizedNetwork} from './modules/home/statistics/personalized-network_module';
 import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_module';
 import {ClusterResult} from './modules/home/statistics/cluster-result_module';
+import {ConsultantSkillSearch} from './modules/general/search/consultant-skill-search_module.';
+import {ExportDocumentList} from './modules/home/export/export-document-list_module';
 
 injectTapEventPlugin();
 
@@ -91,9 +93,10 @@ class MyRouter extends React.Component<any, any> {
                 <Route path="/app/" component={ConsultantProfile}/>
                 <Route path="/app/profile" component={ConsultantProfile}/>
                 <Route path="/app/view" component={ViewProfileCard}/>
-                <Route path="/app/reports" component={UnderConstruction}/>
+                <Route path="/app/reports" component={ExportDocumentList}/>
                 <Route path="/app/statistics/network" component={ProfileNetworkGraph}/>
                 <Route path="/app/statistics/clusterinfo" component={ClusterResult}/>
+                <Route path="/app/search" component={ConsultantSkillSearch}/>
             </Route>
             <Route path="/admin" component={AdminClient}>
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
