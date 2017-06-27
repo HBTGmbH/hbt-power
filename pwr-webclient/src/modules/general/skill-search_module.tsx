@@ -2,10 +2,11 @@ import * as React from 'react';
 import {AutoComplete, Popover, TextField} from 'material-ui';
 import * as Immutable from 'immutable';
 import axios, {AxiosResponse} from 'axios';
+import {getSearchSkill} from '../../API_CONFIG';
+import {isNullOrUndefined} from 'util';
 
 interface SkillSearcherProps {
     floatingLabelText?: string;
-    apiUrl?: string;
     maxResults?: number;
     id: string;
     onNewRequest?(request: string): void;
@@ -40,30 +41,31 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     public static defaultProps: Partial<SkillSearcherProps> = {
         floatingLabelText: "",
-        apiUrl: "http://power02.corp.hbt.de:9000/api/skills/skill/search/",
         maxResults: 10,
         onNewRequest: request => {},
         onValueChange: val => {},
     };
 
     private requestSkills = (searchText: string, dataSource: any) => {
-        this.props.onValueChange(searchText);
-        let reqParams = {
-            maxResults: this.props.maxResults
-        };
-        axios.get(this.props.apiUrl + searchText, {params: reqParams}).then((response: AxiosResponse) => {
-            if(response.status === 200) {
-                this.setState({
-                    skills: response.data
-                })
-            } else if(response.status === 204) {
-                this.setState({
-                    skills: []
-                })
-            }
-        }).catch((error: any) => {
-            console.error((error));
-        });
+        if(!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
+            this.props.onValueChange(searchText);
+            let reqParams = {
+                maxResults: this.props.maxResults
+            };
+            axios.get(getSearchSkill(searchText), {params: reqParams}).then((response: AxiosResponse) => {
+                if(response.status === 200) {
+                    this.setState({
+                        skills: response.data
+                    })
+                } else if(response.status === 204) {
+                    this.setState({
+                        skills: []
+                    })
+                }
+            }).catch((error: any) => {
+                console.error((error));
+            });
+        }
     };
 
     private handleRequest = (request: string) => {

@@ -5,7 +5,7 @@ import {AutoComplete, List, ListItem, Paper} from 'material-ui';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 import ChipInput from './../../../external_libs/ChipInput';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {postFindConsultantBySkills} from '../../../API_CONFIG';
+import {getSearchSkill, postFindConsultantBySkills} from '../../../API_CONFIG';
 import {APISkill} from '../../../model/APIProfile';
 
 
@@ -38,7 +38,6 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
         };
     }
 
-    private readonly API_URL: string = 'http://power02.corp.hbt.de:9000/api/skills/skill/search/';
     private readonly MAX_RESULTS: number = 10;
 
 
@@ -77,7 +76,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
             let reqParams = {
                 maxResults: this.MAX_RESULTS
             };
-            axios.get(this.API_URL + value, {params: reqParams}).then((response: AxiosResponse) => {
+            axios.get(getSearchSkill(value), {params: reqParams}).then((response: AxiosResponse) => {
                 if(response.status === 200) {
                     this.setState({
                         currentSuggestSkills: response.data

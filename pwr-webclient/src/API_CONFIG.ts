@@ -10,6 +10,16 @@ declare const POWER_API_SUFFIX_STATISTICS: string;
 
 declare const POWER_API_PORT_STATISTICS: string;
 
+declare const POWER_API_HOST_SKILL: string;
+
+declare const POWER_API_PORT_SKILL: string;
+
+declare const POWER_API_SUFFIX_SKILL: string;
+
+export function getSearchSkill(skillname: string): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/search/" + skillname;
+}
+
 export function getConsultantApiString(initials: string) : string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials;
 }
