@@ -4,6 +4,7 @@ import {SkillUsageMetric} from './SkillUsageMetric';
 import {ProfileSkillMetrics} from './ProfileSkillMetrics';
 import {Network} from './Network';
 import {ConsultantClusterInfo} from './ConsultantClusterInfo';
+import {ScatterSkill} from './ScatterSkill';
 
 @doop
 export class StatisticsStore {
@@ -33,22 +34,28 @@ export class StatisticsStore {
     @doop
     public get consultantClusterInfo() {return doop<ConsultantClusterInfo, this>()};
 
+    @doop
+    public get scatteredSkills() {return doop<Immutable.List<ScatterSkill>, this>()};
+
     private constructor(skillUsages: Immutable.List<SkillUsageMetric>,
                         relativeSkillUsages: Immutable.List<SkillUsageMetric>,
                         activeProfileMetric: ProfileSkillMetrics,
                         network: Network,
                         available: boolean,
-                        consultantClusterInfo: ConsultantClusterInfo
+                        consultantClusterInfo: ConsultantClusterInfo,
+                        scatteredSkills: Immutable.List<ScatterSkill>
     ) {
         return this.skillUsages(skillUsages)
             .relativeSkillUsages(relativeSkillUsages)
             .activeProfileMetric(activeProfileMetric)
             .network(network)
             .available(available)
-            .consultantClusterInfo(consultantClusterInfo);
+            .consultantClusterInfo(consultantClusterInfo)
+            .scatteredSkills(scatteredSkills);
     }
 
     public static createEmpty(): StatisticsStore {
-        return new StatisticsStore(Immutable.List<SkillUsageMetric>(),Immutable.List<SkillUsageMetric>(), null, null, false, null);
+        return new StatisticsStore(Immutable.List<SkillUsageMetric>(),Immutable.List<SkillUsageMetric>(), null, null,
+            false, null, Immutable.List<ScatterSkill>());
     }
 }

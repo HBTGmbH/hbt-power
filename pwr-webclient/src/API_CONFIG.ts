@@ -143,6 +143,10 @@ export function getConsultantClusterInfo(initials: string): string {
     return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/network/consultant/" + initials;
 }
 
+export function getScatterSkills(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/skill/level";
+}
+
 export function postFindConsultantBySkills(): string {
     return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/consultant/find/skills";
 }

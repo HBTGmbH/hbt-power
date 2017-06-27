@@ -98,7 +98,7 @@ export class ViewProfile {
             .creationDate(creationDate)
             .viewKeySkills(viewKeySkills)
             .viewCareerEntries(viewCareerEntries)
-            .viewSkills(viewSectorEntries)
+            .viewSkills(viewSkills)
     }
 
 

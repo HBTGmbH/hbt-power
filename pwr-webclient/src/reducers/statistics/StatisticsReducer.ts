@@ -2,7 +2,7 @@ import {StatisticsStore} from '../../model/statistics/StatisticsStore';
 import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
-    ReceiveConsultantClusterInfoAction, ReceiveNetworkAction, ReceiveProfileSkillMetrics,
+    ReceiveConsultantClusterInfoAction, ReceiveNetworkAction, ReceiveProfileSkillMetrics, ReceiveScatterSkillsAction,
     ReceiveSkillUsageMetricsAction
 } from './statistics-actions';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
@@ -33,6 +33,10 @@ export class StatisticsReducer {
         return store.consultantClusterInfo(action.consultantClusterInfo);
     }
 
+    public static ReceiveScatterSkills(store: StatisticsStore, action: ReceiveScatterSkillsAction) : StatisticsStore {
+        return store.scatteredSkills(action.scatterSkills);
+    }
+
     public static reduce(store: StatisticsStore, action: AbstractAction) : StatisticsStore {
         console.log("Statistics Reducer called with action type " + ActionType[action.type]);
         if(isNullOrUndefined(store)) return StatisticsStore.createEmpty();
@@ -51,6 +55,8 @@ export class StatisticsReducer {
                 return store.available(false);
             case ActionType.ReceiveConsultantClusterInfo:
                 return StatisticsReducer.ReceiveConsultantClusterInfo(store,action as ReceiveConsultantClusterInfoAction);
+            case ActionType.ReceiveScatterSkills:
+                return StatisticsReducer.ReceiveScatterSkills(store, action as ReceiveScatterSkillsAction);
             default:
                 return store;
         }

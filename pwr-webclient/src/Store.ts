@@ -33,6 +33,7 @@ export enum APIRequestType {
 }
 
 export enum ProfileElementType {
+    SkillEntry,
     SectorEntry,
     TrainingEntry,
     EducationEntry,

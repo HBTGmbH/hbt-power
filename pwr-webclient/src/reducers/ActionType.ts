@@ -79,5 +79,6 @@ export enum ActionType {
     ReceiveNetwork,
     ReceiveConsultantClusterInfo,
     StatisticsAvailable,
-    StatisticsNotAvailable
+    StatisticsNotAvailable,
+    ReceiveScatterSkills
 }

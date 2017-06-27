@@ -4,8 +4,12 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
-import {Card, CardHeader, CardMedia, CardText, Subheader} from 'material-ui';
+import {Card, CardHeader, CardMedia, CardText, Slider, Subheader} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
+import {getScatterSkills} from '../../../API_CONFIG';
+import {compareString} from '../../../utils/StringUtil';
+import {compareNumbers} from '../../../utils/ObjectUtil';
 const Recharts = require('recharts');
 
 const TagCloud = require('react-tagcloud');
@@ -14,6 +18,7 @@ const TCloud: any = TagCloud.TagCloud;
 interface SkillStatisticsProps {
     usageMetrics: Immutable.List<SkillUsageMetric>;
     relativeUsageMetrics: Immutable.List<SkillUsageMetric>;
+    scatterSkills: Immutable.List<ScatterSkill>;
 }
 
 interface SkillStatisticsLocalProps {
@@ -21,22 +26,31 @@ interface SkillStatisticsLocalProps {
 }
 
 interface SkillStatisticsLocalState {
-
+    skillOccLevelLength: number;
 }
 
 interface SkillStatisticsDispatch {
 
 }
 
+
 class SkillStatisticsModule extends React.Component<
     SkillStatisticsProps
     & SkillStatisticsLocalProps
     & SkillStatisticsDispatch, SkillStatisticsLocalState> {
 
+    constructor(props: SkillStatisticsProps & SkillStatisticsLocalProps & SkillStatisticsDispatch) {
+        super(props);
+        this.state = {
+            skillOccLevelLength: 20
+        }
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: SkillStatisticsLocalProps): SkillStatisticsProps {
         return {
             usageMetrics: state.statisticsReducer.skillUsages(),
-            relativeUsageMetrics: state.statisticsReducer.relativeSkillUsages()
+            relativeUsageMetrics: state.statisticsReducer.relativeSkillUsages(),
+            scatterSkills: state.statisticsReducer.scatteredSkills()
         };
     }
 
@@ -65,16 +79,25 @@ class SkillStatisticsModule extends React.Component<
 
 
     private renderRelativeData = () => {
-
-        let res = this.props.relativeUsageMetrics.map(usageMetric => {
+        return this.props.relativeUsageMetrics.map(usageMetric => {
             return {
                 name: usageMetric.skillName(),
                 value: usageMetric.skillUsage() * 100.0,
             }
         }).toArray().slice(0, 10);
-        console.log(res);
-        return res;
     };
+
+    private renderScatterData = () => {
+        return this.props.scatterSkills.map(scatterSkill => {
+            return {
+                occ: scatterSkill.occurrences(),
+                rating: scatterSkill.meanRating(),
+                name: scatterSkill.name()
+            }
+        }).toArray().sort((s1, s2) => compareNumbers(s1.occ, s2.occ)).slice(0, this.state.skillOccLevelLength);
+    };
+
+
 
     render() {
         return (<div>
@@ -117,14 +140,34 @@ class SkillStatisticsModule extends React.Component<
                     </Recharts.BarChart>
                 </CardText>
                 <CardText>
-                <Subheader>{PowerLocalize.get("SkillStatistics.WordCloud.Title")}</Subheader>
-                    <TCloud
-                        style={{width: "800px"}}
-                        minSize={12}
-                        maxSize={35}
-                        tags={this.renderTags()}
-                    />
+                    <Subheader>{PowerLocalize.get("SkillStatistics.WordCloud.Title")}</Subheader>
+                        <TCloud
+                            style={{width: "800px"}}
+                            minSize={12}
+                            maxSize={35}
+                            tags={this.renderTags()}
+                        />
                 </CardText>
+                <CardText>
+                    <Subheader>{PowerLocalize.get("SkillStatistics.OccurrenceRating.Title")}</Subheader>
+                    <Slider style={{width: 700}}
+                            step={1}
+                            min={3}
+                            max={100}
+                            value={this.state.skillOccLevelLength}
+                            onChange={(event, value) => this.setState({skillOccLevelLength: value})}/>
+                    <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
+                                   margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+                        <Recharts.XAxis dataKey="name"/>
+                        <Recharts.YAxis />
+                        <Recharts.Tooltip/>
+                        <Recharts.Legend/>
+                        <Recharts.CartesianGrid stroke='#f5f5f5'/>
+                        <Recharts.Bar dataKey='occ' barSize={20} fill='#413ea0'/>
+                        <Recharts.Line type='monotone' dataKey='rating' stroke='#ff7300'/>
+                    </Recharts.ComposedChart>
+                </CardText>
+
             </Card>
 
         </div>);

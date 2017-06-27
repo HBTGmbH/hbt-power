@@ -4,6 +4,7 @@ import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {Network} from '../../model/statistics/Network';
 import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
+import {ScatterSkill} from '../../model/statistics/ScatterSkill';
 
 export interface ReceiveSkillUsageMetricsAction extends AbstractAction {
     metrics: Array<SkillUsageMetric>;
@@ -19,4 +20,8 @@ export interface ReceiveNetworkAction extends AbstractAction {
 
 export interface ReceiveConsultantClusterInfoAction extends AbstractAction {
     consultantClusterInfo: ConsultantClusterInfo;
+}
+
+export interface ReceiveScatterSkillsAction extends AbstractAction {
+    scatterSkills: Immutable.List<ScatterSkill>;
 }

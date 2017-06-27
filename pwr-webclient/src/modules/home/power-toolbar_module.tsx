@@ -46,6 +46,7 @@ interface ToolbarDispatch {
     loadNetworkGraph(): void;
     loadConsultantClusterInfo(initials: string): void;
     loadExportDocuments(initials: string): void;
+    loadSkillStatistics(): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -75,7 +76,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             },
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
-            loadExportDocuments: (initials) => dispatch(ProfileAsyncActionCreator.getAllExportDocuments(initials))
+            loadExportDocuments: (initials) => dispatch(ProfileAsyncActionCreator.getAllExportDocuments(initials)),
+            loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
         };
     }
 
@@ -131,7 +133,15 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                     primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
                                     onClick={() => this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials())}
                                 />
+                            </Link>,
+                            <Link to="/app/statistics/skills">
+                                <MenuItem
+                                    key="Menu.Statistics.Skills"
+                                    primaryText={PowerLocalize.get('Menu.Statistics.Skills')}
+                                    onClick={() => this.props.loadSkillStatistics()}
+                                />
                             </Link>
+
                         ]}
                     />
                 :

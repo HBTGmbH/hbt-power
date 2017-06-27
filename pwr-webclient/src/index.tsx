@@ -30,7 +30,7 @@ import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import * as Cookies from 'js-cookie';
 import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
 import {UnderConstruction} from './modules/general/UnderConstruction.';
-import {SkillStatistics} from './modules/admin/statistics/skill-statistics_module';
+import {SkillStatistics} from './modules/home/statistics/skill-statistics_module';
 import {ProfileNetwork} from './modules/admin/statistics/profile-network_module';
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
 import {PersonalizedNetwork} from './modules/home/statistics/personalized-network_module';
@@ -96,6 +96,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path="/app/reports" component={ExportDocumentList}/>
                 <Route path="/app/statistics/network" component={ProfileNetworkGraph}/>
                 <Route path="/app/statistics/clusterinfo" component={ClusterResult}/>
+                <Route path="/app/statistics/skills" component={SkillStatistics}/>
                 <Route path="/app/search" component={ConsultantSkillSearch}/>
             </Route>
             <Route path="/admin" component={AdminClient}>

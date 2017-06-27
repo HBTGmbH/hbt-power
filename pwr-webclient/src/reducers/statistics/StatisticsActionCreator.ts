@@ -1,10 +1,11 @@
 import * as redux from 'redux';
+import * as Immutable from 'immutable';
 import {ApplicationState} from '../../Store';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
     getConsultantClusterInfo,
     getKMedProfileNetwork,
-    getProfileStatistics,
+    getProfileStatistics, getScatterSkills,
     getSkillUsageRelative,
     getSkillUsagesAbsolute,
     headStatisticsServiceAvailable
@@ -12,7 +13,7 @@ import {
 import {APINetwork, APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {
-    ReceiveConsultantClusterInfoAction, ReceiveNetworkAction, ReceiveProfileSkillMetrics,
+    ReceiveConsultantClusterInfoAction, ReceiveNetworkAction, ReceiveProfileSkillMetrics, ReceiveScatterSkillsAction,
     ReceiveSkillUsageMetricsAction
 } from './statistics-actions';
 import {ActionType} from '../ActionType';
@@ -20,6 +21,7 @@ import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {Network} from '../../model/statistics/Network';
 import {AbstractAction} from '../profile/database-actions';
 import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
+import {APIScatterSkill, ScatterSkill} from '../../model/statistics/ScatterSkill';
 
 export class StatisticsActionCreator {
 
@@ -71,6 +73,13 @@ export class StatisticsActionCreator {
         }
     }
 
+    public static ReceiveScatterSkills(scatterSkills: Immutable.List<ScatterSkill>): ReceiveScatterSkillsAction {
+        return {
+            type: ActionType.ReceiveScatterSkills,
+            scatterSkills: scatterSkills
+        }
+    }
+
     public static AsyncCheckAvailability() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             axios.head(headStatisticsServiceAvailable()).then((response: AxiosResponse) => {
@@ -85,7 +94,7 @@ export class StatisticsActionCreator {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             let config: AxiosRequestConfig = {
                 params: {
-                    max: 50
+                    max: 500
                 }
             };
             axios.get(getSkillUsagesAbsolute(), config).then(function(response: AxiosResponse) {
@@ -97,8 +106,9 @@ export class StatisticsActionCreator {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
+
             config.params = {
-                max: 50
+                max: 500
             };
             axios.get(getSkillUsageRelative(), config).then(function(response: AxiosResponse) {
                 let data: Array<APISkillUsageMetric> = response.data;
@@ -109,6 +119,8 @@ export class StatisticsActionCreator {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
+
+            dispatch(StatisticsActionCreator.AsyncRequestScatterSkills());
         };
     }
 
@@ -149,4 +161,19 @@ export class StatisticsActionCreator {
             });
         }
     }
+
+    public static AsyncRequestScatterSkills() {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
+            axios.get(getScatterSkills()).then((response: AxiosResponse) => {
+                let data: Array<APIScatterSkill> = response.data;
+                let list = Immutable.List<ScatterSkill>(data.map(value => ScatterSkill.fromAPI(value)));
+                dispatch(StatisticsActionCreator.ReceiveScatterSkills(list));
+                dispatch(StatisticsActionCreator.StatisticsAvailable());
+            }).catch(function(error:any) {
+                console.error(error);
+                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+            });
+        }
+    }
+
 }
