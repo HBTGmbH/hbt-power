@@ -15,6 +15,7 @@ interface ProjectModuleProps {
     profile: Profile;
     onSave(state: ProjectDialogState): void;
     onDelete(id: string): void;
+    backgroundColor?: string;
 }
 
 interface ProjectModuleState {
@@ -71,8 +72,8 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
 
     render () {
         return (
-            <Paper zDepth={4}>
-                <Card>
+            <Paper zDepth={1} style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}}>
+                <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}}>
                     <CardHeader
                         title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
                         subtitle={'Tätig als ' + this.getRoleNameList()}

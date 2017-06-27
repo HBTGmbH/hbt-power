@@ -12,6 +12,11 @@ import {GridList, GridTile, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialogState} from './project-dialog_module';
 import {Profile} from '../../../../../model/Profile';
+import {Responsive, WidthProvider} from 'react-grid-layout';
+
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+
+const randomColor = require('randomcolor');
 
 /**
  * Properties that are managed by react-redux.
@@ -97,13 +102,11 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         };
     }
 
-    private renderSingleProject = (value: Project, key: string) => {
+    private renderSingleProject = (value: Project, key: string, index: number) => {
+        let x = index * 3 % 12;
+        let y = Math.floor(index/3) * 3;
         return (
-            <GridTile
-                cols={1}
-                key={key}
-                style={{margin: "2 px"}}
-            >
+            <div key={key} data-grid={{x: x, y:y, w: 3, h: 3, isDraggable: false}}>
                 <ProjectCard
                     project={value}
                     onSave={this.props.saveProject}
@@ -111,20 +114,25 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
                     companies={this.props.companies}
                     projectRoles={this.props.projectRoles}
                     profile={this.props.profile}
+                    backgroundColor={"white"}
                 />
-            </GridTile>);
+            </div>);
+    };
+
+    private renderProjects = () => {
+        let index = 0;
+        return this.props.projects.map((value, key) => this.renderSingleProject(value, key, index++)).toArray()
     };
 
     render() {
         return (
             <div>
                 <div>
-                    <GridList
-                    cols={2}
-                    cellHeight="auto"
-                    >
-                        {this.props.projects.map(this.renderSingleProject).toArray()}
-                    </GridList>
+                    <ResponsiveReactGridLayout className="layout"
+                                               breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+                                               cols={{lg: 12, md: 9, sm: 6, xs: 3, xxs: 3}}>
+                        {this.renderProjects()}
+                    </ResponsiveReactGridLayout>
                 </div>
                 <br/>
                 <div style={{textAlign: 'center'}}>
