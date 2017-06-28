@@ -11,10 +11,8 @@ import thunkMiddleware from 'redux-thunk';
 import {PowerClient} from './modules/home/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
-import injectTapEventPlugin = require('react-tap-event-plugin');
 import {PowerLogin} from './modules/power-login_module';
-import {Route, Router} from 'react-router';
-import { browserHistory } from 'react-router';
+import {browserHistory, Route, Router} from 'react-router';
 import {PowerOverview} from './modules/home/power-overview_module';
 import {ConsultantProfile} from './modules/home/profile/profile_module';
 import {ViewProfileCard} from './modules/home/view/view-profile_module';
@@ -26,18 +24,23 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
 import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from './model/PwrConstants';
 import {isNullOrUndefined} from 'util';
-import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import * as Cookies from 'js-cookie';
 import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
-import {UnderConstruction} from './modules/general/UnderConstruction.';
 import {SkillStatistics} from './modules/home/statistics/skill-statistics_module';
 import {ProfileNetwork} from './modules/admin/statistics/profile-network_module';
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
-import {PersonalizedNetwork} from './modules/home/statistics/personalized-network_module';
 import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_module';
 import {ClusterResult} from './modules/home/statistics/cluster-result_module';
 import {ConsultantSkillSearch} from './modules/general/search/consultant-skill-search_module.';
 import {ExportDocumentList} from './modules/home/export/export-document-list_module';
+import {getMuiTheme, spacing} from 'material-ui/styles';
+import {lightBaseTheme} from 'material-ui/styles/baseThemes/lightBaseTheme';
+import injectTapEventPlugin = require('react-tap-event-plugin');
+import {
+    cyan500, darkBlack, fullBlack, grey100, grey300, grey500, indigo500, indigo800, pinkA200, tealA400,
+    white, indigo50, amber300, amber50, yellow50
+} from 'material-ui/styles/colors';
+import {fade} from 'material-ui/utils/colorManipulator';
 
 injectTapEventPlugin();
 
@@ -82,6 +85,7 @@ export class Paths {
     public static readonly APP_ROOT = '/';
 }
 
+
 @DragDropContext(HTML5Backend)
 class MyRouter extends React.Component<any, any> {
     render() {
@@ -110,9 +114,32 @@ class MyRouter extends React.Component<any, any> {
     }
 }
 
+const powerTheme = {
+    spacing: spacing,
+    fontFamily: 'Roboto, sans-serif',
+    palette: {
+        primary1Color: indigo500,
+        primary2Color: indigo800,
+        primary3Color: indigo50,
+        accent1Color: amber300,
+        accent2Color: amber50,
+        accent3Color: yellow50,
+        textColor: darkBlack,
+        alternateTextColor: white,
+        canvasColor: white,
+        borderColor: grey300,
+        disabledColor: fade(darkBlack, 0.3),
+        pickerHeaderColor: cyan500,
+        clockCircleColor: fade(darkBlack, 0.07),
+        shadowColor: fullBlack,
+    },
+};
 
-let Routes = (
-    <MuiThemeProvider>
+const theme = getMuiTheme(powerTheme);
+
+
+let App = (
+    <MuiThemeProvider muiTheme={theme}>
         <Provider store={store}>
             <MyRouter/>
         </Provider>
@@ -121,6 +148,6 @@ let Routes = (
 
 
 ReactDOM.render(
-    Routes,
+    App,
   document.getElementById('root')
 );
