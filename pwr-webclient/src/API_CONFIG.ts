@@ -122,7 +122,7 @@ export function getExportDocuments(initials: string): string {
 }
 
 export function getProfileImageLocation(initials: string): string {
-    return "/img/profile_pictures/" + initials + ".png"
+    return "/img/profile_pictures/foto_" + initials + ".jpg"
 }
 
 export function getSkillUsagesAbsolute(): string {

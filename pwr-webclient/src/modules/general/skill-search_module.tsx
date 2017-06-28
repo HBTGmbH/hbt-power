@@ -8,6 +8,7 @@ import {isNullOrUndefined} from 'util';
 interface SkillSearcherProps {
     floatingLabelText?: string;
     maxResults?: number;
+    maxHeight?: number;
     id: string;
     onNewRequest?(request: string): void;
     /**
@@ -42,6 +43,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     public static defaultProps: Partial<SkillSearcherProps> = {
         floatingLabelText: "",
         maxResults: 10,
+        maxHeight: null,
         onNewRequest: request => {},
         onValueChange: val => {},
     };
@@ -78,12 +80,13 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         return (
             <AutoComplete
                 id={this.props.id}
-                anchorOrigin={{horizontal: 'middle', vertical: 'top'}}
+                anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 floatingLabelText={this.props.floatingLabelText}
                 dataSource={this.state.skills}
                 searchText={this.state.searchText}
                 onNewRequest={this.handleRequest}
                 onUpdateInput={this.requestSkills}
+                menuProps={{maxHeight: this.props.maxHeight}}
                 filter={AutoComplete.noFilter}
             />)
     }

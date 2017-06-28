@@ -312,6 +312,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                     floatingLabelText={PowerLocalize.get('ProjectSkills.Label')}
                                     id={'ProjectDialog.SkillSearcher.' + this.props.project.id()}
                                     onNewRequest={this.handleSkillRequest}
+                                    maxHeight={250}
                                 />
                             </div>
                         </div>

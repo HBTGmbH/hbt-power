@@ -73,10 +73,11 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     render () {
         return (
             <Paper zDepth={1} style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}}>
-                <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}}>
+                <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}} initiallyExpanded={true}>
                     <CardHeader
                         title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
                         subtitle={'Tätig als ' + this.getRoleNameList()}
+                        actAsExpander={true}
                     />
                     <ProjectDialog key={'projectDialog.' + this.props.project.id()}
                         open={this.state.dialogIsOpen}
@@ -85,20 +86,18 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         onSave={this.handleSaveRequest}
                         companies={this.props.companies}
                         projectRoles={this.props.projectRoles}
-                                   profile={this.props.profile}
+                       profile={this.props.profile}
                     />
-                    <CardText>
+                    <CardText expandable={true} >
                         <label>Kurzbeschreibung</label><br/>
                         {this.props.project.description()}
                     </CardText>
-                    <CardActions>
+                    <CardActions expandable={true}>
                         <IconButton size={20} iconClassName="material-icons" onClick={this.openDialog}
                                     tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
                         <IconButton size={20} iconClassName="material-icons" onClick={this.deleteButtonPress}
                                     tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     </CardActions>
-                    <br/>
-                    <br/>
                 </Card>
             </Paper>
         );

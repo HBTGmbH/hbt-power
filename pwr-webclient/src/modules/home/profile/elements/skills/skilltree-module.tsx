@@ -129,6 +129,11 @@ class SkillTreeModule extends React.Component<
         }).toArray();
     };
 
+    private getSkillSearcherHeight = () => {
+        if(this.state.skills.size > 10) return 800;
+        return this.state.skills.size * 80;
+    };
+
     render() {
         return (
             <div className="row">
@@ -139,6 +144,7 @@ class SkillTreeModule extends React.Component<
                         maxResults={20}
                         onNewRequest={this.handleSkillRequest}
                         onValueChange={this.filterSkills}
+                        maxHeight={this.getSkillSearcherHeight()}
                     />
                 </div>
                 <div className="col-md-8">
