@@ -15,18 +15,20 @@ export class ConsultantInfo {
     public get hasProfile() {return doop<boolean, this>()};
     @doop
     public get title() {return doop<string, this>()};
+    @doop
+    public get birthDate() {return doop<Date, this>()};
 
-    private constructor(initials: string, firstName: string, lastName: string, hasProfile: boolean, title: string) {
-        return this.initials(initials).firstName(firstName).lastName(lastName).hasProfile(hasProfile).title(title);
+    private constructor(initials: string, firstName: string, lastName: string, hasProfile: boolean, title: string, birthDate: Date) {
+        return this.initials(initials).firstName(firstName).lastName(lastName).hasProfile(hasProfile).title(title).birthDate(birthDate);
     }
 
     public static fromAPI(apiConsultant: APIConsultant) {
         return new ConsultantInfo(apiConsultant.initials, apiConsultant.firstName, apiConsultant.lastName,
-            !isNullOrUndefined(apiConsultant.profile), apiConsultant.title);
+            !isNullOrUndefined(apiConsultant.profile), apiConsultant.title, new Date(apiConsultant.birthDate));
     }
 
     public static empty() {
-        return new ConsultantInfo("", "", "", false, null);
+        return new ConsultantInfo("", "", "", false, null, null);
     }
 
     /**

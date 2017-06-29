@@ -107,4 +107,5 @@ export interface APIConsultant {
     lastName: string;
     title: string;
     profile: APIProfile;
+    birthDate: string;
 }

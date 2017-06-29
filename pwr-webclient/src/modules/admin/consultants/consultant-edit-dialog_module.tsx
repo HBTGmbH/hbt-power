@@ -107,6 +107,13 @@ class ConsultantEditDialogModule extends React.Component<
         })
     };
 
+    private setBirthDate = (val: Date) => {
+        console.log(val);
+        this.setState({
+            consultantInfo: this.state.consultantInfo.birthDate(val)
+        })
+    };
+
     private closeDialog = () => {
         this.props.onRequestClose();
     };
@@ -142,28 +149,6 @@ class ConsultantEditDialogModule extends React.Component<
         />,
     ];
 
-    /**
-     * <LimitedTextField
-     maxCharacters={100}
-     value={this.state.consultantInfo.firstName()}
-     floatingLabelText={PowerLocalize.get('FirstName')}
-     onChange={this.setFirstName}
-     />
-     <br/>
-     <LimitedTextField
-     maxCharacters={100}
-     value={this.state.consultantInfo.lastName()}
-     floatingLabelText={PowerLocalize.get('LastName')}
-     onChange={this.setLastName}
-     />
-     <LimitedTextField
-     maxCharacters={100}
-     value={isNullOrUndefined(this.state.consultantInfo.title()) ? "" : this.state.consultantInfo.title()}
-     floatingLabelText={PowerLocalize.get('Title.Singular')}
-     onChange={this.setTitle}
-     />
-     * @returns {any}
-     */
     render() {
         return (<div>
             <Dialog
@@ -176,9 +161,11 @@ class ConsultantEditDialogModule extends React.Component<
                     firstName = {this.state.consultantInfo.firstName()}
                     lastName = {this.state.consultantInfo.lastName()}
                     title = {this.state.consultantInfo.title()}
+                    birthDate={this.state.consultantInfo.birthDate()}
                     onFirstNameChange={this.setFirstName}
                     onLastNameChange={this.setLastName}
                     onTitleChange={this.setTitle}
+                    onBirthDateChange={this.setBirthDate}
                 />
             </Dialog>
         </div>);

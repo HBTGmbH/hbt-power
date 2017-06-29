@@ -362,7 +362,8 @@ export class AdminActionCreator {
                 initials: consultantInfo.initials(),
                 firstName: consultantInfo.firstName(),
                 lastName: consultantInfo.lastName(),
-                title: consultantInfo.title()
+                title: consultantInfo.title(),
+                birthDate: consultantInfo.birthDate().toLocaleDateString()
             };
             let config: AxiosRequestConfig = {
                 params: {
@@ -388,7 +389,8 @@ export class AdminActionCreator {
                 initials: consultantInfo.initials(),
                 firstName: consultantInfo.firstName(),
                 lastName: consultantInfo.lastName(),
-                title: consultantInfo.title()
+                title: consultantInfo.title(),
+                birthDate: consultantInfo.birthDate().toLocaleDateString()
             };
             let config: AxiosRequestConfig = {
                 params: {
@@ -397,6 +399,16 @@ export class AdminActionCreator {
             };
             axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
                 config.params.action = 'title';
+                axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
+                    dispatch(AdminActionCreator.ReceiveConsultant(consultantInfo));
+                }).catch(function (error: any) {
+                    console.error(error);
+                });
+            }).catch(function (error: any) {
+                console.error(error);
+            });
+            axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
+                config.params.action = 'birthdate';
                 axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
                     dispatch(AdminActionCreator.ReceiveConsultant(consultantInfo));
                 }).catch(function (error: any) {

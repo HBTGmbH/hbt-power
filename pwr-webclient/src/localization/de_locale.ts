@@ -40,6 +40,7 @@ export const de_locale : any = {
     "Password.Singular": "Passwort",
     "FirstName": "Vorname",
     "LastName": "Nachname",
+    "Birthdate": "Geburtstag",
     "Username.Singular": "Benutzername",
     "Title.Singular": "Titel",
 

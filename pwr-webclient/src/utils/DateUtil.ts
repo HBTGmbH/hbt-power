@@ -20,6 +20,12 @@ const optionsOnlyYear: DateTimeFormatOptions = {
     year: "numeric"
 };
 
+const optionsFullDate: DateTimeFormatOptions = {
+    year: "numeric",
+    day: "2-digit",
+    month: "long"
+};
+
 let language = navigator.language;
 if(isNullOrUndefined(language)) language = "de";
 
@@ -27,12 +33,17 @@ const format: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsSho
 const formatTimeOnly:Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsTimeOnly);
 const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsDayAndMonth);
 const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsOnlyYear);
+const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDate);
 
 export function formatToShortDisplay(date: Date) {
     if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
     return format.format(date);
 }
 
+export function formatFullLocalizedDate(date: Date) {
+    if(isNullOrUndefined(date)) return "???";
+    return formatFullDate.format(date);
+}
 
 function isOnSameDay(a: Date, b: Date) {
     return a.getFullYear() == b.getFullYear() && a.getMonth() == b.getMonth() && a.getDate() == b.getDate();

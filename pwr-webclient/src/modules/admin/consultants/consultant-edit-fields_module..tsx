@@ -2,14 +2,18 @@ import * as React from 'react';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
+import {DatePicker} from 'material-ui';
+import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 
 interface ConsultantEditFieldsProps {
     firstName: string;
     lastName: string;
     title: string;
+    birthDate: Date;
     onFirstNameChange(val: string): void;
     onLastNameChange(val: string): void;
     onTitleChange(val: string): void;
+    onBirthDateChange(val: Date): void;
 }
 
 interface ConsultantEditFieldsState {
@@ -39,6 +43,14 @@ export class ConsultantEditFields extends React.Component<ConsultantEditFieldsPr
                 value={isNullOrUndefined(this.props.title) ? "" : this.props.title}
                 floatingLabelText={PowerLocalize.get('Title.Singular')}
                 onChange={(e, v) => this.props.onTitleChange(v)}
+            />
+            <br/>
+            <DatePicker
+                style={{width: "350px"}}
+                floatingLabelText={PowerLocalize.get("Birthdate")}
+                value={this.props.birthDate}
+                formatDate={formatFullLocalizedDate}
+                onChange={(e: null, date: Date) => this.props.onBirthDateChange(date)}
             />
         </div>);
     }

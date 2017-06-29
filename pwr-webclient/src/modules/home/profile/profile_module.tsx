@@ -60,7 +60,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 
     private readonly cardToolbarStyle = {
-        'backgroundColor' : '#bccfff'
     };
 
     static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ProfileDispatch {

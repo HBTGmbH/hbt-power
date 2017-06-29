@@ -75,7 +75,11 @@ if(!isNullOrUndefined(storedInitials)) {
     browserHistory.push('/');
 }
 
+/**
+ * Paths used for routing. Central point of configuration for routing information.
+ */
 export class Paths {
+    public static readonly ADMIN_BASE = '/admin';
     public static readonly ADMIN_INBOX = '/admin/home/inbox';
     public static readonly ADMIN_TRASHBOX = '/admin/home/trashbox';
     public static readonly ADMIN_CONSULTANTS = '/admin/home/consultants';
@@ -83,6 +87,17 @@ export class Paths {
     public static readonly ADMIN_STATISTICS_SKILL = '/admin/home/statistics/skills';
     public static readonly ADMIN_STATISTICS_NETWORK = '/admin/home/statistics/network';
     public static readonly APP_ROOT = '/';
+
+    public static readonly USER_BASE = "/app";
+    public static readonly USER_HOME = Paths.USER_BASE + "/home";
+    public static readonly USER_PROFILE = Paths.USER_BASE + "/profile";
+    public static readonly USER_VIEW = Paths.USER_BASE + "/view";
+    public static readonly USER_REPORTS = Paths.USER_BASE + "/reports";
+    public static readonly USER_SEARCH = Paths.USER_BASE + "/search";
+    public static readonly USER_STATISTICS_NETWORK = Paths.USER_BASE + "/statistics/network";
+    public static readonly USER_STATISTICS_CLUSTERINFO = Paths.USER_BASE + "/statistics/clusterinfo";
+    public static readonly USER_STATISTICS_SKILLS = Paths.USER_BASE + "/statistics/skills";
+
 }
 
 
@@ -92,18 +107,17 @@ class MyRouter extends React.Component<any, any> {
         return (<Router history={browserHistory}>
             <Route path={Paths.APP_ROOT} component={PowerLogin}/>
             <Route path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
-            <Route path="/app" component={PowerClient}>
-                <Route path="/app/home" component={PowerOverview}/>
-                <Route path="/app/" component={ConsultantProfile}/>
-                <Route path="/app/profile" component={ConsultantProfile}/>
-                <Route path="/app/view" component={ViewProfileCard}/>
-                <Route path="/app/reports" component={ExportDocumentList}/>
-                <Route path="/app/statistics/network" component={ProfileNetworkGraph}/>
-                <Route path="/app/statistics/clusterinfo" component={ClusterResult}/>
-                <Route path="/app/statistics/skills" component={SkillStatistics}/>
-                <Route path="/app/search" component={ConsultantSkillSearch}/>
+            <Route path={Paths.USER_BASE} component={PowerClient}>
+                <Route path={Paths.USER_HOME} component={PowerOverview}/>
+                <Route path={Paths.USER_PROFILE} component={ConsultantProfile}/>
+                <Route path={Paths.USER_VIEW} component={ViewProfileCard}/>
+                <Route path={Paths.USER_REPORTS} component={ExportDocumentList}/>
+                <Route path={Paths.USER_STATISTICS_NETWORK} component={ProfileNetworkGraph}/>
+                <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>
+                <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
+                <Route path={Paths.USER_SEARCH}  component={ConsultantSkillSearch}/>
             </Route>
-            <Route path="/admin" component={AdminClient}>
+            <Route path={Paths.ADMIN_BASE} component={AdminClient}>
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
                 <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid} />
                 <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />

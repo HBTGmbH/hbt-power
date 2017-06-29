@@ -107,6 +107,12 @@ class ConsultantCreateDialogModule extends React.Component<
         })
     };
 
+    private setBirthDate = (val: Date) => {
+        this.setState({
+            consultantInfo: this.state.consultantInfo.birthDate(val)
+        })
+    };
+
 
     private readonly dialogActions = [
 
@@ -134,9 +140,11 @@ class ConsultantCreateDialogModule extends React.Component<
                     firstName = {this.state.consultantInfo.firstName()}
                     lastName = {this.state.consultantInfo.lastName()}
                     title = {this.state.consultantInfo.title()}
+                    birthDate={this.state.consultantInfo.birthDate()}
                     onFirstNameChange={this.setFirstName}
                     onLastNameChange={this.setLastName}
                     onTitleChange={this.setTitle}
+                    onBirthDateChange={this.setBirthDate}
                 >
                     <LimitedTextField
                         maxCharacters={100}

@@ -24,8 +24,8 @@ test('Dispatches an ReceiveAllConsultants action on an empty state.', () => {
     );
     // Construct some API consultants.
     let apiConsultants: Array<APIConsultant> = [
-        {profile: null, title: "Dr. Phil.", initials: "jd",  lastName: "Doe", firstName: "John"},
-        {profile: null, title: "Dr. Rer. Nat.", initials: "jdo",  lastName: "Doe", firstName: "Jane"}
+        {profile: null, title: "Dr. Phil.", initials: "jd",  lastName: "Doe", firstName: "John", birthDate: ""},
+        {profile: null, title: "Dr. Rer. Nat.", initials: "jdo",  lastName: "Doe", firstName: "Jane", birthDate: ""}
     ];
     let consultants: Array<ConsultantInfo> = apiConsultants.map(api => ConsultantInfo.fromAPI(api));
     let action: ReceiveAllConsultantsAction = AdminActionCreator.ReceiveAllConsultants(consultants);

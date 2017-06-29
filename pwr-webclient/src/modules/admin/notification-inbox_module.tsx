@@ -100,7 +100,7 @@ class NotificationInboxModule extends React.Component<
         if(colNum >= 0) {
             this.showNotificationDialog(rowNum);
         }
-    }
+    };
 
     private hideNotificationDialog = () => {
         this.setState({
@@ -108,19 +108,23 @@ class NotificationInboxModule extends React.Component<
         })
     };
 
+
+
     private renderNotificationAsTableRow = (notification: AdminNotification, key: number) => {
         return (
             <TableRow
                 key={"NotificationInbox.TableRow.Not." + notification.id()}
             >
                 <TableRowColumn>{notification.initials()}</TableRowColumn>
-                <TableRowColumn>
+                <TableRowColumn
+                    className="cursor-pointer"
+                >
                     {formatString(
                         PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
                         notification.nameEntity().name(),
                         NameEntityUtil.typeToLocalizedType(notification.nameEntity()))
                     }
-                </TableRowColumn>
+                </TableRowColumn >
                 <TableRowColumn>{formatToMailDisplay(notification.occurrence())}</TableRowColumn>
             </TableRow>
         )
