@@ -202,7 +202,9 @@ export class DatabaseReducer {
     }
 
     private static LogInUser(database: InternalDatabase, action: LoginAction): InternalDatabase {
-        browserHistory.push('/app/home');
+        if(!action.disableRedirect) {
+            browserHistory.push('/app/home');
+        }
         Cookies.set(COOKIE_INITIALS_NAME, action.consultantInfo.initials(), {expires: COOKIE_INITIALS_EXPIRATION_TIME});
         database = database.loginStatus(LoginStatus.SUCCESS);
         return database.loggedInUser(action.consultantInfo);

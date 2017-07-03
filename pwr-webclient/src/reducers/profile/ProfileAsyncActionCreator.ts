@@ -28,6 +28,7 @@ import {ViewElement} from '../../model/viewprofile/ViewElement';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {APIExportDocument, ExportDocument} from '../../model/ExportDocument';
+import {isNullOrUndefined} from 'util';
 
 export class ProfileAsyncActionCreator {
 
@@ -196,13 +197,15 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    public static logInUser(initials: string) {
+    public static logInUser(initials: string, disableRedirect?: boolean) {
         return function(dispatch: redux.Dispatch<InternalDatabase>) {
+            if(isNullOrUndefined(disableRedirect)) disableRedirect = false;
             axios.get(getConsultantApiString(initials)).then(function(response: AxiosResponse) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                 dispatch({
                     type: ActionType.LogInUser,
-                    consultantInfo: ConsultantInfo.fromAPI(response.data)
+                    consultantInfo: ConsultantInfo.fromAPI(response.data),
+                    disableRedirect: disableRedirect
                 });
                 dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
                 dispatch(ProfileAsyncActionCreator.requestAllNameEntities());

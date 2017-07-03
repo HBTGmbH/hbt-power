@@ -78,7 +78,7 @@ export class Paths {
         const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
         // renew the cookie to hold another fixed period of time.
         Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-        store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
+        store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, true));
     };
 
     private userAvailableInCookies = () => {
@@ -89,16 +89,7 @@ export class Paths {
         let location = browserHistory.getCurrentLocation();
         console.info('Current history location is ', browserHistory.getCurrentLocation());
         if(this.userAvailableInCookies()) {
-            let initials = Cookies.get(COOKIE_INITIALS_NAME);
-            console.info('Cookie detected. Performing auto Log-In.');
-            if(location.pathname == Paths.USER_HOME) {
-                console.info("Routing back to user home.");
-                this.loginUser();
-            } else if(location.pathname == Paths.USER_PROFILE) {
-                console.info("Routing back to user profile.");
-                this.loginUser();
-                store.dispatch(ProfileAsyncActionCreator.editProfile(initials))
-            }
+            this.loginUser();
         } else {
             browserHistory.push('/');
         }
