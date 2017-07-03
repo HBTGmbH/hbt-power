@@ -66,6 +66,11 @@ export enum ActionType {
     LogInAdmin,
     LogOutAdmin,
 
+    ReceiveSkillCategory,
+
+    SetSkillTree,
+    AddSkillsToTree,
+
     /**
      * Requests all consultant informations that are available. This should replace the old informations available.
      */

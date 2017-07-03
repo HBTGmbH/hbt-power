@@ -2,15 +2,17 @@ import {AbstractAction, ChangeStringValueAction} from '../profile/database-actio
 import {ActionType} from '../ActionType';
 import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
+    AddSkillsToTreeAction,
     ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveConsultantAction,
-    ReceiveNotifcationsAction,
-    RequestStatusAction
+    ReceiveNotifcationsAction, ReceiveSkillCategoryAction,
+    RequestStatusAction, SetSkillTreeAction
 } from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
 import {
-    getAdminAuthAPIString, getAllConsultantsString, getNotificationAPIString,
-    getNotificationTrashAPIString, postConsultantActionString
+    getAdminAuthAPIString, getAllConsultantsString, getCategoryById, getCategoryChildrenByCategoryId,
+    getNotificationAPIString,
+    getNotificationTrashAPIString, getRootCategoryIds, getSkillsForCategory, postConsultantActionString
 } from '../../API_CONFIG';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApplicationState, RequestStatus} from '../../Store';
@@ -22,6 +24,7 @@ import {ProfileAsyncActionCreator} from '../profile/ProfileAsyncActionCreator';
 import {StatisticsReducer} from '../statistics/StatisticsReducer';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {AdminReducer} from './AdminReducer';
+import {APISkillCategory, APISkillServiceSkill, SkillCategoryNode} from '../../model/admin/SkillTree';
 
 export class AdminActionCreator {
     public static RequestNotifications(): AbstractAction {
@@ -144,6 +147,28 @@ export class AdminActionCreator {
         }
     }
 
+    public static ReceiveSkillCategory(apiSkillCategory: APISkillCategory): ReceiveSkillCategoryAction {
+        return {
+            type: ActionType.ReceiveSkillCategory,
+            skillCategory: apiSkillCategory
+        }
+    }
+
+
+    public static SetSkillTree(root: SkillCategoryNode): SetSkillTreeAction {
+        return {
+            type: ActionType.SetSkillTree,
+            rootNode: root
+        }
+    }
+
+    public static AddSkillsToTree(skills: Array<APISkillServiceSkill>): AddSkillsToTreeAction {
+        return {
+            type: ActionType.AddSkillsToTree,
+            skills: skills
+        }
+    }
+
     public static AsyncNavigateToStatistics() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(StatisticsActionCreator.AsyncRequestSkillUsages());
@@ -157,6 +182,7 @@ export class AdminActionCreator {
             dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_STATISTICS_NETWORK));
         }
     }
+
 
     public static AsyncRequestNotifications(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
@@ -415,6 +441,51 @@ export class AdminActionCreator {
                     console.error(error);
                 });
             }).catch(function (error: any) {
+                console.error(error);
+            });
+        }
+    }
+
+    public static AsyncLoadCategoryChildrenIds = (id: number) => {
+        return function (dispatch: redux.Dispatch<AdminState>) {
+            axios.get(getCategoryChildrenByCategoryId(id)).then(function (response: AxiosResponse) {
+                let childIds: Array<number> = response.data;
+                childIds.forEach(id => dispatch(AdminActionCreator.AsyncLoadCategoryIntoTree(id)));
+            }).catch(function (error: any) {
+                console.error(error);
+            });
+        }
+    };
+
+    public static AsyncLoadCategoryIntoTree = (id: number) => {
+        return function (dispatch: redux.Dispatch<AdminState>) {
+            axios.get(getCategoryById(id)).then(function (response: AxiosResponse) {
+                let apiCategory: APISkillCategory = response.data;
+                dispatch(AdminActionCreator.ReceiveSkillCategory(apiCategory));
+                dispatch(AdminActionCreator.AsyncLoadCategoryChildrenIds(id));
+            }).catch(function (error: any) {
+                console.error(error);
+            });
+        }
+    };
+
+    public static AsyncLoadCategoryTree = () => {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            axios.get(getRootCategoryIds()).then(function(response: AxiosResponse) {
+                let ids: Array<number> = response.data;
+                ids.forEach(id => dispatch(AdminActionCreator.AsyncLoadCategoryIntoTree(id)));
+            }).catch(function(error:any) {
+                console.error(error);
+            });
+        }
+    };
+
+    public static AsyncLoadSkillsForCategory = (categoryId: number) => {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            axios.get(getSkillsForCategory(categoryId)).then(function(response: AxiosResponse) {
+                let skills: Array<APISkillServiceSkill> = response.data;
+                dispatch(AdminActionCreator.AddSkillsToTree(skills));
+            }).catch(function(error:any) {
                 console.error(error);
             });
         }

@@ -2,9 +2,10 @@ import {AdminState} from '../../model/admin/AdminState';
 import {AbstractAction, ChangeStringValueAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
+    AddSkillsToTreeAction,
     ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveConsultantAction,
-    ReceiveNotifcationsAction,
-    RequestStatusAction
+    ReceiveNotifcationsAction, ReceiveSkillCategoryAction,
+    RequestStatusAction, SetSkillTreeAction
 } from './admin-actions';
 import {AdminNotification} from '../../model/admin/AdminNotification';
 import {ActionType} from '../ActionType';
@@ -14,6 +15,7 @@ import {browserHistory} from 'react-router'
 import {Paths} from '../../index';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {LoginStatus} from '../../model/LoginStatus';
+import {SkillCategoryNode} from '../../model/admin/SkillTree';
 
 export class AdminReducer {
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotifcationsAction): AdminState {
@@ -82,6 +84,21 @@ export class AdminReducer {
         return state.consultantsByInitials(consultants);
     }
 
+    public static ReceiveSkillCateogry(state: AdminState, receiveSkillCategoryAction: ReceiveSkillCategoryAction) {
+        let tree = state.skillCategoryTreeRoot().addNodeAsChild(receiveSkillCategoryAction.skillCategory);
+        return state.skillCategoryTreeRoot(tree);
+    }
+
+    public static SetSkillTree(state: AdminState, setSkillTreeAction: SetSkillTreeAction) {
+        return state.skillCategoryTreeRoot(SkillCategoryNode.of(setSkillTreeAction.rootNode));
+    }
+
+    public static AddSkillsToTree(state: AdminState, addSkillsToTreeAction: AddSkillsToTreeAction) {
+        let tree = state.skillCategoryTreeRoot();
+        addSkillsToTreeAction.skills.forEach(skill => tree = tree.addNodeAsLeaf(skill));
+        return state.skillCategoryTreeRoot(tree);
+    }
+
     public static reduce(state : AdminState, action: AbstractAction) : AdminState {
         if(isNullOrUndefined(state)) {
             return AdminState.createDefault();
@@ -117,6 +134,12 @@ export class AdminReducer {
                 return AdminReducer.LogOutAdmin(state);
             case ActionType.ReceiveSingleConsultant:
                 return AdminReducer.ReceiveSingleConsultant(state, action as ReceiveConsultantAction);
+            case ActionType.ReceiveSkillCategory:
+                return AdminReducer.ReceiveSkillCateogry(state, action as ReceiveSkillCategoryAction);
+            case ActionType.SetSkillTree:
+                return AdminReducer.SetSkillTree(state, action as SetSkillTreeAction);
+            case ActionType.AddSkillsToTree:
+                return AdminReducer.AddSkillsToTree(state, action as AddSkillsToTreeAction);
             default:
                 return state;
         }

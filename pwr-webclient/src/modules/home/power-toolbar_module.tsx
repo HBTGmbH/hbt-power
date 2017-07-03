@@ -109,7 +109,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
         >
             <Link to="/app/home"><MenuItem  primaryText={PowerLocalize.get('Menu.Home')} /></Link>
-            <Link to="/app/profile"><MenuItem  primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
+            <Link to={Paths.USER_PROFILE}><MenuItem  primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
             {
                 this.props.viewSelected ? <Link to="/app/view"><MenuItem  primaryText={PowerLocalize.get('Menu.View')} /></Link> : null
             }

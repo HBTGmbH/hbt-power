@@ -41,39 +41,10 @@ import {
     white, indigo50, amber300, amber50, yellow50
 } from 'material-ui/styles/colors';
 import {fade} from 'material-ui/utils/colorManipulator';
+import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
+import {AdminSkillTree} from './modules/admin/info/admin-skill-tree_module';
 
-injectTapEventPlugin();
 
-
-
-let store = createStore(
-    reducerApp,
-    applyMiddleware(
-        thunkMiddleware
-    )
-);
-
-PowerLocalize.setLocale(navigator.language);
-store.dispatch(ProfileAsyncActionCreator.requestQualifications());
-store.dispatch(ProfileAsyncActionCreator.requestLanguages());
-store.dispatch(ProfileAsyncActionCreator.requestEducations());
-store.dispatch(ProfileAsyncActionCreator.requestTrainings());
-store.dispatch(ProfileAsyncActionCreator.requestSectors());
-store.dispatch(ProfileAsyncActionCreator.requestCompanies());
-store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
-store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-
-console.info('Current history location is ', browserHistory.getCurrentLocation());
-
-const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
-if(!isNullOrUndefined(storedInitials)) {
-    console.info('Cookie detected. Performing auto Log-In.');
-    // renew the cookie to hold another fixed period of time.
-    Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-    store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
-} else {
-    browserHistory.push('/');
-}
 
 /**
  * Paths used for routing. Central point of configuration for routing information.
@@ -86,6 +57,7 @@ export class Paths {
     public static readonly ADMIN_LOGIN = '/login';
     public static readonly ADMIN_STATISTICS_SKILL = '/admin/home/statistics/skills';
     public static readonly ADMIN_STATISTICS_NETWORK = '/admin/home/statistics/network';
+    public static readonly ADMIN_INFO_SKILLTREE = '/admin/home/info/skilltree';
     public static readonly APP_ROOT = '/';
 
     public static readonly USER_BASE = "/app";
@@ -98,7 +70,68 @@ export class Paths {
     public static readonly USER_STATISTICS_CLUSTERINFO = Paths.USER_BASE + "/statistics/clusterinfo";
     public static readonly USER_STATISTICS_SKILLS = Paths.USER_BASE + "/statistics/skills";
 
+    constructor() {
+
+    }
+
+    private loginUser = () => {
+        const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
+        // renew the cookie to hold another fixed period of time.
+        Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
+        store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
+    };
+
+    private userAvailableInCookies = () => {
+        return !isNullOrUndefined(Cookies.get(COOKIE_INITIALS_NAME));
+    };
+
+    public restorePath() {
+        let location = browserHistory.getCurrentLocation();
+        console.info('Current history location is ', browserHistory.getCurrentLocation());
+        if(this.userAvailableInCookies()) {
+            let initials = Cookies.get(COOKIE_INITIALS_NAME);
+            console.info('Cookie detected. Performing auto Log-In.');
+            if(location.pathname == Paths.USER_HOME) {
+                console.info("Routing back to user home.");
+                this.loginUser();
+            } else if(location.pathname == Paths.USER_PROFILE) {
+                console.info("Routing back to user profile.");
+                this.loginUser();
+                store.dispatch(ProfileAsyncActionCreator.editProfile(initials))
+            }
+        } else {
+            browserHistory.push('/');
+        }
+    }
+
 }
+
+
+injectTapEventPlugin();
+let store = createStore(
+    reducerApp,
+    applyMiddleware(
+        thunkMiddleware
+    )
+);
+
+const paths = new Paths();
+paths.restorePath();
+
+PowerLocalize.setLocale(navigator.language);
+store.dispatch(ProfileAsyncActionCreator.requestQualifications());
+store.dispatch(ProfileAsyncActionCreator.requestLanguages());
+store.dispatch(ProfileAsyncActionCreator.requestEducations());
+store.dispatch(ProfileAsyncActionCreator.requestTrainings());
+store.dispatch(ProfileAsyncActionCreator.requestSectors());
+store.dispatch(ProfileAsyncActionCreator.requestCompanies());
+store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
+store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+
+
+
+
+
 
 
 @DragDropContext(HTML5Backend)
@@ -123,6 +156,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
                 <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics} />
                 <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork} />
+                <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree} />
             </Route>
         </Router>);
     }

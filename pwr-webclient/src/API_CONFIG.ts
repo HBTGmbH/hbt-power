@@ -160,3 +160,19 @@ export function getScatterSkills(): string {
 export function postFindConsultantBySkills(): string {
     return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/consultant/find/skills";
 }
+
+export function getRootCategoryIds(): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/root";
+}
+
+export function getCategoryById(id: number): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + id;
+}
+
+export function getCategoryChildrenByCategoryId(id: number): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + id + "/children";
+}
+
+export function getSkillsForCategory(id: number): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + id + "/skills";
+}

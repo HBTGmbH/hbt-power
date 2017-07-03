@@ -12,8 +12,12 @@ const POWER_API_SUFFIX_PROFILE = "/pwr-profile-service/api";
 const POWER_API_HOST_STATISTICS = "http://localhost";
 const POWER_API_PORT_STATISTICS = "9007";
 const POWER_API_SUFFIX_STATISTICS = "";
-
+/*
 const POWER_API_HOST_SKILL = "http://power02.corp.hbt.de";
 const POWER_API_PORT_SKILL = "9000";
 const POWER_API_SUFFIX_SKILL = "/pwr-skill-service/";
+*/
+const POWER_API_HOST_SKILL = "http://localhost";
+const POWER_API_PORT_SKILL = "9003";
+const POWER_API_SUFFIX_SKILL = "";
 

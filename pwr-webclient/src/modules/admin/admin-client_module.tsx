@@ -8,6 +8,7 @@ import {ApplicationState, RequestStatus} from '../../Store';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {RequestSnackbar} from '../general/request-snackbar_module.';
 import {Paths} from '../../index';
+import {browserHistory} from 'react-router'
 
 
 /**
@@ -149,6 +150,12 @@ class AdminClientModule extends React.Component<
                                 >
                                 </ListItem>
                                 <ListItem
+                                    primaryText="Skilltree"
+                                    leftIcon={<FontIcon className="material-icons">people</FontIcon>}
+                                    onClick={() => browserHistory.push(Paths.ADMIN_INFO_SKILLTREE)}
+                                >
+                                </ListItem>
+                                <ListItem
                                     primaryText={PowerLocalize.get("AdminClient.Menu.Statistics")}
                                     leftIcon={<FontIcon className="material-icons">insert_chart</FontIcon>}
                                     open={true}
@@ -171,7 +178,7 @@ class AdminClientModule extends React.Component<
                             </List>
                         </Paper>
                     </div>
-                    <div className="col-md-9">
+                    <div className="col-md-9 fittingContainer">
                         {this.props.children}
                     </div>
                     <RequestSnackbar APIRequestStatus={this.props.requestStatus}/>

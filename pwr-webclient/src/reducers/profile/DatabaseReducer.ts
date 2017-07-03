@@ -205,7 +205,7 @@ export class DatabaseReducer {
         browserHistory.push('/app/home');
         Cookies.set(COOKIE_INITIALS_NAME, action.consultantInfo.initials(), {expires: COOKIE_INITIALS_EXPIRATION_TIME});
         database = database.loginStatus(LoginStatus.SUCCESS);
-        return database.loggedInUser(action.consultantInfo); // TODO
+        return database.loggedInUser(action.consultantInfo);
     }
 
     private static ShowProfile(database: InternalDatabase): InternalDatabase {
