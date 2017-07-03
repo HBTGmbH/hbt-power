@@ -1,17 +1,16 @@
 package de.hbt.pwr.service;
 
 import de.hbt.pwr.StreamUtils;
-import de.hbt.pwr.model.RelativeSkillUsage;
-import de.hbt.pwr.model.SkillUsage;
-import de.hbt.pwr.model.StatisticsConfig;
+import de.hbt.pwr.model.*;
 import de.hbt.pwr.model.clustering.*;
 import de.hbt.pwr.model.profile.Consultant;
+import de.hbt.pwr.model.profile.Skill;
 import de.hbt.pwr.repo.ClusteredNetworkRepo;
 import de.hbt.pwr.repo.ConsultantRepository;
 import de.hbt.pwr.repo.StatisticsConfigRepo;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -149,8 +148,37 @@ public class StatisticsService {
             info.sort();
             return info;
         }
-
         return null;
+    }
+
+
+    @NotNull
+    public List<ConsultantSkillInfo> findConsultantsBySkills(List<String> skillNames) {
+        List<Consultant> consultants = StreamUtils.asStream(consultantRepository.findAll()).collect(Collectors.toList());
+        Set<String> skillNameSet = new HashSet<>(skillNames);
+        consultants.removeIf(consultant -> !consultant.hasAllSkills(skillNameSet));
+        return consultants.stream().map(consultant -> new ConsultantSkillInfo(consultant, skillNameSet)).collect(Collectors.toList());
+    }
+
+    private Set<Skill> getAllSkills(List<Consultant> consultants) {
+        Set<Skill> skills = new HashSet<>();
+        consultants.forEach(consultant -> skills.addAll(consultant.getProfile().getSkills()));
+        return skills;
+    }
+
+    public List<SkillAverageRating> calculateRatedSkillFrequency() {
+        Map<String, SkillAverageRating> ratedSkillsByName = new HashMap<>();
+        List<Consultant> consultants = StreamUtils.asStream(consultantRepository.findAll()).collect(Collectors.toList());
+        Set<Skill> skills = getAllSkills(consultants);
+        skills.forEach(skill -> {
+            SkillAverageRating s = ratedSkillsByName.get(skill.getName());
+            if(s == null) {
+                s = new SkillAverageRating(skill.getName());
+                ratedSkillsByName.put(s.getName(), s);
+            }
+            s.addSkill(skill);
+        });
+        return ratedSkillsByName.values().stream().peek(SkillAverageRating::evaluate).collect(Collectors.toList());
     }
 
 }

@@ -6,6 +6,11 @@ import java.util.stream.StreamSupport;
 
 public class StreamUtils {
 
+
+    public static <T> Stream<T> asStream(Iterable<T> sourceIterator) {
+        return asStream(sourceIterator.iterator(), false);
+    }
+
     public static <T> Stream<T> asStream(Iterator<T> sourceIterator) {
         return asStream(sourceIterator, false);
     }

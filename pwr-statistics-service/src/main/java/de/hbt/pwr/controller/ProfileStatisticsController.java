@@ -1,11 +1,14 @@
 package de.hbt.pwr.controller;
 
+import de.hbt.pwr.model.ConsultantSkillInfo;
 import de.hbt.pwr.model.RelativeSkillUsage;
-import de.hbt.pwr.model.SimRank.ProfileSkillNetwork;
+import de.hbt.pwr.model.SkillAverageRating;
 import de.hbt.pwr.model.SkillUsage;
 import de.hbt.pwr.model.clustering.ClusteredNetwork;
 import de.hbt.pwr.model.clustering.ConsultantClusteringInfo;
 import de.hbt.pwr.model.clustering.MetricType;
+import de.hbt.pwr.model.profile.Consultant;
+import de.hbt.pwr.service.AsyncInformationService;
 import de.hbt.pwr.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static de.hbt.pwr.model.StatisticsConfig.DEFAULT_MAX_SKILLS;
 
@@ -31,15 +35,23 @@ public class ProfileStatisticsController {
 
     private final StatisticsService statisticsService;
 
+    private final AsyncInformationService asyncInformationService;
 
 
     @Autowired
-    public ProfileStatisticsController(StatisticsService statisticsService) {
+    public ProfileStatisticsController(StatisticsService statisticsService, AsyncInformationService asyncInformationService) {
         this.statisticsService = statisticsService;
+        this.asyncInformationService = asyncInformationService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.HEAD)
     public ResponseEntity available() {
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity refresh() {
+        asyncInformationService.invokeConsultantDataRefresh();
         return ResponseEntity.noContent().build();
     }
 
@@ -48,7 +60,11 @@ public class ProfileStatisticsController {
         if(maxSkills == null) maxSkills = DEFAULT_MAX_SKILLS;
         if(maxSkills <= 0) throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Parameter 'max' must not be negative.");
         return ResponseEntity.ok(statisticsService.getMostUsedSkills(maxSkills));
+    }
 
+    @RequestMapping(value = "/consultant/find/skills", produces = "application/json", consumes = "application/json", method = RequestMethod.POST)
+    public ResponseEntity<List<ConsultantSkillInfo>> findConsultantsBySkills(@RequestBody List<String> skillNames) {
+        return ResponseEntity.ok(statisticsService.findConsultantsBySkills(skillNames));
     }
 
 
@@ -75,11 +91,23 @@ public class ProfileStatisticsController {
         return ResponseEntity.ok(result);
     }
 
+    @RequestMapping(value = "/skill/level", produces = "application/json")
+    public ResponseEntity<List<SkillAverageRating>> getSkillLevelMetric() {
+        return ResponseEntity.ok(statisticsService.calculateRatedSkillFrequency());
+    }
+
     @RequestMapping(value = "/network/kmed", produces = "application/json")
     public ResponseEntity<ClusteredNetwork> getClusteredNetwork() {
         return ResponseEntity.ok(statisticsService.getClusteredNetwork());
     }
 
+    /**
+     * Updates the parameters for the clustering process that is automated and invokes a re-clustering
+     * @param iterations the amount of iterations used for the k-medoid algorithm
+     * @param clusters the amount of expected clusters
+     * @param metric type to be used
+     * @return the newly clustered network.
+     */
     @RequestMapping(value = "/network/kmed", produces = "application/json", method = RequestMethod.POST)
     public ResponseEntity<ClusteredNetwork> updateClusteredNetworkParams(
             @RequestParam(value = "iterations", required = true) Integer iterations,
@@ -94,5 +122,6 @@ public class ProfileStatisticsController {
     public ResponseEntity<ConsultantClusteringInfo> getConsultantClusteringInfo(@PathVariable("initials") String initials){
         return ResponseEntity.ok(statisticsService.getConsultantInfo(initials));
     }
+
 
 }
