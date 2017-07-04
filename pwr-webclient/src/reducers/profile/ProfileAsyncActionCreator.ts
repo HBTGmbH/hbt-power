@@ -399,9 +399,11 @@ export class ProfileAsyncActionCreator {
                     'Content-Type': 'application/json'
                 }
             };
+            dispatch(ProfileActionCreator.APIRequestPending());
             axios.post(postCreatePDFProfile(initials), null, config).then((response: AxiosResponse) => {
                 let location = response.data.filelocation;
-                window.open(location, "_blank");
+                window.open("http://" + location, "_blank");
+                dispatch(ProfileActionCreator.SucceedAPIRequest());
             }).catch(function (error: any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
