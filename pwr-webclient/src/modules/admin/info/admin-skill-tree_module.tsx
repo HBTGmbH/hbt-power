@@ -5,6 +5,7 @@ import {ApplicationState} from '../../../Store';
 import {SkillCategoryNode} from '../../../model/admin/SkillTree';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {isNullOrUndefined} from 'util';
+import {AutoComplete, TextField} from 'material-ui';
 
 const SortableTree = require('react-sortable-tree').default;
 
@@ -17,7 +18,6 @@ interface AdminSkillTreeLocalProps {
 }
 
 interface AdminSkillTreeLocalState {
-
 }
 
 interface AdminSkillTreeDispatch {
@@ -30,6 +30,12 @@ class AdminSkillTreeModule extends React.Component<
     AdminSkillTreeProps
     & AdminSkillTreeLocalProps
     & AdminSkillTreeDispatch, AdminSkillTreeLocalState> {
+
+    constructor(props:AdminSkillTreeProps & AdminSkillTreeLocalProps & AdminSkillTreeDispatch) {
+        super(props);
+        this.state = {
+        }
+    }
 
     static mapStateToProps(state: ApplicationState, localProps: AdminSkillTreeLocalProps): AdminSkillTreeProps {
         return {
@@ -60,16 +66,23 @@ class AdminSkillTreeModule extends React.Component<
         }
     };
 
+    private treeSearchMethod = (data: { node: SkillCategoryNode, path: number[] | string[], treeIndex: number, searchQuery: string }) => {
+        if(isNullOrUndefined(data.searchQuery)) return false;
+        return AutoComplete.fuzzyFilter(data.searchQuery, data.node.qualifier);
+    };
+
     render() {
         return (
-            <SortableTree
-                treeData={[this.props.rootNode]}
-                style={{height: "800px", paddingTop: "50px"}}
-                onChange={(tree: Array<SkillCategoryNode>) => this.props.setSkillTree(tree[0])}
-                onVisibilityToggle={this.handleVisibilityToggle}
-                canDrag={false}
-                canDrop={false}
-            />
+            <div>
+                <SortableTree
+                    treeData={[this.props.rootNode]}
+                    style={{height: "800px", paddingTop: "50px"}}
+                    onChange={(tree: Array<SkillCategoryNode>) => this.props.setSkillTree(tree[0])}
+                    onVisibilityToggle={this.handleVisibilityToggle}
+                    canDrag={false}
+                    canDrop={false}
+                />
+            </div>
    );
     }
 }

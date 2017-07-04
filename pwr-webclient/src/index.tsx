@@ -43,6 +43,7 @@ import {
 import {fade} from 'material-ui/utils/colorManipulator';
 import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import {AdminSkillTree} from './modules/admin/info/admin-skill-tree_module';
+import {NameEntityOverview} from './modules/admin/info/name-entity-overview_module';
 
 
 
@@ -58,6 +59,7 @@ export class Paths {
     public static readonly ADMIN_STATISTICS_SKILL = '/admin/home/statistics/skills';
     public static readonly ADMIN_STATISTICS_NETWORK = '/admin/home/statistics/network';
     public static readonly ADMIN_INFO_SKILLTREE = '/admin/home/info/skilltree';
+    public static readonly ADMIN_INFO_NAME_ENTITY = '/admin/home/info/names';
     public static readonly APP_ROOT = '/';
 
     public static readonly USER_BASE = "/app";
@@ -148,6 +150,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics} />
                 <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork} />
                 <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree} />
+                <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={NameEntityOverview} />
             </Route>
         </Router>);
     }

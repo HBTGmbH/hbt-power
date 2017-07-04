@@ -23,11 +23,12 @@ export class SkillCategoryNode {
     title: string | JSX.Element;
     children: Array<SkillCategoryNode>;
     expanded: boolean;
+    qualifier: string;
     type: "CATEGORY" | "SKILL";
 
 
     private constructor(id: number, categoryId: number, title:  string | JSX.Element, children: Array<SkillCategoryNode>, expanded: boolean,
-            type: "CATEGORY" | "SKILL") {
+            type: "CATEGORY" | "SKILL", qualifier: string) {
         this.categoryId = categoryId;
         this.title = title;
         this.children = children;
@@ -35,10 +36,11 @@ export class SkillCategoryNode {
         this.id = id;
         this.type = type;
         this.title = title;
+        this.qualifier = qualifier;
     }
 
     public static root() {
-        return new SkillCategoryNode(-1, -1,  "root", [], true, TYPE_CATEGORY);
+        return new SkillCategoryNode(-1, -1,  "root", [], true, TYPE_CATEGORY, "root");
     }
 
     private hasChild(id: number, type: "CATEGORY" | "SKILL") {
@@ -64,8 +66,8 @@ export class SkillCategoryNode {
             // Found another category without parent.
             // This category is root(defined by -1) -> Add under root.
             if(!this.children.some(value => value.id == apiSkillCategory.id && value.type == TYPE_CATEGORY)) {
-                let child = new SkillCategoryNode(apiSkillCategory.id, -1, apiSkillCategory.qualifier, [], false, TYPE_CATEGORY);
-                return new SkillCategoryNode(this.id, this.categoryId, this.title,  [... this.children, child], this.expanded, this.type);
+                let child = new SkillCategoryNode(apiSkillCategory.id, -1, apiSkillCategory.qualifier, [], false, TYPE_CATEGORY, apiSkillCategory.qualifier);
+                return new SkillCategoryNode(this.id, this.categoryId, this.title,  [... this.children, child], this.expanded, this.type, this.qualifier);
             } else {
                 return this;
             }
@@ -74,8 +76,9 @@ export class SkillCategoryNode {
             // Add under the condition that the children do not contain one with the same name already.
             if(!this.children.some(value => value.id == apiSkillCategory.id && value.type == TYPE_CATEGORY)) {
                 // Children do not contain this child already
-                let child = new SkillCategoryNode(apiSkillCategory.id, apiSkillCategory.category.id, apiSkillCategory.qualifier, [], false, TYPE_CATEGORY);
-                return new SkillCategoryNode(this.id, this.categoryId, this.title,  [... this.children, child], this.expanded, this.type);
+                let child = new SkillCategoryNode(apiSkillCategory.id, apiSkillCategory.category.id,
+                    apiSkillCategory.qualifier, [], false, TYPE_CATEGORY, apiSkillCategory.qualifier);
+                return new SkillCategoryNode(this.id, this.categoryId, this.title,  [... this.children, child], this.expanded, this.type, this.qualifier);
             } else {
                 // Children contain the child already
                 return this;
@@ -83,7 +86,7 @@ export class SkillCategoryNode {
         } else {
             // One of the children might be parent
             let newChildren = this.children.map(child => child.addNodeAsChild(apiSkillCategory));
-            return new SkillCategoryNode(this.id, this.categoryId, this.title, newChildren, this.expanded, TYPE_CATEGORY);
+            return new SkillCategoryNode(this.id, this.categoryId, this.title, newChildren, this.expanded, this.type, this.qualifier);
         }
     }
 
@@ -99,22 +102,25 @@ export class SkillCategoryNode {
                     (<div><FontIcon className="material-icons">keyboard</FontIcon>{apiSkill.qualifier}</div>),
                     [],
                     false,
-                    TYPE_SKILL);
-                return new SkillCategoryNode(this.id, this.categoryId, this.title,  [... this.children, child], this.expanded, this.type);
+                    TYPE_SKILL,
+                    apiSkill.qualifier
+                );
+                return new SkillCategoryNode(this.id, this.categoryId, this.title,  [... this.children, child], this.expanded, this.type, this.qualifier);
             } else {
                 return this;
             }
         } else {
             // One of the children might be parent
             let newChildren = this.children.map(child => child.addNodeAsLeaf(apiSkill));
-            return new SkillCategoryNode(this.id, this.categoryId, this.title, newChildren, this.expanded, this.type);
+            return new SkillCategoryNode(this.id, this.categoryId, this.title, newChildren, this.expanded, this.type, this.qualifier);
         }
     }
 
 
     public static of(skillCategoryNode: SkillCategoryNode): SkillCategoryNode {
         let children = skillCategoryNode.children.map((value, index, array) => SkillCategoryNode.of(value));
-        return new SkillCategoryNode(skillCategoryNode.id, skillCategoryNode.categoryId, skillCategoryNode.title, children, skillCategoryNode.expanded, skillCategoryNode.type);
+        return new SkillCategoryNode(skillCategoryNode.id, skillCategoryNode.categoryId, skillCategoryNode.title,
+            children, skillCategoryNode.expanded, skillCategoryNode.type, skillCategoryNode.qualifier);
     }
 
 }
