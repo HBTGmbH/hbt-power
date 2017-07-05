@@ -156,12 +156,14 @@ class AdminClientModule extends React.Component<
                                     open={true}
                                     nestedItems={[
                                         <ListItem
+                                            key="AdminClient.Menu.Info.ProfileElements"
                                             primaryText={PowerLocalize.get("AdminClient.Menu.Info.ProfileElements")}
                                             leftIcon={<FontIcon className="material-icons">dehaze</FontIcon>}
                                             onClick={() => browserHistory.push(Paths.ADMIN_INFO_NAME_ENTITY)}
                                         >
                                         </ListItem>,
                                         <ListItem
+                                            key="AdminClient.Menu.Info.SkillTree"
                                             primaryText={PowerLocalize.get("AdminClient.Menu.Info.SkillTree")}
                                             leftIcon={<FontIcon className="material-icons">device_hub</FontIcon>}
                                             onClick={() => browserHistory.push(Paths.ADMIN_INFO_SKILLTREE)}

@@ -3,6 +3,10 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.fullWidth {
+  width: 100%
+}
 .fittingContainer {
   display: inline-block;
 }
@@ -30,6 +34,10 @@ body {
   padding: 8px;
 }
 
+.padding-left-16px {
+  padding-left: 16px;
+}
+
 .vertical-align {
   display: flex !important;
   align-items: center;
@@ -41,6 +49,14 @@ body {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.Aligner-item--top {
+  align-self: flex-start;
+}
+
+.Aligner-item--bottom {
+  align-self: flex-end;
 }
 
 .material-icons-custom {

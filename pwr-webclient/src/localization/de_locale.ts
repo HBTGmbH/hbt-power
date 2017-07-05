@@ -87,12 +87,14 @@ export const de_locale : any = {
     "ConsultantTile.EditConsultant": "Berater bearbeiten",
     "UserLogin.LoginFailed": "Login fehlgeschlagen",
     "SkillTree.SearchAndAddSkill": "Skill suchen/hinzufügen",
+    "AdminClient.Login.Remember": "Login merken",
     "AdminClient.Menu.Statistics": "Statistiken",
     "AdminClient.Menu.Statistics.Skills": "Skills",
     "AdminClient.Menu.Statistics.Network": "Profil-Netzwerk",
     "AdminClient.Menu.Info": "Informationen",
     "AdminClient.Menu.Info.SkillTree": "Skill-Baum",
     "AdminClient.Menu.Info.ProfileElements": "Profil-Elemente",
+    "AdminClient.Menu.Info.ProfileElements.ElementTypes": "Profil-Element Typen",
     "ProfileNetwork.Description": "Der folgende Graph stellt ein Netzwerk aller vorhandenen Beraterprofile dar. Die Farben repräsentieren dabei Cluster, die mit Hilfe des k-medoids Algorithmus entstanden sind. Profile innerhalb eines Clusters teilen sich ähnliche Skills. Die Kanten beschreiben die Anzahl der Skills, die die Profile untereinander Teilen.",
     "ProfileNetwork.NodeDetails.Title": "Knoten-Details",
     "ProfileNetwork.CommonSkillsCount": "Gemeinsame Skills",
@@ -174,6 +176,7 @@ export const de_locale : any = {
     "Action.Next": "Weiter",
     "Action.Execute": "Ausführen",
     "Action.Duplicate": "Duplizieren",
-    "Action.CreateNewConsultant": "Neuer Berater"
+    "Action.CreateNewConsultant": "Neuer Berater",
+    "Action.Login": "Anmelden"
 
 };

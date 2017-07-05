@@ -1,4 +1,4 @@
-import {Paths} from './index';
+import {Paths, store} from './index';
 import {PowerLogin} from './modules/power-login_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
 import {PowerClient} from './modules/home/power-client_module';
@@ -17,8 +17,10 @@ import {ExportDocumentList} from './modules/home/export/export-document-list_mod
 import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_module';
 import {ClusterResult} from './modules/home/statistics/cluster-result_module';
 import {ConsultantSkillSearch} from './modules/general/search/consultant-skill-search_module.';
+import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
 
-export const powerRoutes = {
+
+export const routes = {
     path: Paths.APP_ROOT,
     component: PowerLogin,
     childRoutes: [
@@ -85,7 +87,7 @@ export const powerRoutes = {
                     component: AdminSkillTree
                 },{
                     path: Paths.ADMIN_INFO_NAME_ENTITY,
-                    component: NameEntityOverview
+                    component: NameEntityOverview,
                 }
             ]
         }

@@ -25,6 +25,9 @@ import {StatisticsReducer} from '../statistics/StatisticsReducer';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {AdminReducer} from './AdminReducer';
 import {APISkillCategory, APISkillServiceSkill, SkillCategoryNode} from '../../model/admin/SkillTree';
+import {isNullOrUndefined} from 'util';
+import {COOKIE_ADMIN_EXPIRATION_TIME, COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
+import * as Cookies from 'js-cookie';
 
 export class AdminActionCreator {
     public static RequestNotifications(): AbstractAction {
@@ -342,7 +345,27 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncValidateAuthentication(username: string, password: string) {
+
+    public static AsyncRestoreFromCookies() {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            const storedUsername = Cookies.get(COOKIE_ADMIN_USERNAME);
+            const storedPassword = Cookies.get(COOKIE_ADMIN_PASSWORD);
+            Promise.all([
+                dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
+                dispatch(AdminActionCreator.ChangePassword(storedPassword))]
+            ).then(() => dispatch(AdminActionCreator.AsyncValidateAuthentication(storedUsername, storedPassword, true)));
+        }
+    }
+
+    /**
+     *
+     * @param username
+     * @param password
+     * @param rememberLogin
+     * @returns {(dispatch:redux.Dispatch<AdminState>)=>undefined}
+     * @constructor
+     */
+    public static AsyncValidateAuthentication(username: string, password: string, rememberLogin?: boolean) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
                 auth: {
@@ -351,13 +374,20 @@ export class AdminActionCreator {
                 },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
+            if(isNullOrUndefined(rememberLogin)) rememberLogin = false;
             axios.head(getAdminAuthAPIString(), config).then(function(response: AxiosResponse) {
+                if(rememberLogin) {
+                    Cookies.set(COOKIE_ADMIN_USERNAME, username, COOKIE_ADMIN_EXPIRATION_TIME);
+                    Cookies.set(COOKIE_ADMIN_PASSWORD, password, COOKIE_ADMIN_EXPIRATION_TIME);
+                }
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.INITIALS));
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
                 dispatch(AdminActionCreator.AsyncGetAllConsultants());
                 dispatch(AdminActionCreator.LogInAdmin());
             }).catch(function(error:any) {
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
+                // Clear possible cookies
+                dispatch(AdminActionCreator.LogOutAdmin())
                 console.error(error);
             });
         };

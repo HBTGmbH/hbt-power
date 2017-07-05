@@ -2,6 +2,7 @@ import {NameEntity} from '../model/NameEntity';
 import {isNull, isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {ProfileElementType} from '../Store';
+import {type} from 'os';
 export class NameEntityUtil {
 
     /**
@@ -31,8 +32,17 @@ export class NameEntityUtil {
         return nameEntity.name();
     }
 
-    public static typeToLocalizedType(nameEntity: NameEntity) {
+    public static typeToLocalizedType(nameEntity: NameEntity ): string {
         return PowerLocalize.get("NameEntityType." + nameEntity.type());
+    }
+
+    public static getProfileElementTypeValues() {
+        let members = [];
+        for(let i:number = 0; true; i++) {
+            if(ProfileElementType[i] === undefined) break
+            members.push(ProfileElementType[i])
+        }
+        return members
     }
 
     public static typeToViewAPIString(profileElementType: ProfileElementType) {

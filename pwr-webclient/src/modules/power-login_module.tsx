@@ -139,7 +139,6 @@ class PowerLoginModule extends React.Component<
                             <Link to={Paths.ADMIN_LOGIN}><FlatButton label="Admin"/></Link>
                         </div>
                     </div>
-
                 </Paper>
             </div>
         </div>);

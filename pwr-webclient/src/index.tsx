@@ -22,7 +22,12 @@ import {NotificationTrashbox} from './modules/admin/notification-trashbox_module
 import {AdminLogin} from './modules/admin/admin-login_module';
 import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
-import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from './model/PwrConstants';
+import {
+    COOKIE_ADMIN_PASSWORD,
+    COOKIE_ADMIN_USERNAME,
+    COOKIE_INITIALS_EXPIRATION_TIME,
+    COOKIE_INITIALS_NAME
+} from './model/PwrConstants';
 import {isNullOrUndefined} from 'util';
 import * as Cookies from 'js-cookie';
 import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
@@ -34,20 +39,25 @@ import {ClusterResult} from './modules/home/statistics/cluster-result_module';
 import {ConsultantSkillSearch} from './modules/general/search/consultant-skill-search_module.';
 import {ExportDocumentList} from './modules/home/export/export-document-list_module';
 import {getMuiTheme, spacing} from 'material-ui/styles';
-import {lightBaseTheme} from 'material-ui/styles/baseThemes/lightBaseTheme';
-import injectTapEventPlugin = require('react-tap-event-plugin');
 import {
-    cyan500, darkBlack, fullBlack, grey100, grey300, grey500, indigo500, indigo800, pinkA200, tealA400,
-    white, indigo50, amber300, amber50, yellow50
+    cyan500,
+    darkBlack,
+    deepOrange500,
+    deepOrange700,
+    fullBlack, grey100,
+    grey300, grey500,
+    indigo50,
+    indigo500,
+    indigo800,
+    orange100,
+    white
 } from 'material-ui/styles/colors';
 import {fade} from 'material-ui/utils/colorManipulator';
-import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import {AdminSkillTree} from './modules/admin/info/admin-skill-tree_module';
 import {NameEntityOverview} from './modules/admin/info/name-entity-overview_module';
-import {ProfileElementType} from './Store';
+import {AdminActionCreator} from './reducers/admin/AdminActionCreator';
+import injectTapEventPlugin = require('react-tap-event-plugin');
 
-
-console.log(ProfileElementType);
 
 /**
  * Paths used for routing. Central point of configuration for routing information.
@@ -66,15 +76,15 @@ export class Paths {
     public static readonly ADMIN_INFO_SKILLTREE = '/admin/home/info/skilltree';
     public static readonly ADMIN_INFO_NAME_ENTITY = '/admin/home/info/names';
 
-    public static readonly USER_BASE = "/app/";
-    public static readonly USER_HOME = "/app/home";
-    public static readonly USER_PROFILE = "/app/profile";
-    public static readonly USER_VIEW = "/app/view";
-    public static readonly USER_REPORTS = "/app/reports";
-    public static readonly USER_SEARCH = "/app/search";
-    public static readonly USER_STATISTICS_NETWORK =  "/app/statistics/network";
-    public static readonly USER_STATISTICS_CLUSTERINFO = "/app/statistics/clusterinfo";
-    public static readonly USER_STATISTICS_SKILLS = "/app/statistics/skills";
+    public static readonly USER_BASE = '/app/';
+    public static readonly USER_HOME = '/app/home';
+    public static readonly USER_PROFILE = '/app/profile';
+    public static readonly USER_VIEW = '/app/view';
+    public static readonly USER_REPORTS = '/app/reports';
+    public static readonly USER_SEARCH = '/app/search';
+    public static readonly USER_STATISTICS_NETWORK =  '/app/statistics/network';
+    public static readonly USER_STATISTICS_CLUSTERINFO = '/app/statistics/clusterinfo';
+    public static readonly USER_STATISTICS_SKILLS = '/app/statistics/skills';
 
     constructor() {
 
@@ -87,14 +97,24 @@ export class Paths {
         store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, true));
     };
 
+    private logInAdmin = () => {
+
+    };
+
     private userAvailableInCookies = () => {
         return !isNullOrUndefined(Cookies.get(COOKIE_INITIALS_NAME));
+    };
+
+    private adminAvailableInCookies = () => {
+        return !isNullOrUndefined(Cookies.get(COOKIE_ADMIN_USERNAME)) && !isNullOrUndefined(Cookies.get(COOKIE_ADMIN_PASSWORD));
     };
 
     public restorePath() {
         let location = browserHistory.getCurrentLocation();
         console.info('Current history location is ', browserHistory.getCurrentLocation());
-        if(this.userAvailableInCookies()) {
+        if(this.adminAvailableInCookies()) {
+            store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
+        }else if(this.userAvailableInCookies()) {
             this.loginUser();
         } else {
             browserHistory.push('/');
@@ -105,7 +125,7 @@ export class Paths {
 
 
 injectTapEventPlugin();
-let store = createStore(
+export const store = createStore(
     reducerApp,
     applyMiddleware(
         thunkMiddleware
@@ -167,9 +187,9 @@ const powerTheme = {
         primary1Color: indigo500,
         primary2Color: indigo800,
         primary3Color: indigo50,
-        accent1Color: amber300,
-        accent2Color: amber50,
-        accent3Color: yellow50,
+        accent1Color: deepOrange500,
+        accent2Color: grey100,
+        accent3Color: grey500,
         textColor: darkBlack,
         alternateTextColor: white,
         canvasColor: white,
@@ -181,12 +201,13 @@ const powerTheme = {
     },
 };
 
-const theme = getMuiTheme(powerTheme);
+export const POWER_MUI_THEME = getMuiTheme(powerTheme);
 
 
 let App = (
-    <MuiThemeProvider muiTheme={theme}>
+    <MuiThemeProvider muiTheme={POWER_MUI_THEME}>
         <Provider store={store}>
+
             <MyRouter/>
         </Provider>
     </MuiThemeProvider>

@@ -16,6 +16,8 @@ import {Paths} from '../../index';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {LoginStatus} from '../../model/LoginStatus';
 import {SkillCategoryNode} from '../../model/admin/SkillTree';
+import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
+import * as Cookies from 'js-cookie';
 
 export class AdminReducer {
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotifcationsAction): AdminState {
@@ -76,6 +78,8 @@ export class AdminReducer {
 
     public static LogOutAdmin(state: AdminState): AdminState {
         browserHistory.push(Paths.APP_ROOT);
+        Cookies.remove(COOKIE_ADMIN_USERNAME);
+        Cookies.remove(COOKIE_ADMIN_PASSWORD);
         return AdminState.createDefault();
     }
 
