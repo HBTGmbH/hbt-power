@@ -44,33 +44,37 @@ import {fade} from 'material-ui/utils/colorManipulator';
 import {ProfileActionCreator} from './reducers/profile/ProfileActionCreator';
 import {AdminSkillTree} from './modules/admin/info/admin-skill-tree_module';
 import {NameEntityOverview} from './modules/admin/info/name-entity-overview_module';
+import {ProfileElementType} from './Store';
 
 
+console.log(ProfileElementType);
 
 /**
  * Paths used for routing. Central point of configuration for routing information.
  */
 export class Paths {
-    public static readonly ADMIN_BASE = '/admin';
+    public static readonly APP_ROOT = '/';
+    public static readonly ADMIN_LOGIN = 'login';
+
+
+    public static readonly ADMIN_BASE = '/admin/';
     public static readonly ADMIN_INBOX = '/admin/home/inbox';
     public static readonly ADMIN_TRASHBOX = '/admin/home/trashbox';
     public static readonly ADMIN_CONSULTANTS = '/admin/home/consultants';
-    public static readonly ADMIN_LOGIN = '/login';
     public static readonly ADMIN_STATISTICS_SKILL = '/admin/home/statistics/skills';
     public static readonly ADMIN_STATISTICS_NETWORK = '/admin/home/statistics/network';
     public static readonly ADMIN_INFO_SKILLTREE = '/admin/home/info/skilltree';
     public static readonly ADMIN_INFO_NAME_ENTITY = '/admin/home/info/names';
-    public static readonly APP_ROOT = '/';
 
-    public static readonly USER_BASE = "/app";
-    public static readonly USER_HOME = Paths.USER_BASE + "/home";
-    public static readonly USER_PROFILE = Paths.USER_BASE + "/profile";
-    public static readonly USER_VIEW = Paths.USER_BASE + "/view";
-    public static readonly USER_REPORTS = Paths.USER_BASE + "/reports";
-    public static readonly USER_SEARCH = Paths.USER_BASE + "/search";
-    public static readonly USER_STATISTICS_NETWORK = Paths.USER_BASE + "/statistics/network";
-    public static readonly USER_STATISTICS_CLUSTERINFO = Paths.USER_BASE + "/statistics/clusterinfo";
-    public static readonly USER_STATISTICS_SKILLS = Paths.USER_BASE + "/statistics/skills";
+    public static readonly USER_BASE = "/app/";
+    public static readonly USER_HOME = "/app/home";
+    public static readonly USER_PROFILE = "/app/profile";
+    public static readonly USER_VIEW = "/app/view";
+    public static readonly USER_REPORTS = "/app/reports";
+    public static readonly USER_SEARCH = "/app/search";
+    public static readonly USER_STATISTICS_NETWORK =  "/app/statistics/network";
+    public static readonly USER_STATISTICS_CLUSTERINFO = "/app/statistics/clusterinfo";
+    public static readonly USER_STATISTICS_SKILLS = "/app/statistics/skills";
 
     constructor() {
 

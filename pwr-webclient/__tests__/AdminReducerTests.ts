@@ -13,7 +13,7 @@ import {isNullOrUndefined} from 'util';
 
 test('Dispatches an ReceiveAllConsultants action on an empty state.', () => {
     console.log(AdminReducer);
-    let store = createStore(
+    let testStore = createStore(
         combineReducers({
             databaseReducer: DatabaseReducer.Reduce,
             adminReducer: AdminReducer.reduce
@@ -29,8 +29,8 @@ test('Dispatches an ReceiveAllConsultants action on an empty state.', () => {
     ];
     let consultants: Array<ConsultantInfo> = apiConsultants.map(api => ConsultantInfo.fromAPI(api));
     let action: ReceiveAllConsultantsAction = AdminActionCreator.ReceiveAllConsultants(consultants);
-    store.dispatch(action);
-    let states: any = store.getState() as any;
+    testStore.dispatch(action);
+    let states: any = testStore.getState() as any;
     // Make sure that the database part of the store is still in its original state.
     expect(states.databaseReducer).toEqual(InternalDatabase.createWithDefaults());
     // Make sure that the admin part contains the two consultants

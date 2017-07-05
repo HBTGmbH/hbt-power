@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
+import {ApplicationState, ProfileElementType} from '../../../Store';
 import {
     Table, TableRow, TableHeader, TableHeaderColumn, TableBody, TableRowColumn, SelectField,
     MenuItem

@@ -9,6 +9,7 @@ import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Paths} from '../../index';
 import {browserHistory} from 'react-router';
+import {Link} from 'react-router';
 
 /**
  * Properties that are managed by react-redux.
@@ -97,10 +98,6 @@ class AdminLoginModule extends React.Component<
         }
     };
 
-    private handleToUserLogin = () => {
-        browserHistory.push(Paths.APP_ROOT);
-    };
-
     private getErrorText = () => {
         return this.props.loginState == LoginStatus.REJECTED ? "Invalid" : null
     };
@@ -155,7 +152,7 @@ class AdminLoginModule extends React.Component<
                         </div>
                         <div className="row"  style={{marginTop: "20px"}}>
                             <div className="col-md-offset-1">
-                                <RaisedButton onClick={this.handleToUserLogin} label="Zurück"/>
+                                <Link to={Paths.APP_ROOT}><RaisedButton label="Zurück"/></Link>
                             </div>
                         </div>
                     </Paper>

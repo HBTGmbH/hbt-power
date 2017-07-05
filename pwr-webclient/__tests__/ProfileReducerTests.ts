@@ -6,9 +6,6 @@ import {ProfileElementType} from '../src/Store';
 import {CreateEntryAction, SaveEntryAction} from '../src/reducers/profile/database-actions';
 import {EducationEntry} from '../src/model/EducationEntry';
 import {NameEntity} from '../src/model/NameEntity';
-/**
- * Created by nt on 14.05.2017.
- */
 
 //== The following tests validate that arbitrary entries may be added into the profile. ==//
 
