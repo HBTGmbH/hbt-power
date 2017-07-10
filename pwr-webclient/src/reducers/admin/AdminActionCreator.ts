@@ -25,8 +25,29 @@ import {StatisticsReducer} from '../statistics/StatisticsReducer';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {AdminReducer} from './AdminReducer';
 import {APISkillCategory, APISkillServiceSkill, SkillCategoryNode} from '../../model/admin/SkillTree';
+import {isNullOrUndefined} from 'util';
 
 export class AdminActionCreator {
+    private static logAxiosError(error: any) {
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error(error.response.data);
+            console.error(error.response.status);
+            console.error(error.response.headers);
+        } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            console.error(error.request);
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error('Error', error.message);
+        }
+    }
+
+
+
     public static RequestNotifications(): AbstractAction {
         return {
             type: ActionType.RequestNotifications
@@ -197,7 +218,7 @@ export class AdminActionCreator {
             axios.get(getNotificationAPIString(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ReceiveNotifications(response.data));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.FailReceiveNotifications());
             });
         };
@@ -216,7 +237,7 @@ export class AdminActionCreator {
             axios.get(getNotificationTrashAPIString(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ReceiveTrashedNotifications(response.data));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.FailReceiveTrashedNotifications());
             });
         };
@@ -242,7 +263,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.RequestNotificationTrashingSuccess());
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.RequestNotificationTrashingFail());
             });
         };
@@ -262,7 +283,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.RequestNotificationTrashingSuccess());
                 dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.RequestNotificationTrashingFail());
             });
         };
@@ -296,7 +317,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
             });
         };
@@ -316,7 +337,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
             });
         };
@@ -336,7 +357,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
             });
         };
@@ -358,7 +379,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.LogInAdmin());
             }).catch(function(error:any) {
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         };
     }
@@ -370,7 +391,7 @@ export class AdminActionCreator {
                 let consultants = apiConsultants.map((value, index, array) => ConsultantInfo.fromAPI(value));
                 dispatch(AdminActionCreator.ReceiveAllConsultants(consultants));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         };
     }
@@ -381,6 +402,12 @@ export class AdminActionCreator {
         };
     }
 
+    /**
+     * Creates a consultant.
+     * @param consultantInfo that must not be null. Also, consultantInfo.birthDate() must not be null either.
+     * @returns {(dispatch:redux.Dispatch<AdminState>)=>undefined}
+     * @constructor
+     */
     public static AsyncCreateConsultant(consultantInfo: ConsultantInfo) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let apiConsultant: APIConsultant = {
@@ -389,7 +416,7 @@ export class AdminActionCreator {
                 firstName: consultantInfo.firstName(),
                 lastName: consultantInfo.lastName(),
                 title: consultantInfo.title(),
-                birthDate: consultantInfo.birthDate().toLocaleDateString()
+                birthDate: !isNullOrUndefined(consultantInfo.birthDate()) ? consultantInfo.birthDate().toISOString() : null
             };
             let config: AxiosRequestConfig = {
                 params: {
@@ -403,7 +430,7 @@ export class AdminActionCreator {
                     dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(res)));
                 });
             }).catch(function (error: any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         }
     }
@@ -416,7 +443,7 @@ export class AdminActionCreator {
                 firstName: consultantInfo.firstName(),
                 lastName: consultantInfo.lastName(),
                 title: consultantInfo.title(),
-                birthDate: consultantInfo.birthDate().toLocaleDateString()
+                birthDate: !isNullOrUndefined(consultantInfo.birthDate()) ? consultantInfo.birthDate().toISOString() : null
             };
             let config: AxiosRequestConfig = {
                 params: {
@@ -431,7 +458,7 @@ export class AdminActionCreator {
                     console.error(error);
                 });
             }).catch(function (error: any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
             axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
                 config.params.action = 'birthdate';
@@ -441,7 +468,7 @@ export class AdminActionCreator {
                     console.error(error);
                 });
             }).catch(function (error: any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         }
     }
@@ -452,7 +479,7 @@ export class AdminActionCreator {
                 let childIds: Array<number> = response.data;
                 childIds.forEach(id => dispatch(AdminActionCreator.AsyncLoadCategoryIntoTree(id)));
             }).catch(function (error: any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         }
     };
@@ -464,7 +491,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.ReceiveSkillCategory(apiCategory));
                 dispatch(AdminActionCreator.AsyncLoadCategoryChildrenIds(id));
             }).catch(function (error: any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         }
     };
@@ -475,7 +502,7 @@ export class AdminActionCreator {
                 let ids: Array<number> = response.data;
                 ids.forEach(id => dispatch(AdminActionCreator.AsyncLoadCategoryIntoTree(id)));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         }
     };
@@ -486,7 +513,7 @@ export class AdminActionCreator {
                 let skills: Array<APISkillServiceSkill> = response.data;
                 dispatch(AdminActionCreator.AddSkillsToTree(skills));
             }).catch(function(error:any) {
-                console.error(error);
+                AdminActionCreator.logAxiosError(error);
             });
         }
     }

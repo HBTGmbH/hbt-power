@@ -28,7 +28,7 @@ export class ConsultantInfo {
     }
 
     public static empty() {
-        return new ConsultantInfo("", "", "", false, null, null);
+        return new ConsultantInfo("", "", "", false, "", new Date());
     }
 
     /**
