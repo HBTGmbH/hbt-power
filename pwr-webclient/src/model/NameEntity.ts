@@ -1,7 +1,6 @@
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {APINameEntity} from './APIProfile';
 import {doop} from 'doop';
-import {isBoolean} from 'util';
 
 /**
  * Describes an unique name/qualifier.

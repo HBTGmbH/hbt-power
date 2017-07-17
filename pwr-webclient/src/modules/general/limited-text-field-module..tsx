@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {FontIcon, LinearProgress, TextField, IconButton} from 'material-ui';
 import {FormEvent} from 'react';
+import {FontIcon, IconButton, LinearProgress, TextField} from 'material-ui';
 
 interface LimitedTextFieldProps {
     maxCharacters: number;

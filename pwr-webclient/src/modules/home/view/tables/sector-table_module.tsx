@@ -6,7 +6,13 @@ import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {NameEntity} from '../../../../model/NameEntity';
 import {ViewElement} from '../../../../model/viewprofile/ViewElement';
 import {
-    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    Checkbox,
+    FontIcon,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
     TableRowColumn
 } from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';

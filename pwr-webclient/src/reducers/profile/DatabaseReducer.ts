@@ -1,7 +1,8 @@
 import {APIRequestType, ProfileElementType, RequestStatus} from '../../Store';
 import {error, isNullOrUndefined} from 'util';
 import {
-    AbstractAction, AddSkillAction,
+    AbstractAction,
+    AddSkillAction,
     ChangeStringValueAction,
     ChangeViewProfileAction,
     CreateEntryAction,

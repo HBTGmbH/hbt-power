@@ -7,9 +7,8 @@ import {FlatButton, Paper, RaisedButton, TextField} from 'material-ui';
 import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
-import {browserHistory} from 'react-router';
-import {Paths} from '../index';
 import {Link} from 'react-router';
+import {Paths} from '../Paths';
 /**
  * Properties that are managed by react-redux.
  *

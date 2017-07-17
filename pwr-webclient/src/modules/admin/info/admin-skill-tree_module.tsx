@@ -5,7 +5,7 @@ import {ApplicationState} from '../../../Store';
 import {SkillCategoryNode} from '../../../model/admin/SkillTree';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {isNullOrUndefined} from 'util';
-import {AutoComplete, TextField} from 'material-ui';
+import {AutoComplete} from 'material-ui';
 
 const SortableTree = require('react-sortable-tree').default;
 

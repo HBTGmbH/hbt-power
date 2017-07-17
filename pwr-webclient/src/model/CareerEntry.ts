@@ -1,4 +1,3 @@
-
 import {doop} from 'doop';
 import {APICareerEntry, APIEducationStep} from './APIProfile';
 import {EducationEntry} from './EducationEntry';

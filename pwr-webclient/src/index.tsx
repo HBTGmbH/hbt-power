@@ -3,11 +3,8 @@ import * as ReactDOM from 'react-dom';
 
 import './index.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import reducerApp from './reducers/reducerIndex';
-import {applyMiddleware, createStore} from 'redux';
+import {store} from './reducers/reducerIndex';
 import {Provider} from 'react-redux';
-
-import thunkMiddleware from 'redux-thunk';
 import {PowerClient} from './modules/home/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
@@ -22,14 +19,7 @@ import {NotificationTrashbox} from './modules/admin/notification-trashbox_module
 import {AdminLogin} from './modules/admin/admin-login_module';
 import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
-import {
-    COOKIE_ADMIN_PASSWORD,
-    COOKIE_ADMIN_USERNAME,
-    COOKIE_INITIALS_EXPIRATION_TIME,
-    COOKIE_INITIALS_NAME
-} from './model/PwrConstants';
-import {isNullOrUndefined} from 'util';
-import * as Cookies from 'js-cookie';
+
 import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
 import {SkillStatistics} from './modules/home/statistics/skill-statistics_module';
 import {ProfileNetwork} from './modules/admin/statistics/profile-network_module';
@@ -43,94 +33,23 @@ import {
     cyan500,
     darkBlack,
     deepOrange500,
-    deepOrange700,
-    fullBlack, grey100,
-    grey300, grey500,
+    fullBlack,
+    grey100,
+    grey300,
+    grey500,
     indigo50,
     indigo500,
     indigo800,
-    orange100,
     white
 } from 'material-ui/styles/colors';
 import {fade} from 'material-ui/utils/colorManipulator';
 import {AdminSkillTree} from './modules/admin/info/admin-skill-tree_module';
 import {NameEntityOverview} from './modules/admin/info/name-entity-overview_module';
-import {AdminActionCreator} from './reducers/admin/AdminActionCreator';
+import {Paths} from './Paths';
 import injectTapEventPlugin = require('react-tap-event-plugin');
 
-
-/**
- * Paths used for routing. Central point of configuration for routing information.
- */
-export class Paths {
-    public static readonly APP_ROOT = '/';
-    public static readonly ADMIN_LOGIN = 'login';
-
-
-    public static readonly ADMIN_BASE = '/admin/';
-    public static readonly ADMIN_INBOX = '/admin/home/inbox';
-    public static readonly ADMIN_TRASHBOX = '/admin/home/trashbox';
-    public static readonly ADMIN_CONSULTANTS = '/admin/home/consultants';
-    public static readonly ADMIN_STATISTICS_SKILL = '/admin/home/statistics/skills';
-    public static readonly ADMIN_STATISTICS_NETWORK = '/admin/home/statistics/network';
-    public static readonly ADMIN_INFO_SKILLTREE = '/admin/home/info/skilltree';
-    public static readonly ADMIN_INFO_NAME_ENTITY = '/admin/home/info/names';
-
-    public static readonly USER_BASE = '/app/';
-    public static readonly USER_HOME = '/app/home';
-    public static readonly USER_PROFILE = '/app/profile';
-    public static readonly USER_VIEW = '/app/view';
-    public static readonly USER_REPORTS = '/app/reports';
-    public static readonly USER_SEARCH = '/app/search';
-    public static readonly USER_STATISTICS_NETWORK =  '/app/statistics/network';
-    public static readonly USER_STATISTICS_CLUSTERINFO = '/app/statistics/clusterinfo';
-    public static readonly USER_STATISTICS_SKILLS = '/app/statistics/skills';
-
-    constructor() {
-
-    }
-
-    private loginUser = () => {
-        const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
-        // renew the cookie to hold another fixed period of time.
-        Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-        store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, true));
-    };
-
-    private logInAdmin = () => {
-
-    };
-
-    private userAvailableInCookies = () => {
-        return !isNullOrUndefined(Cookies.get(COOKIE_INITIALS_NAME));
-    };
-
-    private adminAvailableInCookies = () => {
-        return !isNullOrUndefined(Cookies.get(COOKIE_ADMIN_USERNAME)) && !isNullOrUndefined(Cookies.get(COOKIE_ADMIN_PASSWORD));
-    };
-
-    public restorePath() {
-        let location = browserHistory.getCurrentLocation();
-        console.info('Current history location is ', browserHistory.getCurrentLocation());
-        if(this.adminAvailableInCookies()) {
-            store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
-        }else if(this.userAvailableInCookies()) {
-            this.loginUser();
-        } else {
-            browserHistory.push('/');
-        }
-    }
-
-}
-
-
+// For material ui tap touch support
 injectTapEventPlugin();
-export const store = createStore(
-    reducerApp,
-    applyMiddleware(
-        thunkMiddleware
-    )
-);
 
 const paths = new Paths();
 paths.restorePath();
@@ -207,7 +126,6 @@ export const POWER_MUI_THEME = getMuiTheme(powerTheme);
 let App = (
     <MuiThemeProvider muiTheme={POWER_MUI_THEME}>
         <Provider store={store}>
-
             <MyRouter/>
         </Provider>
     </MuiThemeProvider>

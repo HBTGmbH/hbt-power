@@ -2,10 +2,13 @@ import * as redux from 'redux';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
     deleteViewProfileString,
-    getAllViewProfilesString, getCareerSuggestionAPIString,
+    getAllViewProfilesString,
+    getCareerSuggestionAPIString,
     getCompanySuggestionsAPIString,
     getConsultantApiString,
-    getEducationSuggestionAPIString, getExportDocuments, getKeySkillsSuggestionAPIString,
+    getEducationSuggestionAPIString,
+    getExportDocuments,
+    getKeySkillsSuggestionAPIString,
     getLangSuggestionAPIString,
     GetPostMutateViewProfile,
     getPostViewProfileAPIString,
@@ -14,9 +17,10 @@ import {
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
     getTrainingSuggestionAPIString,
-    getViewProfileString, postCreatePDFProfile,
+    getViewProfileString,
     postDuplicateViewProfile,
-    postEditViewProfileDetails
+    postEditViewProfileDetails,
+    postGenerateProfile
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
@@ -394,16 +398,43 @@ export class ProfileAsyncActionCreator {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
             let config: AxiosRequestConfig = {
                 params: {
-                    viewid: viewProfileId
+                    viewid: viewProfileId,
+                    type: "PDF"
                 },
                 headers: {
                     'Content-Type': 'application/json'
                 }
             };
             dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(postCreatePDFProfile(initials), null, config).then((response: AxiosResponse) => {
+            axios.post(postGenerateProfile(initials), null, config).then((response: AxiosResponse) => {
                 let location = response.data.filelocation;
-                window.open("http://" + location, "_blank");
+                console.info("Received location: ", location);
+                window.open(location, "_blank");
+                dispatch(ProfileActionCreator.SucceedAPIRequest());
+            }).catch(function (error: any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
+
+    public static generateDocXProfile(initials: string, viewProfileId: string) {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            let config: AxiosRequestConfig = {
+                params: {
+                    viewid: viewProfileId,
+                    type: "DOC",
+                    charsperline: 35
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.post(postGenerateProfile(initials), null, config).then((response: AxiosResponse) => {
+                let location = response.data.filelocation;
+                console.info("Received location: ", location);
+                window.open(location, "_blank");
                 dispatch(ProfileActionCreator.SucceedAPIRequest());
             }).catch(function (error: any) {
                 ProfileAsyncActionCreator.logAxiosError(error);

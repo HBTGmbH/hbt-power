@@ -21,7 +21,6 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../../model/PwrConstants';
 
 
 interface EducationEntryDialogLocalProps {

@@ -10,7 +10,6 @@ import {ProjectDialogState} from '../../modules/home/profile/elements/project/pr
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {ExportDocument} from '../../model/ExportDocument';
 
 export interface AbstractAction {
     type: ActionType;

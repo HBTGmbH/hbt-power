@@ -1,7 +1,11 @@
 import {Profile} from '../../model/Profile';
 import {
     AddSkillAction,
-    ChangeStringValueAction, CreateEntryAction, DeleteEntryAction, DeleteSkillAction, SaveEntryAction,
+    ChangeStringValueAction,
+    CreateEntryAction,
+    DeleteEntryAction,
+    DeleteSkillAction,
+    SaveEntryAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {EducationEntry} from '../../model/EducationEntry';
@@ -11,7 +15,7 @@ import {LanguageSkill} from '../../model/LanguageSkill';
 import {QualificationEntry} from '../../model/QualificationEntry';
 import {SectorEntry} from '../../model/SectorEntry';
 import {Skill} from '../../model/Skill';
-import {error, isNull, isNullOrUndefined} from 'util';
+import {error, isNullOrUndefined} from 'util';
 import {Project} from '../../model/Project';
 import {CareerEntry} from '../../model/CareerEntry';
 import {KeySkillEntry} from '../../model/KeySkillEntry';

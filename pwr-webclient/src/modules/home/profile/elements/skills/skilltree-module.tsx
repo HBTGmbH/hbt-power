@@ -4,14 +4,13 @@ import {CSSProperties} from 'react';
 import * as redux from 'redux';
 import {InternalDatabase} from '../../../../../model/InternalDatabase';
 import {ApplicationState} from '../../../../../Store';
-import {AutoComplete, List, Subheader} from 'material-ui';
+import {List, Subheader} from 'material-ui';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {SkillChip} from './skill-chip_module';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Skill} from '../../../../../model/Skill';
 import * as Immutable from 'immutable';
-import {levenshtein} from '../../../../../utils/ObjectUtil';
 
 const distance = require("jaro-winkler");
 

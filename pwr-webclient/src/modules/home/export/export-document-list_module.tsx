@@ -4,10 +4,7 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
 import {ExportDocument} from '../../../model/ExportDocument';
 import * as Immutable from 'immutable';
-import {
-    FontIcon, IconButton, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
-    TableRowColumn
-} from 'material-ui';
+import {IconButton, Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
 import {trimURL} from '../../../utils/StringUtil';
 
 interface ExportDocumentListProps {

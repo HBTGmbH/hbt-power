@@ -5,9 +5,7 @@ import {ApplicationState} from '../../../Store';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {Dialog, FlatButton} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
-import {isNullOrUndefined} from 'util';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 
 /**

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import * as Immutable from 'immutable';
-import {AutoComplete, List, ListItem, Paper} from 'material-ui';
+import {List, ListItem, Paper} from 'material-ui';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 import ChipInput from './../../../external_libs/ChipInput';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';

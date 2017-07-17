@@ -8,7 +8,7 @@ import {ApplicationState} from '../../../../../Store';
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {GridList, GridTile, IconButton} from 'material-ui';
+import {IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialogState} from './project-dialog_module';
 import {Profile} from '../../../../../model/Profile';

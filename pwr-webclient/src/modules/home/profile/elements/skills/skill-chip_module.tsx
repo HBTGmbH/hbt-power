@@ -1,9 +1,7 @@
-import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
-import {Skill} from '../../../../../model/Skill';
-import {Avatar, Chip, FontIcon, IconButton} from 'material-ui';
 import {CSSProperties} from 'react';
+import {Skill} from '../../../../../model/Skill';
+import {Chip, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 
 

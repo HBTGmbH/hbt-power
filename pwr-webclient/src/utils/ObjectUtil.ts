@@ -1,5 +1,4 @@
 // Um obj vollständig unveränderbar zu machen, friere jedes Objekt in obj ein.
-import {accessSync} from 'fs';
 export function deepFreeze(obj: Object) {
 
     // Ermittle die Namen der für obj definierten Eigenschaften

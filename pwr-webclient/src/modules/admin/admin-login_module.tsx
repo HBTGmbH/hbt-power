@@ -1,15 +1,14 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {KeyboardEvent} from 'react';
+import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
 import {Checkbox, Paper, RaisedButton, TextField} from 'material-ui';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {Paths} from '../../index';
-import {browserHistory} from 'react-router';
 import {Link} from 'react-router';
+import {Paths} from '../../Paths';
 import construct = Reflect.construct;
 
 /**

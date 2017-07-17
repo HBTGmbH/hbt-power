@@ -4,14 +4,21 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
 import {AdminNotification} from '../../model/admin/AdminNotification';
 import {
-    FontIcon, RaisedButton, Tab, Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn,
+    FontIcon,
+    RaisedButton,
+    Tab,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
+    TableRowColumn,
     Tabs
 } from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {formatString} from '../../utils/StringUtil';
-import {formatToMailDisplay, formatToShortDisplay} from '../../utils/DateUtil';
+import {formatToMailDisplay} from '../../utils/DateUtil';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
-import {type} from 'os';
 import {NotificationDialog} from './notification-dialog_module';
 import {NameEntityUtil} from '../../utils/NameEntityUtil';
 

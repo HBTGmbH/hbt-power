@@ -19,11 +19,17 @@ export interface APIAdminNotification {
     profileEntryId: number;
 }
 
+
 @doop
 export class AdminNotification {
     @doop public get id() {return doop<number, this>()};
     @doop public get initials() {return doop<string, this>()};
     @doop public get reason()  {return doop<string, this>()};
+
+    /**
+     * The date on which the notification occured.
+     * @returns {Doop<Date, this>}
+     */
     @doop public get occurrence() {return doop<Date, this>()};
     @doop public get type() {return doop<string, this>()};
     @doop public get profileEntryId() {return doop<number, this>()}
@@ -55,6 +61,10 @@ export class AdminNotification {
             apiAdminNotification.profileEntryId,
             NameEntity.fromAPI(apiAdminNotification.nameEntity)
         )
+    }
+
+    public static of(id: number, initials: string, reason: string, occurrence: Date, type: string, profileEntryId: number, nameEntity: NameEntity) {
+        return new AdminNotification(id, initials, reason, occurrence, type, profileEntryId, nameEntity);
     }
 
     public toApi() : APIAdminNotification {

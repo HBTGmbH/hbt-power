@@ -259,7 +259,7 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                         floatingLabelText={PowerLocalize.get('Broker.Singular')}
                                         value={this.state.brokerACValue}
                                         dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
-                                        onUpdateInput={this.handleBrokerInput}
+                                        onUpdateInput={(txt) => {this.setState({})}}
                                         onNewRequest={this.handleBrokerRequest}
                                         filter={AutoComplete.levenshteinDistanceFilter(LEVENSHTEIN_FILTER_LEVEL)}
 

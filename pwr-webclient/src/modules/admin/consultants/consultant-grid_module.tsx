@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
-import {FontIcon, GridList, GridTile, RaisedButton} from 'material-ui';
+import {FontIcon, GridList, RaisedButton} from 'material-ui';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
 import {ConsultantTile} from './consultant-tile_module';

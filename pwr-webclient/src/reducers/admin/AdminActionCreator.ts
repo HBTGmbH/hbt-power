@@ -3,34 +3,40 @@ import {ActionType} from '../ActionType';
 import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
     AddSkillsToTreeAction,
-    ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveConsultantAction,
-    ReceiveNotifcationsAction, ReceiveSkillCategoryAction,
-    RequestStatusAction, SetSkillTreeAction
+    ChangeLoginStatusAction,
+    NavigateAction,
+    ReceiveAllConsultantsAction,
+    ReceiveConsultantAction,
+    ReceiveNotificationsAction,
+    ReceiveSkillCategoryAction,
+    ChangeRequestStatusAction,
+    SetSkillTreeAction
 } from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
 import {
-    getAdminAuthAPIString, getAllConsultantsString, getCategoryById, getCategoryChildrenByCategoryId,
+    getAdminAuthAPIString,
+    getAllConsultantsString,
+    getCategoryById,
+    getCategoryChildrenByCategoryId,
     getNotificationAPIString,
-    getNotificationTrashAPIString, getRootCategoryIds, getSkillsForCategory, postConsultantActionString
+    getNotificationTrashAPIString,
+    getRootCategoryIds,
+    getSkillsForCategory,
+    postConsultantActionString
 } from '../../API_CONFIG';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApplicationState, RequestStatus} from '../../Store';
-import {Paths} from '../../index';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {APIConsultant} from '../../model/APIProfile';
 import {ProfileAsyncActionCreator} from '../profile/ProfileAsyncActionCreator';
-import {StatisticsReducer} from '../statistics/StatisticsReducer';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
-import {AdminReducer} from './AdminReducer';
 import {APISkillCategory, APISkillServiceSkill, SkillCategoryNode} from '../../model/admin/SkillTree';
 import {isNullOrUndefined} from 'util';
-<<<<<<< HEAD
 import {COOKIE_ADMIN_EXPIRATION_TIME, COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
-=======
->>>>>>> master
+import {Paths} from '../../Paths';
 
 export class AdminActionCreator {
     private static logAxiosError(error: any) {
@@ -52,14 +58,13 @@ export class AdminActionCreator {
     }
 
 
-
     public static RequestNotifications(): AbstractAction {
         return {
             type: ActionType.RequestNotifications
         }
     }
 
-    public static ReceiveNotifications(notifications: Array<APIAdminNotification>): ReceiveNotifcationsAction {
+    public static ReceiveNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveNotifications,
             notifications: notifications
@@ -78,7 +83,7 @@ export class AdminActionCreator {
         }
     }
 
-    public static ReceiveTrashedNotifications(notifications: Array<APIAdminNotification>): ReceiveNotifcationsAction {
+    public static ReceiveTrashedNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveTrashedNotifications,
             notifications: notifications
@@ -91,21 +96,21 @@ export class AdminActionCreator {
         }
     }
 
-    public static RequestNotificationTrashing(): RequestStatusAction {
+    public static RequestNotificationTrashing(): ChangeRequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Pending
         }
     }
 
-    public static RequestNotificationTrashingSuccess(): RequestStatusAction {
+    public static RequestNotificationTrashingSuccess(): ChangeRequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Successful
         }
     }
 
-    public static RequestNotificationTrashingFail(): RequestStatusAction {
+    public static RequestNotificationTrashingFail(): ChangeRequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Failiure
@@ -119,7 +124,7 @@ export class AdminActionCreator {
         }
     }
 
-    public static ChangeRequestStatus(to: RequestStatus): RequestStatusAction {
+    public static ChangeRequestStatus(to: RequestStatus): ChangeRequestStatusAction {
         return {
             type: ActionType.AdminRequestStatus,
             requestStatus: to
@@ -409,13 +414,9 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.LogInAdmin());
             }).catch(function(error:any) {
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
-<<<<<<< HEAD
                 // Clear possible cookies
-                dispatch(AdminActionCreator.LogOutAdmin())
-                console.error(error);
-=======
+                dispatch(AdminActionCreator.LogOutAdmin());
                 AdminActionCreator.logAxiosError(error);
->>>>>>> master
             });
         };
     }

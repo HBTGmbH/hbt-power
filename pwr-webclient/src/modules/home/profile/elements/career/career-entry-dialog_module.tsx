@@ -4,8 +4,15 @@ import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ApplicationState, ProfileElementType} from '../../../../../Store';
 import {
-    AutoComplete, Card, CardActions, CardHeader, CardMedia, DatePicker, Dialog, FontIcon,
-    IconButton, TextField
+    AutoComplete,
+    Card,
+    CardActions,
+    CardHeader,
+    CardMedia,
+    DatePicker,
+    Dialog,
+    IconButton,
+    TextField
 } from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';

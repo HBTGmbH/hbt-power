@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {FontIcon, IconButton, TableRow, TableRowColumn} from 'material-ui';
+import {FontIcon} from 'material-ui';
 import {
+    ConnectDragSource,
+    ConnectDropTarget,
     DragSource,
     DragSourceConnector,
     DragSourceMonitor,
+    DragSourceSpec,
     DropTarget,
     DropTargetConnector,
     DropTargetMonitor,
-    DropTargetSpec,
-    DragSourceSpec,
-    ConnectDragSource,
-    ConnectDropTarget
+    DropTargetSpec
 } from 'react-dnd';
 import {DraggableItemType} from '../../../../../model/DraggableItemType';
 

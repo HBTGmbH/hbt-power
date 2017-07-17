@@ -85,5 +85,6 @@ export enum ActionType {
     ReceiveConsultantClusterInfo,
     StatisticsAvailable,
     StatisticsNotAvailable,
-    ReceiveScatterSkills
+    ReceiveScatterSkills,
+    AddNameEntityUsageInfo
 }

@@ -3,24 +3,42 @@ import {AbstractAction, ChangeStringValueAction} from '../profile/database-actio
 import {isNullOrUndefined} from 'util';
 import {
     AddSkillsToTreeAction,
-    ChangeLoginStatusAction, NavigateAction, ReceiveAllConsultantsAction, ReceiveConsultantAction,
-    ReceiveNotifcationsAction, ReceiveSkillCategoryAction,
-    RequestStatusAction, SetSkillTreeAction
+    ChangeLoginStatusAction,
+    NavigateAction,
+    ReceiveAllConsultantsAction,
+    ReceiveConsultantAction,
+    ReceiveNotificationsAction,
+    ReceiveSkillCategoryAction,
+    ChangeRequestStatusAction,
+    SetSkillTreeAction
 } from './admin-actions';
 import {AdminNotification} from '../../model/admin/AdminNotification';
 import {ActionType} from '../ActionType';
 import {RequestStatus} from '../../Store';
 import * as Immutable from 'immutable';
-import {browserHistory} from 'react-router'
-import {Paths} from '../../index';
+import {browserHistory} from 'react-router';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {LoginStatus} from '../../model/LoginStatus';
 import {SkillCategoryNode} from '../../model/admin/SkillTree';
 import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
+import {Paths} from '../../Paths';
 
 export class AdminReducer {
-    public static ReceiveNotifications(state: AdminState, action: ReceiveNotifcationsAction): AdminState {
+
+    /**
+     * Consumes the given {@link ReceiveNotificationsAction} and replaces all present notifications with the notifications
+     * present in the action (after parsing). The action represents a successful request, resulting in the request status
+     * of the store set to successful.
+     * @param state is the current application state that is not mutated.
+     * @param action is the action that is consumed. {@link ReceiveNotificationsAction#notifications} must not be null.
+     * @returns {AdminState} a copy of the previous state with {@link AdminState#notifications()} updated and {@link AdminState#requestStatus()} set to
+     *          {@link RequestStatus#Successful}
+     * @throws TypeError if an invalid action has been provided.
+     * @see ReceiveNotificationsAction
+     */
+    public static ReceiveNotifications(state: AdminState, action: ReceiveNotificationsAction): AdminState {
+        if(isNullOrUndefined(action.notifications)) throw new TypeError("ReceiveNotificationAction.notifications must not be null or undefined.");
         let notifications = action.notifications.map(an => AdminNotification.fromAPI(an)).sort((a, b) => {
             if(a.occurrence() > b.occurrence()) return -1;
             if(a.occurrence() == b.occurrence()) return 0;
@@ -29,12 +47,24 @@ export class AdminReducer {
         return state.notifications(Immutable.List<AdminNotification>(notifications)).requestStatus(RequestStatus.Successful);
     }
 
-    public static ReceiveTrashedNotifications(state: AdminState, action: ReceiveNotifcationsAction): AdminState {
+    /**
+     * Consumes the given {@link ReceiveNotificationsAction} and replaces all present trashed notifications with the given
+     * notifications. The action represents a successful request, resulting in the {@link AdminState#requestStatus()} set to
+     * {@link RequestStatus#Successful}.
+     * @param state is the current application state that is not mutated.
+     * @param action is the action that is consumed. {@link ReceiveNotificationsAction#notifications} must not be null.
+     * @returns {AdminState} a copy of the previous state with {@link AdminState#notifications()} updated and {@link AdminState#requestStatus()} set to
+     *          {@link RequestStatus#Successful}
+     * @throws TypeError if an invalid action has been provided.
+     * @see ReceiveNotificationsAction
+     */
+    public static ReceiveTrashedNotifications(state: AdminState, action: ReceiveNotificationsAction): AdminState {
         let notifications = action.notifications.map(an => AdminNotification.fromAPI(an));
         return state.trashedNotifications(Immutable.List<AdminNotification>(notifications)).requestStatus(RequestStatus.Successful);
     }
 
-    public static RequestNotificationTrashing(state: AdminState, action: RequestStatusAction) {
+
+    public static RequestNotificationTrashing(state: AdminState, action: ChangeRequestStatusAction) {
         return state.requestStatus(action.requestStatus);
     }
 
@@ -109,21 +139,21 @@ export class AdminReducer {
         }
         switch(action.type) {
             case ActionType.ReceiveNotifications:
-                return AdminReducer.ReceiveNotifications(state, action as ReceiveNotifcationsAction);
+                return AdminReducer.ReceiveNotifications(state, action as ReceiveNotificationsAction);
+            case ActionType.ReceiveTrashedNotifications:
+                return AdminReducer.ReceiveTrashedNotifications(state, action as ReceiveNotificationsAction);
             case ActionType.RequestTrashedNotifications:
             case ActionType.RequestNotifications:
                 return AdminReducer.PendRequest(state);
             case ActionType.FailRequestTrashedNotifications:
             case ActionType.FailRequestNotifications:
                 return AdminReducer.FailRequest(state);
-            case ActionType.ReceiveTrashedNotifications:
-                return AdminReducer.ReceiveTrashedNotifications(state, action as ReceiveNotifcationsAction);
             case ActionType.RequestNotificationTrashing:
-                return AdminReducer.RequestNotificationTrashing(state, action as RequestStatusAction);
+                return AdminReducer.RequestNotificationTrashing(state, action as ChangeRequestStatusAction);
             case ActionType.AdminNavigate:
                 return AdminReducer.NaviagateTo(state, action as NavigateAction);
             case ActionType.AdminRequestStatus:
-                return state.requestStatus((action as RequestStatusAction).requestStatus);
+                return state.requestStatus((action as ChangeRequestStatusAction).requestStatus);
             case ActionType.ChangeAdminLoginStatus:
                 return AdminReducer.ChangeLoginStatus(state, action as ChangeLoginStatusAction);
             case ActionType.ChangeUsername:

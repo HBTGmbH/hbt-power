@@ -1,8 +1,7 @@
 import {NameEntity} from '../model/NameEntity';
-import {isNull, isNullOrUndefined} from 'util';
+import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {ProfileElementType} from '../Store';
-import {type} from 'os';
 export class NameEntityUtil {
 
     /**
@@ -45,6 +44,11 @@ export class NameEntityUtil {
         return members
     }
 
+    public static getProfileElementTypes() {
+        const res = Object.keys(ProfileElementType).map(key => Number(key)).filter(key => !isNaN(key));
+        return res;
+    }
+
     public static typeToViewAPIString(profileElementType: ProfileElementType) {
         switch(profileElementType) {
             case ProfileElementType.LanguageEntry:
@@ -65,6 +69,10 @@ export class NameEntityUtil {
                 return "KEY_SKILL";
             case ProfileElementType.SkillEntry:
                 return "SKILL";
+            case ProfileElementType.Company:
+                return "COMPANY";
+            case ProfileElementType.ProjectRole:
+                return "PROJECT_ROLE";
         }
     }
 }

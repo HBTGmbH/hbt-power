@@ -7,7 +7,6 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
-import {isNullOrUndefined} from 'util';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 
 /**

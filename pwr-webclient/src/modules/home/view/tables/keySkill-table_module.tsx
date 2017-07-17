@@ -7,12 +7,17 @@ import {NameEntity} from '../../../../model/NameEntity';
 import {ViewElement} from '../../../../model/viewprofile/ViewElement';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 import {
-    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    Checkbox,
+    FontIcon,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
     TableRowColumn
 } from 'material-ui';
 import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 

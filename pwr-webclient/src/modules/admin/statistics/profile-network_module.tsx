@@ -3,8 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
 import {Network} from '../../../model/statistics/Network';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {Paper, RadioButton, RadioButtonGroup, RaisedButton, Slider, Subheader} from 'material-ui';
 import {ProfileNetworkGraph} from '../../general/statistics/profile-network_module';
 
 

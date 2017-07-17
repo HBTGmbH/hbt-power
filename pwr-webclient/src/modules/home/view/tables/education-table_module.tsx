@@ -4,7 +4,13 @@ import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {NameEntity} from '../../../../model/NameEntity';
 import {
-    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    Checkbox,
+    FontIcon,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
     TableRowColumn
 } from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
@@ -16,7 +22,6 @@ import {isNullOrUndefined} from 'util';
 import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
 import {AscDescButton} from '../../../general/asc-desc-button_module';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
-import {DragRowIndicator} from './drag/drag-row-indicator_module.';
 import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 
 /**

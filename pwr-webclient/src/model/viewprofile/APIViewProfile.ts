@@ -1,6 +1,12 @@
 import {
     APICareerEntry,
-    APIEducationStep, APIKeySkill, APILanguageSkill, APIProfile, APIProject, APIQualificationEntry, APISectorEntry,
+    APIEducationStep,
+    APIKeySkill,
+    APILanguageSkill,
+    APIProfile,
+    APIProject,
+    APIQualificationEntry,
+    APISectorEntry,
     APISkill,
     APITrainingEntry
 } from '../APIProfile';

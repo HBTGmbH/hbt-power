@@ -1,4 +1,3 @@
-import {Paths, store} from './index';
 import {PowerLogin} from './modules/power-login_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
 import {PowerClient} from './modules/home/power-client_module';
@@ -17,7 +16,8 @@ import {ExportDocumentList} from './modules/home/export/export-document-list_mod
 import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_module';
 import {ClusterResult} from './modules/home/statistics/cluster-result_module';
 import {ConsultantSkillSearch} from './modules/general/search/consultant-skill-search_module.';
-import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
+import * as React from 'react';
+import {Paths} from './Paths';
 
 
 export const routes = {
@@ -93,3 +93,4 @@ export const routes = {
         }
     ]
 };
+

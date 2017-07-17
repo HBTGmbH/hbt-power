@@ -5,6 +5,8 @@ import {ProfileSkillMetrics} from './ProfileSkillMetrics';
 import {Network} from './Network';
 import {ConsultantClusterInfo} from './ConsultantClusterInfo';
 import {ScatterSkill} from './ScatterSkill';
+import {NameEntity} from '../NameEntity';
+import {ConsultantInfo} from '../ConsultantInfo';
 
 @doop
 export class StatisticsStore {
@@ -37,13 +39,21 @@ export class StatisticsStore {
     @doop
     public get scatteredSkills() {return doop<Immutable.List<ScatterSkill>, this>()};
 
+    /**
+     * Information about usage of name entites.
+     * @returns {Doop<Immutable.Map<NameEntity, ConsultantInfo>, this>}
+     */
+    @doop
+    public get nameEntityUsageInfo() {return doop<Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>, this>()};
+
     private constructor(skillUsages: Immutable.List<SkillUsageMetric>,
                         relativeSkillUsages: Immutable.List<SkillUsageMetric>,
                         activeProfileMetric: ProfileSkillMetrics,
                         network: Network,
                         available: boolean,
                         consultantClusterInfo: ConsultantClusterInfo,
-                        scatteredSkills: Immutable.List<ScatterSkill>
+                        scatteredSkills: Immutable.List<ScatterSkill>,
+                        nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>
     ) {
         return this.skillUsages(skillUsages)
             .relativeSkillUsages(relativeSkillUsages)
@@ -51,11 +61,12 @@ export class StatisticsStore {
             .network(network)
             .available(available)
             .consultantClusterInfo(consultantClusterInfo)
-            .scatteredSkills(scatteredSkills);
+            .scatteredSkills(scatteredSkills)
+            .nameEntityUsageInfo(nameEntityUsageInfo);
     }
 
     public static createEmpty(): StatisticsStore {
         return new StatisticsStore(Immutable.List<SkillUsageMetric>(),Immutable.List<SkillUsageMetric>(), null, null,
-            false, null, Immutable.List<ScatterSkill>());
+            false, null, Immutable.List<ScatterSkill>(), Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>());
     }
 }

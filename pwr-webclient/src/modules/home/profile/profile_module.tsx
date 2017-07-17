@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../../Store';
-import {Card, CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
+import {CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';

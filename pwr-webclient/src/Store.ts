@@ -41,7 +41,9 @@ export enum ProfileElementType {
     LanguageEntry,
     KeySkill,
     Project,
-    CareerEntry
+    CareerEntry,
+    Company,
+    ProjectRole
 }
 
 

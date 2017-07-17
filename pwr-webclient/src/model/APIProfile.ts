@@ -1,4 +1,3 @@
-import {NameEntity} from './NameEntity';
 export interface APINameEntity {
     id: number;
     name: string;

@@ -5,7 +5,8 @@ import {QualificationEntry} from './QualificationEntry';
 import {TrainingEntry} from './TrainingEntry';
 import {
     APICareerEntry,
-    APIEducationStep, APIKeySkill,
+    APIEducationStep,
+    APIKeySkill,
     APILanguageSkill,
     APIProfile,
     APIProject,

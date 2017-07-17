@@ -113,7 +113,7 @@ export function postDuplicateViewProfile(id: string): string {
     return getViewProfileString(id);
 }
 
-export function postCreatePDFProfile(initials: string): string {
+export function postGenerateProfile(initials: string): string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
 }
 
@@ -175,4 +175,8 @@ export function getCategoryChildrenByCategoryId(id: number): string {
 
 export function getSkillsForCategory(id: number): string {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + id + "/skills";
+}
+
+export function getNameEntityUsageInfo() {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/entries/referencing";
 }

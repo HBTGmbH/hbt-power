@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {AutoComplete, Popover, TextField} from 'material-ui';
-import * as Immutable from 'immutable';
+import {AutoComplete} from 'material-ui';
 import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';

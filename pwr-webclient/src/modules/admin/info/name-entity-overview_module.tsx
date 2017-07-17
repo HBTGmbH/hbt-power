@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../Store';
-import {List, ListItem, makeSelectable, MenuItem, Paper, SelectField, Subheader, FontIcon} from 'material-ui';
+import {FontIcon, List, ListItem, makeSelectable, MenuItem, Paper, SelectField, Subheader} from 'material-ui';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../model/NameEntity';
@@ -10,9 +10,9 @@ import {Comparators} from '../../../utils/Comparators';
 import * as Immutable from 'immutable';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {POWER_MUI_THEME} from '../../../index';
-
-
-
+import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
+import {ConsultantInfo} from '../../../model/ConsultantInfo';
+import {isNullOrUndefined} from 'util';
 
 
 function wrapState(ComposedComponent: any) {
@@ -48,6 +48,7 @@ interface NameEntityOverviewProps {
     languages: Immutable.Map<string, NameEntity>;
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
+    nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>
 }
 
 interface NameEntityOverviewLocalProps {
@@ -55,13 +56,13 @@ interface NameEntityOverviewLocalProps {
 }
 
 interface NameEntityOverviewLocalState {
-    selectedField: string;
-    nameEntities: Array<NameEntity>;
+    selectedField: ProfileElementType;
     selectedIndex: number;
 }
 
 interface NameEntityOverviewDispatch {
     requestAllNameEntities(): void;
+    requestNameEntityUsageInfo(nameEntity: NameEntity, type: string): void;
 }
 
 class NameEntityOverviewModule extends React.Component<
@@ -72,8 +73,7 @@ class NameEntityOverviewModule extends React.Component<
     constructor(props: any) {
         super(props);
         this.state = {
-            selectedField: ProfileElementType[ProfileElementType.SectorEntry],
-            nameEntities: this.getNameEntitiesByField(ProfileElementType[ProfileElementType.SectorEntry]),
+            selectedField: ProfileElementType.SectorEntry,
             selectedIndex: -1
         };
     }
@@ -92,43 +92,47 @@ class NameEntityOverviewModule extends React.Component<
             trainings: state.databaseReducer.trainings(),
             languages: state.databaseReducer.languages(),
             projectRoles: state.databaseReducer.projectRoles(),
-            companies: state.databaseReducer.companies()
+            companies: state.databaseReducer.companies(),
+            nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo()
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NameEntityOverviewDispatch {
         return {
-            requestAllNameEntities: () => dispatch(ProfileAsyncActionCreator.requestAllNameEntities())
+            requestAllNameEntities: () => dispatch(ProfileAsyncActionCreator.requestAllNameEntities()),
+            requestNameEntityUsageInfo: (nameEntity, type) => dispatch(StatisticsActionCreator.AsyncRequestNameEntityUsageInfo(nameEntity, type))
         };
     }
 
-    private handleSelect = (e: any, index: number, val: string) => {
+    private handleSelect = (e: any, index: number, val: ProfileElementType) => {
         this.setState({
             selectedField: val,
-            nameEntities: this.getNameEntitiesByField(val)
+            selectedIndex: -1
         });
     };
 
-    private getNameEntitiesByField = (selectedField: string) => {
+    private getNameEntitiesByField = (selectedField: ProfileElementType) => {
         switch(selectedField) {
-            case ProfileElementType[ProfileElementType.SectorEntry]:
+            case ProfileElementType.SectorEntry:
                 return this.props.sectors.toArray().sort(Comparators.getNameEntityComparator(true));
-            case ProfileElementType[ProfileElementType.KeySkill]:
+            case ProfileElementType.KeySkill:
                 return this.props.keySkills.toArray().sort(Comparators.getNameEntityComparator(true));
-            case ProfileElementType[ProfileElementType.CareerEntry]:
+            case ProfileElementType.CareerEntry:
                 return this.props.careers.toArray().sort(Comparators.getNameEntityComparator(true));
-            case ProfileElementType[ProfileElementType.EducationEntry]:
+            case ProfileElementType.EducationEntry:
                 return this.props.educations.toArray().sort(Comparators.getNameEntityComparator(true));
-            case ProfileElementType[ProfileElementType.QualificationEntry]:
+            case ProfileElementType.QualificationEntry:
                 return this.props.qualifications.toArray().sort(Comparators.getNameEntityComparator(true));
-            case ProfileElementType[ProfileElementType.TrainingEntry]:
+            case ProfileElementType.TrainingEntry:
                 return this.props.trainings.toArray().sort(Comparators.getNameEntityComparator(true));
-            case ProfileElementType[ProfileElementType.LanguageEntry]:
+            case ProfileElementType.LanguageEntry:
                 return this.props.languages.toArray().sort(Comparators.getNameEntityComparator(true));
-            case ProfileElementType[ProfileElementType.Project]:
+            case ProfileElementType.Project:
                 return this.props.projectRoles.toArray().sort(Comparators.getNameEntityComparator(true));
-            case 'company':
+            case ProfileElementType.Company:
                 return this.props.companies.toArray().sort(Comparators.getNameEntityComparator(true));
+            case ProfileElementType.ProjectRole:
+                return this.props.projectRoles.toArray().sort(Comparators.getNameEntityComparator(true));
             default:
                 return [];
         }
@@ -142,11 +146,24 @@ class NameEntityOverviewModule extends React.Component<
         this.setState({
             selectedIndex: index
         });
+        let nameEntity = this.getNameEntitiesByState()[index];
+        this.props.requestNameEntityUsageInfo(nameEntity, NameEntityUtil.typeToViewAPIString(this.state.selectedField));
     };
 
-    private renderInfoBox = () => {
+    private renderUsedBy = (nameEntity: NameEntity) => {
+        let usedBy: Immutable.List<ConsultantInfo> = this.props.nameEntityUsageInfo.get(nameEntity);
+        if(!isNullOrUndefined(usedBy)) {
+            return <List>
+                {usedBy.map((value, key, iter) => <ListItem key={key}>{value.initials()}</ListItem>)}
+            </List>
+        } else {
+            return null;
+        }
+    };
+
+    private renderInfoBox = (nameEntities: Array<NameEntity>) => {
         if(this.state.selectedIndex != -1 ) {
-            let ne = this.state.nameEntities[this.state.selectedIndex];
+            let ne = nameEntities[this.state.selectedIndex];
             return <div>
                 <div className="vertical-align" style={{backgroundColor: POWER_MUI_THEME.baseTheme.palette.primary2Color, height: '56px'}}>
                     <div
@@ -166,8 +183,8 @@ class NameEntityOverviewModule extends React.Component<
                 </div>
                 <Subheader>Bezeichnung</Subheader>
                 <span className="padding-left-16px">{ne.name()}</span>
-
                 <Subheader>Benutzt von</Subheader>
+                {this.renderUsedBy(ne)}
             </div>;
         } else {
             return null;
@@ -175,6 +192,7 @@ class NameEntityOverviewModule extends React.Component<
     };
 
     render() {
+        let nameEntites = this.getNameEntitiesByField(this.state.selectedField);
         return (
             <div style={{marginTop: '55px'}}>
                 <div className="row" style={{marginBottom: '16px'}}>
@@ -187,11 +205,10 @@ class NameEntityOverviewModule extends React.Component<
                             >
                                 {
                                     NameEntityUtil
-                                        .getProfileElementTypeValues()
-                                        .filter((value, index, array) => !(value == 'SkillEntry' || value == 'Project'))
-                                        .map((value, index, array) => <MenuItem key={value} value={value} primaryText={value} />)
+                                        .getProfileElementTypes()
+                                        .filter((value, index, array) => !(value === ProfileElementType.Project || value === ProfileElementType.SkillEntry))
+                                        .map((value, index, array) => <MenuItem key={value} value={value} primaryText={ProfileElementType[value]}/>)
                                 }
-                                <MenuItem key={'company'} value={'company'} primaryText={'Company'} />
                             </SelectField>
                         </Paper>
                     </div>
@@ -201,14 +218,14 @@ class NameEntityOverviewModule extends React.Component<
                         <Paper>
                             <SelectableList selectedIndex={this.state.selectedIndex} onSelect={this.handleIndexSelect}>
                                 {
-                                    this.state.nameEntities.map((ne, key) =>  <ListItem value={key} key={key}>{ne.name()}</ListItem>)
+                                    nameEntites.map((ne, key) =>  <ListItem value={key} key={key}>{ne.name()}</ListItem>)
                                 }
                             </SelectableList>
                         </Paper>
                     </div>
                     <div className="col-md-4">
                         <Paper style={{width: '100%', height: '100%'}}>
-                            {this.renderInfoBox()}
+                            {this.renderInfoBox(nameEntites)}
                         </Paper>
                     </div>
                 </div>

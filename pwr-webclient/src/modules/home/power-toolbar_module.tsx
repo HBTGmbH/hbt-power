@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {AppBar, FlatButton, FontIcon, IconButton, IconMenu, ListItem, MenuItem} from 'material-ui';
+import {AppBar, FlatButton, FontIcon, IconButton, IconMenu, MenuItem} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -10,9 +10,9 @@ import {isNullOrUndefined} from 'util';
 import {Link} from 'react-router';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
-import {Paths} from '../../index';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
+import {Paths} from '../../Paths';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;

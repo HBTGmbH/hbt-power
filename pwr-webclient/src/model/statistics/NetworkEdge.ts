@@ -1,6 +1,5 @@
 import {doop} from 'doop';
 import {APIEdge} from './ApiMetrics';
-import {strictEqual} from 'assert';
 @doop
 export class NetworkEdge {
     @doop public get source() {return doop<number, this>()};

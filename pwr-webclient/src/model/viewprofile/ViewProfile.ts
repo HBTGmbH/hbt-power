@@ -4,7 +4,6 @@
 import {doop} from 'doop';
 import {Profile} from '../Profile';
 import * as Immutable from 'immutable';
-import {NEW_ENTITY_PREFIX} from '../PwrConstants';
 import {ViewElement} from './ViewElement';
 import {APIViewProfile} from './APIViewProfile';
 /**
