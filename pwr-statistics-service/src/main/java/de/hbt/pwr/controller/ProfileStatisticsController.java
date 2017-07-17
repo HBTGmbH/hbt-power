@@ -1,13 +1,12 @@
 package de.hbt.pwr.controller;
 
-import de.hbt.pwr.model.ConsultantSkillInfo;
-import de.hbt.pwr.model.RelativeSkillUsage;
-import de.hbt.pwr.model.SkillAverageRating;
-import de.hbt.pwr.model.SkillUsage;
+import de.hbt.pwr.model.*;
 import de.hbt.pwr.model.clustering.ClusteredNetwork;
 import de.hbt.pwr.model.clustering.ConsultantClusteringInfo;
 import de.hbt.pwr.model.clustering.MetricType;
 import de.hbt.pwr.model.profile.Consultant;
+import de.hbt.pwr.model.profile.NameEntity;
+import de.hbt.pwr.model.profile.NameEntityType;
 import de.hbt.pwr.service.AsyncInformationService;
 import de.hbt.pwr.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,5 +122,12 @@ public class ProfileStatisticsController {
         return ResponseEntity.ok(statisticsService.getConsultantInfo(initials));
     }
 
+    @GetMapping(value = "/entries/referencing", produces = "application/json")
+    public ResponseEntity<List<ConsultantInfo>> getConsultantsReferencingNameEntity(
+            @RequestParam(value = "name-entity", required = true) String nameEntityName,
+            @RequestParam(value = "type", required = true) NameEntityType type) {
+        List<Consultant> consultantLost = statisticsService.getAllConsultantsReferencingNameEntity(nameEntityName, type);
+        return ResponseEntity.ok(consultantLost.stream().map(ConsultantInfo::new).collect(Collectors.toList()));
+    }
 
 }

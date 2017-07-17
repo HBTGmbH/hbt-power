@@ -3,8 +3,8 @@ package de.hbt.pwr.service;
 import de.hbt.pwr.StreamUtils;
 import de.hbt.pwr.model.*;
 import de.hbt.pwr.model.clustering.*;
-import de.hbt.pwr.model.profile.Consultant;
-import de.hbt.pwr.model.profile.Skill;
+import de.hbt.pwr.model.profile.*;
+import de.hbt.pwr.model.profile.entries.ProfileEntry;
 import de.hbt.pwr.repo.ClusteredNetworkRepo;
 import de.hbt.pwr.repo.ConsultantRepository;
 import de.hbt.pwr.repo.StatisticsConfigRepo;
@@ -179,6 +179,54 @@ public class StatisticsService {
             s.addSkill(skill);
         });
         return ratedSkillsByName.values().stream().peek(SkillAverageRating::evaluate).collect(Collectors.toList());
+    }
+
+    public boolean hasNameEntity(Consultant consultant,@NotNull String name, NameEntityType type) {
+        Profile profile = consultant.getProfile();
+        if(type == NameEntityType.COMPANY) {
+            Set<NameEntity> companies = profile.getProjects().stream().map(Project::getBroker).collect(Collectors.toSet());
+            companies.addAll(profile.getProjects().stream().map(Project::getClient).collect(Collectors.toSet()));
+            return companies.stream().anyMatch(nameEntity -> name.equals(nameEntity.getName()));
+        } else if(type == NameEntityType.PROJECT_ROLE) {
+            final Set<NameEntity> roles = new HashSet<>();
+            profile.getProjects().forEach(project -> {
+                roles.addAll(project.getProjectRoles());
+            });
+            return roles.stream().anyMatch(nameEntity -> name.equals(nameEntity.getName()));
+        } else {
+            Set<? extends ProfileEntry> lookup = new HashSet<>();
+            switch (type) {
+                case EDUCATION:
+                    lookup = profile.getEducation();
+                    break;
+                case LANGUAGE:
+                    lookup = profile.getLanguages();
+                    break;
+                case QUALIFICATION:
+                    lookup = profile.getQualification();
+                    break;
+                case SECTOR:
+                    lookup = profile.getSectors();
+                    break;
+                case TRAINING:
+                    lookup = profile.getTrainingEntries();
+                    break;
+                case CAREER:
+                    lookup = profile.getCareerEntries();
+                    break;
+                case KEY_SKILL:
+                    lookup = profile.getKeySkillEntries();
+                    break;
+            }
+            return lookup.stream().anyMatch(o -> o.getNameEntity() != null && name.equals(o.getNameEntity().getName()));
+        }
+    }
+
+    public List<Consultant> getAllConsultantsReferencingNameEntity(@NotNull String nameEntityName, NameEntityType type) {
+        return StreamUtils
+                .asStream(consultantRepository.findAll())
+                .filter(consultant -> hasNameEntity(consultant, nameEntityName, type))
+                .collect(Collectors.toList());
     }
 
 }

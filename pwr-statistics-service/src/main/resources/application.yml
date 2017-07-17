@@ -8,13 +8,13 @@ feign:
     enabled: true
 ---
 spring:
-  profiles: development
+  profiles: localDev
 eureka:
   client:
     enabled: false
 pwr-profile-service:
   ribbon:
-    listOfServers: localhost:9004
+    listOfServers: power02.corp.hbt.de:9004
 ---
 spring:
   profiles: integration
