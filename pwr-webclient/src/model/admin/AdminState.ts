@@ -4,7 +4,6 @@ import {AdminNotification} from './AdminNotification';
 import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../LoginStatus';
 import {ConsultantInfo} from '../ConsultantInfo';
-import {SkillCategoryNode} from './SkillTree';
 
 @doop
 export class AdminState {
@@ -29,8 +28,6 @@ export class AdminState {
     @doop
     public get consultantsByInitials() {return doop<Immutable.Map<string, ConsultantInfo>, this>()};
 
-    @doop
-    public get skillCategoryTreeRoot() {return doop<SkillCategoryNode,this>()}
 
     private constructor(notifications: Immutable.List<AdminNotification>,
                         trashedNotifications: Immutable.List<AdminNotification>,
@@ -38,15 +35,13 @@ export class AdminState {
                         loginStatus: LoginStatus,
                         adminName: string,
                         adminPass: string,
-                        consultantsByInitials: Immutable.Map<string, ConsultantInfo>,
-                        skillCategoryTreeRoot: SkillCategoryNode) {
+                        consultantsByInitials: Immutable.Map<string, ConsultantInfo>) {
         return this.notifications(notifications).trashedNotifications(trashedNotifications).requestStatus(requestStatus)
-            .loginStatus(loginStatus).adminName(adminName).adminPass(adminPass).consultantsByInitials(consultantsByInitials)
-            .skillCategoryTreeRoot(skillCategoryTreeRoot);
+            .loginStatus(loginStatus).adminName(adminName).adminPass(adminPass).consultantsByInitials(consultantsByInitials);
     }
 
     public static createDefault() {
         return new AdminState(Immutable.List<AdminNotification>(),Immutable.List<AdminNotification>(),
-            RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>(), SkillCategoryNode.root());
+            RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>());
     }
 }

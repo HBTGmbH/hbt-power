@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
-import {FlatButton, FontIcon, IconButton, IconMenu, MenuItem, RaisedButton, Paper} from 'material-ui';
+import {FontIcon, IconButton, IconMenu, Paper, RaisedButton} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';

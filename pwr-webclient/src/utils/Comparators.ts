@@ -1,4 +1,5 @@
 import {NameEntity} from '../model/NameEntity';
+import {SkillCategory} from '../model/skill/SkillCategory';
 export class Comparators {
 
     public static getNameEntityComparator(asc: boolean) {
@@ -18,6 +19,10 @@ export class Comparators {
         if(s1 > s2) return -1;
         if(s1 == s2) return 0;
         return 1;
+    }
+
+    public static compareCategories(s1: SkillCategory, s2: SkillCategory): number {
+        return Comparators.compareString(s2.qualifier(), s1.qualifier());
     }
 
 

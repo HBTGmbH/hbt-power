@@ -13,29 +13,10 @@ import {POWER_MUI_THEME} from '../../../index';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
+import {ReactUtils} from '../../../utils/ReactUtils';
+import wrapSelectableList = ReactUtils.wrapSelectableList;
 
-
-function wrapState(ComposedComponent: any) {
-    return class SelectableList extends React.Component<{selectedIndex: number, onSelect(index: number): void}, {}> {
-
-        handleRequestChange = (event: any, index: any) => {
-           this.props.onSelect(index);
-        };
-
-        render() {
-            return (
-                <ComposedComponent
-                    value={this.props.selectedIndex}
-                    onChange={this.handleRequestChange}
-                >
-                    {this.props.children}
-                </ComposedComponent>
-            );
-        }
-    };
-}
-
-let SelectableList = wrapState(makeSelectable(List));
+let SelectableList = wrapSelectableList(makeSelectable(List));
 
 
 interface NameEntityOverviewProps {

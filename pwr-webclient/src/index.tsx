@@ -43,9 +43,9 @@ import {
     white
 } from 'material-ui/styles/colors';
 import {fade} from 'material-ui/utils/colorManipulator';
-import {AdminSkillTree} from './modules/admin/info/admin-skill-tree_module';
 import {NameEntityOverview} from './modules/admin/info/name-entity-overview_module';
 import {Paths} from './Paths';
+import {AdminSkillTree2} from './modules/admin/info/admin-skill-tree2_module';
 import injectTapEventPlugin = require('react-tap-event-plugin');
 
 // For material ui tap touch support
@@ -92,7 +92,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
                 <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics} />
                 <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork} />
-                <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree} />
+                <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2} />
                 <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={NameEntityOverview} />
             </Route>
         </Router>);

@@ -6,7 +6,6 @@ import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInf
 import {ScatterSkill} from '../../model/statistics/ScatterSkill';
 import {ActionType} from '../ActionType';
 import {NameEntity} from '../../model/NameEntity';
-import {APIConsultant} from '../../model/APIProfile';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 
 export interface ReceiveSkillUsageMetricsAction extends AbstractAction {

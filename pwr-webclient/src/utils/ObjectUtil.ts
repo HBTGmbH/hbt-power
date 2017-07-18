@@ -76,3 +76,4 @@ export function compareNumbers(n1: number, n2: number) {
     if(n1 == n2) return 0;
     return 1;
 }
+

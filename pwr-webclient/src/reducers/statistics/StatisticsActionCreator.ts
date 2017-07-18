@@ -4,7 +4,8 @@ import {ApplicationState} from '../../Store';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
     getConsultantClusterInfo,
-    getKMedProfileNetwork, getNameEntityUsageInfo,
+    getKMedProfileNetwork,
+    getNameEntityUsageInfo,
     getProfileStatistics,
     getScatterSkills,
     getSkillUsageRelative,
