@@ -76,6 +76,12 @@ export class InternalDatabase {
     public get projectRoles() {return doop<Immutable.Map<string, NameEntity>, this>();}
 
     /**
+     * All skills that are, currently, part of any base profile. (View profiles are excluded)
+     * @returns {Doop<Immutable.Set<string>, this>}
+     */
+    @doop public get currentlyUsedSkillNames() {return doop<Immutable.Set<string>, this>()};
+
+    /**
      * The profile that is currently being views and edited.
      * @returns {Doop<string, this>}
      */
@@ -99,7 +105,8 @@ export class InternalDatabase {
         loggedInUser: ConsultantInfo,
         degrees: Immutable.List<string>,
         activeViewProfileId: string,
-        exportDocuments: Immutable.List<ExportDocument>
+        exportDocuments: Immutable.List<ExportDocument>,
+        currentlyUsedSkillNames: Immutable.Set<string>
 ) {
         return this.APIRequestStatus(apiRequestStatus)
             .languageLevels(languageLevels)
@@ -118,6 +125,7 @@ export class InternalDatabase {
             .keySkills(keySkills)
             .activeViewProfileId(activeViewProfileId)
             .exportDocuments(exportDocuments)
+            .currentlyUsedSkillNames(currentlyUsedSkillNames);
     }
 
     public static createWithDefaults(): InternalDatabase {
@@ -140,6 +148,7 @@ export class InternalDatabase {
             Immutable.List<string>(['Bachelor', 'Master', 'Doktor', 'Diplom']),
             null,
             Immutable.List<ExportDocument>(),
+            Immutable.Set<string>(),
         );
     }
 

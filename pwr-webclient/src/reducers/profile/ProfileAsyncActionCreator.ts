@@ -2,6 +2,7 @@ import * as redux from 'redux';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
     deleteViewProfileString,
+    getAllCurrentlyUsedSkillNames,
     getAllViewProfilesString,
     getCareerSuggestionAPIString,
     getCompanySuggestionsAPIString,
@@ -449,6 +450,18 @@ export class ProfileAsyncActionCreator {
                 let apiExportDocs: Array<APIExportDocument> = response.data;
                 let exportDocs = apiExportDocs.map(value => ExportDocument.fromAPI(value));
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(exportDocs, APIRequestType.RequestExportDocs));
+            }).catch(function (error: any) {
+                ProfileAsyncActionCreator.logAxiosError(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
+
+    public static getAllCurrentlyUsedSkills() {
+        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+            axios.get(getAllCurrentlyUsedSkillNames()).then((response: AxiosResponse) => {
+                let apiData: Array<String> = response.data;
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(apiData, APIRequestType.RequestSkillNames))
             }).catch(function (error: any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());

@@ -85,6 +85,10 @@ export function getCompanySuggestionsAPIString(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/companies";
 }
 
+export function getAllCurrentlyUsedSkillNames(): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/skills";
+}
+
 export function getPostViewProfileAPIString(initials: string): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
 }

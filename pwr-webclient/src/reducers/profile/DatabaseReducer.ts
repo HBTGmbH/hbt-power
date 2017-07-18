@@ -197,7 +197,9 @@ export class DatabaseReducer {
             case APIRequestType.RequestExportDocs:
                 newState = state.exportDocuments(Immutable.List<ExportDocument>(action.payload));
                 break;
-
+            case APIRequestType.RequestSkillNames:
+                newState = state.currentlyUsedSkillNames(Immutable.Set<string>(action.payload));
+                break;
         }
         return newState.APIRequestStatus(RequestStatus.Successful);
     }

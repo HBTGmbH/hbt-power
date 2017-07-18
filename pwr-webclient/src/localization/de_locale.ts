@@ -95,6 +95,8 @@ export const de_locale : any = {
     "AdminClient.Menu.Info.SkillTree": "Skill-Baum",
     "AdminClient.Menu.Info.ProfileElements": "Profil-Elemente",
     "AdminClient.Menu.Info.ProfileElements.ElementTypes": "Profil-Element Typen",
+    "AdminClient.Overview.Skills": "Skill-Übersicht",
+    "AdminClient.Overview.NameEntity": "Eintrags-Namen-Übersicht",
     "ProfileNetwork.Description": "Der folgende Graph stellt ein Netzwerk aller vorhandenen Beraterprofile dar. Die Farben repräsentieren dabei Cluster, die mit Hilfe des k-medoids Algorithmus entstanden sind. Profile innerhalb eines Clusters teilen sich ähnliche Skills. Die Kanten beschreiben die Anzahl der Skills, die die Profile untereinander Teilen.",
     "ProfileNetwork.NodeDetails.Title": "Knoten-Details",
     "ProfileNetwork.CommonSkillsCount": "Gemeinsame Skills",

@@ -148,8 +148,5 @@ export interface AddSkillAction extends AbstractAction {
     skillName: string;
 }
 
-export interface ClearViewProfilesAction extends AbstractAction {
-
-}
 
 

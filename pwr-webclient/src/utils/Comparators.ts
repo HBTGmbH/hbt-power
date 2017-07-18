@@ -8,7 +8,14 @@ export class Comparators {
         } else {
             return (n1: NameEntity, n2: NameEntity) => Comparators.compareNameEntity(n1, n2)
         }
+    }
 
+    public static getStringComparator(asc: boolean) {
+        if(asc) {
+            return (s1: string, s2: string) => Comparators.compareString(s2, s1)
+        } else {
+            return (s1: string, s2: string) => Comparators.compareString(s1, s2)
+        }
     }
 
     public static compareNameEntity(n1: NameEntity, n2: NameEntity) {

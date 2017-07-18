@@ -28,14 +28,14 @@ export class AdminState {
     @doop
     public get consultantsByInitials() {return doop<Immutable.Map<string, ConsultantInfo>, this>()};
 
-
     private constructor(notifications: Immutable.List<AdminNotification>,
                         trashedNotifications: Immutable.List<AdminNotification>,
                         requestStatus: RequestStatus,
                         loginStatus: LoginStatus,
                         adminName: string,
                         adminPass: string,
-                        consultantsByInitials: Immutable.Map<string, ConsultantInfo>) {
+                        consultantsByInitials: Immutable.Map<string, ConsultantInfo>,
+    ) {
         return this.notifications(notifications).trashedNotifications(trashedNotifications).requestStatus(requestStatus)
             .loginStatus(loginStatus).adminName(adminName).adminPass(adminPass).consultantsByInitials(consultantsByInitials);
     }

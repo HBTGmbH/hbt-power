@@ -18,6 +18,10 @@ export enum RequestStatus {
 }
 
 export enum APIRequestType {
+    /**
+     * Request requested all skill names.
+     */
+    RequestSkillNames,
     RequestCareers,
     RequestKeySkills,
     RequestProjectRoles,

@@ -29,6 +29,7 @@ interface NameEntityOverviewProps {
     languages: Immutable.Map<string, NameEntity>;
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
+    currentlyUsedSkillNames: Immutable.Set<string>;
     nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>
 }
 
@@ -43,6 +44,7 @@ interface NameEntityOverviewLocalState {
 
 interface NameEntityOverviewDispatch {
     requestAllNameEntities(): void;
+    requestCurrentlyUsedSkills(): void;
     requestNameEntityUsageInfo(nameEntity: NameEntity, type: string): void;
 }
 
@@ -74,14 +76,16 @@ class NameEntityOverviewModule extends React.Component<
             languages: state.databaseReducer.languages(),
             projectRoles: state.databaseReducer.projectRoles(),
             companies: state.databaseReducer.companies(),
-            nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo()
+            nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo(),
+            currentlyUsedSkillNames: state.databaseReducer.currentlyUsedSkillNames()
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NameEntityOverviewDispatch {
         return {
             requestAllNameEntities: () => dispatch(ProfileAsyncActionCreator.requestAllNameEntities()),
-            requestNameEntityUsageInfo: (nameEntity, type) => dispatch(StatisticsActionCreator.AsyncRequestNameEntityUsageInfo(nameEntity, type))
+            requestNameEntityUsageInfo: (nameEntity, type) => dispatch(StatisticsActionCreator.AsyncRequestNameEntityUsageInfo(nameEntity, type)),
+            requestCurrentlyUsedSkills: () => dispatch(ProfileAsyncActionCreator.getAllCurrentlyUsedSkills())
         };
     }
 
@@ -136,7 +140,7 @@ class NameEntityOverviewModule extends React.Component<
         if(!isNullOrUndefined(usedBy)) {
             return <List>
                 {usedBy.map((value, key, iter) => <ListItem key={key}>{value.initials()}</ListItem>)}
-            </List>
+            </List>;
         } else {
             return null;
         }
@@ -151,13 +155,13 @@ class NameEntityOverviewModule extends React.Component<
                         style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}
                     >
                         <FontIcon
-                            style={{verticalAlign: "middle"}}
+                            style={{verticalAlign: 'middle'}}
                             className="material-icons"
                             color={POWER_MUI_THEME.baseTheme.palette.alternateTextColor}
                         >
                             info_outline
                         </FontIcon>
-                        <span style={{marginLeft: "5px"}}>
+                        <span style={{marginLeft: '5px'}}>
                         Info
                         </span>
                     </div>
@@ -175,7 +179,7 @@ class NameEntityOverviewModule extends React.Component<
     render() {
         let nameEntites = this.getNameEntitiesByField(this.state.selectedField);
         return (
-            <div style={{marginTop: '55px'}}>
+            <div>
                 <div className="row" style={{marginBottom: '16px'}}>
                     <div className="col-md-12">
                         <Paper style={{paddingLeft: '16px'}}>
@@ -187,7 +191,7 @@ class NameEntityOverviewModule extends React.Component<
                                 {
                                     NameEntityUtil
                                         .getProfileElementTypes()
-                                        .filter((value, index, array) => !(value === ProfileElementType.Project || value === ProfileElementType.SkillEntry))
+                                        .filter((value, index, array) => !(value === ProfileElementType.Project))
                                         .map((value, index, array) => <MenuItem key={value} value={value} primaryText={ProfileElementType[value]}/>)
                                 }
                             </SelectField>
