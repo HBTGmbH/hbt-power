@@ -222,11 +222,23 @@ public class StatisticsService {
         }
     }
 
+    public boolean hasSkill(@NotNull Consultant consultant, @NotNull String name) {
+        return consultant.getProfile().getSkills().stream().anyMatch(skill -> name.equals(skill.getName()));
+    }
+
     public List<Consultant> getAllConsultantsReferencingNameEntity(@NotNull String nameEntityName, NameEntityType type) {
         return StreamUtils
                 .asStream(consultantRepository.findAll())
                 .filter(consultant -> hasNameEntity(consultant, nameEntityName, type))
                 .collect(Collectors.toList());
+    }
+
+    public List<Consultant> getAllConsultantsReferencingSkill(@NotNull String skillName) {
+        return StreamUtils
+                .asStream(consultantRepository.findAll())
+                .filter(consultant -> hasSkill(consultant, skillName))
+                .collect(Collectors.toList());
+
     }
 
 }
