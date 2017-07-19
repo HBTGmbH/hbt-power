@@ -127,7 +127,7 @@ class NameEntityOverviewModule extends React.Component<
         return this.getNameEntitiesByField(this.state.selectedField);
     };
 
-    private handleIndexSelect = (index: number) => {
+    private handleIndexSelect = (event: any, index: number) => {
         this.setState({
             selectedIndex: index
         });
@@ -191,8 +191,8 @@ class NameEntityOverviewModule extends React.Component<
                                 {
                                     NameEntityUtil
                                         .getProfileElementTypes()
-                                        .filter((value, index, array) => !(value === ProfileElementType.Project))
-                                        .map((value, index, array) => <MenuItem key={value} value={value} primaryText={ProfileElementType[value]}/>)
+                                        .filter((value, index, array) => !(value === ProfileElementType.Project || value === ProfileElementType.SkillEntry))
+                                        .map((value, index, array) => <MenuItem key={value} value={value} primaryText={PowerLocalize.get(ProfileElementType[value])}/>)
                                 }
                             </SelectField>
                         </Paper>

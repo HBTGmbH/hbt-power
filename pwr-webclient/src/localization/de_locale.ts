@@ -97,6 +97,9 @@ export const de_locale : any = {
     "AdminClient.Menu.Info.ProfileElements.ElementTypes": "Profil-Element Typen",
     "AdminClient.Overview.Skills": "Skill-Übersicht",
     "AdminClient.Overview.NameEntity": "Eintrags-Namen-Übersicht",
+    "AdminClient.Infos.UsedSkills.UsedBy": "Skill benutzt von:",
+    "AdminClient.Infos.UsedSkills.SkillHiearchy": "Skill-Hiearchie",
+    "AdminClient.Infos.UsedSkills.SkillQualifier": "Name",
     "ProfileNetwork.Description": "Der folgende Graph stellt ein Netzwerk aller vorhandenen Beraterprofile dar. Die Farben repräsentieren dabei Cluster, die mit Hilfe des k-medoids Algorithmus entstanden sind. Profile innerhalb eines Clusters teilen sich ähnliche Skills. Die Kanten beschreiben die Anzahl der Skills, die die Profile untereinander Teilen.",
     "ProfileNetwork.NodeDetails.Title": "Knoten-Details",
     "ProfileNetwork.CommonSkillsCount": "Gemeinsame Skills",
@@ -180,6 +183,20 @@ export const de_locale : any = {
     "Action.Execute": "Ausführen",
     "Action.Duplicate": "Duplizieren",
     "Action.CreateNewConsultant": "Neuer Berater",
-    "Action.Login": "Anmelden"
+    "Action.Login": "Anmelden",
+    "Action.Search": "Suchen",
+
+    // == Enum localizations == //
+    "SkillEntry": "Skill",
+    "SectorEntry": "Branche",
+    "TrainingEntry": "Fortbildung",
+    "EducationEntry": "Ausbildung",
+    "QualificationEntry": "Zusatzqualifikation",
+    "LanguageEntry": "Sprache",
+    "KeySkill": "Schwerpunkt",
+    "Project": "Projekt",
+    "CareerEntry": "Werdegang",
+    "Company": "Unternehmen",
+    "ProjectRole": "Projektrolle"
 
 };

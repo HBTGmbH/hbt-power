@@ -86,5 +86,6 @@ export enum ActionType {
 
     // == Skill reducer
     AddCategoryToTree,
-    AddSkillToTree
+    AddSkillToTree,
+    ReadSkillHierarchy
 }
