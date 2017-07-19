@@ -3,6 +3,7 @@ import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
     AddNameEntityUsageInfoAction,
+    AddSkillUsageInfoAction,
     ReceiveConsultantClusterInfoAction,
     ReceiveNetworkAction,
     ReceiveProfileSkillMetrics,
@@ -49,6 +50,12 @@ export class StatisticsReducer {
         return store.nameEntityUsageInfo(map);
     }
 
+    public static AddSkillUsageInfo(store: StatisticsStore, action: AddSkillUsageInfoAction): StatisticsStore {
+        let map = store.skillUsageInfo();
+        map = map.set(action.skillName, Immutable.List<ConsultantInfo>(action.consultantInfos));
+        return store.skillUsageInfo(map);
+    }
+
     public static reduce(store: StatisticsStore, action: AbstractAction) : StatisticsStore {
         console.log("Statistics Reducer called with action type " + ActionType[action.type]);
         if(isNullOrUndefined(store)) return StatisticsStore.createEmpty();
@@ -71,6 +78,8 @@ export class StatisticsReducer {
                 return StatisticsReducer.ReceiveScatterSkills(store, action as ReceiveScatterSkillsAction);
             case ActionType.AddNameEntityUsageInfo:
                 return StatisticsReducer.AddNameEntityUsageInfo(store, action as AddNameEntityUsageInfoAction);
+            case ActionType.AddSkillUsageInfo:
+                return StatisticsReducer.AddSkillUsageInfo(store, action as AddSkillUsageInfoAction);
             default:
                 return store;
         }

@@ -82,6 +82,7 @@ export enum ActionType {
     StatisticsNotAvailable,
     ReceiveScatterSkills,
     AddNameEntityUsageInfo,
+    AddSkillUsageInfo,
 
     // == Skill reducer
     AddCategoryToTree,

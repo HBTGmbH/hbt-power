@@ -184,3 +184,7 @@ export function getSkillsForCategory(id: number): string {
 export function getNameEntityUsageInfo() {
     return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/entries/referencing";
 }
+
+export function getSkillUsageInfo() {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/skill/referencing";
+}

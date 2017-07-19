@@ -209,7 +209,7 @@ class NameEntityOverviewModule extends React.Component<
                         </Paper>
                     </div>
                     <div className="col-md-4">
-                        <Paper style={{width: '100%', height: '100%'}}>
+                        <Paper style={{width: '100%', minHeight: "400px"}}>
                             {this.renderInfoBox(nameEntites)}
                         </Paper>
                     </div>

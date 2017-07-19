@@ -39,3 +39,9 @@ export class AddNameEntityUsageInfoAction implements AbstractAction {
         this.consultantInfos = consultantInfos;
     }
 }
+
+export interface AddSkillUsageInfoAction extends AbstractAction {
+    type: ActionType;
+    skillName: string;
+    consultantInfos: Array<ConsultantInfo>;
+}

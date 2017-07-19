@@ -8,6 +8,7 @@ import {
     getNameEntityUsageInfo,
     getProfileStatistics,
     getScatterSkills,
+    getSkillUsageInfo,
     getSkillUsageRelative,
     getSkillUsagesAbsolute,
     headStatisticsServiceAvailable
@@ -16,6 +17,7 @@ import {APINetwork, APISkillUsageMetric} from '../../model/statistics/ApiMetrics
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {
     AddNameEntityUsageInfoAction,
+    AddSkillUsageInfoAction,
     ReceiveConsultantClusterInfoAction,
     ReceiveNetworkAction,
     ReceiveProfileSkillMetrics,
@@ -86,6 +88,14 @@ export class StatisticsActionCreator {
         return {
             type: ActionType.ReceiveScatterSkills,
             scatterSkills: scatterSkills
+        }
+    }
+
+    public static AddSkillUsageInfo(skillName: string, consultants: Array<ConsultantInfo>): AddSkillUsageInfoAction {
+        return {
+            type: ActionType.AddSkillUsageInfo,
+            consultantInfos: consultants,
+            skillName: skillName
         }
     }
 
@@ -206,6 +216,25 @@ export class StatisticsActionCreator {
                     let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
                     let list = data.map(value => ConsultantInfo.fromAPI(value));
                     dispatch(Object.assign({}, new AddNameEntityUsageInfoAction(ActionType.AddNameEntityUsageInfo, nameEntity, list)));
+                }).catch(function(error:any) {
+                    console.error(error);
+                    dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+                });
+            }
+        }
+    }
+
+    public static AsyncRequestSkillUsageInfo(skillName: string) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let state = getState();
+            if(!state.statisticsReducer.skillUsageInfo().has(skillName)) {
+                let config: AxiosRequestConfig = {
+                    params: { "skill": skillName }
+                };
+                axios.get(getSkillUsageInfo(), config).then((response: AxiosResponse) => {
+                    let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
+                    let list = data.map(value => ConsultantInfo.fromAPI(value));
+                    dispatch(StatisticsActionCreator.AddSkillUsageInfo(skillName, list));
                 }).catch(function(error:any) {
                     console.error(error);
                     dispatch(StatisticsActionCreator.AsyncCheckAvailability());

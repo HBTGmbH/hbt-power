@@ -46,6 +46,8 @@ export class StatisticsStore {
     @doop
     public get nameEntityUsageInfo() {return doop<Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>, this>()};
 
+    @doop public get skillUsageInfo() {return doop<Immutable.Map<string, Immutable.List<ConsultantInfo>>, this>()};
+
     private constructor(skillUsages: Immutable.List<SkillUsageMetric>,
                         relativeSkillUsages: Immutable.List<SkillUsageMetric>,
                         activeProfileMetric: ProfileSkillMetrics,
@@ -53,7 +55,8 @@ export class StatisticsStore {
                         available: boolean,
                         consultantClusterInfo: ConsultantClusterInfo,
                         scatteredSkills: Immutable.List<ScatterSkill>,
-                        nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>
+                        nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>,
+                        skillUsageInfo: Immutable.Map<string, Immutable.List<ConsultantInfo>>
     ) {
         return this.skillUsages(skillUsages)
             .relativeSkillUsages(relativeSkillUsages)
@@ -62,11 +65,13 @@ export class StatisticsStore {
             .available(available)
             .consultantClusterInfo(consultantClusterInfo)
             .scatteredSkills(scatteredSkills)
-            .nameEntityUsageInfo(nameEntityUsageInfo);
+            .nameEntityUsageInfo(nameEntityUsageInfo)
+            .skillUsageInfo(skillUsageInfo);
     }
 
     public static createEmpty(): StatisticsStore {
         return new StatisticsStore(Immutable.List<SkillUsageMetric>(),Immutable.List<SkillUsageMetric>(), null, null,
-            false, null, Immutable.List<ScatterSkill>(), Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>());
+            false, null, Immutable.List<ScatterSkill>(), Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>(),
+            Immutable.Map<string, Immutable.List<ConsultantInfo>>());
     }
 }
