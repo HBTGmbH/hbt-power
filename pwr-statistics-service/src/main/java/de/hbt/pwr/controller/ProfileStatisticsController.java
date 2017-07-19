@@ -130,6 +130,7 @@ public class ProfileStatisticsController {
         return ResponseEntity.ok(consultantLost.stream().map(ConsultantInfo::new).collect(Collectors.toList()));
     }
 
+    @GetMapping(value = "/skill/referencing", produces = "application/json")
     public ResponseEntity<List<ConsultantInfo>> getConsultantsReferencingSkill(
             @RequestParam(value = "skill", required = true) String skillName) {
         List<Consultant> consultants = statisticsService.getAllConsultantsReferencingSkill(skillName);
