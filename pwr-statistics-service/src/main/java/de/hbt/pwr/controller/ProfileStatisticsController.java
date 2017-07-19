@@ -5,7 +5,6 @@ import de.hbt.pwr.model.clustering.ClusteredNetwork;
 import de.hbt.pwr.model.clustering.ConsultantClusteringInfo;
 import de.hbt.pwr.model.clustering.MetricType;
 import de.hbt.pwr.model.profile.Consultant;
-import de.hbt.pwr.model.profile.NameEntity;
 import de.hbt.pwr.model.profile.NameEntityType;
 import de.hbt.pwr.service.AsyncInformationService;
 import de.hbt.pwr.service.StatisticsService;

@@ -1,7 +1,6 @@
 package de.hbt.pwr.model.clustering;
 
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 

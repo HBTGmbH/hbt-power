@@ -2,7 +2,9 @@ package de.hbt.pwr.service;
 
 import de.hbt.pwr.StreamUtils;
 import de.hbt.pwr.model.*;
-import de.hbt.pwr.model.clustering.*;
+import de.hbt.pwr.model.clustering.ClusteredNetwork;
+import de.hbt.pwr.model.clustering.ConsultantClusteringInfo;
+import de.hbt.pwr.model.clustering.MetricType;
 import de.hbt.pwr.model.profile.*;
 import de.hbt.pwr.model.profile.entries.ProfileEntry;
 import de.hbt.pwr.repo.ClusteredNetworkRepo;

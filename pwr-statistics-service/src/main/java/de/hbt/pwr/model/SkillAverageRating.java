@@ -1,18 +1,11 @@
 package de.hbt.pwr.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import de.hbt.pwr.model.profile.Skill;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.util.MathUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 public class SkillAverageRating {

@@ -16,7 +16,6 @@ import de.hbt.pwr.statistics.KMedoidSimRankMetric;
 import de.hbt.pwr.statistics.ProfileKMedoidClusterer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
