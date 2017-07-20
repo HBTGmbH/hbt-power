@@ -10,8 +10,8 @@ export namespace SkillReducer {
     import ReadSkillHierarchyAction = SkillActions.ReadSkillHierarchyAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
-        if(!isNullOrUndefined(category.category)) {
-            if(!isNullOrUndefined(category.category.category)) {
+        if(!isNullOrUndefined(category)) {
+            if(!isNullOrUndefined(category.category)) {
                 return category.qualifier +  " => " + buildHierarchy(category.category);
             }
             else {

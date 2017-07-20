@@ -13,6 +13,10 @@ interface SkillTreeProps {
     selectedIndex: number | string;
     onIndexSelect(index: number | string): void;
     onLoadChildren(categoryId: number): void;
+    /**
+     * List elements with nested elements expand on a click or tap. Defaults to true.
+     */
+    expandOnClick?: boolean;
 }
 
 interface SkillTreeState {
@@ -25,6 +29,9 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         super(props);
     }
 
+    public static defaultProps: Partial<SkillTreeProps> = {
+        expandOnClick: true
+    };
 
     private mapTo = (skillCategory: SkillCategory): JSX.Element => {
         return <ListItem
@@ -33,6 +40,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             nestedItems={this.renderNestedItems(skillCategory)}
             onNestedListToggle={(data) => this.props.onLoadChildren(data.props.value as any)}
             leftIcon={<FontIcon className="material-icons">label</FontIcon>}
+            primaryTogglesNestedList={this.props.expandOnClick}
         >
             {skillCategory.qualifier()}
         </ListItem>;
@@ -43,6 +51,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             key={skill.qualifier()}
             value={skill.qualifier()}
             leftIcon={<FontIcon className="material-icons">label_outline</FontIcon>}
+
         >
             {skill.qualifier()}
         </ListItem>;

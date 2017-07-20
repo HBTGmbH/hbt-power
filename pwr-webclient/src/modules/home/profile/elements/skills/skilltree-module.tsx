@@ -11,6 +11,7 @@ import {SkillChip} from './skill-chip_module';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Skill} from '../../../../../model/Skill';
 import * as Immutable from 'immutable';
+import {Comparators} from '../../../../../utils/Comparators';
 
 const distance = require("jaro-winkler");
 
@@ -99,6 +100,7 @@ class SkillTreeModule extends React.Component<
     }
 
     private filterSkills = (searchText: string) => {
+        console.log(searchText.length);
         let skills = this.props.skills;
         if(searchText.trim().length != 0) {
             skills = Immutable.Map<string, Skill>(skills.filter((skill: Skill, key:string) => {
@@ -118,14 +120,14 @@ class SkillTreeModule extends React.Component<
     };
 
     private renderSkills = () => {
-        return this.state.skills.map(skill => {
+        return this.state.skills.sort(Comparators.compareSkills).map(skill => {
             return (<SkillChip
                 key={skill.id()}
                 skill={skill}
                 onDelete={this.props.onSkillDelete}
                 onRatingChange={this.props.changeSkillRating}
             />)
-        }).toArray();
+        });
     };
 
     private getSkillSearcherHeight = () => {
