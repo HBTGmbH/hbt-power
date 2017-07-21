@@ -3,6 +3,7 @@ import {CSSProperties} from 'react';
 import {Skill} from '../../../../../model/Skill';
 import {Chip, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {StarRating} from '../../../../star-rating_module.';
 
 
 /**
@@ -31,26 +32,12 @@ interface SkillChipLocalState {
 
 export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLocalState> {
 
-    private styleYellow: CSSProperties = {
-        color: "yellow"
-    };
-
-    private styleDefault: CSSProperties = {
-        color: "initial"
-    };
 
 
 
 
-    private getStyle = (starPosition: number) => {
-        if(starPosition <= this.props.skill.rating()) {
-            return this.styleYellow;
-        } else {
-            return this.styleDefault;
-        }
-    };
 
-    private handleStarPress = (pos: number) => {
+    private handleRatingChange = (pos: number) => {
         this.props.onRatingChange(pos, this.props.skill.id());
     };
 
@@ -69,15 +56,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                 style={this.props.style}
             >
                 {this.props.skill.name()}
-                    <IconButton
-                        id={"Skill.Star1." + this.props.skill.id()}
-                        onClick={() => this.handleStarPress(1)}
-                        iconClassName="material-icons"
-                        iconStyle={this.getStyle(1)}>star_rate</IconButton>
-                    <IconButton  id={"Skill.Star2." + this.props.skill.id()} onClick={() => this.handleStarPress(2)} iconClassName="material-icons" iconStyle={this.getStyle(2)}>star_rate</IconButton>
-                    <IconButton  id={"Skill.Star3." + this.props.skill.id()} onClick={() => this.handleStarPress(3)} iconClassName="material-icons" iconStyle={this.getStyle(3)}>star_rate</IconButton>
-                    <IconButton  id={"Skill.Star4." + this.props.skill.id()} onClick={() => this.handleStarPress(4)} iconClassName="material-icons" iconStyle={this.getStyle(4)}>star_rate</IconButton>
-                    <IconButton  id={"Skill.Star5." + this.props.skill.id()} onClick={() => this.handleStarPress(5)} iconClassName="material-icons" iconStyle={this.getStyle(5)}>star_rate</IconButton>
+                    <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
                     <IconButton  id={"Skill.Delete." + this.props.skill.id()}
                                  onClick={this.handleDelete}
                                  tooltip={PowerLocalize.get("Action.Delete")}

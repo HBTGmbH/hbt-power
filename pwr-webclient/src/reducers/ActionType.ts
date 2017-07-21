@@ -87,5 +87,14 @@ export enum ActionType {
     // == Skill reducer
     AddCategoryToTree,
     AddSkillToTree,
-    ReadSkillHierarchy
+    ReadSkillHierarchy,
+
+    SetCurrentSkillName,
+    SetCurrentSkillRating,
+    SetAddSkillStep,
+    StepBackToSkillInfo,
+    ChangeSkillComment,
+    SetCurrentChoice,
+    SetAddSkillError,
+    ResetAddSkillDialog
 }

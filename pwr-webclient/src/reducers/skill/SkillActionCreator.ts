@@ -12,12 +12,20 @@ import {
 } from '../../API_CONFIG';
 import axios, {AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
+import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../profile/database-actions';
+import {AddSkillStep} from '../../model/skill/AddSkillStep';
+import {isNullOrUndefined} from 'util';
+import {ProfileActionCreator} from '../profile/ProfileActionCreator';
+import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 
 
 export namespace SkillActionCreator {
     import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;
     import AddSkillToTreeAction = SkillActions.AddSkillToTreeAction;
     import ReadSkillHierarchyAction = SkillActions.ReadSkillHierarchyAction;
+    import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
+    import Timer = NodeJS.Timer;
+    import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -40,6 +48,60 @@ export namespace SkillActionCreator {
             type: ActionType.ReadSkillHierarchy,
             skill: skill
         };
+    }
+
+    export function SetCurrentSkillName(name: string): ChangeStringValueAction {
+        return {
+            value: name,
+            type: ActionType.SetCurrentSkillName
+        };
+    }
+
+    export function SetCurrentSkillRating(rating: number): ChangeNumberValueAction {
+        return {
+            value: rating,
+            type: ActionType.SetCurrentSkillRating
+        };
+    }
+
+    export function SetAddSkillStep(step: AddSkillStep): SetAddSkillStepAction {
+        return {
+            type: ActionType.SetAddSkillStep,
+            step: step
+        }
+    }
+
+    export function StepBackToSkillInfo(): AbstractAction {
+        return {
+            type: ActionType.StepBackToSkillInfo
+        }
+    }
+
+    export function ResetAddSkillDialog(): AbstractAction {
+        return {
+            type: ActionType.ResetAddSkillDialog
+        }
+    }
+
+    export function ChangeSkillComment(comment: string): ChangeStringValueAction {
+        return {
+            type: ActionType.ChangeSkillComment,
+            value: comment
+        }
+    }
+
+    export function SetCurrentChoice(choice: UnCategorizedSkillChoice): SetCurrentChoiceAction {
+        return {
+            type: ActionType.SetCurrentChoice,
+            currentChoice: choice
+        }
+    }
+
+    function SetAddSkillError(text: string): ChangeStringValueAction {
+        return {
+            type: ActionType.SetAddSkillError,
+            value: text
+        }
     }
 
 
@@ -105,6 +167,55 @@ export namespace SkillActionCreator {
                 });
             }
         };
+    }
+
+    export function AsyncProgressAddSkill() {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let state = getState().skillReducer;
+            let step = state.currentAddSkillStep();
+            console.log("Step", step);
+            if(step === AddSkillStep.NONE) {
+                dispatch(SetAddSkillStep(AddSkillStep.SKILL_INFO))
+            } else if (step === AddSkillStep.SKILL_INFO) {
+                let skillName = state.currentSkillName();
+                let hierarchy = state.categorieHierarchiesBySkillName().get(state.currentSkillName());
+                if(!isNullOrUndefined(hierarchy)) {
+                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
+                } else {
+                    dispatch(SetAddSkillStep(AddSkillStep.CATEGORY_REQUEST_PENDING));
+                    axios.get(getSkillByName(skillName)).then((response: AxiosResponse) => {
+                        if(response.status === 200) {
+                            dispatch(ReadSkillHierarchy(response.data));
+                            dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY))
+                        } else if(response.status === 204){
+                            dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
+                        } else {
+                            let error: any = new Error("Unexpected response status in response.");
+                            error.response = response;
+                            throw error;
+                        }
+                    }).catch(function (error: any) {
+                        console.error(error);
+                        dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
+                    });
+                }
+            } else if (step === AddSkillStep.SHOW_CATEGORY) {
+                dispatch(SetAddSkillStep(AddSkillStep.DONE));
+            } else if(step === AddSkillStep.SHOW_EDITING_OPTIONS) {
+                if(state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT && state.skillComment().trim() !== "") {
+                    dispatch(SetAddSkillStep(AddSkillStep.DONE));
+                } else if(state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT) {
+                    dispatch(SetAddSkillError("Comment necessary"));
+                } else {
+                    dispatch(SetAddSkillStep(AddSkillStep.DONE));
+                }
+            } else if (step === AddSkillStep.DONE) {
+                // FIXME it misses the rating; Remove from skill-tree-module, add here.
+                dispatch(ProfileActionCreator.AddSkill(getState().skillReducer.currentSkillName()));
+                dispatch(ResetAddSkillDialog());
+            }
+        }
+
     }
 
 }

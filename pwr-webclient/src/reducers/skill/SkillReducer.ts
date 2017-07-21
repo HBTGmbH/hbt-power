@@ -1,13 +1,17 @@
 import {SkillStore} from '../../model/skill/SkillStore';
-import {AbstractAction} from '../profile/database-actions';
+import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {SkillActions} from './SkillActions';
 import {APISkillCategory} from '../../model/skill/SkillCategory';
+import {AddSkillStep} from '../../model/skill/AddSkillStep';
+import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 export namespace SkillReducer {
     import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;
     import AddSkillToTreeAction = SkillActions.AddSkillToTreeAction;
     import ReadSkillHierarchyAction = SkillActions.ReadSkillHierarchyAction;
+    import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
+    import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if(!isNullOrUndefined(category)) {
@@ -40,6 +44,38 @@ export namespace SkillReducer {
                     return skillStore.categorieHierarchiesBySkillName(map);
                 }
                 return skillStore;
+            }
+            case ActionType.SetCurrentSkillName: {
+                let act = action as ChangeStringValueAction;
+                return skillStore.currentSkillName(act.value);
+            }
+            case ActionType.SetCurrentSkillRating: {
+                let act = action as ChangeNumberValueAction;
+                return skillStore.currentSkillRating(act.value);
+            }
+            case ActionType.SetAddSkillStep: {
+                let act = action as SetAddSkillStepAction;
+                return skillStore.currentAddSkillStep(act.step);
+            }
+            case ActionType.StepBackToSkillInfo: {
+                return skillStore.currentAddSkillStep(AddSkillStep.SKILL_INFO);
+            }
+            case ActionType.ChangeSkillComment: {
+                let act = action as ChangeStringValueAction;
+                return skillStore.skillComment(act.value).addSkillError(null);
+            }
+            case ActionType.SetCurrentChoice: {
+                let act = action as SetCurrentChoiceAction;
+                return skillStore.currentChoice(act.currentChoice);
+            }
+            case ActionType.SetAddSkillError: {
+                let act = action as ChangeStringValueAction;
+                return skillStore.addSkillError(act.value);
+            }
+            case ActionType.ResetAddSkillDialog: {
+                return skillStore.currentChoice(UnCategorizedSkillChoice.PROCEED_WITH_COMMENT)
+                    .addSkillError(null).skillComment("").currentSkillName("").currentSkillRating(1)
+                    .currentAddSkillStep(AddSkillStep.NONE)
             }
             default:
                 return skillStore;

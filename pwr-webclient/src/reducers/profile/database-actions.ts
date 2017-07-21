@@ -22,6 +22,14 @@ export interface ChangeStringValueAction extends AbstractAction {
     value: string;
 }
 
+export interface ChangeNumberValueAction extends AbstractAction {
+    /**
+     * The new abstract text.
+     */
+    value: number;
+}
+
+
 export interface ReceiveAPIResponseAction extends AbstractAction {
     requestType: APIRequestType;
     payload: any;

@@ -12,6 +12,7 @@ import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Skill} from '../../../../../model/Skill';
 import * as Immutable from 'immutable';
 import {Comparators} from '../../../../../utils/Comparators';
+import {AddSkillDialog} from './add-skill-dialog_module';
 
 const distance = require("jaro-winkler");
 
@@ -139,6 +140,7 @@ class SkillTreeModule extends React.Component<
         return (
             <div className="row">
                 <div className="col-md-4">
+                    <AddSkillDialog/>
                     <SkillSearcher
                         id="SkillTree.SkillSeacher"
                         floatingLabelText={PowerLocalize.get("SkillTree.SearchAndAddSkill")}
