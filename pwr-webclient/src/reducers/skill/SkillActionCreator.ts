@@ -210,8 +210,7 @@ export namespace SkillActionCreator {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
                 }
             } else if (step === AddSkillStep.DONE) {
-                // FIXME it misses the rating; Remove from skill-tree-module, add here.
-                dispatch(ProfileActionCreator.AddSkill(getState().skillReducer.currentSkillName()));
+                dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating()));
                 dispatch(ResetAddSkillDialog());
             }
         }

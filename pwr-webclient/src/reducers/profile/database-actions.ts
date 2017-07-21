@@ -154,6 +154,7 @@ export interface ChangeViewProfileAction extends AbstractAction {
 
 export interface AddSkillAction extends AbstractAction {
     skillName: string;
+    rating: number;
 }
 
 

@@ -177,7 +177,7 @@ export class ProfileReducer {
     public static reducerHandleAddSkill(profile: Profile, action: AddSkillAction): Profile {
         if(!profile.getSkillByName(action.skillName)) {
             let skills = profile.skills();
-            let skill = Skill.createNew(action.skillName);
+            let skill = Skill.of(action.skillName, action.rating);
             skills = skills.set(skill.id(), skill);
             return profile.skills(skills);
         } else {

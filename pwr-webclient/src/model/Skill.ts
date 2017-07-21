@@ -42,6 +42,10 @@ export class Skill {
         return new Skill(qualifier, NEW_ENTITY_PREFIX + String(Skill.CURRENT_ID++), 1, true);
     }
 
+    public static of(name: string, level: number): Skill {
+        return new Skill(name, NEW_ENTITY_PREFIX + String(Skill.CURRENT_ID++), level, true);
+    }
+
     public static fromAPI(apiSkill: APISkill) {
         return new Skill(
             String(apiSkill.name),

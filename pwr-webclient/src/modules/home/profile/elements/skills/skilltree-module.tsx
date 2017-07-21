@@ -8,7 +8,6 @@ import {List, Subheader} from 'material-ui';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {SkillChip} from './skill-chip_module';
-import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Skill} from '../../../../../model/Skill';
 import * as Immutable from 'immutable';
 import {Comparators} from '../../../../../utils/Comparators';
@@ -53,7 +52,6 @@ interface SkillTreeLocalState {
 interface SkillTreeDispatch {
     changeSkillRating(rating: number, id: string): void;
     onSkillDelete(id: string): void;
-    addSkill(name: string): void;
 }
 
 class SkillTreeModule extends React.Component<
@@ -93,9 +91,6 @@ class SkillTreeModule extends React.Component<
             },
             onSkillDelete: (id: string) => {
                 dispatch(ProfileActionCreator.deleteSkill(id));
-            },
-            addSkill: (name: string) => {
-                dispatch(ProfileActionCreator.AddSkill(name));
             }
         };
     }
@@ -113,16 +108,10 @@ class SkillTreeModule extends React.Component<
         });
     };
 
-    private handleSkillRequest = (skillString: string) => {
-        this.props.addSkill(skillString);
-        this.setState({
-            skills: this.props.skills
-        });
-    };
-
     private renderSkills = () => {
         return this.state.skills.sort(Comparators.compareSkills).map(skill => {
             return (<SkillChip
+                style={{margin: "4px"}}
                 key={skill.id()}
                 skill={skill}
                 onDelete={this.props.onSkillDelete}
@@ -138,25 +127,14 @@ class SkillTreeModule extends React.Component<
 
     render() {
         return (
-            <div className="row">
-                <div className="col-md-4">
+            <div className="vertical-align">
+                <div>
                     <AddSkillDialog/>
-                    <SkillSearcher
-                        id="SkillTree.SkillSeacher"
-                        floatingLabelText={PowerLocalize.get("SkillTree.SearchAndAddSkill")}
-                        maxResults={20}
-                        onNewRequest={this.handleSkillRequest}
-                        onValueChange={this.filterSkills}
-                        maxHeight={this.getSkillSearcherHeight()}
-                    />
-                </div>
-                <div className="col-md-8">
                     <List>
                         <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
                         {this.renderSkills()}
                     </List>
                 </div>
-
             </div>
         );
     }

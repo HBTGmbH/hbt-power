@@ -56,14 +56,15 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                 style={this.props.style}
             >
                 {this.props.skill.name()}
-                    <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
-                    <IconButton  id={"Skill.Delete." + this.props.skill.id()}
-                                 onClick={this.handleDelete}
-                                 tooltip={PowerLocalize.get("Action.Delete")}
-                                 tooltipPosition="top-right"
-                                 iconClassName="material-icons"
-                    >
-                        delete</IconButton>
+                <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
+                <IconButton  id={"Skill.Delete." + this.props.skill.id()}
+                             onClick={this.handleDelete}
+                             tooltip={PowerLocalize.get("Action.Delete")}
+                             tooltipPosition="top-right"
+                             iconClassName="material-icons"
+                >
+                    delete</IconButton>
+                {this.props.skill.isNew() ? "New Skill": false}
             </Chip>);
     }
 }

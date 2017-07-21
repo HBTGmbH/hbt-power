@@ -123,10 +123,11 @@ export class ProfileActionCreator {
         }
     }
 
-    public static AddSkill(skillName: string): AddSkillAction {
+    public static AddSkill(skillName: string, rating: number): AddSkillAction {
         return {
             type: ActionType.AddSkill,
-            skillName: skillName
+            skillName: skillName,
+            rating: rating
         }
     }
 

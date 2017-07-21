@@ -6,7 +6,6 @@ import {AddSkillStep} from '../../../../../model/skill/AddSkillStep';
 import {
     Dialog,
     Divider,
-    FontIcon,
     IconButton,
     RadioButton,
     RadioButtonGroup,
@@ -208,7 +207,14 @@ class AddSkillDialogModule extends React.Component<
     private renderDone = (): JSX.Element  => {
         return <div style={{textAlign: "center"}}>
             Done<br/>
-            <FontIcon className="material-icons" style={{color: "green"}}>check_circle</FontIcon>
+            <IconButton
+                iconClassName="material-icons"
+                iconStyle={{color: "green"}}
+                onClick={this.props.progress}
+                size={80}
+            >
+                check_circle
+            </IconButton>
         </div>;
     };
 
