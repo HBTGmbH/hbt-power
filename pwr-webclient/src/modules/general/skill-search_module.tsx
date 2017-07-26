@@ -51,9 +51,10 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         this.props.onValueChange(searchText);
         if(!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
             let reqParams = {
-                maxResults: this.props.maxResults
+                maxResults: this.props.maxResults,
+                searchterm: searchText
             };
-            axios.get(getSearchSkill(searchText), {params: reqParams}).then((response: AxiosResponse) => {
+            axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
                 if(response.status === 200) {
                     this.setState({
                         skills: response.data

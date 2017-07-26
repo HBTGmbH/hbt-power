@@ -96,5 +96,6 @@ export enum ActionType {
     ChangeSkillComment,
     SetCurrentChoice,
     SetAddSkillError,
+    SetNoCategoryReason,
     ResetAddSkillDialog
 }

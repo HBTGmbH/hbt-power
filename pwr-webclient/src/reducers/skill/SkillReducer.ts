@@ -25,6 +25,13 @@ export namespace SkillReducer {
         return "";
     }
 
+
+    function resetAddSkillDialog(skillStore: SkillStore): SkillStore {
+        return skillStore.currentChoice(UnCategorizedSkillChoice.PROCEED_WITH_COMMENT)
+            .addSkillError(null).skillComment("").currentSkillName("").currentSkillRating(1)
+            .currentAddSkillStep(AddSkillStep.NONE)
+    }
+
     export function reduce(skillStore: SkillStore, action: AbstractAction): SkillStore {
         if(isNullOrUndefined(skillStore)) return SkillStore.empty();
         switch(action.type) {
@@ -58,7 +65,7 @@ export namespace SkillReducer {
                 return skillStore.currentAddSkillStep(act.step);
             }
             case ActionType.StepBackToSkillInfo: {
-                return skillStore.currentAddSkillStep(AddSkillStep.SKILL_INFO);
+                return resetAddSkillDialog(skillStore).currentAddSkillStep(AddSkillStep.SKILL_INFO);
             }
             case ActionType.ChangeSkillComment: {
                 let act = action as ChangeStringValueAction;
@@ -73,9 +80,11 @@ export namespace SkillReducer {
                 return skillStore.addSkillError(act.value);
             }
             case ActionType.ResetAddSkillDialog: {
-                return skillStore.currentChoice(UnCategorizedSkillChoice.PROCEED_WITH_COMMENT)
-                    .addSkillError(null).skillComment("").currentSkillName("").currentSkillRating(1)
-                    .currentAddSkillStep(AddSkillStep.NONE)
+                return resetAddSkillDialog(skillStore);
+            }
+            case ActionType.SetNoCategoryReason: {
+                let act = action as ChangeStringValueAction;
+                return skillStore.noCategoryReason(act.value);
             }
             default:
                 return skillStore;

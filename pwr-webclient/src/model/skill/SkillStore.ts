@@ -45,19 +45,30 @@ export class SkillStore {
 
     @doop public get skillComment() {return doop<string, this>()};
 
+    /**
+     * Error text displayed in the add skill dialog, related to the comment field.
+     * @returns {Doop<string, this>}
+     */
     @doop public get addSkillError() {return doop<string, this>()};
+
+    /**
+     * Reason why no category for a given skill was found.
+     * @returns {Doop<string, this>}
+     */
+    @doop public get noCategoryReason() {return doop<string, this>()};
 
 
     private constructor(skillTreeRoot: SkillCategory, categorieHierarchiesBySkillName: Immutable.Map<string, string>,
                         currentAddSkillStep: AddSkillStep, currentSkillRating: number, currentSkillName: string,
-                        currentChoice: UnCategorizedSkillChoice, skillComment: string, addSkillError: string) {
+                        currentChoice: UnCategorizedSkillChoice, skillComment: string, addSkillError: string,
+                        noCategoryReason: string) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
-            .addSkillError(addSkillError);
+            .addSkillError(addSkillError).noCategoryReason(noCategoryReason)
     }
 
     public static empty() {
         return new SkillStore(SkillCategory.of(-1, "root"), Immutable.Map<string, string>(), AddSkillStep.NONE, 1, "",
-            UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null);
+            UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "");
     }
 }

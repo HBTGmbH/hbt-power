@@ -10,7 +10,7 @@ import {
     getSkillByName,
     getSkillsForCategory
 } from '../../API_CONFIG';
-import axios, {AxiosResponse} from 'axios';
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../profile/database-actions';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
@@ -104,6 +104,12 @@ export namespace SkillActionCreator {
         }
     }
 
+    function SetNoCategoryReason(reason: string): ChangeStringValueAction {
+        return {
+            type: ActionType.SetNoCategoryReason,
+            value: reason
+        }
+    }
 
     export function AsyncLoadChildrenIntoTree(parentId: number, currentDepth: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
@@ -160,7 +166,8 @@ export namespace SkillActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state = getState();
             if (!state.skillReducer.categorieHierarchiesBySkillName().has(skillName)) {
-                axios.get(getSkillByName(skillName)).then((response: AxiosResponse) => {
+                let config: AxiosRequestConfig = {params: {qualifier: skillName}};
+                axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
                     dispatch(ReadSkillHierarchy(response.data));
                 }).catch(function (error: any) {
                     console.error(error);
@@ -174,6 +181,8 @@ export namespace SkillActionCreator {
             let state = getState().skillReducer;
             let step = state.currentAddSkillStep();
             console.log("Step", step);
+            // Simple state machine that defines how to progress from one state into another.
+            // State progression is rather simple, for more, see AddSkillStep enum
             if(step === AddSkillStep.NONE) {
                 dispatch(SetAddSkillStep(AddSkillStep.SKILL_INFO))
             } else if (step === AddSkillStep.SKILL_INFO) {
@@ -183,19 +192,25 @@ export namespace SkillActionCreator {
                     dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
                 } else {
                     dispatch(SetAddSkillStep(AddSkillStep.CATEGORY_REQUEST_PENDING));
-                    axios.get(getSkillByName(skillName)).then((response: AxiosResponse) => {
+                    let config: AxiosRequestConfig = {params: {qualifier: skillName}};
+                    axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
                         if(response.status === 200) {
                             dispatch(ReadSkillHierarchy(response.data));
                             dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY))
                         } else if(response.status === 204){
+                            dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
                             dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                         } else {
-                            let error: any = new Error("Unexpected response status in response.");
-                            error.response = response;
-                            throw error;
+                            dispatch(SetNoCategoryReason("SERVER_ERROR"));
+                            dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                         }
-                    }).catch(function (error: any) {
+                    }).catch(function (error: AxiosError) {
                         console.error(error);
+                        if(!isNullOrUndefined(error.response) && (error.response.status === 400 || error.response.status === 404)) {
+                            dispatch(SetNoCategoryReason("SERVICE_NOT_AVAILABLE"));
+                        } else {
+                            dispatch(SetNoCategoryReason("UNKNOWN"));
+                        }
                         dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                     });
                 }

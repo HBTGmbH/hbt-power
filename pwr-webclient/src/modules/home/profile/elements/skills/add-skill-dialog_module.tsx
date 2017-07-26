@@ -30,6 +30,10 @@ interface AddSkillDialogProps {
     currentChoice: UnCategorizedSkillChoice;
     skillComment: string;
     addSkillError: string | undefined | null;
+    /**
+     * Reason why no category could be found.
+     */
+    noCategoryReason: string;
 
 }
 
@@ -65,7 +69,8 @@ class AddSkillDialogModule extends React.Component<
             categoryString: state.skillReducer.categorieHierarchiesBySkillName().get(state.skillReducer.currentSkillName()),
             currentChoice: state.skillReducer.currentChoice(),
             skillComment: state.skillReducer.skillComment(),
-            addSkillError: state.skillReducer.addSkillError()
+            addSkillError: state.skillReducer.addSkillError(),
+            noCategoryReason: state.skillReducer.noCategoryReason()
         };
     }
 
@@ -163,7 +168,9 @@ class AddSkillDialogModule extends React.Component<
 
     private renderShowEditingOptions = (): JSX.Element  => {
         return <div>
-            <span>The skill service has no category information for this skill. Please choose one of the options below</span>
+            <span>The skill service has no category information for this skill. Reason: </span><br/>
+            {this.props.noCategoryReason}<br/>
+            <span>Please choose one of the options below.</span>
             <div style={{width: "100%", height: "150px"}}>
                 <RadioButtonGroup
                     name="choice"
@@ -270,7 +277,7 @@ class AddSkillDialogModule extends React.Component<
 }
 
 /**
- * Allows adding skills in a dialog.
+ * Allows adding skills in a dialog form. Comes with a button to open the dialog.
  * @see AddSkillDialogModule
  * @author nt
  * @since 21.07.2017

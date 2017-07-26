@@ -127,14 +127,12 @@ class SkillTreeModule extends React.Component<
 
     render() {
         return (
-            <div className="vertical-align">
-                <div>
-                    <AddSkillDialog/>
-                    <List>
-                        <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
-                        {this.renderSkills()}
-                    </List>
-                </div>
+            <div>
+                <AddSkillDialog/>
+                <List>
+                    <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
+                    {this.renderSkills()}
+                </List>
             </div>
         );
     }

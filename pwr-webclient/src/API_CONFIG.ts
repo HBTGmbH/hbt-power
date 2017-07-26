@@ -16,8 +16,8 @@ declare const POWER_API_PORT_SKILL: string;
 
 declare const POWER_API_SUFFIX_SKILL: string;
 
-export function getSearchSkill(skillname: string): string {
-    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/search/" + skillname;
+export function getSearchSkill(): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/search";
 }
 
 export function getConsultantApiString(initials: string) : string {
@@ -181,8 +181,8 @@ export function getSkillsForCategory(id: number): string {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + id + "/skills";
 }
 
-export function getSkillByName(name: string): string {
-    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/byName/" + name;
+export function getSkillByName(): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/byName";
 }
 
 export function getNameEntityUsageInfo() {
