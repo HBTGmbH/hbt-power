@@ -3,24 +3,14 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
 import {AdminNotification} from '../../model/admin/AdminNotification';
-import {
-    FontIcon,
-    RaisedButton,
-    Tab,
-    Table,
-    TableBody,
-    TableHeader,
-    TableHeaderColumn,
-    TableRow,
-    TableRowColumn,
-    Tabs
-} from 'material-ui';
+import {FontIcon, RaisedButton, Tab, Tabs} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {formatString} from '../../utils/StringUtil';
-import {formatToMailDisplay} from '../../utils/DateUtil';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
-import {NotificationDialog} from './notification-dialog_module';
-import {NameEntityUtil} from '../../utils/NameEntityUtil';
+import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
+import {ProfileEntryNotificationTable} from './notification/profile-entry-notification-table_module';
+import {ProfileUpdateNotificationTable} from './notification/profile-update-notification-table_module';
+import {SkillNotificationTable} from './notification/skill-notification-table_module';
+import {SkillNotification} from '../../model/admin/SkillNotification';
 
 /**
  * Properties that are managed by react-redux.
@@ -29,7 +19,9 @@ import {NameEntityUtil} from '../../utils/NameEntityUtil';
  * otherwise the component will not render and update correctly.
  */
 interface NotificationInboxProps {
-    notifications: Immutable.List<AdminNotification>;
+    profileEntryNotifications: Immutable.List<ProfileEntryNotification>;
+    profileUpdateNotifications: Immutable.List<AdminNotification>;
+    skillNotifications: Immutable.List<SkillNotification>;
     username: string;
     password: string;
 }
@@ -52,9 +44,9 @@ interface NotificationInboxLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface NotificationInboxLocalState {
-    selectedRows: string | Array<number>;
-    notificationDialogOpen: boolean;
-    selectedNotification: number;
+    selectedProfileEntryRows: Array<number>;
+    selectedProfileUpdateRows: Array<number>;
+    selectedSkillRows: Array<number>;
 }
 
 /**
@@ -73,15 +65,17 @@ class NotificationInboxModule extends React.Component<
     constructor(props: NotificationInboxProps & NotificationInboxLocalProps & NotificationInboxDispatch) {
         super(props);
         this.state = {
-            selectedRows: [],
-            notificationDialogOpen: false,
-            selectedNotification: -1
+            selectedProfileEntryRows: [],
+            selectedProfileUpdateRows: [],
+            selectedSkillRows: [],
         }
     }
 
     static mapStateToProps(state: ApplicationState, localProps: NotificationInboxLocalProps): NotificationInboxProps {
         return {
-            notifications: state.adminReducer.notifications(),
+            profileUpdateNotifications: state.adminReducer.profileUpdateNotifications(),
+            profileEntryNotifications: state.adminReducer.profileEntryNotifications(),
+            skillNotifications: state.adminReducer.skillNotifications(),
             username: state.adminReducer.adminName(),
             password: state.adminReducer.adminPass()
         }
@@ -94,88 +88,45 @@ class NotificationInboxModule extends React.Component<
         };
     }
 
-    private showNotificationDialog = (index: number) => {
-        console.log("show", index);
-        this.setState({
-            notificationDialogOpen: true,
-            selectedNotification: index
-        })
-    };
-
-    private handleCellClick = (rowNum: number, colNum: number) => {
-        // Ignore the checkboxes.
-        if(colNum >= 0) {
-            this.showNotificationDialog(rowNum);
-        }
-    };
-
-    private hideNotificationDialog = () => {
-        this.setState({
-            notificationDialogOpen: false
-        })
-    };
-
-
-
-    private renderNotificationAsTableRow = (notification: AdminNotification, key: number) => {
-        return (
-            <TableRow
-                key={"NotificationInbox.TableRow.Not." + notification.id()}
-            >
-                <TableRowColumn>{notification.initials()}</TableRowColumn>
-                <TableRowColumn
-                    className="cursor-pointer"
-                >
-                    {formatString(
-                        PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
-                        notification.nameEntity().name(),
-                        NameEntityUtil.typeToLocalizedType(notification.nameEntity()))
-                    }
-                </TableRowColumn >
-                <TableRowColumn>{formatToMailDisplay(notification.occurrence())}</TableRowColumn>
-            </TableRow>
-        )
-    };
-
-    private renderTableHeader = () => {
-        return ( <TableHeader>
-            <TableRow>
-                <TableHeaderColumn>{PowerLocalize.get("Initials.Singular")}</TableHeaderColumn>
-                <TableHeaderColumn>{PowerLocalize.get("Subject.Singular")}</TableHeaderColumn>
-                <TableHeaderColumn>{PowerLocalize.get("Date.Singular")}</TableHeaderColumn>
-            </TableRow>
-        </TableHeader>);
-    };
-
-    private handleAllMessagesRowSelection = (rows: string | Array<number>) => {
-        this.setState({
-            selectedRows: rows
-        });
-    };
-
-    private handleTrashSelected = () => {
+    private handleTrashSelectedProfileEntryNotification = (rows: Array<number>, entries: Immutable.List<ProfileEntryNotification>) => {
         let ids: Array<number> = [];
-        if(typeof(this.state.selectedRows) == 'string') {
-            if(this.state.selectedRows == 'all') {
-                this.props.notifications.forEach(n => ids.push(n.id()));
-            }
-        } else {
-            let selRows: Array<number> = this.state.selectedRows as Array<number>;
-            selRows.forEach(rowNum => {
-                ids.push(this.props.notifications.get(rowNum).id())
-            });
-        }
+        rows.forEach(rowNum => {
+            ids.push(entries.get(rowNum).adminNotification().id())
+        });
         this.props.trashNotifications(ids, this.props.username, this.props.password);
+    };
+
+    private handleTrashSelectedProfileUpdateNotification = (rows: Array<number>, entries: Immutable.List<AdminNotification>) => {
+        let ids: Array<number> = [];
+        rows.forEach(rowNum => {
+            ids.push(entries.get(rowNum).id())
+        });
+        console.log("IDs", ids);
+        this.props.trashNotifications(ids, this.props.username, this.props.password);
+    };
+
+    private handleTrashSelectedSkillNotification = (rows: Array<number>, entries: Immutable.List<SkillNotification>) => {
+        let ids: Array<number> = [];
+        rows.forEach(rowNum => {
+            ids.push(entries.get(rowNum).adminNotification().id())
+        });
+        this.props.trashNotifications(ids, this.props.username, this.props.password);
+    };
+
+    private handleTrashNotifications = () => {
+        this.handleTrashSelectedProfileEntryNotification(this.state.selectedProfileEntryRows, this.props.profileEntryNotifications);
+        this.handleTrashSelectedProfileUpdateNotification(this.state.selectedProfileUpdateRows, this.props.profileUpdateNotifications);
+        this.handleTrashSelectedSkillNotification(this.state.selectedSkillRows, this.props.skillNotifications);
+        this.setState({
+            selectedProfileEntryRows: [],
+            selectedProfileUpdateRows: [],
+            selectedSkillRows: []
+        })
     };
 
     render() {
         return (
             <div>
-                <NotificationDialog
-                    index={this.state.selectedNotification}
-                    open={this.state.notificationDialogOpen}
-                    onRequestClose={this.hideNotificationDialog}
-                />
                 <div className="row">
                     <div className="col-md-9">
                         <RaisedButton
@@ -188,56 +139,42 @@ class NotificationInboxModule extends React.Component<
                             style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
                             label={PowerLocalize.get('Action.Delete')}
                             icon={<FontIcon className="material-icons">delete</FontIcon>}
-                            onClick={this.handleTrashSelected}
+                            onClick={this.handleTrashNotifications}
                         />
                     </div>
                 </div>
                 <Tabs>
                     <Tab
-                        icon={<FontIcon className="material-icons">inbox</FontIcon>}
-                        label={PowerLocalize.get("NotificationInbox.AllMessages")}
-                    >
-                        <Table
-                            multiSelectable={true}
-                            onRowSelection={this.handleAllMessagesRowSelection}
-                            onCellClick={this.handleCellClick}
-                        >
-                            {this.renderTableHeader()}
-                            <TableBody deselectOnClickaway={false}>
-                                {
-                                    this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
-                                }
-                            </TableBody>
-                        </Table>
-                    </Tab>
-                    <Tab
                         icon={<FontIcon className="material-icons">add_box</FontIcon>}
                         label={PowerLocalize.get("NotificationInbox.NewNameEntity")}
                     >
-                        <Table multiSelectable={true}
-                               onRowSelection={this.handleAllMessagesRowSelection}
-                               onCellClick={this.handleCellClick}
-                        >
-                            {this.renderTableHeader()}
-                            <TableBody deselectOnClickaway={false}
-                            >
-                                {
-                                    this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
-                                }
-                            </TableBody>
-                        </Table>
+                        <ProfileEntryNotificationTable
+                            profileEntryNotifications={this.props.profileEntryNotifications}
+                            onRowSelection={rows => this.setState({selectedProfileEntryRows: rows})}
+                            selectedRows={this.state.selectedProfileEntryRows}
+                        />
+                    </Tab>
+                    <Tab
+                        icon={<FontIcon className="material-icons">color_lens</FontIcon>}
+                        label={PowerLocalize.get("NotificationInbox.Skills")}
+                    >
+                        <SkillNotificationTable
+                            skillNotifications={this.props.skillNotifications}
+                            selectedRows={this.state.selectedSkillRows}
+                            onRowSelection={rows => this.setState({selectedSkillRows: rows})}
+                        />
                     </Tab>
                     <Tab
                         icon={<FontIcon className="material-icons">autorenew</FontIcon>}
                         label={PowerLocalize.get("NotificationInbox.ProfileUpdates")}
                     >
-                        <Table multiSelectable={true}>
-                            {this.renderTableHeader()}
-                            <TableBody deselectOnClickaway={false}>
-
-                            </TableBody>
-                        </Table>
+                        <ProfileUpdateNotificationTable
+                            profileUpdateNotifications={this.props.profileUpdateNotifications}
+                            selectedRows={this.state.selectedProfileUpdateRows}
+                            onRowSelection={rows => this.setState({selectedProfileUpdateRows: rows})}
+                        />
                     </Tab>
+
                 </Tabs>
             </div>);
     }

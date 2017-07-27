@@ -77,7 +77,7 @@ class NotificationTrashboxModule extends React.Component<
                 <TableRowColumn>
                     {formatString(
                         PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
-                        notification.nameEntity().name(),
+                        "TODO",
                         "TODO")
                     }
                 </TableRowColumn>

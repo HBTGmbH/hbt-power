@@ -1,9 +1,10 @@
 import {ReceiveNotificationsAction} from '../src/reducers/admin/admin-actions';
-import {AdminNotification, APIAdminNotification} from '../src/model/admin/AdminNotification';
+import {AdminNotification} from '../src/model/admin/AdminNotification';
 import {AdminActionCreator} from '../src/reducers/admin/AdminActionCreator';
 import {AdminReducer} from '../src/reducers/admin/AdminReducer';
 import {RequestStatus} from '../src/Store';
-const apiNotification1: APIAdminNotification = {
+import {APIProfileEntryNotification, ProfileEntryNotification} from '../src/model/admin/ProfileEntryNotification';
+const apiNotification1: APIProfileEntryNotification = {
     nameEntity: {
         type: "SECTOR",
         name: "Test1",
@@ -17,7 +18,7 @@ const apiNotification1: APIAdminNotification = {
     reason: "Broken"
 };
 
-const apiNotification2: APIAdminNotification = {
+const apiNotification2: APIProfileEntryNotification = {
     nameEntity: {
         type: "COMPANY",
         name: "Test2",
@@ -31,7 +32,7 @@ const apiNotification2: APIAdminNotification = {
     reason: "Broken"
 };
 
-const apiNotification3: APIAdminNotification = {
+const apiNotification3: APIProfileEntryNotification = {
     nameEntity: {
         type: "SECTOR",
         name: "Test3",
@@ -56,11 +57,11 @@ test('Validates that the AdminReducer implements correct behaviour for an Receiv
     // Reduce with the action
     testState = AdminReducer.reduce(testState, action);
     // State should contain 3 notifications. Check based on their IDs
-    expect(testState.notifications()).toContainEqual(AdminNotification.fromAPI(apiNotification1));
-    expect(testState.notifications()).toContainEqual(AdminNotification.fromAPI(apiNotification2));
-    expect(testState.notifications()).toContainEqual(AdminNotification.fromAPI(apiNotification3));
+    expect(testState.profileEntryNotifications()).toContainEqual(ProfileEntryNotification.fromAPI(apiNotification1));
+    expect(testState.profileEntryNotifications()).toContainEqual(ProfileEntryNotification.fromAPI(apiNotification2));
+    expect(testState.profileEntryNotifications()).toContainEqual(ProfileEntryNotification.fromAPI(apiNotification3));
     // State should not contain more than 3 elements
-    expect(testState.notifications().count()).toEqual(3);
+    expect(testState.profileEntryNotifications().count()).toEqual(3);
     // Response status is successful
     expect(testState.requestStatus()).toEqual(RequestStatus.Successful);
 });
@@ -80,8 +81,8 @@ test('Validates that the AdminReducer implements correct behaviour for an Receiv
     // Create the overriding action
     let actionOverriding: ReceiveNotificationsAction = AdminActionCreator.ReceiveNotifications(apiNotificationsOverriding);
     testState = AdminReducer.reduce(testState, actionOverriding);
-    expect(testState.notifications()).toContainEqual(AdminNotification.fromAPI(apiNotification3));
-    expect(testState.notifications().count()).toEqual(1);
+    expect(testState.profileEntryNotifications()).toContainEqual(AdminNotification.fromAPI(apiNotification3));
+    expect(testState.profileEntryNotifications().count()).toEqual(1);
     // Response status is successful
     expect(testState.requestStatus()).toEqual(RequestStatus.Successful);
 });

@@ -2,13 +2,14 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
-import {AdminNotification} from '../../model/admin/AdminNotification';
 import {Dialog, FlatButton, RadioButton, RadioButtonGroup, RaisedButton, Step, StepLabel, TextField} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Stepper} from 'material-ui/Stepper';
 import {NameEntityUtil} from '../../utils/NameEntityUtil';
+import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
+import {formatString} from '../../utils/StringUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -17,7 +18,7 @@ import {NameEntityUtil} from '../../utils/NameEntityUtil';
  * otherwise the component will not render and update correctly.
  */
 interface NotificationDialogProps {
-    notification: AdminNotification;
+    notification: ProfileEntryNotification;
     username: string;
     password: string;
 }
@@ -55,7 +56,7 @@ interface NotificationDialogLocalState {
 interface NotificationDialogDispatch {
     executeDeleteAction(id: number, user: string, pass:string): void;
     executeOkAction(id: number, user: string, pass:string): void;
-    executePatchAction(notification: AdminNotification, user: string, pass:string): void;
+    executePatchAction(notification: ProfileEntryNotification, user: string, pass:string): void;
 }
 
 class NotificationDialogModule extends React.Component<
@@ -80,7 +81,7 @@ class NotificationDialogModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: NotificationDialogLocalProps): NotificationDialogProps {
         return {
-            notification: state.adminReducer.notifications().get(localProps.index),
+            notification: state.adminReducer.profileEntryNotifications().get(localProps.index),
             username: state.adminReducer.adminName(),
             password: state.adminReducer.adminPass()
         };
@@ -131,7 +132,7 @@ class NotificationDialogModule extends React.Component<
     private executeSelectedAction = () => {
         switch(this.state.selectedAction){
             case 'ok':
-                this.props.executeOkAction(this.props.notification.id(), this.props.username, this.props.password);
+                this.props.executeOkAction(this.props.notification.adminNotification().id(), this.props.username, this.props.password);
                 break;
             case 'edit':
                 let notification = this.props.notification;
@@ -141,7 +142,7 @@ class NotificationDialogModule extends React.Component<
                 this.props.executePatchAction(notification, this.props.username, this.props.password);
                 break;
             case 'delete':
-                this.props.executeDeleteAction(this.props.notification.id(), this.props.username, this.props.password);
+                this.props.executeDeleteAction(this.props.notification.adminNotification().id(), this.props.username, this.props.password);
                 break;
         }
         this.closeDialog();
@@ -199,7 +200,7 @@ class NotificationDialogModule extends React.Component<
     private renderStepperContentIndex0 = () => {
         return (
             <div>
-                Im Profil von <strong>{this.props.notification.initials()}</strong> wurde der neue Bezeichner <strong>
+                Im Profil von <strong>{this.props.notification.adminNotification().initials()}</strong> wurde der neue Bezeichner <strong>
                 {this.props.notification.nameEntity().name()}</strong> hinzugefügt.
                 Dies betrifft den Eintragstyp <strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity())}</strong>
                 <br/>
@@ -209,16 +210,18 @@ class NotificationDialogModule extends React.Component<
 
     private renderStepperContentIndex1 = () => {
         return (
-            <div className="vertical-align">
+            <div >
                 <RadioButtonGroup
                     name="notificationActions"
                     defaultSelected="ok"
                     onChange={this.setAction}
+                    style={{width: "100%"}}
                 >
                     <RadioButton
                         value="ok"
                         label={PowerLocalize.get('Action.OK')}
                     />
+
                     <RadioButton
                         value="delete"
                         label={PowerLocalize.get('Action.Delete')}
@@ -228,6 +231,11 @@ class NotificationDialogModule extends React.Component<
                         label={PowerLocalize.get('Action.Edit')}
                     />
                 </RadioButtonGroup>
+                <div  style={{width: "100%", marginTop: "16px", marginBottom: "16px"}}>
+                    <strong>{PowerLocalize.get('Action.OK') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionOK.Description")}<br/><br/>
+                    <strong>{PowerLocalize.get('Action.Delete') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionDelete.Description")}<br/><br/>
+                    <strong>{PowerLocalize.get('Action.Edit') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionEdit.Description")}<br/><br/>
+                </div>
             </div>
         )
     };
@@ -255,6 +263,12 @@ class NotificationDialogModule extends React.Component<
         return <div/>
     };
 
+    private renderTitle = () => {
+        return formatString(
+            PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
+            this.props.notification.nameEntity().name(),
+            NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity()));
+    }
 
     render() {
         if(!isNullOrUndefined(this.props.notification)) {
@@ -263,11 +277,11 @@ class NotificationDialogModule extends React.Component<
                     modal={false}
                     open={this.props.open}
                     onRequestClose={this.closeDialog}
+                    title={this.renderTitle()}
                 >
-                    {this.renderStepper()}
                     {this.renderStepperContent()}
+                    {this.renderStepper()}
                     {this.renderStepperControl()}
-
                 </Dialog>
             </div>);
         }

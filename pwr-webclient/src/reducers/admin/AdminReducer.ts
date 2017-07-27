@@ -19,6 +19,9 @@ import {LoginStatus} from '../../model/LoginStatus';
 import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {Paths} from '../../Paths';
+import {APIProfileEntryNotification, ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
+import {Comparators} from '../../utils/Comparators';
+import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
 
 export class AdminReducer {
 
@@ -35,12 +38,26 @@ export class AdminReducer {
      */
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotificationsAction): AdminState {
         if(isNullOrUndefined(action.notifications)) throw new TypeError("ReceiveNotificationAction.notifications must not be null or undefined.");
-        let notifications = action.notifications.map(an => AdminNotification.fromAPI(an)).sort((a, b) => {
-            if(a.occurrence() > b.occurrence()) return -1;
-            if(a.occurrence() == b.occurrence()) return 0;
-            return 1;
-        });
-        return state.notifications(Immutable.List<AdminNotification>(notifications)).requestStatus(RequestStatus.Successful);
+        let apiProfileEntryNotifications = action.notifications.filter((value, index, array) => value.type === AdminNotification.TP_PROFILE_ENTRY);
+        let apiProfileUpdateNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_PROFILE_UPDATE);
+        let apiSkillNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_SKILL);
+
+
+        let profileEntryNotifications = apiProfileEntryNotifications
+            .map(an => ProfileEntryNotification.fromAPI(an as APIProfileEntryNotification))
+            .sort((a, b) => Comparators.compareAdminNotification(a.adminNotification(), b.adminNotification()));
+        let profileUpdateNotifications = apiProfileUpdateNotifications
+            .map(an => AdminNotification.fromAPI(an))
+            .sort(Comparators.compareAdminNotification);
+        let skillNotifications = apiSkillNotifications
+            .map(an => SkillNotification.fromAPI(an as APISkillNotification))
+            .sort((a, b) => Comparators.compareAdminNotification(a.adminNotification(), b.adminNotification()));
+
+        return state
+            .profileEntryNotifications(Immutable.List<ProfileEntryNotification>(profileEntryNotifications))
+            .profileUpdateNotifications(Immutable.List<AdminNotification>(profileUpdateNotifications))
+            .skillNotifications(Immutable.List<SkillNotification>(skillNotifications))
+            .requestStatus(RequestStatus.Successful);
     }
 
     /**

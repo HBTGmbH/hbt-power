@@ -1,6 +1,6 @@
 import {AbstractAction, ChangeStringValueAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
-import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNotification';
+import {APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
     ChangeLoginStatusAction,
     ChangeRequestStatusAction,
@@ -29,6 +29,7 @@ import {isNullOrUndefined} from 'util';
 import {COOKIE_ADMIN_EXPIRATION_TIME, COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {Paths} from '../../Paths';
+import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 
 export class AdminActionCreator {
     private static logAxiosError(error: any) {
@@ -323,7 +324,7 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncNotificationInvokeEdit(notification: AdminNotification, username: string, password: string) {
+    public static AsyncNotificationInvokeEdit(notification: ProfileEntryNotification, username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
                 auth: {
@@ -333,7 +334,7 @@ export class AdminActionCreator {
                     headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
-            axios.patch(getNotificationAPIString(), notification.toApi(), config).then(function(response: AxiosResponse) {
+            axios.patch(getNotificationAPIString(), notification.toAPI(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
             }).catch(function(error:any) {

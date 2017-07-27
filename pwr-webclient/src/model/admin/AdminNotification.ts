@@ -1,6 +1,5 @@
 import {doop} from 'doop';
-import {APINameEntity} from '../APIProfile';
-import {NameEntity} from '../NameEntity';
+import {ProfileEntryNotification} from './ProfileEntryNotification';
 /**
  * Everything that can be returned by the API. Includes multiple types of Admin notification discriminated by
  * their type.
@@ -14,14 +13,14 @@ export interface APIAdminNotification {
      */
     occurrence: string;
     type: string;
-    // == Everything below this is message specific == //
-    nameEntity: APINameEntity;
-    profileEntryId: number;
 }
-
 
 @doop
 export class AdminNotification {
+    public static readonly TP_SKILL: string = "SkillNotification";
+    public static readonly TP_PROFILE_UPDATE: string = "ProfileUpdatedNotification";
+    public static readonly TP_PROFILE_ENTRY: string = "ProfileEntryNotification";
+
     @doop public get id() {return doop<number, this>()};
     @doop public get initials() {return doop<string, this>()};
     @doop public get reason()  {return doop<string, this>()};
@@ -32,39 +31,26 @@ export class AdminNotification {
      */
     @doop public get occurrence() {return doop<Date, this>()};
     @doop public get type() {return doop<string, this>()};
-    @doop public get profileEntryId() {return doop<number, this>()}
-    @doop public get nameEntity() {return doop<NameEntity, this>()};
 
-    private constructor(id: number,
+
+    protected constructor(id: number,
                         initials: string,
                         reason: string,
                         occurrence: Date,
-                        type: string,
-                        profileEntryId: number,
-                        nameEntity: NameEntity) {
+                        type: string,) {
         return this.id(id)
             .initials(initials)
             .reason(reason)
             .occurrence(occurrence)
-            .type(type)
-            .profileEntryId(profileEntryId)
-            .nameEntity(nameEntity);
+            .type(type);
     }
 
-    public static fromAPI(apiAdminNotification: APIAdminNotification) {
-        return new AdminNotification(
-            Number(apiAdminNotification.id),
-            apiAdminNotification.initials,
-            apiAdminNotification.reason,
-            new Date(apiAdminNotification.occurrence),
-            apiAdminNotification.type,
-            apiAdminNotification.profileEntryId,
-            NameEntity.fromAPI(apiAdminNotification.nameEntity)
-        )
+    public static of(id: number, initials: string, reason: string, occurence: Date, type: string) {
+        return new AdminNotification(id, initials, reason, occurence, type);
     }
 
-    public static of(id: number, initials: string, reason: string, occurrence: Date, type: string, profileEntryId: number, nameEntity: NameEntity) {
-        return new AdminNotification(id, initials, reason, occurrence, type, profileEntryId, nameEntity);
+    public static fromAPI(apiAdminNotification: APIAdminNotification): AdminNotification {
+        return new AdminNotification(apiAdminNotification.id, apiAdminNotification.initials, apiAdminNotification.reason, new Date(apiAdminNotification.occurrence), apiAdminNotification.type);
     }
 
     public toApi() : APIAdminNotification {
@@ -73,9 +59,7 @@ export class AdminNotification {
             initials: this.initials(),
             reason: this.reason(),
             occurrence: this.occurrence().toISOString(),
-            type: this.type(),
-            nameEntity: this.nameEntity().toAPI(),
-            profileEntryId: this.profileEntryId()
+            type: this.type()
         }
     }
 }

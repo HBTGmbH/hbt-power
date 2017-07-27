@@ -1,6 +1,7 @@
 import {NameEntity} from '../model/NameEntity';
 import {SkillCategory} from '../model/skill/SkillCategory';
 import {Skill} from '../model/Skill';
+import {AdminNotification} from '../model/admin/AdminNotification';
 export class Comparators {
 
     public static getNameEntityComparator(asc: boolean) {
@@ -29,12 +30,22 @@ export class Comparators {
         return 1;
     }
 
+    public static compareDate(d1: Date, d2: Date) {
+        if(d1 > d2) return -1;
+        if(d1 == d2) return 0;
+        return 1;
+    }
+
     public static compareCategories(s1: SkillCategory, s2: SkillCategory): number {
         return Comparators.compareString(s2.qualifier(), s1.qualifier());
     }
 
     public static compareSkills(s1: Skill, s2: Skill): number {
         return Comparators.compareString(s2.name(), s1.name());
+    }
+
+    public static compareAdminNotification(a1: AdminNotification, a2: AdminNotification): number {
+        return Comparators.compareDate(a1.occurrence(), a2.occurrence());
     }
 
 
