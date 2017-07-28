@@ -192,3 +192,7 @@ export function getNameEntityUsageInfo() {
 export function getSkillUsageInfo() {
     return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/skill/referencing";
 }
+
+export function postCategorizeSkill() {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill";
+}

@@ -5,9 +5,12 @@ import {
     ChangeLoginStatusAction,
     ChangeRequestStatusAction,
     NavigateAction,
+    OpenSkillNotificationDialogAction,
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
-    ReceiveNotificationsAction
+    ReceiveNotificationsAction,
+    SetSkillNotificationActionAction,
+    SetSkillNotificationEditStatusAction
 } from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
@@ -16,9 +19,11 @@ import {
     getAllConsultantsString,
     getNotificationAPIString,
     getNotificationTrashAPIString,
+    getSkillByName,
+    postCategorizeSkill,
     postConsultantActionString
 } from '../../API_CONFIG';
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApplicationState, RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -30,6 +35,11 @@ import {COOKIE_ADMIN_EXPIRATION_TIME, COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNA
 import * as Cookies from 'js-cookie';
 import {Paths} from '../../Paths';
 import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
+import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
+import {APISkillServiceSkill} from '../../model/skill/SkillServiceSkill';
+import {SkillActionCreator} from '../skill/SkillActionCreator';
+import {APISkillCategory} from '../../model/skill/SkillCategory';
+import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
 
 export class AdminActionCreator {
     private static logAxiosError(error: any) {
@@ -54,120 +64,154 @@ export class AdminActionCreator {
     public static RequestNotifications(): AbstractAction {
         return {
             type: ActionType.RequestNotifications
-        }
+        };
     }
 
     public static ReceiveNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveNotifications,
             notifications: notifications
-        }
+        };
     }
 
     public static FailReceiveNotifications(): AbstractAction {
         return {
             type: ActionType.FailRequestNotifications
-        }
+        };
     }
 
     public static RequestTrashedNotifications(): AbstractAction {
         return {
             type: ActionType.RequestTrashedNotifications
-        }
+        };
     }
 
     public static ReceiveTrashedNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveTrashedNotifications,
             notifications: notifications
-        }
+        };
     }
 
     public static FailReceiveTrashedNotifications(): AbstractAction {
         return {
             type: ActionType.FailRequestTrashedNotifications
-        }
+        };
     }
 
     public static RequestNotificationTrashing(): ChangeRequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Pending
-        }
+        };
     }
 
     public static RequestNotificationTrashingSuccess(): ChangeRequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Successful
-        }
+        };
     }
 
     public static RequestNotificationTrashingFail(): ChangeRequestStatusAction {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Failiure
-        }
+        };
     }
 
     public static NavigateTo(to: string): NavigateAction {
         return {
             type: ActionType.AdminNavigate,
             location: to
-        }
+        };
     }
 
     public static ChangeRequestStatus(to: RequestStatus): ChangeRequestStatusAction {
         return {
             type: ActionType.AdminRequestStatus,
             requestStatus: to
-        }
+        };
     }
 
     public static ChangeUsername(val: string): ChangeStringValueAction {
         return {
             type: ActionType.ChangeUsername,
             value: val
-        }
+        };
     }
 
     public static ChangePassword(val: string): ChangeStringValueAction {
         return {
             type: ActionType.ChangePassword,
             value: val
-        }
+        };
     }
 
     public static ChangeLoginStatus(status: LoginStatus): ChangeLoginStatusAction {
         return {
             type: ActionType.ChangeAdminLoginStatus,
             status: status
-        }
+        };
     }
 
     public static LogInAdmin() : AbstractAction {
         return {
             type: ActionType.LogInAdmin
-        }
+        };
     }
 
     public static LogOutAdmin(): AbstractAction {
         return {
             type: ActionType.LogOutAdmin
-        }
+        };
     }
 
     public static ReceiveAllConsultants(consultants: Array<ConsultantInfo>): ReceiveAllConsultantsAction {
         return {
             type: ActionType.ReceiveAllConsultants,
             consultants: consultants
-        }
+        };
     }
 
     public static ReceiveConsultant(consultant: ConsultantInfo): ReceiveConsultantAction {
         return {
             type: ActionType.ReceiveSingleConsultant,
             consultant: consultant
+        };
+    }
+
+    public static SetSkillNotificationEditStatus(skillNotificationEditStatus: SkillNotificationEditStatus): SetSkillNotificationEditStatusAction {
+        return {
+            type: ActionType.SetSkillNotificationEditStatus,
+            skillNotificationEditStatus: skillNotificationEditStatus
+        };
+    }
+
+    public static CloseAndResetSkillNotificationDlg(): AbstractAction {
+        return {
+            type: ActionType.CloseAndResetSkillNotificationDlg
+        };
+    }
+
+    public static OpenSkillNotificationDialog(notificationId: number): OpenSkillNotificationDialogAction {
+        return {
+            type: ActionType.OpenSkillNotificationDialog,
+            notificationId: notificationId
+        };
+    }
+
+    public static SetSkillNotificationErrorText(text: string): ChangeStringValueAction {
+        return {
+            type: ActionType.SetSkillNotificationEditStatus,
+            value: text
+        }
+    }
+
+    public static SetSkillNotificationAction(action: SkillNotificationAction): SetSkillNotificationActionAction {
+        return {
+            type: ActionType.SetSkillNotificationAction,
+            skillNotificationAction: action
         }
     }
 
@@ -175,15 +219,19 @@ export class AdminActionCreator {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(StatisticsActionCreator.AsyncRequestSkillUsages());
             dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_STATISTICS_SKILL));
-        }
+        };
     }
 
     public static AsyncNavigateToNetwork() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(StatisticsActionCreator.AsyncRequestNetwork());
             dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_STATISTICS_NETWORK));
-        }
+        };
     }
+
+
+
+
 
 
     public static AsyncRequestNotifications(username: string, password: string) {
@@ -273,30 +321,31 @@ export class AdminActionCreator {
     public static AsyncNavigateToInbox(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>){
             dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
-            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_INBOX))
-        }
+            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_INBOX));
+        };
     }
 
     public static AsyncNavigateToTrashbox(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>){
             dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
-            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_TRASHBOX))
-        }
+            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_TRASHBOX));
+        };
     }
 
-    public static AsyncNotificationInvokeDelete(notificationId: number, username: string, password: string) {
-        return function(dispatch: redux.Dispatch<AdminState>) {
+    public static AsyncNotificationInvokeDelete(notificationId: number) {
+        return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+            let adminState = getState().adminReducer;
             let config = {
                 auth: {
-                    username: username,
-                    password: password
+                    username: adminState.adminName(),
+                    password:  adminState.adminPass()
                 },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
-            axios.delete(getNotificationAPIString() + "/" + notificationId, config).then(function(response: AxiosResponse) {
+            axios.delete(getNotificationAPIString() + '/' + notificationId, config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
+                dispatch(AdminActionCreator.AsyncRequestNotifications(adminState.adminName(),  adminState.adminPass()));
             }).catch(function(error:any) {
                 AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
@@ -304,19 +353,20 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncNotificationInvokeOK(notificationId: number, username: string, password: string) {
-        return function(dispatch: redux.Dispatch<AdminState>) {
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+    public static AsyncNotificationInvokeOK(notificationId: number) {
+        return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+            let adminState = getState().adminReducer;
             let config = {
                 auth: {
-                    username: username,
-                    password: password
+                    username: adminState.adminName(),
+                    password: adminState.adminPass()
                 },
-                headers: {'X-Requested-With': 'XMLHttpRequest'}
+                headers: {'X-Requested-With': 'XMLHttpRequest', "Content-Type": "application/json"}
             };
-            axios.put(getNotificationAPIString() + "/" + notificationId, null, config).then(function(response: AxiosResponse) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.put(getNotificationAPIString() + '/' + notificationId, "", config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
+                dispatch(AdminActionCreator.AsyncRequestNotifications(adminState.adminName(), adminState.adminPass()));
             }).catch(function(error:any) {
                 AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
@@ -324,19 +374,20 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncNotificationInvokeEdit(notification: ProfileEntryNotification, username: string, password: string) {
-        return function(dispatch: redux.Dispatch<AdminState>) {
+    public static AsyncNotificationInvokeEdit(notification: ProfileEntryNotification) {
+        return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+            let adminState = getState().adminReducer;
             let config = {
                 auth: {
-                    username: username,
-                    password: password
+                    username: adminState.adminName(),
+                    password: adminState.adminPass()
                 },
                     headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
             axios.patch(getNotificationAPIString(), notification.toAPI(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
+                dispatch(AdminActionCreator.AsyncRequestNotifications(adminState.adminName(), adminState.adminPass()));
             }).catch(function(error:any) {
                 AdminActionCreator.logAxiosError(error);
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
@@ -353,7 +404,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
                 dispatch(AdminActionCreator.ChangePassword(storedPassword))]
             ).then(() => dispatch(AdminActionCreator.AsyncValidateAuthentication(storedUsername, storedPassword, true)));
-        }
+        };
     }
 
     /**
@@ -440,7 +491,7 @@ export class AdminActionCreator {
             }).catch(function (error: any) {
                 AdminActionCreator.logAxiosError(error);
             });
-        }
+        };
     }
 
     public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
@@ -478,6 +529,90 @@ export class AdminActionCreator {
             }).catch(function (error: any) {
                 AdminActionCreator.logAxiosError(error);
             });
+        };
+    }
+
+    public static AsyncOpenSkillNotificationDialog(notificationId: number) {
+        return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+            dispatch(AdminActionCreator.OpenSkillNotificationDialog(notificationId));
+            let notification = getState().adminReducer.skillNotifications().find(notification => notification.adminNotification().id() === notificationId);
+
+            let config: AxiosRequestConfig = {params: {qualifier: notification.skill().name()}};
+            axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
+                let apiSkillServiceSkill: APISkillServiceSkill = response.data;
+                if(isNullOrUndefined(apiSkillServiceSkill.category)) {
+                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY));
+                } else {
+                    console.log("apiSkillServiceSkill", apiSkillServiceSkill);
+                    dispatch(SkillActionCreator.ReadSkillHierarchy(apiSkillServiceSkill));
+                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY));
+                }
+            }).catch(function (error: AxiosError) {
+                console.error(error);
+                dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_ERROR));
+            });
+        }
+    };
+
+    /**
+     * Transition from DISPLAY_INFO_NO_CATEGORY to CATEGORY_PENDING
+     * @param skillName
+     * @returns a thunk for thunk middleware
+     */
+    public static AsyncCategorizeSkill(skillName: string) {
+        return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+            let adminState = getState().adminReducer;
+            // Only allow entering this transition when the status is correct.
+            if(adminState.skillNotificationEditStatus() !== SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY) {
+                throw new RangeError("Invalid status for AsyncCategorizeSkill. Expected " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY]);
+            } else {
+                let config: AxiosRequestConfig = {params: {qualifier: skillName}}
+                axios.post(postCategorizeSkill(), null, config).then((response: AxiosResponse) => {
+                    let apiCategory: APISkillCategory = response.data;
+                    // Build a skill around the category
+                    let skillServiceSkill: APISkillServiceSkill = {
+                        id: -1,
+                        category: apiCategory,
+                        qualifier: skillName
+                    };
+                    dispatch(SkillActionCreator.ReadSkillHierarchy(skillServiceSkill));
+                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY));
+                }).catch(function (error: AxiosError) {
+                    console.error(error);
+                    if(!isNullOrUndefined(error.response)) {
+                        dispatch(AdminActionCreator.SetSkillNotificationErrorText("ERR_" + error.response.status));
+                    } else {
+                        dispatch(AdminActionCreator.SetSkillNotificationErrorText("ERR_UNKNOWN"));
+                    }
+                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR));
+                });
+            }
+        }
+    }
+
+    /**
+     * Progresses the state machine from the action selection in the skill notification dialog
+     * @constructor
+     */
+    public static AsyncProgressFromActionSelection() {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let adminState = getState().adminReducer;
+            if(adminState.skillNotificationEditStatus() !== SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY) {
+                throw new RangeError("Invalid status for AsyncCategorizeSkill. Expected " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY]);
+            } else {
+                if(adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_OK) {
+                    dispatch(AdminActionCreator.AsyncNotificationInvokeOK(adminState.selectedSkillNotification().adminNotification().id()));
+                    dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
+                } else if(adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_DELETE) {
+                    console.log("invoking delete");
+                    dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(adminState.selectedSkillNotification().adminNotification().id()));
+                    dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
+                } else if(adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_EDIT) {
+                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG));
+                } else {
+                    throw new RangeError("Invalid value for skillNotificationSelectedAction. Was:" + SkillNotificationEditStatus[adminState.skillNotificationSelectedAction()])
+                }
+            }
         }
     }
 }

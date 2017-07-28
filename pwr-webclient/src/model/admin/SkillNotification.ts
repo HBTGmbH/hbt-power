@@ -30,4 +30,12 @@ export class SkillNotification {
             apiSkillNotification.newName
         )
     }
+
+    public toAPI(): APISkillNotification {
+        let thisToApi = {
+            skill: this.skill().toAPI(),
+            newName: this.newName(),
+        };
+        return Object.assign(thisToApi, this.adminNotification().toApi());
+    }
 }

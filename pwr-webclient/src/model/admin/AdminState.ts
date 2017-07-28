@@ -6,6 +6,8 @@ import {LoginStatus} from '../LoginStatus';
 import {ConsultantInfo} from '../ConsultantInfo';
 import {ProfileEntryNotification} from './ProfileEntryNotification';
 import {SkillNotification} from './SkillNotification';
+import {SkillNotificationEditStatus} from './SkillNotificationEditStatus';
+import {SkillNotificationAction} from './SkillNotificationAction';
 
 @doop
 export class AdminState {
@@ -36,6 +38,22 @@ export class AdminState {
     @doop
     public get consultantsByInitials() {return doop<Immutable.Map<string, ConsultantInfo>, this>()};
 
+    /**
+     * Skill notification that is selected for resolving.
+     * @returns {Doop<SkillNotification, this>}
+     */
+    @doop public get selectedSkillNotification() {return doop<SkillNotification, this>()};
+
+    @doop public get skillNotificationEditStatus() {return doop<SkillNotificationEditStatus,this>()}
+
+    /**
+     * Selected action for the selected skill notification.
+     * @returns {Doop<SkillNotificationAction, this>}
+     */
+    @doop public get skillNotificationSelectedAction() {return doop<SkillNotificationAction, this>()}
+
+    @doop public get skillNotificationError() {return doop<string, this>()}
+
     private constructor(profileEntryNotifications: Immutable.List<ProfileEntryNotification>,
                         profileUpdateNotifications: Immutable.List<AdminNotification>,
                         skillNotifications: Immutable.List<SkillNotification>,
@@ -45,12 +63,21 @@ export class AdminState {
                         adminName: string,
                         adminPass: string,
                         consultantsByInitials: Immutable.Map<string, ConsultantInfo>,
+                        skillInfo: string,
+                        skillNotificationEditStatus: SkillNotificationEditStatus,
+                        selectedSkillNotification: SkillNotification,
+                        skillNotificationError: string,
+                        skillNotificationSelectedAction: SkillNotificationAction
     ) {
         return this.profileEntryNotifications(profileEntryNotifications)
             .profileUpdateNotifications(profileUpdateNotifications)
             .skillNotifications(skillNotifications)
             .trashedNotifications(trashedNotifications).requestStatus(requestStatus)
-            .loginStatus(loginStatus).adminName(adminName).adminPass(adminPass).consultantsByInitials(consultantsByInitials);
+            .loginStatus(loginStatus).adminName(adminName).adminPass(adminPass).consultantsByInitials(consultantsByInitials)
+            .skillNotificationEditStatus(skillNotificationEditStatus)
+            .selectedSkillNotification(selectedSkillNotification)
+            .skillNotificationError(skillNotificationError)
+            .skillNotificationSelectedAction(skillNotificationSelectedAction);
     }
 
     public static createDefault() {
@@ -58,6 +85,8 @@ export class AdminState {
             Immutable.List<AdminNotification>(),
             Immutable.List<SkillNotification>(),
             Immutable.List<AdminNotification>(),
-            RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>());
+            RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>(),
+            "",
+            SkillNotificationEditStatus.CLOSED, null, "", SkillNotificationAction.ACTION_OK);
     }
 }

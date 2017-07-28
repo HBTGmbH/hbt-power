@@ -72,6 +72,12 @@ export enum ActionType {
     ReceiveAllConsultants,
     ReceiveSingleConsultant,
 
+    OpenSkillNotificationDialog,
+    SetSkillNotificationEditStatus,
+    CloseAndResetSkillNotificationDlg,
+    SetSkillNotificationError,
+    SetSkillNotificationAction,
+
     // == Statistics
     ReceiveSkillUsageMetrics,
     ReceiveRelativeSkillUsageMetrics,

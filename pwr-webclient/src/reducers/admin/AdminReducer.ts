@@ -5,9 +5,12 @@ import {
     ChangeLoginStatusAction,
     ChangeRequestStatusAction,
     NavigateAction,
+    OpenSkillNotificationDialogAction,
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
-    ReceiveNotificationsAction
+    ReceiveNotificationsAction,
+    SetSkillNotificationActionAction,
+    SetSkillNotificationEditStatusAction
 } from './admin-actions';
 import {AdminNotification} from '../../model/admin/AdminNotification';
 import {ActionType} from '../ActionType';
@@ -22,6 +25,7 @@ import {Paths} from '../../Paths';
 import {APIProfileEntryNotification, ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {Comparators} from '../../utils/Comparators';
 import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
+import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
 
 export class AdminReducer {
 
@@ -131,6 +135,23 @@ export class AdminReducer {
         return state.consultantsByInitials(consultants);
     }
 
+    public static SetSkillNotificationEditStatus(state: AdminState, action: SetSkillNotificationEditStatusAction) {
+        return state.skillNotificationEditStatus(action.skillNotificationEditStatus);
+    }
+
+    public static OpenSkillNotificationDialog(state: AdminState, setSkillInfoAction: OpenSkillNotificationDialogAction) {
+        let notification = state.skillNotifications().find((value, key, iter) => value.adminNotification().id() === setSkillInfoAction.notificationId);
+        return state.selectedSkillNotification(notification).skillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING)
+    }
+
+    public static SetSkillNotificationError(state: AdminState, action: ChangeStringValueAction) {
+        return state.skillNotificationError(action.value);
+    }
+
+    public static SetSkillNotification(state: AdminState, setSkillNotificationAction: SetSkillNotificationActionAction) {
+        return state.skillNotificationSelectedAction(setSkillNotificationAction.skillNotificationAction);
+    }
+
     public static reduce(state : AdminState, action: AbstractAction) : AdminState {
         if(isNullOrUndefined(state)) {
             return AdminState.createDefault();
@@ -166,10 +187,19 @@ export class AdminReducer {
                 return AdminReducer.LogOutAdmin(state);
             case ActionType.ReceiveSingleConsultant:
                 return AdminReducer.ReceiveSingleConsultant(state, action as ReceiveConsultantAction);
+            case ActionType.SetSkillNotificationEditStatus:
+                return AdminReducer.SetSkillNotificationEditStatus(state, action as SetSkillNotificationEditStatusAction);
+            case ActionType.CloseAndResetSkillNotificationDlg:
+                return state.skillNotificationEditStatus(SkillNotificationEditStatus.CLOSED);
+            case ActionType.OpenSkillNotificationDialog:
+                return AdminReducer.OpenSkillNotificationDialog(state, action as OpenSkillNotificationDialogAction);
+            case ActionType.SetSkillNotificationError:
+                return AdminReducer.SetSkillNotificationError(state, action as ChangeStringValueAction);
+            case ActionType.SetSkillNotificationAction:
+                return AdminReducer.SetSkillNotification(state, action as SetSkillNotificationActionAction);
             default:
                 return state;
         }
     }
-
 
 }

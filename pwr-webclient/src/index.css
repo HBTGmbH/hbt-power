@@ -59,6 +59,10 @@ body {
   align-self: flex-end;
 }
 
+.error-text {
+  color: red;
+}
+
 .material-icons-custom {
   font-family: 'Material Icons';
   font-weight: normal;

@@ -4,6 +4,8 @@ import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ActionType} from '../ActionType';
+import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
+import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
 
 /**
  * Represents an action where an array of {@link APIAdminNotification} is received from an external source and parsed.
@@ -46,4 +48,16 @@ export interface ReceiveAllConsultantsAction extends AbstractAction {
 
 export interface ReceiveConsultantAction extends AbstractAction {
     consultant: ConsultantInfo;
+}
+
+export interface SetSkillNotificationEditStatusAction extends AbstractAction {
+    skillNotificationEditStatus: SkillNotificationEditStatus;
+}
+
+export interface SetSkillNotificationActionAction extends AbstractAction {
+    skillNotificationAction: SkillNotificationAction;
+}
+
+export interface OpenSkillNotificationDialogAction extends AbstractAction {
+    notificationId: number;
 }

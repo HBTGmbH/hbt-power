@@ -1,5 +1,6 @@
 import {doop} from 'doop';
 import {APISkillCategory} from './SkillCategory';
+import {isNullOrUndefined} from 'util';
 
 export interface APISkillServiceSkill {
     id: number;
@@ -18,6 +19,7 @@ export class SkillServiceSkill {
     }
 
     public static fromAPI(api: APISkillServiceSkill) {
-        return new SkillServiceSkill(api.id, api.qualifier, api.category.id);
+        let categoryId = !isNullOrUndefined(api.category) ? api.category.id : null;
+        return new SkillServiceSkill(api.id, api.qualifier, categoryId);
     }
 }
