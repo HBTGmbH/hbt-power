@@ -195,8 +195,13 @@ export namespace SkillActionCreator {
                     let config: AxiosRequestConfig = {params: {qualifier: skillName}};
                     axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
                         if(response.status === 200) {
-                            dispatch(ReadSkillHierarchy(response.data));
-                            dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY))
+                            if(response.data.category != null) {
+                                dispatch(ReadSkillHierarchy(response.data));
+                                dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY))
+                            } else {
+                                dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
+                                dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
+                            }
                         } else if(response.status === 204){
                             dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
                             dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
