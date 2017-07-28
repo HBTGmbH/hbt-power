@@ -11,11 +11,13 @@ import {
     RaisedButton,
     RefreshIndicator
 } from 'material-ui';
+
 import {SkillNotificationEditStatus} from '../../../model/admin/SkillNotificationEditStatus';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {SkillNotification} from '../../../model/admin/SkillNotification';
 import {isNullOrUndefined} from 'util';
 import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAction';
+import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
@@ -46,7 +48,7 @@ class SkillNotificationModuleModule extends React.Component<
     & SkillNotificationModuleDispatch, SkillNotificationModuleLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: SkillNotificationModuleLocalProps): SkillNotificationModuleProps {
-        let hierarchy = "";
+        let hierarchy = '';
         if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
             let skill = state.adminReducer.selectedSkillNotification().skill();
             if(!isNullOrUndefined(skill)) {
@@ -59,7 +61,7 @@ class SkillNotificationModuleModule extends React.Component<
             hierarchy: hierarchy,
             error: state.adminReducer.skillNotificationError(),
             skillNotificationSelectedAction: state.adminReducer.skillNotificationSelectedAction()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillNotificationModuleDispatch {
@@ -68,7 +70,7 @@ class SkillNotificationModuleModule extends React.Component<
             setSkillNotificationAction: action => dispatch(AdminActionCreator.SetSkillNotificationAction(action)),
             categorizeSkill: skillName => dispatch(AdminActionCreator.AsyncCategorizeSkill(skillName)),
             progressFromActionSelection: () => dispatch(AdminActionCreator.AsyncProgressFromActionSelection())
-        }
+        };
     }
 
     private renderPending = () => {
@@ -78,7 +80,7 @@ class SkillNotificationModuleModule extends React.Component<
                     size={40}
                     left={0}
                     top={0}
-                    style={{position: "relative", marginBottom: "8px"}}
+                    style={{position: 'relative', marginBottom: '8px'}}
                     loadingColor="#FF9800"
                     status="loading"
                 />
@@ -86,7 +88,7 @@ class SkillNotificationModuleModule extends React.Component<
             <div className="vertical-align">
                 Fetching information for skill '{this.props.notification.skill().name()}'
             </div>
-        </div>
+        </div>;
     };
 
     private SkillInfo = () => {
@@ -95,8 +97,39 @@ class SkillNotificationModuleModule extends React.Component<
                 The previously unknown skill {this.props.notification.skill().name()} was added to the profile
                 of {this.props.notification.adminNotification().initials()}.
             </p>
-        </div>
+        </div>;
     };
+
+    private NotificationActions = () => {
+        return <div>
+            <p>
+                Please choose one of the action below to resolve the notification.
+            </p>
+            <RadioButtonGroup
+                name="notificationAction"
+                valueSelected={this.props.skillNotificationSelectedAction}
+                onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {this.props.setSkillNotificationAction(value as any);}}
+            >
+            <RadioButton
+                value={SkillNotificationAction.ACTION_OK}
+                label="Accept Skill"
+            />
+            <RadioButton
+                value={SkillNotificationAction.ACTION_EDIT}
+                label="Edit Skill"
+            />
+            <RadioButton
+                value={SkillNotificationAction.ACTION_DELETE}
+                label="Delete Skill"
+            />
+            </RadioButtonGroup>
+            <RaisedButton
+                label="Continue"
+                secondary={true}
+                onClick={this.props.progressFromActionSelection}
+            />
+        </div>
+    }
 
     private renderInfo = () => {
         return <div>
@@ -107,33 +140,8 @@ class SkillNotificationModuleModule extends React.Component<
             <p>
                 {this.props.hierarchy}
             </p>
-            <p>
-                Please choose one of the action below to resolve the notification.
-            </p>
-            <RadioButtonGroup
-                name="notificationAction"
-                valueSelected={this.props.skillNotificationSelectedAction}
-                onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {this.props.setSkillNotificationAction(value as any)}}
-            >
-                <RadioButton
-                    value={SkillNotificationAction.ACTION_OK}
-                    label="Accept Skill"
-                />
-                <RadioButton
-                    value={SkillNotificationAction.ACTION_EDIT}
-                    label="Edit Skill"
-                />
-                <RadioButton
-                    value={SkillNotificationAction.ACTION_DELETE}
-                    label="Delete Skill"
-                />
-            </RadioButtonGroup>
-            <RaisedButton
-                label="Continue"
-                secondary={true}
-                onClick={this.props.progressFromActionSelection}
-            />
-        </div>
+            <this.NotificationActions/>
+        </div>;
     };
 
     private renderInfoCategoryPending = () => {
@@ -143,7 +151,7 @@ class SkillNotificationModuleModule extends React.Component<
                 size={40}
                 left={0}
                 top={0}
-                style={{position: "relative", marginBottom: "8px"}}
+                style={{position: 'relative', marginBottom: '8px'}}
                 loadingColor="#FF9800"
                 status="loading"
             />
@@ -155,7 +163,7 @@ class SkillNotificationModuleModule extends React.Component<
                 onClick={() => this.props.categorizeSkill(this.props.notification.skill().name())}
                 disabled={true}
             />
-        </div>
+        </div>;
     };
 
     private renderInfoNoCategory = () => {
@@ -168,7 +176,7 @@ class SkillNotificationModuleModule extends React.Component<
                 label="Categorize"
                 onClick={() => this.props.categorizeSkill(this.props.notification.skill().name())}
             />
-        </div>
+        </div>;
     };
 
     private renderInfoCategoryError = () => {
@@ -177,31 +185,28 @@ class SkillNotificationModuleModule extends React.Component<
             <p>
                 Categorization failed. Reason: {this.props.error}
             </p>
-            <FlatButton
-                label="Categorize again."
-                onClick={() => this.props.categorizeSkill(this.props.notification.skill().name())}
-            />
-        </div>
+            <this.NotificationActions/>
+        </div>;
     };
 
     private renderError = () => {
         return <div className="error-text">
             An error occurred: {this.props.error}
-        </div>
+        </div>;
     };
 
     private renderSuccess = () => {
-        return <div style={{textAlign: "center"}}>
+        return <div style={{textAlign: 'center'}}>
             Success<br/>
             <IconButton
                 iconClassName="material-icons"
-                iconStyle={{color: "green"}}
+                iconStyle={{color: 'green'}}
                 size={80}
             >
                 check_circle
             </IconButton>
         </div>;
-    }
+    };
 
     private renderContent() {
         switch(this.props.status) {
@@ -220,8 +225,49 @@ class SkillNotificationModuleModule extends React.Component<
             case SkillNotificationEditStatus.DISPLAY_SUCCESS:
                 return this.renderSuccess();
             default:
-                return <div/>
+                return <div/>;
         }
+    }
+
+    private renderStepper = () => {
+        let index = 0;
+        let displayLastStepper = false;
+        switch(this.props.status) {
+            case SkillNotificationEditStatus.FETCHING_DATA:
+            case SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY:
+            case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING:
+                index = 0;
+                break;
+            case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY:
+            case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR:
+                index = 1;
+                break;
+            case SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG:
+                index = 2;
+                break;
+            case SkillNotificationEditStatus.DISPLAY_ERROR:
+            case SkillNotificationEditStatus.DISPLAY_SUCCESS:
+            default:
+                break;
+        }
+        if(this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT) {
+            displayLastStepper = true;
+        }
+        let steps = [
+            <Step>
+                <StepLabel>Information Resolving</StepLabel>
+            </Step>,
+            <Step>
+                <StepLabel>Information</StepLabel>
+            </Step>
+        ];
+        if(displayLastStepper) steps.push(<Step>
+            <StepLabel>Edit Skill</StepLabel>
+        </Step>);
+
+        return (<Stepper activeStep={index}>
+            {steps}
+        </Stepper>);
     }
 
     render() {
@@ -234,6 +280,7 @@ class SkillNotificationModuleModule extends React.Component<
             />]}
         >
             {this.renderContent()}
+            {this.renderStepper()}
         </Dialog>);
     }
 }

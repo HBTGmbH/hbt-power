@@ -5,7 +5,7 @@ import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotific
 import {formatString} from '../../../utils/StringUtil';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
-import {NotificationDialog} from '../notification-dialog_module';
+import {NotificationDialog} from './notification-dialog_module';
 
 
 interface ProfileEntryNotificationTableLocalProps {
