@@ -77,6 +77,7 @@ export enum ActionType {
     CloseAndResetSkillNotificationDlg,
     SetSkillNotificationError,
     SetSkillNotificationAction,
+    SetNewSkillName,
 
     // == Statistics
     ReceiveSkillUsageMetrics,

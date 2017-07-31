@@ -61,3 +61,10 @@ export interface SetSkillNotificationActionAction extends AbstractAction {
 export interface OpenSkillNotificationDialogAction extends AbstractAction {
     notificationId: number;
 }
+
+/**
+ * Sets the new name for the skill in a given notification, identified by id
+ */
+export interface SetNewSkillNameAction extends AbstractAction {
+    name: string;
+}

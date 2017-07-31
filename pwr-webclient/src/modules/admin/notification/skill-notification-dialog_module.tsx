@@ -9,7 +9,8 @@ import {
     RadioButton,
     RadioButtonGroup,
     RaisedButton,
-    RefreshIndicator
+    RefreshIndicator,
+    TextField
 } from 'material-ui';
 
 import {SkillNotificationEditStatus} from '../../../model/admin/SkillNotificationEditStatus';
@@ -25,6 +26,7 @@ interface SkillNotificationModuleProps {
     hierarchy: string;
     error: string;
     skillNotificationSelectedAction: SkillNotificationAction;
+    newSkillName: string;
 }
 
 interface SkillNotificationModuleLocalProps {
@@ -40,6 +42,8 @@ interface SkillNotificationModuleDispatch {
     setSkillNotificationAction(action: SkillNotificationAction): void;
     categorizeSkill(name: string): void;
     progressFromActionSelection(): void;
+    changeNewSkillName(name: string): void;
+    invokeSkillNotificationEditAction(): void;
 }
 
 class SkillNotificationModuleModule extends React.Component<
@@ -55,12 +59,17 @@ class SkillNotificationModuleModule extends React.Component<
                 hierarchy = state.skillReducer.categorieHierarchiesBySkillName().get(skill.name());
             }
         }
+        let newSkillName = '';
+        if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
+            newSkillName = state.adminReducer.selectedSkillNotification().newName();
+        }
         return {
             status: state.adminReducer.skillNotificationEditStatus(),
             notification: state.adminReducer.selectedSkillNotification(),
             hierarchy: hierarchy,
             error: state.adminReducer.skillNotificationError(),
-            skillNotificationSelectedAction: state.adminReducer.skillNotificationSelectedAction()
+            skillNotificationSelectedAction: state.adminReducer.skillNotificationSelectedAction(),
+            newSkillName: newSkillName
         };
     }
 
@@ -69,7 +78,9 @@ class SkillNotificationModuleModule extends React.Component<
             closeAndReset: () => dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg()),
             setSkillNotificationAction: action => dispatch(AdminActionCreator.SetSkillNotificationAction(action)),
             categorizeSkill: skillName => dispatch(AdminActionCreator.AsyncCategorizeSkill(skillName)),
-            progressFromActionSelection: () => dispatch(AdminActionCreator.AsyncProgressFromActionSelection())
+            progressFromActionSelection: () => dispatch(AdminActionCreator.AsyncProgressFromActionSelection()),
+            changeNewSkillName: (name) => dispatch(AdminActionCreator.SetNewSkillName(name)),
+            invokeSkillNotificationEditAction: () => dispatch(AdminActionCreator.AsyncNotificationInvokeSkillEdit())
         };
     }
 
@@ -180,6 +191,7 @@ class SkillNotificationModuleModule extends React.Component<
     };
 
     private renderInfoCategoryError = () => {
+        console.log("Reason:", this.props.error);
         return <div>
             <this.SkillInfo/>
             <p>
@@ -208,6 +220,21 @@ class SkillNotificationModuleModule extends React.Component<
         </div>;
     };
 
+    private renderEdit = () => {
+        return <div className="vcenter">
+            <TextField
+                floatingLabelText="New Skill Name"
+                value={this.props.newSkillName}
+                onChange={(e: any, val: string) => this.props.changeNewSkillName(val)}
+            />
+            <RaisedButton
+                label="Finish"
+                secondary={true}
+                onClick={this.props.invokeSkillNotificationEditAction}
+            />
+        </div>
+    }
+
     private renderContent() {
         switch(this.props.status) {
             case SkillNotificationEditStatus.FETCHING_DATA:
@@ -220,6 +247,8 @@ class SkillNotificationModuleModule extends React.Component<
                 return this.renderInfoCategoryPending();
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR:
                 return this.renderInfoCategoryError();
+            case SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG:
+                return this.renderEdit();
             case SkillNotificationEditStatus.DISPLAY_ERROR:
                 return this.renderError();
             case SkillNotificationEditStatus.DISPLAY_SUCCESS:

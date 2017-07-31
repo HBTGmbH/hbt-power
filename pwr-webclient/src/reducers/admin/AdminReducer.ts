@@ -9,6 +9,7 @@ import {
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
     ReceiveNotificationsAction,
+    SetNewSkillNameAction,
     SetSkillNotificationActionAction,
     SetSkillNotificationEditStatusAction
 } from './admin-actions';
@@ -136,6 +137,8 @@ export class AdminReducer {
     }
 
     public static SetSkillNotificationEditStatus(state: AdminState, action: SetSkillNotificationEditStatusAction) {
+        if(typeof SkillNotificationEditStatus[action.skillNotificationEditStatus] === 'undefined')
+            throw new RangeError("Enum value for SkillNotificationEditStatus is out of range: " + action.skillNotificationEditStatus);
         return state.skillNotificationEditStatus(action.skillNotificationEditStatus);
     }
 
@@ -153,9 +156,7 @@ export class AdminReducer {
     }
 
     public static reduce(state : AdminState, action: AbstractAction) : AdminState {
-        if(isNullOrUndefined(state)) {
-            return AdminState.createDefault();
-        }
+        if(isNullOrUndefined(state)) return AdminState.createDefault();
         switch(action.type) {
             case ActionType.ReceiveNotifications:
                 return AdminReducer.ReceiveNotifications(state, action as ReceiveNotificationsAction);
@@ -197,6 +198,11 @@ export class AdminReducer {
                 return AdminReducer.SetSkillNotificationError(state, action as ChangeStringValueAction);
             case ActionType.SetSkillNotificationAction:
                 return AdminReducer.SetSkillNotification(state, action as SetSkillNotificationActionAction);
+            case ActionType.SetNewSkillName: {
+                let act = action as SetNewSkillNameAction;
+                // TODO change the other notification, too
+                return state.selectedSkillNotification(state.selectedSkillNotification().newName(act.name));
+            }
             default:
                 return state;
         }

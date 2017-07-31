@@ -9,6 +9,7 @@ import {
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
     ReceiveNotificationsAction,
+    SetNewSkillNameAction,
     SetSkillNotificationActionAction,
     SetSkillNotificationEditStatusAction
 } from './admin-actions';
@@ -203,7 +204,7 @@ export class AdminActionCreator {
 
     public static SetSkillNotificationErrorText(text: string): ChangeStringValueAction {
         return {
-            type: ActionType.SetSkillNotificationEditStatus,
+            type: ActionType.SetSkillNotificationError,
             value: text
         }
     }
@@ -229,6 +230,12 @@ export class AdminActionCreator {
         };
     }
 
+    public static SetNewSkillName( newName: string): SetNewSkillNameAction {
+        return {
+            type: ActionType.SetNewSkillName,
+            name: newName
+        }
+    }
 
 
 
@@ -385,6 +392,29 @@ export class AdminActionCreator {
                     headers: {'X-Requested-With': 'XMLHttpRequest'}
             };
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.patch(getNotificationAPIString(), notification.toAPI(), config).then(function(response: AxiosResponse) {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                dispatch(AdminActionCreator.AsyncRequestNotifications(adminState.adminName(), adminState.adminPass()));
+            }).catch(function(error:any) {
+                AdminActionCreator.logAxiosError(error);
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
+        };
+    }
+
+    public static AsyncNotificationInvokeSkillEdit() {
+        return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+            let adminState = getState().adminReducer;
+            let notification = adminState.selectedSkillNotification();
+            let config = {
+                auth: {
+                    username: adminState.adminName(),
+                    password: adminState.adminPass()
+                },
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            };
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
             axios.patch(getNotificationAPIString(), notification.toAPI(), config).then(function(response: AxiosResponse) {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
                 dispatch(AdminActionCreator.AsyncRequestNotifications(adminState.adminName(), adminState.adminPass()));
@@ -561,6 +591,7 @@ export class AdminActionCreator {
      */
     public static AsyncCategorizeSkill(skillName: string) {
         return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+            console.info("Invoking remote categorization for skill '" + skillName + "'");
             let adminState = getState().adminReducer;
             // Only allow entering this transition when the status is correct.
             if(adminState.skillNotificationEditStatus() !== SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY) {
@@ -579,6 +610,7 @@ export class AdminActionCreator {
                     dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY));
                 }).catch(function (error: AxiosError) {
                     console.error(error);
+                    console.log(error.response);
                     if(!isNullOrUndefined(error.response)) {
                         dispatch(AdminActionCreator.SetSkillNotificationErrorText("ERR_" + error.response.status));
                     } else {
@@ -597,14 +629,14 @@ export class AdminActionCreator {
     public static AsyncProgressFromActionSelection() {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let adminState = getState().adminReducer;
-            if(adminState.skillNotificationEditStatus() !== SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY) {
-                throw new RangeError("Invalid status for AsyncCategorizeSkill. Expected " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY]);
+            if(!(adminState.skillNotificationEditStatus() === SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY ||
+                adminState.skillNotificationEditStatus() === SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR)) {
+                throw new RangeError("Invalid status for AsyncProgressFromActionSelection. Expected " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY]) + " or " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR];
             } else {
                 if(adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_OK) {
                     dispatch(AdminActionCreator.AsyncNotificationInvokeOK(adminState.selectedSkillNotification().adminNotification().id()));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
                 } else if(adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_DELETE) {
-                    console.log("invoking delete");
                     dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(adminState.selectedSkillNotification().adminNotification().id()));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
                 } else if(adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_EDIT) {
