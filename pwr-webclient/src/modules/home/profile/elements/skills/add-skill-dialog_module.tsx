@@ -144,7 +144,7 @@ class AddSkillDialogModule extends React.Component<
         return <div>
             <div style={{textAlign: "center", margin: "16px"}}>
                 The following category hiearchy was determined for the provided skill<br/>
-                <span style={{color: "#ffc01b", marginTop: "8px", marginBottom: "8px"}}> {this.props.categoryString}</span><br/>
+                <span className="highlighted-category"> {this.props.categoryString}</span><br/>
                 Please validate that this is a category that is appropriate for the skill.<br/>
                 If the category is inappropriate, it is most likely the wrong or incomplete name for the skill. <br/>
                 For products, consider adding the developing company.

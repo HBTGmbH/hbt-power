@@ -38,6 +38,8 @@ export class AdminState {
     @doop
     public get consultantsByInitials() {return doop<Immutable.Map<string, ConsultantInfo>, this>()};
 
+    // == Values below are used for the skill notification dialog == //
+
     /**
      * Skill notification that is selected for resolving.
      * @returns {Doop<SkillNotification, this>}
@@ -54,6 +56,8 @@ export class AdminState {
 
     @doop public get skillNotificationError() {return doop<string, this>()}
 
+    @doop public get isSkillNameEdited() {return doop<boolean, this>()};
+
     private constructor(profileEntryNotifications: Immutable.List<ProfileEntryNotification>,
                         profileUpdateNotifications: Immutable.List<AdminNotification>,
                         skillNotifications: Immutable.List<SkillNotification>,
@@ -67,7 +71,8 @@ export class AdminState {
                         skillNotificationEditStatus: SkillNotificationEditStatus,
                         selectedSkillNotification: SkillNotification,
                         skillNotificationError: string,
-                        skillNotificationSelectedAction: SkillNotificationAction
+                        skillNotificationSelectedAction: SkillNotificationAction,
+                        isSkillNameEdited: boolean
     ) {
         return this.profileEntryNotifications(profileEntryNotifications)
             .profileUpdateNotifications(profileUpdateNotifications)
@@ -77,7 +82,8 @@ export class AdminState {
             .skillNotificationEditStatus(skillNotificationEditStatus)
             .selectedSkillNotification(selectedSkillNotification)
             .skillNotificationError(skillNotificationError)
-            .skillNotificationSelectedAction(skillNotificationSelectedAction);
+            .skillNotificationSelectedAction(skillNotificationSelectedAction)
+            .isSkillNameEdited(isSkillNameEdited);
     }
 
     public static createDefault() {
@@ -87,6 +93,6 @@ export class AdminState {
             Immutable.List<AdminNotification>(),
             RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>(),
             "",
-            SkillNotificationEditStatus.CLOSED, null, "", SkillNotificationAction.ACTION_OK);
+            SkillNotificationEditStatus.CLOSED, null, "", SkillNotificationAction.ACTION_OK, false);
     }
 }

@@ -584,6 +584,7 @@ export class AdminActionCreator {
         }
     };
 
+
     /**
      * Transition from DISPLAY_INFO_NO_CATEGORY to CATEGORY_PENDING
      * @param skillName
@@ -593,9 +594,10 @@ export class AdminActionCreator {
         return function(dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             console.info("Invoking remote categorization for skill '" + skillName + "'");
             let adminState = getState().adminReducer;
-            // Only allow entering this transition when the status is correct.
-            if(adminState.skillNotificationEditStatus() !== SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY) {
-                throw new RangeError("Invalid status for AsyncCategorizeSkill. Expected " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY]);
+            let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY,
+                SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG];
+            if(allowedStates.indexOf(adminState.skillNotificationEditStatus()) === -1) {
+                throw new RangeError("Invalid status for AsyncCategorizeSkill. Expected one of " + allowedStates);
             } else {
                 let config: AxiosRequestConfig = {params: {qualifier: skillName}}
                 axios.post(postCategorizeSkill(), null, config).then((response: AxiosResponse) => {
@@ -629,9 +631,11 @@ export class AdminActionCreator {
     public static AsyncProgressFromActionSelection() {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let adminState = getState().adminReducer;
-            if(!(adminState.skillNotificationEditStatus() === SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY ||
-                adminState.skillNotificationEditStatus() === SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR)) {
-                throw new RangeError("Invalid status for AsyncProgressFromActionSelection. Expected " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY]) + " or " + SkillNotificationEditStatus[SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR];
+            let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY,
+                SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR,
+                SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY];
+            if(allowedStates.indexOf(adminState.skillNotificationEditStatus()) === -1) {
+                throw new RangeError("Invalid status for AsyncProgressFromActionSelection. Expected one of " + allowedStates);
             } else {
                 if(adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_OK) {
                     dispatch(AdminActionCreator.AsyncNotificationInvokeOK(adminState.selectedSkillNotification().adminNotification().id()));

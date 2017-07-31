@@ -9,6 +9,8 @@ interface SkillSearcherProps {
     maxResults?: number;
     maxHeight?: number;
     id: string;
+    value?: string;
+    initialValue?: string;
     onNewRequest?(request: string): void;
     /**
      * Fired everytime the value changes(User input) and returns the value the user typed in.
@@ -33,10 +35,16 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     constructor(props: SkillSearcherProps) {
         super(props);
         this.state = {
-            searchText: "",
+            searchText: !isNullOrUndefined(props.initialValue) ? props.initialValue : "",
             skills: []
         }
 
+    }
+
+    public componentWillReceiveProps(props: SkillSearcherProps) {
+        if(!isNullOrUndefined(props.value) && this.props.value !== props.value) {
+            this.requestSkills(props.value, []);
+        }
     }
 
     public static defaultProps: Partial<SkillSearcherProps> = {
@@ -71,9 +79,12 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     };
 
     private handleRequest = (request: string) => {
-        this.setState({
-            searchText: ""
-        });
+        if(isNullOrUndefined(this.props.value)) {
+            console.log("Value", this.props.value);
+            this.setState({
+                searchText: ""
+            });
+        }
         this.props.onNewRequest(request)
     };
     render() {

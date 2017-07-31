@@ -27,6 +27,8 @@ import {APIProfileEntryNotification, ProfileEntryNotification} from '../../model
 import {Comparators} from '../../utils/Comparators';
 import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
+import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
+import set = Reflect.set;
 
 export class AdminReducer {
 
@@ -139,12 +141,15 @@ export class AdminReducer {
     public static SetSkillNotificationEditStatus(state: AdminState, action: SetSkillNotificationEditStatusAction) {
         if(typeof SkillNotificationEditStatus[action.skillNotificationEditStatus] === 'undefined')
             throw new RangeError("Enum value for SkillNotificationEditStatus is out of range: " + action.skillNotificationEditStatus);
+        if(action.skillNotificationEditStatus === SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG) {
+            state = state.isSkillNameEdited(true);
+        }
         return state.skillNotificationEditStatus(action.skillNotificationEditStatus);
     }
 
     public static OpenSkillNotificationDialog(state: AdminState, setSkillInfoAction: OpenSkillNotificationDialogAction) {
         let notification = state.skillNotifications().find((value, key, iter) => value.adminNotification().id() === setSkillInfoAction.notificationId);
-        return state.selectedSkillNotification(notification).skillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING)
+        return state.selectedSkillNotification(notification).skillNotificationEditStatus(SkillNotificationEditStatus.FETCHING_DATA)
     }
 
     public static SetSkillNotificationError(state: AdminState, action: ChangeStringValueAction) {
@@ -152,6 +157,7 @@ export class AdminReducer {
     }
 
     public static SetSkillNotification(state: AdminState, setSkillNotificationAction: SetSkillNotificationActionAction) {
+
         return state.skillNotificationSelectedAction(setSkillNotificationAction.skillNotificationAction);
     }
 
@@ -191,7 +197,12 @@ export class AdminReducer {
             case ActionType.SetSkillNotificationEditStatus:
                 return AdminReducer.SetSkillNotificationEditStatus(state, action as SetSkillNotificationEditStatusAction);
             case ActionType.CloseAndResetSkillNotificationDlg:
-                return state.skillNotificationEditStatus(SkillNotificationEditStatus.CLOSED);
+                return state
+                    .skillNotificationEditStatus(SkillNotificationEditStatus.CLOSED)
+                    .isSkillNameEdited(false)
+                    .selectedSkillNotification(null)
+                    .skillNotificationError("")
+                    .skillNotificationSelectedAction(SkillNotificationAction.ACTION_OK);
             case ActionType.OpenSkillNotificationDialog:
                 return AdminReducer.OpenSkillNotificationDialog(state, action as OpenSkillNotificationDialogAction);
             case ActionType.SetSkillNotificationError:

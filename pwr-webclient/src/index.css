@@ -63,6 +63,12 @@ body {
   color: red;
 }
 
+.highlighted-category {
+  color: #ffc01b;
+  margin-top: 8px;
+  margin-bottom: 8px
+}
+
 .material-icons-custom {
   font-family: 'Material Icons';
   font-weight: normal;
