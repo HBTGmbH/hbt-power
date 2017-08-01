@@ -230,7 +230,7 @@ export namespace SkillActionCreator {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
                 }
             } else if (step === AddSkillStep.DONE) {
-                dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating()));
+                dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment()));
                 dispatch(ResetAddSkillDialog());
             }
         }

@@ -28,6 +28,7 @@ interface SkillNotificationModuleProps {
     skillNotificationSelectedAction: SkillNotificationAction;
     newSkillName: string;
     skillEdited: boolean;
+    comment: string;
 }
 
 interface SkillNotificationModuleLocalProps {
@@ -61,6 +62,10 @@ class SkillNotificationModuleModule extends React.Component<
         if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
             newSkillName = state.adminReducer.selectedSkillNotification().newName();
         }
+        let comment = null;
+        if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
+            comment = state.adminReducer.selectedSkillNotification().skill().comment();
+        }
         return {
             status: state.adminReducer.skillNotificationEditStatus(),
             notification: state.adminReducer.selectedSkillNotification(),
@@ -68,7 +73,8 @@ class SkillNotificationModuleModule extends React.Component<
             error: state.adminReducer.skillNotificationError(),
             skillNotificationSelectedAction: state.adminReducer.skillNotificationSelectedAction(),
             newSkillName: newSkillName,
-            skillEdited: state.adminReducer.isSkillNameEdited()
+            skillEdited: state.adminReducer.isSkillNameEdited(),
+            comment: comment
         };
     }
 
@@ -107,6 +113,9 @@ class SkillNotificationModuleModule extends React.Component<
                 The previously unknown skill <strong>{this.props.notification.skill().name()}</strong> was added to the profile
                 of <strong>{this.props.notification.adminNotification().initials()}</strong>.
             </p>
+            {
+                !isNullOrUndefined(this.props.comment) ? <p>A comment was provided: {this.props.comment}</p> : false
+            }
             {
                 this.props.skillEdited ? <p>The new skill name will be <strong>{this.props.newSkillName}</strong></p> : false
             }

@@ -79,8 +79,6 @@ export enum ActionType {
     SetSkillNotificationAction,
     SetNewSkillName,
 
-    ProgressSkillNotificationDialog,
-
     // == Statistics
     ReceiveSkillUsageMetrics,
     ReceiveRelativeSkillUsageMetrics,

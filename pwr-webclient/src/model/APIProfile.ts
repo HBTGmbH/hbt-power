@@ -69,6 +69,7 @@ export interface APISkill {
     id: string,
     name: string,
     rating: number
+    comment: string;
 }
 
 /**
