@@ -5,6 +5,7 @@ import {
     AddSkillAction,
     ChangeStringValueAction,
     ChangeViewProfileAction,
+    ChangeViewProfileCharsPerLineAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteProjectAction,
@@ -196,6 +197,14 @@ export class ProfileActionCreator {
             type: ActionType.ChangeViewProfileDescription,
             viewProfileId: id,
             val: description
+        }
+    }
+
+    public static ChangeViewProfileCharsPerLine(id: string, charsPerLine: number): ChangeViewProfileCharsPerLineAction{
+        return {
+            type: ActionType.ChangeViewProfileCharsPerLine,
+            viewProfileId: id,
+            val: charsPerLine
         }
     }
 

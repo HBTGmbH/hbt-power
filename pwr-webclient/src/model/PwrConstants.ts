@@ -15,3 +15,7 @@ export const COOKIE_ADMIN_USERNAME = "pwr_admin_username";
 export const COOKIE_ADMIN_PASSWORD = "pwr_admin_password";
 
 export const COOKIE_ADMIN_EXPIRATION_TIME = 3; // 3 Days expiration time
+
+export const DESCRIPTION_CHARS_PER_LINE_LOWER = 20;
+
+export const DESCRIPTION_CHARS_PER_LINE_UPPER = 200;

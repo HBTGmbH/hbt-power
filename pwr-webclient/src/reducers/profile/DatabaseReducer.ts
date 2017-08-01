@@ -5,6 +5,7 @@ import {
     AddSkillAction,
     ChangeStringValueAction,
     ChangeViewProfileAction,
+    ChangeViewProfileCharsPerLineAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteProjectAction,
@@ -349,6 +350,12 @@ export class DatabaseReducer {
         return state.profile(profile);
     }
 
+    private static ChangeViewProfileCharsPerLine(state: InternalDatabase, changeViewProfileCharsPerLineAction: ChangeViewProfileCharsPerLineAction) {
+        let viewProfile = state.viewProfiles().get(changeViewProfileCharsPerLineAction.viewProfileId);
+        viewProfile = viewProfile.descriptionCharsPerLine(changeViewProfileCharsPerLineAction.val);
+        return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
+    }
+
     public static Reduce(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
         if(isNullOrUndefined(state)) {
             state = InternalDatabase.createWithDefaults();
@@ -381,8 +388,11 @@ export class DatabaseReducer {
             case ActionType.ChangeViewProfileDescription: return DatabaseReducer.ChangeViewProfileDescription(state, action as ChangeViewProfileAction);
             case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
             case ActionType.ClearViewProfiles: return state.viewProfiles(state.viewProfiles().clear());
+            case ActionType.ChangeViewProfileCharsPerLine: return DatabaseReducer.ChangeViewProfileCharsPerLine(state, action as ChangeViewProfileCharsPerLineAction);
             default:
                 return state;
         }
     }
+
+
 }

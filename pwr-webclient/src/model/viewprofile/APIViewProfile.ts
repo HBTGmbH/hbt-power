@@ -56,6 +56,7 @@ export interface APIViewProfile {
     id: number;
     name: string;
     description: string;
+    descriptionCharsPerLine: number;
     profileSnapshot: APIProfile;
     creationDate: string;
     educationViewEntries: Array<APIViewEducation>;

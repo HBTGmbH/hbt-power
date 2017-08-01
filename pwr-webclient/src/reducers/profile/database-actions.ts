@@ -152,6 +152,11 @@ export interface ChangeViewProfileAction extends AbstractAction {
     viewProfileId: string;
 }
 
+export interface ChangeViewProfileCharsPerLineAction extends AbstractAction {
+    val: number,
+    viewProfileId: string;
+}
+
 export interface AddSkillAction extends AbstractAction {
     skillName: string;
     rating: number;

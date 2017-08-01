@@ -9,6 +9,7 @@ import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreat
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
+import {isNullOrUndefined} from 'util';
 
 
 /**
@@ -42,6 +43,7 @@ interface ViewCardLocalProps {
 interface ViewCardLocalState {
     nameInputDisabled: boolean;
     descriptionInputDisabled: boolean;
+    charsPerLineDisabled: boolean;
 }
 
 /**
@@ -52,7 +54,8 @@ interface ViewCardDispatch {
     selectViewProfile(id: string): void;
     changeViewProfileName(id: string, val: string): void;
     changeViewProfileDescription(id: string, description: string): void;
-    saveViewProfileChanges(id: string, name: string, description: string): void;
+    changeViewProfileCharsPerLine(id: string, charsPerLine: number): void;
+    saveViewProfileChanges(id: string, name: string, description: string, charsPerLine: number): void;
     duplicateViewProfile(id: string): void;
     generatePdf(initials: string, viewProfileId: string): void;
     generateDocX(initials: string, viewProfileId: string): void;
@@ -64,7 +67,8 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
         super(props);
         this.state = {
             nameInputDisabled: true,
-            descriptionInputDisabled: true
+            descriptionInputDisabled: true,
+            charsPerLineDisabled: true
         };
     }
 
@@ -80,8 +84,9 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
             deleteViewProfile: (id, initials) => dispatch(ProfileAsyncActionCreator.deleteViewProfile(id, initials)),
             selectViewProfile: id => dispatch(ProfileActionCreator.SelectViewProfile(id)),
             changeViewProfileDescription: (id, description) => dispatch(ProfileActionCreator.ChangeViewProfileDescription(id, description)),
+            changeViewProfileCharsPerLine: (id, charsPerLine) => dispatch(ProfileActionCreator.ChangeViewProfileCharsPerLine(id, charsPerLine)),
             changeViewProfileName: (id, val) => dispatch(ProfileActionCreator.ChangeViewProfileName(id, val)),
-            saveViewProfileChanges:(id, name2, description) => dispatch(ProfileAsyncActionCreator.editViewProfileDetails(id, name2, description)),
+            saveViewProfileChanges:(id, name2, description, charsPerLine) => dispatch(ProfileAsyncActionCreator.editViewProfileDetails(id, name2, description, charsPerLine)),
             duplicateViewProfile: (id) => dispatch(ProfileAsyncActionCreator.duplicateViewProfile(id)),
             generatePdf: (initials, id) => dispatch(ProfileAsyncActionCreator.generatePDFProfile(initials, id)),
             generateDocX: (initials, id) => dispatch(ProfileAsyncActionCreator.generateDocXProfile(initials, id))
@@ -90,7 +95,11 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
 
     private invokeUpdate = () => {
         this.props.saveViewProfileChanges(
-            this.props.viewProfileId, this.props.viewProfile.name(), this.props.viewProfile.description());
+            this.props.viewProfileId,
+            this.props.viewProfile.name(),
+            this.props.viewProfile.description(),
+            this.props.viewProfile.descriptionCharsPerLine()
+        );
     };
 
     private handleToggleNameInputEdit = (disabled: boolean) => {
@@ -105,6 +114,25 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
             descriptionInputDisabled: disabled
         });
         if(disabled) this.invokeUpdate();
+    };
+
+    private handleCharsPerLineToggle = (disabled: boolean) => {
+        this.setState({
+            charsPerLineDisabled: disabled
+        });
+        if(disabled) this.invokeUpdate();
+    };
+
+    private handleChangeCharsPerLine = (e: any, v: string) => {
+        if(v.trim() == "") {
+            this.props.changeViewProfileCharsPerLine(this.props.viewProfileId, 0);
+        } else {
+            const num = Number.parseInt(v);
+            if(!isNullOrUndefined(num) && !isNaN(num)) {
+                this.props.changeViewProfileCharsPerLine(this.props.viewProfileId, num);
+            }
+        }
+
     };
 
     private invokePDFGeneration = () => {
@@ -143,6 +171,19 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
                         disabled={this.state.descriptionInputDisabled}
                         onToggleEdit={this.handleToggleDescriptionInput}
                         multiLine={true}
+                    />
+                </div>
+                <div className="fullWidth">
+                    <LimitedTextField
+                        maxCharacters={2}
+                        onChange={this.handleChangeCharsPerLine}
+                        floatingLabelText={"Chars per Line"}
+                        value={this.props.viewProfile.descriptionCharsPerLine().toString()}
+                        fullWidth={true}
+                        errorText={PowerLocalize.get('ErrorText.InputTooLong')}
+                        useToggleEditButton={true}
+                        disabled={this.state.charsPerLineDisabled}
+                        onToggleEdit={this.handleCharsPerLineToggle}
                     />
                 </div>
                 <h6>

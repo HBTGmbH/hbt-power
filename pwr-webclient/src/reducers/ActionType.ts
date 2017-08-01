@@ -10,6 +10,7 @@ export enum ActionType {
 
     ChangeViewProfileName,
     ChangeViewProfileDescription,
+    ChangeViewProfileCharsPerLine,
     ReceiveViewProfile,
     SortViewProfile,
     SetSelectedIndexes,

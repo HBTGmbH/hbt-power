@@ -364,12 +364,14 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    public static editViewProfileDetails(viewProfileId: string, name: string, description: string) {
+    public static editViewProfileDetails(viewProfileId: string, name: string, description: string, charsPerLine?: number) {
         return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            axios.post(postEditViewProfileDetails(viewProfileId), {
+            const data = {
                 name: name,
-                description: description
-            }).then(function (response: AxiosResponse) {
+                description: description,
+                descriptionCharsPerLine: charsPerLine
+            };
+            axios.post(postEditViewProfileDetails(viewProfileId), data).then(function (response: AxiosResponse) {
                 dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function (error: any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
@@ -424,8 +426,7 @@ export class ProfileAsyncActionCreator {
             let config: AxiosRequestConfig = {
                 params: {
                     viewid: viewProfileId,
-                    type: "DOC",
-                    charsperline: 35
+                    type: "DOC"
                 },
                 headers: {
                     'Content-Type': 'application/json'
