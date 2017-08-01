@@ -14,7 +14,6 @@ import {
 
 import {SkillNotificationEditStatus} from '../../../model/admin/SkillNotificationEditStatus';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
-import {SkillNotification} from '../../../model/admin/SkillNotification';
 import {isNullOrUndefined} from 'util';
 import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAction';
 import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
@@ -22,13 +21,15 @@ import {SkillSearcher} from '../../general/skill-search_module';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
-    notification: SkillNotification;
     hierarchy: string;
     error: string;
     skillNotificationSelectedAction: SkillNotificationAction;
     newSkillName: string;
     skillEdited: boolean;
     comment: string;
+    skillName: string;
+    initials: string;
+    newName: string;
 }
 
 interface SkillNotificationModuleLocalProps {
@@ -63,18 +64,27 @@ class SkillNotificationModuleModule extends React.Component<
             newSkillName = state.adminReducer.selectedSkillNotification().newName();
         }
         let comment = null;
+        let skillName = '';
+        let initials = "";
+        let newName = "";
         if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
             comment = state.adminReducer.selectedSkillNotification().skill().comment();
+            skillName = state.adminReducer.selectedSkillNotification().skill().name();
+            initials = state.adminReducer.selectedSkillNotification().adminNotification().initials();
+            newName = state.adminReducer.selectedSkillNotification().newName()
         }
+
         return {
             status: state.adminReducer.skillNotificationEditStatus(),
-            notification: state.adminReducer.selectedSkillNotification(),
             hierarchy: hierarchy,
             error: state.adminReducer.skillNotificationError(),
             skillNotificationSelectedAction: state.adminReducer.skillNotificationSelectedAction(),
             newSkillName: newSkillName,
             skillEdited: state.adminReducer.isSkillNameEdited(),
-            comment: comment
+            comment: comment,
+            skillName: skillName,
+            initials: initials,
+            newName: newName
         };
     }
 
@@ -102,7 +112,7 @@ class SkillNotificationModuleModule extends React.Component<
                 />
             </div>
             <div className="vertical-align">
-                Fetching information for skill '{this.props.notification.skill().name()}'
+                Fetching information for skill '{this.props.skillName}'
             </div>
         </div>;
     };
@@ -110,8 +120,8 @@ class SkillNotificationModuleModule extends React.Component<
     private SkillInfo = () => {
         return <div>
             <p>
-                The previously unknown skill <strong>{this.props.notification.skill().name()}</strong> was added to the profile
-                of <strong>{this.props.notification.adminNotification().initials()}</strong>.
+                The previously unknown skill <strong>{this.props.skillName}</strong> was added to the profile
+                of <strong>{this.props.initials}</strong>.
             </p>
             {
                 !isNullOrUndefined(this.props.comment) ? <p>A comment was provided: {this.props.comment}</p> : false
@@ -184,7 +194,7 @@ class SkillNotificationModuleModule extends React.Component<
                 <FlatButton
                     label="Categorize now."
                     secondary={true}
-                    onClick={() => this.props.categorizeSkill(this.props.notification.skill().name())}
+                    onClick={() => this.props.categorizeSkill(this.props.skillName)}
                 />
             </p>
             <this.NotificationActions/>
@@ -308,7 +318,7 @@ class SkillNotificationModuleModule extends React.Component<
                 return (<RaisedButton
                     secondary={true}
                     label="Categorize"
-                    onClick={() => this.props.categorizeSkill(this.props.notification.skill().name())}
+                    onClick={() => this.props.categorizeSkill(this.props.skillName)}
                     disabled={true}
                 />);
             case SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY:
@@ -327,7 +337,7 @@ class SkillNotificationModuleModule extends React.Component<
                             label="Validate"
                             primary={true}
 
-                            onClick={() => this.props.categorizeSkill(this.props.notification.newName())}
+                            onClick={() => this.props.categorizeSkill(this.props.newName)}
                         />
                         <RaisedButton
                             label="Finish"
@@ -347,7 +357,7 @@ class SkillNotificationModuleModule extends React.Component<
 
     render() {
         return (<Dialog
-            open={this.props.status !== SkillNotificationEditStatus.CLOSED && !isNullOrUndefined(this.props.notification)}
+            open={this.props.status !== SkillNotificationEditStatus.CLOSED}
             actions={[<FlatButton
                 label="Cancel"
                 primary={true}
