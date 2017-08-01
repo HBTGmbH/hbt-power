@@ -94,7 +94,13 @@ class AdminLoginModule extends React.Component<
     };
 
     private getErrorText = () => {
-        return this.props.loginState == LoginStatus.REJECTED ? "Invalid" : null
+        if(this.props.loginState === LoginStatus.REJECTED) {
+            return PowerLocalize.get("AdminClient.Login.Rejected");
+        } else if(this.props.loginState === LoginStatus.UNAVAILABLE) {
+            return PowerLocalize.get("AdminClient.Login.Unavailable");
+        } else {
+            return null;
+        }
     };
 
     private handleRememberCheckboxCheck = (event: object, isInputChecked: boolean) => {

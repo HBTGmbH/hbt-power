@@ -464,10 +464,13 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
                 dispatch(AdminActionCreator.AsyncGetAllConsultants());
                 dispatch(AdminActionCreator.LogInAdmin());
-            }).catch(function(error:any) {
-                dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
-                // Clear possible cookies
-                dispatch(AdminActionCreator.LogOutAdmin());
+            }).catch(function(error:AxiosError) {
+                console.log(error.code);
+                if(!isNullOrUndefined(error.response) && error.response.status === 401) {
+                    dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
+                } else {
+                    dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.UNAVAILABLE));
+                }
                 AdminActionCreator.logAxiosError(error);
             });
         };

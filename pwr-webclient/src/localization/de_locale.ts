@@ -95,6 +95,8 @@ export const de_locale : any = {
     "UserLogin.LoginFailed": "Login fehlgeschlagen",
     "SkillTree.SearchAndAddSkill": "Skill suchen/hinzufügen",
     "AdminClient.Login.Remember": "Login merken",
+    "AdminClient.Login.Rejected": "Ungültiger Nutzername oder Passwort",
+    "AdminClient.Login.Unavailable": "Login nicht verfügbar",
     "AdminClient.Menu.Statistics": "Statistiken",
     "AdminClient.Menu.Statistics.Skills": "Skills",
     "AdminClient.Menu.Statistics.Network": "Profil-Netzwerk",
