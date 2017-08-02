@@ -106,6 +106,8 @@ export const de_locale : any = {
     "AdminClient.Menu.Info.ProfileElements.ElementTypes": "Profil-Element Typen",
     "AdminClient.Overview.Skills": "Skill-Übersicht",
     "AdminClient.Overview.NameEntity": "Eintrags-Namen-Übersicht",
+    "AdminClient.Info.SkillTree.Legend": "Legende",
+    "AdminClient.Info.SkillTree.Category.IsBlacklisted": "Auf der Blacklist",
     "AdminClient.Infos.UsedSkills.UsedBy": "Skill benutzt von:",
     "AdminClient.Infos.UsedSkills.SkillHiearchy": "Skill-Hiearchie",
     "AdminClient.Infos.UsedSkills.SkillQualifier": "Name",

@@ -4,6 +4,7 @@ import {ActionType} from '../ActionType';
 import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
 import {
+    deleteBlacklistCategory,
     getCategoryById,
     getCategoryChildrenByCategoryId,
     getRootCategoryIds,
@@ -174,6 +175,46 @@ export namespace SkillActionCreator {
                 });
             }
         };
+    }
+
+    /**
+     * Invokes witelisting of the {@link SkillCategory} identified by the given ID.
+     * If the category is already whitelisted, nothing will change.
+     * If the category is not existent, BAD REQUEST is returned.
+     * @param categoryId of the category to be whitelisted
+     */
+    export function AsyncWhitelistCategory(categoryId: number) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            axios.delete(deleteBlacklistCategory(categoryId)).then((response: AxiosResponse) => {
+                let apiCategory: APISkillCategory = response.data;
+                let parentId: number = null;
+                if(!isNullOrUndefined(apiCategory.category)) {
+                    parentId = apiCategory.category.id;
+                }
+                //dispatch(AddCategoryToTree(null, SkillCategory.fromAPI(apiCategory)));
+                dispatch(AsyncLoadCategoryIntoTree(parentId, apiCategory.id, 1));
+                dispatch(AsyncLoadSkillsForCategory(categoryId));
+            }).catch((error: AxiosError) => {
+                console.log(error);
+            });
+        }
+    }
+
+    export function AsyncBlacklistCategory(categoryId: number) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            axios.post(deleteBlacklistCategory(categoryId)).then((response: AxiosResponse) => {
+                let apiCategory: APISkillCategory = response.data;
+                let parentId: number = null;
+                if(!isNullOrUndefined(apiCategory.category)) {
+                    parentId = apiCategory.category.id;
+                }
+                //dispatch(AddCategoryToTree(null, SkillCategory.fromAPI(apiCategory)));
+                dispatch(AsyncLoadCategoryIntoTree(parentId, apiCategory.id, 1));
+                dispatch(AsyncLoadSkillsForCategory(categoryId));
+            }).catch((error: AxiosError) => {
+                console.log(error);
+            });
+        }
     }
 
     export function AsyncProgressAddSkill() {

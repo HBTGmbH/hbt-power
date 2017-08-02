@@ -196,3 +196,12 @@ export function getSkillUsageInfo() {
 export function postCategorizeSkill() {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill";
 }
+
+/**
+ * String representing a delete operation on the blacklist.
+ * @param id of the category to be whitelisted
+ * @returns {string} the representing the full API URI
+ */
+export function deleteBlacklistCategory(id: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/blacklist/" + id;
+}

@@ -13,6 +13,12 @@ export class SkillStore {
     @doop public get skillTreeRoot() {return doop<SkillCategory, this>()};
 
     /**
+     * Flat map of all categories
+     * @returns {Map<any, any>|any|Map<number, SkillCategory>}
+     */
+    @doop public get categoriesById() {return doop<Immutable.Map<number, SkillCategory>, this>()};
+
+    /**
      * Categories and their hierachy by skill name. Used to provide skill information.
      * @returns {Doop<Immutable.Map<string, string>, this>}
      */
@@ -61,14 +67,14 @@ export class SkillStore {
     private constructor(skillTreeRoot: SkillCategory, categorieHierarchiesBySkillName: Immutable.Map<string, string>,
                         currentAddSkillStep: AddSkillStep, currentSkillRating: number, currentSkillName: string,
                         currentChoice: UnCategorizedSkillChoice, skillComment: string, addSkillError: string,
-                        noCategoryReason: string) {
+                        noCategoryReason: string, categoriesById: Immutable.Map<number, SkillCategory>) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
-            .addSkillError(addSkillError).noCategoryReason(noCategoryReason)
+            .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById);
     }
 
     public static empty() {
         return new SkillStore(SkillCategory.of(-1, "root"), Immutable.Map<string, string>(), AddSkillStep.NONE, 1, "",
-            UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "");
+            UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>());
     }
 }

@@ -37,7 +37,12 @@ export namespace SkillReducer {
         switch(action.type) {
             case ActionType.AddCategoryToTree: {
                 let act = action as AddCategoryToTreeAction;
-                return skillStore.skillTreeRoot(skillStore.skillTreeRoot().addCategoryToTree(act.parentId, act.toAdd))
+                if(isNullOrUndefined(act.parentId)) {
+                    act.parentId = -1;
+                }
+                let map = skillStore.categoriesById();
+                map = map.set(act.toAdd.id(), act.toAdd);
+                return skillStore.skillTreeRoot(skillStore.skillTreeRoot().addCategoryToTree(act.parentId, act.toAdd)).categoriesById(map);
             }
             case ActionType.AddSkillToTree: {
                 let act = action as AddSkillToTreeAction;

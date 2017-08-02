@@ -6,6 +6,7 @@ export interface APISkillCategory {
     id: number;
     qualifier: string;
     category: APISkillCategory;
+    blacklisted: boolean;
 }
 
 
@@ -19,20 +20,28 @@ export class SkillCategory {
 
     @doop public get skills() {return doop<Immutable.List<SkillServiceSkill>, this>()};
 
-    private constructor(id: number, qualifier: string, categories: Immutable.List<SkillCategory>, skills: Immutable.List<SkillServiceSkill>) {
-        return this.id(id).qualifier(qualifier).categories(categories).skills(skills);
+    @doop public get blacklisted() {return doop<boolean, this>()};
+
+    private constructor(id: number, qualifier: string, categories: Immutable.List<SkillCategory>,
+                        skills: Immutable.List<SkillServiceSkill>, blacklisted: boolean) {
+        return this.id(id).qualifier(qualifier).categories(categories).skills(skills).blacklisted(blacklisted);
     }
 
     public static of(id: number, qualifier: string) {
-        return new SkillCategory(id, qualifier, Immutable.List<SkillCategory>(), Immutable.List<SkillServiceSkill>());
+        return new SkillCategory(id, qualifier, Immutable.List<SkillCategory>(), Immutable.List<SkillServiceSkill>(), false);
     }
 
     public static fromAPI(apiSkillCategory: APISkillCategory) {
-        return new SkillCategory(apiSkillCategory.id, apiSkillCategory.qualifier, Immutable.List<SkillCategory>(), Immutable.List<SkillServiceSkill>());
+        return new SkillCategory(apiSkillCategory.id, apiSkillCategory.qualifier, Immutable.List<SkillCategory>(),
+            Immutable.List<SkillServiceSkill>(), apiSkillCategory.blacklisted);
     }
 
     public containsChildCategory(childId: number): boolean {
         return this.categories().some((value, key, iter) => value.id() === childId);
+    }
+
+    public getIndex(childId: number): number {
+        return this.categories().findIndex((value, index, iter) => value.id() === childId);
     }
 
     public hasSkill(skill: SkillServiceSkill): boolean {
@@ -48,10 +57,16 @@ export class SkillCategory {
         }
     }
 
+
     public addCategoryToTree(parentId: number, category: SkillCategory): SkillCategory {
         let newCategories;
-        if(this.id() === parentId && !this.containsChildCategory(category.id())) {
-            newCategories = this.categories().push(category);
+        if(this.id() === parentId) {
+            let childIndex = this.getIndex(category.id());
+            if(childIndex === -1) {
+                newCategories = this.categories().push(category);
+            } else {
+                newCategories = this.categories().remove(childIndex).push(category);
+            }
         } else {
             newCategories = this.categories().map(child => child.addCategoryToTree(parentId, category));
         }

@@ -69,6 +69,10 @@ body {
   margin-bottom: 8px
 }
 
+.blacklisted-icon {
+  color: crimson !important;
+}
+
 .material-icons-custom {
   font-family: 'Material Icons';
   font-weight: normal;
@@ -92,4 +96,9 @@ body {
 
   /* Support for IE. */
   font-feature-settings: 'liga';
+}
+
+.sticky-top {
+  position: sticky;
+  top: 0;
 }
