@@ -107,7 +107,10 @@ export const de_locale : any = {
     "AdminClient.Overview.Skills": "Skill-Übersicht",
     "AdminClient.Overview.NameEntity": "Eintrags-Namen-Übersicht",
     "AdminClient.Info.SkillTree.Legend": "Legende",
+    "AdminClient.Info.SkillTree.Legend.Category": "Kategorie",
+    "AdminClient.Info.SkillTree.Legend.Skill": "Skill",
     "AdminClient.Info.SkillTree.Category.IsBlacklisted": "Auf der Blacklist",
+    "AdminClient.Info.SkillTree.Category.Localizations": "Lokalisierungen",
     "AdminClient.Infos.UsedSkills.UsedBy": "Skill benutzt von:",
     "AdminClient.Infos.UsedSkills.SkillHiearchy": "Skill-Hiearchie",
     "AdminClient.Infos.UsedSkills.SkillQualifier": "Name",
@@ -138,8 +141,13 @@ export const de_locale : any = {
     "ClusterInfo.Recommendations.Title": "Vorschläge",
     "ClusterInfo.Recommendations.Subtitle": "Berater in diesem Cluster konnten auch oft...",
     "Search.Consultant.BySkill.Label": "Im Profil enthaltene Skills",
-
-
+    "LocalizationTable.Title": "Lokalisierung Hinzufügen",
+    "LocalizationTable.Content.LocalesLinkName": "ISO 639-2 Ländercodes Online",
+    "LocalizationTable.Content.Description": "Lokalisierungen definieren Übersetzungen für den existierenden Bezeichner. " +
+                                             "Die Sprache muss hierfür als ISO 639-2 Ländercode angegeben werden.",
+    "LocalizationTable.Content.LocalizationRemarks": "Es besteht die Möglichkeit, Lokalisierungen zu Suchen",
+    "LocalizationTable.Input.Qualifier": "Lokalisierter Bezeichner",
+    "LocalizationTable.Input.Language": "ISO 639-2 Sprache",
 
 
 

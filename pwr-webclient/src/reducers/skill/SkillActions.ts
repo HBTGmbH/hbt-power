@@ -27,4 +27,12 @@ export namespace SkillActions {
         currentChoice: UnCategorizedSkillChoice;
     }
 
+    /**
+     * Actions that invokes an update of id, qualifier and localizations for a given category
+     * Children remain unchanged.
+     */
+    export interface PartiallyUpdateSkillCategoryAction extends AbstractAction {
+        skillCategory: SkillCategory;
+    }
+
 }

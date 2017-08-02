@@ -57,7 +57,7 @@ export class StatisticsReducer {
     }
 
     public static reduce(store: StatisticsStore, action: AbstractAction) : StatisticsStore {
-        console.log("Statistics Reducer called with action type " + ActionType[action.type]);
+        console.debug("Statistics Reducer called with action type " + ActionType[action.type]);
         if(isNullOrUndefined(store)) return StatisticsStore.createEmpty();
         switch(action.type) {
             case ActionType.ReceiveRelativeSkillUsageMetrics:

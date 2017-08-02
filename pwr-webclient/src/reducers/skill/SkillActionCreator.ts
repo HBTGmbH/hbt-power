@@ -2,14 +2,16 @@ import {APISkillCategory, SkillCategory} from '../../model/skill/SkillCategory';
 import {SkillActions} from './SkillActions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
-import {ApplicationState} from '../../Store';
+import {ApplicationState, RequestStatus} from '../../Store';
 import {
     deleteBlacklistCategory,
+    deleteLocaleFromCategory,
     getCategoryById,
     getCategoryChildrenByCategoryId,
     getRootCategoryIds,
     getSkillByName,
-    getSkillsForCategory
+    getSkillsForCategory,
+    postLocaleToCategory
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
@@ -18,6 +20,7 @@ import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
+import {AdminActionCreator} from '../admin/AdminActionCreator';
 
 
 export namespace SkillActionCreator {
@@ -27,6 +30,7 @@ export namespace SkillActionCreator {
     import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
     import Timer = NodeJS.Timer;
     import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
+    import PartiallyUpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -112,6 +116,13 @@ export namespace SkillActionCreator {
         }
     }
 
+    function PartiallyUpdateSkillCategory(skillCategory: SkillCategory): PartiallyUpdateSkillCategoryAction {
+        return {
+            type: ActionType.PartiallyUpdateSkillCategory,
+            skillCategory: skillCategory
+        }
+    }
+
     export function AsyncLoadChildrenIntoTree(parentId: number, currentDepth: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getCategoryChildrenByCategoryId(parentId)).then(function (response: AxiosResponse) {
@@ -126,7 +137,6 @@ export namespace SkillActionCreator {
     export function AsyncLoadRootChildrenIntoTree() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getRootCategoryIds()).then(function (response: AxiosResponse) {
-                console.log(response.data);
                 let categories: number[] = response.data;
                 categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 1)));
             }).catch(function (error: any) {
@@ -217,11 +227,47 @@ export namespace SkillActionCreator {
         }
     }
 
+    const partiallyUpdateCategory = (apiSkillCategory: APISkillCategory, dispatch: redux.Dispatch<ApplicationState>) => {
+        let skillCategory = SkillCategory.fromAPI(apiSkillCategory);
+        dispatch(PartiallyUpdateSkillCategory(skillCategory));
+        dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+    }
+
+    export function AsyncAddLocale(categoryId: number, locale: string, qualifier: string) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let config: AxiosRequestConfig = {
+                params: {
+                    lang: locale,
+                    qualifier: qualifier
+                }
+            };
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.post(postLocaleToCategory(categoryId), {}, config).then((response: AxiosResponse) => {
+                partiallyUpdateCategory(response.data, dispatch);
+            }).catch((error: AxiosError) => {
+                console.log(error);
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
+        }
+    }
+
+    export function AsyncDeleteLocale(categoryId: number, language: string) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.delete(deleteLocaleFromCategory(categoryId, language)).then((response: AxiosResponse) => {
+                partiallyUpdateCategory(response.data, dispatch);
+            }).catch((error: AxiosError) => {
+                console.log(error);
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
+        }
+    }
+
+
     export function AsyncProgressAddSkill() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state = getState().skillReducer;
             let step = state.currentAddSkillStep();
-            console.log("Step", step);
             // Simple state machine that defines how to progress from one state into another.
             // State progression is rather simple, for more, see AddSkillStep enum
             if(step === AddSkillStep.NONE) {

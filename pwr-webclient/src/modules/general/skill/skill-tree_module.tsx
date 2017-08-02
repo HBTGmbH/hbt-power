@@ -55,7 +55,6 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         onSkillSelect: () => {}
     };
 
-    // className={skillCategory.blacklisted() ? "blacklisted" : ""}
 
     private mapTo = (skillCategory: SkillCategory): JSX.Element => {
         return <ListItem
@@ -93,7 +92,6 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
     };
 
     private handleOnSelect = (e: any, v: string) => {
-        console.log(v);
         // Get the prefix
         let prefix = v.slice(0, 3);
         let id = Number.parseInt(v.slice(3, v.length));

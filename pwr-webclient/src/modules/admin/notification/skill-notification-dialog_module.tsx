@@ -296,14 +296,14 @@ class SkillNotificationModuleModule extends React.Component<
             displayLastStepper = true;
         }
         let steps = [
-            <Step>
+            <Step key="SkillNotDlg.Step0">
                 <StepLabel>Information Resolving</StepLabel>
             </Step>,
-            <Step>
+            <Step key="SkillNotDlg.Step1">
                 <StepLabel>Information</StepLabel>
             </Step>
         ];
-        if(displayLastStepper) steps.push(<Step>
+        if(displayLastStepper) steps.push(<Step key="SkillNotDlg.Step2">
             <StepLabel>Edit Skill</StepLabel>
         </Step>);
 
@@ -359,6 +359,7 @@ class SkillNotificationModuleModule extends React.Component<
         return (<Dialog
             open={this.props.status !== SkillNotificationEditStatus.CLOSED}
             actions={[<FlatButton
+                key="SkillNotDlg.CloseAndReset"
                 label="Cancel"
                 primary={true}
                 onTouchTap={this.props.closeAndReset}

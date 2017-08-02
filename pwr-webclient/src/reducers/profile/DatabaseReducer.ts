@@ -360,7 +360,7 @@ export class DatabaseReducer {
         if(isNullOrUndefined(state)) {
             state = InternalDatabase.createWithDefaults();
         }
-        console.log('DatabaseReducer called for action type ' + ActionType[action.type]);
+        console.debug('DatabaseReducer called for action type ' + ActionType[action.type]);
         switch(action.type) {
             case ActionType.ChangeAbstract: return DatabaseReducer.HandleChangeAbstract(state, action as ChangeStringValueAction);
             case ActionType.DeleteEntry: return DatabaseReducer.DeleteEntry(state, action as DeleteEntryAction);

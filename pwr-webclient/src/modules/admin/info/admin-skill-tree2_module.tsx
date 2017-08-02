@@ -9,6 +9,7 @@ import {SkillTree} from '../../general/skill/skill-tree_module';
 import {Checkbox, FontIcon, Paper, Subheader} from 'material-ui';
 import {InfoPaper} from '../../general/info-paper_module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {LocalizationTable} from '../../general/skill/localization-table_module';
 
 interface AdminSkillTree2Props {
     root: SkillCategory;
@@ -29,6 +30,8 @@ interface AdminSkillTree2Dispatch {
     loadSkillsForCategory(categoryId: number): void;
     whitelistCategory(categoryId: number): void;
     blacklistCategory(categoryId: number): void;
+    addLocalization(categoryId: number, language: string, qualifier: string): void;
+    deleteLocalization(categoryId: number, language: string): void;
 }
 
 class AdminSkillTree2Module extends React.Component<
@@ -63,6 +66,8 @@ class AdminSkillTree2Module extends React.Component<
             },
             whitelistCategory: categoryId => dispatch(SkillActionCreator.AsyncWhitelistCategory(categoryId)),
             blacklistCategory: categoryId => dispatch(SkillActionCreator.AsyncBlacklistCategory(categoryId)),
+            addLocalization: (categoryId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddLocale(categoryId, language, qualifier)),
+            deleteLocalization: (categoryId, language) => dispatch(SkillActionCreator.AsyncDeleteLocale(categoryId, language))
         }
     }
 
@@ -92,22 +97,34 @@ class AdminSkillTree2Module extends React.Component<
         }
     };
 
+    private handleAddLocale = (language: string, qualifier: string) => {
+        this.props.addLocalization(this.state.selectedCategoryId, language, qualifier);
+    };
+
+    private handleDeleteLocale = (language: string) => {
+        this.props.deleteLocalization(this.state.selectedCategoryId, language);
+    }
+
     private SkillInfo = () => {
         return <div/>
     };
 
     private CategoryInfo = () => {
-        console.log(this.state.selectedCategoryId);
         let selectedCategory = this.props.categoriesById.get(this.state.selectedCategoryId);
         return <div>
-            <Subheader style={{textAlign: "center"}}>{selectedCategory.qualifier()}</Subheader>
-            <div className="vertical-align">
-                <Checkbox
-                    label={PowerLocalize.get("AdminClient.Info.SkillTree.Category.IsBlacklisted")}
-                    checked={selectedCategory.blacklisted()}
-                    onCheck={this.handleCategoryBlacklistCheck}
-                />
-            </div>
+            <Subheader>{selectedCategory.qualifier()}</Subheader>
+            <Checkbox
+                style={{marginLeft: "16px"}}
+                label={PowerLocalize.get("AdminClient.Info.SkillTree.Category.IsBlacklisted")}
+                checked={selectedCategory.blacklisted()}
+                onCheck={this.handleCategoryBlacklistCheck}
+            />
+            <Subheader>{PowerLocalize.get("AdminClient.Info.SkillTree.Category.Localizations")}</Subheader>
+            <LocalizationTable
+                localizations={selectedCategory.qualifiers()}
+                onLocaleAdd={this.handleAddLocale}
+                onLocaleDelete={this.handleDeleteLocale}
+            />
         </div>
     };
 
@@ -119,7 +136,7 @@ class AdminSkillTree2Module extends React.Component<
         } else {
             return <this.CategoryInfo/>
         }
-    }
+    };
 
 
 
@@ -146,6 +163,7 @@ class AdminSkillTree2Module extends React.Component<
                             minHeight="100px"
                             title={PowerLocalize.get("AdminClient.Info.SkillTree.Legend")}
                             sticky={false}
+                            style={{paddingBottom: "16px"}}
                         >
                             <div style={{marginLeft: "8px"}}>
                                 <FontIcon
@@ -155,6 +173,24 @@ class AdminSkillTree2Module extends React.Component<
                                     warning
                                 </FontIcon>
                                 {PowerLocalize.get("AdminClient.Info.SkillTree.Category.IsBlacklisted")}
+                            </div>
+                            <div style={{marginLeft: "8px"}}>
+                                <FontIcon
+                                    className="material-icons"
+                                    style={{top: "6px", marginRight: "24px"}}
+                                >
+                                    label
+                                </FontIcon>
+                                {PowerLocalize.get("AdminClient.Info.SkillTree.Legend.Category")}
+                            </div>
+                            <div style={{marginLeft: "8px"}}>
+                                <FontIcon
+                                    className="material-icons"
+                                    style={{top: "6px", marginRight: "24px"}}
+                                >
+                                    label_outline
+                                </FontIcon>
+                                {PowerLocalize.get("AdminClient.Info.SkillTree.Legend.Skill")}
                             </div>
                         </InfoPaper>
                     </div>

@@ -12,6 +12,7 @@ export namespace SkillReducer {
     import ReadSkillHierarchyAction = SkillActions.ReadSkillHierarchyAction;
     import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
     import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
+    import PartiallyUpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if(!isNullOrUndefined(category)) {
@@ -35,6 +36,16 @@ export namespace SkillReducer {
     export function reduce(skillStore: SkillStore, action: AbstractAction): SkillStore {
         if(isNullOrUndefined(skillStore)) return SkillStore.empty();
         switch(action.type) {
+            case ActionType.PartiallyUpdateSkillCategory: {
+                let act = action as PartiallyUpdateSkillCategoryAction;
+                // First, update the map
+                let categoriesById = skillStore.categoriesById();
+                let category = categoriesById.get(act.skillCategory.id());
+                category = category.partialUpdate(act.skillCategory);
+                categoriesById = categoriesById.set(category.id(), category);
+                let root = skillStore.skillTreeRoot().updateCategoryInTree(act.skillCategory);
+                return skillStore.skillTreeRoot(root).categoriesById(categoriesById);
+            }
             case ActionType.AddCategoryToTree: {
                 let act = action as AddCategoryToTreeAction;
                 if(isNullOrUndefined(act.parentId)) {
