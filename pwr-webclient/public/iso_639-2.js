@@ -1,4 +1,4 @@
-{
+const ISO_639_2_DATA = {
 	"aar":
 	{
 		"int":["Afar"],

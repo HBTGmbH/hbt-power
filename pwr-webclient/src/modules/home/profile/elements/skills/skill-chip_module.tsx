@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import {Skill} from '../../../../../model/Skill';
-import {Chip, IconButton} from 'material-ui';
+import {Chip, FontIcon, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {StarRating} from '../../../../star-rating_module.';
 
@@ -55,6 +55,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                 key={"Skill."+ this.props.skill.id()}
                 style={this.props.style}
             >
+
                 {this.props.skill.name()}
                 <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
                 <IconButton  id={"Skill.Delete." + this.props.skill.id()}
@@ -64,7 +65,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                              iconClassName="material-icons"
                 >
                     delete</IconButton>
-                {this.props.skill.isNew() ? "New Skill": false}
+                {this.props.skill.isNew() ? <FontIcon className="material-icons">fiber_new</FontIcon>: false}
             </Chip>);
     }
 }
