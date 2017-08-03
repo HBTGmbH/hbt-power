@@ -13,6 +13,7 @@ export namespace SkillReducer {
     import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
     import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
     import PartiallyUpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
+    import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if(!isNullOrUndefined(category)) {
@@ -62,6 +63,12 @@ export namespace SkillReducer {
                 return skillStore
                     .skillTreeRoot(skillStore.skillTreeRoot().addSkillToTree(act.categoryId, act.toAdd))
                     .skillsById(map);
+            }
+            case ActionType.RemoveSkillCategory: {
+                let act = action as RemoveSkillCategoryAction;
+                let categoriesById = skillStore.categoriesById().delete(act.id);
+                let root = skillStore.skillTreeRoot().removeCategoryFromChildren(act.id);
+                return skillStore.skillTreeRoot(root).categoriesById(categoriesById);
             }
             case ActionType.ReadSkillHierarchy: {
                 let act = action as ReadSkillHierarchyAction;

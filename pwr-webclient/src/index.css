@@ -30,6 +30,10 @@ body {
   margin: 5px;
 }
 
+.mui-margin {
+  margin: 8px
+}
+
 .padding-8px {
   padding: 8px;
 }

@@ -5,13 +5,15 @@ import * as redux from 'redux';
 import {ApplicationState, RequestStatus} from '../../Store';
 import {
     deleteBlacklistCategory,
+    deleteCategory,
     deleteLocaleFromCategory,
     getCategoryById,
     getCategoryChildrenByCategoryId,
     getRootCategoryIds,
     getSkillByName,
     getSkillsForCategory,
-    postLocaleToCategory
+    postLocaleToCategory,
+    postNewCategory
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
@@ -31,6 +33,7 @@ export namespace SkillActionCreator {
     import Timer = NodeJS.Timer;
     import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
     import PartiallyUpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
+    import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -120,6 +123,13 @@ export namespace SkillActionCreator {
         return {
             type: ActionType.PartiallyUpdateSkillCategory,
             skillCategory: skillCategory
+        }
+    }
+
+    function RemoveSkillCategory(id: number): RemoveSkillCategoryAction {
+        return {
+            type: ActionType.RemoveSkillCategory,
+            id: id
         }
     }
 
@@ -262,6 +272,33 @@ export namespace SkillActionCreator {
             });
         }
     }
+
+    export function AsyncCreateCategory(qualifier: string, parentId: number) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let category: SkillCategory = SkillCategory.of(null, qualifier);
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.post(postNewCategory(parentId), category).then((response: AxiosResponse) => {
+                let data: APISkillCategory = response.data;
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                dispatch(AddCategoryToTree(parentId, SkillCategory.fromAPI(data)));
+            }).catch((error: AxiosError) => {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
+        }
+    }
+
+    export function AsyncDeleteCategory(categoryId: number) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.delete(deleteCategory(categoryId)).then((respone: AxiosResponse) => {
+                dispatch(RemoveSkillCategory(categoryId));
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+            }).catch((error: AxiosError) => {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            })
+        }
+    }
+
 
 
     export function AsyncProgressAddSkill() {

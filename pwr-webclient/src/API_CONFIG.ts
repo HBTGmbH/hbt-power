@@ -213,3 +213,11 @@ export function postLocaleToCategory(categoryId: number) {
 export function deleteLocaleFromCategory(categoryId: number, locale: string) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + categoryId + "/locale/" + locale;
 }
+
+export function postNewCategory(parentId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
+}
+
+export function deleteCategory(parentId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
+}

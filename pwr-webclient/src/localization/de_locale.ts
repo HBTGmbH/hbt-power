@@ -109,6 +109,7 @@ export const de_locale : any = {
     "AdminClient.Info.SkillTree.Legend": "Legende",
     "AdminClient.Info.SkillTree.Legend.Category": "Kategorie",
     "AdminClient.Info.SkillTree.Legend.Skill": "Skill",
+    "AdminClient.Info.SkillTree.Legend.OwnItem": "Eigens erstellt",
     "AdminClient.Info.SkillTree.Category.IsBlacklisted": "Auf der Blacklist",
     "AdminClient.Info.SkillTree.Category.Localizations": "Lokalisierungen",
     "AdminClient.Infos.UsedSkills.UsedBy": "Skill benutzt von:",
@@ -207,6 +208,10 @@ export const de_locale : any = {
     "Action.CreateNewConsultant": "Neuer Berater",
     "Action.Login": "Anmelden",
     "Action.Search": "Suchen",
+    "Action.AddCategory": "Kategorie Hinzufügen",
+    "Action.DeleteCategory": "Kategorie Löschen",
+    "Action.Yes": "Ja",
+    "Action.No": "Nein",
 
     // == Enum localizations == //
     "SkillEntry": "Skill",

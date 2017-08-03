@@ -1,5 +1,5 @@
 export namespace LanguageUtils {
-    const iso639_2data = require("./../resources/iso_639-2.json");
+    declare const ISO_639_2_DATA: any;
 
     interface _ISO639_2Data {
         int: string;
@@ -13,14 +13,14 @@ export namespace LanguageUtils {
     }
 
     export function getISO639_2LanguageCode(code: string): _ISO639_2Data {
-        return iso639_2data[code];
+        return ISO_639_2_DATA[code];
     }
 
     export function getAllISO639_2LanguageCodes(): Array<ISO639_2DataSet> {
-        let keys: Array<string> = Object.keys(iso639_2data);
+        let keys: Array<string> = Object.keys(ISO_639_2_DATA);
         let result: Array<ISO639_2DataSet> = [];
         keys.forEach((value, index, array) => {
-            let toAdd = Object.assign({code: value}, iso639_2data[value]);
+            let toAdd = Object.assign({code: value}, ISO_639_2_DATA[value]);
             result.push(toAdd);
         });
         return result;

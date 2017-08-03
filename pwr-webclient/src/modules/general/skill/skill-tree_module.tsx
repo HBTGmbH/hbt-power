@@ -57,6 +57,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
 
 
     private mapTo = (skillCategory: SkillCategory): JSX.Element => {
+        let secondIconMargin = (skillCategory.blacklisted() && skillCategory.isCustom()) ? "48px": "24px";
         return <ListItem
             key={skillCategory.qualifier()}
             value={SkillTree.CATEGORY_PREFIX + skillCategory.id().toString()}
@@ -70,7 +71,17 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
                 <FontIcon
                     className="material-icons blacklisted-icon"
                     style={{marginLeft: "24px", position: "absolute", top: "12px"}}
-                >warning</FontIcon>
+                >
+                    warning
+                </FontIcon>
+                : false}
+            {skillCategory.isCustom() ?
+                <FontIcon
+                    className="material-icons"
+                    style={{marginLeft: secondIconMargin, position: "absolute", top: "12px"}}
+                >
+                    extension
+                </FontIcon>
                 : false}
         </ListItem>;
     };

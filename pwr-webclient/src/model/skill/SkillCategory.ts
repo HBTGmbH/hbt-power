@@ -9,6 +9,7 @@ export interface APISkillCategory {
     qualifiers: [APILocalizedQualifier];
     category: APISkillCategory;
     blacklisted: boolean;
+    custom: boolean;
 }
 
 
@@ -26,11 +27,15 @@ export class SkillCategory {
 
     @doop public get blacklisted() {return doop<boolean, this>()};
 
+    @doop public get isCustom() {return doop<boolean, this>()};
+
     private constructor(id: number, qualifier: string,
                         qualifiers: Immutable.List<LocalizedQualifier>,
                         categories: Immutable.List<SkillCategory>,
-                        skills: Immutable.List<SkillServiceSkill>, blacklisted: boolean) {
-        return this.id(id).qualifier(qualifier).qualifiers(qualifiers).categories(categories).skills(skills).blacklisted(blacklisted);
+                        skills: Immutable.List<SkillServiceSkill>, blacklisted: boolean,
+                        isCustom: boolean) {
+        return this.id(id).qualifier(qualifier).qualifiers(qualifiers).categories(categories).skills(skills)
+            .blacklisted(blacklisted).isCustom(isCustom);
     }
 
     public static of(id: number, qualifier: string) {
@@ -38,7 +43,9 @@ export class SkillCategory {
             qualifier,
             Immutable.List<LocalizedQualifier>(),
             Immutable.List<SkillCategory>(),
-            Immutable.List<SkillServiceSkill>(), false);
+            Immutable.List<SkillServiceSkill>(),
+            false,
+            false);
     }
 
     public static fromAPI(apiSkillCategory: APISkillCategory) {
@@ -48,7 +55,8 @@ export class SkillCategory {
             Immutable.List<LocalizedQualifier>(qualifiers),
             Immutable.List<SkillCategory>(),
             Immutable.List<SkillServiceSkill>(),
-            apiSkillCategory.blacklisted);
+            apiSkillCategory.blacklisted,
+            apiSkillCategory.custom);
     }
 
     public containsChildCategory(childId: number): boolean {
@@ -100,5 +108,14 @@ export class SkillCategory {
             let newCategories = this.categories().map(child => child.updateCategoryInTree(child)).sort(Comparators.compareCategories);
             return this.categories(Immutable.List<SkillCategory>(newCategories));
         }
+    }
+
+    public removeCategoryFromChildren(categoryId: number): SkillCategory {
+        let children = Immutable.List<SkillCategory>(this.categories().filter(category => category.id() !== categoryId));
+        if(children.size !== this.categories().size) {
+            return this.categories(children);
+        }
+        let newCategories = this.categories().map(child => child.removeCategoryFromChildren(categoryId));
+        return this.categories(Immutable.List<SkillCategory>(newCategories));
     }
 }

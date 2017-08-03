@@ -35,4 +35,8 @@ export namespace SkillActions {
         skillCategory: SkillCategory;
     }
 
+    export interface RemoveSkillCategoryAction extends AbstractAction {
+        id: number;
+    }
+
 }

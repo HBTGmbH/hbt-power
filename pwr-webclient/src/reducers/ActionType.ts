@@ -98,6 +98,7 @@ export enum ActionType {
     ReadSkillHierarchy,
 
     PartiallyUpdateSkillCategory,
+    RemoveSkillCategory,
 
     SetCurrentSkillName,
     SetCurrentSkillRating,
