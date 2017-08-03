@@ -10,10 +10,12 @@ import {Checkbox, FontIcon, Paper, Subheader} from 'material-ui';
 import {InfoPaper} from '../../general/info-paper_module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LocalizationTable} from '../../general/skill/localization-table_module';
+import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';
 
 interface AdminSkillTree2Props {
     root: SkillCategory;
     categoriesById: Immutable.Map<number, SkillCategory>;
+    skillsById: Immutable.Map<number, SkillServiceSkill>;
 }
 
 interface AdminSkillTree2LocalProps {
@@ -54,7 +56,8 @@ class AdminSkillTree2Module extends React.Component<
     static mapStateToProps(state: ApplicationState, localProps: AdminSkillTree2LocalProps): AdminSkillTree2Props {
         return {
             root: state.skillReducer.skillTreeRoot(),
-            categoriesById: state.skillReducer.categoriesById()
+            categoriesById: state.skillReducer.categoriesById(),
+            skillsById: state.skillReducer.skillsById()
         }
     }
 
@@ -106,7 +109,11 @@ class AdminSkillTree2Module extends React.Component<
     }
 
     private SkillInfo = () => {
-        return <div/>
+        let selectedSkill = this.props.skillsById.get(this.state.selectedSkillId);
+
+        return <div>
+            <Subheader>{selectedSkill.qualifier()}</Subheader>
+        </div>
     };
 
     private CategoryInfo = () => {
@@ -122,6 +129,7 @@ class AdminSkillTree2Module extends React.Component<
             <Subheader>{PowerLocalize.get("AdminClient.Info.SkillTree.Category.Localizations")}</Subheader>
             <LocalizationTable
                 localizations={selectedCategory.qualifiers()}
+                termToLocalize={selectedCategory.qualifier()}
                 onLocaleAdd={this.handleAddLocale}
                 onLocaleDelete={this.handleDeleteLocale}
             />

@@ -21,6 +21,7 @@ import ISOData = LanguageUtils.ISO639_2DataSet;
 
 interface LocalizationTableProps {
     localizations: Immutable.List<LocalizedQualifier>;
+    termToLocalize: string;
     onLocaleAdd?(locale: string, qualifier: string): void;
     onLocaleDelete?(locale: string): void;
 }
@@ -125,7 +126,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                 <Dialog
                     open={this.state.addOpen}
                     onRequestClose={this.closeDialog}
-                    title={PowerLocalize.get('LocalizationTable.Title')}
+                    title={PowerLocalize.getFormatted('LocalizationTable.Title.Template', this.props.termToLocalize)}
                     actions={[
                         <FlatButton
                             primary={true}

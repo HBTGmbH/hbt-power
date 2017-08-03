@@ -3,6 +3,7 @@ import {SkillCategory} from './SkillCategory';
 import * as Immutable from 'immutable';
 import {AddSkillStep} from './AddSkillStep';
 import {UnCategorizedSkillChoice} from './UncategorizedSkillChoice';
+import {SkillServiceSkill} from './SkillServiceSkill';
 
 @doop
 export class SkillStore {
@@ -18,18 +19,19 @@ export class SkillStore {
      */
     @doop public get categoriesById() {return doop<Immutable.Map<number, SkillCategory>, this>()};
 
+
+    /**
+     * All categories that have been added to the skill tree are also stored here, referenced by ID
+     * @returns {Doop<Immutable.Map<number, SkillServiceSkill>, this>}
+     */
+    @doop public get skillsById() {return doop<Immutable.Map<number, SkillServiceSkill>, this>()};
+
     /**
      * Categories and their hierachy by skill name. Used to provide skill information.
      * @returns {Doop<Immutable.Map<string, string>, this>}
      */
     @doop public get categorieHierarchiesBySkillName() {return doop<Immutable.Map<string, string>, this>()};
 
-    /**
-     * Skill trees (personalized) per consultant. Maps initials to a skill category root.
-     * This skill tree needs to be u
-     * @returns {Doop<Immutable.Map<string, SkillCategory>, this>}
-
-    @doop public get personalizedSkillTrees() {return doop<Immutable.Map<string, SkillCategory>, this>()};*/
 
     // == The following refer to the create skill dialog == //
 
@@ -64,17 +66,21 @@ export class SkillStore {
     @doop public get noCategoryReason() {return doop<string, this>()};
 
 
-    private constructor(skillTreeRoot: SkillCategory, categorieHierarchiesBySkillName: Immutable.Map<string, string>,
+    private constructor(skillTreeRoot: SkillCategory,
+                        categorieHierarchiesBySkillName: Immutable.Map<string, string>,
+                        skillsById: Immutable.Map<number, SkillServiceSkill>,
                         currentAddSkillStep: AddSkillStep, currentSkillRating: number, currentSkillName: string,
                         currentChoice: UnCategorizedSkillChoice, skillComment: string, addSkillError: string,
                         noCategoryReason: string, categoriesById: Immutable.Map<number, SkillCategory>) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
-            .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById);
+            .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById);
     }
 
     public static empty() {
-        return new SkillStore(SkillCategory.of(-1, "root"), Immutable.Map<string, string>(), AddSkillStep.NONE, 1, "",
+        return new SkillStore(SkillCategory.of(-1, "root"), Immutable.Map<string, string>(),
+            Immutable.Map<number, SkillServiceSkill>(),
+            AddSkillStep.NONE, 1, "",
             UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>());
     }
 }

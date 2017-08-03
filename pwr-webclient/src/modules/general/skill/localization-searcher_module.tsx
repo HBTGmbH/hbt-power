@@ -82,7 +82,9 @@ export class LocalizationSearcher extends React.Component<LocalizationSearcherPr
         <Dialog
             open={this.props.open}
             onRequestClose={this.props.onRequestClose}
+            title={PowerLocalize.get("LocalizationSearcher.Title")}
         >
+            {PowerLocalize.get("LocalizationSearcher.Explanation")}
             <TextField
                 value={this.state.searchString}
                 onChange={this.handleSearchStringChange}

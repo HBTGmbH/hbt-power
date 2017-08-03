@@ -141,13 +141,16 @@ export const de_locale : any = {
     "ClusterInfo.Recommendations.Title": "Vorschläge",
     "ClusterInfo.Recommendations.Subtitle": "Berater in diesem Cluster konnten auch oft...",
     "Search.Consultant.BySkill.Label": "Im Profil enthaltene Skills",
-    "LocalizationTable.Title": "Lokalisierung Hinzufügen",
+    "LocalizationTable.Title.Template": "Lokalisierung für '{0}' Hinzufügen",
     "LocalizationTable.Content.LocalesLinkName": "ISO 639-2 Ländercodes Online",
     "LocalizationTable.Content.Description": "Lokalisierungen definieren Übersetzungen für den existierenden Bezeichner. " +
                                              "Die Sprache muss hierfür als ISO 639-2 Ländercode angegeben werden.",
     "LocalizationTable.Content.LocalizationRemarks": "Es besteht die Möglichkeit, Lokalisierungen zu Suchen",
     "LocalizationTable.Input.Qualifier": "Lokalisierter Bezeichner",
     "LocalizationTable.Input.Language": "ISO 639-2 Sprache",
+    "LocalizationSearcher.SearchString": "ISO-639-2 Durchsuchen",
+    "LocalizationSearcher.Title": "ISO-639-2 Sprache Suchen",
+    "LocalizationSearcher.Explanation": "Durch anklicken einer ISO-639-2 Sprache wird diese übernommen.",
 
 
 

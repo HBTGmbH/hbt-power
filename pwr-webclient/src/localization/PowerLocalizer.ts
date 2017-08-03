@@ -3,6 +3,7 @@
  */
 import {de_locale} from './de_locale';
 import {isNullOrUndefined} from 'util';
+import {formatString} from '../utils/StringUtil';
 
 /**
  * Quick localizer that localizes localizations. For localizing locales.
@@ -56,5 +57,10 @@ export class PowerLocalize {
         let val = this.localization[field];
         if(isNullOrUndefined(val)) return field + "_" + PowerLocalize.noLocalizationFound;
         return String(val);
+    }
+
+    public static getFormatted(field: string, ...args: string[]): string {
+        let val = PowerLocalize.get(field);
+        return formatString(val, ...args);
     }
 }

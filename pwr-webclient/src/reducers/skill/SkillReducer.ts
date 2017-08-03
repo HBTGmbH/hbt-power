@@ -57,7 +57,11 @@ export namespace SkillReducer {
             }
             case ActionType.AddSkillToTree: {
                 let act = action as AddSkillToTreeAction;
-                return skillStore.skillTreeRoot(skillStore.skillTreeRoot().addSkillToTree(act.categoryId, act.toAdd));
+                let map = skillStore.skillsById();
+                map = map.set(act.toAdd.id(), act.toAdd);
+                return skillStore
+                    .skillTreeRoot(skillStore.skillTreeRoot().addSkillToTree(act.categoryId, act.toAdd))
+                    .skillsById(map);
             }
             case ActionType.ReadSkillHierarchy: {
                 let act = action as ReadSkillHierarchyAction;
