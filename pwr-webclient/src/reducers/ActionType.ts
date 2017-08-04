@@ -97,7 +97,7 @@ export enum ActionType {
     AddSkillToTree,
     ReadSkillHierarchy,
 
-    PartiallyUpdateSkillCategory,
+    UpdateSkillCategory,
     RemoveSkillCategory,
 
     SetCurrentSkillName,

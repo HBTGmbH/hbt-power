@@ -1,7 +1,6 @@
 import * as Immutable from 'immutable';
 import {doop} from 'doop';
 import {SkillServiceSkill} from './SkillServiceSkill';
-import {Comparators} from '../../utils/Comparators';
 import {APILocalizedQualifier, LocalizedQualifier} from './LocalizedQualifier';
 export interface APISkillCategory {
     id: number;
@@ -57,65 +56,5 @@ export class SkillCategory {
             Immutable.List<SkillServiceSkill>(),
             apiSkillCategory.blacklisted,
             apiSkillCategory.custom);
-    }
-
-    public containsChildCategory(childId: number): boolean {
-        return this.categories().some((value, key, iter) => value.id() === childId);
-    }
-
-    public getIndex(childId: number): number {
-        return this.categories().findIndex((value, index, iter) => value.id() === childId);
-    }
-
-    public hasSkill(skill: SkillServiceSkill): boolean {
-        return this.skills().some(value => value.id() === skill.id());
-    }
-
-    public partialUpdate(category: SkillCategory): SkillCategory {
-        return this.blacklisted(category.blacklisted()).qualifiers(category.qualifiers()).qualifier(category.qualifier());
-    }
-
-    public addSkillToTree(categoryId: number, skill: SkillServiceSkill): SkillCategory {
-        if(categoryId === this.id() && !this.hasSkill(skill)) {
-            return this.skills(this.skills().push(skill));
-        } else {
-            let newCategories = this.categories().map(child => child.addSkillToTree(categoryId, skill)).sort(Comparators.compareCategories);
-            return this.categories(Immutable.List<SkillCategory>(newCategories));
-        }
-    }
-
-
-    public addCategoryToTree(parentId: number, category: SkillCategory): SkillCategory {
-        let newCategories;
-        if(this.id() === parentId) {
-            let childIndex = this.getIndex(category.id());
-            if(childIndex === -1) {
-                newCategories = this.categories().push(category);
-            } else {
-                newCategories = this.categories().remove(childIndex).push(category);
-            }
-        } else {
-            newCategories = this.categories().map(child => child.addCategoryToTree(parentId, category));
-        }
-        return this.categories(Immutable.List<SkillCategory>(newCategories.sort(Comparators.compareCategories)));
-    }
-
-
-    public updateCategoryInTree(categoryToUpdate: SkillCategory): SkillCategory {
-        if(this.id() === categoryToUpdate.id()) {
-            return this.partialUpdate(categoryToUpdate);
-        } else {
-            let newCategories = this.categories().map(child => child.updateCategoryInTree(child)).sort(Comparators.compareCategories);
-            return this.categories(Immutable.List<SkillCategory>(newCategories));
-        }
-    }
-
-    public removeCategoryFromChildren(categoryId: number): SkillCategory {
-        let children = Immutable.List<SkillCategory>(this.categories().filter(category => category.id() !== categoryId));
-        if(children.size !== this.categories().size) {
-            return this.categories(children);
-        }
-        let newCategories = this.categories().map(child => child.removeCategoryFromChildren(categoryId));
-        return this.categories(Immutable.List<SkillCategory>(newCategories));
     }
 }

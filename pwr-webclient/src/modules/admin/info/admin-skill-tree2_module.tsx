@@ -12,9 +12,10 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LocalizationTable} from '../../general/skill/localization-table_module';
 import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';
 import {CategoryDeleteConfirmation} from '../../general/skill/category-delete-confirmation_module';
+import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 
 interface AdminSkillTree2Props {
-    root: SkillCategory;
+    root: SkillTreeNode;
     categoriesById: Immutable.Map<number, SkillCategory>;
     skillsById: Immutable.Map<number, SkillServiceSkill>;
 }
@@ -264,6 +265,8 @@ class AdminSkillTree2Module extends React.Component<
                         onCategorySelect={this.handleCategorySelect}
                         onSkillSelect={this.handleSkillSelect}
                         expandOnClick={false}
+                        categoriesById={this.props.categoriesById}
+                        skillsById={this.props.skillsById}
                     />
                 </Paper>
                 <div className="col-md-4">

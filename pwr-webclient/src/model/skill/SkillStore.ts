@@ -4,6 +4,7 @@ import * as Immutable from 'immutable';
 import {AddSkillStep} from './AddSkillStep';
 import {UnCategorizedSkillChoice} from './UncategorizedSkillChoice';
 import {SkillServiceSkill} from './SkillServiceSkill';
+import {SkillTreeNode} from './SkillTreeNode';
 
 @doop
 export class SkillStore {
@@ -11,7 +12,7 @@ export class SkillStore {
      * Skill tree root for the global, large skill tree.
      * @returns {Doop<SkillCategory, this>}
      */
-    @doop public get skillTreeRoot() {return doop<SkillCategory, this>()};
+    @doop public get skillTreeRoot() {return doop<SkillTreeNode, this>()};
 
     /**
      * Flat map of all categories
@@ -66,7 +67,8 @@ export class SkillStore {
     @doop public get noCategoryReason() {return doop<string, this>()};
 
 
-    private constructor(skillTreeRoot: SkillCategory,
+
+    private constructor(skillTreeRoot: SkillTreeNode,
                         categorieHierarchiesBySkillName: Immutable.Map<string, string>,
                         skillsById: Immutable.Map<number, SkillServiceSkill>,
                         currentAddSkillStep: AddSkillStep, currentSkillRating: number, currentSkillName: string,
@@ -74,11 +76,11 @@ export class SkillStore {
                         noCategoryReason: string, categoriesById: Immutable.Map<number, SkillCategory>) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
-            .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById);
+            .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById)
     }
 
     public static empty() {
-        return new SkillStore(SkillCategory.of(-1, "root"), Immutable.Map<string, string>(),
+        return new SkillStore(SkillTreeNode.root(), Immutable.Map<string, string>(),
             Immutable.Map<number, SkillServiceSkill>(),
             AddSkillStep.NONE, 1, "",
             UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>());

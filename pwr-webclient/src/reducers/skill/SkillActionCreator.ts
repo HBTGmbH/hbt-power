@@ -33,7 +33,7 @@ export namespace SkillActionCreator {
     import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
     import Timer = NodeJS.Timer;
     import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
-    import PartiallyUpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
+    import UpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
     import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
@@ -106,7 +106,7 @@ export namespace SkillActionCreator {
         }
     }
 
-    function SetAddSkillError(text: string): ChangeStringValueAction {
+    export function SetAddSkillError(text: string): ChangeStringValueAction {
         return {
             type: ActionType.SetAddSkillError,
             value: text
@@ -120,9 +120,9 @@ export namespace SkillActionCreator {
         }
     }
 
-    function PartiallyUpdateSkillCategory(skillCategory: SkillCategory): PartiallyUpdateSkillCategoryAction {
+    function UpdateSkillCategory(skillCategory: SkillCategory): UpdateSkillCategoryAction {
         return {
-            type: ActionType.PartiallyUpdateSkillCategory,
+            type: ActionType.UpdateSkillCategory,
             skillCategory: skillCategory
         }
     }
@@ -134,35 +134,100 @@ export namespace SkillActionCreator {
         }
     }
 
+
+    let currentAPICalls = 0;
+
+    function beginAPICall(dispatch: redux.Dispatch<ApplicationState>) {
+        if(currentAPICalls === 0) {
+            console.log("Starting Pending");
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+        }
+        currentAPICalls++;
+       // dispatch(ChangeSkillRequestCount(true));
+    }
+
+    function succeedAPICall(dispatch: redux.Dispatch<ApplicationState>) {
+        currentAPICalls--;
+        console.log(currentAPICalls);
+        if(currentAPICalls === 0) {
+            console.log("Starting Successful");
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+        }
+    }
+
+    function failAPICall(dispatch: redux.Dispatch<ApplicationState>) {
+        currentAPICalls --;
+        if(currentAPICalls === 0) {
+            console.log("Starting Successful");
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+        }
+    }
+
+    function wrappedGetCall(uri: string,
+                            dispatch: redux.Dispatch<ApplicationState>,
+                            onSuccess: (response: AxiosResponse) => void,
+                            onError?: (error: AxiosError) => void,
+                            config?: AxiosRequestConfig) {
+        beginAPICall(dispatch);
+        axios.get(uri, config).then(function (response: AxiosResponse) {
+            succeedAPICall(dispatch);
+            onSuccess(response);
+        }).catch(function (error: any) {
+            failAPICall(dispatch);
+            onError(error);
+            console.log(error);
+        });
+    }
+
     export function AsyncLoadChildrenIntoTree(parentId: number, currentDepth: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getCategoryChildrenByCategoryId(parentId)).then(function (response: AxiosResponse) {
+            wrappedGetCall(getCategoryChildrenByCategoryId(parentId), dispatch, response => {
                 let data: number[] = response.data;
                 data.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(parentId, value, currentDepth - 1)));
-            }).catch(function (error: any) {
-                console.log(error);
             });
         };
     }
 
     export function AsyncLoadRootChildrenIntoTree() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
+            beginAPICall(dispatch);
             axios.get(getRootCategoryIds()).then(function (response: AxiosResponse) {
+                succeedAPICall(dispatch);
                 let categories: number[] = response.data;
                 categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 1)));
             }).catch(function (error: any) {
                 console.log(error);
+                failAPICall(dispatch);
             });
         };
     }
 
-    export function AsyncUpdateCategoryInTree(categoryId: number) {
+    function InvokeChildUpdate(categoryId: number, dispatch: redux.Dispatch<ApplicationState>) {
+        beginAPICall(dispatch);
+        axios.get(getCategoryChildrenByCategoryId(categoryId)).then(function (response: AxiosResponse) {
+            succeedAPICall(dispatch);
+            let data: number[] = response.data;
+            data.forEach((value, index, array) => dispatch(AsyncUpdateCategory(value, true)));
+        }).catch(function (error: any) {
+            console.log(error);
+            failAPICall(dispatch);
+        });
+    }
+
+    export function AsyncUpdateCategory(categoryId: number, fullRecursive?: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
+            let doRecursive: boolean = isNullOrUndefined(fullRecursive) ? false : fullRecursive;
+            beginAPICall(dispatch);
             axios.get(getCategoryById(categoryId)).then(function (response: AxiosResponse) {
+                succeedAPICall(dispatch);
                 let data: APISkillCategory = response.data;
                 let category = SkillCategory.fromAPI(data);
-                dispatch(PartiallyUpdateSkillCategory(category));
+                dispatch(UpdateSkillCategory(category));
+                if(doRecursive) {
+                    InvokeChildUpdate(categoryId, dispatch);
+                }
             }).catch(function (error: any) {
+                failAPICall(dispatch);
                 console.log(error);
             });
         };
@@ -170,9 +235,11 @@ export namespace SkillActionCreator {
 
     export function AsyncLoadCategoryIntoTree(parentId: number, id: number, remainingDepth: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
+            beginAPICall(dispatch);
             axios.get(getCategoryById(id)).then(function (response: AxiosResponse) {
                 let data: APISkillCategory = response.data;
                 let category = SkillCategory.fromAPI(data);
+                succeedAPICall(dispatch);
                 dispatch(AddCategoryToTree(parentId, category));
                 dispatch(AsyncLoadSkillsForCategory(category.id()));
                 if (remainingDepth > 0) {
@@ -180,6 +247,7 @@ export namespace SkillActionCreator {
                 }
 
             }).catch(function (error: any) {
+                failAPICall(dispatch);
                 console.log(error);
             });
         };
@@ -187,10 +255,13 @@ export namespace SkillActionCreator {
 
     export function AsyncLoadSkillsForCategory(categoryId: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
+            beginAPICall(dispatch);
             axios.get(getSkillsForCategory(categoryId)).then(function (response: AxiosResponse) {
+                succeedAPICall(dispatch);
                 let skills: Array<APISkillServiceSkill> = response.data;
                 skills.forEach(apiSkill => dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(apiSkill))));
             }).catch(function (error: any) {
+                failAPICall(dispatch);
                 console.log(error);
             });
         };
@@ -201,9 +272,12 @@ export namespace SkillActionCreator {
             let state = getState();
             if (!state.skillReducer.categorieHierarchiesBySkillName().has(skillName)) {
                 let config: AxiosRequestConfig = {params: {qualifier: skillName}};
+                beginAPICall(dispatch);
                 axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
+                    succeedAPICall(dispatch);
                     dispatch(ReadSkillHierarchy(response.data));
                 }).catch(function (error: any) {
+                    failAPICall(dispatch);
                     console.error(error);
                 });
             }
@@ -218,16 +292,17 @@ export namespace SkillActionCreator {
      */
     export function AsyncWhitelistCategory(categoryId: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            beginAPICall(dispatch);
             axios.delete(deleteBlacklistCategory(categoryId)).then((response: AxiosResponse) => {
                 let apiCategory: APISkillCategory = response.data;
                 let parentId: number = null;
                 if(!isNullOrUndefined(apiCategory.category)) {
                     parentId = apiCategory.category.id;
                 }
-                //dispatch(AddCategoryToTree(null, SkillCategory.fromAPI(apiCategory)));
-                dispatch(AsyncLoadCategoryIntoTree(parentId, apiCategory.id, 1));
-                dispatch(AsyncLoadSkillsForCategory(categoryId));
+                succeedAPICall(dispatch);
+                dispatch(AsyncUpdateCategory(categoryId, true));
             }).catch((error: AxiosError) => {
+                failAPICall(dispatch);
                 console.log(error);
             });
         }
@@ -235,26 +310,28 @@ export namespace SkillActionCreator {
 
     export function AsyncBlacklistCategory(categoryId: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            beginAPICall(dispatch);
             axios.post(deleteBlacklistCategory(categoryId)).then((response: AxiosResponse) => {
                 let apiCategory: APISkillCategory = response.data;
                 let parentId: number = null;
                 if(!isNullOrUndefined(apiCategory.category)) {
                     parentId = apiCategory.category.id;
                 }
-                //dispatch(AddCategoryToTree(null, SkillCategory.fromAPI(apiCategory)));
-                dispatch(AsyncLoadCategoryIntoTree(parentId, apiCategory.id, 1));
-                dispatch(AsyncLoadSkillsForCategory(categoryId));
+                succeedAPICall(dispatch);
+                dispatch(AsyncUpdateCategory(categoryId, true));
             }).catch((error: AxiosError) => {
+                failAPICall(dispatch);
                 console.log(error);
             });
         }
     }
 
-    const partiallyUpdateCategory = (apiSkillCategory: APISkillCategory, dispatch: redux.Dispatch<ApplicationState>) => {
+    const invokeCategoryUpdate = (apiSkillCategory: APISkillCategory, dispatch: redux.Dispatch<ApplicationState>) => {
         let skillCategory = SkillCategory.fromAPI(apiSkillCategory);
-        dispatch(PartiallyUpdateSkillCategory(skillCategory));
+        succeedAPICall(dispatch);
+        dispatch(UpdateSkillCategory(skillCategory));
         dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-    }
+    };
 
     export function AsyncAddLocale(categoryId: number, locale: string, qualifier: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
@@ -264,24 +341,24 @@ export namespace SkillActionCreator {
                     qualifier: qualifier
                 }
             };
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            beginAPICall(dispatch);
             axios.post(postLocaleToCategory(categoryId), {}, config).then((response: AxiosResponse) => {
-                partiallyUpdateCategory(response.data, dispatch);
+                invokeCategoryUpdate(response.data, dispatch);
             }).catch((error: AxiosError) => {
                 console.log(error);
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+                failAPICall(dispatch);
             });
         }
     }
 
     export function AsyncDeleteLocale(categoryId: number, language: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            beginAPICall(dispatch);
             axios.delete(deleteLocaleFromCategory(categoryId, language)).then((response: AxiosResponse) => {
-                partiallyUpdateCategory(response.data, dispatch);
+                invokeCategoryUpdate(response.data, dispatch);
             }).catch((error: AxiosError) => {
                 console.log(error);
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+                failAPICall(dispatch);
             });
         }
     }
@@ -289,38 +366,38 @@ export namespace SkillActionCreator {
     export function AsyncCreateCategory(qualifier: string, parentId: number) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let category: SkillCategory = SkillCategory.of(null, qualifier);
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            beginAPICall(dispatch);
             axios.post(postNewCategory(parentId), category).then((response: AxiosResponse) => {
                 let data: APISkillCategory = response.data;
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                succeedAPICall(dispatch);
                 dispatch(AddCategoryToTree(parentId, SkillCategory.fromAPI(data)));
             }).catch((error: AxiosError) => {
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+                failAPICall(dispatch);
             });
         }
     }
 
     export function AsyncDeleteCategory(categoryId: number) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            beginAPICall(dispatch);
             axios.delete(deleteCategory(categoryId)).then((respone: AxiosResponse) => {
                 dispatch(RemoveSkillCategory(categoryId));
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                succeedAPICall(dispatch);
             }).catch((error: AxiosError) => {
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+                failAPICall(dispatch);
             })
         }
     }
 
     export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            beginAPICall(dispatch);
             axios.patch(patchMoveSkill(skillId, newCategoryId)).then((response: AxiosResponse) => {
-                dispatch(AsyncUpdateCategoryInTree(oldCategoryId));
-                dispatch(AsyncUpdateCategoryInTree(newCategoryId));
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+                dispatch(AsyncUpdateCategory(oldCategoryId, true));
+                dispatch(AsyncUpdateCategory(newCategoryId, true));
+                succeedAPICall(dispatch);
             }).catch((error: AxiosError) => {
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+                failAPICall(dispatch);
             });
         }
     }
