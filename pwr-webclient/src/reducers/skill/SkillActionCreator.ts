@@ -12,6 +12,7 @@ import {
     getRootCategoryIds,
     getSkillByName,
     getSkillsForCategory,
+    patchMoveSkill,
     postLocaleToCategory,
     postNewCategory
 } from '../../API_CONFIG';
@@ -149,6 +150,18 @@ export namespace SkillActionCreator {
             axios.get(getRootCategoryIds()).then(function (response: AxiosResponse) {
                 let categories: number[] = response.data;
                 categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 1)));
+            }).catch(function (error: any) {
+                console.log(error);
+            });
+        };
+    }
+
+    export function AsyncUpdateCategoryInTree(categoryId: number) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            axios.get(getCategoryById(categoryId)).then(function (response: AxiosResponse) {
+                let data: APISkillCategory = response.data;
+                let category = SkillCategory.fromAPI(data);
+                dispatch(PartiallyUpdateSkillCategory(category));
             }).catch(function (error: any) {
                 console.log(error);
             });
@@ -296,6 +309,19 @@ export namespace SkillActionCreator {
             }).catch((error: AxiosError) => {
                 dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
             })
+        }
+    }
+
+    export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.patch(patchMoveSkill(skillId, newCategoryId)).then((response: AxiosResponse) => {
+                dispatch(AsyncUpdateCategoryInTree(oldCategoryId));
+                dispatch(AsyncUpdateCategoryInTree(newCategoryId));
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+            }).catch((error: AxiosError) => {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            });
         }
     }
 

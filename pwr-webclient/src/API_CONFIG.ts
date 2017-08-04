@@ -221,3 +221,7 @@ export function postNewCategory(parentId: number) {
 export function deleteCategory(parentId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
 }
+
+export function patchMoveSkill(skillId: number, newCategoryId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId + "/category/" + newCategoryId;
+}

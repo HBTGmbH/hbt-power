@@ -45,9 +45,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         this.props.onDelete(this.props.skill.id())
     };
 
-    private showInfo = () => {
-
-    };
+    private showInfo = () => { };
 
     render() {
         return (
@@ -55,7 +53,6 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                 key={"Skill."+ this.props.skill.id()}
                 style={this.props.style}
             >
-
                 {this.props.skill.name()}
                 <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
                 <IconButton  id={"Skill.Delete." + this.props.skill.id()}
