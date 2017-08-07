@@ -218,6 +218,14 @@ export function postNewCategory(parentId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
 }
 
+export function postNewSkill(categoryId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/category/" + categoryId;
+}
+
+export function deleteCustomSkill(skillId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId;
+}
+
 export function deleteCategory(parentId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
 }

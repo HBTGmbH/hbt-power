@@ -67,6 +67,13 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         onSkillSelect: () => {}
     };
 
+    private static CustomIcon = (props: {secondIconMargin: string}) => <FontIcon
+            className="material-icons"
+            style={{marginLeft: props.secondIconMargin, position: "absolute", top: "12px"}}
+        >
+            extension
+        </FontIcon>;
+
 
     private mapTo = (skillTreeNode: SkillTreeNode): JSX.Element => {
         let skillCategory = this.props.categoriesById.get(skillTreeNode.skillCategoryId());
@@ -88,14 +95,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
                     warning
                 </FontIcon>
                 : false}
-            {skillCategory.isCustom() ?
-                <FontIcon
-                    className="material-icons"
-                    style={{marginLeft: secondIconMargin, position: "absolute", top: "12px"}}
-                >
-                    extension
-                </FontIcon>
-                : false}
+            {skillCategory.isCustom() ? <SkillTree.CustomIcon secondIconMargin={secondIconMargin}/> : false}
         </ListItem>;
     };
 
@@ -107,6 +107,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             leftIcon={<FontIcon className="material-icons">label_outline</FontIcon>}
         >
             {skill.qualifier()}
+            {skill.isCustom() ? <SkillTree.CustomIcon secondIconMargin={"24px"}/> : false}
         </ListItem>;
     };
 

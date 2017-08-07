@@ -112,6 +112,8 @@ export const de_locale : any = {
     "AdminClient.Info.SkillTree.Legend.OwnItem": "Eigens erstellt",
     "AdminClient.Info.SkillTree.Category.IsBlacklisted": "Auf der Blacklist",
     "AdminClient.Info.SkillTree.Category.Localizations": "Lokalisierungen",
+    "AdminClient.Info.SkillTree.NewCategory.Name": "Kategorie-Name",
+    "AdminClient.Info.SkillTree.NewSkill.Name": "Skill-Name",
     "AdminClient.Infos.UsedSkills.UsedBy": "Skill benutzt von:",
     "AdminClient.Infos.UsedSkills.SkillHiearchy": "Skill-Hiearchie",
     "AdminClient.Infos.UsedSkills.SkillQualifier": "Name",
@@ -210,6 +212,9 @@ export const de_locale : any = {
     "Action.Search": "Suchen",
     "Action.AddCategory": "Kategorie Hinzufügen",
     "Action.DeleteCategory": "Kategorie Löschen",
+    "Action.ChangeCategory": "Kategorie Ändern",
+    "Action.DeleteSkill": "Skill löschen",
+    "Action.AddSkillToCategory": "Skill hinzufügen",
     "Action.Yes": "Ja",
     "Action.No": "Nein",
 

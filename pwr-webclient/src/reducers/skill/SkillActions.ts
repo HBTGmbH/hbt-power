@@ -45,4 +45,8 @@ export namespace SkillActions {
         skillId: number;
     }
 
+    export interface RemoveSkillAction extends AbstractAction {
+        skillId: number;
+    }
+
 }
