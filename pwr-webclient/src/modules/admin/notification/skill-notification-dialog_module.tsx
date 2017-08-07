@@ -18,6 +18,7 @@ import {isNullOrUndefined} from 'util';
 import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAction';
 import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import {SkillSearcher} from '../../general/skill-search_module';
+import {AdminNotificationReason} from '../../../model/admin/AdminNotificationReason';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
@@ -30,6 +31,7 @@ interface SkillNotificationModuleProps {
     skillName: string;
     initials: string;
     newName: string;
+    reason: AdminNotificationReason;
 }
 
 interface SkillNotificationModuleLocalProps {
@@ -67,11 +69,13 @@ class SkillNotificationModuleModule extends React.Component<
         let skillName = '';
         let initials = "";
         let newName = "";
+        let reason = undefined;
         if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
             comment = state.adminReducer.selectedSkillNotification().skill().comment();
             skillName = state.adminReducer.selectedSkillNotification().skill().name();
             initials = state.adminReducer.selectedSkillNotification().adminNotification().initials();
             newName = state.adminReducer.selectedSkillNotification().newName()
+            reason = state.adminReducer.selectedSkillNotification().adminNotification().reason();
         }
 
         return {
@@ -84,7 +88,8 @@ class SkillNotificationModuleModule extends React.Component<
             comment: comment,
             skillName: skillName,
             initials: initials,
-            newName: newName
+            newName: newName,
+            reason: reason
         };
     }
 
@@ -119,10 +124,18 @@ class SkillNotificationModuleModule extends React.Component<
 
     private SkillInfo = () => {
         return <div>
-            <p>
-                The previously unknown skill <strong>{this.props.skillName}</strong> was added to the profile
-                of <strong>{this.props.initials}</strong>.
-            </p>
+            {
+                this.props.reason === AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN ?
+                    <p>
+                        The previously unknown skill <strong>{this.props.skillName}</strong> was added to the profile
+                        of <strong>{this.props.initials}</strong>.
+                    </p>
+                :
+                    <p>
+                        The skill <strong>{this.props.skillName}</strong> was added to the profile
+                        of <strong>{this.props.initials}</strong> but the category is blacklisted.
+                    </p>
+            }
             {
                 !isNullOrUndefined(this.props.comment) ? <p>A comment was provided: {this.props.comment}</p> : false
             }

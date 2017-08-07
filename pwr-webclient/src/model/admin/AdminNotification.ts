@@ -1,5 +1,6 @@
 import {doop} from 'doop';
 import {ProfileEntryNotification} from './ProfileEntryNotification';
+import {AdminNotificationReason, AdminNotificationReasonUtil} from './AdminNotificationReason';
 /**
  * Everything that can be returned by the API. Includes multiple types of Admin notification discriminated by
  * their type.
@@ -23,7 +24,7 @@ export class AdminNotification {
 
     @doop public get id() {return doop<number, this>()};
     @doop public get initials() {return doop<string, this>()};
-    @doop public get reason()  {return doop<string, this>()};
+    @doop public get reason()  {return doop<AdminNotificationReason, this>()};
 
     /**
      * The date on which the notification occured.
@@ -35,7 +36,7 @@ export class AdminNotification {
 
     protected constructor(id: number,
                         initials: string,
-                        reason: string,
+                        reason: AdminNotificationReason,
                         occurrence: Date,
                         type: string,) {
         return this.id(id)
@@ -45,19 +46,24 @@ export class AdminNotification {
             .type(type);
     }
 
-    public static of(id: number, initials: string, reason: string, occurence: Date, type: string) {
+    public static of(id: number, initials: string, reason: AdminNotificationReason, occurence: Date, type: string) {
         return new AdminNotification(id, initials, reason, occurence, type);
     }
 
     public static fromAPI(apiAdminNotification: APIAdminNotification): AdminNotification {
-        return new AdminNotification(apiAdminNotification.id, apiAdminNotification.initials, apiAdminNotification.reason, new Date(apiAdminNotification.occurrence), apiAdminNotification.type);
+        return new AdminNotification(
+            apiAdminNotification.id,
+            apiAdminNotification.initials,
+            AdminNotificationReasonUtil.fromString(apiAdminNotification.reason),
+            new Date(apiAdminNotification.occurrence),
+            apiAdminNotification.type);
     }
 
     public toApi() : APIAdminNotification {
         return {
             id: this.id(),
             initials: this.initials(),
-            reason: this.reason(),
+            reason: AdminNotificationReason[this.reason()],
             occurrence: this.occurrence().toISOString(),
             type: this.type()
         }
