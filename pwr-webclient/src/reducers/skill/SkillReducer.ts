@@ -6,6 +6,7 @@ import {SkillActions} from './SkillActions';
 import {APISkillCategory} from '../../model/skill/SkillCategory';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
+import {SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 export namespace SkillReducer {
     import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;
     import AddSkillToTreeAction = SkillActions.AddSkillToTreeAction;
@@ -16,6 +17,7 @@ export namespace SkillReducer {
     import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
     import MoveSkillAction = SkillActions.MoveSkillAction;
     import RemoveSkillServiceSkillAction = SkillActions.RemoveSkillAction;
+    import AddProfileOnlySkillAction = SkillActions.AddProfileOnlySkillAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if(!isNullOrUndefined(category)) {
@@ -34,6 +36,20 @@ export namespace SkillReducer {
         return skillStore.currentChoice(UnCategorizedSkillChoice.PROCEED_WITH_COMMENT)
             .addSkillError(null).skillComment("").currentSkillName("").currentSkillRating(1)
             .currentAddSkillStep(AddSkillStep.NONE)
+    }
+
+    /**
+     * Updates all resources in the {@link SkillStore} that reference the skill and returns the
+     * new {@link SkillStore}
+     * @param skillStore to update
+     * @param skill updated skill
+     * @returns {SkillStore} as a copy of the original SkillStore
+     */
+    function addOrUpdateSkill(skillStore: SkillStore, skill: SkillServiceSkill) {
+        let skillsById = skillStore.skillsById().set(skill.id(), skill);
+        let skillsByQualifier = skillStore.skillsByQualifier().set(skill.qualifier(), skill);
+
+        return skillStore.skillsByQualifier(skillsByQualifier).skillsById(skillsById);
     }
 
     export function reduce(skillStore: SkillStore, action: AbstractAction): SkillStore {
@@ -55,35 +71,32 @@ export namespace SkillReducer {
                 map = map.set(act.toAdd.id(), act.toAdd);
                 return skillStore.skillTreeRoot(skillStore.skillTreeRoot().addCategoryToTree(act.parentId, act.toAdd, map)).categoriesById(map);
             }
-            case ActionType.AddSkillToTree: {
-                let act = action as AddSkillToTreeAction;
-                let map = skillStore.skillsById();
-                map = map.set(act.toAdd.id(), act.toAdd);
-                return skillStore
-                    .skillTreeRoot(skillStore.skillTreeRoot().addSkillToTree(act.categoryId, act.toAdd))
-                    .skillsById(map);
-            }
             case ActionType.RemoveSkillCategory: {
                 let act = action as RemoveSkillCategoryAction;
                 let categoriesById = skillStore.categoriesById().delete(act.id);
                 let root = skillStore.skillTreeRoot().removeCategoryFromChildren(act.id);
                 return skillStore.skillTreeRoot(root).categoriesById(categoriesById);
             }
+            case ActionType.AddSkillToTree: {
+                let act = action as AddSkillToTreeAction;
+                let root = skillStore.skillTreeRoot().addSkillToTree(act.categoryId, act.toAdd);
+                let store =  addOrUpdateSkill(skillStore, act.toAdd).skillTreeRoot(root);
+                return store;
+            }
             case ActionType.MoveSkill: {
                 let act = action as MoveSkillAction;
                 let root = skillStore.skillTreeRoot().removeSkillFromTree(act.originCategoryId, act.skillId);
-                let skillsById = skillStore.skillsById();
-                let skill = skillsById.get(act.skillId).categoryId(act.targetCategoryId);
-                skillsById = skillsById.set(skill.id(), skill);
+                let skill = skillStore.skillsById().get(act.skillId).categoryId(act.targetCategoryId);
                 root = root.addSkillIdToTree(act.targetCategoryId, act.skillId);
-                return skillStore.skillTreeRoot(root).skillsById(skillsById);
+                return addOrUpdateSkill(skillStore, skill).skillTreeRoot(root);
+
+                //return skillStore.skillTreeRoot(root).skillsById(skillsById);
             }
             case ActionType.RemoveSkillServiceSkill: {
                 let act = action as RemoveSkillServiceSkillAction;
                 let skill = skillStore.skillsById().get(act.skillId)
-                let skillsById = skillStore.skillsById().remove(act.skillId);
                 let root = skillStore.skillTreeRoot().removeSkillFromTree(skill.categoryId(), skill.id());
-                return skillStore.skillTreeRoot(root).skillsById(skillsById);
+                return addOrUpdateSkill(skillStore, skill).skillTreeRoot(root);
             }
             case ActionType.ReadSkillHierarchy: {
                 let act = action as ReadSkillHierarchyAction;
@@ -93,6 +106,11 @@ export namespace SkillReducer {
                     return skillStore.categorieHierarchiesBySkillName(map);
                 }
                 return skillStore;
+            }
+            case ActionType.AddProfileOnlySkill: {
+                let act = action as AddProfileOnlySkillAction;
+                let profileOnlySkillQualifiers = skillStore.profileOnlySkillQualifiers().add(act.skillName);
+                return skillStore.profileOnlySkillQualifiers(profileOnlySkillQualifiers);
             }
             case ActionType.SetCurrentSkillName: {
                 let act = action as ChangeStringValueAction;

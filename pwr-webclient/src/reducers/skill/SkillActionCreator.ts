@@ -39,6 +39,7 @@ export namespace SkillActionCreator {
     import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
     import MoveSkillAction = SkillActions.MoveSkillAction;
     import RemoveSkillAction = SkillActions.RemoveSkillAction;
+    import AddProfileOnlySkillAction = SkillActions.AddProfileOnlySkillAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -151,6 +152,13 @@ export namespace SkillActionCreator {
         return {
             type: ActionType.RemoveSkillServiceSkill,
             skillId: skillId
+        }
+    }
+
+    function AddProfileOnlySkill(name: string): AddProfileOnlySkillAction {
+        return {
+            type: ActionType.AddProfileOnlySkill,
+            skillName: name
         }
     }
 
@@ -392,31 +400,7 @@ export namespace SkillActionCreator {
         }
     }
 
-    export function AsyncCreateSkill(qualifier: string, categoryId: number) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let skill: SkillServiceSkill = SkillServiceSkill.forQualifier(qualifier);
-            beginAPICall(dispatch);
-            axios.post(postNewSkill(categoryId), skill).then((response: AxiosResponse) => {
-                let data: APISkillServiceSkill = response.data;
-                succeedAPICall(dispatch);
-                dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(data)));
-            }).catch((error: AxiosError) => {
-                failAPICall(dispatch);
-            });
-        }
-    }
 
-    export function AsyncDeleteSkill(skillId: number) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            beginAPICall(dispatch);
-            axios.delete(deleteCustomSkill(skillId)).then((response: AxiosResponse) => {
-                dispatch(RemoveSkill(skillId));
-                succeedAPICall(dispatch);
-            }).catch((error: AxiosError) => {
-                failAPICall(dispatch);
-            })
-        }
-    }
 
     export function AsyncDeleteCategory(categoryId: number) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
@@ -430,17 +414,82 @@ export namespace SkillActionCreator {
         }
     }
 
-    export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            beginAPICall(dispatch);
-            axios.patch(patchMoveSkill(skillId, newCategoryId)).then((response: AxiosResponse) => {
-                //dispatch(AsyncUpdateCategory(oldCategoryId, true));
-                //dispatch(AsyncUpdateCategory(newCategoryId, true));
-                dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId));
-                succeedAPICall(dispatch);
-            }).catch((error: AxiosError) => {
-                failAPICall(dispatch);
-            });
+
+
+    export namespace Skill {
+
+        /**
+         * Retrieves a {@link SkillServiceSkill} from the skill service and adds it to the {@link SkillStore}.
+         *
+         * If the skill is already present, no operation is performed.
+         *
+         * @param qualifier of the skill to be retrieved
+         * @param force forces a retrieval of the skill even if it is already loaded (Can be used to perform an update operation). Default: false
+         * @constructor
+         */
+        export function AsyncGetSkillByName(qualifier: string, force?: boolean) {
+            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                if(!isNullOrUndefined(force)) {
+                    force = false;
+                }
+                if(!getState().skillReducer.skillWithQualifierExists(qualifier)) {
+                    beginAPICall(dispatch);
+                    let config: AxiosRequestConfig = {params: {qualifier: qualifier}};
+                    axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
+                        if(response.status === 200) {
+                            let data: APISkillServiceSkill = response.data;
+                            let skill: SkillServiceSkill = SkillServiceSkill.fromAPI(data);
+                            dispatch(AddSkillToTree(skill.categoryId(), skill));
+                        } else {
+                            dispatch(AddProfileOnlySkill(qualifier));
+                        }
+                        succeedAPICall(dispatch);
+                    }).catch((error: AxiosError) => {
+                        console.error(error);
+                        failAPICall(dispatch);
+                    });
+                }
+            }
+        }
+
+        export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
+            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                beginAPICall(dispatch);
+                axios.patch(patchMoveSkill(skillId, newCategoryId)).then((response: AxiosResponse) => {
+                    //dispatch(AsyncUpdateCategory(oldCategoryId, true));
+                    //dispatch(AsyncUpdateCategory(newCategoryId, true));
+                    dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId));
+                    succeedAPICall(dispatch);
+                }).catch((error: AxiosError) => {
+                    failAPICall(dispatch);
+                });
+            }
+        }
+
+        export function AsyncCreateSkill(qualifier: string, categoryId: number) {
+            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                let skill: SkillServiceSkill = SkillServiceSkill.forQualifier(qualifier);
+                beginAPICall(dispatch);
+                axios.post(postNewSkill(categoryId), skill).then((response: AxiosResponse) => {
+                    let data: APISkillServiceSkill = response.data;
+                    succeedAPICall(dispatch);
+                    dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(data)));
+                }).catch((error: AxiosError) => {
+                    failAPICall(dispatch);
+                });
+            }
+        }
+
+        export function AsyncDeleteSkill(skillId: number) {
+            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                beginAPICall(dispatch);
+                axios.delete(deleteCustomSkill(skillId)).then((response: AxiosResponse) => {
+                    dispatch(RemoveSkill(skillId));
+                    succeedAPICall(dispatch);
+                }).catch((error: AxiosError) => {
+                    failAPICall(dispatch);
+                })
+            }
         }
     }
 

@@ -49,4 +49,8 @@ export namespace SkillActions {
         skillId: number;
     }
 
+    export interface AddProfileOnlySkillAction extends AbstractAction {
+        skillName: string;
+    }
+
 }

@@ -17,6 +17,7 @@ import {StarRating} from '../../../../star-rating_module.';
 interface SkillChipLocalProps {
     skill: Skill;
     style?: CSSProperties;
+    className?: string;
     onRatingChange(newRating: number, id: string): void;
     onDelete(id: string): void;
 }
@@ -31,11 +32,6 @@ interface SkillChipLocalState {
 }
 
 export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLocalState> {
-
-
-
-
-
 
     private handleRatingChange = (pos: number) => {
         this.props.onRatingChange(pos, this.props.skill.id());
@@ -52,6 +48,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
             <Chip
                 key={"Skill."+ this.props.skill.id()}
                 style={this.props.style}
+                className={this.props.className}
             >
                 {this.props.skill.name()}
                 <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>

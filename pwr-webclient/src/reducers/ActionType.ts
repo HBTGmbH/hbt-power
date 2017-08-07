@@ -101,6 +101,7 @@ export enum ActionType {
     RemoveSkillCategory,
     MoveSkill,
     RemoveSkillServiceSkill,
+    AddProfileOnlySkill,
 
     SetCurrentSkillName,
     SetCurrentSkillRating,

@@ -6,6 +6,9 @@ import {UnCategorizedSkillChoice} from './UncategorizedSkillChoice';
 import {SkillServiceSkill} from './SkillServiceSkill';
 import {SkillTreeNode} from './SkillTreeNode';
 
+/**
+ * Replication of the skill service data; Stores skill service data in various forms.
+ */
 @doop
 export class SkillStore {
     /**
@@ -22,10 +25,24 @@ export class SkillStore {
 
 
     /**
-     * All categories that have been added to the skill tree are also stored here, referenced by ID
+     * All categories that have been added to the skill tree are also stored here, referenced by ID.
+     * Implemented for fast access to a possible data set of 60k skills that may be replicated into the client
      * @returns {Doop<Immutable.Map<number, SkillServiceSkill>, this>}
      */
     @doop public get skillsById() {return doop<Immutable.Map<number, SkillServiceSkill>, this>()};
+
+    /**
+     * All skills that have been replicated from the skill service into this client
+     * @returns {Doop<Immutable.Map<string, SkillServiceSkill>, this>}
+     */
+    @doop public get skillsByQualifier() {return doop<Immutable.Map<string, SkillServiceSkill>, this>()};
+
+    /**
+     * Necessary to determine if a skill is in the skill service or if its profile only.
+     * To avoid endless request recursion.
+     * @returns {Doop<Immutable.Set<string>, this>}
+     */
+    @doop public get profileOnlySkillQualifiers() {return doop<Immutable.Set<string>, this>()};
 
     /**
      * Categories and their hierachy by skill name. Used to provide skill information.
@@ -68,21 +85,32 @@ export class SkillStore {
 
 
 
+
     private constructor(skillTreeRoot: SkillTreeNode,
                         categorieHierarchiesBySkillName: Immutable.Map<string, string>,
                         skillsById: Immutable.Map<number, SkillServiceSkill>,
                         currentAddSkillStep: AddSkillStep, currentSkillRating: number, currentSkillName: string,
                         currentChoice: UnCategorizedSkillChoice, skillComment: string, addSkillError: string,
-                        noCategoryReason: string, categoriesById: Immutable.Map<number, SkillCategory>) {
+                        noCategoryReason: string, categoriesById: Immutable.Map<number, SkillCategory>,
+                        skillsByQualifier: Immutable.Map<string, SkillServiceSkill>,
+                        profileOnlySkillQualifiers: Immutable.Set<string>
+    ) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
             .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById)
+            .skillsByQualifier(skillsByQualifier).profileOnlySkillQualifiers(profileOnlySkillQualifiers);
     }
 
     public static empty() {
         return new SkillStore(SkillTreeNode.root(), Immutable.Map<string, string>(),
             Immutable.Map<number, SkillServiceSkill>(),
             AddSkillStep.NONE, 1, "",
-            UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>());
+            UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>(),
+            Immutable.Map<string, SkillServiceSkill>(),
+            Immutable.Set<string>());
+    }
+
+    public skillWithQualifierExists(qualifier: string) {
+        return this.skillsByQualifier().has(qualifier) || this.profileOnlySkillQualifiers().contains(qualifier);
     }
 }
