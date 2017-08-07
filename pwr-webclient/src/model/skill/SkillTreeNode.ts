@@ -65,15 +65,29 @@ export class SkillTreeNode {
     }
 
 
-    public hasSkill(skill: SkillServiceSkill): boolean {
-        return this.skillIds().some(skillId => skillId === skill.id());
+    public hasSkill(skillIdToFind: number): boolean {
+        return this.skillIds().some(skillId => skillId === skillIdToFind);
+    }
+
+
+    public addSkillIdToTree(categoryId: number, skillId: number): SkillTreeNode {
+        if(categoryId === this.skillCategoryId() && !this.hasSkill(skillId)) {
+            return this.skillIds(this.skillIds().push(skillId));
+        } else {
+            let childNodes = this.childNodes().map(child => child.addSkillIdToTree(categoryId, skillId));
+            return this.childNodes(Immutable.List<SkillTreeNode>(childNodes));
+        }
     }
 
     public addSkillToTree(categoryId: number, skill: SkillServiceSkill): SkillTreeNode {
-        if(categoryId === this.skillCategoryId() && !this.hasSkill(skill)) {
-            return this.skillIds(this.skillIds().push(skill.id()));
+        return this.addSkillIdToTree(categoryId, skill.id());
+    }
+
+    public removeSkillFromTree(categoryId: number, skillId: number): SkillTreeNode {
+        if(this.skillCategoryId() === categoryId) {
+            return this.skillIds(Immutable.List<number>(this.skillIds().filter(sId => sId !== skillId)));
         } else {
-            let childNodes = this.childNodes().map(child => child.addSkillToTree(categoryId, skill));
+            let childNodes = this.childNodes().map(childNode => childNode.removeSkillFromTree(categoryId, skillId));
             return this.childNodes(Immutable.List<SkillTreeNode>(childNodes));
         }
     }

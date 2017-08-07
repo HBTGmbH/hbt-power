@@ -35,6 +35,7 @@ export namespace SkillActionCreator {
     import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
     import UpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
     import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
+    import MoveSkillAction = SkillActions.MoveSkillAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -134,12 +135,19 @@ export namespace SkillActionCreator {
         }
     }
 
+    function MoveSkill(originCategoryId: number, targetCategoryId: number, skillId: number): MoveSkillAction {
+        return {
+            type: ActionType.MoveSkill,
+            skillId: skillId,
+            targetCategoryId: targetCategoryId,
+            originCategoryId: originCategoryId
+        }
+    }
 
     let currentAPICalls = 0;
 
     function beginAPICall(dispatch: redux.Dispatch<ApplicationState>) {
         if(currentAPICalls === 0) {
-            console.log("Starting Pending");
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
         }
         currentAPICalls++;
@@ -148,9 +156,7 @@ export namespace SkillActionCreator {
 
     function succeedAPICall(dispatch: redux.Dispatch<ApplicationState>) {
         currentAPICalls--;
-        console.log(currentAPICalls);
         if(currentAPICalls === 0) {
-            console.log("Starting Successful");
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
         }
     }
@@ -158,7 +164,6 @@ export namespace SkillActionCreator {
     function failAPICall(dispatch: redux.Dispatch<ApplicationState>) {
         currentAPICalls --;
         if(currentAPICalls === 0) {
-            console.log("Starting Successful");
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
         }
     }
@@ -393,8 +398,9 @@ export namespace SkillActionCreator {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             beginAPICall(dispatch);
             axios.patch(patchMoveSkill(skillId, newCategoryId)).then((response: AxiosResponse) => {
-                dispatch(AsyncUpdateCategory(oldCategoryId, true));
-                dispatch(AsyncUpdateCategory(newCategoryId, true));
+                //dispatch(AsyncUpdateCategory(oldCategoryId, true));
+                //dispatch(AsyncUpdateCategory(newCategoryId, true));
+                dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId));
                 succeedAPICall(dispatch);
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);

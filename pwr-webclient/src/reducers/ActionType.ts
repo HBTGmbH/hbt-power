@@ -99,6 +99,7 @@ export enum ActionType {
 
     UpdateSkillCategory,
     RemoveSkillCategory,
+    MoveSkill,
 
     SetCurrentSkillName,
     SetCurrentSkillRating,
