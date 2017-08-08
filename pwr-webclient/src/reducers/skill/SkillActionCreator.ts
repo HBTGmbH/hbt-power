@@ -16,7 +16,8 @@ import {
     patchMoveSkill,
     postLocaleToCategory,
     postNewCategory,
-    postNewSkill
+    postNewSkill,
+    skillLocale
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
@@ -40,6 +41,7 @@ export namespace SkillActionCreator {
     import MoveSkillAction = SkillActions.MoveSkillAction;
     import RemoveSkillAction = SkillActions.RemoveSkillAction;
     import AddProfileOnlySkillAction = SkillActions.AddProfileOnlySkillAction;
+    import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -162,6 +164,13 @@ export namespace SkillActionCreator {
         }
     }
 
+    function UpdateSkillServiceSkill(skill: SkillServiceSkill): UpdateSkillServiceSkillAction {
+        return {
+            type: ActionType.UpdateSkillServiceSkill,
+            skill: skill
+        }
+    }
+
     let currentAPICalls = 0;
 
     function beginAPICall(dispatch: redux.Dispatch<ApplicationState>) {
@@ -182,7 +191,7 @@ export namespace SkillActionCreator {
     function failAPICall(dispatch: redux.Dispatch<ApplicationState>) {
         currentAPICalls --;
         if(currentAPICalls === 0) {
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
         }
     }
 
@@ -213,36 +222,28 @@ export namespace SkillActionCreator {
 
     export function AsyncLoadRootChildrenIntoTree() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            beginAPICall(dispatch);
             axios.get(getRootCategoryIds()).then(function (response: AxiosResponse) {
-                succeedAPICall(dispatch);
                 let categories: number[] = response.data;
                 categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 1)));
             }).catch(function (error: any) {
                 console.log(error);
-                failAPICall(dispatch);
             });
         };
     }
 
     function InvokeChildUpdate(categoryId: number, dispatch: redux.Dispatch<ApplicationState>) {
-        beginAPICall(dispatch);
         axios.get(getCategoryChildrenByCategoryId(categoryId)).then(function (response: AxiosResponse) {
-            succeedAPICall(dispatch);
             let data: number[] = response.data;
             data.forEach((value, index, array) => dispatch(AsyncUpdateCategory(value, true)));
         }).catch(function (error: any) {
             console.log(error);
-            failAPICall(dispatch);
         });
     }
 
     export function AsyncUpdateCategory(categoryId: number, fullRecursive?: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             let doRecursive: boolean = isNullOrUndefined(fullRecursive) ? false : fullRecursive;
-            beginAPICall(dispatch);
             axios.get(getCategoryById(categoryId)).then(function (response: AxiosResponse) {
-                succeedAPICall(dispatch);
                 let data: APISkillCategory = response.data;
                 let category = SkillCategory.fromAPI(data);
                 dispatch(UpdateSkillCategory(category));
@@ -250,7 +251,6 @@ export namespace SkillActionCreator {
                     InvokeChildUpdate(categoryId, dispatch);
                 }
             }).catch(function (error: any) {
-                failAPICall(dispatch);
                 console.log(error);
             });
         };
@@ -258,11 +258,9 @@ export namespace SkillActionCreator {
 
     export function AsyncLoadCategoryIntoTree(parentId: number, id: number, remainingDepth: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            beginAPICall(dispatch);
             axios.get(getCategoryById(id)).then(function (response: AxiosResponse) {
                 let data: APISkillCategory = response.data;
                 let category = SkillCategory.fromAPI(data);
-                succeedAPICall(dispatch);
                 dispatch(AddCategoryToTree(parentId, category));
                 dispatch(AsyncLoadSkillsForCategory(category.id()));
                 if (remainingDepth > 0) {
@@ -270,7 +268,6 @@ export namespace SkillActionCreator {
                 }
 
             }).catch(function (error: any) {
-                failAPICall(dispatch);
                 console.log(error);
             });
         };
@@ -414,8 +411,6 @@ export namespace SkillActionCreator {
         }
     }
 
-
-
     export namespace Skill {
 
         /**
@@ -485,6 +480,31 @@ export namespace SkillActionCreator {
                 beginAPICall(dispatch);
                 axios.delete(deleteCustomSkill(skillId)).then((response: AxiosResponse) => {
                     dispatch(RemoveSkill(skillId));
+                    succeedAPICall(dispatch);
+                }).catch((error: AxiosError) => {
+                    failAPICall(dispatch);
+                })
+            }
+        }
+
+        export function AsyncAddSkillLocale(skillId: number, language: string, qualifier: string) {
+            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                beginAPICall(dispatch);
+                let config: AxiosRequestConfig = {params: {qualifier: qualifier}};
+                axios.post(skillLocale(skillId, language), null, config).then((response: AxiosResponse) => {
+                    dispatch(UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(response.data)));
+                    succeedAPICall(dispatch);
+                }).catch((error: AxiosError) => {
+                    failAPICall(dispatch);
+                })
+            }
+        }
+
+        export function AsyncDeleteSkillLocale(skillId: number, language: string) {
+            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                beginAPICall(dispatch);
+                axios.delete(skillLocale(skillId, language)).then((response: AxiosResponse) => {
+                    dispatch(UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(response.data)));
                     succeedAPICall(dispatch);
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);

@@ -53,4 +53,8 @@ export namespace SkillActions {
         skillName: string;
     }
 
+    export interface UpdateSkillServiceSkillAction extends AbstractAction {
+        skill: SkillServiceSkill;
+    }
+
 }

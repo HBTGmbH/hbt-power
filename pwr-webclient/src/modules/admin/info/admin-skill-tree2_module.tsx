@@ -46,6 +46,9 @@ interface AdminSkillTree2Dispatch {
     addLocalization(categoryId: number, language: string, qualifier: string): void;
     deleteLocalization(categoryId: number, language: string): void;
 
+    addSkillLocalization(skillId: number, language: string, qualifier: string): void;
+    deleteSkillLocalization(skillId: number, language: string): void;
+
     createCategory(parentId: number, qualifier: string): void;
     deleteCategory(categoryId: number): void;
 
@@ -97,7 +100,9 @@ class AdminSkillTree2Module extends React.Component<
             deleteCategory: categoryId => dispatch(SkillActionCreator.AsyncDeleteCategory(categoryId)),
             moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.Skill.AsyncMoveSkill(skillId, newCategory, oldCategory)),
             createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.Skill.AsyncCreateSkill(qualifier, categoryId)),
-            deleteSkill: skillId => dispatch(SkillActionCreator.Skill.AsyncDeleteSkill(skillId))
+            deleteSkill: skillId => dispatch(SkillActionCreator.Skill.AsyncDeleteSkill(skillId)),
+            addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.Skill.AsyncAddSkillLocale(skillId, language, qualifier)),
+            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.Skill.AsyncDeleteSkillLocale(skillId, language))
         };
     }
 
@@ -127,13 +132,22 @@ class AdminSkillTree2Module extends React.Component<
         }
     };
 
-    private handleAddLocale = (language: string, qualifier: string) => {
+    private handleAddCategoryLocale = (language: string, qualifier: string) => {
         this.props.addLocalization(this.state.selectedCategoryId, language, qualifier);
     };
 
-    private handleDeleteLocale = (language: string) => {
+    private handleDeleteCategoryLocale = (language: string) => {
         this.props.deleteLocalization(this.state.selectedCategoryId, language);
     };
+
+    private handleAddSkillLocale = (language: string, qualifier: string) => {
+        this.props.addSkillLocalization(this.state.selectedSkillId, language, qualifier);
+    };
+
+    private handleDeleteSkillLocale = (language: string) => {
+        this.props.deleteSkillLocalization(this.state.selectedSkillId, language);
+    };
+
 
     private openNameDialog = () => {
         this.setState({
@@ -219,6 +233,12 @@ class AdminSkillTree2Module extends React.Component<
         let selectedSkill = this.getSelectedSkill();
         return <div>
             <Subheader>{selectedSkill.qualifier()}</Subheader>
+            <LocalizationTable
+                localizations={selectedSkill.qualifiers()}
+                termToLocalize={selectedSkill.qualifier()}
+                onLocaleDelete={this.handleDeleteSkillLocale}
+                onLocaleAdd={this.handleAddSkillLocale}
+            />
             <RaisedButton
                 className="mui-margin"
                 label={PowerLocalize.get("Action.ChangeCategory")}
@@ -266,8 +286,8 @@ class AdminSkillTree2Module extends React.Component<
             <LocalizationTable
                 localizations={selectedCategory.qualifiers()}
                 termToLocalize={selectedCategory.qualifier()}
-                onLocaleAdd={this.handleAddLocale}
-                onLocaleDelete={this.handleDeleteLocale}
+                onLocaleAdd={this.handleAddCategoryLocale}
+                onLocaleDelete={this.handleDeleteCategoryLocale}
             />
             <RaisedButton
                 className="mui-margin"

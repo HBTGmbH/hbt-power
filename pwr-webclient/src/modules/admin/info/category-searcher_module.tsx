@@ -68,7 +68,10 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
                 value={this.state.filterText}
                 onChange={this.handleFilterTextChange}
             />
-            <SelectableList selectedIndex={this.state.selected} onSelect={this.handleSelect}>
+            <SelectableList selectedIndex={this.state.selected}
+                            onSelect={this.handleSelect}
+                            style={{maxHeight: "400px", overflow: "auto"}}
+            >
                 {this.renderCategories()}
             </SelectableList>
         </Dialog>);

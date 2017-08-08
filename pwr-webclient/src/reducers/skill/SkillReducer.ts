@@ -18,6 +18,7 @@ export namespace SkillReducer {
     import MoveSkillAction = SkillActions.MoveSkillAction;
     import RemoveSkillServiceSkillAction = SkillActions.RemoveSkillAction;
     import AddProfileOnlySkillAction = SkillActions.AddProfileOnlySkillAction;
+    import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if(!isNullOrUndefined(category)) {
@@ -106,6 +107,10 @@ export namespace SkillReducer {
                     return skillStore.categorieHierarchiesBySkillName(map);
                 }
                 return skillStore;
+            }
+            case ActionType.UpdateSkillServiceSkill: {
+                let act = action as UpdateSkillServiceSkillAction;
+                return addOrUpdateSkill(skillStore, act.skill);
             }
             case ActionType.AddProfileOnlySkill: {
                 let act = action as AddProfileOnlySkillAction;
