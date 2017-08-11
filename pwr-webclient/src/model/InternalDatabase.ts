@@ -37,7 +37,7 @@ export class InternalDatabase {
     public get loginStatus() {return doop<LoginStatus, this>();};
 
     @doop
-    public get authToken() {return doop<string, this>();};
+    public get authToken() {return doop<string, this>();}; //FIXME remove unused
 
     @doop
     public get profile() {return doop<Profile, this>();};

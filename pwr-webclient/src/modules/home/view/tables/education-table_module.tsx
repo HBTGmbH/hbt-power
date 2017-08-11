@@ -169,7 +169,7 @@ class EducationTableModule extends React.Component<
                         adjustForCheckbox={false}
                     >
                         <TableRow>
-                            <TableHeaderColumn style={{width: "50px"}}></TableHeaderColumn>
+                            <TableHeaderColumn style={{width: "50px"}}/>
                             <TableHeaderColumn style={{width: "50px"}}><FontIcon className="material-icons">drag_handle</FontIcon></TableHeaderColumn>
                             <TableHeaderColumn>
                                 <AscDescButton label={PowerLocalize.get('Education.Singular')} onAscDescChange={this.handleNameAscDescChange}/>

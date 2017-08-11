@@ -8,6 +8,8 @@ interface ProfileElementLocalProps {
      */
     title: string;
 
+    subtitle?: string;
+
     /**
      * Callback that is executed when the add button onClick event is invoked.
      * @param event
@@ -29,6 +31,10 @@ interface ProfileElementLocalProps {
 export class ProfileElement extends React.Component<ProfileElementLocalProps, {}> {
 
 
+    public static defaultProps: Partial<ProfileElementLocalProps> = {
+        subtitle: null
+    };
+
     private readonly cardHeaderStyle = {
        'backgroundColor' : 'rgb(255, 204, 102)'
     };
@@ -39,7 +45,11 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
             <div  style={{width:"100%"}}>
                 <br/>
                 <Card>
-                    <CardHeader actAsExpander={true} title={this.props.title}>
+                    <CardHeader
+                        actAsExpander={true}
+                        title={this.props.title}
+                        subtitle={this.props.subtitle}
+                    >
                     </CardHeader>
                     <Divider/>
                     <CardMedia expandable={true}>

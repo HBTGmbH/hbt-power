@@ -91,6 +91,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         return(
             <ProfileElement
                 title={PowerLocalize.get('Sector.Plural')}
+                subtitle={PowerLocalize.get('SectorEntry.Description')}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.sectorEntries.map(this.renderSingleListElement).toArray()}

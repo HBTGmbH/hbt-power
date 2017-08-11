@@ -82,6 +82,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         return(
             <ProfileElement
                 title={PowerLocalize.get('Education.Singular')}
+                subtitle={PowerLocalize.get('EducationEntry.Description')}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.educationEntries.map((education, key) => {

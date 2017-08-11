@@ -27,6 +27,7 @@ import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 
 
 export namespace SkillActionCreator {
@@ -563,7 +564,7 @@ export namespace SkillActionCreator {
                 if(state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT && state.skillComment().trim() !== "") {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
                 } else if(state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT) {
-                    dispatch(SetAddSkillError("Comment necessary"));
+                    dispatch(SetAddSkillError(PowerLocalize.get("AddSkillDialog.Comment.ErrorEmpty")));
                 } else {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
                 }

@@ -19,6 +19,7 @@ export const de_locale : any = {
     "KeySkill.Singular": "Spezialgebiet",
     "KeySkill.Plural": "Spezialgebiete",
     "KeySkill.Abbreviation": "Spez.Gb.",
+    "Skill.Singular": "Skill",
     "Sector.Singular": "Branche",
     "Sector.Plural": "Branchen",
     "Sector.Abbreviation": "Bra.",
@@ -50,10 +51,14 @@ export const de_locale : any = {
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
     "TrainingEntries.Qualifier": "Weiterbildung",
+    "TrainingEntry.Description": "Beschreibt Fortbildungen und Lehrgänge",
     "EducationEntry.EditEntry.Title": "Ausbildungsschritt bearbeiten",
     "EducationEntry.Dialog.EducationName": "Studiengangs-/Ausbildungsbezeichner",
+    "EducationEntry.Description": "Beschreibt fachliche, schulische oder akademische Ausbildungsschritte",
     "SectorEntry.Dialog.Title": "Branche bearbeiten",
+    "SectorEntry.Description": "Beschreibt eine Geschäftsfeld oder Tätigkeitsbereich eines Beraters, z.B. Automotive",
     "LanguageSkill.EditSkill.Title": "Sprache bearbeiten",
+    "LanguageSkill.Description": "Beschreibt eine (Fremd)Sprache",
     "ProfileModule.Tabs.Profile.Title": "Beraterprofil",
     "ProfileModule.Tabs.Projects.Title": "Projektinformationen",
     "Project.StartDate": "Projektbeginn",
@@ -61,10 +66,15 @@ export const de_locale : any = {
     "ProjectDialog.Title": "Projektinformationen bearbeiten",
     "TrainingEntry.Dialog.Title":"Weiterbildung bearbeiten",
     "Qualification.Dialog.Title":"Zusatzqualifikation bearbeiten",
+    "QualificationEntry.Description": "Beschreibt Auszeichnungen wie Zertifikate und Urkunden von Lehrgängen und Fortbildungen",
     "CareerEntry.Dialog.Title": "Werdegangs-Schritt bearbeiten",
     "CareerEntry.Dialog.StartDate": "Beginn",
     "CareerEntry.Dialog.EndDate": "Ende",
     "CareerEntry.Dialog.CareerName": "Position",
+    "CareerEntry.Description": "Beschreibt den beruflichen Werdegang",
+    "KeySkillEntry.Dialog.Title": "Spezialgebiet hinzufügen",
+    "KeySkillEntry.Dialog.KeySkillName": "Spezialgebiets-Name",
+    "KeySkillEntry.Description": "Beschreibt die Gebiete, auf denen ein besonderer Schwerpunkt des Beraters liegt",
     "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
     "SkillOverview.Title": "Skills für Kategorie {0} (und Unterkategorien)",
     "ProjectSkills.Label": "Projektspezifische Skills",
@@ -155,6 +165,24 @@ export const de_locale : any = {
     "LocalizationSearcher.Title": "ISO-639-2 Sprache Suchen",
     "LocalizationSearcher.Explanation": "Durch anklicken einer ISO-639-2 Sprache wird diese übernommen.",
 
+    "AddSkillDialog.Title": "Skill Hinzufügen",
+    "AddSkillDialog.Step.0": "Skill  Bearbeiten",
+    "AddSkillDialog.Step.1": "Kategorie Validieren",
+    "AddSkillDialog.Step.2": "Fertig",
+    "AddSkillDialog.Done": "Fertig",
+    "AddSkillDialog.ButtonProceed": "Weiter",
+    "AddSkillDialog.Comment.ErrorTooLong": "Kommentar zu lang",
+    "AddSkillDialog.Comment.ErrorEmpty": "Kommentar darf nicht leer sein",
+    "AddSkillDialog.EditOptions.Introduction": "HBT Power konnte keine Kategorie-Informationen zu diesem Skill abrufen. Grund:",
+    "AddSkillDialog.EditOptions.ChoiceText": "Bitte wählen sie eine der unteren Optionen",
+    "AddSkillDialog.ShowCategory.Introduction.0": "Die folgende Kategorie-Hierarchy wurde für den gegebenen Skill ermittelt",
+    "AddSkillDialog.ShowCategory.Introduction.1": "Bitte bestätige, das diese Kategorisierung für den Skill sinnvoll ist",
+    "AddSkillDialog.ShowCategory.Introduction.2": "Falls die Kategorie nicht passt, liegt dies meist an einem falschen oder unvollständigen Namen",
+    "AddSkillDialog.ShowCategory.Introduction.3": "Bei Produkten soll in der Regel der Hersteller mit angegeben werden, z.B. \"Apache Maven\" statt \"Maven\"",
+    "AddSkillDialog.CategoryPending.Info": "Skill-Kategorie wird bestimmt",
+    "AddSkillDialog.ShowCategory.BtnValidCategory": "Richtige Kategorie",
+    "AddSkillDialog.ShowCategory.BtnInvalidCategory": "Skill Ändern",
+
 
 
     // == Specific Specific Localizations == //
@@ -184,6 +212,9 @@ export const de_locale : any = {
     "LanguageLevel.BUSINESS_FLUENT": "Verhandlungssicher",
     "LanguageLevel.NATIVE": "Muttersprache",
 
+    // == Enum Localization 'UnCategorizedSkillChoice' == //
+    "PROCEED_WITH_COMMENT": "Mit Kommentar Fortfahren",
+    "PROCEED_ANYWAY": "Ohne Kommentar Fortfahren (nur in Ausnahmen)",
 
     "None": "Kein",
     // == ACTIONS == //
@@ -215,6 +246,7 @@ export const de_locale : any = {
     "Action.ChangeCategory": "Kategorie Ändern",
     "Action.DeleteSkill": "Skill löschen",
     "Action.AddSkillToCategory": "Skill hinzufügen",
+    "Action.SearchSkill": "Skill suchen",
     "Action.Yes": "Ja",
     "Action.No": "Nein",
 

@@ -43,12 +43,6 @@ interface QualificationDispatch {
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
 
-    private static renderHeader() {
-        return (
-            <div></div>
-        );
-    }
-
     static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
         return {
             qualificationEntries : state.databaseReducer.profile().qualificationEntries(),
@@ -78,6 +72,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         return(
             <ProfileElement
                 title={PowerLocalize.get('Qualification.Plural')}
+                subtitle={PowerLocalize.get("QualificationEntry.Description")}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.qualificationEntries.map((q, key) => {

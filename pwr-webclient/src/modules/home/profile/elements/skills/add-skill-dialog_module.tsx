@@ -20,6 +20,7 @@ import {StarRating} from '../../../../star-rating_module.';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {UnCategorizedSkillChoice} from '../../../../../model/skill/UncategorizedSkillChoice';
 import {LimitedTextField} from '../../../../general/limited-text-field-module.';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 
 
 interface AddSkillDialogProps {
@@ -107,14 +108,14 @@ class AddSkillDialogModule extends React.Component<
             <SkillSearcher
                 onValueChange={this.props.changeSkillName}
                 id="AddSkill.Searcher"
-                floatingLabelText={'Search Skill'}
+                floatingLabelText={PowerLocalize.get("Action.SearchSkill")}
             />
             <StarRating
                 rating={this.props.skillRating}
                 onRatingChange={this.props.changeSkillRating}
             />
             <RaisedButton
-                label="Continue"
+                label={PowerLocalize.get("AddSkillDialog.ButtonProceed")}
                 onClick={this.props.progress}
             />
 
@@ -135,7 +136,7 @@ class AddSkillDialogModule extends React.Component<
                 />
             </div>
             <div className="vertical-align">
-                Retreiving Skill category...
+                {PowerLocalize.get("AddSkillDialog.CategoryPending.Info")}
             </div>
         </div>);
     };
@@ -143,20 +144,20 @@ class AddSkillDialogModule extends React.Component<
     private renderShowCategory = (): JSX.Element  => {
         return <div>
             <div style={{textAlign: "center", margin: "16px"}}>
-                The following category hiearchy was determined for the provided skill<br/>
-                <span className="highlighted-category"> {this.props.categoryString}</span><br/>
-                Please validate that this is a category that is appropriate for the skill.<br/>
-                If the category is inappropriate, it is most likely the wrong or incomplete name for the skill. <br/>
-                For products, consider adding the developing company.
+                {PowerLocalize.get("AddSkillDialog.ShowCategory.Introduction.0")}<br/>
+                <span className="highlighted-category">{this.props.categoryString}</span><br/>
+                {PowerLocalize.get("AddSkillDialog.ShowCategory.Introduction.1")}<br/>
+                {PowerLocalize.get("AddSkillDialog.ShowCategory.Introduction.2")}<br/>
+                {PowerLocalize.get("AddSkillDialog.ShowCategory.Introduction.3")}
             </div>
             <div className="vertical-align">
                 <RaisedButton
-                    label="Valid category"
+                    label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnValidCategory")}
                     style={{marginRight: "6px"}}
                     onClick={this.props.progress}
                 />
                 <RaisedButton
-                    label="Invalid category"
+                    label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnInvalidCategory")}
                     secondary={true}
                     style={{marginLeft: "6px"}}
                     onClick={this.props.stepBackToSkillInfo}
@@ -168,9 +169,9 @@ class AddSkillDialogModule extends React.Component<
 
     private renderShowEditingOptions = (): JSX.Element  => {
         return <div>
-            <span>The skill service has no category information for this skill. Reason: </span><br/>
+            <span>{PowerLocalize.get("AddSkillDialog.EditOptions.Introduction")}</span><br/>
             {this.props.noCategoryReason}<br/>
-            <span>Please choose one of the options below.</span>
+            <span>{PowerLocalize.get("AddSkillDialog.EditOptions.ChoiceText")}</span>
             <div style={{width: "100%", height: "150px"}}>
                 <RadioButtonGroup
                     name="choice"
@@ -180,17 +181,17 @@ class AddSkillDialogModule extends React.Component<
                 >
                     <RadioButton
                         value={UnCategorizedSkillChoice.PROCEED_WITH_COMMENT}
-                        label={UnCategorizedSkillChoice[UnCategorizedSkillChoice.PROCEED_WITH_COMMENT]}
+                        label={PowerLocalize.get(UnCategorizedSkillChoice[UnCategorizedSkillChoice.PROCEED_WITH_COMMENT])}
                     />
                     <RadioButton
                         value={UnCategorizedSkillChoice.PROCEED_ANYWAY}
-                        label={UnCategorizedSkillChoice[UnCategorizedSkillChoice.PROCEED_ANYWAY]}
+                        label={PowerLocalize.get(UnCategorizedSkillChoice[UnCategorizedSkillChoice.PROCEED_ANYWAY])}
                     />
                 </RadioButtonGroup>
                 {
                     this.props.currentChoice === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT ?
                         <LimitedTextField
-                            errorText="Too long"
+                            errorText={PowerLocalize.get("AddSkillDialog.Comment.ErrorTooLong")}
                             overrideErrorText={this.props.addSkillError}
                             id="AddSkillDialog.Comment"
                             fullWidth={true}
@@ -205,7 +206,7 @@ class AddSkillDialogModule extends React.Component<
 
             </div>
             <RaisedButton
-                label="Proceed"
+                label={PowerLocalize.get("AddSkillDialog.ButtonProceed")}
                 onClick={this.props.progress}
             />
         </div>;
@@ -213,7 +214,7 @@ class AddSkillDialogModule extends React.Component<
 
     private renderDone = (): JSX.Element  => {
         return <div style={{textAlign: "center"}}>
-            Done<br/>
+            {PowerLocalize.get("AddSkillDialog.Done")}<br/>
             <IconButton
                 iconClassName="material-icons"
                 iconStyle={{color: "green"}}
@@ -246,26 +247,28 @@ class AddSkillDialogModule extends React.Component<
         return (
         <div>
             <RaisedButton
-                label="Add a Skill"
+                label={PowerLocalize.get("AddSkillDialog.Title")}
                 onClick={this.props.progress}
             />
             <Dialog
                 open={this.props.addSkillStep !== AddSkillStep.NONE}
             >
                 <span style={{textAlign: "right"}}>
-                   <IconButton iconClassName="material-icons" onClick={this.props.closeDialog}>close</IconButton>
+                   <IconButton iconClassName="material-icons" onClick={this.props.closeDialog}>
+                        close
+                   </IconButton>
                 </span>
                 <Divider style={{float: "none"}}/>
 
                 <Stepper activeStep={this.mapStepIndex()}>
                     <Step>
-                        <StepLabel>Edit Skill Info</StepLabel>
+                        <StepLabel>{PowerLocalize.get("AddSkillDialog.Step.0")}</StepLabel>
                     </Step>
                     <Step>
-                        <StepLabel>Validate category</StepLabel>
+                        <StepLabel>{PowerLocalize.get("AddSkillDialog.Step.1")}</StepLabel>
                     </Step>
                     <Step>
-                        <StepLabel>Done</StepLabel>
+                        <StepLabel>{PowerLocalize.get("AddSkillDialog.Step.2")}</StepLabel>
                     </Step>
                 </Stepper>
                 <div style={{width: "100%"}}>

@@ -5,7 +5,6 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../../../Store';
 import {List, Subheader} from 'material-ui';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
-import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {SkillChip} from './skill-chip_module';
 import {Skill} from '../../../../../model/Skill';
 import * as Immutable from 'immutable';
@@ -157,7 +156,6 @@ class SkillTreeModule extends React.Component<
             <div>
                 <AddSkillDialog/>
                 <List>
-                    <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
                     <Subheader>Rot = Unbekannter Skill</Subheader>
                     {this.renderSkills()}
                 </List>

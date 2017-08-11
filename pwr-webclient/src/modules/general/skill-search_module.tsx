@@ -57,6 +57,9 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     private requestSkills = (searchText: string, dataSource: any) => {
         this.props.onValueChange(searchText);
+        this.setState({
+            searchText: searchText
+        });
         if(!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
             let reqParams = {
                 maxResults: this.props.maxResults,
@@ -79,13 +82,10 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     };
 
     private handleRequest = (request: string) => {
-        if(isNullOrUndefined(this.props.value)) {
-            console.log("Value", this.props.value);
-            this.setState({
-                searchText: ""
-            });
-        }
-        this.props.onNewRequest(request)
+        this.setState({
+            searchText: ""
+        });
+        this.props.onNewRequest(request);
     };
     render() {
         return (
@@ -94,6 +94,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 floatingLabelText={this.props.floatingLabelText}
                 dataSource={this.state.skills}
+                value={this.state.searchText}
                 searchText={this.state.searchText}
                 onNewRequest={this.handleRequest}
                 onUpdateInput={this.requestSkills}

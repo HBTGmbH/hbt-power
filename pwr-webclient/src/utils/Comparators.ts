@@ -4,6 +4,7 @@ import {Skill} from '../model/Skill';
 import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillTreeNode} from '../model/skill/SkillTreeNode';
 import {compareString} from './StringUtil';
+import {Project} from '../model/Project';
 export class Comparators {
 
     public static getNameEntityComparator(asc: boolean) {
@@ -54,6 +55,10 @@ export class Comparators {
 
     public static compareAdminNotification(a1: AdminNotification, a2: AdminNotification): number {
         return Comparators.compareDate(a1.occurrence(), a2.occurrence());
+    }
+
+    public static compareProjects(p1: Project, p2: Project): number {
+        return Comparators.compareDate(p1.startDate(), p2.startDate());
     }
 
 

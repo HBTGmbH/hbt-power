@@ -65,6 +65,7 @@ class CareersModule extends React.Component<CareersProps & CareersLocalProps & C
     render() {
         return (<ProfileElement
             title={PowerLocalize.get('Career.Singular')}
+            subtitle={PowerLocalize.get("CareerEntry.Description")}
             onAddElement={this.props.addCareerEntry}
         >
             {this.props.careerEntries.map((education, key) => {
