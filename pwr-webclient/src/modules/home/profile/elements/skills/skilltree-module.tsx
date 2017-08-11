@@ -12,6 +12,7 @@ import {Comparators} from '../../../../../utils/Comparators';
 import {AddSkillDialog} from './add-skill-dialog_module';
 import {SkillServiceSkill} from '../../../../../model/skill/SkillServiceSkill';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
+import {isNullOrUndefined} from 'util';
 
 const distance = require("jaro-winkler");
 
@@ -24,7 +25,6 @@ const distance = require("jaro-winkler");
 interface SkillTreeProps {
     skills: Immutable.Map<string, Skill>;
     serviceSkillsByQualifier: Immutable.Map<string, SkillServiceSkill>;
-    profileOnlySkillQualifiers: Immutable.Set<string>;
 }
 
 /**
@@ -46,7 +46,6 @@ interface SkillTreeLocalProps {
  */
 interface SkillTreeLocalState {
     searchText: string;
-    retrieveSkills: boolean;
 }
 
 /**
@@ -55,7 +54,7 @@ interface SkillTreeLocalState {
 interface SkillTreeDispatch {
     changeSkillRating(rating: number, id: string): void;
     onSkillDelete(id: string): void;
-    getSkillServiceSkill(qualifier: string): void;
+    getSkillServiceSkills(qualifiers: Array<string>): void;
 }
 
 class SkillTreeModule extends React.Component<
@@ -67,7 +66,6 @@ class SkillTreeModule extends React.Component<
         super(props);
         this.state = {
             searchText: "",
-            retrieveSkills: true
         }
     }
 
@@ -76,24 +74,17 @@ class SkillTreeModule extends React.Component<
         flexWrap: 'wrap',
     };
 
-    public componentWillReceiveProps(nextProps: SkillTreeProps & SkillTreeLocalProps & SkillTreeDispatch) {
-        if(this.props.skills !== nextProps.skills) {
-            this.setState({
-                retrieveSkills: true
-            })
-        }
+    public componentDidMount() {
+        console.log("componentDidMount", this.props.skills.toArray());
     }
 
-    public componentDidUpdate() {
-        if(this.state.retrieveSkills) {
-            this.props.skills.forEach(skill => {
-                this.props.getSkillServiceSkill(skill.name());
-            });
-            this.setState({
-                retrieveSkills: false
-            });
-        }
+    public componentWillReceiveProps(nextProps: SkillTreeProps) {
+    }
 
+    public componentDidUpdate(oldProps: SkillTreeProps) {
+        if(this.props.skills !== oldProps.skills) {
+            this.props.getSkillServiceSkills(this.props.skills.toArray().map(skill => skill.name()));
+        }
     }
 
 
@@ -101,7 +92,6 @@ class SkillTreeModule extends React.Component<
         return {
             skills: state.databaseReducer.profile().skills(),
             serviceSkillsByQualifier: state.skillReducer.skillsByQualifier(),
-            profileOnlySkillQualifiers: state.skillReducer.profileOnlySkillQualifiers()
         };
     }
 
@@ -113,7 +103,7 @@ class SkillTreeModule extends React.Component<
             onSkillDelete: (id: string) => {
                 dispatch(ProfileActionCreator.deleteSkill(id));
             },
-            getSkillServiceSkill: qualifier => dispatch(SkillActionCreator.Skill.AsyncGetSkillByName(qualifier))
+            getSkillServiceSkills: skillQualifiers => dispatch(SkillActionCreator.Skill.AsyncGetSkillsByName(skillQualifiers))
         };
     }
 
@@ -127,9 +117,9 @@ class SkillTreeModule extends React.Component<
         return null;
     };
 
-    private mapSkill = (skill: Skill, retrieve: boolean) => {
+    private mapSkill = (skill: Skill) => {
         // Retreive it from the map; If it doesn't exist, it's custom
-        let custom = this.props.profileOnlySkillQualifiers.contains(skill.name());
+        let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
         let style = {
             margin: "4px",
             backgroundColor: custom ? "red" : "#9c9c9c"
@@ -144,7 +134,7 @@ class SkillTreeModule extends React.Component<
     };
 
     private renderSkills = () => {
-        return this.props.skills.sort(Comparators.compareSkills).map(skill => this.mapSkill(skill, this.state.retrieveSkills));
+        return this.props.skills.sort(Comparators.compareSkills).map(skill => this.mapSkill(skill));
     };
 
     private getSkillSearcherHeight = () => {
@@ -152,7 +142,7 @@ class SkillTreeModule extends React.Component<
     };
 
     render() {
-        let res = (
+        return (
             <div>
                 <AddSkillDialog/>
                 <List>
@@ -161,7 +151,6 @@ class SkillTreeModule extends React.Component<
                 </List>
             </div>
         );
-        return res;
     }
 }
 

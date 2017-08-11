@@ -49,12 +49,12 @@ export namespace SkillActions {
         skillId: number;
     }
 
-    export interface AddProfileOnlySkillAction extends AbstractAction {
-        skillName: string;
-    }
-
     export interface UpdateSkillServiceSkillAction extends AbstractAction {
         skill: SkillServiceSkill;
+    }
+
+    export interface BatchAddSkillsAction extends AbstractAction {
+        skills: Array<SkillServiceSkill>;
     }
 
 }

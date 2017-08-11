@@ -45,7 +45,7 @@ export class Comparators {
 
     public static getSkillTreeNodeComparator(categoriesById: Immutable.Map<number, SkillCategory>) {
         return function(s1: SkillTreeNode, s2: SkillTreeNode) {
-            return compareString(categoriesById.get(s2.skillCategoryId()).qualifier(), categoriesById.get(s1.skillCategoryId()).qualifier());
+            return compareString(categoriesById.get(s2.skillCategoryId).qualifier(), categoriesById.get(s1.skillCategoryId).qualifier());
         }
     }
 

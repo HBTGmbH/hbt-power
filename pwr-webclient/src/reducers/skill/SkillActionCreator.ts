@@ -41,8 +41,8 @@ export namespace SkillActionCreator {
     import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
     import MoveSkillAction = SkillActions.MoveSkillAction;
     import RemoveSkillAction = SkillActions.RemoveSkillAction;
-    import AddProfileOnlySkillAction = SkillActions.AddProfileOnlySkillAction;
     import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
+    import BatchAddSkillsAction = SkillActions.BatchAddSkillsAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -158,17 +158,17 @@ export namespace SkillActionCreator {
         }
     }
 
-    function AddProfileOnlySkill(name: string): AddProfileOnlySkillAction {
-        return {
-            type: ActionType.AddProfileOnlySkill,
-            skillName: name
-        }
-    }
-
     function UpdateSkillServiceSkill(skill: SkillServiceSkill): UpdateSkillServiceSkillAction {
         return {
             type: ActionType.UpdateSkillServiceSkill,
             skill: skill
+        }
+    }
+
+    function BatchAddSkills(skills: Array<SkillServiceSkill>): BatchAddSkillsAction {
+        return {
+            type: ActionType.BatchAddSkills,
+            skills: skills
         }
     }
 
@@ -414,6 +414,53 @@ export namespace SkillActionCreator {
 
     export namespace Skill {
 
+        function getSkillByQualifier(qualifier: string, onSuccess: (skill: SkillServiceSkill) => void, onError: (error: AxiosError) => void) {
+            let config: AxiosRequestConfig = {params: {qualifier: qualifier}};
+            axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
+                if(response.status === 200) {
+                    onSuccess( SkillServiceSkill.fromAPI(response.data))
+                } else {
+                    onSuccess(null);
+                }
+            }).catch(onError);
+        }
+
+        const checkAndInvoke = (skills: Array<SkillServiceSkill>, skillsChanged: number, remainingRequests: number, dsp: redux.Dispatch<ApplicationState>) => {
+            if(remainingRequests <= 0) {
+                dsp(ProfileActionCreator.SucceedAPIRequest());
+                if(skillsChanged != 0) {
+                    dsp(BatchAddSkills(skills));
+                }
+            }
+        };
+
+        export function AsyncGetSkillsByName(qualifiers: Array<string>) {
+            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                let skills: Array<SkillServiceSkill> = [];
+                let skillStore = getState().skillReducer;
+                let filteredQualifiers = qualifiers.filter(qualifier => {
+                    return !skillStore.skillWithQualifierExists(qualifier)
+                });
+                let remaining = filteredQualifiers.length;
+                if(remaining > 0) {
+                    dispatch(ProfileActionCreator.APIRequestPending());
+
+                    for(let i = 0; i < filteredQualifiers.length; i++) {
+                        getSkillByQualifier(filteredQualifiers[i], skill => {
+                            remaining--;
+                            if(skill != null) {
+                                skills.push(skill);
+                            }
+                            checkAndInvoke(skills, skills.length, remaining, dispatch);
+                        }, error => {
+                            remaining--;
+                            checkAndInvoke(skills, skills.length, remaining, dispatch);
+                        });
+                    }
+                }
+            }
+        }
+
         /**
          * Retrieves a {@link SkillServiceSkill} from the skill service and adds it to the {@link SkillStore}.
          *
@@ -430,21 +477,14 @@ export namespace SkillActionCreator {
                 }
                 if(!getState().skillReducer.skillWithQualifierExists(qualifier)) {
                     beginAPICall(dispatch);
-                    let config: AxiosRequestConfig = {params: {qualifier: qualifier}};
-                    axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
-                        if(response.status === 200) {
-                            let data: APISkillServiceSkill = response.data;
-                            let skill: SkillServiceSkill = SkillServiceSkill.fromAPI(data);
-                            dispatch(AddSkillToTree(skill.categoryId(), skill));
-                        } else {
-                            dispatch(AddProfileOnlySkill(qualifier));
-                        }
-                        succeedAPICall(dispatch);
-                    }).catch((error: AxiosError) => {
+                    getSkillByQualifier(qualifier, (skill) => {
+                        dispatch(AddSkillToTree(skill.categoryId(), skill));
+                    }, (error) => {
                         console.error(error);
                         failAPICall(dispatch);
                     });
                 }
+
             }
         }
 
@@ -452,8 +492,6 @@ export namespace SkillActionCreator {
             return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 beginAPICall(dispatch);
                 axios.patch(patchMoveSkill(skillId, newCategoryId)).then((response: AxiosResponse) => {
-                    //dispatch(AsyncUpdateCategory(oldCategoryId, true));
-                    //dispatch(AsyncUpdateCategory(newCategoryId, true));
                     dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId));
                     succeedAPICall(dispatch);
                 }).catch((error: AxiosError) => {

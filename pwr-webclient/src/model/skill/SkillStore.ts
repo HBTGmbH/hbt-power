@@ -38,13 +38,6 @@ export class SkillStore {
     @doop public get skillsByQualifier() {return doop<Immutable.Map<string, SkillServiceSkill>, this>()};
 
     /**
-     * Necessary to determine if a skill is in the skill service or if its profile only.
-     * To avoid endless request recursion.
-     * @returns {Doop<Immutable.Set<string>, this>}
-     */
-    @doop public get profileOnlySkillQualifiers() {return doop<Immutable.Set<string>, this>()};
-
-    /**
      * Categories and their hierachy by skill name. Used to provide skill information.
      * @returns {Doop<Immutable.Map<string, string>, this>}
      */
@@ -98,7 +91,7 @@ export class SkillStore {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
             .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById)
-            .skillsByQualifier(skillsByQualifier).profileOnlySkillQualifiers(profileOnlySkillQualifiers);
+            .skillsByQualifier(skillsByQualifier);
     }
 
     public static empty() {
@@ -111,6 +104,6 @@ export class SkillStore {
     }
 
     public skillWithQualifierExists(qualifier: string) {
-        return this.skillsByQualifier().has(qualifier) || this.profileOnlySkillQualifiers().contains(qualifier);
+        return this.skillsByQualifier().has(qualifier);
     }
 }

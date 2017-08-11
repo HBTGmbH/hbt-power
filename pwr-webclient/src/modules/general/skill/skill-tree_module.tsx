@@ -76,7 +76,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
 
 
     private mapTo = (skillTreeNode: SkillTreeNode): JSX.Element => {
-        let skillCategory = this.props.categoriesById.get(skillTreeNode.skillCategoryId());
+        let skillCategory = this.props.categoriesById.get(skillTreeNode.skillCategoryId);
         let secondIconMargin = (skillCategory.blacklisted() && skillCategory.isCustom()) ? "48px": "24px";
         return <ListItem
             key={skillCategory.qualifier()}
@@ -112,8 +112,8 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
     };
 
     private renderNestedItems = (skillTreeNode: SkillTreeNode): Array<JSX.Element> => {
-        let res: Array<JSX.Element> = skillTreeNode.childNodes().map(this.mapTo).toArray();
-        skillTreeNode.skillIds().forEach(skillId => res.push(this.mapSkill(skillId)));
+        let res: Array<JSX.Element> = skillTreeNode.childNodes.map(this.mapTo);
+        skillTreeNode.skillIds.forEach(skillId => res.push(this.mapSkill(skillId)));
         return res;
     };
 
