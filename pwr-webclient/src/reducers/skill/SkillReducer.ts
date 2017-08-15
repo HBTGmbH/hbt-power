@@ -90,7 +90,7 @@ export namespace SkillReducer {
                 let categoriesById = skillStore.categoriesById().delete(act.id);
 
                 let root = skillStore.skillTreeRoot();
-                root.removeCategoryFromChildren(act.id);
+                root.removeCategoryFromTree(act.id);
                 root = Object.assign(SkillTreeNode.root(), root);
                 return skillStore.skillTreeRoot(root).categoriesById(categoriesById);
             }

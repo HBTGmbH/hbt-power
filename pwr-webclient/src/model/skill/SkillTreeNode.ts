@@ -29,8 +29,17 @@ export class SkillTreeNode {
      * @param childId
      * @returns {number|any} index or -1 when not found.
      */
-    public getChildIndex(childId: number): number {
+    private getChildIndex(childId: number): number {
         return this.childNodes.findIndex(child => child.skillCategoryId == childId);
+    }
+
+    private removeCategoryFromChildren(categoryId: number) {
+        this.childNodes = this.childNodes.filter(childNode => childNode.skillCategoryId !== categoryId);
+    }
+
+
+    private hasSkill(skillIdToFind: number): boolean {
+        return this.skillIds.some(skillId => skillId === skillIdToFind);
     }
 
     /**
@@ -50,14 +59,7 @@ export class SkillTreeNode {
         }
     }
 
-    public removeCategoryFromChildren(categoryId: number) {
-        this.childNodes = this.childNodes.filter(childNode => childNode.skillCategoryId !== categoryId);
-    }
 
-
-    public hasSkill(skillIdToFind: number): boolean {
-        return this.skillIds.some(skillId => skillId === skillIdToFind);
-    }
 
 
     public addSkillIdToTree(categoryId: number, skillId: number) {
@@ -70,6 +72,14 @@ export class SkillTreeNode {
 
     public addSkillToTree(categoryId: number, skill: SkillServiceSkill) {
         this.addSkillIdToTree(categoryId, skill.id());
+    }
+
+    public removeCategoryFromTree(categoryId: number) {
+        if(this.getChildIndex(categoryId) !== -1) {
+            this.removeCategoryFromChildren(categoryId);
+        } else {
+            this.childNodes.forEach(childNode => childNode.removeCategoryFromTree(categoryId));
+        }
     }
 
     public removeSkillFromTree(categoryId: number, skillId: number) {
