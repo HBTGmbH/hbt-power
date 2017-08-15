@@ -107,6 +107,7 @@ class AddSkillDialogModule extends React.Component<
         return <div>
             <SkillSearcher
                 onValueChange={this.props.changeSkillName}
+                resetOnRequest={false}
                 id="AddSkill.Searcher"
                 floatingLabelText={PowerLocalize.get("Action.SearchSkill")}
             />

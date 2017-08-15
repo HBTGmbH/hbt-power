@@ -106,7 +106,13 @@ class ConsultantEditDialogModule extends React.Component<
     };
 
     private setBirthDate = (val: Date) => {
-        console.log(val);
+        console.log("date:", val);
+        console.log("toISOString:", val.toISOString());
+        console.log("toLocaleString:", val.toLocaleString());
+        console.log("toLocaleDateString:", val.toLocaleDateString());
+        console.log("toLocaleTimeString:", val.toLocaleTimeString());
+        console.log("toUTCString:", val.toUTCString());
+        console.log("toTimeString:", val.toTimeString());
         this.setState({
             consultantInfo: this.state.consultantInfo.birthDate(val)
         })

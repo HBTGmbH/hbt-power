@@ -529,6 +529,7 @@ export class AdminActionCreator {
 
     public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
         return function(dispatch: redux.Dispatch<AdminState>) {
+            console.log("consultantInfo", consultantInfo.birthDate())
             let apiConsultant: APIConsultant = {
                 profile: null,
                 initials: consultantInfo.initials(),
@@ -537,6 +538,7 @@ export class AdminActionCreator {
                 title: consultantInfo.title(),
                 birthDate: !isNullOrUndefined(consultantInfo.birthDate()) ? consultantInfo.birthDate().toISOString() : null
             };
+            console.log("apiConsultant", apiConsultant);
             let config: AxiosRequestConfig = {
                 params: {
                     action: 'name'

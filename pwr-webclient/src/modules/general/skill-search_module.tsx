@@ -11,6 +11,7 @@ interface SkillSearcherProps {
     id: string;
     value?: string;
     initialValue?: string;
+    resetOnRequest?: boolean;
     onNewRequest?(request: string): void;
     /**
      * Fired everytime the value changes(User input) and returns the value the user typed in.
@@ -53,6 +54,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         maxHeight: null,
         onNewRequest: request => {},
         onValueChange: val => {},
+        resetOnRequest: true
     };
 
     private requestSkills = (searchText: string, dataSource: any) => {
@@ -83,7 +85,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     private handleRequest = (request: string) => {
         this.setState({
-            searchText: ""
+            searchText: this.props.resetOnRequest ? "" : request
         });
         this.props.onNewRequest(request);
     };
