@@ -7,6 +7,7 @@ import * as Immutable from 'immutable';
 import {ViewElement} from './ViewElement';
 import {APIViewProfile} from './APIViewProfile';
 import {isNullOrUndefined} from 'util';
+import {GLOBAL_OPTIONS} from '../PwrConstants';
 /**
  * References a {@link Profile}, but stores only a subset of its data in an ordered way.
  */
@@ -114,7 +115,7 @@ export class ViewProfile {
             false,
             apiViewProfile.name,
             apiViewProfile.description,
-            isNullOrUndefined(apiViewProfile.descriptionCharsPerLine) ? 40 : apiViewProfile.descriptionCharsPerLine,
+            isNullOrUndefined(apiViewProfile.descriptionCharsPerLine) ? GLOBAL_OPTIONS.defaultCharsPerLine : apiViewProfile.descriptionCharsPerLine,
             Profile.createFromAPI(apiViewProfile.profileSnapshot),
             new Date(apiViewProfile.creationDate),
             Immutable.List<ViewElement>(apiViewProfile.sectorViewEntries.map(ViewElement.fromAPIViewSector)),

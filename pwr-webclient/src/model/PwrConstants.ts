@@ -19,3 +19,7 @@ export const COOKIE_ADMIN_EXPIRATION_TIME = 3; // 3 Days expiration time
 export const DESCRIPTION_CHARS_PER_LINE_LOWER = 20;
 
 export const DESCRIPTION_CHARS_PER_LINE_UPPER = 200;
+
+export declare const GLOBAL_OPTIONS: {
+    defaultCharsPerLine: number;
+};
