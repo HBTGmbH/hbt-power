@@ -354,9 +354,9 @@ export class ProfileAsyncActionCreator {
                     'Content-Type':'application/json'
                 }
             };
-            dispatch(ProfileActionCreator.SwapIndexes(elementType, viewProfileId, index1, index2));
+            //dispatch(ProfileActionCreator.SwapIndexes(elementType, viewProfileId, index1, index2));
             axios.post(GetPostMutateViewProfile(viewProfileId), JSON.stringify(indexes), config).then(function(response: AxiosResponse) {
-                //dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
+                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());

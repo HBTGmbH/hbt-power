@@ -36,6 +36,10 @@ export function postConsultantActionString() : string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/consultants";
 }
 
+export function patchConsultantActionString(initials: string) : string {
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials;
+}
+
 export function getNotificationAPIString(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/admin/notifications";
 }

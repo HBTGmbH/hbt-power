@@ -21,6 +21,7 @@ import {
     getNotificationAPIString,
     getNotificationTrashAPIString,
     getSkillByName,
+    patchConsultantActionString,
     postCategorizeSkill,
     postConsultantActionString
 } from '../../API_CONFIG';
@@ -529,7 +530,6 @@ export class AdminActionCreator {
 
     public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
         return function(dispatch: redux.Dispatch<AdminState>) {
-            console.log("consultantInfo", consultantInfo.birthDate())
             let apiConsultant: APIConsultant = {
                 profile: null,
                 initials: consultantInfo.initials(),
@@ -538,29 +538,8 @@ export class AdminActionCreator {
                 title: consultantInfo.title(),
                 birthDate: !isNullOrUndefined(consultantInfo.birthDate()) ? consultantInfo.birthDate().toISOString() : null
             };
-            console.log("apiConsultant", apiConsultant);
-            let config: AxiosRequestConfig = {
-                params: {
-                    action: 'name'
-                }
-            };
-            axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
-                config.params.action = 'title';
-                axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
-                    dispatch(AdminActionCreator.ReceiveConsultant(consultantInfo));
-                }).catch(function (error: any) {
-                    console.error(error);
-                });
-            }).catch(function (error: any) {
-                AdminActionCreator.logAxiosError(error);
-            });
-            axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
-                config.params.action = 'birthdate';
-                axios.post(postConsultantActionString(), apiConsultant, config).then(function (response: AxiosResponse) {
-                    dispatch(AdminActionCreator.ReceiveConsultant(consultantInfo));
-                }).catch(function (error: any) {
-                    console.error(error);
-                });
+            axios.patch(patchConsultantActionString(consultantInfo.initials()), apiConsultant).then(function (response: AxiosResponse) {
+                dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(response.data)));
             }).catch(function (error: any) {
                 AdminActionCreator.logAxiosError(error);
             });
