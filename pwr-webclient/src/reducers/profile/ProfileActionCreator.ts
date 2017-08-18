@@ -5,6 +5,7 @@ import {
     AddSkillAction,
     ChangeStringValueAction,
     ChangeViewProfileAction,
+    ChangeViewProfileCharsPerLineAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteProjectAction,
@@ -123,10 +124,12 @@ export class ProfileActionCreator {
         }
     }
 
-    public static AddSkill(skillName: string): AddSkillAction {
+    public static AddSkill(skillName: string, rating: number, comment: string): AddSkillAction {
         return {
             type: ActionType.AddSkill,
-            skillName: skillName
+            skillName: skillName,
+            rating: rating,
+            comment: comment
         }
     }
 
@@ -194,6 +197,14 @@ export class ProfileActionCreator {
             type: ActionType.ChangeViewProfileDescription,
             viewProfileId: id,
             val: description
+        }
+    }
+
+    public static ChangeViewProfileCharsPerLine(id: string, charsPerLine: number): ChangeViewProfileCharsPerLineAction{
+        return {
+            type: ActionType.ChangeViewProfileCharsPerLine,
+            viewProfileId: id,
+            val: charsPerLine
         }
     }
 

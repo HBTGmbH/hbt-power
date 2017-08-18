@@ -7,10 +7,8 @@ import {
     CardActions,
     CardHeader,
     CardText,
-    Dialog, Divider,
+    Dialog,
     FontIcon,
-    GridList,
-    GridTile,
     IconButton,
     RaisedButton,
     TextField
@@ -22,7 +20,6 @@ import {Profile} from '../../model/Profile';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {ProfileElement} from './profile/profile-element_module';
 import {ProfileStatistics} from './profile-statistics_module';
 
 /**
@@ -222,7 +219,7 @@ class PowerOverviewModule extends React.Component<
                                 {
                                     this.props.viewProfiles.map(viewProfile => {
                                         return (
-                                            <div className="col-md-4" key={"ViewProfileCard." + viewProfile.id()}>
+                                            <div className="col-md-4 padding-8px" key={"ViewProfileCard." + viewProfile.id()}>
                                                 <ViewCard viewProfileId={viewProfile.id()}/>
                                             </div>
                                         );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import * as Immutable from 'immutable';
-import {AutoComplete, List, ListItem, Paper} from 'material-ui';
+import {List, ListItem, Paper} from 'material-ui';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 import ChipInput from './../../../external_libs/ChipInput';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -74,9 +74,10 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
         if(value.trim().length > 0) {
             let prev = this.state.currentSuggestSkills;
             let reqParams = {
-                maxResults: this.MAX_RESULTS
+                maxResults: this.MAX_RESULTS,
+                searchterm: value
             };
-            axios.get(getSearchSkill(value), {params: reqParams}).then((response: AxiosResponse) => {
+            axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
                 if(response.status === 200) {
                     this.setState({
                         currentSuggestSkills: response.data

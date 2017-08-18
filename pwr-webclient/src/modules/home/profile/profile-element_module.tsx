@@ -1,13 +1,14 @@
 import * as React from 'react';
 import {Card, CardHeader, CardMedia, Divider, IconButton, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {Color} from '../../../utils/ColorUtil';
 
 interface ProfileElementLocalProps {
     /**
      * Title of the card header
      */
     title: string;
+
+    subtitle?: string;
 
     /**
      * Callback that is executed when the add button onClick event is invoked.
@@ -30,6 +31,10 @@ interface ProfileElementLocalProps {
 export class ProfileElement extends React.Component<ProfileElementLocalProps, {}> {
 
 
+    public static defaultProps: Partial<ProfileElementLocalProps> = {
+        subtitle: null
+    };
+
     private readonly cardHeaderStyle = {
        'backgroundColor' : 'rgb(255, 204, 102)'
     };
@@ -40,7 +45,11 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
             <div  style={{width:"100%"}}>
                 <br/>
                 <Card>
-                    <CardHeader actAsExpander={true} title={this.props.title}>
+                    <CardHeader
+                        actAsExpander={true}
+                        title={this.props.title}
+                        subtitle={this.props.subtitle}
+                    >
                     </CardHeader>
                     <Divider/>
                     <CardMedia expandable={true}>

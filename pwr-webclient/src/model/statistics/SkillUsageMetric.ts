@@ -1,6 +1,4 @@
-
 import {doop} from 'doop';
-import {Skill} from '../Skill';
 import {APISkillUsageMetric} from './ApiMetrics';
 @doop
 export class SkillUsageMetric {

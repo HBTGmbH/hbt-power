@@ -2,12 +2,19 @@ import {StatisticsStore} from '../../model/statistics/StatisticsStore';
 import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
-    ReceiveConsultantClusterInfoAction, ReceiveNetworkAction, ReceiveProfileSkillMetrics, ReceiveScatterSkillsAction,
+    AddNameEntityUsageInfoAction,
+    AddSkillUsageInfoAction,
+    ReceiveConsultantClusterInfoAction,
+    ReceiveNetworkAction,
+    ReceiveProfileSkillMetrics,
+    ReceiveScatterSkillsAction,
     ReceiveSkillUsageMetricsAction
 } from './statistics-actions';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import * as Immutable from 'immutable';
 import {ActionType} from '../ActionType';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
+
 
 export class StatisticsReducer {
 
@@ -37,8 +44,20 @@ export class StatisticsReducer {
         return store.scatteredSkills(action.scatterSkills);
     }
 
+    public static AddNameEntityUsageInfo(store: StatisticsStore, action: AddNameEntityUsageInfoAction): StatisticsStore {
+        let map = store.nameEntityUsageInfo();
+        map = map.set(action.nameEntity, Immutable.List<ConsultantInfo>(action.consultantInfos));
+        return store.nameEntityUsageInfo(map);
+    }
+
+    public static AddSkillUsageInfo(store: StatisticsStore, action: AddSkillUsageInfoAction): StatisticsStore {
+        let map = store.skillUsageInfo();
+        map = map.set(action.skillName, Immutable.List<ConsultantInfo>(action.consultantInfos));
+        return store.skillUsageInfo(map);
+    }
+
     public static reduce(store: StatisticsStore, action: AbstractAction) : StatisticsStore {
-        console.log("Statistics Reducer called with action type " + ActionType[action.type]);
+        console.debug("Statistics Reducer called with action type " + ActionType[action.type]);
         if(isNullOrUndefined(store)) return StatisticsStore.createEmpty();
         switch(action.type) {
             case ActionType.ReceiveRelativeSkillUsageMetrics:
@@ -57,6 +76,10 @@ export class StatisticsReducer {
                 return StatisticsReducer.ReceiveConsultantClusterInfo(store,action as ReceiveConsultantClusterInfoAction);
             case ActionType.ReceiveScatterSkills:
                 return StatisticsReducer.ReceiveScatterSkills(store, action as ReceiveScatterSkillsAction);
+            case ActionType.AddNameEntityUsageInfo:
+                return StatisticsReducer.AddNameEntityUsageInfo(store, action as AddNameEntityUsageInfoAction);
+            case ActionType.AddSkillUsageInfo:
+                return StatisticsReducer.AddSkillUsageInfo(store, action as AddSkillUsageInfoAction);
             default:
                 return store;
         }

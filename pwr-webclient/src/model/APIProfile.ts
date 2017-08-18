@@ -1,4 +1,3 @@
-import {NameEntity} from './NameEntity';
 export interface APINameEntity {
     id: number;
     name: string;
@@ -70,6 +69,7 @@ export interface APISkill {
     id: string,
     name: string,
     rating: number
+    comment: string;
 }
 
 /**

@@ -16,8 +16,8 @@ declare const POWER_API_PORT_SKILL: string;
 
 declare const POWER_API_SUFFIX_SKILL: string;
 
-export function getSearchSkill(skillname: string): string {
-    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/search/" + skillname;
+export function getSearchSkill(): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/search";
 }
 
 export function getConsultantApiString(initials: string) : string {
@@ -34,6 +34,10 @@ export function getAllConsultantsString(): string {
 
 export function postConsultantActionString() : string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/consultants";
+}
+
+export function patchConsultantActionString(initials: string) : string {
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials;
 }
 
 export function getNotificationAPIString(): string {
@@ -85,6 +89,10 @@ export function getCompanySuggestionsAPIString(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/companies";
 }
 
+export function getAllCurrentlyUsedSkillNames(): string {
+    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/skills";
+}
+
 export function getPostViewProfileAPIString(initials: string): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
 }
@@ -113,7 +121,7 @@ export function postDuplicateViewProfile(id: string): string {
     return getViewProfileString(id);
 }
 
-export function postCreatePDFProfile(initials: string): string {
+export function postGenerateProfile(initials: string): string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
 }
 
@@ -175,4 +183,61 @@ export function getCategoryChildrenByCategoryId(id: number): string {
 
 export function getSkillsForCategory(id: number): string {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + id + "/skills";
+}
+
+export function getSkillByName(): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/byName";
+}
+
+export function getNameEntityUsageInfo() {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/entries/referencing";
+}
+
+export function getSkillUsageInfo() {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/skill/referencing";
+}
+
+export function postCategorizeSkill() {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill";
+}
+
+/**
+ * String representing a delete operation on the blacklist.
+ * @param id of the category to be whitelisted
+ * @returns {string} the representing the full API URI
+ */
+export function deleteBlacklistCategory(id: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/blacklist/" + id;
+}
+
+export function postLocaleToCategory(categoryId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + categoryId + "/locale";
+}
+
+export function deleteLocaleFromCategory(categoryId: number, locale: string) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + categoryId + "/locale/" + locale;
+}
+
+export function skillLocale(categoryId: number, language: string) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + categoryId + "/locale/" + language;
+}
+
+export function postNewCategory(parentId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
+}
+
+export function postNewSkill(categoryId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/category/" + categoryId;
+}
+
+export function deleteCustomSkill(skillId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId;
+}
+
+export function deleteCategory(parentId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
+}
+
+export function patchMoveSkill(skillId: number, newCategoryId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId + "/category/" + newCategoryId;
 }

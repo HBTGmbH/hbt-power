@@ -3,10 +3,18 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {ViewProfile} from '../../../../model/viewprofile/ViewProfile';
-import {NameEntity} from '../../../../model/NameEntity';
 import {ViewElement} from '../../../../model/viewprofile/ViewElement';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
-import {Checkbox, TableHeaderColumn, TableRowColumn, TableRow, Table, TableHeader, FontIcon, TableBody} from 'material-ui';
+import {
+    Checkbox,
+    FontIcon,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
+    TableRowColumn
+} from 'material-ui';
 import {ReduxDragIndicator} from './drag/redux-drag-row-indicator_module';
 import {ConnectedAscDescButton} from './connected-asc-desc-button_module';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';

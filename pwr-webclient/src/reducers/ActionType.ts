@@ -10,6 +10,7 @@ export enum ActionType {
 
     ChangeViewProfileName,
     ChangeViewProfileDescription,
+    ChangeViewProfileCharsPerLine,
     ReceiveViewProfile,
     SortViewProfile,
     SetSelectedIndexes,
@@ -66,16 +67,18 @@ export enum ActionType {
     LogInAdmin,
     LogOutAdmin,
 
-    ReceiveSkillCategory,
-
-    SetSkillTree,
-    AddSkillsToTree,
-
     /**
      * Requests all consultant informations that are available. This should replace the old informations available.
      */
     ReceiveAllConsultants,
     ReceiveSingleConsultant,
+
+    OpenSkillNotificationDialog,
+    SetSkillNotificationEditStatus,
+    CloseAndResetSkillNotificationDlg,
+    SetSkillNotificationError,
+    SetSkillNotificationAction,
+    SetNewSkillName,
 
     // == Statistics
     ReceiveSkillUsageMetrics,
@@ -85,5 +88,29 @@ export enum ActionType {
     ReceiveConsultantClusterInfo,
     StatisticsAvailable,
     StatisticsNotAvailable,
-    ReceiveScatterSkills
+    ReceiveScatterSkills,
+    AddNameEntityUsageInfo,
+    AddSkillUsageInfo,
+
+    // == Skill reducer
+    AddCategoryToTree,
+    AddSkillToTree,
+    ReadSkillHierarchy,
+
+    UpdateSkillCategory,
+    RemoveSkillCategory,
+    MoveSkill,
+    RemoveSkillServiceSkill,
+    UpdateSkillServiceSkill,
+    BatchAddSkills,
+
+    SetCurrentSkillName,
+    SetCurrentSkillRating,
+    SetAddSkillStep,
+    StepBackToSkillInfo,
+    ChangeSkillComment,
+    SetCurrentChoice,
+    SetAddSkillError,
+    SetNoCategoryReason,
+    ResetAddSkillDialog
 }

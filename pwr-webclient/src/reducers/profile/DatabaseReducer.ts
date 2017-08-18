@@ -1,9 +1,11 @@
 import {APIRequestType, ProfileElementType, RequestStatus} from '../../Store';
 import {error, isNullOrUndefined} from 'util';
 import {
-    AbstractAction, AddSkillAction,
+    AbstractAction,
+    AddSkillAction,
     ChangeStringValueAction,
     ChangeViewProfileAction,
+    ChangeViewProfileCharsPerLineAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteProjectAction,
@@ -196,13 +198,17 @@ export class DatabaseReducer {
             case APIRequestType.RequestExportDocs:
                 newState = state.exportDocuments(Immutable.List<ExportDocument>(action.payload));
                 break;
-
+            case APIRequestType.RequestSkillNames:
+                newState = state.currentlyUsedSkillNames(Immutable.Set<string>(action.payload));
+                break;
         }
         return newState.APIRequestStatus(RequestStatus.Successful);
     }
 
     private static LogInUser(database: InternalDatabase, action: LoginAction): InternalDatabase {
-        browserHistory.push('/app/home');
+        if(!action.disableRedirect) {
+            browserHistory.push('/app/home');
+        }
         Cookies.set(COOKIE_INITIALS_NAME, action.consultantInfo.initials(), {expires: COOKIE_INITIALS_EXPIRATION_TIME});
         database = database.loginStatus(LoginStatus.SUCCESS);
         return database.loggedInUser(action.consultantInfo);
@@ -344,11 +350,17 @@ export class DatabaseReducer {
         return state.profile(profile);
     }
 
+    private static ChangeViewProfileCharsPerLine(state: InternalDatabase, changeViewProfileCharsPerLineAction: ChangeViewProfileCharsPerLineAction) {
+        let viewProfile = state.viewProfiles().get(changeViewProfileCharsPerLineAction.viewProfileId);
+        viewProfile = viewProfile.descriptionCharsPerLine(changeViewProfileCharsPerLineAction.val);
+        return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
+    }
+
     public static Reduce(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
         if(isNullOrUndefined(state)) {
             state = InternalDatabase.createWithDefaults();
         }
-        console.log('DatabaseReducer called for action type ' + ActionType[action.type]);
+        console.debug('DatabaseReducer called for action type ' + ActionType[action.type]);
         switch(action.type) {
             case ActionType.ChangeAbstract: return DatabaseReducer.HandleChangeAbstract(state, action as ChangeStringValueAction);
             case ActionType.DeleteEntry: return DatabaseReducer.DeleteEntry(state, action as DeleteEntryAction);
@@ -376,8 +388,11 @@ export class DatabaseReducer {
             case ActionType.ChangeViewProfileDescription: return DatabaseReducer.ChangeViewProfileDescription(state, action as ChangeViewProfileAction);
             case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
             case ActionType.ClearViewProfiles: return state.viewProfiles(state.viewProfiles().clear());
+            case ActionType.ChangeViewProfileCharsPerLine: return DatabaseReducer.ChangeViewProfileCharsPerLine(state, action as ChangeViewProfileCharsPerLineAction);
             default:
                 return state;
         }
     }
+
+
 }

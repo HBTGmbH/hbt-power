@@ -67,6 +67,7 @@ class KeySkillsModule extends React.Component<
     render() {
         return (<ProfileElement
             title={PowerLocalize.get('KeySkill.Singular')}
+            subtitle={PowerLocalize.get("KeySkillEntry.Description")}
             onAddElement={this.props.addElement}
         >
             {this.props.keySkillEntries.map((keySkill, key) => {

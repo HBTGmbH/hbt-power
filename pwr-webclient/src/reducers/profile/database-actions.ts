@@ -10,7 +10,6 @@ import {ProjectDialogState} from '../../modules/home/profile/elements/project/pr
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {ExportDocument} from '../../model/ExportDocument';
 
 export interface AbstractAction {
     type: ActionType;
@@ -22,6 +21,14 @@ export interface ChangeStringValueAction extends AbstractAction {
      */
     value: string;
 }
+
+export interface ChangeNumberValueAction extends AbstractAction {
+    /**
+     * The new abstract text.
+     */
+    value: number;
+}
+
 
 export interface ReceiveAPIResponseAction extends AbstractAction {
     requestType: APIRequestType;
@@ -74,6 +81,7 @@ export interface DeleteProjectAction extends AbstractAction {
  */
 export interface LoginAction extends AbstractAction {
     consultantInfo: ConsultantInfo;
+    disableRedirect: boolean;
 }
 
 export interface UpdateSkillRatingAction extends AbstractAction {
@@ -144,12 +152,16 @@ export interface ChangeViewProfileAction extends AbstractAction {
     viewProfileId: string;
 }
 
+export interface ChangeViewProfileCharsPerLineAction extends AbstractAction {
+    val: number,
+    viewProfileId: string;
+}
+
 export interface AddSkillAction extends AbstractAction {
     skillName: string;
+    rating: number;
+    comment: string;
 }
 
-export interface ClearViewProfilesAction extends AbstractAction {
-
-}
 
 

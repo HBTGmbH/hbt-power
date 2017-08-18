@@ -80,6 +80,7 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
         return(
             <ProfileElement
                 title={PowerLocalize.get('TrainingEntries.Qualifier')}
+                subtitle={PowerLocalize.get('TrainingEntry.Description')}
                 onAddElement={this.handleAddElement}
             >
                 {

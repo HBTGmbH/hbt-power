@@ -1,6 +1,7 @@
 import {InternalDatabase} from './model/InternalDatabase';
 import {AdminState} from './model/admin/AdminState';
 import {StatisticsStore} from './model/statistics/StatisticsStore';
+import {SkillStore} from './model/skill/SkillStore';
 
 /**
  * State encapsulating all consultants.
@@ -17,6 +18,10 @@ export enum RequestStatus {
 }
 
 export enum APIRequestType {
+    /**
+     * Request requested all skill names.
+     */
+    RequestSkillNames,
     RequestCareers,
     RequestKeySkills,
     RequestProjectRoles,
@@ -41,7 +46,9 @@ export enum ProfileElementType {
     LanguageEntry,
     KeySkill,
     Project,
-    CareerEntry
+    CareerEntry,
+    Company,
+    ProjectRole
 }
 
 
@@ -51,5 +58,6 @@ export interface ApplicationState {
     databaseReducer: InternalDatabase;
     adminReducer: AdminState;
     statisticsReducer: StatisticsStore;
+    skillReducer: SkillStore;
 }
 

@@ -1,14 +1,13 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Avatar, FlatButton, FontIcon, List, RaisedButton, Toolbar, ToolbarGroup} from 'material-ui';
-import {Paper, ListItem} from 'material-ui';
+import {Avatar, FlatButton, FontIcon, List, ListItem, Paper, Toolbar, ToolbarGroup} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ApplicationState, RequestStatus} from '../../Store';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {RequestSnackbar} from '../general/request-snackbar_module.';
-import {Paths} from '../../index';
-import {browserHistory} from 'react-router'
+import {Paths} from '../../Paths';
+import {browserHistory} from 'react-router';
 
 
 /**
@@ -149,10 +148,27 @@ class AdminClientModule extends React.Component<
                                     onClick={this.props.navigateToConsultants}
                                 >
                                 </ListItem>
+
                                 <ListItem
-                                    primaryText="Skilltree"
-                                    leftIcon={<FontIcon className="material-icons">people</FontIcon>}
-                                    onClick={() => browserHistory.push(Paths.ADMIN_INFO_SKILLTREE)}
+                                    primaryText={PowerLocalize.get("AdminClient.Menu.Info")}
+                                    leftIcon={<FontIcon className="material-icons">info_outline</FontIcon>}
+                                    open={true}
+                                    nestedItems={[
+                                        <ListItem
+                                            key="AdminClient.Menu.Info.ProfileElements"
+                                            primaryText={PowerLocalize.get("AdminClient.Menu.Info.ProfileElements")}
+                                            leftIcon={<FontIcon className="material-icons">dehaze</FontIcon>}
+                                            onClick={() => browserHistory.push(Paths.ADMIN_INFO_NAME_ENTITY)}
+                                        >
+                                        </ListItem>,
+                                        <ListItem
+                                            key="AdminClient.Menu.Info.SkillTree"
+                                            primaryText={PowerLocalize.get("AdminClient.Menu.Info.SkillTree")}
+                                            leftIcon={<FontIcon className="material-icons">device_hub</FontIcon>}
+                                            onClick={() => browserHistory.push(Paths.ADMIN_INFO_SKILLTREE)}
+                                        >
+                                        </ListItem>
+                                    ]}
                                 >
                                 </ListItem>
                                 <ListItem

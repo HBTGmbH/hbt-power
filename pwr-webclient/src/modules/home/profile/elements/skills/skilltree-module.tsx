@@ -2,16 +2,17 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import * as redux from 'redux';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
 import {ApplicationState} from '../../../../../Store';
-import {AutoComplete, List, Subheader} from 'material-ui';
+import {List, Subheader} from 'material-ui';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
-import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {SkillChip} from './skill-chip_module';
-import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Skill} from '../../../../../model/Skill';
 import * as Immutable from 'immutable';
-import {levenshtein} from '../../../../../utils/ObjectUtil';
+import {Comparators} from '../../../../../utils/Comparators';
+import {AddSkillDialog} from './add-skill-dialog_module';
+import {SkillServiceSkill} from '../../../../../model/skill/SkillServiceSkill';
+import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
+import {isNullOrUndefined} from 'util';
 
 const distance = require("jaro-winkler");
 
@@ -23,6 +24,7 @@ const distance = require("jaro-winkler");
  */
 interface SkillTreeProps {
     skills: Immutable.Map<string, Skill>;
+    serviceSkillsByQualifier: Immutable.Map<string, SkillServiceSkill>;
 }
 
 /**
@@ -43,7 +45,7 @@ interface SkillTreeLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface SkillTreeLocalState {
-    skills: Immutable.Map<string, Skill>;
+    searchText: string;
 }
 
 /**
@@ -52,7 +54,7 @@ interface SkillTreeLocalState {
 interface SkillTreeDispatch {
     changeSkillRating(rating: number, id: string): void;
     onSkillDelete(id: string): void;
-    addSkill(name: string): void;
+    getSkillServiceSkills(qualifiers: Array<string>): void;
 }
 
 class SkillTreeModule extends React.Component<
@@ -63,8 +65,8 @@ class SkillTreeModule extends React.Component<
     constructor(props: SkillTreeProps& SkillTreeLocalProps& SkillTreeDispatch) {
         super(props);
         this.state = {
-            skills: this.props.skills
-        };
+            searchText: "",
+        }
     }
 
     private chipContainerStyle: CSSProperties = {
@@ -72,20 +74,28 @@ class SkillTreeModule extends React.Component<
         flexWrap: 'wrap',
     };
 
-    public componentWillReceiveProps(nextProps: SkillTreeProps & SkillTreeLocalProps & SkillTreeDispatch){
-        this.setState({
-            skills: nextProps.skills
-        })
+    public componentDidMount() {
+        console.log("componentDidMount", this.props.skills.toArray());
+    }
+
+    public componentWillReceiveProps(nextProps: SkillTreeProps) {
+    }
+
+    public componentDidUpdate(oldProps: SkillTreeProps) {
+        if(this.props.skills !== oldProps.skills) {
+            this.props.getSkillServiceSkills(this.props.skills.toArray().map(skill => skill.name()));
+        }
     }
 
 
     static mapStateToProps(state: ApplicationState, localProps: SkillTreeLocalProps): SkillTreeProps {
         return {
-            skills: state.databaseReducer.profile().skills()
+            skills: state.databaseReducer.profile().skills(),
+            serviceSkillsByQualifier: state.skillReducer.skillsByQualifier(),
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<InternalDatabase>): SkillTreeDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillTreeDispatch {
         return {
             changeSkillRating: (rating: number, id: string) => {
                 dispatch(ProfileActionCreator.updateSkillRating(rating, id));
@@ -93,67 +103,52 @@ class SkillTreeModule extends React.Component<
             onSkillDelete: (id: string) => {
                 dispatch(ProfileActionCreator.deleteSkill(id));
             },
-            addSkill: (name: string) => {
-                dispatch(ProfileActionCreator.AddSkill(name));
-            }
+            getSkillServiceSkills: skillQualifiers => dispatch(SkillActionCreator.Skill.AsyncGetSkillsByName(skillQualifiers))
         };
     }
 
     private filterSkills = (searchText: string) => {
         let skills = this.props.skills;
         if(searchText.trim().length != 0) {
-            skills = Immutable.Map<string, Skill>(skills.filter((skill: Skill, key:string) => {
+            return skills.filter((skill: Skill, key:string) => {
                 return distance(searchText, skill.name(), { caseSensitive: false }) >= 0.6;
-            }));
+            });
         }
-        this.setState({
-            skills: skills
-        });
+        return null;
     };
 
-    private handleSkillRequest = (skillString: string) => {
-        this.props.addSkill(skillString);
-        this.setState({
-            skills: this.props.skills
-        });
+    private mapSkill = (skill: Skill) => {
+        // Retreive it from the map; If it doesn't exist, it's custom
+        let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
+        let style = {
+            margin: "4px",
+            backgroundColor: custom ? "red" : "#9c9c9c"
+        };
+        return (<SkillChip
+            style={style}
+            key={skill.id()}
+            skill={skill}
+            onDelete={this.props.onSkillDelete}
+            onRatingChange={this.props.changeSkillRating}
+        />)
     };
 
     private renderSkills = () => {
-        return this.state.skills.map(skill => {
-            return (<SkillChip
-                key={skill.id()}
-                skill={skill}
-                onDelete={this.props.onSkillDelete}
-                onRatingChange={this.props.changeSkillRating}
-            />)
-        }).toArray();
+        return this.props.skills.sort(Comparators.compareSkills).map(skill => this.mapSkill(skill));
     };
 
     private getSkillSearcherHeight = () => {
-        if(this.state.skills.size > 10) return 800;
-        return this.state.skills.size * 80;
+        return 800;
     };
 
     render() {
         return (
-            <div className="row">
-                <div className="col-md-4">
-                    <SkillSearcher
-                        id="SkillTree.SkillSeacher"
-                        floatingLabelText={PowerLocalize.get("SkillTree.SearchAndAddSkill")}
-                        maxResults={20}
-                        onNewRequest={this.handleSkillRequest}
-                        onValueChange={this.filterSkills}
-                        maxHeight={this.getSkillSearcherHeight()}
-                    />
-                </div>
-                <div className="col-md-8">
-                    <List>
-                        <Subheader>{PowerLocalize.get('Category.Plural')}</Subheader>
-                        {this.renderSkills()}
-                    </List>
-                </div>
-
+            <div>
+                <AddSkillDialog/>
+                <List>
+                    <Subheader>Rot = Unbekannter Skill</Subheader>
+                    {this.renderSkills()}
+                </List>
             </div>
         );
     }

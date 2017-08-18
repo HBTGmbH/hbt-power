@@ -1,16 +1,5 @@
 import * as React from 'react';
-import {
-    AutoComplete,
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    Chip,
-    DatePicker,
-    Dialog,
-    IconButton,
-    TextField
-} from 'material-ui';
+import {AutoComplete, Chip, DatePicker, Dialog, IconButton, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {Project} from '../../../../../model/Project';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -21,7 +10,6 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Profile} from '../../../../../model/Profile';
-import {LEVENSHTEIN_FILTER_LEVEL} from '../../../../../model/PwrConstants';
 import {isNullOrUndefined} from 'util';
 
 interface ProjectDialogProps {
@@ -208,16 +196,28 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         return (
             <Dialog
                 open={this.props.open}
-                modal={false}
+                modal={true}
                 onRequestClose={this.props.onClose}
                 autoScrollBodyContent={true}
-            >
-                <Card>
-                    <CardHeader
-                        title={PowerLocalize.get('ProjectDialog.Title')}
-                    />
-
-                    <CardMedia>
+                title={PowerLocalize.get('ProjectDialog.Title')}
+                actions={[
+                    (<IconButton
+                        size={20}
+                        iconClassName="material-icons"
+                        onClick={this.handleSaveButtonPress}
+                        tooltip={PowerLocalize.get('Action.Save')}
+                    >
+                        save
+                    </IconButton>),
+                    (<IconButton
+                        size={20}
+                        iconClassName="material-icons"
+                        onClick={this.handleCloseButtonPress}
+                        tooltip={PowerLocalize.get('Action.Exit')}
+                    >
+                        close
+                    </IconButton>)]}
+                >
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <TextField
@@ -259,10 +259,9 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                         floatingLabelText={PowerLocalize.get('Broker.Singular')}
                                         value={this.state.brokerACValue}
                                         dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
-                                        onUpdateInput={this.handleBrokerInput}
+                                        onUpdateInput={(txt) => {this.setState({brokerACValue: txt})}}
                                         onNewRequest={this.handleBrokerRequest}
-                                        filter={AutoComplete.levenshteinDistanceFilter(LEVENSHTEIN_FILTER_LEVEL)}
-
+                                        filter={AutoComplete.fuzzyFilter}
                                     />
                                 </div>
                             </div>
@@ -325,15 +324,6 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                                 </div>
                             </div>
                         </div>
-                    </CardMedia>
-
-
-
-                    <CardActions>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                    </CardActions>
-                </Card>
             </Dialog>
         );
     }

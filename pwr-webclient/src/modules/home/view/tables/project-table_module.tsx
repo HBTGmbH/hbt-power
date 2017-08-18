@@ -3,7 +3,13 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {
-    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    Checkbox,
+    FontIcon,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
     TableRowColumn
 } from 'material-ui';
 import {ViewElement} from '../../../../model/viewprofile/ViewElement';

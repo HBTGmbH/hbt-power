@@ -4,9 +4,10 @@
 import {doop} from 'doop';
 import {Profile} from '../Profile';
 import * as Immutable from 'immutable';
-import {NEW_ENTITY_PREFIX} from '../PwrConstants';
 import {ViewElement} from './ViewElement';
 import {APIViewProfile} from './APIViewProfile';
+import {isNullOrUndefined} from 'util';
+import {GLOBAL_OPTIONS} from '../PwrConstants';
 /**
  * References a {@link Profile}, but stores only a subset of its data in an ordered way.
  */
@@ -32,6 +33,9 @@ export class ViewProfile {
 
     @doop
     public get description() {return doop<string, ViewProfile>()};
+
+    @doop
+    public get descriptionCharsPerLine() {return doop<number, this>()};
 
     /**
      * The referenced profile.
@@ -78,7 +82,8 @@ export class ViewProfile {
     private static currentId: number = 0;
 
 
-    private constructor(id: string, isNew: boolean, name: string, description: string, profile: Profile, creationDate: Date,
+    private constructor(id: string, isNew: boolean, name: string, description: string, descriptionCharsPerLine: number,
+                profile: Profile, creationDate: Date,
                 viewSectorEntries: Immutable.List<ViewElement>,
                 viewTrainignEntries:Immutable.List<ViewElement>,
                 viewEducationEntries:Immutable.List<ViewElement>,
@@ -89,7 +94,9 @@ export class ViewProfile {
                 viewCareerEntries: Immutable.List<ViewElement>,
                 viewSkills: Immutable.List<ViewElement>,
     ) {
-        return this.id(id).isNew(isNew).name(name).description(description).profile(profile).viewSectorEntries(viewSectorEntries)
+        return this.id(id).isNew(isNew).name(name).description(description)
+            .descriptionCharsPerLine(descriptionCharsPerLine)
+            .profile(profile).viewSectorEntries(viewSectorEntries)
             .viewTrainingEntries(viewTrainignEntries)
             .viewEducationEntries(viewEducationEntries)
             .viewLanguageEntries(viewLanguageSkills)
@@ -108,6 +115,7 @@ export class ViewProfile {
             false,
             apiViewProfile.name,
             apiViewProfile.description,
+            isNullOrUndefined(apiViewProfile.descriptionCharsPerLine) ? GLOBAL_OPTIONS.defaultCharsPerLine : apiViewProfile.descriptionCharsPerLine,
             Profile.createFromAPI(apiViewProfile.profileSnapshot),
             new Date(apiViewProfile.creationDate),
             Immutable.List<ViewElement>(apiViewProfile.sectorViewEntries.map(ViewElement.fromAPIViewSector)),

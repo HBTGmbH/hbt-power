@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../../Store';
-import {Card, CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
+import {CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -85,10 +85,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         this.props.saveProfile(this.props.loggedInUser.initials(), this.props.database);
     };
 
-    private handleResetProfile = (event: TouchTapEvent) => {
-        // FIXME implement
-    };
-
     private getInitials = () => {
         return isNullOrUndefined(this.props.loggedInUser) ? "" : this.props.loggedInUser.initials();
     };
@@ -149,7 +145,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                 </Tabs>
                 <Toolbar style={this.cardToolbarStyle}>
                     <IconButton iconClassName="material-icons" onClick={this.handleSaveProfile} tooltip={PowerLocalize.get('Action.Save')}>done</IconButton>
-                    <IconButton iconClassName="material-icons" disabled={true} onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Update')}>update</IconButton>
                     <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
                 </Toolbar>
            </Paper>

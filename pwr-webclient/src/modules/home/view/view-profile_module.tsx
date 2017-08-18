@@ -68,7 +68,9 @@ class ViewProfileCardModule extends React.Component<
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileCardDispatch {
-        return {};
+        return {
+
+        };
     }
 
     render() {
@@ -76,7 +78,7 @@ class ViewProfileCardModule extends React.Component<
             return (
                 <div>
                     <Paper className="margin-5px padding-8px">
-                        <h3 style={{marginLeft: "5px"}}>{"View " + this.props.viewProfile.name()}</h3>
+                        <h3 style={{marginLeft: '5px'}}>{'View ' + this.props.viewProfile.name()}</h3>
                         <Subheader>{this.props.viewProfile.description()}</Subheader>
                     </Paper>
                     <Paper className="margin-5px">

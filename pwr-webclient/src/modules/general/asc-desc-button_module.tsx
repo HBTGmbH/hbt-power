@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IconButton, FontIcon, FlatButton} from 'material-ui';
+import {FlatButton, FontIcon} from 'material-ui';
 
 interface AscDescButtonProps {
     initial?: 'ASC'|'DESC';

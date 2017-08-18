@@ -7,7 +7,7 @@ import {NetworkNodeDetails} from './network-node-details_module.';
 import {ApplicationState} from '../../../Store';
 import {Network} from '../../../model/statistics/Network';
 import * as vis from 'vis';
-import {DataSet, Edge, Node} from 'vis';
+import {Edge, Node} from 'vis';
 
 interface ProfileNetworkGraphProps {
     network: Network;

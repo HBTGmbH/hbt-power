@@ -4,7 +4,6 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {isNullOrUndefined} from 'util';
-import {Subheader} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Profile} from '../../model/Profile';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';

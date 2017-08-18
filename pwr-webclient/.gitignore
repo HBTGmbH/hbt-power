@@ -162,3 +162,4 @@ typings/
 
 ### static images that don't need to be version controlled ###
 public/img/**
+build/

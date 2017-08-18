@@ -2,16 +2,14 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
-import {
-    Card, CardHeader, FlatButton, FontIcon, Paper, Subheader, TextField, IconMenu, IconButton,
-    MenuItem
-} from 'material-ui';
+import {FontIcon, IconButton, IconMenu, Paper, RaisedButton} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfile} from '../../../model/viewprofile/ViewProfile';
 import {ProfileActionCreator} from '../../../reducers/profile/ProfileActionCreator';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
+import {isNullOrUndefined} from 'util';
 
 
 /**
@@ -45,6 +43,7 @@ interface ViewCardLocalProps {
 interface ViewCardLocalState {
     nameInputDisabled: boolean;
     descriptionInputDisabled: boolean;
+    charsPerLineDisabled: boolean;
 }
 
 /**
@@ -55,9 +54,11 @@ interface ViewCardDispatch {
     selectViewProfile(id: string): void;
     changeViewProfileName(id: string, val: string): void;
     changeViewProfileDescription(id: string, description: string): void;
-    saveViewProfileChanges(id: string, name: string, description: string): void;
+    changeViewProfileCharsPerLine(id: string, charsPerLine: number): void;
+    saveViewProfileChanges(id: string, name: string, description: string, charsPerLine: number): void;
     duplicateViewProfile(id: string): void;
     generatePdf(initials: string, viewProfileId: string): void;
+    generateDocX(initials: string, viewProfileId: string): void;
 }
 
 class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps & ViewCardDispatch, ViewCardLocalState> {
@@ -66,7 +67,8 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
         super(props);
         this.state = {
             nameInputDisabled: true,
-            descriptionInputDisabled: true
+            descriptionInputDisabled: true,
+            charsPerLineDisabled: true
         };
     }
 
@@ -82,16 +84,22 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
             deleteViewProfile: (id, initials) => dispatch(ProfileAsyncActionCreator.deleteViewProfile(id, initials)),
             selectViewProfile: id => dispatch(ProfileActionCreator.SelectViewProfile(id)),
             changeViewProfileDescription: (id, description) => dispatch(ProfileActionCreator.ChangeViewProfileDescription(id, description)),
+            changeViewProfileCharsPerLine: (id, charsPerLine) => dispatch(ProfileActionCreator.ChangeViewProfileCharsPerLine(id, charsPerLine)),
             changeViewProfileName: (id, val) => dispatch(ProfileActionCreator.ChangeViewProfileName(id, val)),
-            saveViewProfileChanges:(id, name2, description) => dispatch(ProfileAsyncActionCreator.editViewProfileDetails(id, name2, description)),
+            saveViewProfileChanges:(id, name2, description, charsPerLine) => dispatch(ProfileAsyncActionCreator.editViewProfileDetails(id, name2, description, charsPerLine)),
             duplicateViewProfile: (id) => dispatch(ProfileAsyncActionCreator.duplicateViewProfile(id)),
-            generatePdf: (initials, id) => dispatch(ProfileAsyncActionCreator.generatePDFProfile(initials, id))
+            generatePdf: (initials, id) => dispatch(ProfileAsyncActionCreator.generatePDFProfile(initials, id)),
+            generateDocX: (initials, id) => dispatch(ProfileAsyncActionCreator.generateDocXProfile(initials, id))
         };
     }
 
     private invokeUpdate = () => {
         this.props.saveViewProfileChanges(
-            this.props.viewProfileId, this.props.viewProfile.name(), this.props.viewProfile.description());
+            this.props.viewProfileId,
+            this.props.viewProfile.name(),
+            this.props.viewProfile.description(),
+            this.props.viewProfile.descriptionCharsPerLine()
+        );
     };
 
     private handleToggleNameInputEdit = (disabled: boolean) => {
@@ -108,89 +116,133 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
         if(disabled) this.invokeUpdate();
     };
 
+    private handleCharsPerLineToggle = (disabled: boolean) => {
+        this.setState({
+            charsPerLineDisabled: disabled
+        });
+        if(disabled) this.invokeUpdate();
+    };
+
+    private handleChangeCharsPerLine = (e: any, v: string) => {
+        if(v.trim() == "") {
+            this.props.changeViewProfileCharsPerLine(this.props.viewProfileId, 0);
+        } else {
+            const num = Number.parseInt(v);
+            if(!isNullOrUndefined(num) && !isNaN(num)) {
+                this.props.changeViewProfileCharsPerLine(this.props.viewProfileId, num);
+            }
+        }
+
+    };
+
     private invokePDFGeneration = () => {
         this.props.generatePdf(this.props.loggedInUser.initials(), this.props.viewProfileId);
     };
 
+    private invokeDocXGeneration = () => {
+        this.props.generateDocX(this.props.loggedInUser.initials(), this.props.viewProfileId);
+    };
+
     render() {
         return (
-                <div style={{padding:'30px'}}>
-                    <div className="row">
-                        <div className="col-md-12">
-                            <LimitedTextField
-                                maxCharacters={50}
-                                onChange={(evt, val)=> {this.props.changeViewProfileName(this.props.viewProfileId, val);}}
-                                floatingLabelText={PowerLocalize.get('ViewCard.Name')}
-                                value={this.props.viewProfile.name()}
-                                fullWidth={true}
-                                errorText={PowerLocalize.get('ErrorText.InputTooLong')}
-                                useToggleEditButton={true}
-                                disabled={this.state.nameInputDisabled}
-                                onToggleEdit={this.handleToggleNameInputEdit}
-                            />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-12">
-                            <LimitedTextField
-                                maxCharacters={255}
-                                onChange={(evt, val)=> {this.props.changeViewProfileDescription(this.props.viewProfileId, val);}}
-                                floatingLabelText={PowerLocalize.get('ViewCard.Description')}
-                                value={this.props.viewProfile.description()}
-                                fullWidth={true}
-                                errorText={PowerLocalize.get('ErrorText.InputTooLong')}
-                                useToggleEditButton={true}
-                                disabled={this.state.descriptionInputDisabled}
-                                onToggleEdit={this.handleToggleDescriptionInput}
-                                multiLine={true}
-                            />
-                        </div>
-                    </div>
-                    <h6>
-                        {PowerLocalize.get('ViewCard.CreatedOn') + ' '
-                        + this.props.viewProfile.creationDate().toLocaleDateString()
-                        + ' um '
-                        + this.props.viewProfile.creationDate().toLocaleTimeString()}
-                    </h6>
-                    <div className="row">
-                        <div className="col-md-4">
-                            <FlatButton
-                                label={PowerLocalize.get('Action.Edit')}
-                                labelPosition="before"
-                                icon={ <FontIcon className="material-icons">edit</FontIcon>}
-                                onClick={() => this.props.selectViewProfile(this.props.viewProfileId)}
-                            />
-                        </div>
-                        <div className="col-md-4">
-                            <FlatButton
-                                label={PowerLocalize.get('Action.Generate')}
-                                labelPosition="before"
-                                primary={true}
-                                icon={ <FontIcon className="material-icons">picture_as_pdf</FontIcon>}
-                                onClick={this.invokePDFGeneration}
-                            />
-                        </div>
-                        <div className="col-md-4">
-                            <IconMenu
-                                iconButtonElement={<IconButton><FontIcon className="material-icons">ic_more_vert</FontIcon></IconButton>}
-                                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                                targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                            >
-                                <MenuItem
-                                    primaryText={PowerLocalize.get('Action.Delete')}
-                                    leftIcon={ <FontIcon className="material-icons">delete</FontIcon>}
-                                    onClick={() => this.props.deleteViewProfile(this.props.viewProfileId, this.props.loggedInUser.initials())}
-                                />
-                                <MenuItem
-                                    primaryText={PowerLocalize.get('Action.Duplicate')}
-                                    leftIcon={ <FontIcon className="material-icons">content_copy</FontIcon>}
-                                    onClick={() => {this.props.duplicateViewProfile(this.props.viewProfileId)}}
-                                />
-                            </IconMenu>
-
-                        </div>
-                    </div>
+            <Paper style={{padding:'30px'}}>
+                <div className="fullWidth">
+                    <LimitedTextField
+                        maxCharacters={50}
+                        onChange={(evt, val)=> {this.props.changeViewProfileName(this.props.viewProfileId, val);}}
+                        floatingLabelText={PowerLocalize.get('ViewCard.Name')}
+                        value={this.props.viewProfile.name()}
+                        fullWidth={true}
+                        errorText={PowerLocalize.get('ErrorText.InputTooLong')}
+                        useToggleEditButton={true}
+                        disabled={this.state.nameInputDisabled}
+                        onToggleEdit={this.handleToggleNameInputEdit}
+                    />
                 </div>
+                <div className="fullWidth">
+                    <LimitedTextField
+                        maxCharacters={255}
+                        onChange={(evt, val)=> {this.props.changeViewProfileDescription(this.props.viewProfileId, val);}}
+                        floatingLabelText={PowerLocalize.get('ViewCard.Description')}
+                        value={this.props.viewProfile.description()}
+                        fullWidth={true}
+                        errorText={PowerLocalize.get('ErrorText.InputTooLong')}
+                        useToggleEditButton={true}
+                        disabled={this.state.descriptionInputDisabled}
+                        onToggleEdit={this.handleToggleDescriptionInput}
+                        multiLine={true}
+                    />
+                </div>
+                <div className="fullWidth">
+                    <LimitedTextField
+                        maxCharacters={2}
+                        onChange={this.handleChangeCharsPerLine}
+                        floatingLabelText={"Chars per Line"}
+                        value={this.props.viewProfile.descriptionCharsPerLine().toString()}
+                        fullWidth={true}
+                        errorText={PowerLocalize.get('ErrorText.InputTooLong')}
+                        useToggleEditButton={true}
+                        disabled={this.state.charsPerLineDisabled}
+                        onToggleEdit={this.handleCharsPerLineToggle}
+                    />
+                </div>
+                <h6>
+                    {PowerLocalize.get('ViewCard.CreatedOn') + ' '
+                    + this.props.viewProfile.creationDate().toLocaleDateString()
+                    + ' um '
+                    + this.props.viewProfile.creationDate().toLocaleTimeString()}
+                </h6>
+                <div className="vcenter">
+                    <RaisedButton
+                        className="margin-5px"
+                        label={PowerLocalize.get('Action.Edit')}
+                        labelPosition="before"
+                        icon={ <FontIcon className="material-icons">edit</FontIcon>}
+                        onClick={() => this.props.selectViewProfile(this.props.viewProfileId)}
+                    />
+                </div>
+                <IconMenu
+                    iconButtonElement={<IconButton iconClassName="material-icons">more</IconButton>}
+                    anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                >
+                    <RaisedButton
+                        className="margin-5px"
+                        label={PowerLocalize.get('Action.Delete')}
+                        labelPosition="before"
+                        secondary={true}
+                        icon={ <FontIcon className="material-icons">delete</FontIcon>}
+                        onClick={() => this.props.deleteViewProfile(this.props.viewProfileId, this.props.loggedInUser.initials())}
+                    />
+                    <RaisedButton
+                        className="margin-5px"
+                        label={PowerLocalize.get('Action.Duplicate')}
+                        labelPosition="before"
+                        primary={true}
+                        icon={ <FontIcon className="material-icons">content_copy</FontIcon>}
+                        onClick={() => {this.props.duplicateViewProfile(this.props.viewProfileId);}}
+                    />
+                </IconMenu>
+                <div className="vcenter">
+                    <RaisedButton
+                        className="margin-5px"
+                        label={PowerLocalize.get('Action.Generate.PDF')}
+                        labelPosition="before"
+                        primary={true}
+                        icon={ <FontIcon className="material-icons">picture_as_pdf</FontIcon>}
+                        onClick={this.invokePDFGeneration}
+                    />
+                    <RaisedButton
+                        className="margin-5px"
+                        label={PowerLocalize.get('Action.Generate.Word')}
+                        labelPosition="before"
+                        primary={true}
+                        icon={ <FontIcon className="material-icons">open_in_new</FontIcon>}
+                        onClick={this.invokeDocXGeneration}
+                    />
+
+                </div>
+            </Paper>
         );
     }
 }

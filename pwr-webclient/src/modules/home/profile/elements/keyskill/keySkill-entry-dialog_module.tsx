@@ -119,8 +119,8 @@ class KeySkillDialogModule extends React.Component<
                     <div className="row">
                         <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                             <AutoComplete
-                                floatingLabelText={PowerLocalize.get('KeySkillEntry.Dialog.CareerName')}
-                                id={'KeySkillEntry.Dialog.Name' + this.props.keySkillEntry.id()}
+                                floatingLabelText={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
+                                id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
                                 value={this.state.autoCompleteValue}
                                 searchText={this.state.autoCompleteValue}
                                 dataSource={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}

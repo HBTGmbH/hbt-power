@@ -4,11 +4,9 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
-import {Card, CardHeader, CardMedia, CardText, Slider, Subheader} from 'material-ui';
+import {Card, CardHeader, CardText, Slider, Subheader} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
-import {getScatterSkills} from '../../../API_CONFIG';
-import {compareString} from '../../../utils/StringUtil';
 import {compareNumbers} from '../../../utils/ObjectUtil';
 const Recharts = require('recharts');
 

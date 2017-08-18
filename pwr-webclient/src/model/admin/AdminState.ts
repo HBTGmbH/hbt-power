@@ -4,12 +4,21 @@ import {AdminNotification} from './AdminNotification';
 import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../LoginStatus';
 import {ConsultantInfo} from '../ConsultantInfo';
-import {SkillCategoryNode} from './SkillTree';
+import {ProfileEntryNotification} from './ProfileEntryNotification';
+import {SkillNotification} from './SkillNotification';
+import {SkillNotificationEditStatus} from './SkillNotificationEditStatus';
+import {SkillNotificationAction} from './SkillNotificationAction';
 
 @doop
 export class AdminState {
     @doop
-    public get notifications() {return doop<Immutable.List<AdminNotification>, this>()};
+    public get profileEntryNotifications() {return doop<Immutable.List<ProfileEntryNotification>, this>()};
+
+    @doop
+    public get profileUpdateNotifications() {return doop<Immutable.List<AdminNotification>, this>()};
+
+    @doop
+    public get skillNotifications() {return doop<Immutable.List<SkillNotification>, this>()};
 
     @doop
     public get trashedNotifications() {return doop<Immutable.List<AdminNotification>, this>()};
@@ -29,24 +38,61 @@ export class AdminState {
     @doop
     public get consultantsByInitials() {return doop<Immutable.Map<string, ConsultantInfo>, this>()};
 
-    @doop
-    public get skillCategoryTreeRoot() {return doop<SkillCategoryNode,this>()}
+    // == Values below are used for the skill notification dialog == //
 
-    private constructor(notifications: Immutable.List<AdminNotification>,
+    /**
+     * Skill notification that is selected for resolving.
+     * @returns {Doop<SkillNotification, this>}
+     */
+    @doop public get selectedSkillNotification() {return doop<SkillNotification, this>()};
+
+    @doop public get skillNotificationEditStatus() {return doop<SkillNotificationEditStatus,this>()}
+
+    /**
+     * Selected action for the selected skill notification.
+     * @returns {Doop<SkillNotificationAction, this>}
+     */
+    @doop public get skillNotificationSelectedAction() {return doop<SkillNotificationAction, this>()}
+
+    @doop public get skillNotificationError() {return doop<string, this>()}
+
+    @doop public get isSkillNameEdited() {return doop<boolean, this>()};
+
+    private constructor(profileEntryNotifications: Immutable.List<ProfileEntryNotification>,
+                        profileUpdateNotifications: Immutable.List<AdminNotification>,
+                        skillNotifications: Immutable.List<SkillNotification>,
                         trashedNotifications: Immutable.List<AdminNotification>,
                         requestStatus: RequestStatus,
                         loginStatus: LoginStatus,
                         adminName: string,
                         adminPass: string,
                         consultantsByInitials: Immutable.Map<string, ConsultantInfo>,
-                        skillCategoryTreeRoot: SkillCategoryNode) {
-        return this.notifications(notifications).trashedNotifications(trashedNotifications).requestStatus(requestStatus)
+                        skillInfo: string,
+                        skillNotificationEditStatus: SkillNotificationEditStatus,
+                        selectedSkillNotification: SkillNotification,
+                        skillNotificationError: string,
+                        skillNotificationSelectedAction: SkillNotificationAction,
+                        isSkillNameEdited: boolean
+    ) {
+        return this.profileEntryNotifications(profileEntryNotifications)
+            .profileUpdateNotifications(profileUpdateNotifications)
+            .skillNotifications(skillNotifications)
+            .trashedNotifications(trashedNotifications).requestStatus(requestStatus)
             .loginStatus(loginStatus).adminName(adminName).adminPass(adminPass).consultantsByInitials(consultantsByInitials)
-            .skillCategoryTreeRoot(skillCategoryTreeRoot);
+            .skillNotificationEditStatus(skillNotificationEditStatus)
+            .selectedSkillNotification(selectedSkillNotification)
+            .skillNotificationError(skillNotificationError)
+            .skillNotificationSelectedAction(skillNotificationSelectedAction)
+            .isSkillNameEdited(isSkillNameEdited);
     }
 
     public static createDefault() {
-        return new AdminState(Immutable.List<AdminNotification>(),Immutable.List<AdminNotification>(),
-            RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>(), SkillCategoryNode.root());
+        return new AdminState(Immutable.List<ProfileEntryNotification>(),
+            Immutable.List<AdminNotification>(),
+            Immutable.List<SkillNotification>(),
+            Immutable.List<AdminNotification>(),
+            RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>(),
+            "",
+            SkillNotificationEditStatus.CLOSED, null, "", SkillNotificationAction.ACTION_OK, false);
     }
 }

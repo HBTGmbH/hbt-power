@@ -4,7 +4,13 @@ import * as redux from 'redux';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {NameEntity} from '../../../../model/NameEntity';
 import {
-    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    Checkbox,
+    FontIcon,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
     TableRowColumn
 } from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';

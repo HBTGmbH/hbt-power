@@ -136,7 +136,7 @@ class CareerTableModule extends React.Component<
                         </TableHeaderColumn>
                         <TableHeaderColumn>
                             <ConnectedAscDescButton
-                                label={PowerLocalize.get('END')}
+                                label={PowerLocalize.get('End')}
                                 viewProfileId={this.props.viewProfileId}
                                 entryField="DATE_END"
                                 elementType={ProfileElementType.CareerEntry}

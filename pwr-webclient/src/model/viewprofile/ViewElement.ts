@@ -1,7 +1,12 @@
 import {doop} from 'doop';
 import {
     APIViewCareer,
-    APIViewEducation, APIViewKeySkill, APIViewLanguage, APIViewProject, APIViewQualification, APIViewSector,
+    APIViewEducation,
+    APIViewKeySkill,
+    APIViewLanguage,
+    APIViewProject,
+    APIViewQualification,
+    APIViewSector,
     APIViewSkill,
     APIViewTraining
 } from './APIViewProfile';

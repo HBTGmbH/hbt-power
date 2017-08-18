@@ -5,7 +5,10 @@ import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
     getConsultantClusterInfo,
     getKMedProfileNetwork,
-    getProfileStatistics, getScatterSkills,
+    getNameEntityUsageInfo,
+    getProfileStatistics,
+    getScatterSkills,
+    getSkillUsageInfo,
     getSkillUsageRelative,
     getSkillUsagesAbsolute,
     headStatisticsServiceAvailable
@@ -13,7 +16,12 @@ import {
 import {APINetwork, APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {
-    ReceiveConsultantClusterInfoAction, ReceiveNetworkAction, ReceiveProfileSkillMetrics, ReceiveScatterSkillsAction,
+    AddNameEntityUsageInfoAction,
+    AddSkillUsageInfoAction,
+    ReceiveConsultantClusterInfoAction,
+    ReceiveNetworkAction,
+    ReceiveProfileSkillMetrics,
+    ReceiveScatterSkillsAction,
     ReceiveSkillUsageMetricsAction
 } from './statistics-actions';
 import {ActionType} from '../ActionType';
@@ -22,6 +30,9 @@ import {Network} from '../../model/statistics/Network';
 import {AbstractAction} from '../profile/database-actions';
 import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
 import {APIScatterSkill, ScatterSkill} from '../../model/statistics/ScatterSkill';
+import {APIConsultant} from '../../model/APIProfile';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {NameEntity} from '../../model/NameEntity';
 
 export class StatisticsActionCreator {
 
@@ -77,6 +88,14 @@ export class StatisticsActionCreator {
         return {
             type: ActionType.ReceiveScatterSkills,
             scatterSkills: scatterSkills
+        }
+    }
+
+    public static AddSkillUsageInfo(skillName: string, consultants: Array<ConsultantInfo>): AddSkillUsageInfoAction {
+        return {
+            type: ActionType.AddSkillUsageInfo,
+            consultantInfos: consultants,
+            skillName: skillName
         }
     }
 
@@ -176,4 +195,51 @@ export class StatisticsActionCreator {
         }
     }
 
+    /**
+     * Requests name entity info unless the info is already available in the store.
+     * @param nameEntity
+     * @param type
+     * @returns {(dispatch:redux.Dispatch<ApplicationState>, getState:()=>ApplicationState)=>undefined}
+     * @constructor
+     */
+    public static AsyncRequestNameEntityUsageInfo(nameEntity: NameEntity, type: string) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let state = getState();
+            if(!state.statisticsReducer.nameEntityUsageInfo().has(nameEntity)) {
+                let config: AxiosRequestConfig = {
+                    params: {
+                        "name-entity": nameEntity.name(),
+                        "type": type
+                    }
+                };
+                axios.get(getNameEntityUsageInfo(), config).then((response: AxiosResponse) => {
+                    let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
+                    let list = data.map(value => ConsultantInfo.fromAPI(value));
+                    dispatch(Object.assign({}, new AddNameEntityUsageInfoAction(ActionType.AddNameEntityUsageInfo, nameEntity, list)));
+                }).catch(function(error:any) {
+                    console.error(error);
+                    dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+                });
+            }
+        }
+    }
+
+    public static AsyncRequestSkillUsageInfo(skillName: string) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let state = getState();
+            if(!state.statisticsReducer.skillUsageInfo().has(skillName)) {
+                let config: AxiosRequestConfig = {
+                    params: { "skill": skillName }
+                };
+                axios.get(getSkillUsageInfo(), config).then((response: AxiosResponse) => {
+                    let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
+                    let list = data.map(value => ConsultantInfo.fromAPI(value));
+                    dispatch(StatisticsActionCreator.AddSkillUsageInfo(skillName, list));
+                }).catch(function(error:any) {
+                    console.error(error);
+                    dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+                });
+            }
+        }
+    }
 }

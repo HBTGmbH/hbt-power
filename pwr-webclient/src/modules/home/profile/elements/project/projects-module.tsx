@@ -8,11 +8,12 @@ import {ApplicationState} from '../../../../../Store';
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {GridList, GridTile, IconButton} from 'material-ui';
+import {IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialogState} from './project-dialog_module';
 import {Profile} from '../../../../../model/Profile';
 import {Responsive, WidthProvider} from 'react-grid-layout';
+import {Comparators} from '../../../../../utils/Comparators';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -121,7 +122,9 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
 
     private renderProjects = () => {
         let index = 0;
-        return this.props.projects.map((value, key) => this.renderSingleProject(value, key, index++)).toArray()
+        return this.props.projects
+            .sort(Comparators.compareProjects)
+            .map((value, key) => this.renderSingleProject(value, key, index++)).toArray()
     };
 
     render() {

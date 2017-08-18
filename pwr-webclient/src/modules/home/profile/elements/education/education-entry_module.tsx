@@ -3,7 +3,7 @@ import {IconButton, TouchTapEvent} from 'material-ui';
 import {EducationEntry} from '../../../../../model/EducationEntry';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {formatToShortDisplay, formatToYear} from '../../../../../utils/DateUtil';
+import {formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {EducationEntryDialogModule} from './education-entry-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';

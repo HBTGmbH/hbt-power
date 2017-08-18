@@ -1,5 +1,4 @@
 // Um obj vollständig unveränderbar zu machen, friere jedes Objekt in obj ein.
-import {accessSync} from 'fs';
 export function deepFreeze(obj: Object) {
 
     // Ermittle die Namen der für obj definierten Eigenschaften
@@ -72,8 +71,10 @@ export function levenshtein(a: string, b: string): number
     return matrix[bn][an];
 }
 
+
 export function compareNumbers(n1: number, n2: number) {
     if(n1 > n2) return -1;
     if(n1 == n2) return 0;
     return 1;
 }
+

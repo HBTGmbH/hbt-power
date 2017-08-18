@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AllConsultantsState, ApplicationState} from '../../Store';
-import {AppBar, FlatButton, FontIcon, IconButton, IconMenu, ListItem, MenuItem} from 'material-ui';
+import {AppBar, FlatButton, FontIcon, IconButton, IconMenu, MenuItem} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -10,9 +10,9 @@ import {isNullOrUndefined} from 'util';
 import {Link} from 'react-router';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
-import {Paths} from '../../index';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
+import {Paths} from '../../Paths';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -108,33 +108,33 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             anchorOrigin={{horizontal: 'left', vertical: 'top'}}
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
         >
-            <Link to="/app/home"><MenuItem  primaryText={PowerLocalize.get('Menu.Home')} /></Link>
+            <Link to={Paths.USER_HOME}><MenuItem  primaryText={PowerLocalize.get('Menu.Home')} /></Link>
             <Link to={Paths.USER_PROFILE}><MenuItem  primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
             {
                 this.props.viewSelected ? <Link to="/app/view"><MenuItem  primaryText={PowerLocalize.get('Menu.View')} /></Link> : null
             }
-            <Link to="/app/reports"><MenuItem  primaryText={PowerLocalize.get('Menu.Reports')} onClick={this.loadExportDocuments}/></Link>
+            <Link to={Paths.USER_REPORTS}><MenuItem  primaryText={PowerLocalize.get('Menu.Reports')} onClick={this.loadExportDocuments}/></Link>
             {
                 this.props.statisticsAvailable ?
                     <MenuItem
                         primaryText={PowerLocalize.get('Menu.Statistics')}
                         rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
                         menuItems={[
-                            <Link to="/app/statistics/network">
+                            <Link to={Paths.USER_STATISTICS_NETWORK}>
                                 <MenuItem
                                     key="Menu.Statistics.Network"
                                     primaryText={PowerLocalize.get('Menu.Statistics.Network')}
                                     onClick={this.props.loadNetworkGraph}
                                 />
                             </Link>,
-                            <Link to="/app/statistics/clusterinfo">
+                            <Link to={Paths.USER_STATISTICS_CLUSTERINFO}>
                                 <MenuItem
                                     key="Menu.Statistics.Network"
                                     primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
                                     onClick={() => this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials())}
                                 />
                             </Link>,
-                            <Link to="/app/statistics/skills">
+                            <Link to={Paths.USER_STATISTICS_SKILLS}>
                                 <MenuItem
                                     key="Menu.Statistics.Skills"
                                     primaryText={PowerLocalize.get('Menu.Statistics.Skills')}
@@ -147,7 +147,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 :
                 null
             }
-            <Link to="/app/search"><MenuItem  primaryText={PowerLocalize.get('Menu.Search')}/></Link>
+            <Link to={Paths.USER_SEARCH}><MenuItem  primaryText={PowerLocalize.get('Menu.Search')}/></Link>
         </IconMenu>);
     };
 

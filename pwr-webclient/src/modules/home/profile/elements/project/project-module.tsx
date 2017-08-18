@@ -7,6 +7,7 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {Profile} from '../../../../../model/Profile';
+import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 
 interface ProjectModuleProps {
     project: Project;
@@ -70,13 +71,18 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
         return res;
     };
 
+    private renderTitle = () => {
+        return "Tätig als " + this.getRoleNameList() + " von " + formatToShortDisplay(this.props.project.startDate())
+            + " bis " + formatToShortDisplay(this.props.project.endDate());
+    };
+
     render () {
         return (
             <Paper zDepth={1} style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}}>
                 <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}} initiallyExpanded={true}>
                     <CardHeader
                         title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
-                        subtitle={'Tätig als ' + this.getRoleNameList()}
+                        subtitle={this.renderTitle()}
                         actAsExpander={true}
                     />
                     <ProjectDialog key={'projectDialog.' + this.props.project.id()}

@@ -87,6 +87,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         return(
             <ProfileElement
                 title={PowerLocalize.get('Language.Singular')}
+                subtitle={PowerLocalize.get("LanguageSkill.Description")}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.languageSkills.map(this.renderSingleLanguage).toArray()}

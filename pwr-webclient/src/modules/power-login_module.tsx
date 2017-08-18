@@ -7,8 +7,8 @@ import {FlatButton, Paper, RaisedButton, TextField} from 'material-ui';
 import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
-import {browserHistory} from 'react-router';
-import {Paths} from '../index';
+import {Link} from 'react-router';
+import {Paths} from '../Paths';
 /**
  * Properties that are managed by react-redux.
  *
@@ -135,10 +135,9 @@ class PowerLoginModule extends React.Component<
                     </div>
                     <div className="row" style={{marginTop: "20px"}}>
                         <div className="col-md-offset-1">
-                            <FlatButton label="Admin" onClick={() => browserHistory.push(Paths.ADMIN_LOGIN)}/>
+                            <Link to={Paths.ADMIN_LOGIN}><FlatButton label="Admin"/></Link>
                         </div>
                     </div>
-
                 </Paper>
             </div>
         </div>);

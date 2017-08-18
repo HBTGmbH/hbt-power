@@ -1,7 +1,7 @@
 import {doop} from 'doop';
 import {APIConsultant} from './APIProfile';
-import has = Reflect.has;
 import {isNullOrUndefined} from 'util';
+import has = Reflect.has;
 @doop
 export class ConsultantInfo {
 

@@ -1,6 +1,12 @@
 import {
     APICareerEntry,
-    APIEducationStep, APIKeySkill, APILanguageSkill, APIProfile, APIProject, APIQualificationEntry, APISectorEntry,
+    APIEducationStep,
+    APIKeySkill,
+    APILanguageSkill,
+    APIProfile,
+    APIProject,
+    APIQualificationEntry,
+    APISectorEntry,
     APISkill,
     APITrainingEntry
 } from '../APIProfile';
@@ -50,6 +56,7 @@ export interface APIViewProfile {
     id: number;
     name: string;
     description: string;
+    descriptionCharsPerLine: number;
     profileSnapshot: APIProfile;
     creationDate: string;
     educationViewEntries: Array<APIViewEducation>;

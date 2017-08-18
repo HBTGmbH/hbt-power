@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Card, CardHeader, Subheader, CardText} from 'material-ui';
+import {Card, CardHeader, CardText, Subheader} from 'material-ui';
 import {Network} from '../../../model/statistics/Network';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Properties} from '@types/vis';

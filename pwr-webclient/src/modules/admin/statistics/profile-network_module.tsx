@@ -3,8 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../Store';
 import {Network} from '../../../model/statistics/Network';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {Paper, RadioButton, RadioButtonGroup, RaisedButton, Slider, Subheader} from 'material-ui';
 import {ProfileNetworkGraph} from '../../general/statistics/profile-network_module';
 
 
@@ -61,39 +59,6 @@ class ProfileNetworkModule extends React.Component<
         return (
             <div>
                 <ProfileNetworkGraph/>
-                {/*<Paper style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                    <Subheader>{PowerLocalize.get('ProfileNetwork.Method')}</Subheader>
-                    <RadioButtonGroup
-                        name="method"
-                        valueSelected={this.state.method}
-                        onChange={(evt, val) => this.setState({method: val})}>
-                        <RadioButton
-                            value="COMMON_SKILLS"
-                            label="Skill-Gemeinsamkeit"
-                        />
-                        <RadioButton
-                            value="SIM_RANK"
-                            label="SimRank"
-                        />
-                    </RadioButtonGroup>
-                    <Slider
-                        value={this.state.iterations}
-                        min={2}
-                        max={500}
-                        step={1}
-                        onChange={(evt, val) => this.setState({iterations: val})}
-                    />
-                    <Subheader>{PowerLocalize.get('ProfileNetwork.IterationCount') + this.state.iterations}</Subheader>
-                    <Slider
-                        value={this.state.clusters}
-                        min={2}
-                        max={40}
-                        step={1}
-                        onChange={(evt, val) => this.setState({clusters: val})}
-                    />
-                    <Subheader>{PowerLocalize.get('ProfileNetwork.ClusterAmount') + this.state.clusters}</Subheader>
-                    <RaisedButton label={PowerLocalize.get('ProfileNetwork.Recalc')}/>
-                </Paper>*/}
             </div>);
     }
 }

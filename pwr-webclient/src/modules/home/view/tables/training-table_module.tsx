@@ -4,7 +4,13 @@ import * as redux from 'redux';
 import {NameEntity} from '../../../../model/NameEntity';
 import {ApplicationState, ProfileElementType} from '../../../../Store';
 import {
-    Checkbox, FontIcon, Table, TableBody, TableHeader, TableHeaderColumn, TableRow,
+    Checkbox,
+    FontIcon,
+    Table,
+    TableBody,
+    TableHeader,
+    TableHeaderColumn,
+    TableRow,
     TableRowColumn
 } from 'material-ui';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
@@ -155,7 +161,7 @@ class TrainingTableModule extends React.Component<
                             </TableHeaderColumn>
                             <TableHeaderColumn>
                                 <ConnectedAscDescButton
-                                    label={PowerLocalize.get('END')}
+                                    label={PowerLocalize.get('End')}
                                     viewProfileId={this.props.viewProfileId}
                                     entryField="DATE_END"
                                     elementType={ProfileElementType.TrainingEntry}

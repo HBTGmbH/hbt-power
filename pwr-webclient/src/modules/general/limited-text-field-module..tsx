@@ -1,6 +1,7 @@
 import * as React from 'react';
-import {FontIcon, LinearProgress, TextField, IconButton} from 'material-ui';
 import {FormEvent} from 'react';
+import {FontIcon, IconButton, LinearProgress, TextField} from 'material-ui';
+import {isNullOrUndefined} from 'util';
 
 interface LimitedTextFieldProps {
     maxCharacters: number;
@@ -17,6 +18,8 @@ interface LimitedTextFieldProps {
      * <code>null</code> means that no text will be displayed. Note: ""(empty string) will be displayed.
      */
     errorText?: string;
+
+    overrideErrorText?: string;
 
     /**
      * Default:false
@@ -37,6 +40,8 @@ interface LimitedTextFieldProps {
     useToggleEditButton?: boolean;
 
     onToggleEdit?(disabled: boolean): void;
+
+    id?: string;
 }
 
 interface LimitedTextFieldState {
@@ -56,7 +61,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     }
 
     public componentWillReceiveProps(newProps: LimitedTextFieldProps) {
-        if(newProps.value.length <= newProps.maxCharacters) {
+        if(isNullOrUndefined(newProps.overrideErrorText) && (newProps.value.length <= newProps.maxCharacters)) {
             this.setState({
                 errorText: null
             });
@@ -97,12 +102,13 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                 <div style={{width: this.props.fullWidth ? '100%' : 350}}>
                     <div style={{width:this.props.fullWidth ? '85%' : 256, float:'left'}}>
                         <TextField
+                            id={this.props.id}
                             value={this.props.value}
                             disabled={this.props.disabled}
                             onChange={this.interceptOnChange}
                             multiLine={this.props.multiLine}
                             fullWidth={this.props.fullWidth}
-                            errorText={this.state.errorText}
+                            errorText={isNullOrUndefined(this.state.errorText) ? this.props.overrideErrorText : this.state.errorText}
                             floatingLabelText={this.props.floatingLabelText}
                         />
                     </div>

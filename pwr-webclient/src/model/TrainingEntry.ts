@@ -4,7 +4,6 @@ import {isNullOrUndefined} from 'util';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {doop} from 'doop';
-import {start} from 'repl';
 /**
  * Immutable representation of a career element. A career element represents a persons single career steps during their
  * professional career.

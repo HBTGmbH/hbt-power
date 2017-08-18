@@ -5,9 +5,7 @@ import {ApplicationState} from '../../../Store';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {Dialog, FlatButton} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
-import {isNullOrUndefined} from 'util';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 
 /**
@@ -108,7 +106,13 @@ class ConsultantEditDialogModule extends React.Component<
     };
 
     private setBirthDate = (val: Date) => {
-        console.log(val);
+        console.log("date:", val);
+        console.log("toISOString:", val.toISOString());
+        console.log("toLocaleString:", val.toLocaleString());
+        console.log("toLocaleDateString:", val.toLocaleDateString());
+        console.log("toLocaleTimeString:", val.toLocaleTimeString());
+        console.log("toUTCString:", val.toUTCString());
+        console.log("toTimeString:", val.toTimeString());
         this.setState({
             consultantInfo: this.state.consultantInfo.birthDate(val)
         })
