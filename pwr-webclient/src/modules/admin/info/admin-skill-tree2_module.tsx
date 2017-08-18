@@ -38,7 +38,7 @@ interface AdminSkillTree2LocalState {
 
 interface AdminSkillTree2Dispatch {
     loadTree(): void;
-    loadSkillsForCategory(categoryId: number): void;
+    //loadSkillsForCategory(categoryId: number): void;
 
     whitelistCategory(categoryId: number): void;
     blacklistCategory(categoryId: number): void;
@@ -89,9 +89,9 @@ class AdminSkillTree2Module extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminSkillTree2Dispatch {
         return {
             loadTree: () => dispatch(SkillActionCreator.AsyncLoadRootChildrenIntoTree()),
-            loadSkillsForCategory: categoryId => {
+            /*loadSkillsForCategory: categoryId => {
                 dispatch(SkillActionCreator.AsyncLoadChildrenIntoTree(categoryId, 2));
-            },
+            },*/
             whitelistCategory: categoryId => dispatch(SkillActionCreator.AsyncWhitelistCategory(categoryId)),
             blacklistCategory: categoryId => dispatch(SkillActionCreator.AsyncBlacklistCategory(categoryId)),
             addLocalization: (categoryId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddLocale(categoryId, language, qualifier)),
@@ -349,7 +349,6 @@ class AdminSkillTree2Module extends React.Component<
                 <Paper className="col-md-8">
                     <SkillTree
                         root={this.props.root}
-                        onLoadChildren={this.props.loadSkillsForCategory}
                         onCategorySelect={this.handleCategorySelect}
                         onSkillSelect={this.handleSkillSelect}
                         expandOnClick={false}

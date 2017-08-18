@@ -15,7 +15,7 @@ interface SkillTreeProps {
      * Invoked when a category is expanded and needs its children loaded
      * @param categoryId of the category that has been expanded
      */
-    onLoadChildren(categoryId: number): void;
+    onLoadChildren?(categoryId: number): void;
 
     /**
      * Invokes when a category has been clicked
@@ -63,6 +63,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
 
     public static defaultProps: Partial<SkillTreeProps> = {
         expandOnClick: true,
+        onLoadChildren: () => {},
         onCategorySelect: () => {},
         onSkillSelect: () => {}
     };

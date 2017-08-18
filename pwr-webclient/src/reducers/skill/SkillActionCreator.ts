@@ -225,7 +225,7 @@ export namespace SkillActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getRootCategoryIds()).then(function (response: AxiosResponse) {
                 let categories: number[] = response.data;
-                categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 1)));
+                categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 99)));
             }).catch(function (error: any) {
                 console.log(error);
             });
@@ -412,6 +412,10 @@ export namespace SkillActionCreator {
         }
     }
 
+    export namespace Tree {
+
+    }
+
     export namespace Skill {
 
         function getSkillByQualifier(qualifier: string, onSuccess: (skill: SkillServiceSkill) => void, onError: (error: AxiosError) => void) {
@@ -526,6 +530,13 @@ export namespace SkillActionCreator {
             }
         }
 
+        /**
+         * Invokes a POST call to the skill locale resource, persistently adding a locale to the skill.
+         * @param skillId
+         * @param language
+         * @param qualifier
+         * @constructor
+         */
         export function AsyncAddSkillLocale(skillId: number, language: string, qualifier: string) {
             return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 beginAPICall(dispatch);
@@ -539,6 +550,12 @@ export namespace SkillActionCreator {
             }
         }
 
+        /**
+         * Invokes a DELETE call to the skill locale endpoint, persistently deleting the locale
+         * from the skill.
+         * @param skillId of the skill whose locale is to be deleted
+         * @param language defines which locale from the skill is deleted
+         */
         export function AsyncDeleteSkillLocale(skillId: number, language: string) {
             return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 beginAPICall(dispatch);

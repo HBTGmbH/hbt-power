@@ -206,6 +206,7 @@ export const de_locale : any = {
     "NameEntityType.TRAINING" : "Weiterbildung",
     "NameEntityType.PROJECT_ROLE" : "Projektrolle",
     "NameEntityType.COMPANY" : "Unternehmen",
+    "NameEntityType.KEY_SKILL": "Spezialgebiet",
     "ErrorText.InputTooLong": "Zu viele Zeichen",
     "LanguageLevel.BASIC": "Anfänger",
     "LanguageLevel.ADVANCED": "Fortgeschritten",
