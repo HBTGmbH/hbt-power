@@ -6,6 +6,12 @@ spring:
 feign:
   hystrix:
     enabled: true
+management:
+  context-path: /meta
+endpoints:
+  cors:
+    allowed-methods: '*'
+    allowed-origins: '*'
 ---
 spring:
   profiles: localDev
