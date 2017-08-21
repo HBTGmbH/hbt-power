@@ -2,6 +2,7 @@ import {InternalDatabase} from './model/InternalDatabase';
 import {AdminState} from './model/admin/AdminState';
 import {StatisticsStore} from './model/statistics/StatisticsStore';
 import {SkillStore} from './model/skill/SkillStore';
+import {MetaDataStore} from './model/metadata/MetaDataStore';
 
 /**
  * State encapsulating all consultants.
@@ -59,5 +60,6 @@ export interface ApplicationState {
     adminReducer: AdminState;
     statisticsReducer: StatisticsStore;
     skillReducer: SkillStore;
+    metaDataReducer: MetaDataStore;
 }
 

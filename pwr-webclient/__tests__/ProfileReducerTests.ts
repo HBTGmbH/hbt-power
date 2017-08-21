@@ -1,15 +1,9 @@
 import {ProfileReducer} from '../src/reducers/profile/profile-reducer';
 import {Profile} from '../src/model/Profile';
-import {AbstractAction} from '../src/reducers/profile/database-actions';
-import {ProfileActionCreator} from '../src/reducers/profile/ProfileActionCreator';
-import {ProfileElementType, RequestStatus} from '../src/Store';
 import {CreateEntryAction, SaveEntryAction} from '../src/reducers/profile/database-actions';
+import {ProfileActionCreator} from '../src/reducers/profile/ProfileActionCreator';
+import {ProfileElementType} from '../src/Store';
 import {EducationEntry} from '../src/model/EducationEntry';
-import {NameEntity} from '../src/model/NameEntity';
-import {AdminNotification, APIAdminNotification} from '../src/model/admin/AdminNotification';
-import {AdminReducer} from '../src/reducers/admin/AdminReducer';
-import {AdminActionCreator} from '../src/reducers/admin/AdminActionCreator';
-import {ReceiveNotificationsAction} from '../src/reducers/admin/admin-actions';
 import {doop} from 'doop';
 
 //== The following tests validate that arbitrary entries may be added into the profile. ==//

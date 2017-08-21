@@ -9,6 +9,7 @@ import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
 import {Link} from 'react-router';
 import {Paths} from '../Paths';
+import {BottomBuildInfo} from './metadata/build-info_module';
 /**
  * Properties that are managed by react-redux.
  *
@@ -108,39 +109,44 @@ class PowerLoginModule extends React.Component<
 
     render() {
         return (
-        <div className="row">
-            <div className="col-md-4 col-md-offset-4">
-                <Paper style={{height: "400px"}}>
-                    <br/>
-                    <div className="row">
-                        <div className="col-md-4 col-md-offset-1">
-                            <img className="img-responsive" src="/img/logo_hbt.png"/>
-                        </div>
+            <div>
+                <div className="row">
+                    <div className="col-md-4 col-md-offset-4">
+                        <Paper style={{height: "400px"}}>
+                            <br/>
+                            <div className="row">
+                                <div className="col-md-4 col-md-offset-1">
+                                    <img className="img-responsive" src="/img/logo_hbt.png"/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-offset-1">
+                                    <h1>Profilauswahl</h1>
+                                    <h4>Weiter zu HBT Power</h4>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-offset-1">
+                                    {this.renderInputField()}
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-offset-1">
+                                    <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
+                                </div>
+                            </div>
+                            <div className="row" style={{marginTop: "20px"}}>
+                                <div className="col-md-offset-1">
+                                    <Link to={Paths.ADMIN_LOGIN}><FlatButton label="Admin"/></Link>
+                                </div>
+                            </div>
+                        </Paper>
                     </div>
-                    <div className="row">
-                        <div className="col-md-offset-1">
-                            <h1>Profilauswahl</h1>
-                            <h4>Weiter zu HBT Power</h4>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-offset-1">
-                            {this.renderInputField()}
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-offset-1">
-                            <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
-                        </div>
-                    </div>
-                    <div className="row" style={{marginTop: "20px"}}>
-                        <div className="col-md-offset-1">
-                            <Link to={Paths.ADMIN_LOGIN}><FlatButton label="Admin"/></Link>
-                        </div>
-                    </div>
-                </Paper>
-            </div>
-        </div>);
+                </div>
+                <div className="vertical-align" style={{marginTop: "50px"}}>
+                    <BottomBuildInfo/>
+                </div>
+            </div>);
     }
 }
 

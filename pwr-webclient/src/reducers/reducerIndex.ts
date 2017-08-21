@@ -5,12 +5,14 @@ import {StatisticsReducer} from './statistics/StatisticsReducer';
 
 import thunkMiddleware from 'redux-thunk';
 import {SkillReducer} from './skill/SkillReducer';
+import {MetaDataReducer} from './metadata/MetaDataReducer';
 
 const ApplicationStore = combineReducers({
     databaseReducer: DatabaseReducer.Reduce,
     adminReducer: AdminReducer.reduce,
     statisticsReducer: StatisticsReducer.reduce,
-    skillReducer: SkillReducer.reduce
+    skillReducer: SkillReducer.reduce,
+    metaDataReducer: MetaDataReducer.reduce
 });
 
 export const store = createStore(

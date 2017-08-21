@@ -16,6 +16,27 @@ declare const POWER_API_PORT_SKILL: string;
 
 declare const POWER_API_SUFFIX_SKILL: string;
 
+declare const POWER_PROFILE_META_INFO: string;
+
+declare const POWER_API_META_INFO_REPORT: string;
+
+
+export function getProfileBuildInfo(): string {
+    return POWER_PROFILE_META_INFO + "/info";
+}
+
+export function getStatisticsBuildsInfo(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/meta/info";
+}
+
+export function getSkillBuildInfo(): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/meta/info";
+}
+
+export function getReportBuildInfo(): string {
+    return POWER_API_META_INFO_REPORT + "/info";
+}
+
 export function getSearchSkill(): string {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/search";
 }

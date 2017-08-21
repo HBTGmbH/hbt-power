@@ -5,6 +5,7 @@ import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillTreeNode} from '../model/skill/SkillTreeNode';
 import {compareString} from './StringUtil';
 import {Project} from '../model/Project';
+import {BuildInfo} from '../model/metadata/BuildInfo';
 export class Comparators {
 
     public static getNameEntityComparator(asc: boolean) {
@@ -20,6 +21,14 @@ export class Comparators {
             return (s1: string, s2: string) => Comparators.compareString(s2, s1)
         } else {
             return (s1: string, s2: string) => Comparators.compareString(s1, s2)
+        }
+    }
+
+    public static getBuildInfoComparator(asc: boolean) {
+        if(asc) {
+            return (s1: BuildInfo, s2: BuildInfo) => Comparators.compareBuildInfo(s2, s1);
+        } else {
+            return (s1: BuildInfo, s2: BuildInfo) => Comparators.compareBuildInfo(s1, s2);
         }
     }
 
@@ -59,6 +68,10 @@ export class Comparators {
 
     public static compareProjects(p1: Project, p2: Project): number {
         return Comparators.compareDate(p1.startDate(), p2.startDate());
+    }
+
+    public static compareBuildInfo(b1: BuildInfo, b2: BuildInfo): number {
+        return Comparators.compareString(b1.name(), b2.name());
     }
 
 

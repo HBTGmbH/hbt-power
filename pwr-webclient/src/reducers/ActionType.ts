@@ -2,6 +2,8 @@
  * Created by nt on 29.05.2017.
  */
 
+import {MetaDataActionCreator} from './metadata/MetaDataActions';
+import AddOrReplaceBuildInfo = MetaDataActionCreator.AddOrReplaceBuildInfo;
 export enum ActionType {
 
     AddSkill,
@@ -112,5 +114,9 @@ export enum ActionType {
     SetCurrentChoice,
     SetAddSkillError,
     SetNoCategoryReason,
-    ResetAddSkillDialog
+    ResetAddSkillDialog,
+
+    // == MEta data
+    AddOrReplaceBuildInfo,
+    SetServiceAvaiabiltiy
 }
