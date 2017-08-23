@@ -183,6 +183,11 @@ export const de_locale : any = {
     "AddSkillDialog.ShowCategory.BtnValidCategory": "Richtige Kategorie",
     "AddSkillDialog.ShowCategory.BtnInvalidCategory": "Skill Ändern",
 
+    "ConfirmNavDialog.Action.NavigateAnyway": "Fortfahren",
+    "ConfirmNavDialog.Action.CancelNavigation": "Bleiben",
+    "ConfirmNavDialog.Title": "Ungespeicherte Änderungen",
+    "ConfirmNavDialog.Content": "Es gibt noch ungespeicherte Änderungen. Diese Aktion würde die Änderungen verwerfen.",
+
 
 
     // == Specific Specific Localizations == //

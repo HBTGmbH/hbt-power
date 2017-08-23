@@ -9,7 +9,8 @@ import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {Stepper} from 'material-ui/Stepper';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
-import {formatString} from '../../../utils/StringUtil';
+import {StringUtils} from '../../../utils/StringUtil';
+import formatString = StringUtils.formatString;
 
 /**
  * Properties that are managed by react-redux.
@@ -265,7 +266,7 @@ class NotificationDialogModule extends React.Component<
             PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
             this.props.notification.nameEntity().name(),
             NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity()));
-    }
+    };
 
     render() {
         if(!isNullOrUndefined(this.props.notification)) {

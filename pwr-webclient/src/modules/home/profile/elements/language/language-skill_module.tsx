@@ -9,7 +9,8 @@ import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
-import {langLevelToLocalizedString} from '../../../../../utils/StringUtil';
+import {StringUtils} from '../../../../../utils/StringUtil';
+import langLevelToLocalizedString = StringUtils.langLevelToLocalizedString;
 
 interface SingleLanguageState {
     dialogOpen: boolean;

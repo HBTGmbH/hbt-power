@@ -144,7 +144,7 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
-            null,
+            ConsultantInfo.empty(),
             Immutable.List<string>(['Bachelor', 'Master', 'Doktor', 'Diplom']),
             null,
             Immutable.List<ExportDocument>(),

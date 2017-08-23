@@ -23,11 +23,12 @@ export enum ActionType {
     ClearViewProfiles,
     ReplaceExportDocuments,
 
+    SetUserInitials,
+
     LogOutUser,
     DeleteSkill,
     UpdateSkillRating,
     LogInUser,
-    ShowProfile,
     CreateProject,
     DeleteProject,
     SaveProject,
@@ -40,7 +41,6 @@ export enum ActionType {
     APIRequestPending,
     ChangeLanguageSkillLevel,
 
-    ChangeInitials,
     ChangeFirstName,
     ChangeLastName,
     ChangeBirthDate,
@@ -118,5 +118,10 @@ export enum ActionType {
 
     // == MEta data
     AddOrReplaceBuildInfo,
-    SetServiceAvaiabiltiy
+    SetServiceAvaiabiltiy,
+
+    // == Navigation
+    SetCurrentLocation,
+    SetNavigationTarget,
+    DropNavigationTarget,
 }

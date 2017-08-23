@@ -27,16 +27,14 @@ import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {APINameEntity} from '../../model/APIProfile';
-import {browserHistory} from 'react-router';
 import {ActionType} from '../ActionType';
 import {ViewElement} from '../../model/viewprofile/ViewElement';
 import * as Immutable from 'immutable';
 import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 import {LoginStatus} from '../../model/LoginStatus';
-import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
-import * as Cookies from 'js-cookie';
 import {ExportDocument} from '../../model/ExportDocument';
+import {ConsultantInfo} from '../../model/ConsultantInfo';
 
 export class DatabaseReducer {
     private static AddAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
@@ -206,24 +204,13 @@ export class DatabaseReducer {
     }
 
     private static LogInUser(database: InternalDatabase, action: LoginAction): InternalDatabase {
-        if(!action.disableRedirect) {
-            browserHistory.push('/app/home');
-        }
-        Cookies.set(COOKIE_INITIALS_NAME, action.consultantInfo.initials(), {expires: COOKIE_INITIALS_EXPIRATION_TIME});
         database = database.loginStatus(LoginStatus.SUCCESS);
         return database.loggedInUser(action.consultantInfo);
     }
 
-    private static ShowProfile(database: InternalDatabase): InternalDatabase {
-        browserHistory.push('/app/profile');
-        return database;
-    }
-
     private static LogOutUser(database: InternalDatabase): InternalDatabase {
-        browserHistory.push('/');
-        Cookies.remove(COOKIE_INITIALS_NAME);
         database = database.viewProfiles(database.viewProfiles().clear());
-        database = database.loggedInUser(null);
+        database = database.loggedInUser(ConsultantInfo.empty());
         return database.profile(Profile.createDefault());
     }
 
@@ -236,7 +223,6 @@ export class DatabaseReducer {
     }
 
     private static SelectViewProfile(state: InternalDatabase, action: SelectViewProfileAction): InternalDatabase {
-        browserHistory.push("/app/view");
         return state.activeViewProfileId(action.id);
     }
 
@@ -356,6 +342,11 @@ export class DatabaseReducer {
         return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
     }
 
+    public static SetUserInitials(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
+        let loggedInUser = state.loggedInUser().initials(action.value);
+        return state.loggedInUser(loggedInUser);
+    }
+
     public static Reduce(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
         if(isNullOrUndefined(state)) {
             state = InternalDatabase.createWithDefaults();
@@ -375,7 +366,6 @@ export class DatabaseReducer {
             case ActionType.APIRequestFail: return state.APIRequestStatus(RequestStatus.Failiure);
             case ActionType.APIRequestSuccess: return DatabaseReducer.ApiRequestSuccessful(state, action as ReceiveAPIResponseAction);
             case ActionType.LogInUser: return DatabaseReducer.LogInUser(state, action as LoginAction);
-            case ActionType.ShowProfile: return DatabaseReducer.ShowProfile(state);
             case ActionType.LogOutUser: return DatabaseReducer.LogOutUser(state);
             case ActionType.SaveViewProfile: return DatabaseReducer.SaveViewProfiles(state, action as SaveViewProfileAction);
             case ActionType.DeleteViewProfile: return DatabaseReducer.DeleteViewProfile(state, action as DeleteViewProfileAction);
@@ -389,6 +379,7 @@ export class DatabaseReducer {
             case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
             case ActionType.ClearViewProfiles: return state.viewProfiles(state.viewProfiles().clear());
             case ActionType.ChangeViewProfileCharsPerLine: return DatabaseReducer.ChangeViewProfileCharsPerLine(state, action as ChangeViewProfileCharsPerLineAction);
+            case ActionType.SetUserInitials: return DatabaseReducer.SetUserInitials(state, action as ChangeStringValueAction);
             default:
                 return state;
         }

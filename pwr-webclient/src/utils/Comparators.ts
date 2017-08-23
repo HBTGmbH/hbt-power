@@ -3,7 +3,6 @@ import {SkillCategory} from '../model/skill/SkillCategory';
 import {Skill} from '../model/Skill';
 import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillTreeNode} from '../model/skill/SkillTreeNode';
-import {compareString} from './StringUtil';
 import {Project} from '../model/Project';
 import {BuildInfo} from '../model/metadata/BuildInfo';
 export class Comparators {
@@ -54,7 +53,7 @@ export class Comparators {
 
     public static getSkillTreeNodeComparator(categoriesById: Immutable.Map<number, SkillCategory>) {
         return function(s1: SkillTreeNode, s2: SkillTreeNode) {
-            return compareString(categoriesById.get(s2.skillCategoryId).qualifier(), categoriesById.get(s1.skillCategoryId).qualifier());
+            return Comparators.compareString(categoriesById.get(s2.skillCategoryId).qualifier(), categoriesById.get(s1.skillCategoryId).qualifier());
         }
     }
 

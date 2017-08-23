@@ -74,12 +74,6 @@ class SkillTreeModule extends React.Component<
         flexWrap: 'wrap',
     };
 
-    public componentDidMount() {
-        console.log("componentDidMount", this.props.skills.toArray());
-    }
-
-    public componentWillReceiveProps(nextProps: SkillTreeProps) {
-    }
 
     public componentDidUpdate(oldProps: SkillTreeProps) {
         if(this.props.skills !== oldProps.skills) {

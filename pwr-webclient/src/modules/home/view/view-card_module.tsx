@@ -10,6 +10,7 @@ import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncA
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
+import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 
 
 /**
@@ -82,7 +83,7 @@ class ViewCardModule extends React.Component<ViewCardProps & ViewCardLocalProps 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewCardDispatch {
         return {
             deleteViewProfile: (id, initials) => dispatch(ProfileAsyncActionCreator.deleteViewProfile(id, initials)),
-            selectViewProfile: id => dispatch(ProfileActionCreator.SelectViewProfile(id)),
+            selectViewProfile: id => dispatch(NavigationActionCreator.AsyncNavigateToViewProfile(id)),
             changeViewProfileDescription: (id, description) => dispatch(ProfileActionCreator.ChangeViewProfileDescription(id, description)),
             changeViewProfileCharsPerLine: (id, charsPerLine) => dispatch(ProfileActionCreator.ChangeViewProfileCharsPerLine(id, charsPerLine)),
             changeViewProfileName: (id, val) => dispatch(ProfileActionCreator.ChangeViewProfileName(id, val)),

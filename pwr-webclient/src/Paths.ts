@@ -10,6 +10,7 @@ import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCr
 import {browserHistory} from 'react-router';
 import {AdminActionCreator} from './reducers/admin/AdminActionCreator';
 import {store} from './reducers/reducerIndex';
+import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
 
 /**
  * Paths used for routing. Central point of configuration for routing information.
@@ -28,10 +29,14 @@ export class Paths {
     public static readonly ADMIN_INFO_SKILLTREE = '/admin/home/info/skilltree';
     public static readonly ADMIN_INFO_NAME_ENTITY = '/admin/home/info/names';
 
+    public static readonly USER_SPECIAL_LOGOUT = '##LOGOUT_USER##';
+    public static readonly USER_SPECIAL_LOGIN = '##LOGIN_USER##';
+
     public static readonly USER_BASE = '/app/';
     public static readonly USER_HOME = '/app/home';
     public static readonly USER_PROFILE = '/app/profile';
-    public static readonly USER_VIEW = '/app/view';
+    public static readonly USER_VIEW = '/app/view/:id';
+    public static readonly USER_VIEW_NO_ID = '/app/view/';
     public static readonly USER_REPORTS = '/app/reports';
     public static readonly USER_SEARCH = '/app/search';
     public static readonly USER_STATISTICS_NETWORK =  '/app/statistics/network';
@@ -41,17 +46,6 @@ export class Paths {
     constructor() {
 
     }
-
-    private loginUser = () => {
-        const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
-        // renew the cookie to hold another fixed period of time.
-        Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-        store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, true));
-    };
-
-    private logInAdmin = () => {
-
-    };
 
     private userAvailableInCookies = () => {
         return !isNullOrUndefined(Cookies.get(COOKIE_INITIALS_NAME));
@@ -67,9 +61,13 @@ export class Paths {
         if(this.adminAvailableInCookies()) {
             store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
         }else if(this.userAvailableInCookies()) {
-            this.loginUser();
+            const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
+            // renew the cookie to hold another fixed period of time.
+            Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
+            store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
+            store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_HOME));
         } else {
-            browserHistory.push('/');
+            store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
         }
     }
 

@@ -5,7 +5,8 @@ import {ApplicationState} from '../../../Store';
 import {ExportDocument} from '../../../model/ExportDocument';
 import * as Immutable from 'immutable';
 import {IconButton, Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
-import {trimURL} from '../../../utils/StringUtil';
+import {StringUtils} from '../../../utils/StringUtil';
+import trimURL = StringUtils.trimURL;
 
 interface ExportDocumentListProps {
     exportDocuments: Immutable.List<ExportDocument>;

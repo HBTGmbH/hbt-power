@@ -21,6 +21,8 @@ import {ViewProfile} from '../../model/viewprofile/ViewProfile';
 import * as Immutable from 'immutable';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ProfileStatistics} from './profile-statistics_module';
+import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
+import {Paths} from '../../Paths';
 
 /**
  * Properties that are managed by react-redux.
@@ -61,7 +63,8 @@ interface PowerOverviewLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface PowerOverviewDispatch {
-    editProfile(initials: string): void;
+    requestSingleProfile(initials: string): void;
+    navigateTo(target: string): void;
     createViewProfile(name: string, description: string, initials: string): void;
     refreshViews(initials: string): void;
 }
@@ -92,15 +95,16 @@ class PowerOverviewModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerOverviewDispatch {
         return {
-            editProfile: function(initials: string) {
-                dispatch(ProfileAsyncActionCreator.editProfile(initials));
+            requestSingleProfile: function(initials: string) {
+                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
             },
             createViewProfile: (name, description, initials) => {
                 dispatch(ProfileAsyncActionCreator.createView(initials, name, description))
             },
             refreshViews: (initials) => {
                 dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials))
-            }
+            },
+            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target))
         }
     }
 
@@ -113,7 +117,8 @@ class PowerOverviewModule extends React.Component<
     };
 
     private handleEditButtonClick = () => {
-        this.props.editProfile(this.props.loggedInUser.initials());
+        this.props.requestSingleProfile(this.props.loggedInUser.initials());
+        this.props.navigateTo(Paths.USER_PROFILE);
     };
 
     private changeViewProfileName(newName: string) {

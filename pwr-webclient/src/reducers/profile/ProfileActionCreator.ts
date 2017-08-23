@@ -213,6 +213,13 @@ export class ProfileActionCreator {
             type: ActionType.ClearViewProfiles
         }
     }
+
+    public static SetUserInitials(initials: string): ChangeStringValueAction {
+        return {
+            type: ActionType.SetUserInitials,
+            value: initials
+        }
+    }
 }
 
 

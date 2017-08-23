@@ -4,12 +4,13 @@ import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../Store';
 import {FlatButton, Paper, RaisedButton, TextField} from 'material-ui';
-import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
 import {Link} from 'react-router';
 import {Paths} from '../Paths';
 import {BottomBuildInfo} from './metadata/build-info_module';
+import {NavigationActionCreator} from '../reducers/navigation/NavigationActionCreator';
+import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';
 /**
  * Properties that are managed by react-redux.
  *
@@ -18,6 +19,7 @@ import {BottomBuildInfo} from './metadata/build-info_module';
  */
 interface PowerLoginProps {
     loginStatus: LoginStatus;
+    initials: string;
 }
 
 /**
@@ -38,7 +40,6 @@ interface PowerLoginLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface PowerLoginLocalState {
-    initials: string;
     isAdmin: boolean;
 }
 
@@ -48,7 +49,8 @@ interface PowerLoginLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface PowerLoginDispatch {
-    logInUser(initials: string): void;
+    logInUser(): void;
+    setUserInitials(value: string): void;
 }
 
 class PowerLoginModule extends React.Component<
@@ -59,40 +61,37 @@ class PowerLoginModule extends React.Component<
     constructor(props:PowerLoginProps& PowerLoginProps& PowerLoginDispatch) {
         super(props);
         this.state = {
-            initials: "",
             isAdmin: false
         }
     }
 
     static mapStateToProps(state: ApplicationState, localProps: PowerLoginProps): PowerLoginProps {
         return {
-            loginStatus: state.databaseReducer.loginStatus()
+            loginStatus: state.databaseReducer.loginStatus(),
+            initials: state.databaseReducer.loggedInUser().initials()
         }
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerLoginDispatch {
         return {
-            logInUser: function(initials: string) {
-                dispatch(ProfileAsyncActionCreator.logInUser(initials));
-            }
+            logInUser: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGIN)),
+            setUserInitials: (value) => dispatch(ProfileActionCreator.SetUserInitials(value))
         }
     }
 
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
         if(event.key == 'Enter') {
-            this.props.logInUser(this.state.initials);
+            this.props.logInUser();
         }
     };
 
     private handleProgressButtonClick = () => {
-        this.props.logInUser(this.state.initials);
+        this.props.logInUser();
     };
 
     private handleFieldValueChange = (irrelevantFormEvent: any, value: string) => {
-        this.setState({
-            initials: value
-        })
+        this.props.setUserInitials(value);
     };
 
 
@@ -100,7 +99,7 @@ class PowerLoginModule extends React.Component<
     private renderInputField = () => {
         return (<TextField
             floatingLabelText={PowerLocalize.get("Initials.Singular")}
-            value={this.state.initials}
+            value={this.props.initials}
             onChange={this.handleFieldValueChange}
             onKeyPress={this.handleInputFieldKeyPress}
             errorText={this.props.loginStatus == LoginStatus.REJECTED ? PowerLocalize.get("UserLogin.LoginFailed") : null}

@@ -19,7 +19,8 @@ import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-import {langLevelToLocalizedString} from '../../../../../utils/StringUtil';
+import {StringUtils} from '../../../../../utils/StringUtil';
+import langLevelToLocalizedString = StringUtils.langLevelToLocalizedString;
 
 
 interface EducationEntryDialogLocalProps {

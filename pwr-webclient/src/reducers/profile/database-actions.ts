@@ -81,7 +81,6 @@ export interface DeleteProjectAction extends AbstractAction {
  */
 export interface LoginAction extends AbstractAction {
     consultantInfo: ConsultantInfo;
-    disableRedirect: boolean;
 }
 
 export interface UpdateSkillRatingAction extends AbstractAction {

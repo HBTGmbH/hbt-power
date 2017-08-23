@@ -1,18 +1,18 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../Store';
+import {ApplicationState} from '../../Store';
 import {AppBar, FlatButton, FontIcon, IconButton, IconMenu, MenuItem} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
-import {Link} from 'react-router';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Paths} from '../../Paths';
+import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -41,8 +41,8 @@ interface ToolbarLocalState {
 }
 
 interface ToolbarDispatch {
+    navigateTo(target: string): void;
     logOutUser(): void;
-    backToAdmin(): void;
     loadNetworkGraph(): void;
     loadConsultantClusterInfo(initials: string): void;
     loadExportDocuments(initials: string): void;
@@ -65,15 +65,13 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ToolbarDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : ToolbarDispatch {
         return {
             logOutUser: function() {
                 dispatch(ProfileActionCreator.logOutUser());
                 dispatch(AdminActionCreator.LogOutAdmin());
             },
-            backToAdmin: function() {
-                dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS));
-            },
+            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
             loadExportDocuments: (initials) => dispatch(ProfileAsyncActionCreator.getAllExportDocuments(initials)),
@@ -99,7 +97,31 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     };
 
     private loadExportDocuments = () => {
+        this.props.navigateTo(Paths.USER_REPORTS);
+        // FIXME move this into the async action.
         this.props.loadExportDocuments(this.props.loggedInUser.initials());
+    };
+
+    private loadNetworkGraph = () => {
+        // FIXME move this into the async action.
+        this.props.loadNetworkGraph();
+        this.props.navigateTo(Paths.USER_STATISTICS_NETWORK);
+    };
+
+    private loadConsultantClusterInfo = () => {
+        // FIXME move this into the async action.
+        this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials());
+        this.props.navigateTo(Paths.USER_STATISTICS_CLUSTERINFO);
+    };
+
+    private loadSkillStatistics = () => {
+        // FIXME move this into the async action.
+        this.props.loadSkillStatistics();
+        this.props.navigateTo(Paths.USER_STATISTICS_SKILLS);
+    };
+
+    private logOutUser = () => {
+        this.props.navigateTo(Paths.USER_SPECIAL_LOGOUT);
     };
 
     private renderMenu = () => {
@@ -108,46 +130,54 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             anchorOrigin={{horizontal: 'left', vertical: 'top'}}
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
         >
-            <Link to={Paths.USER_HOME}><MenuItem  primaryText={PowerLocalize.get('Menu.Home')} /></Link>
-            <Link to={Paths.USER_PROFILE}><MenuItem  primaryText={PowerLocalize.get('Menu.BaseData')} /></Link>
+            <MenuItem
+                primaryText={PowerLocalize.get('Menu.Home')}
+                onClick={() => this.props.navigateTo(Paths.USER_HOME)}
+            />
+            <MenuItem
+                onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
+                primaryText={PowerLocalize.get('Menu.BaseData')}
+            />
             {
-                this.props.viewSelected ? <Link to="/app/view"><MenuItem  primaryText={PowerLocalize.get('Menu.View')} /></Link> : null
+                this.props.viewSelected ?
+                <MenuItem
+                    onClick={() => this.props.navigateTo(Paths.USER_VIEW)}
+                    primaryText={PowerLocalize.get('Menu.View')}
+                /> : null
             }
-            <Link to={Paths.USER_REPORTS}><MenuItem  primaryText={PowerLocalize.get('Menu.Reports')} onClick={this.loadExportDocuments}/></Link>
+            <MenuItem
+                primaryText={PowerLocalize.get('Menu.Reports')}
+                onClick={this.loadExportDocuments}/>
             {
                 this.props.statisticsAvailable ?
                     <MenuItem
                         primaryText={PowerLocalize.get('Menu.Statistics')}
                         rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
                         menuItems={[
-                            <Link to={Paths.USER_STATISTICS_NETWORK}>
-                                <MenuItem
-                                    key="Menu.Statistics.Network"
-                                    primaryText={PowerLocalize.get('Menu.Statistics.Network')}
-                                    onClick={this.props.loadNetworkGraph}
-                                />
-                            </Link>,
-                            <Link to={Paths.USER_STATISTICS_CLUSTERINFO}>
-                                <MenuItem
-                                    key="Menu.Statistics.Network"
-                                    primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
-                                    onClick={() => this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials())}
-                                />
-                            </Link>,
-                            <Link to={Paths.USER_STATISTICS_SKILLS}>
-                                <MenuItem
-                                    key="Menu.Statistics.Skills"
-                                    primaryText={PowerLocalize.get('Menu.Statistics.Skills')}
-                                    onClick={() => this.props.loadSkillStatistics()}
-                                />
-                            </Link>
-
+                            <MenuItem
+                                key="Menu.Statistics.Network"
+                                primaryText={PowerLocalize.get('Menu.Statistics.Network')}
+                                onClick={this.loadNetworkGraph}
+                            />,
+                            <MenuItem
+                                key="Menu.Statistics.Network"
+                                primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
+                                onClick={this.loadConsultantClusterInfo}
+                            />,
+                            <MenuItem
+                                key="Menu.Statistics.Skills"
+                                primaryText={PowerLocalize.get('Menu.Statistics.Skills')}
+                                onClick={this.loadSkillStatistics}
+                            />
                         ]}
                     />
                 :
                 null
             }
-            <Link to={Paths.USER_SEARCH}><MenuItem  primaryText={PowerLocalize.get('Menu.Search')}/></Link>
+           <MenuItem
+               primaryText={PowerLocalize.get('Menu.Search')}
+               onClick={() => this.props.navigateTo(Paths.USER_SEARCH)}
+           />
         </IconMenu>);
     };
 
@@ -166,16 +196,15 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     </span>
                     {
                         this.props.loggedInAsAdmin ?
-                            <Link to={Paths.ADMIN_CONSULTANTS}>
-                                <FlatButton
-                                    label={PowerLocalize.get('Tooolbar.ToAdminOverview')}
-                                />
-                            </Link>
+                            <FlatButton
+                                label={PowerLocalize.get('Tooolbar.ToAdminOverview')}
+                                onClick={() => this.props.navigateTo(Paths.ADMIN_CONSULTANTS)}
+                            />
                             :
                             null
                     }
                     <FlatButton
-                        onClick={this.props.logOutUser}
+                        onClick={this.logOutUser}
                         label={PowerLocalize.get('Tooolbar.LogOut')}
                     />
                 </div>

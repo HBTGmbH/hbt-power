@@ -1,7 +1,6 @@
 import {Profile} from '../../model/Profile';
 import {
     AddSkillAction,
-    ChangeStringValueAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteSkillAction,
@@ -25,41 +24,45 @@ export class ProfileReducer {
         switch(entryType) {
             case ProfileElementType.TrainingEntry: {
                 let tEntry: TrainingEntry = entry as TrainingEntry;
-                return profile.trainingEntries(profile.trainingEntries().set(tEntry.id(), tEntry));
+                profile = profile.trainingEntries(profile.trainingEntries().set(tEntry.id(), tEntry));
+                break;
             }
             case ProfileElementType.SectorEntry: {
                 let sEntry: SectorEntry = entry as SectorEntry;
-                return profile.sectorEntries(profile.sectorEntries().set(sEntry.id(), sEntry));
+                profile = profile.sectorEntries(profile.sectorEntries().set(sEntry.id(), sEntry));
+                break;
             }
             case ProfileElementType.EducationEntry: {
                 let eEntry: EducationEntry = entry as EducationEntry;
-                return profile.educationEntries(profile.educationEntries().set(eEntry.id(), eEntry));
+                profile = profile.educationEntries(profile.educationEntries().set(eEntry.id(), eEntry));
+                break;
             }
             case ProfileElementType.QualificationEntry: {
                 let qEntry: QualificationEntry = entry as QualificationEntry;
-                return profile.qualificationEntries(profile.qualificationEntries().set(qEntry.id(), qEntry));
+                profile = profile.qualificationEntries(profile.qualificationEntries().set(qEntry.id(), qEntry));
+                break;
             }
             case ProfileElementType.LanguageEntry: {
                 let lEntry: LanguageSkill = entry as LanguageSkill;
-                return profile.languageSkills(profile.languageSkills().set(lEntry.id(), lEntry));
-
+                profile = profile.languageSkills(profile.languageSkills().set(lEntry.id(), lEntry));
+                break;
             }
             case ProfileElementType.CareerEntry: {
                 let cEntry: CareerEntry = entry as CareerEntry;
-                return profile.careerEntries(profile.careerEntries().set(cEntry.id(), cEntry));
+                profile = profile.careerEntries(profile.careerEntries().set(cEntry.id(), cEntry));
+                break;
             }
             case ProfileElementType.KeySkill: {
                 let kEntry: KeySkillEntry = entry as KeySkillEntry;
-                return profile.keySkillEntries(profile.keySkillEntries().set(kEntry.id(), kEntry));
+                profile = profile.keySkillEntries(profile.keySkillEntries().set(kEntry.id(), kEntry));
+                break;
             }
             default:
                 throw new TypeError("Unknown switch value " + ProfileElementType[entryType]);
         }
+        return profile.changesMade(profile.changesMade() + 1);
     }
 
-    public static reducerHandleChangeCurrentPosition(profile: Profile, action: ChangeStringValueAction) {
-        return profile.currentPosition(action.value);
-    }
 
     public static reducerUpdateEntry(profile: Profile, action: SaveEntryAction): Profile {
         return ProfileReducer.updateEntry(profile, action.entry, action.entryType);
@@ -68,22 +71,30 @@ export class ProfileReducer {
     public static reducerHandleRemoveEntry(profile: Profile, action: DeleteEntryAction): Profile {
         switch(action.elementType) {
             case ProfileElementType.TrainingEntry:
-                return profile.trainingEntries(profile.trainingEntries().remove(action.elementId));
+                profile = profile.trainingEntries(profile.trainingEntries().remove(action.elementId));
+                break;
             case ProfileElementType.SectorEntry:
-                return profile.sectorEntries(profile.sectorEntries().remove(action.elementId));
+                profile = profile.sectorEntries(profile.sectorEntries().remove(action.elementId));
+                break;
             case ProfileElementType.EducationEntry:
-                return profile.educationEntries(profile.educationEntries().remove(action.elementId));
+                profile = profile.educationEntries(profile.educationEntries().remove(action.elementId));
+                break;
             case ProfileElementType.QualificationEntry:
-                return profile.qualificationEntries(profile.qualificationEntries().remove(action.elementId));
+                profile = profile.qualificationEntries(profile.qualificationEntries().remove(action.elementId));
+                break;
             case ProfileElementType.LanguageEntry:
-                return profile.languageSkills(profile.languageSkills().remove(action.elementId));
+                profile = profile.languageSkills(profile.languageSkills().remove(action.elementId));
+                break;
             case ProfileElementType.CareerEntry:
-                return profile.careerEntries(profile.careerEntries().remove(action.elementId));
+                profile = profile.careerEntries(profile.careerEntries().remove(action.elementId));
+                break;
             case ProfileElementType.KeySkill:
-                return profile.keySkillEntries(profile.keySkillEntries().remove(action.elementId));
+                profile = profile.keySkillEntries(profile.keySkillEntries().remove(action.elementId));
+                break;
             default:
                 throw TypeError("Unknown switch value " + ProfileElementType[action.elementType]);
         }
+        return profile.changesMade(profile.changesMade() + 1);
     }
 
     public static reducerHandleCreateEntry(profile: Profile, action: CreateEntryAction): Profile {
@@ -141,7 +152,9 @@ export class ProfileReducer {
             projectSkillIds = projectSkillIds.add(skill.id());
         });
         project = project.skillIDs(projectSkillIds);
-        return profile.projects(profile.projects().set(project.id(), project));
+        return profile
+            .projects(profile.projects().set(project.id(), project))
+            .changesMade(profile.changesMade());
     }
 
     /**
@@ -164,13 +177,16 @@ export class ProfileReducer {
     public static reducerHandleDeleteSkill(profile: Profile, action: DeleteSkillAction): Profile {
         let skills = profile.skills();
         skills = skills.remove(action.id);
-        return ProfileReducer.deleteOrphanSkills(profile.skills(skills), action.id);
+        profile = ProfileReducer.deleteOrphanSkills(profile.skills(skills), action.id);
+        return profile.changesMade(profile.changesMade() + 1);
     }
 
     public static reducerHandleUpdateSkillRating(profile: Profile, action: UpdateSkillRatingAction): Profile {
         let skill: Skill = profile.getSkill(action.id);
         skill = skill.rating(action.rating);
-        return profile.skills(profile.skills().set(skill.id(), skill));
+        profile = profile.skills(profile.skills().set(skill.id(), skill));
+        profile = profile.changesMade(profile.changesMade() + 1);
+        return profile;
 
     }
 
@@ -179,7 +195,7 @@ export class ProfileReducer {
             let skills = profile.skills();
             let skill = Skill.of(action.skillName, action.rating, action.comment);
             skills = skills.set(skill.id(), skill);
-            return profile.skills(skills);
+            return profile.skills(skills).changesMade(profile.changesMade() + 1);
         } else {
             return profile;
         }

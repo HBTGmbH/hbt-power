@@ -46,6 +46,8 @@ import {fade} from 'material-ui/utils/colorManipulator';
 import {Paths} from './Paths';
 import {AdminSkillTree2} from './modules/admin/info/admin-skill-tree2_module';
 import {AdminProfileOverview} from './modules/admin/info/admin-profile-overview_module.';
+import {ApplicationState} from './Store';
+import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
 import injectTapEventPlugin = require('react-tap-event-plugin');
 
 // For material ui tap touch support
@@ -65,6 +67,18 @@ store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
 store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
 
+
+const pageLeavePreventer = (ev: any) => {
+    let state: ApplicationState = store.getState() as ApplicationState;
+    let changes = state.databaseReducer.profile().changesMade();
+    console.log("Changes", changes);
+    return changes > 0 ? "Foo" : null;
+};
+
+/**
+ * Register a listener that is called before the page is closed.
+ */
+window.onbeforeunload = pageLeavePreventer;
 
 
 
@@ -126,7 +140,10 @@ export const POWER_MUI_THEME = getMuiTheme(powerTheme);
 let App = (
     <MuiThemeProvider muiTheme={POWER_MUI_THEME}>
         <Provider store={store}>
-            <MyRouter/>
+            <div>
+                <ConfirmNavDialog/>
+                <MyRouter/>
+            </div>
         </Provider>
     </MuiThemeProvider>
 );

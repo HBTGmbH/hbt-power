@@ -48,7 +48,6 @@ class BuildInfoModule extends React.Component<
     }
 
     render() {
-        console.log(this.props.buildInfo);
         return (<div>
             <Subheader>Service-Summary</Subheader>
             <div style={{paddingLeft: "16px"}}>
