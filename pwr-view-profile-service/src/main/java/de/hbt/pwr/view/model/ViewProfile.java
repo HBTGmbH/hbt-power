@@ -3,7 +3,10 @@ package de.hbt.pwr.view.model;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDate;
@@ -12,6 +15,9 @@ import java.util.List;
 import java.util.Locale;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @RedisHash("viewProfile")
 public class ViewProfile {
 

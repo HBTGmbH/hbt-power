@@ -35,6 +35,16 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @PatchMapping("/{entryType}/all/visibility/{isEnabled}")
+    ResponseEntity<ViewProfile> setEnabledForAll(@PathVariable("initials") String initials,
+                                                 @PathVariable("viewProfileId") String viewProfileId,
+                                                 @PathVariable("entryType") ProfileEntryType profileEntryType,
+                                                 @PathVariable("isEnabled") Boolean isEnabled) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.setIsEnabledForAll(viewProfile, profileEntryType, isEnabled);
+        return ResponseEntity.ok(viewProfile);
+    }
+
     @PatchMapping("/PROJECT/{projectIndex}/SKILL/{skillIndex}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForSkillInProject(@PathVariable("initials") String initials,
                                                                @PathVariable("viewProfileId") String viewProfileId,
@@ -46,6 +56,16 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @PatchMapping("/PROJECT/{projectIndex}/SKILL/all/visibility/{isEnabled}")
+    ResponseEntity<ViewProfile> setVisibilityForAllSkillsInProject(@PathVariable("initials") String initials,
+                                                                   @PathVariable("viewProfileId") String viewProfileId,
+                                                                   @PathVariable("projectIndex") int projectIndex,
+                                                                   @PathVariable("isEnabled") boolean isEnabled) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.setIsEnabledForAllSkillsInProject(viewProfile, projectIndex, isEnabled);
+        return ResponseEntity.ok(viewProfile);
+    }
+
     @PatchMapping("/PROJECT/{projectIndex}/ROLE/{roleIndex}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForRoleInProject(@PathVariable("initials") String initials,
                                                               @PathVariable("viewProfileId") String viewProfileId,
@@ -54,6 +74,16 @@ public class ViewProfileOperationsController {
                                                               @PathVariable("isEnabled") boolean isEnabled) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileService.setRoleInProjectEnabled(viewProfile, projectIndex, roleIndex, isEnabled);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/PROJECT/{projectIndex}/ROLE/all/visibility/{isEnabled}")
+    ResponseEntity<ViewProfile> setVisibilityForAllRolesInProject(@PathVariable("initials") String initials,
+                                                                 @PathVariable("viewProfileId") String viewProfileId,
+                                                                 @PathVariable("projectIndex") int projectIndex,
+                                                                 @PathVariable("isEnabled") boolean isEnabled) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.setIsEnabledForAllRolesInProject(viewProfile, projectIndex, isEnabled);
         return ResponseEntity.ok(viewProfile);
     }
 }

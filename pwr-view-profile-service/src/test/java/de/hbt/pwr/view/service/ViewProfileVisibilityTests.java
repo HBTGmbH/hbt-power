@@ -1,10 +1,12 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.client.profile.model.ProfileEntry;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
+import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +30,14 @@ public class ViewProfileVisibilityTests {
     @MockBean
     private ViewProfileRepository viewProfileRepository;
 
-    @MockBean
-    private JedisConnectionFactory jedisConnectionFactory;
-
     private ViewProfile profileToTest;
+
+    private Condition<ToggleableEntry> enabled = new Condition<ToggleableEntry>() {
+        @Override
+        public boolean matches(ToggleableEntry value) {
+            return value.getEnabled();
+        }
+    };
 
     @Before
     public void setUp() {
@@ -101,6 +107,74 @@ public class ViewProfileVisibilityTests {
                 break;
             case SKILL:
                 assertThat(profileToTest.getSkills().get(index).getEnabled()).isEqualTo(expected);
+                break;
+            default:
+                fail("Wrong type for switch: " + profileEntryType.name());
+        }
+    }
+
+    private void assertAllEntrisAreEnabled(ProfileEntryType profileEntryType) {
+        switch (profileEntryType) {
+            case CAREER:
+                assertThat(profileToTest.getCareers()).are(enabled);
+                break;
+            case EDUCATION:
+                assertThat(profileToTest.getEducations()).are(enabled);
+                break;
+            case KEY_SKILL:
+                assertThat(profileToTest.getKeySkills()).are(enabled);
+                break;
+            case LANGUAGE:
+                assertThat(profileToTest.getLanguages()).are(enabled);
+                break;
+            case PROJECT:
+                assertThat(profileToTest.getProjects()).are(enabled);
+                break;
+            case PROJECT_ROLE:
+                assertThat(profileToTest.getProjectRoles()).are(enabled);
+                break;
+            case SECTOR:
+                assertThat(profileToTest.getSectors()).are(enabled);
+                break;
+            case TRAINING:
+                assertThat(profileToTest.getTrainings()).are(enabled);
+                break;
+            case SKILL:
+                assertThat(profileToTest.getSkills()).are(enabled);
+                break;
+            default:
+                fail("Wrong type for switch: " + profileEntryType.name());
+        }
+    }
+
+    private void assertAllEntriesAreNotEnabled(ProfileEntryType profileEntryType) {
+        switch (profileEntryType) {
+            case CAREER:
+                assertThat(profileToTest.getCareers()).areNot(enabled);
+                break;
+            case EDUCATION:
+                assertThat(profileToTest.getEducations()).areNot(enabled);
+                break;
+            case KEY_SKILL:
+                assertThat(profileToTest.getKeySkills()).areNot(enabled);
+                break;
+            case LANGUAGE:
+                assertThat(profileToTest.getLanguages()).areNot(enabled);
+                break;
+            case PROJECT:
+                assertThat(profileToTest.getProjects()).areNot(enabled);
+                break;
+            case PROJECT_ROLE:
+                assertThat(profileToTest.getProjectRoles()).areNot(enabled);
+                break;
+            case SECTOR:
+                assertThat(profileToTest.getSectors()).areNot(enabled);
+                break;
+            case TRAINING:
+                assertThat(profileToTest.getTrainings()).areNot(enabled);
+                break;
+            case SKILL:
+                assertThat(profileToTest.getSkills()).areNot(enabled);
                 break;
             default:
                 fail("Wrong type for switch: " + profileEntryType.name());
@@ -248,6 +322,56 @@ public class ViewProfileVisibilityTests {
         addSkillProjectToProfile(true);
         viewProfileService.setSkillInProjectEnabled(profileToTest, 0, 0, false);
         assertThat(profileToTest.getProjects().get(0).getSkills().get(0).getEnabled()).isFalse();
+    }
+
+    @Test
+    public void AllEntriesCanBeDisabledAndEnabled() {
+        for (ProfileEntryType profileEntryType : ProfileEntryType.values()) {
+            for(int i = 0; i < 5; i++) {
+                addEntry(profileEntryType, false);
+            }
+            viewProfileService.setIsEnabledForAll(profileToTest, profileEntryType, true);
+            assertAllEntrisAreEnabled(profileEntryType);
+
+            viewProfileService.setIsEnabledForAll(profileToTest, profileEntryType, false);
+            assertAllEntriesAreNotEnabled(profileEntryType);
+        }
+    }
+
+    @Test
+    public void AllSkillsInProjectAreEnabled() {
+        Project project = new Project();
+        for(int i = 0; i < 5; i++) {
+            project.getSkills().add(Skill.builder().enabled(false).build());
+        }
+        profileToTest.getProjects().add(project);
+        viewProfileService.setIsEnabledForAllSkillsInProject(profileToTest,0,  true);
+        profileToTest.getProjects().forEach(project1 -> {
+            assertThat(project1.getSkills()).are(enabled);
+        });
+
+        viewProfileService.setIsEnabledForAllSkillsInProject(profileToTest, 0, false);
+        profileToTest.getProjects().forEach(project1 -> {
+            assertThat(project1.getSkills()).areNot(enabled);
+        });
+    }
+
+    @Test
+    public void AllRolesInProjectAreEnabled() {
+        Project project = new Project();
+        for(int i = 0; i < 5; i++) {
+            project.getProjectRoles().add(ProjectRole.builder().enabled(false).build());
+        }
+        profileToTest.getProjects().add(project);
+        viewProfileService.setIsEnabledForAllRolesInProject(profileToTest,0, true);
+        profileToTest.getProjects().forEach(project1 -> {
+            assertThat(project1.getProjectRoles()).are(enabled);
+        });
+
+        viewProfileService.setIsEnabledForAllRolesInProject(profileToTest, 0, false);
+        profileToTest.getProjects().forEach(project1 -> {
+            assertThat(project1.getProjectRoles()).areNot(enabled);
+        });
     }
 
 

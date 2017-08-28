@@ -63,10 +63,7 @@ public class ViewProfileController {
     })
     @GetMapping(path = "/{initials}")
     public ResponseEntity< List<String>> getAllViewProfiles(@PathVariable("initials") String initials) {
-        List<String> ids = viewProfileService.getViewProfileIdsForInitials(initials)
-                .stream()
-                .map(ViewProfile::getId)
-                .collect(Collectors.toList());
+        List<String> ids = viewProfileService.getViewProfileIdsForInitials(initials);
         return ResponseEntity.ok(ids);
     }
 
