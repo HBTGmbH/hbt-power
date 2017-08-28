@@ -12,43 +12,24 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ViewProfileExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {InvalidOwnerException.class})
-    public ResponseEntity<String> handleInvalidOwner(InvalidOwnerException invalidOwnerException){
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        ObjectNode inerror = objectMapper.createObjectNode();
-        inerror.put("error", "InvalidOwner");
-        inerror.put("viewProfileId", invalidOwnerException.getViewProfileId());
-        inerror.put("initials", invalidOwnerException.getInitials());
-
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("code", HttpStatus.FORBIDDEN.value());
-        objectNode.put("message", invalidOwnerException.getMessage());
-        objectNode.put("target", invalidOwnerException.getViewProfileId());
-        objectNode.set("innererror", inerror);
-
-        ObjectNode error = objectMapper.createObjectNode();
-        error.set("error", objectNode);
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error.toString());
+    public ResponseEntity<InvalidOwnerException.Error> handleInvalidOwner(InvalidOwnerException invalidOwnerException){
+        String viewProfileId = invalidOwnerException.getViewProfileId();
+        String initials = invalidOwnerException.getInitials();
+        String message = invalidOwnerException.getMessage();
+        InvalidOwnerException.InnerError innerError = new InvalidOwnerException.InnerError(viewProfileId, initials);
+        InvalidOwnerException.OuterError outerError = new InvalidOwnerException.OuterError(message, viewProfileId, innerError);
+        InvalidOwnerException.Error error = new InvalidOwnerException.Error(outerError);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
     @ExceptionHandler(value = ViewProfileNotFoundException.class)
-    public ResponseEntity<String> handleViewProfileNotFound(ViewProfileNotFoundException viewProfileNotFoundException) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public ResponseEntity<ViewProfileNotFoundException.Error> handleViewProfileNotFound(ViewProfileNotFoundException viewProfileNotFoundException) {
+        String viewProfileId = viewProfileNotFoundException.getViewProfileId();
+        String message = viewProfileNotFoundException.getMessage();
+        ViewProfileNotFoundException.InnerError innerError = new ViewProfileNotFoundException.InnerError(viewProfileId);
+        ViewProfileNotFoundException.OuterError outerError = new ViewProfileNotFoundException.OuterError(message, viewProfileId, innerError);
+        ViewProfileNotFoundException.Error error = new ViewProfileNotFoundException.Error(outerError);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 
-        ObjectNode innerError = objectMapper.createObjectNode();
-        innerError.put("viewProfileId", viewProfileNotFoundException.getViewProfileId());
-        innerError.put("code", "ViewNotFound");
-
-        ObjectNode outerError = objectMapper.createObjectNode();
-        outerError.put("code", HttpStatus.NOT_FOUND.value());
-        outerError.put("message", viewProfileNotFoundException.getMessage());
-        outerError.put("target", viewProfileNotFoundException.getViewProfileId());
-        outerError.set("innererror", innerError);
-
-        ObjectNode error = objectMapper.createObjectNode();
-        error.set("error", outerError);
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.toString());
     }
 }

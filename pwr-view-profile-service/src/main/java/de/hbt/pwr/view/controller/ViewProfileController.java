@@ -1,12 +1,11 @@
 package de.hbt.pwr.view.controller;
 
+import de.hbt.pwr.view.exception.InvalidOwnerException;
+import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileImportService;
 import de.hbt.pwr.view.service.ViewProfileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -37,12 +36,12 @@ public class ViewProfileController {
         response = ViewProfile.class,
         httpMethod = "POST",
         produces = "application/json")
-
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "Returns the newly created view profile in the response")
     })
     @PostMapping(path = "/{initials}")
-    public ResponseEntity<ViewProfile> createViewProfile(@PathVariable("initials") String initials) {
+    public ResponseEntity<ViewProfile> createViewProfile(
+            @ApiParam("Initials of the consultant for which the profile is created") @PathVariable("initials") String initials) {
         ViewProfile viewProfile = viewProfileImportService.createViewProfile(initials, "TODO", Locale.GERMAN);
         return ResponseEntity.ok(viewProfile);
     }
@@ -77,6 +76,11 @@ public class ViewProfileController {
             httpMethod = "GET",
             produces = "application/json"
     )
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "View profile is returned in response."),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
     @GetMapping(path = "/{initials}/{id}")
     public ResponseEntity<ViewProfile> getViewProfile(@PathVariable("initials") String initials, @PathVariable String id) {
         return ResponseEntity.ok(viewProfileService.getByIdAndCheckOwner(id, initials));
@@ -90,8 +94,8 @@ public class ViewProfileController {
     )
     @ApiResponses(value ={
             @ApiResponse(code = 204, message = "The view profile has been deleted."),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed."),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.")
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
     })
     @DeleteMapping(path = "/{initials}/{id}")
     public ResponseEntity deleteViewProfile(@PathVariable("initials") String initials, @PathVariable String id) {

@@ -1,8 +1,14 @@
 package de.hbt.pwr.view.controller;
 
+import de.hbt.pwr.view.exception.InvalidOwnerException;
+import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,6 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * Controls operations that can be performed on a view profile
  */
+@Api(
+        basePath = "/{initials}/view/{viewProfileId}",
+        description = "Provides means to perform operations on a view profile. All operations are persistent. No " +
+                "further operations are required to persistently store the information. Results are directly returned" +
+                "in the response body of the request.",
+        value = "View Profile Operations"
+)
 @Controller
 @RequestMapping("/{initials}/view/{viewProfileId}")
 public class ViewProfileOperationsController {
@@ -24,6 +37,18 @@ public class ViewProfileOperationsController {
         this.viewProfileService = viewProfileService;
     }
 
+
+    @ApiOperation(value = "Sets the visibility of an entry",
+            notes = "Sets the visibility of a view profile entry and returns the updates view profile. This operation" +
+                    " is directly persistent, no further actions are necessary to save the view profile.",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
     @PatchMapping("/{entryType}/{index}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibility(@PathVariable("initials") String initials,
                                               @PathVariable("viewProfileId") String viewProfileId,
@@ -35,6 +60,17 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sets the visibility for all entries",
+            notes = "Sets the visibility for all entries of the given type in the defined view profile. " +
+                    "This operation is persistent.",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
     @PatchMapping("/{entryType}/all/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setEnabledForAll(@PathVariable("initials") String initials,
                                                  @PathVariable("viewProfileId") String viewProfileId,
@@ -45,6 +81,17 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sets the visibility for a nested skill",
+            notes = "Sets the visibility for a skill that is nested inside a project. Does not the master skill list. " +
+                    "This operation is persistent.",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
     @PatchMapping("/PROJECT/{projectIndex}/SKILL/{skillIndex}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForSkillInProject(@PathVariable("initials") String initials,
                                                                @PathVariable("viewProfileId") String viewProfileId,
@@ -56,6 +103,17 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sets the visibility for all nested skills",
+            notes = "Sets the visibility for all nested skills of a specified project. Does not affect the master " +
+                    "skill list. This operation is persistent.",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
     @PatchMapping("/PROJECT/{projectIndex}/SKILL/all/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForAllSkillsInProject(@PathVariable("initials") String initials,
                                                                    @PathVariable("viewProfileId") String viewProfileId,
@@ -66,6 +124,18 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+
+    @ApiOperation(value = "Sets the visibility for a nested project role",
+            notes = "Sets the visibility for all nested project role of the specified project. Does not affect the " +
+                    "master project role list. This operation is persistent.",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
     @PatchMapping("/PROJECT/{projectIndex}/ROLE/{roleIndex}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForRoleInProject(@PathVariable("initials") String initials,
                                                               @PathVariable("viewProfileId") String viewProfileId,
@@ -77,6 +147,17 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sets the visibility for all nested project roles",
+            notes = "Sets the visibility for all nested project roles of a specified project. Does not affect the " +
+                    "master role list. This operation is persistent.",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
     @PatchMapping("/PROJECT/{projectIndex}/ROLE/all/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForAllRolesInProject(@PathVariable("initials") String initials,
                                                                  @PathVariable("viewProfileId") String viewProfileId,
