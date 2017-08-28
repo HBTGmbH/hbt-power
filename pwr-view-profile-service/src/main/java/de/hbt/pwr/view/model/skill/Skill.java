@@ -3,11 +3,13 @@ package de.hbt.pwr.view.model.skill;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.data.annotation.Transient;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"rating", "enabled", "category"})
 public class Skill implements ToggleableEntry {
     private String name;
@@ -16,9 +18,6 @@ public class Skill implements ToggleableEntry {
     @JsonBackReference
     @Transient
     private Category category;
-
-    public Skill() {
-    }
 
     public Skill(String name) {
         this.name = name;

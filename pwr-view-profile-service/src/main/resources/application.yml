@@ -27,3 +27,9 @@ eureka:
     enabled: true
     service-url:
        defaultZone: http://power02.corp.hbt.de:8761/eureka
+---
+spring:
+  profiles: test
+eureka:
+  client:
+    enabled: false

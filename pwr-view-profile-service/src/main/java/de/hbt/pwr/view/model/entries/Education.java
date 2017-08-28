@@ -1,20 +1,21 @@
 package de.hbt.pwr.view.model.entries;
 
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@Builder
+@NoArgsConstructor
 public class Education implements ToggleableEntry {
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
     private String degree;
     private Boolean enabled;
-
-    public Education() {
-    }
 
     public Education(String name, LocalDate startDate, LocalDate endDate, String degree, Boolean enabled) {
         this.name = name;

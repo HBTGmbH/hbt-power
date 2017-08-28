@@ -2,10 +2,13 @@ package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
+import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -16,7 +19,7 @@ public class ViewProfileService {
 
     private final ViewProfileRepository viewProfileRepository;
 
-    public ViewProfileService(ViewProfileRepository viewProfileRepository) {
+    ViewProfileService(ViewProfileRepository viewProfileRepository) {
         this.viewProfileRepository = viewProfileRepository;
     }
 
@@ -49,5 +52,52 @@ public class ViewProfileService {
             throw new InvalidOwnerException(id, owner);
         }
         viewProfileRepository.delete(id);
+    }
+
+    private <T extends ToggleableEntry> void setEnabled(List<T> list, int index, boolean isEnabled) {
+        list.get(index).setEnabled(isEnabled);
+    }
+
+
+    public void setEntryEnabled(ViewProfile viewProfile, int index, boolean isEnabled, ProfileEntryType profileEntryType) {
+        switch (profileEntryType) {
+            case CAREER:
+                setEnabled(viewProfile.getCareers(), index, isEnabled);
+                break;
+            case EDUCATION:
+                setEnabled(viewProfile.getEducations(), index, isEnabled);
+                break;
+            case KEY_SKILL:
+                setEnabled(viewProfile.getKeySkills(), index, isEnabled);
+                break;
+            case LANGUAGE:
+                setEnabled(viewProfile.getLanguages(), index, isEnabled);
+                break;
+            case PROJECT:
+                setEnabled(viewProfile.getProjects(), index, isEnabled);
+                break;
+            case PROJECT_ROLE:
+                setEnabled(viewProfile.getProjectRoles(), index, isEnabled);
+                break;
+            case SECTOR:
+                setEnabled(viewProfile.getSectors(), index, isEnabled);
+                break;
+            case TRAINING:
+                setEnabled(viewProfile.getTrainings(), index, isEnabled);
+                break;
+            case SKILL:
+                setEnabled(viewProfile.getSkills(), index, isEnabled);
+                break;
+            default:
+                throw new RuntimeException("Unknown type: " + profileEntryType);
+        }
+    }
+
+    public void setRoleInProjectEnabled(ViewProfile viewProfile, int projectIndex, int roleIndex, boolean isEnabled) {
+        viewProfile.getProjects().get(projectIndex).getProjectRoles().get(roleIndex).setEnabled(isEnabled);
+    }
+
+    public void setSkillInProjectEnabled(ViewProfile viewProfile, int projectIndex, int skillIndex, boolean isEnabled) {
+        viewProfile.getProjects().get(projectIndex).getSkills().get(skillIndex).setEnabled(isEnabled);
     }
 }
