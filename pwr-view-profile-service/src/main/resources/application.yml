@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: pwr-view-service
+server:
+  port: 9008
+eureka:
+  client:
+    enabled: true
+management:
+  context-path: /meta
+endpoints:
+  cors:
+    allowed-origins: '*'
+    allowed-methods: '*'
+feign:
+  hystrix:
+    enabled: true
+---
+spring:
+  profiles: local
+  redis:
+    host: localhost
+    port: 6379
+    database: 4
+eureka:
+  client:
+    enabled: true
+    service-url:
+       defaultZone: http://power02.corp.hbt.de:8761/eureka
