@@ -60,6 +60,25 @@ public class DisplayCategoryTest {
     }
 
     /**
+     * Validates that the new display category also is part of the {@link ViewProfile#displayCategories} collection
+     * and the old one gets properly removed.
+     */
+    @Test
+    public void displayCategoryShouldChangeInList() {
+        Category oldCategory = Category.builder().name("Old").build();
+        Category newCategory = Category.builder().name("New").parent(oldCategory).build();
+        Skill skill = Skill.builder().name("Skill").category(newCategory).displayCategory(oldCategory).build();
+        viewProfile.getDisplayCategories().add(oldCategory);
+        viewProfile.getSkills().add(skill);
+        // Precondition to this test
+        assertThat(viewProfile.getDisplayCategories()).doesNotContain(newCategory);
+        viewProfileService.setDisplayCategory(viewProfile, 0, newCategory.getName());
+        // Postconditions
+        assertThat(viewProfile.getDisplayCategories()).doesNotContain(oldCategory);
+        assertThat(viewProfile.getDisplayCategories()).contains(newCategory);
+    }
+
+    /**
      * Valdiates that an exception is thrown in one of the following cases:
      * A) The provided category name is not part of the category branch the skill is in
      * B) The provided category name does not reflect any existing category

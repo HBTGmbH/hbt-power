@@ -16,12 +16,12 @@ public class Skill implements ToggleableEntry {
     private Integer rating;
     private Boolean enabled;
 
-    @JsonBackReference
+    @JsonBackReference(value = "refSkills")
     @Transient
     private Category category;
 
     @Transient
-    @JsonBackReference
+    @JsonBackReference(value = "refDisplaySkills")
     private Category displayCategory;
 
     public Skill(String name) {
@@ -30,10 +30,16 @@ public class Skill implements ToggleableEntry {
 
     public void setCategory(Category category) {
         this.category = category;
-        if(!this.category.getSkills().contains(this)) {
+        if(this.category != null && !this.category.getSkills().contains(this)) {
             this.category.getSkills().add(this);
         }
     }
 
+    public void setDisplayCategory(Category displayCategory) {
+        this.displayCategory = displayCategory;
+        if(this.displayCategory != null && !this.displayCategory.getSkills().contains(this)) {
+            this.displayCategory.getDisplaySkills().add(this);
+        }
+    }
 
 }

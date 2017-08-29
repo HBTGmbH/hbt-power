@@ -1,30 +1,24 @@
 package de.hbt.pwr.view.controller;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileService;
+import de.hbt.pwr.view.service.ViewProfileSortService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ViewProfileOperationsController.class)
@@ -45,10 +39,13 @@ public class ViewProfileOperationsControllerTest {
     public ViewProfileService viewProfileService;
 
     @MockBean
+    public ViewProfileSortService viewProfileSortService;
+
+    @MockBean
     // DO NOT REMOVE. Stops the container for crashing. Don't ask why ~nt
     private JedisConnectionFactory jedisConnectionFactory;
 
-    private ViewProfile profileToReturn = new ViewProfile();
+    private ViewProfile viewProfileReturned = new ViewProfile();
 
     private String initials = "tst";
 
@@ -58,7 +55,7 @@ public class ViewProfileOperationsControllerTest {
 
     @Before
     public void setUp() {
-        given(viewProfileService.getByIdAndCheckOwner(viewProfileId, initials)).willReturn(profileToReturn);
+        given(viewProfileService.getByIdAndCheckOwner(viewProfileId, initials)).willReturn(viewProfileReturned);
     }
 
     private void assertOwnerCheckAndRetrieval() {
@@ -72,66 +69,70 @@ public class ViewProfileOperationsControllerTest {
         mockMvc.perform(patch(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
     }
 
+    private String urlBasePath() {
+        return "/" + initials + "/view/" + viewProfileId + "/";
+    }
+
     @Test
     public void retrievesProfileAndPerformsEnablingAndReturns200() throws Exception {
         ProfileEntryType entryType = ProfileEntryType.LANGUAGE;
         Integer index = 0;
-        String url = "/" + initials + "/view/" + viewProfileId + "/" + entryType + "/" + index + "/visibility/" + isVisible;
+        String url = urlBasePath() + entryType + "/" + index + "/visibility/" + isVisible;
 
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setEntryEnabled(profileToReturn, index, isVisible, entryType);
+        then(viewProfileService).should(times(1)).setEntryEnabled(viewProfileReturned, index, isVisible, entryType);
     }
 
     @Test
     public void retrievesProfileAndPerformsEnablingForSkillInProjectAndReturns200() throws Exception {
         Integer index = 0;
         Integer projectIndex = 0;
-        String url = "/" + initials + "/view/" + viewProfileId + "/PROJECT/" + projectIndex + "/SKILL/"+ index + "/visibility/" + isVisible;
+        String url = urlBasePath() + "/PROJECT/" + projectIndex + "/SKILL/"+ index + "/visibility/" + isVisible;
 
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setSkillInProjectEnabled(profileToReturn, projectIndex, index, isVisible);
+        then(viewProfileService).should(times(1)).setSkillInProjectEnabled(viewProfileReturned, projectIndex, index, isVisible);
     }
 
     @Test
     public void retrievesProfileAndPerformsEnablingForRoleInProjectAndReturns200() throws Exception {
         Integer index = 0;
         Integer projectIndex = 0;
-        String url = "/" + initials + "/view/" + viewProfileId + "/PROJECT/" + projectIndex + "/ROLE/"+ index + "/visibility/" + isVisible;
+        String url = urlBasePath() + "/PROJECT/" + projectIndex + "/ROLE/"+ index + "/visibility/" + isVisible;
 
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setRoleInProjectEnabled(profileToReturn, projectIndex, index, isVisible);
+        then(viewProfileService).should(times(1)).setRoleInProjectEnabled(viewProfileReturned, projectIndex, index, isVisible);
     }
 
     @Test
     public void enabledAllEntriesAndReturns200() throws Exception {
         ProfileEntryType profileEntryType = ProfileEntryType.CAREER;
-        String url = "/" + initials + "/view/" + viewProfileId + "/" + profileEntryType + "/all/visibility/" + isVisible;
+        String url = urlBasePath() + profileEntryType + "/all/visibility/" + isVisible;
 
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setIsEnabledForAll(profileToReturn, profileEntryType, isVisible);
+        then(viewProfileService).should(times(1)).setIsEnabledForAll(viewProfileReturned, profileEntryType, isVisible);
     }
 
     @Test
     public void enabledAllSkillsInProfileAndReturns200() throws Exception {
         Integer projectIndex = 0;
-        String url = "/" + initials + "/view/" + viewProfileId + "/PROJECT/" + projectIndex + "/SKILL/all/visibility/" + isVisible;
+        String url = urlBasePath() + "/PROJECT/" + projectIndex + "/SKILL/all/visibility/" + isVisible;
 
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setIsEnabledForAllSkillsInProject(profileToReturn,projectIndex, isVisible);
+        then(viewProfileService).should(times(1)).setIsEnabledForAllSkillsInProject(viewProfileReturned,projectIndex, isVisible);
     }
 
     @Test
     public void enabledAllRolesInProfileAndReturns200() throws Exception {
         Integer projectIndex = 0;
-        String url = "/" + initials + "/view/" + viewProfileId + "/PROJECT/" + projectIndex + "/ROLE/all/visibility/" + isVisible;
+        String url = urlBasePath()+ "/PROJECT/" + projectIndex + "/ROLE/all/visibility/" + isVisible;
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setIsEnabledForAllRolesInProject(profileToReturn, projectIndex, isVisible);
+        then(viewProfileService).should(times(1)).setIsEnabledForAllRolesInProject(viewProfileReturned, projectIndex, isVisible);
     }
 
     /**
@@ -142,12 +143,70 @@ public class ViewProfileOperationsControllerTest {
     public void changesDisplayCategoryAndReturns200() throws Exception {
         int skillIndex = 0;
         String newDisplayCategoryName = "FooBar";
-        String url = "/" + initials + "/view/" + viewProfileId + "/SKILL/" + skillIndex + "/display-category";
+        String url = urlBasePath() + "/SKILL/" + skillIndex + "/display-category";
         mockMvc.perform(patch(url)
                 .param("display-category", newDisplayCategoryName)
                 .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setDisplayCategory(profileToReturn, skillIndex, newDisplayCategoryName);
+        then(viewProfileService).should(times(1)).setDisplayCategory(viewProfileReturned, skillIndex, newDisplayCategoryName);
+    }
+
+    @Test
+    public void sortsDisplayCategoriesAndReturns200() throws Exception {
+        String url = urlBasePath() + "/DISPLAY_CATEGORY/order";
+        final Boolean doAscending = true;
+        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService).should(times(1)).sortDisplayCategoriesByName(viewProfileReturned, doAscending);
+    }
+
+    @Test
+    public void sortsSkillsByNameInDisplayAndReturns200() throws Exception {
+        int displayCategoryIndex = 3;
+        String url = urlBasePath() + "/DISPLAY_CATEGORY/" + displayCategoryIndex + "/SKILL/name/order";
+        final Boolean doAscending = false;
+        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService).should(times(1)).sortSkillsInDisplayByName(viewProfileReturned, displayCategoryIndex, doAscending);
+    }
+
+    @Test
+    public void sortsSkillsByRatingInDisplayAndReturns200() throws Exception {
+        int displayCategoryIndex = 999;
+        String url = urlBasePath() + "/DISPLAY_CATEGORY/" + displayCategoryIndex + "/SKILL/rating/order";
+        final Boolean doAscending = false;
+        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService).should(times(1)).sortSkillsInDisplayByRating(viewProfileReturned, displayCategoryIndex, doAscending);
+    }
+
+    @Test
+    public void movesSkillInDisplayAndReturns200() throws Exception {
+        int displayCategoryIndex = 999;
+        int sourceIndex = 0;
+        int targetIndex = 20;
+        String url = urlBasePath() + "/DISPLAY_CATEGORY/" + displayCategoryIndex + "/SKILL/position/" + sourceIndex + "/" + targetIndex;
+        mockMvc.perform(patch(url).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .moveSkillInDisplayCategory(viewProfileReturned, displayCategoryIndex, sourceIndex, targetIndex);
+    }
+
+    @Test
+    public void movesDisplayCategoryAndReturns200() throws Exception {
+        int sourceIndex = 0;
+        int targetIndex = 20;
+        String url = urlBasePath() + "/DISPLAY_CATEGORY/position/" + sourceIndex + "/" + targetIndex;
+        mockMvc.perform(patch(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .moveDisplayCategory(viewProfileReturned, sourceIndex, targetIndex);
     }
 }

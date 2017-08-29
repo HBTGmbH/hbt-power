@@ -6,6 +6,7 @@ import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileService;
+import de.hbt.pwr.view.service.ViewProfileSortService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.websocket.server.PathParam;
 
 /**
  * Controls operations that can be performed on a view profile
@@ -34,10 +33,13 @@ import javax.websocket.server.PathParam;
 @RequestMapping("/{initials}/view/{viewProfileId}")
 public class ViewProfileOperationsController {
 
+    private final ViewProfileSortService viewProfileSortService;
+
     private final ViewProfileService viewProfileService;
 
     @Autowired
-    public ViewProfileOperationsController(ViewProfileService viewProfileService) {
+    public ViewProfileOperationsController(ViewProfileSortService viewProfileSortService, ViewProfileService viewProfileService) {
+        this.viewProfileSortService = viewProfileSortService;
         this.viewProfileService = viewProfileService;
     }
 
@@ -191,6 +193,56 @@ public class ViewProfileOperationsController {
                                                    @RequestParam("display-category") String newDisplayCategoryName) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileService.setDisplayCategory(viewProfile, skillIndex, newDisplayCategoryName);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/DISPLAY_CATEGORY/order")
+    ResponseEntity<ViewProfile> sortDisplayCategories(@PathVariable("initials") String initials,
+                                                      @PathVariable("viewProfileId") String viewProfileId,
+                                                      @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.sortDisplayCategoriesByName(viewProfile, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/name/order")
+    ResponseEntity<ViewProfile> sortSkillsByNameInDisplayCategory(@PathVariable("initials") String initials,
+                                                                  @PathVariable("viewProfileId") String viewProfileId,
+                                                                  @PathVariable("displayCategoryIndex") int displayCategoryIndex,
+                                                                  @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.sortSkillsInDisplayByName(viewProfile, displayCategoryIndex, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/rating/order")
+    ResponseEntity<ViewProfile> sortSkillsByRatingInDisplayCategory(@PathVariable("initials") String initials,
+                                                                    @PathVariable("viewProfileId") String viewProfileId,
+                                                                    @PathVariable("displayCategoryIndex") int displayCategoryIndex,
+                                                                    @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.sortSkillsInDisplayByRating(viewProfile, displayCategoryIndex, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/position/{sourceIndex}/{targetIndex}")
+    ResponseEntity<ViewProfile> moveSkillInDisplayCategory(@PathVariable("initials") String initials,
+                                                           @PathVariable("viewProfileId") String viewProfileId,
+                                                           @PathVariable("displayCategoryIndex") int displayCategoryIndex,
+                                                           @PathVariable("sourceIndex") int sourceIndex,
+                                                           @PathVariable("targetIndex") int targetIndex) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.moveSkillInDisplayCategory(viewProfile, displayCategoryIndex, sourceIndex, targetIndex);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/DISPLAY_CATEGORY/position/{sourceIndex}/{targetIndex}")
+    ResponseEntity<ViewProfile> moveDisplayCategory(@PathVariable("initials") String initials,
+                                                    @PathVariable("viewProfileId") String viewProfileId,
+                                                    @PathVariable("sourceIndex") int sourceIndex,
+                                                    @PathVariable("targetIndex") int targetIndex) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.moveDisplayCategory(viewProfile, sourceIndex, targetIndex);
         return ResponseEntity.ok(viewProfile);
     }
 }

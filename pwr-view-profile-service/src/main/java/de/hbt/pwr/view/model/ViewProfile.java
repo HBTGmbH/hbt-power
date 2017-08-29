@@ -53,6 +53,8 @@ public class ViewProfile {
 
     private List<Skill> skills = new ArrayList<>();
 
+    private List<Category> displayCategories = new ArrayList<>();
+
     /**
      */
     private Category rootCategory;

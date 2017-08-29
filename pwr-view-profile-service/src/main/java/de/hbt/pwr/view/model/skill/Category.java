@@ -12,32 +12,43 @@ import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"isDisplay", "parent", "parent", "skills", "children"})
 public class Category {
 
     private String name;
 
-    private Boolean isDisplay;
+    @Builder.Default private Boolean isDisplay = false;
 
     @JsonBackReference
     @Transient
     private Category parent;
 
-    @JsonManagedReference
-    private List<Skill> skills = new ArrayList<>();
+    @JsonManagedReference(value = "refSkills")
+    @Builder.Default private List<Skill> skills = new ArrayList<>();
+
+    @JsonManagedReference(value = "refDisplaySkills")
+    @Builder.Default private List<Skill> displaySkills = new ArrayList<>();
 
     @JsonManagedReference
-    private List<Category> children = new ArrayList<>();
+    @Builder.Default private List<Category> children = new ArrayList<>();
+
+
+    public Category() {
+        isDisplay = false;
+        children = new ArrayList<>();
+        displaySkills = new ArrayList<>();
+        skills = new ArrayList<>();
+    }
 
     public Category(String name) {
+        this();
         this.name = name;
     }
 
     public void setParent(Category parent) {
         this.parent = parent;
-        if(!this.parent.getChildren().contains(this)) {
+        if(this.parent != null && !this.parent.getChildren().contains(this)) {
             this.parent.getChildren().add(this);
         }
     }

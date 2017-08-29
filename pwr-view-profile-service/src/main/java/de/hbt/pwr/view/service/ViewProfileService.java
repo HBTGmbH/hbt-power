@@ -178,12 +178,17 @@ public class ViewProfileService {
      *     The category identified by this name <bold>must</bold> be a direct or indirect parent of the skill at
      *     <code>skillIndex</code>. If this is not the case, {@link DisplayCategoryNotFoundException} is thrown.
      * </p>
+     * <p>
+     *     Also sets the {@link ViewProfile#displayCategories}
+     * </p>
      * @param viewProfile to be changed
      * @param skillIndex index of the skill in the collection of {@link ViewProfile#skills}
      * @param newDisplayCategoryName of the category that is supposed to be the new display category.
      */
     public void setDisplayCategory(ViewProfile viewProfile, int skillIndex, String newDisplayCategoryName) {
         Skill skill = viewProfile.getSkills().get(skillIndex);
+        viewProfile.getDisplayCategories().remove(skill.getDisplayCategory());
         setDisplayCategory(viewProfile, skill, newDisplayCategoryName, skill.getCategory());
+        viewProfile.getDisplayCategories().add(skill.getDisplayCategory());
     }
 }
