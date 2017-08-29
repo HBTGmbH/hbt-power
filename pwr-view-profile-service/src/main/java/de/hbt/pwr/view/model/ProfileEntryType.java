@@ -48,5 +48,5 @@ public enum ProfileEntryType {
     /**
      * {@link de.hbt.pwr.view.model.skill.Skill} independent from a {@link de.hbt.pwr.view.model.entries.Project}
      */
-    SKILL,
+    SKILL;
 }

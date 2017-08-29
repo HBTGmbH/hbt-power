@@ -47,7 +47,6 @@ public class ViewProfileService {
         return viewProfile;
     }
 
-
     public void deleteWithOwnerCheck(@NotNull String id, @NotNull String owner) {
         ViewProfile viewProfile = viewProfileRepository.findOne(id);
         if(viewProfile == null) {

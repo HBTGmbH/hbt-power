@@ -2,6 +2,7 @@ package de.hbt.pwr.view.controller;
 
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.entries.sort.ProjectSortableField;
 import de.hbt.pwr.view.service.ViewProfileService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import org.junit.Before;
@@ -208,5 +209,41 @@ public class ViewProfileOperationsControllerTest {
         then(viewProfileSortService)
                 .should(times(1))
                 .moveDisplayCategory(viewProfileReturned, sourceIndex, targetIndex);
+    }
+
+    @Test
+    public void sortsProjectsByStartDateAndReturns200() throws Exception {
+        String url = urlBasePath() + "/PROJECT/" + ProjectSortableField.START_DATE + "/order";
+        Boolean doAscending = true;
+        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortProjectsByStartDate(viewProfileReturned, doAscending);
+    }
+
+    @Test
+    public void sortsProjectByEndDateAndReturns200() throws Exception {
+        String url = urlBasePath() + "/PROJECT/" + ProjectSortableField.END_DATE + "/order";
+        Boolean doAscending = true;
+        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortProjectsByEndDate(viewProfileReturned, doAscending);
+    }
+
+    @Test
+    public void movesProjectAndReturns200() throws Exception {
+        int sourceIndex = 0;
+        int targetIndex = 33;
+        String url = urlBasePath() + "/PROJECT/position/" + sourceIndex + "/" + targetIndex;
+        mockMvc.perform(patch(url)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .moveProject(viewProfileReturned, sourceIndex, targetIndex);
     }
 }

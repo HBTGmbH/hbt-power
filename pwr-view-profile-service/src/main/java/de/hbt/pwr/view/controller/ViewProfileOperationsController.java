@@ -5,6 +5,7 @@ import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.entries.sort.ProjectSortableField;
 import de.hbt.pwr.view.service.ViewProfileService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import io.swagger.annotations.Api;
@@ -243,6 +244,26 @@ public class ViewProfileOperationsController {
                                                     @PathVariable("targetIndex") int targetIndex) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileSortService.moveDisplayCategory(viewProfile, sourceIndex, targetIndex);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/PROJECT/{sortable-field}/order")
+    ResponseEntity<ViewProfile> sortProjects(@PathVariable("initials") String initials,
+                                             @PathVariable("viewProfileId") String viewProfileId,
+                                             @PathVariable("sortable-field") ProjectSortableField sortableField,
+                                             @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        sortableField.invokeSort(viewProfileSortService, viewProfile, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/PROJECT/position/{sourceIndex}/{targetIndex}")
+    ResponseEntity<ViewProfile> moveProject(@PathVariable("initials") String initials,
+                                            @PathVariable("viewProfileId") String viewProfileId,
+                                            @PathVariable("sourceIndex") int sourceIndex,
+                                            @PathVariable("targetIndex") int targetIndex) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.moveProject(viewProfile, sourceIndex, targetIndex);
         return ResponseEntity.ok(viewProfile);
     }
 }

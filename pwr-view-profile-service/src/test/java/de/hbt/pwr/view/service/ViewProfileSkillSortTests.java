@@ -14,7 +14,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ViewProfileSortTests {
+public class ViewProfileSkillSortTests {
 
     private ViewProfile viewProfile;
     private ViewProfileSortService viewProfileSortService;
