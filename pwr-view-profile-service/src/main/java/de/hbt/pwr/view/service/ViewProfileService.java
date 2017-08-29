@@ -1,10 +1,13 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.exception.DisplayCategoryNotFoundException;
 import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
+import de.hbt.pwr.view.model.skill.Category;
+import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.stereotype.Service;
@@ -147,5 +150,40 @@ public class ViewProfileService {
 
     public void setIsEnabledForAllRolesInProject(ViewProfile viewProfile, int projectIndex, boolean isEnabled) {
         viewProfile.getProjects().get(projectIndex).getProjectRoles().forEach(projectRole -> projectRole.setEnabled(isEnabled));
+    }
+
+    /**
+     * Recursivley sets the display category or throws {@link DisplayCategoryNotFoundException} if the category
+     * can not be found.
+     * <br/>
+     * <br/>
+     * See {@linkplain ViewProfileService#setDisplayCategory(ViewProfile, int, String)} for doc.
+     */
+    private void setDisplayCategory(ViewProfile viewProfile, Skill skill, String newDisplayCategoryName, Category currentCategory) {
+        if(currentCategory != null) {
+            if(currentCategory.getName().equals(newDisplayCategoryName)) {
+                skill.setDisplayCategory(currentCategory);
+            } else {
+                setDisplayCategory(viewProfile, skill, newDisplayCategoryName, currentCategory.getParent());
+            }
+        } else {
+            throw new DisplayCategoryNotFoundException(viewProfile.getId(), skill.getName(), newDisplayCategoryName);
+        }
+    }
+
+    /**
+     * Sets the display category of the skill at the position <code>skillIndex</code>
+     * <p>
+     *     The new display category is identified by its {@link Category#name}, which is unique per view profile.
+     *     The category identified by this name <bold>must</bold> be a direct or indirect parent of the skill at
+     *     <code>skillIndex</code>. If this is not the case, {@link DisplayCategoryNotFoundException} is thrown.
+     * </p>
+     * @param viewProfile to be changed
+     * @param skillIndex index of the skill in the collection of {@link ViewProfile#skills}
+     * @param newDisplayCategoryName of the category that is supposed to be the new display category.
+     */
+    public void setDisplayCategory(ViewProfile viewProfile, int skillIndex, String newDisplayCategoryName) {
+        Skill skill = viewProfile.getSkills().get(skillIndex);
+        setDisplayCategory(viewProfile, skill, newDisplayCategoryName, skill.getCategory());
     }
 }

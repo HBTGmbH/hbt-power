@@ -15,9 +15,14 @@ public class Skill implements ToggleableEntry {
     private String name;
     private Integer rating;
     private Boolean enabled;
+
     @JsonBackReference
     @Transient
     private Category category;
+
+    @Transient
+    @JsonBackReference
+    private Category displayCategory;
 
     public Skill(String name) {
         this.name = name;

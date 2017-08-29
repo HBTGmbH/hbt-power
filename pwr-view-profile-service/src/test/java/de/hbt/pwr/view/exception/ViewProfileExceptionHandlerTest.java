@@ -53,4 +53,15 @@ public class ViewProfileExceptionHandlerTest {
         String url = "/view/fooBar";
         mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
     }
+
+    /**
+     * Validates that the exception handling for a {@link DisplayCategoryNotFoundException} works and returns
+     * a 400 bad request.
+     */
+    @Test
+    public void shouldReturnBadRequest400() throws Exception {
+        given(viewProfileService.getViewProfileIdsForInitials("fooBar")).willThrow(new DisplayCategoryNotFoundException("12", "12", "12"));
+        String url = "/view/fooBar";
+        mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+    }
 }

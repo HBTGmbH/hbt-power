@@ -132,6 +132,22 @@ public class ViewProfileOperationsControllerTest {
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
         then(viewProfileService).should(times(1)).setIsEnabledForAllRolesInProject(profileToReturn, projectIndex, isVisible);
+    }
 
+    /**
+     * Validates that the correct service methods are being called when a display category is supposed to be changed
+     * and that the correct call returns a status code of 200.
+     */
+    @Test
+    public void changesDisplayCategoryAndReturns200() throws Exception {
+        int skillIndex = 0;
+        String newDisplayCategoryName = "FooBar";
+        String url = "/" + initials + "/view/" + viewProfileId + "/SKILL/" + skillIndex + "/display-category";
+        mockMvc.perform(patch(url)
+                .param("display-category", newDisplayCategoryName)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService).should(times(1)).setDisplayCategory(profileToReturn, skillIndex, newDisplayCategoryName);
     }
 }

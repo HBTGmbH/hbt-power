@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.controller;
 
+import de.hbt.pwr.view.exception.DisplayCategoryNotFoundException;
 import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ProfileEntryType;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.websocket.server.PathParam;
 
 /**
  * Controls operations that can be performed on a view profile
@@ -165,6 +169,28 @@ public class ViewProfileOperationsController {
                                                                  @PathVariable("isEnabled") boolean isEnabled) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileService.setIsEnabledForAllRolesInProject(viewProfile, projectIndex, isEnabled);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @ApiOperation(value = "Sets the display category of a skill",
+            notes = "Sets the display category of a skill provided the display category is a direct or indirect parent " +
+                    "to the skill. ",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 400, message = "The category was not direct or indirect parent to the skill", response = DisplayCategoryNotFoundException.Error.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+    })
+    @PatchMapping("/SKILL/{skillIndex}/display-category")
+    ResponseEntity<ViewProfile> setDisplayCategory(@PathVariable("initials") String initials,
+                                                   @PathVariable("viewProfileId") String viewProfileId,
+                                                   @PathVariable("skillIndex") int skillIndex,
+                                                   @RequestParam("display-category") String newDisplayCategoryName) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.setDisplayCategory(viewProfile, skillIndex, newDisplayCategoryName);
         return ResponseEntity.ok(viewProfile);
     }
 }

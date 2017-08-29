@@ -30,6 +30,20 @@ public class ViewProfileExceptionHandler extends ResponseEntityExceptionHandler 
         ViewProfileNotFoundException.OuterError outerError = new ViewProfileNotFoundException.OuterError(message, viewProfileId, innerError);
         ViewProfileNotFoundException.Error error = new ViewProfileNotFoundException.Error(outerError);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
+    @ExceptionHandler(value = DisplayCategoryNotFoundException.class)
+    public ResponseEntity<DisplayCategoryNotFoundException.Error> handleDisplayCategoryNotFound(DisplayCategoryNotFoundException displayCategoryNotFoundException) {
+        DisplayCategoryNotFoundException.InnerError innerError = new DisplayCategoryNotFoundException.InnerError(
+                displayCategoryNotFoundException.getViewProfileId(),
+                displayCategoryNotFoundException.getSkillName(),
+                displayCategoryNotFoundException.getWantedCategory());
+        DisplayCategoryNotFoundException.OuterError outerError = new DisplayCategoryNotFoundException.OuterError(
+                displayCategoryNotFoundException.getMessage(),
+                displayCategoryNotFoundException.getViewProfileId(),
+                innerError
+        );
+        DisplayCategoryNotFoundException.Error error = new DisplayCategoryNotFoundException.Error(outerError);
+        return ResponseEntity.badRequest().body(error);
     }
 }

@@ -3,8 +3,7 @@ package de.hbt.pwr.view.model.skill;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.base.Objects;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.data.annotation.Transient;
 import sun.util.resources.cldr.teo.CalendarData_teo_KE;
 
@@ -12,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"isDisplay", "parent", "parent", "skills", "children"})
 public class Category {
 
@@ -28,10 +30,6 @@ public class Category {
 
     @JsonManagedReference
     private List<Category> children = new ArrayList<>();
-
-    public Category() {
-
-    }
 
     public Category(String name) {
         this.name = name;
