@@ -139,17 +139,5 @@ public class ViewProfileSkillSortTests {
         assertThat(viewProfile.getDisplayCategories().get(categoryIndex).getDisplaySkills())
                 .containsExactly(skillA, skillD, skillB, skillC);
     }
-
-    @Test
-    public void categoryShouldHaveMoved() {
-        setUpDisplaySortData();
-        // categoryB = 0, categoryC = 1, categoryA = 2
-        // 2 -> 0
-        // categoryA = 0, categoryB = 1, categoryC = 2
-        int sourceIndex = 2;
-        int targetIndex = 0;
-        viewProfileSortService.moveDisplayCategory(viewProfile, sourceIndex, targetIndex);
-        assertThat(viewProfile.getDisplayCategories()).containsExactly(categoryA, categoryB, categoryC);
-    }
 }
 

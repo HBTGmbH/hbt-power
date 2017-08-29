@@ -1,7 +1,6 @@
 package de.hbt.pwr.view.client.skill.model;
 
 import lombok.Data;
-import org.apache.tomcat.jni.Local;
 
 import java.util.ArrayList;
 import java.util.List;

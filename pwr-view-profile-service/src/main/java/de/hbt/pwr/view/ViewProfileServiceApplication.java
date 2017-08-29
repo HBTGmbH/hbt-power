@@ -1,35 +1,29 @@
 package de.hbt.pwr.view;
 
-import static springfox.documentation.builders.PathSelectors.any;
-import static springfox.documentation.builders.PathSelectors.regex;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationContextException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import static springfox.documentation.builders.PathSelectors.any;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -41,8 +35,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableRedisRepositories
 public class ViewProfileServiceApplication {
 
+    private final JedisConnectionFactory jedisConnectionFactory;
+
     @Autowired
-    private JedisConnectionFactory jedisConnectionFactory;
+    public ViewProfileServiceApplication(JedisConnectionFactory jedisConnectionFactory) {
+        this.jedisConnectionFactory = jedisConnectionFactory;
+    }
 
 
     /**
@@ -55,7 +53,7 @@ public class ViewProfileServiceApplication {
 
     @Bean
     public RedisTemplate<?, ?> redisTemplate() {
-        RedisTemplate<byte[],byte[]> res =  new RedisTemplate<byte[], byte[]>();
+        RedisTemplate<byte[],byte[]> res = new RedisTemplate<>();
         res.setConnectionFactory(jedisConnectionFactory);
         return res;
     }

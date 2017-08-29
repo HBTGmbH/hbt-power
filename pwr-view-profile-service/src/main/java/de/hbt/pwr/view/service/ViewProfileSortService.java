@@ -1,14 +1,13 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.util.ListUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.Comparator;
 
 @Service
@@ -80,12 +79,8 @@ public class ViewProfileSortService {
         ListUtil.move(displayCategory.getDisplaySkills(), sourceIndex, targetIndex);
     }
 
-    public void moveDisplayCategory(ViewProfile viewProfile, int sourceIndex, int targetIndex) {
-        ListUtil.move(viewProfile.getDisplayCategories(), sourceIndex, targetIndex);
-    }
-
-    public void moveProject(ViewProfile viewProfile, int sourceIndex, int targetIndex) {
-        ListUtil.move(viewProfile.getProjects(), sourceIndex, targetIndex);
+    public void move(ViewProfile viewProfile, ProfileEntryType profileEntryType, int sourceIndex, int targetIndex) {
+        ListUtil.move(profileEntryType.extractMovableEntry(viewProfile), sourceIndex, targetIndex);
     }
 
 

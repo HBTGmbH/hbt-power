@@ -1,7 +1,8 @@
 package de.hbt.pwr.view.model;
 
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
-import de.hbt.pwr.view.model.entries.sort.ToggleableType;
+import de.hbt.pwr.view.model.entries.ToggleableExtractable;
+import de.hbt.pwr.view.model.entries.sort.MovableEntryExtractable;
 
 import java.util.List;
 
@@ -9,11 +10,16 @@ import java.util.List;
  * @author nt / nt@hbt.de
  * @since 28.08.2017
  */
-public enum ProfileEntryType implements ToggleableType {
+public enum ProfileEntryType implements ToggleableExtractable, MovableEntryExtractable {
     /**
      * {@link de.hbt.pwr.view.model.entries.Career}
      */
     CAREER {
+        @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getCareers();
+        }
+
         @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getCareers();
@@ -25,6 +31,11 @@ public enum ProfileEntryType implements ToggleableType {
      */
     EDUCATION {
         @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getEducations();
+        }
+
+        @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getEducations();
         }
@@ -34,6 +45,11 @@ public enum ProfileEntryType implements ToggleableType {
      * {@link de.hbt.pwr.view.model.entries.KeySkill}
      */
     KEY_SKILL {
+        @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getKeySkills();
+        }
+
         @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getKeySkills();
@@ -45,6 +61,11 @@ public enum ProfileEntryType implements ToggleableType {
      */
     LANGUAGE {
         @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getLanguages();
+        }
+
+        @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getLanguages();
         }
@@ -54,6 +75,11 @@ public enum ProfileEntryType implements ToggleableType {
      * {@link de.hbt.pwr.view.model.entries.Project}
      */
     PROJECT {
+        @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getProjects();
+        }
+
         @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getProjects();
@@ -65,6 +91,11 @@ public enum ProfileEntryType implements ToggleableType {
      */
     PROJECT_ROLE {
         @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getProjectRoles();
+        }
+
+        @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getProjectRoles();
         }
@@ -74,6 +105,11 @@ public enum ProfileEntryType implements ToggleableType {
      * {@link de.hbt.pwr.view.model.entries.Sector}
      */
     SECTOR {
+        @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getSectors();
+        }
+
         @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getSectors();
@@ -85,6 +121,11 @@ public enum ProfileEntryType implements ToggleableType {
      */
     TRAINING {
         @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getTrainings();
+        }
+
+        @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getTrainings();
         }
@@ -95,8 +136,35 @@ public enum ProfileEntryType implements ToggleableType {
      */
     SKILL {
         @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getSkills();
+        }
+
+        @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
             return viewProfile.getSkills();
         }
-    };
+    },
+    DISPLAY_CATEGORY {
+        @Override
+        public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
+            return viewProfile.getDisplayCategories();
+        }
+
+        @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getDisplayCategories();
+        }
+    },
+    QUALIFICATION {
+        @Override
+        public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
+            return viewProfile.getQualifications();
+        }
+
+        @Override
+        public List<?> extractMovableEntry(ViewProfile viewProfile) {
+            return viewProfile.getQualifications();
+        }
+    }
 }

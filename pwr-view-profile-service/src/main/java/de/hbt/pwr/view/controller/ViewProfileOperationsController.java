@@ -197,6 +197,7 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sorts all display categories")
     @PatchMapping("/DISPLAY_CATEGORY/order")
     ResponseEntity<ViewProfile> sortDisplayCategories(@PathVariable("initials") String initials,
                                                       @PathVariable("viewProfileId") String viewProfileId,
@@ -206,6 +207,7 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sorts all skills in a display category")
     @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/name/order")
     ResponseEntity<ViewProfile> sortSkillsByNameInDisplayCategory(@PathVariable("initials") String initials,
                                                                   @PathVariable("viewProfileId") String viewProfileId,
@@ -216,6 +218,7 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sorts all skills in a display category")
     @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/rating/order")
     ResponseEntity<ViewProfile> sortSkillsByRatingInDisplayCategory(@PathVariable("initials") String initials,
                                                                     @PathVariable("viewProfileId") String viewProfileId,
@@ -226,6 +229,7 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Moves a skill in a display category")
     @PatchMapping("/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/position/{sourceIndex}/{targetIndex}")
     ResponseEntity<ViewProfile> moveSkillInDisplayCategory(@PathVariable("initials") String initials,
                                                            @PathVariable("viewProfileId") String viewProfileId,
@@ -237,16 +241,20 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
-    @PatchMapping("/DISPLAY_CATEGORY/position/{sourceIndex}/{targetIndex}")
-    ResponseEntity<ViewProfile> moveDisplayCategory(@PathVariable("initials") String initials,
-                                                    @PathVariable("viewProfileId") String viewProfileId,
-                                                    @PathVariable("sourceIndex") int sourceIndex,
-                                                    @PathVariable("targetIndex") int targetIndex) {
+
+    @ApiOperation(value = "Moves a movable entry")
+    @PatchMapping("/{movable-entry}/position/{sourceIndex}/{targetIndex}")
+    ResponseEntity<ViewProfile> moveMovable(@PathVariable("initials") String initials,
+                                            @PathVariable("viewProfileId") String viewProfileId,
+                                            @PathVariable("movable-entry") ProfileEntryType profileEntryType,
+                                            @PathVariable("sourceIndex") int sourceIndex,
+                                            @PathVariable("targetIndex") int targetIndex) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileSortService.moveDisplayCategory(viewProfile, sourceIndex, targetIndex);
+        viewProfileSortService.move(viewProfile, profileEntryType, sourceIndex, targetIndex);
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Sorts all projects")
     @PatchMapping("/PROJECT/{sortable-field}/order")
     ResponseEntity<ViewProfile> sortProjects(@PathVariable("initials") String initials,
                                              @PathVariable("viewProfileId") String viewProfileId,
@@ -254,16 +262,6 @@ public class ViewProfileOperationsController {
                                              @RequestParam("do-ascending") boolean doAscending) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         sortableField.invokeSort(viewProfileSortService, viewProfile, doAscending);
-        return ResponseEntity.ok(viewProfile);
-    }
-
-    @PatchMapping("/PROJECT/position/{sourceIndex}/{targetIndex}")
-    ResponseEntity<ViewProfile> moveProject(@PathVariable("initials") String initials,
-                                            @PathVariable("viewProfileId") String viewProfileId,
-                                            @PathVariable("sourceIndex") int sourceIndex,
-                                            @PathVariable("targetIndex") int targetIndex) {
-        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileSortService.moveProject(viewProfile, sourceIndex, targetIndex);
         return ResponseEntity.ok(viewProfile);
     }
 }

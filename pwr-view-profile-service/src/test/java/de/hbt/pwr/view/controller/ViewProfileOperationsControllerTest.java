@@ -37,10 +37,10 @@ public class ViewProfileOperationsControllerTest {
      * refer to {@link de.hbt.pwr.view.service.ViewProfileVisibilityTests}
      */
     @MockBean
-    public ViewProfileService viewProfileService;
+    private ViewProfileService viewProfileService;
 
     @MockBean
-    public ViewProfileSortService viewProfileSortService;
+    private ViewProfileSortService viewProfileSortService;
 
     @MockBean
     // DO NOT REMOVE. Stops the container for crashing. Don't ask why ~nt
@@ -52,7 +52,7 @@ public class ViewProfileOperationsControllerTest {
 
     private String viewProfileId = "ABCD";
 
-    final Boolean isVisible = true;
+    private final static Boolean isVisible = true;
 
     @Before
     public void setUp() {
@@ -64,7 +64,7 @@ public class ViewProfileOperationsControllerTest {
     }
 
     /**
-     * Invokes the patch operation with application/json and expectes to return 200
+     * Invokes the patch operation with application/json and expected to return 200
      */
     private void patchAndAssertStatus200(String url) throws Exception {
         mockMvc.perform(patch(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
@@ -200,18 +200,6 @@ public class ViewProfileOperationsControllerTest {
     }
 
     @Test
-    public void movesDisplayCategoryAndReturns200() throws Exception {
-        int sourceIndex = 0;
-        int targetIndex = 20;
-        String url = urlBasePath() + "/DISPLAY_CATEGORY/position/" + sourceIndex + "/" + targetIndex;
-        mockMvc.perform(patch(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
-        assertOwnerCheckAndRetrieval();
-        then(viewProfileSortService)
-                .should(times(1))
-                .moveDisplayCategory(viewProfileReturned, sourceIndex, targetIndex);
-    }
-
-    @Test
     public void sortsProjectsByStartDateAndReturns200() throws Exception {
         String url = urlBasePath() + "/PROJECT/" + ProjectSortableField.START_DATE + "/order";
         Boolean doAscending = true;
@@ -236,14 +224,20 @@ public class ViewProfileOperationsControllerTest {
     }
 
     @Test
-    public void movesProjectAndReturns200() throws Exception {
+    public void allProfileEntriesAreMovableAndReturn200() throws Exception {
         int sourceIndex = 0;
         int targetIndex = 33;
-        String url = urlBasePath() + "/PROJECT/position/" + sourceIndex + "/" + targetIndex;
-        mockMvc.perform(patch(url)).andExpect(status().isOk());
-        assertOwnerCheckAndRetrieval();
-        then(viewProfileSortService)
-                .should(times(1))
-                .moveProject(viewProfileReturned, sourceIndex, targetIndex);
+        int times = 0;
+        for (ProfileEntryType profileEntryType : ProfileEntryType.values()) {
+            times++;
+            String url = urlBasePath() + "/" + profileEntryType + "/position/" + sourceIndex + "/" + targetIndex;
+            mockMvc.perform(patch(url)).andExpect(status().isOk());
+            then(viewProfileService).should(times(times)).getByIdAndCheckOwner(viewProfileId, initials);
+            then(viewProfileSortService)
+                    .should(times(1))
+                    .move(viewProfileReturned, profileEntryType, sourceIndex, targetIndex);
+            // Reset the service
+            setUp();
+        }
     }
 }

@@ -1,7 +1,6 @@
 package de.hbt.pwr.view.model.skill;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import lombok.*;
 import org.springframework.data.annotation.Transient;

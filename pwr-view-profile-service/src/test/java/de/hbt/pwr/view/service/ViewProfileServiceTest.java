@@ -49,12 +49,8 @@ public class ViewProfileServiceTest {
     public void setUp() {
         //noinspection unchecked
         given(viewProfileRepository.findAll()).willReturn(ListUtils.union(testViewProfileListOfTestUser, testViewProfilesOfOtherUser));
-        testViewProfileListOfTestUser.forEach(viewProfile -> {
-            given(viewProfileRepository.findOne(viewProfile.getId())).willReturn(viewProfile);
-        });
-        testViewProfilesOfOtherUser.forEach(viewProfile -> {
-            given(viewProfileRepository.findOne(viewProfile.getId())).willReturn(viewProfile);
-        });
+        testViewProfileListOfTestUser.forEach(viewProfile -> given(viewProfileRepository.findOne(viewProfile.getId())).willReturn(viewProfile));
+        testViewProfilesOfOtherUser.forEach(viewProfile -> given(viewProfileRepository.findOne(viewProfile.getId())).willReturn(viewProfile));
         viewProfileService = new ViewProfileService(viewProfileRepository);
     }
 

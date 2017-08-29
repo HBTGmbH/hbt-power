@@ -4,7 +4,9 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 
 /**
- * Created by nt on 29.08.2017.
+ * Defines fields of a {@link de.hbt.pwr.view.model.entries.Project} that are sortable.
+ * @author nt
+ * @since 29.08.2017
  */
 public enum ProjectSortableField implements ProjectSortableFieldInvokeable {
     START_DATE {

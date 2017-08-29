@@ -19,7 +19,6 @@ import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +48,7 @@ public class ViewProfileImportServiceTest {
             return optional.get();
         } else {
             fail("Expected " + categoryList.toString() + " to contain a category with the name '" + nameToFind + "'");
-            // Somhow necessary
+            // Somehow necessary
             throw new RuntimeException();
         }
     }
@@ -103,12 +102,9 @@ public class ViewProfileImportServiceTest {
 
         given(profileServiceClient.getSingleProfile("nt")).willReturn(profile);
 
-        when(viewProfileRepository.save(any(ViewProfile.class))).thenAnswer(new Answer<ViewProfile>() {
-            @Override
-            public ViewProfile answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Object[] args = invocationOnMock.getArguments();
-                return (ViewProfile) args[0];
-            }
+        when(viewProfileRepository.save(any(ViewProfile.class))).thenAnswer(invocationOnMock -> {
+            Object[] args = invocationOnMock.getArguments();
+            return (ViewProfile) args[0];
         });
 
         ViewProfileImportService viewProfileImportService = new ViewProfileImportService(profileServiceClient,

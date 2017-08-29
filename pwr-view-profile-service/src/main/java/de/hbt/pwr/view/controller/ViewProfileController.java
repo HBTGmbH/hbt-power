@@ -6,17 +6,14 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileImportService;
 import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
-@Api(value = "/view", description = "Provides means to manage view profiles with basic CRUID operations on a per user base.")
+@Api(value = "/view", description = "Provides means to manage view profiles with basic CRUD operations on a per user base.")
 @RequestMapping("/view")
 @Controller
 public class ViewProfileController {

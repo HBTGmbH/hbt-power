@@ -2,10 +2,12 @@ package de.hbt.pwr.view.model.skill;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.google.common.base.Objects;
-import lombok.*;
+import de.hbt.pwr.view.model.entries.ToggleableEntry;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Transient;
-import sun.util.resources.cldr.teo.CalendarData_teo_KE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"isDisplay", "parent", "parent", "skills", "children"})
-public class Category {
+public class Category implements ToggleableEntry {
 
     private String name;
 
@@ -23,6 +25,8 @@ public class Category {
     @JsonBackReference
     @Transient
     private Category parent;
+
+    private Boolean enabled;
 
     @JsonManagedReference(value = "refSkills")
     @Builder.Default private List<Skill> skills = new ArrayList<>();
@@ -60,5 +64,15 @@ public class Category {
                 "name='" + name + '\'' +
                 ", isDisplay=" + isDisplay +
                 '}';
+    }
+
+    @Override
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

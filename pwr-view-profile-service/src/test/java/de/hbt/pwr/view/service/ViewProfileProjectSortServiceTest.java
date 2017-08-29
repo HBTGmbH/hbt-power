@@ -2,7 +2,6 @@ package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
-import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,6 +36,7 @@ public class ViewProfileProjectSortServiceTest {
         viewProfileSortService = new ViewProfileSortService();
     }
 
+    @SuppressWarnings("Duplicates")
     private Project addProject(String name, LocalDate startDate, LocalDate endDate) {
         Project project = new Project();
         project.setName(name);
@@ -121,15 +120,5 @@ public class ViewProfileProjectSortServiceTest {
         // s4, s3, s1, s2
         viewProfileSortService.moveSkillInProject(viewProfile, 0, 1, 3);
         assertThat(viewProfile.getProjects().get(0).getSkills()).containsExactly(skill4, skill3, skill1, skill2);
-    }
-    
-
-
-    @Test
-    public void shouldHaveMoved() {
-        addProjectData();
-        // P1, P2, P3 // 2 -> 0 // P3, P1, P2
-        viewProfileSortService.moveProject(viewProfile, 2, 0);
-        assertThat(viewProfile.getProjects()).containsExactly(p3, p1, p2);
     }
 }

@@ -8,7 +8,6 @@ import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
-import de.hbt.pwr.view.model.entries.Project;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
@@ -137,7 +136,7 @@ public class ViewProfileImportService {
                 // As a result, the recursion is increased in order to find a category
                 // into which the candidate fits.
                 // The increasing of the recursion moves the validation to the next deeper layer
-                // This ONLY works because it is assumed that toMerge is a strict, linear hierachy, where
+                // This ONLY works because it is assumed that toMerge is a strict, linear hierarchy, where
                 // each category only ever has one child!
                 if(toMerge.getChildren().size() != 1) {
                     throw new RuntimeException("toMerge must only ever have one child");
@@ -146,7 +145,7 @@ public class ViewProfileImportService {
                 merge(root.getChildren().get(index), mergeChild);
             } else if(toMerge.getChildren().size() <= 0) {
                 // when the category to merge has no more children, the end of the recursion is reached
-                // without any insertion happening. This means that the whole, initial branch hierachy
+                // without any insertion happening. This means that the whole, initial branch hierarchy
                 // was already COMPLETELY included in the tree. As a result, only the skill needs to
                 // be included.
                 // As another constraint, the category MUST ONLY have a single skill
@@ -164,8 +163,8 @@ public class ViewProfileImportService {
      * <p>
      *     This invokes resolving of the skill against the skill service.
      * </p>
-     * @param root
-     * @param toAdd
+     * @param root todo
+     * @param toAdd todo
      */
     private Skill mergeIntoTree(Category root, ProfileSkill toAdd) {
         SkillServiceSkill skillServiceSkill = skillServiceClient.getSkillByName(toAdd.getName());

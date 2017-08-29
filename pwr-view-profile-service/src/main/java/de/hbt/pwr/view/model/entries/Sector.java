@@ -1,6 +1,5 @@
 package de.hbt.pwr.view.model.entries;
 
-import javafx.scene.control.Toggle;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
