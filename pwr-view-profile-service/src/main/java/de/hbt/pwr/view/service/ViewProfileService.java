@@ -67,38 +67,14 @@ public class ViewProfileService {
     }
 
 
-    public void setEntryEnabled(ViewProfile viewProfile, int index, boolean isEnabled, ProfileEntryType profileEntryType) {
-        switch (profileEntryType) {
-            case CAREER:
-                setEnabled(viewProfile.getCareers(), index, isEnabled);
-                break;
-            case EDUCATION:
-                setEnabled(viewProfile.getEducations(), index, isEnabled);
-                break;
-            case KEY_SKILL:
-                setEnabled(viewProfile.getKeySkills(), index, isEnabled);
-                break;
-            case LANGUAGE:
-                setEnabled(viewProfile.getLanguages(), index, isEnabled);
-                break;
-            case PROJECT:
-                setEnabled(viewProfile.getProjects(), index, isEnabled);
-                break;
-            case PROJECT_ROLE:
-                setEnabled(viewProfile.getProjectRoles(), index, isEnabled);
-                break;
-            case SECTOR:
-                setEnabled(viewProfile.getSectors(), index, isEnabled);
-                break;
-            case TRAINING:
-                setEnabled(viewProfile.getTrainings(), index, isEnabled);
-                break;
-            case SKILL:
-                setEnabled(viewProfile.getSkills(), index, isEnabled);
-                break;
-            default:
-                throw new RuntimeException("Unknown type: " + profileEntryType);
-        }
+    public void setIsEnabled(ViewProfile viewProfile, int index, boolean isEnabled, ProfileEntryType profileEntryType) {
+        List<? extends ToggleableEntry> toggleableEntries = profileEntryType.getToggleable(viewProfile);
+        setEnabled(toggleableEntries, index, isEnabled);
+    }
+
+    public void setIsEnabledForAll(ViewProfile viewProfile, ProfileEntryType profileEntryType, Boolean isEnabled) {
+        List<? extends ToggleableEntry> toggleableEntries = profileEntryType.getToggleable(viewProfile);
+        setEnabledForAll(toggleableEntries, isEnabled);
     }
 
     public void setRoleInProjectEnabled(ViewProfile viewProfile, int projectIndex, int roleIndex, boolean isEnabled) {
@@ -109,39 +85,7 @@ public class ViewProfileService {
         viewProfile.getProjects().get(projectIndex).getSkills().get(skillIndex).setEnabled(isEnabled);
     }
 
-    public void setIsEnabledForAll(ViewProfile viewProfile, ProfileEntryType profileEntryType, Boolean isEnabled) {
-        switch (profileEntryType) {
-            case CAREER:
-                setEnabledForAll(viewProfile.getCareers(), isEnabled);
-                break;
-            case EDUCATION:
-                setEnabledForAll(viewProfile.getEducations(), isEnabled);
-                break;
-            case KEY_SKILL:
-                setEnabledForAll(viewProfile.getKeySkills(), isEnabled);
-                break;
-            case LANGUAGE:
-                setEnabledForAll(viewProfile.getLanguages(), isEnabled);
-                break;
-            case PROJECT:
-                setEnabledForAll(viewProfile.getProjects(), isEnabled);
-                break;
-            case PROJECT_ROLE:
-                setEnabledForAll(viewProfile.getProjectRoles(), isEnabled);
-                break;
-            case SECTOR:
-                setEnabledForAll(viewProfile.getSectors(), isEnabled);
-                break;
-            case TRAINING:
-                setEnabledForAll(viewProfile.getTrainings(), isEnabled);
-                break;
-            case SKILL:
-                setEnabledForAll(viewProfile.getSkills(), isEnabled);
-                break;
-            default:
-                throw new RuntimeException("Invalid profileEntryType: " + profileEntryType);
-        }
-    }
+
 
     public void setIsEnabledForAllSkillsInProject(ViewProfile viewProfile, int projectIndex, boolean isEnabled) {
         viewProfile.getProjects().get(projectIndex).getSkills().forEach(skill -> skill.setEnabled(isEnabled));

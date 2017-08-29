@@ -63,7 +63,7 @@ public class ViewProfileOperationsController {
                                               @PathVariable("index") int index,
                                               @PathVariable("isEnabled") Boolean isEnabled) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileService.setEntryEnabled(viewProfile, index, isEnabled, profileEntryType);
+        viewProfileService.setIsEnabled(viewProfile, index, isEnabled, profileEntryType);
         return ResponseEntity.ok(viewProfile);
     }
 

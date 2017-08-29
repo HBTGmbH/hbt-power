@@ -1,6 +1,5 @@
 package de.hbt.pwr.view.service;
 
-import de.hbt.pwr.view.client.profile.model.ProfileEntry;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
@@ -11,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collections;
@@ -183,13 +181,13 @@ public class ViewProfileVisibilityTests {
 
     private void testEnableEntry(ProfileEntryType profileEntryType) {
         addEntry(profileEntryType, false);
-        viewProfileService.setEntryEnabled(profileToTest, 0, true, profileEntryType);
+        viewProfileService.setIsEnabled(profileToTest, 0, true, profileEntryType);
         assertEntrySelected(profileEntryType, 0, true);
     }
 
     private void testDisableEntry(ProfileEntryType profileEntryType) {
         addEntry(profileEntryType, true);
-        viewProfileService.setEntryEnabled(profileToTest, 0, false, profileEntryType);
+        viewProfileService.setIsEnabled(profileToTest, 0, false, profileEntryType);
         assertEntrySelected(profileEntryType, 0, false);
     }
 

@@ -82,7 +82,7 @@ public class ViewProfileOperationsControllerTest {
 
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setEntryEnabled(viewProfileReturned, index, isVisible, entryType);
+        then(viewProfileService).should(times(1)).setIsEnabled(viewProfileReturned, index, isVisible, entryType);
     }
 
     @Test
