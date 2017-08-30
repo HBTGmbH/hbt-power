@@ -93,4 +93,14 @@ public class ViewProfileServiceTest {
         viewProfileService.deleteWithOwnerCheck("FooBar", otherUserInitials);
         verify(viewProfileRepository, times(0)).delete("FooBar");
     }
+
+    @Test
+    public void shouldChangeDescription() {
+        final String oldDescription = "FizzBuzz";
+        final String newDescription = "FooBar";
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setDescription(oldDescription);
+        viewProfileService.setDescription(viewProfile, newDescription);
+        assertThat(viewProfile.getDescription()).isEqualTo(newDescription);
+    }
 }

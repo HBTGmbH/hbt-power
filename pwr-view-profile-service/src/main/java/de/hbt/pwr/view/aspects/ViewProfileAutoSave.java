@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
  *         <li>The <code>viewProfile</code> is not null</li>
  *     </ul>
  * </p>
+ * @author nt (nt@hbt.de)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})

@@ -16,10 +16,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controls operations that can be performed on a view profile
@@ -275,6 +272,16 @@ public class ViewProfileOperationsController {
                                                     @RequestParam("do-ascending") boolean doAscending) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileSortService.sortEntryByEndDate(viewProfile, entryType, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @ApiOperation(value = "Changes the description TODO nt / document this")
+    @PatchMapping("/DESCRIPTION")
+    ResponseEntity<ViewProfile> setDescription(@PathVariable("initials") String initials,
+                                               @PathVariable("viewProfileId") String viewProfileId,
+                                               @RequestBody() String newDescription) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.setDescription(viewProfile, newDescription);
         return ResponseEntity.ok(viewProfile);
     }
 }

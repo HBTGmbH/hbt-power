@@ -254,4 +254,13 @@ public class ViewProfileOperationsControllerTest {
                     .sortEntryByEndDate(viewProfileReturned, entryType, doAscending);
         }
     }
+
+    @Test
+    public void setsDescriptionAndReturns200() throws Exception {
+        String url = urlBasePath() + "/DESCRIPTION";
+        String newDescription = "afdpojafpajfkasfasdä1''''sda,.a^^wdasda--";
+        mockMvc.perform(patch(url).content(newDescription).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService).should(times(1)).setDescription(viewProfileReturned, newDescription);
+    }
 }
