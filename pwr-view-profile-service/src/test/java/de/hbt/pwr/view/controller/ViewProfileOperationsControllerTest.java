@@ -3,7 +3,7 @@ package de.hbt.pwr.view.controller;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
-import de.hbt.pwr.view.model.entries.sort.ProjectSortableField;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.service.ViewProfileService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import org.junit.Before;
@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -191,30 +193,6 @@ public class ViewProfileOperationsControllerTest {
     }
 
     @Test
-    public void sortsProjectsByStartDateAndReturns200() throws Exception {
-        String url = urlBasePath() + "/PROJECT/" + ProjectSortableField.START_DATE + "/order";
-        Boolean doAscending = true;
-        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()))
-                .andExpect(status().isOk());
-        assertOwnerCheckAndRetrieval();
-        then(viewProfileSortService)
-                .should(times(1))
-                .sortProjectsByStartDate(viewProfileReturned, doAscending);
-    }
-
-    @Test
-    public void sortsProjectByEndDateAndReturns200() throws Exception {
-        String url = urlBasePath() + "/PROJECT/" + ProjectSortableField.END_DATE + "/order";
-        Boolean doAscending = true;
-        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()))
-                .andExpect(status().isOk());
-        assertOwnerCheckAndRetrieval();
-        then(viewProfileSortService)
-                .should(times(1))
-                .sortProjectsByEndDate(viewProfileReturned, doAscending);
-    }
-
-    @Test
     public void allProfileEntriesAreMovableAndReturn200() throws Exception {
         int sourceIndex = 0;
         int targetIndex = 33;
@@ -252,6 +230,28 @@ public class ViewProfileOperationsControllerTest {
                     .should(times(1))
                     .sortEntryByName(viewProfileReturned, nameComparableEntryType, doAscending);
         }
+    }
 
+    @Test
+    public void sortsAllStartEndDateSortAblesAndReturns200() throws Exception {
+        int expectedTimes = 0;
+        final Boolean doAscending = true;
+        for (StartEndDateComparableEntryType entryType : StartEndDateComparableEntryType.values()) {
+            for(String field: Arrays.asList("end-date", "start-date")) {
+                expectedTimes++;
+                String url = urlBasePath() + "/" + entryType.toString() +  "/" + field + "/order";
+                mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()).accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+                then(viewProfileService)
+                        .should(times(expectedTimes))
+                        .getByIdAndCheckOwner(viewProfileId, initials);
+            }
+            then(viewProfileSortService)
+                    .should(times(1))
+                    .sortEntryByEndDate(viewProfileReturned, entryType, doAscending);
+            then(viewProfileSortService)
+                    .should(times(1))
+                    .sortEntryByEndDate(viewProfileReturned, entryType, doAscending);
+        }
     }
 }

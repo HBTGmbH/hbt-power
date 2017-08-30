@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
@@ -19,6 +20,7 @@ import java.util.Comparator;
  * @author nt / nt@hbt.de
  */
 @Service
+@ViewProfileAutoSave
 public class ViewProfileSortService {
 
     private static final Comparator<Skill> SkillByRatingAsc = Comparator.comparing(Skill::getRating);
@@ -51,9 +53,6 @@ public class ViewProfileSortService {
     private static Comparator<Skill> getSkillRatingComparator(boolean sortAscending) {
         return sortAscending ? SkillByRatingAsc : SkillByRatingDesc;
     }
-
-
-
 
     public void sortEntryByName(ViewProfile viewProfile, NameComparableEntryType entryType, boolean sortAscending) {
         Comparator<NameComparable> comparator = getNameComparator(sortAscending);

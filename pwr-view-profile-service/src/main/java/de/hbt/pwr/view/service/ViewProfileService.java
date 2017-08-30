@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
 import de.hbt.pwr.view.exception.DisplayCategoryNotFoundException;
 import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@ViewProfileAutoSave
 public class ViewProfileService {
 
     private final ViewProfileRepository viewProfileRepository;
@@ -129,5 +131,9 @@ public class ViewProfileService {
         viewProfile.getDisplayCategories().remove(skill.getDisplayCategory());
         setDisplayCategory(viewProfile, skill, newDisplayCategoryName, skill.getCategory());
         viewProfile.getDisplayCategories().add(skill.getDisplayCategory());
+    }
+
+    public void setDescription(ViewProfile viewProfile, String newDescription) {
+        viewProfile.setDescription(newDescription);
     }
 }

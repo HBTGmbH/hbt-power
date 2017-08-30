@@ -12,6 +12,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
@@ -32,6 +33,7 @@ import static springfox.documentation.builders.PathSelectors.any;
 @EnableHystrix
 @EnableAutoConfiguration(exclude = MongoAutoConfiguration.class)
 @EnableSwagger2
+@EnableAspectJAutoProxy // Enables AspectJ style annotations
 @EnableRedisRepositories
 public class ViewProfileServiceApplication {
 
@@ -68,7 +70,7 @@ public class ViewProfileServiceApplication {
                 .build();
     }
 
-    public ApiInfo apiInfo() {
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("HBT Power View Profile Service")
                 .description("Service that generates momentary snapshots of a consultant profile to provide various methods to structure the unstructured data.")

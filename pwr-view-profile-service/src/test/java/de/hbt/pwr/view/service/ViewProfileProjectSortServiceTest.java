@@ -21,9 +21,6 @@ public class ViewProfileProjectSortServiceTest {
     private ViewProfile viewProfile;
 
     private ViewProfileSortService viewProfileSortService;
-    private Project p1;
-    private Project p2;
-    private Project p3;
     private Skill skill1;
     private Skill skill2;
     private Skill skill3;
@@ -46,12 +43,6 @@ public class ViewProfileProjectSortServiceTest {
         return project;
     }
 
-    private void addProjectData() {
-        p1 = addProject("P1", LocalDate.of(2001, 5, 20), LocalDate.of(2016, 5, 21));
-        p2 = addProject("P2", LocalDate.of(1990, 3, 2), LocalDate.of(1990, 3, 21));
-        p3 = addProject("P3", LocalDate.of(2010, 4, 2), LocalDate.of(2010, 5, 21));
-    }
-    
     private void addSkillProjectData() {
         skill1 = Skill.builder().name("1").rating(1).build();
         skill2 = Skill.builder().name("2").rating(2).build();
@@ -61,33 +52,6 @@ public class ViewProfileProjectSortServiceTest {
         viewProfile.getProjects().add(project);
     }
 
-    @Test
-    public void shouldBeSortedAscendingByStartDate() {
-        addProjectData();
-        viewProfileSortService.sortProjectsByStartDate(viewProfile, true);
-        assertThat(viewProfile.getProjects()).containsExactly(p2, p1, p3);
-    }
-
-    @Test
-    public void shouldBeSortedDescendingByStartDate() {
-        addProjectData();
-        viewProfileSortService.sortProjectsByStartDate(viewProfile, false);
-        assertThat(viewProfile.getProjects()).containsExactly(p3, p1, p2);
-    }
-
-    @Test
-    public void shouldBeSortedAscendingByEndDate() {
-        addProjectData();
-        viewProfileSortService.sortProjectsByEndDate(viewProfile, true);
-        assertThat(viewProfile.getProjects()).containsExactly(p2, p3, p1);
-    }
-
-    @Test
-    public void shouldBeSortedDescendingByEndDate() {
-        addProjectData();
-        viewProfileSortService.sortProjectsByEndDate(viewProfile, false);
-        assertThat(viewProfile.getProjects()).containsExactly(p1, p3, p2);
-    }
 
     @Test
     public void shouldBeSortedByNameInProject() {

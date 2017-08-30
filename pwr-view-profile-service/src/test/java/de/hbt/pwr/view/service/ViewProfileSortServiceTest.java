@@ -4,15 +4,15 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.entries.sort.NameComparable;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparable;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
-import de.hbt.pwr.view.model.skill.Skill;
-import org.apache.commons.codec.language.bm.Lang;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,6 +38,22 @@ public class ViewProfileSortServiceTest {
         assertThat((List)nameComparableEntryType.getComparable(viewProfile)).containsExactly(o1, o2, o3);
         viewProfileSortService.sortEntryByName(viewProfile,nameComparableEntryType, false);
         assertThat((List)nameComparableEntryType.getComparable(viewProfile)).containsExactly(o3, o2, o1);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void performStartEndDateSortAssert(StartEndDateComparableEntryType entryType,
+                                               StartEndDateComparable o1,
+                                               StartEndDateComparable o2,
+                                               StartEndDateComparable o3) {
+        viewProfileSortService.sortEntryByStartDate(viewProfile, entryType, true);
+        assertThat((List)entryType.getComparable(viewProfile)).containsExactly(o1, o2, o3);
+        viewProfileSortService.sortEntryByStartDate(viewProfile, entryType, false);
+        assertThat((List)entryType.getComparable(viewProfile)).containsExactly(o3, o2, o1);
+
+        viewProfileSortService.sortEntryByEndDate(viewProfile, entryType, true);
+        assertThat((List)entryType.getComparable(viewProfile)).containsExactly(o1, o2, o3);
+        viewProfileSortService.sortEntryByEndDate(viewProfile, entryType, false);
+        assertThat((List)entryType.getComparable(viewProfile)).containsExactly(o3, o2, o1);
     }
 
     @Test
@@ -119,6 +135,66 @@ public class ViewProfileSortServiceTest {
         Category categoryC = Category.builder().name("C").build();
         viewProfile.getDisplayCategories().addAll(Arrays.asList(categoryB, categoryA, categoryC));
         performSortAndAssert(NameComparableEntryType.DISPLAY_CATEGORY, categoryA, categoryB, categoryC);
+    }
+
+    @Test
+    public void EducationShouldBeDateSorted() {
+        Education ed1 = Education.builder().name("E1")
+                .startDate(LocalDate.of(2010, 3, 3))
+                .endDate(LocalDate.of(2010, 4,4)).build();
+        Education ed2 = Education.builder().name("E2")
+                .startDate(LocalDate.of(2011, 3, 3))
+                .endDate(LocalDate.of(2011, 4,4)).build();
+        Education ed3 = Education.builder().name("E1")
+                .startDate(LocalDate.of(2012, 3, 3))
+                .endDate(LocalDate.of(2012, 4,4)).build();
+        viewProfile.getEducations().addAll(Arrays.asList(ed2, ed1, ed3));
+        performStartEndDateSortAssert(StartEndDateComparableEntryType.EDUCATION, ed1, ed2, ed3);
+    }
+
+    @Test
+    public void CareerShouldBeDateSorted() {
+        Career ed1 = Career.builder().name("E1")
+                .startDate(LocalDate.of(2010, 3, 3))
+                .endDate(LocalDate.of(2010, 4,4)).build();
+        Career ed2 = Career.builder().name("E2")
+                .startDate(LocalDate.of(2011, 3, 3))
+                .endDate(LocalDate.of(2011, 4,4)).build();
+        Career ed3 = Career.builder().name("E1")
+                .startDate(LocalDate.of(2012, 3, 3))
+                .endDate(LocalDate.of(2012, 4,4)).build();
+        viewProfile.getCareers().addAll(Arrays.asList(ed2, ed1, ed3));
+        performStartEndDateSortAssert(StartEndDateComparableEntryType.CAREER, ed1, ed2, ed3);
+    }
+
+    @Test
+    public void ProjectShouldBeDateSorted() {
+        Project ed1 = Project.builder().name("E1")
+                .startDate(LocalDate.of(2010, 3, 3))
+                .endDate(LocalDate.of(2010, 4,4)).build();
+        Project ed2 = Project.builder().name("E2")
+                .startDate(LocalDate.of(2011, 3, 3))
+                .endDate(LocalDate.of(2011, 4,4)).build();
+        Project ed3 = Project.builder().name("E1")
+                .startDate(LocalDate.of(2012, 3, 3))
+                .endDate(LocalDate.of(2012, 4,4)).build();
+        viewProfile.getProjects().addAll(Arrays.asList(ed2, ed1, ed3));
+        performStartEndDateSortAssert(StartEndDateComparableEntryType.PROJECT, ed1, ed2, ed3);
+    }
+
+    @Test
+    public void TrainingShouldBeDateSorted() {
+        Training ed1 = Training.builder().name("E1")
+                .startDate(LocalDate.of(2010, 3, 3))
+                .endDate(LocalDate.of(2010, 4,4)).build();
+        Training ed2 = Training.builder().name("E2")
+                .startDate(LocalDate.of(2011, 3, 3))
+                .endDate(LocalDate.of(2011, 4,4)).build();
+        Training ed3 = Training.builder().name("E1")
+                .startDate(LocalDate.of(2012, 3, 3))
+                .endDate(LocalDate.of(2012, 4,4)).build();
+        viewProfile.getTrainings().addAll(Arrays.asList(ed2, ed1, ed3));
+        performStartEndDateSortAssert(StartEndDateComparableEntryType.TRAINING, ed1, ed2, ed3);
     }
 
 }
