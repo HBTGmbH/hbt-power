@@ -5,6 +5,8 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
 import de.hbt.pwr.view.model.entries.sort.NameComparable;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparable;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.util.ListUtil;
@@ -22,11 +24,11 @@ public class ViewProfileSortService {
     private static final Comparator<Skill> SkillByRatingAsc = Comparator.comparing(Skill::getRating);
     private static final Comparator<Skill> SkillByRatingDesc = Comparator.comparing(Skill::getRating).reversed();
 
-    private static final Comparator<Project> ProjectByStartDateAsc = Comparator.comparing(Project::getStartDate);
-    private static final Comparator<Project> ProjectByStartDateDesc = Comparator.comparing(Project::getStartDate).reversed();
+    private static final Comparator<StartEndDateComparable> StartDateAsc = Comparator.comparing(StartEndDateComparable::getStartDate);
+    private static final Comparator<StartEndDateComparable> StartDateDesc = Comparator.comparing(StartEndDateComparable::getStartDate).reversed();
 
-    private static final Comparator<Project> ProjectByEndDateAsc = Comparator.comparing(Project::getEndDate);
-    private static final Comparator<Project> ProjectByEndDateDesc = Comparator.comparing(Project::getEndDate).reversed();
+    private static final Comparator<StartEndDateComparable> EndDateAsc = Comparator.comparing(StartEndDateComparable::getEndDate);
+    private static final Comparator<StartEndDateComparable> EndDateDesc = Comparator.comparing(StartEndDateComparable::getEndDate).reversed();
 
 
     private static final Comparator<NameComparable> ByNameAsc = Comparator.comparing(NameComparable::getName);
@@ -50,10 +52,27 @@ public class ViewProfileSortService {
         return sortAscending ? SkillByRatingAsc : SkillByRatingDesc;
     }
 
+
+
+
     public void sortEntryByName(ViewProfile viewProfile, NameComparableEntryType entryType, boolean sortAscending) {
         Comparator<NameComparable> comparator = getNameComparator(sortAscending);
         entryType.getComparable(viewProfile).sort(comparator);
     }
+
+    public void sortEntryByStartDate(ViewProfile viewProfile, StartEndDateComparableEntryType entryType, boolean sortAscending) {
+        Comparator<StartEndDateComparable> comparator = sortAscending ? StartDateAsc : StartDateDesc;
+        entryType.getComparable(viewProfile).sort(comparator);
+    }
+
+    public void sortEntryByEndDate(ViewProfile viewProfile, StartEndDateComparableEntryType entryType, boolean sortAscending) {
+        Comparator<StartEndDateComparable> comparator = sortAscending ? EndDateAsc : EndDateDesc;
+        entryType.getComparable(viewProfile).sort(comparator);
+    }
+
+
+
+
 
     public void sortSkillsInDisplayByName(ViewProfile viewProfile, int displayCategoryIndex, boolean sortAscending) {
         Comparator<NameComparable> comparator = getNameComparator(sortAscending);
@@ -75,16 +94,6 @@ public class ViewProfileSortService {
         Project project = viewProfile.getProjects().get(projectIndex);
         Comparator<Skill> comparator = getSkillRatingComparator(sortAscending);
         project.getSkills().sort(comparator);
-    }
-
-    public void sortProjectsByStartDate(ViewProfile viewProfile, boolean sortAscending) {
-        Comparator<Project> comparator = sortAscending ? ProjectByStartDateAsc : ProjectByStartDateDesc;
-        viewProfile.getProjects().sort(comparator);
-    }
-
-    public void sortProjectsByEndDate(ViewProfile viewProfile, boolean sortAscending) {
-        Comparator<Project> comparator = sortAscending ? ProjectByEndDateAsc : ProjectByEndDateDesc;
-        viewProfile.getProjects().sort(comparator);
     }
 
     public void moveSkillInDisplayCategory(ViewProfile viewProfile, int categoryIndex, int sourceIndex, int targetIndex) {

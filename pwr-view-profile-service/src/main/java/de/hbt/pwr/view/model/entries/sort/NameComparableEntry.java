@@ -5,7 +5,9 @@ import de.hbt.pwr.view.model.ViewProfile;
 import java.util.List;
 
 /**
- * Created by nt on 30.08.2017.
+ * Defines a {@link ViewProfile} entry that implements the {@link NameComparable} interface.
+ * Used to avoid switches; Instead, implemented by {@link NameComparableEntryType} to
+ * return the correct collection.
  */
 public interface NameComparableEntry {
     List<? extends NameComparable> getComparable(ViewProfile viewProfile);

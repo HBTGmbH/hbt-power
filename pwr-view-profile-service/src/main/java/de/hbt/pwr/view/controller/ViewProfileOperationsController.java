@@ -6,7 +6,7 @@ import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
-import de.hbt.pwr.view.model.entries.sort.ProjectSortableField;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.service.ViewProfileService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import io.swagger.annotations.Api;
@@ -256,14 +256,25 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
-    @ApiOperation(value = "Sorts all projects")
-    @PatchMapping("/PROJECT/{sortable-field}/order")
-    ResponseEntity<ViewProfile> sortProjects(@PathVariable("initials") String initials,
-                                             @PathVariable("viewProfileId") String viewProfileId,
-                                             @PathVariable("sortable-field") ProjectSortableField sortableField,
-                                             @RequestParam("do-ascending") boolean doAscending) {
+    @ApiOperation(value = "Sorts entries by start date TODO nt / document this")
+    @PatchMapping("/{entryType}/start-date/order")
+    ResponseEntity<ViewProfile> sortStartDateSortable(@PathVariable("initials") String initials,
+                                                      @PathVariable("viewProfileId") String viewProfileId,
+                                                      @PathVariable("entryType") StartEndDateComparableEntryType entryType,
+                                                      @RequestParam("do-ascending") boolean doAscending) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        sortableField.invokeSort(viewProfileSortService, viewProfile, doAscending);
+        viewProfileSortService.sortEntryByStartDate(viewProfile, entryType, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @ApiOperation(value = "Sorts entries by end date TODO nt / document this")
+    @PatchMapping("/{entryType}/end-date/order")
+    ResponseEntity<ViewProfile> sortEndDateSortable(@PathVariable("initials") String initials,
+                                                    @PathVariable("viewProfileId") String viewProfileId,
+                                                    @PathVariable("entryType") StartEndDateComparableEntryType entryType,
+                                                    @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.sortEntryByEndDate(viewProfile, entryType, doAscending);
         return ResponseEntity.ok(viewProfile);
     }
 }

@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.model.entries;
 
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparable;
 import de.hbt.pwr.view.model.skill.Skill;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.util.List;
 @Data
 @Builder
 @NoArgsConstructor
-public class Project implements ToggleableEntry {
+public class Project implements ToggleableEntry, StartEndDateComparable {
     private String name;
     private String description;
     private String client;

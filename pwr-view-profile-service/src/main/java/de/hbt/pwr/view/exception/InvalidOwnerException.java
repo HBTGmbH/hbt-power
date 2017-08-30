@@ -2,6 +2,7 @@ package de.hbt.pwr.view.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
  * provided consultant.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class InvalidOwnerException extends RuntimeException {
 
 

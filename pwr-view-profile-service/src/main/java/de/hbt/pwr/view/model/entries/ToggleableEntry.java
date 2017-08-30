@@ -1,7 +1,7 @@
 package de.hbt.pwr.view.model.entries;
 
 /**
- * Created by nt on 23.08.2017.
+ * @author nt (nt@hbt.de)
  */
 public interface ToggleableEntry {
     Boolean getEnabled();

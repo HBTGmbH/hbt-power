@@ -1,7 +1,9 @@
 package de.hbt.pwr.view.model.entries.sort;
 
 /**
- * Created by nt on 30.08.2017.
+ * Implementing objects are comparable by their name. Does not specify
+ * how the name is comparable.
+ * @author nt nt@hbt.de
  */
 public interface NameComparable {
     String getName();
