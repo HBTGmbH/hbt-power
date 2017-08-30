@@ -2,6 +2,7 @@ package de.hbt.pwr.view.controller;
 
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.ProjectSortableField;
 import de.hbt.pwr.view.service.ViewProfileService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
@@ -154,16 +155,6 @@ public class ViewProfileOperationsControllerTest {
     }
 
     @Test
-    public void sortsDisplayCategoriesAndReturns200() throws Exception {
-        String url = urlBasePath() + "/DISPLAY_CATEGORY/order";
-        final Boolean doAscending = true;
-        mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-        assertOwnerCheckAndRetrieval();
-        then(viewProfileSortService).should(times(1)).sortDisplayCategoriesByName(viewProfileReturned, doAscending);
-    }
-
-    @Test
     public void sortsSkillsByNameInDisplayAndReturns200() throws Exception {
         int displayCategoryIndex = 3;
         String url = urlBasePath() + "/DISPLAY_CATEGORY/" + displayCategoryIndex + "/SKILL/name/order";
@@ -233,11 +224,34 @@ public class ViewProfileOperationsControllerTest {
             String url = urlBasePath() + "/" + profileEntryType + "/position/" + sourceIndex + "/" + targetIndex;
             mockMvc.perform(patch(url)).andExpect(status().isOk());
             then(viewProfileService).should(times(times)).getByIdAndCheckOwner(viewProfileId, initials);
+            // Only checks that the service has been invoked properly; The validation
+            // that the moving works is done in the ViewProfileMoveTest
             then(viewProfileSortService)
                     .should(times(1))
                     .move(viewProfileReturned, profileEntryType, sourceIndex, targetIndex);
             // Reset the service
             setUp();
         }
+    }
+
+    @Test
+    public void sortsAllNameSortAblesAndReturns200() throws Exception {
+        int expectedTimes = 0;
+        for (NameComparableEntryType nameComparableEntryType : NameComparableEntryType.values()) {
+            expectedTimes++;
+            String url = urlBasePath() + "/" + nameComparableEntryType.toString() +  "/name/order";
+            final Boolean doAscending = true;
+            mockMvc.perform(patch(url).param("do-ascending", doAscending.toString()).accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+            then(viewProfileService)
+                    .should(times(expectedTimes))
+                    .getByIdAndCheckOwner(viewProfileId, initials);
+
+            then(viewProfileSortService)
+                    .should(times(1))
+                    .sortEntryByName(viewProfileReturned, nameComparableEntryType, doAscending);
+        }
+
     }
 }

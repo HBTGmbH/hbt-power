@@ -2,6 +2,7 @@ package de.hbt.pwr.view.model.skill;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
+import de.hbt.pwr.view.model.entries.sort.NameComparable;
 import lombok.*;
 import org.springframework.data.annotation.Transient;
 
@@ -10,7 +11,7 @@ import org.springframework.data.annotation.Transient;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"rating", "enabled", "category"})
-public class Skill implements ToggleableEntry {
+public class Skill implements ToggleableEntry, NameComparable {
     private String name;
     private Integer rating;
     private Boolean enabled;

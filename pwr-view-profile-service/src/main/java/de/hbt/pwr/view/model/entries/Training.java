@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.model.entries;
 
+import de.hbt.pwr.view.model.entries.sort.NameComparable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Training implements ToggleableEntry {
+public class Training implements ToggleableEntry, NameComparable {
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;

@@ -5,6 +5,7 @@ import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.ProjectSortableField;
 import de.hbt.pwr.view.service.ViewProfileService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
@@ -197,16 +198,6 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
-    @ApiOperation(value = "Sorts all display categories")
-    @PatchMapping("/DISPLAY_CATEGORY/order")
-    ResponseEntity<ViewProfile> sortDisplayCategories(@PathVariable("initials") String initials,
-                                                      @PathVariable("viewProfileId") String viewProfileId,
-                                                      @RequestParam("do-ascending") boolean doAscending) {
-        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileSortService.sortDisplayCategoriesByName(viewProfile, doAscending);
-        return ResponseEntity.ok(viewProfile);
-    }
-
     @ApiOperation(value = "Sorts all skills in a display category")
     @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/name/order")
     ResponseEntity<ViewProfile> sortSkillsByNameInDisplayCategory(@PathVariable("initials") String initials,
@@ -251,6 +242,17 @@ public class ViewProfileOperationsController {
                                             @PathVariable("targetIndex") int targetIndex) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileSortService.move(viewProfile, profileEntryType, sourceIndex, targetIndex);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @ApiOperation(value = "Sorts entries by name TODO nt / document this")
+    @PatchMapping("/{entryType}/name/order")
+    ResponseEntity<ViewProfile> sortNameSortable(@PathVariable("initials") String initials,
+                                                 @PathVariable("viewProfileId") String viewProfileId,
+                                                 @PathVariable("entryType") NameComparableEntryType entryType,
+                                                 @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.sortEntryByName(viewProfile, entryType, doAscending);
         return ResponseEntity.ok(viewProfile);
     }
 

@@ -136,4 +136,16 @@ public class ViewProfileMoveTest {
         assertThat(viewProfile.getSectors()).containsExactly(o3, o1, o2);
     }
 
+    @Test
+    public void TrainingShouldHaveMoved() {
+        Training o1 = Training.builder().name("E1").build();
+        Training o2 = Training.builder().name("E2").build();
+        Training o3 = Training.builder().name("E3").build();
+        viewProfile.getTrainings().add(o1);
+        viewProfile.getTrainings().add(o2);
+        viewProfile.getTrainings().add(o3);
+        viewProfileSortService.move(viewProfile, ProfileEntryType.TRAINING, 2, 0);
+        assertThat(viewProfile.getTrainings()).containsExactly(o3, o1, o2);
+    }
+
 }

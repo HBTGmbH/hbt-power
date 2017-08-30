@@ -35,28 +35,6 @@ public class ViewProfileSkillSortTests {
         viewProfileSortService = new ViewProfileSortService();
     }
 
-    private void setUpDisplaySortData() {
-        categoryA = Category.builder().name("A").build();
-        Category categoryA2 = Category.builder().name("A2").parent(categoryA).build();
-        Skill skillFoo = Skill.builder().name("SkillFooInA").category(categoryA2).displayCategory(categoryA).build();
-
-        categoryB = Category.builder().name("B").build();
-        Category categoryB2 = Category.builder().name("B2").parent(categoryB).build();
-        Skill skillBar = Skill.builder().name("SkillBarInA").category(categoryB2).displayCategory(categoryB).build();
-
-        categoryC = Category.builder().name("C").build();
-        Category categoryC2 = Category.builder().name("C2").parent(categoryC).build();
-        Skill skillTest = Skill.builder().name("SkillTestInC").category(categoryC2).displayCategory(categoryC).build();
-
-        viewProfile.getSkills().add(skillBar);
-        viewProfile.getSkills().add(skillTest);
-        viewProfile.getSkills().add(skillFoo);
-
-        viewProfile.getDisplayCategories().add(categoryB);
-        viewProfile.getDisplayCategories().add(categoryC);
-        viewProfile.getDisplayCategories().add(categoryA);
-    }
-
 
     private void setUpSkillsInDisplayData() {
         Category category = Category.builder().name("Category").build();
@@ -67,21 +45,6 @@ public class ViewProfileSkillSortTests {
         category.getDisplaySkills().addAll(Arrays.asList(skillB, skillA, skillD, skillC));
         viewProfile.getSkills().addAll(Arrays.asList(skillB, skillA, skillD, skillC));
         viewProfile.getDisplayCategories().add(category);
-    }
-
-
-    @Test
-    public void displayCategoriesShouldBeSortedByNameAsc() {
-        setUpDisplaySortData();
-        viewProfileSortService.sortDisplayCategoriesByName(viewProfile, true);
-        assertThat(viewProfile.getDisplayCategories()).containsExactly(categoryA, categoryB, categoryC);
-    }
-
-    @Test
-    public void displayCategoriesShouldBeSortedByNameDesc() {
-        setUpDisplaySortData();
-        viewProfileSortService.sortDisplayCategoriesByName(viewProfile, false);
-        assertThat(viewProfile.getDisplayCategories()).containsExactly(categoryC, categoryB, categoryA);
     }
 
     @Test

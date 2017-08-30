@@ -3,6 +3,7 @@ package de.hbt.pwr.view.model.skill;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
+import de.hbt.pwr.view.model.entries.sort.NameComparable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +16,8 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"isDisplay", "parent", "parent", "skills", "children"})
-public class Category implements ToggleableEntry {
+@EqualsAndHashCode(exclude = {"isDisplay", "parent", "skills", "children"})
+public class Category implements ToggleableEntry, NameComparable {
 
     private String name;
 
