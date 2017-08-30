@@ -18,6 +18,9 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Tests that the exception mapper does correct mapping and is actually invoked correctly.
+ */
 @RunWith(SpringRunner.class)
 @WebMvcTest(ViewProfileController.class)
 @ActiveProfiles("test")
@@ -30,7 +33,7 @@ public class ViewProfileExceptionHandlerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    public ViewProfileService viewProfileService;
+    private ViewProfileService viewProfileService;
 
     @MockBean
     public ViewProfileImportService viewProfileImportService;
@@ -57,6 +60,20 @@ public class ViewProfileExceptionHandlerTest {
     @Test
     public void shouldReturnBadRequest400() throws Exception {
         given(viewProfileService.getViewProfileIdsForInitials("fooBar")).willThrow(new DisplayCategoryNotFoundException("12", "12", "12"));
+        String url = "/view/fooBar";
+        mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnConflict409() throws Exception {
+        given(viewProfileService.getViewProfileIdsForInitials("fooBar")).willThrow(new CategoryNotUniqueException("12"));
+        String url = "/view/fooBar";
+        mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isConflict());
+    }
+
+    @Test
+    public void shouldReturnBadRequest400CategoryMissing() throws Exception {
+        given(viewProfileService.getViewProfileIdsForInitials("fooBar")).willThrow(new CategoryNotFoundException("12"));
         String url = "/view/fooBar";
         mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
     }

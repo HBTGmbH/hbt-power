@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 /**
  * Indicates that a {@link de.hbt.pwr.view.model.skill.Category} is neither a direct nor indirect parent
@@ -29,23 +28,6 @@ public class DisplayCategoryNotFoundException extends RuntimeException {
         this.viewProfileId = viewProfileId;
         this.skillName = skillName;
         this.wantedCategory = wantedCategory;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Error {
-        private OuterError error;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    static class OuterError {
-        private final int code = HttpStatus.BAD_REQUEST.value();
-        private String message;
-        private String target;
-        private InnerError innerError;
     }
 
     @Data

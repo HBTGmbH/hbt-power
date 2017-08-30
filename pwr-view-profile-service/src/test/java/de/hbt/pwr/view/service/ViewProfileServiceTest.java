@@ -1,8 +1,11 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.exception.CategoryNotFoundException;
+import de.hbt.pwr.view.exception.CategoryNotUniqueException;
 import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.apache.commons.collections.ListUtils;
 import org.junit.Before;
@@ -102,5 +105,50 @@ public class ViewProfileServiceTest {
         viewProfile.setDescription(oldDescription);
         viewProfileService.setDescription(viewProfile, newDescription);
         assertThat(viewProfile.getDescription()).isEqualTo(newDescription);
+    }
+
+    @Test
+    public void shouldHaveAddedNewCategory() {
+        Category category = Category.builder().name("Category1").build();
+        Category newCategoryParent = Category.builder().name("Category2").build();
+        String newCategoryName = "Category3";
+        newCategoryParent.setParent(category);
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(category);
+
+        viewProfileService.addNewCategory(viewProfile, newCategoryParent.getName(), newCategoryName);
+
+        Category newCategory = viewProfile.getRootCategory().getChildren().get(0).getChildren().get(0);
+        assertThat(newCategory.getName()).isEqualTo(newCategoryName);
+        assertThat(newCategory.getParent()).isEqualTo(newCategoryParent);
+    }
+
+    @Test(expected = CategoryNotUniqueException.class)
+    public void shouldThrowBecauseNameAlreadyExist() {
+        final String category1Name = "Category1";
+        final String category2Name = "Category2";
+        final Category category1 = Category.builder().name(category1Name).build();
+        final Category category2 = Category.builder().name(category2Name).build();
+        final Category root = Category.builder().name("root").build();
+        category1.setParent(root);
+        category2.setParent(root);
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(root);
+
+        viewProfileService.addNewCategory(viewProfile, category1Name, category2Name);
+    }
+
+    @Test(expected = CategoryNotFoundException.class)
+    public void shouldThrowBecauseParentDoesNotExist() {
+        final String category1Name = "Category1";
+        final String category2Name = "Category2";
+        final Category category1 = Category.builder().name(category1Name).build();
+        final Category category2 = Category.builder().name(category2Name).build();
+        final Category root = Category.builder().name("root").build();
+        category1.setParent(root);
+        category2.setParent(root);
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(root);
+        viewProfileService.addNewCategory(viewProfile, "düpämölv", "afsada");
     }
 }

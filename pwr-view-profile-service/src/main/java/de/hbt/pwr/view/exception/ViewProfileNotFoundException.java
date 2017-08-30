@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 /**
  * Exception that indicates that the requested view profile id
@@ -21,24 +20,6 @@ public class ViewProfileNotFoundException extends RuntimeException {
         super("The given id (" + viewProfileId + ") did not match a view profile.");
         this.viewProfileId = viewProfileId;
     }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Error {
-        private OuterError error;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class OuterError {
-        private final int code = HttpStatus.FORBIDDEN.value();
-        private String message;
-        private String target;
-        private InnerError innerError;
-    }
-
 
     @Data
     @AllArgsConstructor

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 /**
  * Constructs an exception that translates into a 404 status code
@@ -25,24 +24,6 @@ public class InvalidOwnerException extends RuntimeException {
         this.viewProfileId = viewProfileId;
         this.initials = initials;
     }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Error {
-        private OuterError error;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class OuterError {
-        private final int code = HttpStatus.FORBIDDEN.value();
-        private String message;
-        private String target;
-        private InnerError innerError;
-    }
-
 
     @Data
     @AllArgsConstructor

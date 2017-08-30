@@ -1,8 +1,6 @@
 package de.hbt.pwr.view.controller;
 
-import de.hbt.pwr.view.exception.DisplayCategoryNotFoundException;
-import de.hbt.pwr.view.exception.InvalidOwnerException;
-import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
+import de.hbt.pwr.view.exception.ServiceError;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
@@ -51,8 +49,8 @@ public class ViewProfileOperationsController {
             produces = "application/json")
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/{entryType}/{index}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibility(@PathVariable("initials") String initials,
@@ -73,8 +71,8 @@ public class ViewProfileOperationsController {
             produces = "application/json")
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/{entryType}/all/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setEnabledForAll(@PathVariable("initials") String initials,
@@ -94,8 +92,8 @@ public class ViewProfileOperationsController {
             produces = "application/json")
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/PROJECT/{projectIndex}/SKILL/{skillIndex}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForSkillInProject(@PathVariable("initials") String initials,
@@ -116,8 +114,8 @@ public class ViewProfileOperationsController {
             produces = "application/json")
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/PROJECT/{projectIndex}/SKILL/all/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForAllSkillsInProject(@PathVariable("initials") String initials,
@@ -138,8 +136,8 @@ public class ViewProfileOperationsController {
             produces = "application/json")
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/PROJECT/{projectIndex}/ROLE/{roleIndex}/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForRoleInProject(@PathVariable("initials") String initials,
@@ -160,8 +158,8 @@ public class ViewProfileOperationsController {
             produces = "application/json")
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/PROJECT/{projectIndex}/ROLE/all/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForAllRolesInProject(@PathVariable("initials") String initials,
@@ -181,9 +179,9 @@ public class ViewProfileOperationsController {
             produces = "application/json")
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
-            @ApiResponse(code = 400, message = "The category was not direct or indirect parent to the skill", response = DisplayCategoryNotFoundException.Error.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 400, message = "The category was not direct or indirect parent to the skill", response = ServiceError.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/SKILL/{skillIndex}/display-category")
     ResponseEntity<ViewProfile> setDisplayCategory(@PathVariable("initials") String initials,
@@ -282,6 +280,17 @@ public class ViewProfileOperationsController {
                                                @RequestBody() String newDescription) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileService.setDescription(viewProfile, newDescription);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @ApiOperation(value = "Creates a new category TODO nt document this")
+    @PostMapping("/CATEGORY")
+    ResponseEntity<ViewProfile> addCategory(@PathVariable("initials") String initials,
+                                            @PathVariable("viewProfileId") String viewProfileId,
+                                            @RequestParam("parent-name") String parentName,
+                                            @RequestParam("category-name") String newCategoryName) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.addNewCategory(viewProfile, parentName, newCategoryName);
         return ResponseEntity.ok(viewProfile);
     }
 }

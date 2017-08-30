@@ -1,7 +1,6 @@
 package de.hbt.pwr.view.controller;
 
-import de.hbt.pwr.view.exception.InvalidOwnerException;
-import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
+import de.hbt.pwr.view.exception.ServiceError;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileImportService;
 import de.hbt.pwr.view.service.ViewProfileService;
@@ -75,8 +74,8 @@ public class ViewProfileController {
     )
     @ApiResponses(value ={
             @ApiResponse(code = 200, message = "View profile is returned in response."),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @GetMapping(path = "/{initials}/{id}")
     public ResponseEntity<ViewProfile> getViewProfile(@PathVariable("initials") String initials, @PathVariable String id) {
@@ -91,8 +90,8 @@ public class ViewProfileController {
     )
     @ApiResponses(value ={
             @ApiResponse(code = 204, message = "The view profile has been deleted."),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = InvalidOwnerException.Error.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ViewProfileNotFoundException.Error.class)
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @DeleteMapping(path = "/{initials}/{id}")
     public ResponseEntity deleteViewProfile(@PathVariable("initials") String initials, @PathVariable String id) {

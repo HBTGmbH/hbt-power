@@ -1,9 +1,7 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
-import de.hbt.pwr.view.exception.DisplayCategoryNotFoundException;
-import de.hbt.pwr.view.exception.InvalidOwnerException;
-import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
+import de.hbt.pwr.view.exception.*;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
@@ -135,5 +133,31 @@ public class ViewProfileService {
 
     public void setDescription(ViewProfile viewProfile, String newDescription) {
         viewProfile.setDescription(newDescription);
+    }
+
+    private void addNewCategory(Category current, String parentName, String newName) {
+        if(parentName.equals(current.getName())) {
+            Category category = Category.builder().name(newName).parent(current).isDisplay(false).enabled(true).build();
+            current.getChildren().add(category);
+        } else {
+            current.getChildren().forEach(category -> addNewCategory(category, parentName, newName));
+        }
+    }
+
+    private boolean categoryContains(@NotNull Category current, @NotNull String nameToFind) {
+        return nameToFind.equals(current.getName())
+                || current.getChildren().stream().anyMatch(category -> categoryContains(category, nameToFind));
+    }
+
+    public void addNewCategory(@NotNull ViewProfile viewProfile,
+                               @NotNull String parentName,
+                               @NotNull String newCategoryName) {
+        if(categoryContains(viewProfile.getRootCategory(), newCategoryName)) {
+            throw new CategoryNotUniqueException(newCategoryName);
+        }
+        if(!categoryContains(viewProfile.getRootCategory(), parentName)) {
+            throw new CategoryNotFoundException(parentName);
+        }
+        addNewCategory(viewProfile.getRootCategory(), parentName, newCategoryName);
     }
 }

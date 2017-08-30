@@ -22,8 +22,10 @@ import java.util.Arrays;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("ConstantConditions")
 @RunWith(SpringRunner.class)
 @WebMvcTest(ViewProfileOperationsController.class)
 @ActiveProfiles("test")
@@ -262,5 +264,18 @@ public class ViewProfileOperationsControllerTest {
         mockMvc.perform(patch(url).content(newDescription).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         assertOwnerCheckAndRetrieval();
         then(viewProfileService).should(times(1)).setDescription(viewProfileReturned, newDescription);
+    }
+
+    @Test
+    public void createsCategoryAndReturns200() throws Exception {
+        String url = urlBasePath() + "/CATEGORY";
+        String parentName = "Smithing";
+        String newCategoryName = "Goldsmithing";
+        mockMvc.perform(post(url).param("parent-name", parentName).param("category-name", newCategoryName))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService)
+                .should(times(1))
+                .addNewCategory(viewProfileReturned, parentName, newCategoryName);
     }
 }
