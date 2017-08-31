@@ -1,10 +1,18 @@
 package de.hbt.pwr.view.client.profile.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import de.hbt.pwr.view.model.LanguageLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class LanguageSkill extends ProfileEntry{
-    private LanguageSkillLevel level;
+    @Getter
+    @Setter
+    private LanguageLevel level;
+
+    public LanguageSkill(Long id, NameEntity nameEntity, LanguageLevel level) {
+        super(id, nameEntity);
+        this.level = level;
+    }
 }

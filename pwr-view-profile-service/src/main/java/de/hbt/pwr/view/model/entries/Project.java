@@ -4,6 +4,7 @@ import de.hbt.pwr.view.model.entries.sort.StartEndDateComparable;
 import de.hbt.pwr.view.model.skill.Skill;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 @Builder
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"projectRoles", "skills"})
 public class Project implements ToggleableEntry, StartEndDateComparable {
     private String name;
     private String description;

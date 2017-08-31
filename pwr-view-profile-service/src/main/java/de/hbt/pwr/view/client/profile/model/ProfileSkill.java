@@ -18,4 +18,9 @@ public class ProfileSkill {
     public ProfileSkill(String name) {
         this.name = name;
     }
+
+    public ProfileSkill(String name, Integer rating) {
+        this.name = name;
+        this.rating = rating;
+    }
 }

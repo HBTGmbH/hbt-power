@@ -20,4 +20,9 @@ public class SkillServiceCategory {
     public SkillServiceCategory(String qualifier) {
         this.qualifier = qualifier;
     }
+
+    public SkillServiceCategory(String qualifier, SkillServiceCategory category) {
+        this.qualifier = qualifier;
+        this.category = category;
+    }
 }

@@ -5,7 +5,7 @@ import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component(value = "skillServiceFallback")
 public class SkillServiceFallback implements SkillServiceClient{
 
     private static final Logger LOG = Logger.getLogger(SkillServiceFallback.class);

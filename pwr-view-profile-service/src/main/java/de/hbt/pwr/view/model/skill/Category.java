@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.model.entries.sort.NameComparable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.data.annotation.Transient;
 
 import java.util.ArrayList;
@@ -16,7 +13,8 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"isDisplay", "parent", "skills", "children"})
+@EqualsAndHashCode(exclude = {"isDisplay", "parent", "skills", "children", "displaySkills"})
+@ToString(exclude = {"parent", "skills", "children"})
 public class Category implements ToggleableEntry, NameComparable {
 
     private String name;
@@ -58,14 +56,6 @@ public class Category implements ToggleableEntry, NameComparable {
         }
     }
 
-
-    @Override
-    public String toString() {
-        return "Category{" +
-                "name='" + name + '\'' +
-                ", isDisplay=" + isDisplay +
-                '}';
-    }
 
     @Override
     public Boolean getEnabled() {

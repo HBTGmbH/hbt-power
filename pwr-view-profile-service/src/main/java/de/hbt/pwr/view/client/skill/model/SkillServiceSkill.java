@@ -19,4 +19,9 @@ public class SkillServiceSkill {
     public SkillServiceSkill(String qualifier) {
         this.qualifier = qualifier;
     }
+
+    public SkillServiceSkill(String qualifier, SkillServiceCategory category) {
+        this.qualifier = qualifier;
+        this.category = category;
+    }
 }

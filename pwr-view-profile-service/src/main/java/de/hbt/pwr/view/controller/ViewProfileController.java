@@ -2,27 +2,28 @@ package de.hbt.pwr.view.controller;
 
 import de.hbt.pwr.view.exception.ServiceError;
 import de.hbt.pwr.view.model.ViewProfile;
-import de.hbt.pwr.view.service.ViewProfileImportService;
+import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
 
 @Api(value = "/view", description = "Provides means to manage view profiles with basic CRUD operations on a per user base.")
 @RequestMapping("/view")
 @Controller
 public class ViewProfileController {
 
-    private final ViewProfileImportService viewProfileImportService;
+    private final ViewProfileImporter viewProfileImporter;
 
     private final ViewProfileService viewProfileService;
 
-    public ViewProfileController(ViewProfileImportService viewProfileImportService, ViewProfileService viewProfileService) {
-        this.viewProfileImportService = viewProfileImportService;
+    @Autowired
+    public ViewProfileController(ViewProfileImporter viewProfileImporter, ViewProfileService viewProfileService) {
+        this.viewProfileImporter = viewProfileImporter;
         this.viewProfileService = viewProfileService;
     }
 
@@ -38,7 +39,7 @@ public class ViewProfileController {
     @PostMapping(path = "/{initials}")
     public ResponseEntity<ViewProfile> createViewProfile(
             @ApiParam("Initials of the consultant for which the profile is created") @PathVariable("initials") String initials) {
-        ViewProfile viewProfile = viewProfileImportService.createViewProfile(initials, "TODO", Locale.GERMAN);
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
         return ResponseEntity.ok(viewProfile);
     }
 

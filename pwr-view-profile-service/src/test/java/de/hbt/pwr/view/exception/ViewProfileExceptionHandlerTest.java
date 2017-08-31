@@ -1,7 +1,7 @@
 package de.hbt.pwr.view.exception;
 
 import de.hbt.pwr.view.controller.ViewProfileController;
-import de.hbt.pwr.view.service.ViewProfileImportService;
+import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,8 +36,7 @@ public class ViewProfileExceptionHandlerTest {
     private ViewProfileService viewProfileService;
 
     @MockBean
-    public ViewProfileImportService viewProfileImportService;
-
+    private ViewProfileImporter viewProfileImporter;
 
     @Test
     public void shouldReturnForbidden403() throws Exception {

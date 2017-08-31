@@ -10,7 +10,8 @@ import org.springframework.data.annotation.Transient;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"rating", "enabled", "category"})
+@EqualsAndHashCode(exclude = {"rating", "enabled", "category", "displayCategory"})
+@ToString(exclude = {"category", "displayCategory"})
 public class Skill implements ToggleableEntry, NameComparable {
     private String name;
     private Integer rating;
@@ -28,6 +29,7 @@ public class Skill implements ToggleableEntry, NameComparable {
         this.name = name;
     }
 
+    // fixme / nt / test this
     public void setCategory(Category category) {
         this.category = category;
         if(this.category != null && !this.category.getSkills().contains(this)) {
@@ -35,9 +37,10 @@ public class Skill implements ToggleableEntry, NameComparable {
         }
     }
 
+    // fixme / nt / test this
     public void setDisplayCategory(Category displayCategory) {
         this.displayCategory = displayCategory;
-        if(this.displayCategory != null && !this.displayCategory.getSkills().contains(this)) {
+        if(this.displayCategory != null && !this.displayCategory.getDisplaySkills().contains(this)) {
             this.displayCategory.getDisplaySkills().add(this);
         }
     }
