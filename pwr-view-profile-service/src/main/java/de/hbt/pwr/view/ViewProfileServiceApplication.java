@@ -16,6 +16,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -57,6 +58,8 @@ public class ViewProfileServiceApplication {
     public RedisTemplate<?, ?> redisTemplate() {
         RedisTemplate<byte[],byte[]> res = new RedisTemplate<>();
         res.setConnectionFactory(jedisConnectionFactory);
+        res.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        res.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
         return res;
     }
 

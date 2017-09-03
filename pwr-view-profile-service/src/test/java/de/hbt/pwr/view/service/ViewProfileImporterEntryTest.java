@@ -8,6 +8,7 @@ import de.hbt.pwr.view.model.LanguageLevel;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Skill;
+import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,9 @@ public class ViewProfileImporterEntryTest {
     @MockBean
     private SkillServiceClient skillServiceClient;
 
+    @MockBean
+    private ViewProfileRepository viewProfileRepository;
+
     private final String initials = "eu";
 
     private Profile profileToReturn;
@@ -60,7 +64,7 @@ public class ViewProfileImporterEntryTest {
         viewProfile = new ViewProfile();
         profileToReturn = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profileToReturn);
-        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, null);
+        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, null, viewProfileRepository);
     }
 
     @After

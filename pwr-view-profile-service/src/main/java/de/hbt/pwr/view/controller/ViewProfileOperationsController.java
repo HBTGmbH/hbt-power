@@ -193,7 +193,19 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
-    @ApiOperation(value = "Sorts all skills in a display category")
+
+    @ApiOperation(value = "Sorts all skills in a display category.",
+            notes = "Sorts all skills in the given display category alphabetically by their name and returns " +
+                    "the changed view profile.",
+            response = ViewProfile.class,
+            httpMethod = "PATCH",
+            produces = "application/json")
+
+    @ApiResponses(value ={
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
+    })
     @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/name/order")
     ResponseEntity<ViewProfile> sortSkillsByNameInDisplayCategory(@PathVariable("initials") String initials,
                                                                   @PathVariable("viewProfileId") String viewProfileId,

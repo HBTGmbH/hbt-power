@@ -56,6 +56,20 @@ public class Category implements ToggleableEntry, NameComparable {
         }
     }
 
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+        this.skills.forEach(skill -> skill.setCategory(this));
+    }
+
+    public void setDisplaySkills(List<Skill> displaySkills) {
+        this.displaySkills = displaySkills;
+        this.displaySkills.forEach(skill -> skill.setDisplayCategory(this));
+    }
+
+    public void setChildren(List<Category> children) {
+        this.children = children;
+        this.children.forEach(category -> category.setParent(category));
+    }
 
     @Override
     public Boolean getEnabled() {

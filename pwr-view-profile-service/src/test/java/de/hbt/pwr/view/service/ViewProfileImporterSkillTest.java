@@ -10,6 +10,7 @@ import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
+import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +42,9 @@ public class ViewProfileImporterSkillTest {
     @MockBean
     private SkillServiceFallback skillServiceFallback;
 
+    @MockBean
+    private ViewProfileRepository viewProfileRepository;
+
 
     private ViewProfileImporter viewProfileImporter;
 
@@ -67,7 +71,7 @@ public class ViewProfileImporterSkillTest {
     public void setUp() throws Exception {
         profile = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
-        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, skillServiceFallback);
+        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, skillServiceFallback, viewProfileRepository);
     }
 
     @After

@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,12 +45,32 @@ public class ViewProfileAutoSaveAspect {
      */
     @After("isAutoSave() && isPublicOperation() && args(viewProfile,..)")
     private void anyViewProfileSavable(JoinPoint joinPoint, ViewProfile viewProfile) {
-        LOG.debug(ViewProfileAutoSaveAspect.class + " invoked around " + joinPoint.getSignature().toString() + ". Performing auto-save...");
+        LOG.debug(ViewProfileAutoSaveAspect.class + " invoked after " + joinPoint.getSignature().toString() + ". Performing auto-save...");
         if(viewProfile != null) {
             viewProfileRepository.save(viewProfile);
             LOG.debug("...done.");
         } else {
             LOG.debug("...failed because param was null.");
+        }
+    }
+
+    private void restore(de.hbt.pwr.view.model.skill.Category category) {
+        category.getSkills().forEach(skill -> skill.setCategory(category));
+        category.getDisplaySkills().forEach(skill -> skill.setDisplayCategory(category));
+        category.getChildren().forEach(child -> {
+            child.setParent(category);
+            restore(child);
+        });
+    }
+
+    @Before("isAutoSave() && isPublicOperation() && args(viewProfile,..)")
+    private void anyViewProfileRestorable(JoinPoint joinPoint, ViewProfile viewProfile) {
+        LOG.debug(ViewProfileAutoSaveAspect.class + " invoked before " + joinPoint.getSignature().toString() + ". Performing bi reference restoring...");
+        if(viewProfile != null) {
+            restore(viewProfile.getRootCategory());
+            LOG.debug("...done");
+        } else {
+            LOG.debug("... failed because param was null");
         }
     }
 }

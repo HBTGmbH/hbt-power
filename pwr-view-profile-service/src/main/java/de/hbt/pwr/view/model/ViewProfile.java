@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
@@ -23,6 +24,7 @@ public class ViewProfile {
 
     private String id;
 
+    @JsonProperty("owner")
     private String ownerInitials;
 
     private String name;
@@ -58,4 +60,6 @@ public class ViewProfile {
     /**
      */
     private Category rootCategory;
+
+
 }

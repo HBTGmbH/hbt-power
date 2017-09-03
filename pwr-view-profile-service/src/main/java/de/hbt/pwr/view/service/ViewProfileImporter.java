@@ -11,6 +11,7 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
+import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.ModelConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,14 @@ public class ViewProfileImporter {
 
     private final SkillServiceFallback skillServiceFallback;
 
+    private final ViewProfileRepository viewProfileRepository;
+
     @Autowired
-    public ViewProfileImporter(ProfileServiceClient profileServiceClient, SkillServiceClient skillServiceClient, SkillServiceFallback skillServiceFallback) {
+    public ViewProfileImporter(ProfileServiceClient profileServiceClient, SkillServiceClient skillServiceClient, SkillServiceFallback skillServiceFallback, ViewProfileRepository viewProfileRepository) {
         this.profileServiceClient = profileServiceClient;
         this.skillServiceClient = skillServiceClient;
         this.skillServiceFallback = skillServiceFallback;
+        this.viewProfileRepository = viewProfileRepository;
     }
 
 
@@ -216,6 +220,7 @@ public class ViewProfileImporter {
         ViewProfile result = new ViewProfile();
         Profile reference = profileServiceClient.getSingleProfile(initials);
         result.setDescription(reference.getDescription());
+        result.setOwnerInitials(initials); // FIXME misses test
 
         addLanguages(result, reference);
         addQualifications(result, reference);
@@ -229,6 +234,7 @@ public class ViewProfileImporter {
         addSkills(result, reference);
         // Must be called after the skill tree has been built
         setDisplayCategories(result);
+        viewProfileRepository.save(result);
         return result;
     }
 }
