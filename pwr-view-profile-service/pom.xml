@@ -99,6 +99,13 @@
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <!-- For integrative tests -->
+        <dependency>
+            <groupId>com.github.kstyrc</groupId>
+            <artifactId>embedded-redis</artifactId>
+            <scope>test</scope>
+            <version>0.6</version>
+        </dependency>
     </dependencies>
 
 	<dependencyManagement>
