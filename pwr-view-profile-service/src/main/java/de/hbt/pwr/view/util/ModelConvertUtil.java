@@ -70,7 +70,7 @@ public class ModelConvertUtil {
     private static Category mapCategory(SkillServiceCategory skillServiceCategory) {
         Category category = new Category();
         category.setName(skillServiceCategory.getQualifier());
-        category.setIsDisplay(false);
+        category.setIsDisplay(skillServiceCategory.getDisplay());
         category.setEnabled(true);
         if(skillServiceCategory.getCategory() != null) {
             category.setParent(mapCategory(skillServiceCategory.getCategory()));
@@ -97,7 +97,7 @@ public class ModelConvertUtil {
     }
 
     private static boolean isTier1Category(Category category) {
-        return category.getParent() != null && isTier0Category(category.getParent());
+        return category.getParent() != null && isTier0Category(category.getParent()) && !category.getParent().getIsDisplay();
     }
 
     /**
@@ -108,9 +108,8 @@ public class ModelConvertUtil {
      */
     private static void setDisplayCategory(Skill skill, Category currentLookup, Map<String, Category> displayCategoriesByName) {
         // Default is second level categories are display
-        if (isTier1Category(currentLookup) || isTier0Category(currentLookup)) {
+        if (currentLookup.getIsDisplay() || isTier1Category(currentLookup) || isTier0Category(currentLookup)) {
             skill.setDisplayCategory(currentLookup);
-            currentLookup.setIsDisplay(true);
             displayCategoriesByName.put(currentLookup.getName(), currentLookup);
         }  else {
             setDisplayCategory(skill, currentLookup.getParent(), displayCategoriesByName);

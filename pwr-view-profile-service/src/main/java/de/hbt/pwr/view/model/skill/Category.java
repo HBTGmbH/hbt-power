@@ -18,6 +18,11 @@ public class Category implements ToggleableEntry, NameComparable {
 
     private String name;
 
+    /**
+     * Hard override to any display logic; If this flag is set, the category
+     * servies as display category to all child skills, provided it is the only one.
+     * First come,first serve principle (bottom-up, first category from the bottom with this flag wins)
+     */
     @Builder.Default private Boolean isDisplay = false;
 
     @JsonBackReference

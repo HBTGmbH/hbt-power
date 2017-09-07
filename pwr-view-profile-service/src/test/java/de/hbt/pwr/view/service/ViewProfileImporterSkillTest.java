@@ -201,8 +201,6 @@ public class ViewProfileImporterSkillTest {
         Category category = new Category(secondHighest.getQualifier(), true, null, true);
 
         assertThat(viewProfile.getDisplayCategories()).containsExactlyInAnyOrder(category);
-        Category display = viewProfile.getDisplayCategories().get(0);
-        assertThat(display.getIsDisplay()).isTrue();
     }
 
     @Test
@@ -262,5 +260,43 @@ public class ViewProfileImporterSkillTest {
         Category categoryWithOrphan = viewProfile.getRootCategory().getChildren().get(0);
         assertThat(categoryWithOrphan.getName()).isEqualTo(highest.getQualifier());
         assertThat(categoryWithOrphan.getDisplaySkills()).containsExactlyInAnyOrder(Skill.builder().name(testSkill1.getQualifier()).build());
+    }
+
+    /**
+     * Sometimes, the skill service will provide a display category.
+     * Makes sure that this is used.
+     *
+     */
+    @Test
+    public void shouldUseDisplayCategoryOverride() {
+        SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
+        SkillServiceCategory center = new SkillServiceCategory("Center", highest);
+        SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center, true);
+        SkillServiceSkill testSkill1 = new SkillServiceSkill("adada", lowest);
+        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
+        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+
+        Optional<Skill> skillOptional = viewProfile.findSkillByName(testSkill1.getQualifier());
+        assertThat(skillOptional.isPresent()).isTrue();
+        assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(lowest.getQualifier());
+    }
+
+    /**
+     * Override has to override any default behavior. 2nd highest is default.
+     */
+    @Test
+    public void shouldUseDisplayCategoryOverrideAboveDefault() {
+        SkillServiceCategory highest = new SkillServiceCategory("Highest", null,  true);
+        SkillServiceCategory center = new SkillServiceCategory("Center", highest);
+        SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center);
+        SkillServiceSkill testSkill1 = new SkillServiceSkill("adada", lowest);
+        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
+        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+
+        Optional<Skill> skillOptional = viewProfile.findSkillByName(testSkill1.getQualifier());
+        assertThat(skillOptional.isPresent()).isTrue();
+        assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(highest.getQualifier());
     }
 }

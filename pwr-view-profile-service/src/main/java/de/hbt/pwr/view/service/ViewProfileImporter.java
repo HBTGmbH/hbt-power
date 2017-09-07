@@ -181,22 +181,22 @@ public class ViewProfileImporter {
 
 
 
-    private void setDisplayCategories(Category category,  Map<String, Category> displayCategoriesByName) {
+    private void setDisplayCategoriesForAllSkills(Category category,  Map<String, Category> displayCategoriesByName) {
         category.getSkills().forEach(skill -> {
             // Because null categories might cause serious problems in the next call, check that
             // this does not happen. In terms of business logic, skills without categories >must< not exist anyway
             if(skill.getCategory() == null) {
                 throw new RuntimeException("Constraint violation! Skill hat null category: " + skill.toString());
             }
-            ModelConvertUtil.setDisplayCategory(skill, displayCategoriesByName);
+            ModelConvertUtil.setDisplayCategory(skill);
         });
-        category.getChildren().forEach(child -> setDisplayCategories(child, displayCategoriesByName));
+        category.getChildren().forEach(child -> setDisplayCategoriesForAllSkills(child, displayCategoriesByName));
     }
 
     private void setDisplayCategories(ViewProfile viewProfile) {
         // The map is there to collect all display categories for the list of display categories.
         Map<String, Category> displayCategoriesByName = new HashMap<>();
-        setDisplayCategories(viewProfile.getRootCategory(), displayCategoriesByName);
+        setDisplayCategoriesForAllSkills(viewProfile.getRootCategory(), displayCategoriesByName);
         viewProfile.setDisplayCategories(new ArrayList<>(displayCategoriesByName.values()));
     }
 

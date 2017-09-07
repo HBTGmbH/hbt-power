@@ -13,6 +13,7 @@ public class SkillServiceCategory {
     private SkillServiceCategory category;
     private Boolean custom;
     private Boolean blacklisted;
+    private Boolean display = false;
 
     public SkillServiceCategory() {
     }
@@ -24,5 +25,11 @@ public class SkillServiceCategory {
     public SkillServiceCategory(String qualifier, SkillServiceCategory category) {
         this.qualifier = qualifier;
         this.category = category;
+    }
+
+    public SkillServiceCategory(String qualifier, SkillServiceCategory category, Boolean display) {
+        this.qualifier = qualifier;
+        this.category = category;
+        this.display = display;
     }
 }
