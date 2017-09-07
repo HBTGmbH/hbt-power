@@ -297,4 +297,16 @@ public class ViewProfileOperationsControllerTest {
                 .should(times(1))
                 .addNewCategory(viewProfileReturned, parentName, newCategoryName);
     }
+
+    @Test
+    public void shouldMoveSkillAndReturn200() throws Exception {
+        String url = urlBasePath() + "/SKILL/CATEGORY";
+        String skillName = "TestSkill";
+        String categoryName = "123123";
+        mockMvc.perform(patch(url).param("skill-name", skillName).param("category-name", categoryName)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService)
+                .should(times(1))
+                .moveSkill(viewProfileReturned, skillName, categoryName);
+    }
 }

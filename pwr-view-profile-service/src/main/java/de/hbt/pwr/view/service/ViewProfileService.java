@@ -9,6 +9,7 @@ import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
+import de.hbt.pwr.view.util.ModelConvertUtil;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.stereotype.Service;
 
@@ -100,11 +101,21 @@ public class ViewProfileService {
         skill.ifPresent(skill1 -> skill1.setEnabled(isEnabled));
     }
 
+    /**
+     * {@link ViewProfileService#setIsEnabledForAllSkills(ViewProfile, boolean)} but recursively
+     * @param category of skills currently changed
+     * @param isEnabled new statue of {@link Skill#enabled}
+     */
     private void setIsEnabledForAllSkills(Category category, boolean isEnabled) {
         category.getSkills().forEach(skill -> skill.setEnabled(isEnabled));
         category.getChildren().forEach(child -> setIsEnabledForAllSkills(child, isEnabled));
     }
 
+    /**
+     * Sets {@link Skill#enabled} to <code>isEnabled</code> for all skills.
+     * @param viewProfile that is affected
+     * @param isEnabled new statue of {@link Skill#enabled}
+     */
     public void setIsEnabledForAllSkills(ViewProfile viewProfile, boolean isEnabled) {
         setIsEnabledForAllSkills(viewProfile.getRootCategory(), isEnabled);
     }
@@ -170,6 +181,20 @@ public class ViewProfileService {
                 || current.getChildren().stream().anyMatch(category -> categoryContains(category, nameToFind));
     }
 
+    /**
+     * Adds a new category to the view profile.
+     * <p>
+     *     The new category is added as child to the category identified by <code>parentName</code> and its
+     *     {@link Category#name} will be set to <code>newCategoryName</code>.
+     * </p>
+
+     * @param viewProfile to be edited
+     * @param parentName of the category where the new category is added
+     * @param newCategoryName of the new category
+     *
+     * @throws CategoryNotUniqueException if a {@link Category} with the given <code>newCategoryName</code> already exists
+     * @throws CategoryNotFoundException if no {@link Category} with the given <code>parentName</code> exists
+     */
     public void addNewCategory(@NotNull ViewProfile viewProfile,
                                @NotNull String parentName,
                                @NotNull String newCategoryName) {
@@ -180,5 +205,28 @@ public class ViewProfileService {
             throw new CategoryNotFoundException(parentName);
         }
         addNewCategory(viewProfile.getRootCategory(), parentName, newCategoryName);
+    }
+
+    private void addSkill(Skill skill, Category category, String parentCategoryName) {
+        if(category.getName().equals(parentCategoryName)) {
+            skill.setCategory(category);
+        } else {
+            category.getChildren().forEach(child -> addSkill(skill, child, parentCategoryName));
+        }
+    }
+
+    public void moveSkill(ViewProfile viewProfile, String skillName, String parentCategoryName) {
+        if(!categoryContains(viewProfile.getRootCategory(), parentCategoryName)) {
+            throw new CategoryNotFoundException(parentCategoryName);
+        }
+        Optional<Skill> skillOptional = viewProfile.findSkillByName(skillName);
+        if(skillOptional.isPresent()) {
+            Skill skill = skillOptional.get();
+            // Important: Remove the skill from its parent list.
+            skill.getCategory().getSkills().remove(skill);
+            addSkill(skill, viewProfile.getRootCategory(), parentCategoryName);
+            // This applies default display category rules to the skill ("best guess")
+            ModelConvertUtil.setDisplayCategory(skill);
+        }
     }
 }

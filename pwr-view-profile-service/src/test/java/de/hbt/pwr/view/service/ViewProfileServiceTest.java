@@ -6,6 +6,7 @@ import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.skill.Category;
+import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.apache.commons.collections.ListUtils;
 import org.junit.Before;
@@ -150,5 +151,50 @@ public class ViewProfileServiceTest {
         ViewProfile viewProfile = new ViewProfile();
         viewProfile.setRootCategory(root);
         viewProfileService.addNewCategory(viewProfile, "düpämölv", "afsada");
+    }
+
+    @Test
+    public void shouldMoveSkill() {
+        Category root = new Category("root");
+        Category oldCategory = new Category("old", root);
+        Category newCategory = new Category("new", root);
+        Skill skill = Skill.builder().name("skill").category(oldCategory).build();
+
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(root);
+
+        viewProfileService.moveSkill(viewProfile, skill.getName(), newCategory.getName());
+
+        assertThat(oldCategory.getSkills()).isEmpty();
+        assertThat(newCategory.getSkills()).containsExactly(skill);
+    }
+
+    @Test
+    public void shouldSetDisplayCategoryForMovedSkill() {
+        Category root = new Category(ViewProfileImporter.PWR_ROOT_NAME);
+        Category oldCategory = new Category("old", root);
+        Category newCategory = new Category("new", root);
+        Skill skill = Skill.builder().name("skill").category(oldCategory).displayCategory(oldCategory).build();
+
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(root);
+
+        viewProfileService.moveSkill(viewProfile, skill.getName(), newCategory.getName());
+
+        assertThat(skill.getDisplayCategory()).isEqualTo(newCategory);
+        assertThat(newCategory.getDisplaySkills()).containsExactly(skill);
+        assertThat(newCategory.getSkills()).containsExactly(skill);
+        assertThat(oldCategory.getDisplaySkills()).doesNotContain(skill);
+        assertThat(oldCategory.getSkills()).doesNotContain(skill);
+    }
+
+    @Test(expected = CategoryNotFoundException.class)
+    public void shouldThrowNotFoundForUnknownCategory() {
+        Category root = new Category(ViewProfileImporter.PWR_ROOT_NAME);
+        Skill skill = Skill.builder().name("skill").category(root).displayCategory(root).build();
+
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(root);
+        viewProfileService.moveSkill(viewProfile, skill.getName(), "asdasfjdapofj");
     }
 }

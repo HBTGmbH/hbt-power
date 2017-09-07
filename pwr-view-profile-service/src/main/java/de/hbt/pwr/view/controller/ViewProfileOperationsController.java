@@ -319,4 +319,14 @@ public class ViewProfileOperationsController {
         viewProfileService.addNewCategory(viewProfile, parentName, newCategoryName);
         return ResponseEntity.ok(viewProfile);
     }
+
+    @PatchMapping("/SKILL/CATEGORY")
+    ResponseEntity<ViewProfile> moveSkill(@PathVariable("initials") String initials,
+                                          @PathVariable("viewProfileId") String viewProfileId,
+                                          @RequestParam("skill-name") String skillName,
+                                          @RequestParam("category-name") String categoryName) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.moveSkill(viewProfile, skillName, categoryName);
+        return ResponseEntity.ok(viewProfile);
+    }
 }

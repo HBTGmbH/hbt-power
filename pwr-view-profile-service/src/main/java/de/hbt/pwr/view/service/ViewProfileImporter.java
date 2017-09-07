@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class ViewProfileImporter {
 
-    private static final String ROOT_NAME = "root";
+    public static final String PWR_ROOT_NAME = "root";
 
     private final ProfileServiceClient profileServiceClient;
 
@@ -170,7 +170,7 @@ public class ViewProfileImporter {
 
 
     private void addSkills(ViewProfile viewProfile, Profile profile) {
-        Category root = new Category(ROOT_NAME);
+        Category root = new Category(PWR_ROOT_NAME);
         Map<String, Skill> skillsByName = profile.getSkills()
                 .stream()
                 .map(profileSkill -> mergeIntoTree(root, profileSkill))
@@ -180,24 +180,6 @@ public class ViewProfileImporter {
 
 
 
-    private boolean isTier0Category(Category category) {
-        return category.getParent() != null && category.getParent().getName().equals(ROOT_NAME);
-    }
-
-    private boolean isTier1Category(Category category) {
-        return category.getParent() != null && isTier0Category(category.getParent());
-    }
-
-    private void setDisplayCategory(Skill skill, Category currentLookup, Map<String, Category> displayCategoriesByName) {
-        // Default is second level categories are display
-        if (isTier1Category(currentLookup) || isTier0Category(currentLookup)) {
-            skill.setDisplayCategory(currentLookup);
-            currentLookup.setIsDisplay(true);
-            displayCategoriesByName.put(currentLookup.getName(), currentLookup);
-        }  else {
-            setDisplayCategory(skill, currentLookup.getParent(), displayCategoriesByName);
-        }
-    }
 
     private void setDisplayCategories(Category category,  Map<String, Category> displayCategoriesByName) {
         category.getSkills().forEach(skill -> {
@@ -206,7 +188,7 @@ public class ViewProfileImporter {
             if(skill.getCategory() == null) {
                 throw new RuntimeException("Constraint violation! Skill hat null category: " + skill.toString());
             }
-            setDisplayCategory(skill, skill.getCategory(), displayCategoriesByName);
+            ModelConvertUtil.setDisplayCategory(skill, displayCategoriesByName);
         });
         category.getChildren().forEach(child -> setDisplayCategories(child, displayCategoriesByName));
     }

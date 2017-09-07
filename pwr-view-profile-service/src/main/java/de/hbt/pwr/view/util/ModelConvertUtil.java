@@ -8,6 +8,11 @@ import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static de.hbt.pwr.view.service.ViewProfileImporter.PWR_ROOT_NAME;
+
 
 /**
  * Utility methods to convert between the various data models this service consumes.
@@ -83,6 +88,44 @@ public class ModelConvertUtil {
             skill.setCategory(category);
         }
         return skill;
+    }
+
+
+
+    private static boolean isTier0Category(Category category) {
+        return category.getParent() != null && category.getParent().getName().equals(PWR_ROOT_NAME);
+    }
+
+    private static boolean isTier1Category(Category category) {
+        return category.getParent() != null && isTier0Category(category.getParent());
+    }
+
+    /**
+     * TODO comment this is important
+     * @param skill
+     * @param currentLookup
+     * @param displayCategoriesByName
+     */
+    private static void setDisplayCategory(Skill skill, Category currentLookup, Map<String, Category> displayCategoriesByName) {
+        // Default is second level categories are display
+        if (isTier1Category(currentLookup) || isTier0Category(currentLookup)) {
+            skill.setDisplayCategory(currentLookup);
+            currentLookup.setIsDisplay(true);
+            displayCategoriesByName.put(currentLookup.getName(), currentLookup);
+        }  else {
+            setDisplayCategory(skill, currentLookup.getParent(), displayCategoriesByName);
+        }
+    }
+
+    public static void setDisplayCategory(Skill skill) {
+        setDisplayCategory(skill, new HashMap<>());
+    }
+
+    public static void setDisplayCategory(Skill skill, Map<String, Category> displayCategoriesByName) {
+        if(skill.getDisplayCategory() != null) {
+            skill.getDisplayCategory().getDisplaySkills().remove(skill);
+        }
+        setDisplayCategory(skill, skill.getCategory(),displayCategoriesByName);
     }
 
 }
