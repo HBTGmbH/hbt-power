@@ -68,17 +68,50 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         onSkillSelect: () => {}
     };
 
-    private static CustomIcon = (props: {secondIconMargin: string}) => <FontIcon
+    private static CustomIcon = (props: {margin: string}) => <FontIcon
             className="material-icons"
-            style={{marginLeft: props.secondIconMargin, position: "absolute", top: "12px"}}
+            style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
         >
             extension
         </FontIcon>;
 
+    private static DisplayIcon = (props: {margin: string}) => <FontIcon
+        className="material-icons"
+        style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
+    >
+        airplay
+    </FontIcon>;
+
+    private static BlacklistedIcon = (props: {margin: string}) => <FontIcon
+        className="material-icons blacklisted-icon"
+        style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
+    >
+        warning
+    </FontIcon>;
+
 
     private mapTo = (skillTreeNode: SkillTreeNode): JSX.Element => {
         let skillCategory = this.props.categoriesById.get(skillTreeNode.skillCategoryId);
-        let secondIconMargin = (skillCategory.blacklisted() && skillCategory.isCustom()) ? "48px": "24px";
+
+        let currentMargin = 24;
+        let blacklistIcon = null;
+        let customIcon = null;
+        let displayIcon = null;
+
+        if(skillCategory.blacklisted()) {
+            blacklistIcon = <SkillTree.BlacklistedIcon margin={currentMargin + "px"}/>;
+            currentMargin += 24
+        }
+        if(skillCategory.isCustom()) {
+            customIcon = <SkillTree.CustomIcon margin={currentMargin + "px"}/>;
+            currentMargin += 24
+        }
+        if(skillCategory.isDisplay()) {
+            displayIcon =  <SkillTree.DisplayIcon margin={currentMargin + "px"}/>;
+            currentMargin += 24
+        }
+
+
         return <ListItem
             key={skillCategory.qualifier()}
             value={SkillTree.CATEGORY_PREFIX + skillCategory.id().toString()}
@@ -88,15 +121,9 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             primaryTogglesNestedList={this.props.expandOnClick}
         >
             {skillCategory.qualifier()}
-            {skillCategory.blacklisted() ?
-                <FontIcon
-                    className="material-icons blacklisted-icon"
-                    style={{marginLeft: "24px", position: "absolute", top: "12px"}}
-                >
-                    warning
-                </FontIcon>
-                : false}
-            {skillCategory.isCustom() ? <SkillTree.CustomIcon secondIconMargin={secondIconMargin}/> : false}
+            {blacklistIcon}
+            {customIcon}
+            {displayIcon}
         </ListItem>;
     };
 
@@ -108,7 +135,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             leftIcon={<FontIcon className="material-icons">label_outline</FontIcon>}
         >
             {skill.qualifier()}
-            {skill.isCustom() ? <SkillTree.CustomIcon secondIconMargin={"24px"}/> : false}
+            {skill.isCustom() ? <SkillTree.CustomIcon margin={"24px"}/> : false}
         </ListItem>;
     };
 

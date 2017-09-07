@@ -9,6 +9,7 @@ export interface APISkillCategory {
     category: APISkillCategory;
     blacklisted: boolean;
     custom: boolean;
+    display: boolean;
 }
 
 
@@ -28,13 +29,15 @@ export class SkillCategory {
 
     @doop public get isCustom() {return doop<boolean, this>()};
 
+    @doop public get isDisplay() {return doop<boolean, this>()};
+
     private constructor(id: number, qualifier: string,
                         qualifiers: Immutable.List<LocalizedQualifier>,
                         categories: Immutable.List<SkillCategory>,
                         skills: Immutable.List<SkillServiceSkill>, blacklisted: boolean,
-                        isCustom: boolean) {
+                        isCustom: boolean, isDisplay: boolean) {
         return this.id(id).qualifier(qualifier).qualifiers(qualifiers).categories(categories).skills(skills)
-            .blacklisted(blacklisted).isCustom(isCustom);
+            .blacklisted(blacklisted).isCustom(isCustom).isDisplay(isDisplay);
     }
 
     public static of(id: number, qualifier: string) {
@@ -43,6 +46,7 @@ export class SkillCategory {
             Immutable.List<LocalizedQualifier>(),
             Immutable.List<SkillCategory>(),
             Immutable.List<SkillServiceSkill>(),
+            false,
             false,
             false);
     }
@@ -55,6 +59,7 @@ export class SkillCategory {
             Immutable.List<SkillCategory>(),
             Immutable.List<SkillServiceSkill>(),
             apiSkillCategory.blacklisted,
-            apiSkillCategory.custom);
+            apiSkillCategory.custom,
+            apiSkillCategory.display);
     }
 }

@@ -231,6 +231,10 @@ export function deleteBlacklistCategory(id: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/blacklist/" + id;
 }
 
+export function patchSetIsDisplayCategory(categoryId: number, isDisplay: boolean) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + categoryId + "/display/" + isDisplay;
+}
+
 export function postLocaleToCategory(categoryId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + categoryId + "/locale";
 }
