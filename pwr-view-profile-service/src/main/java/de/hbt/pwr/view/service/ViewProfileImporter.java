@@ -176,7 +176,6 @@ public class ViewProfileImporter {
                 .map(profileSkill -> mergeIntoTree(root, profileSkill))
                 .collect(Collectors.toMap(Skill::getName, skill -> skill));
         viewProfile.setRootCategory(root);
-        viewProfile.setSkills(new ArrayList<>(skillsByName.values()));
     }
 
 
@@ -200,10 +199,8 @@ public class ViewProfileImporter {
         }
     }
 
-    private void setDisplayCategories(ViewProfile viewProfile) {
-        // The map is there to collect all display categories for the list of display categories.
-        Map<String, Category> displayCategoriesByName = new HashMap<>();
-        viewProfile.getSkills().forEach(skill -> {
+    private void setDisplayCategories(Category category,  Map<String, Category> displayCategoriesByName) {
+        category.getSkills().forEach(skill -> {
             // Because null categories might cause serious problems in the next call, check that
             // this does not happen. In terms of business logic, skills without categories >must< not exist anyway
             if(skill.getCategory() == null) {
@@ -211,6 +208,13 @@ public class ViewProfileImporter {
             }
             setDisplayCategory(skill, skill.getCategory(), displayCategoriesByName);
         });
+        category.getChildren().forEach(child -> setDisplayCategories(child, displayCategoriesByName));
+    }
+
+    private void setDisplayCategories(ViewProfile viewProfile) {
+        // The map is there to collect all display categories for the list of display categories.
+        Map<String, Category> displayCategoriesByName = new HashMap<>();
+        setDisplayCategories(viewProfile.getRootCategory(), displayCategoriesByName);
         viewProfile.setDisplayCategories(new ArrayList<>(displayCategoriesByName.values()));
     }
 

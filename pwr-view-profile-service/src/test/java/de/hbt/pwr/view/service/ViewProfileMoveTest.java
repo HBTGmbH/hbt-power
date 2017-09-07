@@ -42,9 +42,9 @@ public class ViewProfileMoveTest {
 
     @Test
     public void displayCategoryShouldHaveMoved() {
-        Category c1 = Category.builder().name("C1").build();
-        Category c2 = Category.builder().name("C2").build();
-        Category c3 = Category.builder().name("C3").build();
+        Category c1 = new Category("C1");
+        Category c2 = new Category("C2");
+        Category c3 = new Category("C3");
         viewProfile.getDisplayCategories().add(c1);
         viewProfile.getDisplayCategories().add(c2);
         viewProfile.getDisplayCategories().add(c3);

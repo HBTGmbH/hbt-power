@@ -135,7 +135,7 @@ public class ViewProfileImporterSkillTest {
         }
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
 
-        root = Category.builder().name("root").build();
+        root = new Category("root");
 
         resSkillA1a = makeSkill(skillA1a.getQualifier());
         resSkillA1b = makeSkill(skillA1b.getQualifier());
@@ -167,13 +167,24 @@ public class ViewProfileImporterSkillTest {
     }
 
     @Test
-    public void shouldAddSkillsToSkillList() {
+    public void allSkillsShouldBeAvailable() {
         initData();
         ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
-        assertThat(viewProfile.getSkills()).containsExactlyInAnyOrder(resSkillA1a, resSkillA1b, resSkillA2a,
-                resSkillA2b, resSkillB1a, resSkillB1b, resSkillB2a, resSkillB2b);
+        assertThat(viewProfile.findSkillByName(resSkillA1a.getName()).isPresent()).isTrue();
+        assertThat(viewProfile.findSkillByName(resSkillA1b.getName()).isPresent()).isTrue();
+        assertThat(viewProfile.findSkillByName(resSkillA2a.getName()).isPresent()).isTrue();
+        assertThat(viewProfile.findSkillByName(resSkillA2b.getName()).isPresent()).isTrue();
+        assertThat(viewProfile.findSkillByName(resSkillB1a.getName()).isPresent()).isTrue();
+        assertThat(viewProfile.findSkillByName(resSkillB1b.getName()).isPresent()).isTrue();
+        assertThat(viewProfile.findSkillByName(resSkillB2a.getName()).isPresent()).isTrue();
+        assertThat(viewProfile.findSkillByName(resSkillB2b.getName()).isPresent()).isTrue();
     }
 
+    /**
+     * Validates that the default behavior for skill display categories works as intended.
+     * The default behavior uses the category that is second highest in the tree (without root)
+     * as a display category.
+     */
     @Test
     public void shouldSetDisplayCategoryToSecondHighestInTree() {
         SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
@@ -187,7 +198,7 @@ public class ViewProfileImporterSkillTest {
 
         ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
 
-        Category category = Category.builder().name(secondHighest.getQualifier()).enabled(true).isDisplay(true).build();
+        Category category = new Category(secondHighest.getQualifier(), true, null, true);
 
         assertThat(viewProfile.getDisplayCategories()).containsExactlyInAnyOrder(category);
         Category display = viewProfile.getDisplayCategories().get(0);

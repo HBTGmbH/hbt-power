@@ -37,13 +37,16 @@ public class ViewProfileSkillSortTests {
 
 
     private void setUpSkillsInDisplayData() {
-        Category category = Category.builder().name("Category").build();
+        Category category = new Category("Category");
         skillA = Skill.builder().name("A").category(category).rating(5).displayCategory(category).build();
         skillB = Skill.builder().name("B").category(category).rating(2).displayCategory(category).build();
         skillC = Skill.builder().name("C").category(category).rating(1).displayCategory(category).build();
         skillD = Skill.builder().name("D").category(category).rating(3).displayCategory(category).build();
+        category.getDisplaySkills().clear();
         category.getDisplaySkills().addAll(Arrays.asList(skillB, skillA, skillD, skillC));
-        viewProfile.getSkills().addAll(Arrays.asList(skillB, skillA, skillD, skillC));
+        viewProfile.setRootCategory(category);
+        //viewProfile.getSkills().addAll(Arrays.asList(skillB, skillA, skillD, skillC));
+        //fail("missing");
         viewProfile.getDisplayCategories().add(category);
     }
 

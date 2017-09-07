@@ -131,20 +131,6 @@ public enum ProfileEntryType implements ToggleableExtractable, MovableEntryExtra
         }
     },
 
-    /**
-     * {@link de.hbt.pwr.view.model.skill.Skill} independent from a {@link de.hbt.pwr.view.model.entries.Project}
-     */
-    SKILL {
-        @Override
-        public List<?> extractMovableEntry(ViewProfile viewProfile) {
-            return viewProfile.getSkills();
-        }
-
-        @Override
-        public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {
-            return viewProfile.getSkills();
-        }
-    },
     DISPLAY_CATEGORY {
         @Override
         public List<? extends ToggleableEntry> getToggleable(ViewProfile viewProfile) {

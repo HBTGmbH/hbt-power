@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"isDisplay", "parent", "skills", "children", "displaySkills"})
 @ToString(exclude = {"parent", "skills", "children"})
@@ -37,6 +36,19 @@ public class Category implements ToggleableEntry, NameComparable {
     @Builder.Default private List<Category> children = new ArrayList<>();
 
 
+
+    public Category(String name, Category parent) {
+        this.name = name;
+        this.setParent(parent);
+    }
+
+    public Category(String name, Boolean isDisplay, Category parent, Boolean enabled) {
+        this.name = name;
+        this.isDisplay = isDisplay;
+        this.parent = parent;
+        this.enabled = enabled;
+    }
+
     public Category() {
         isDisplay = false;
         children = new ArrayList<>();
@@ -44,8 +56,11 @@ public class Category implements ToggleableEntry, NameComparable {
         skills = new ArrayList<>();
     }
 
+    public Category(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public Category(String name) {
-        this();
         this.name = name;
     }
 

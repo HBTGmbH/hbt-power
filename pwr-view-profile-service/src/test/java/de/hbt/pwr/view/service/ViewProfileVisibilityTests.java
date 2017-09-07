@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * Tests that validate that toggling visibility of profile elements works as intended.
  */
+@SuppressWarnings("ALL")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ViewProfileVisibilityTests {
 
@@ -70,11 +71,8 @@ public class ViewProfileVisibilityTests {
             case TRAINING:
                 profileToTest.getTrainings().add(Training.builder().enabled(enabled).build());
                 break;
-            case SKILL:
-                profileToTest.getSkills().add(Skill.builder().enabled(enabled).build());
-                break;
             case DISPLAY_CATEGORY:
-                profileToTest.getDisplayCategories().add(Category.builder().enabled(enabled).build());
+                profileToTest.getDisplayCategories().add(new Category(enabled));
                 break;
             case QUALIFICATION:
                 profileToTest.getQualifications().add(Qualification.builder().enabled(enabled).build());
@@ -110,9 +108,6 @@ public class ViewProfileVisibilityTests {
                 break;
             case TRAINING:
                 assertThat(profileToTest.getTrainings().get(index).getEnabled()).isEqualTo(expected);
-                break;
-            case SKILL:
-                assertThat(profileToTest.getSkills().get(index).getEnabled()).isEqualTo(expected);
                 break;
             case DISPLAY_CATEGORY:
                 assertThat(profileToTest.getDisplayCategories().get(index).getEnabled()).isEqualTo(expected);
@@ -151,9 +146,6 @@ public class ViewProfileVisibilityTests {
             case TRAINING:
                 assertThat(profileToTest.getTrainings()).are(enabled);
                 break;
-            case SKILL:
-                assertThat(profileToTest.getSkills()).are(enabled);
-                break;
             case DISPLAY_CATEGORY:
                 assertThat(profileToTest.getDisplayCategories()).are(enabled);
                 break;
@@ -190,9 +182,6 @@ public class ViewProfileVisibilityTests {
                 break;
             case TRAINING:
                 assertThat(profileToTest.getTrainings()).areNot(enabled);
-                break;
-            case SKILL:
-                assertThat(profileToTest.getSkills()).areNot(enabled);
                 break;
             case DISPLAY_CATEGORY:
                 assertThat(profileToTest.getDisplayCategories()).areNot(enabled);
@@ -299,12 +288,37 @@ public class ViewProfileVisibilityTests {
 
     @Test
     public void SkillInProfileIsEnabledAfterEnabling() {
-        testEnableEntry(ProfileEntryType.SKILL);
+        Category category = new Category("root");
+        Skill skill = Skill.builder().name("skill").category(category).build();
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(category);
+
+        viewProfileService.setIsEnabledForSkill(viewProfile, skill.getName(), true);
+        assertThat(viewProfile.findSkillByName(skill.getName()).get().getEnabled()).isTrue();
     }
 
     @Test
     public void SkillInProfileIsDisabledAfterDisabling() {
-        testDisableEntry(ProfileEntryType.SKILL);
+        Category category = new Category("root");
+        Skill skill = Skill.builder().name("skill").category(category).build();
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(category);
+
+        viewProfileService.setIsEnabledForSkill(viewProfile, skill.getName(), false);
+        assertThat(viewProfile.findSkillByName(skill.getName()).get().getEnabled()).isFalse();
+    }
+
+    @Test
+    public void AllSkillsInProfileAreEnabledAfterEnabling() {
+        Category category = new Category("root");
+        Skill skill1 = Skill.builder().name("skill").category(category).enabled(false).build();
+        Skill skill2 = Skill.builder().name("skil2").category(category).enabled(false).build();
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setRootCategory(category);
+
+        viewProfileService.setIsEnabledForAllSkills(viewProfile, true);
+        assertThat(viewProfile.findSkillByName(skill1.getName()).get().getEnabled()).isTrue();
+        assertThat(viewProfile.findSkillByName(skill2.getName()).get().getEnabled()).isTrue();
     }
 
 

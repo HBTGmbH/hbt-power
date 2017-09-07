@@ -1,6 +1,7 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
+import de.hbt.pwr.view.aspects.ViewProfileRestore;
 import de.hbt.pwr.view.exception.*;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @ViewProfileAutoSave
+@ViewProfileRestore
 public class ViewProfileService {
 
     private final ViewProfileRepository viewProfileRepository;
@@ -91,12 +94,27 @@ public class ViewProfileService {
         viewProfile.getProjects().get(projectIndex).getProjectRoles().forEach(projectRole -> projectRole.setEnabled(isEnabled));
     }
 
+
+    public void setIsEnabledForSkill(ViewProfile viewProfile, String skillName, boolean isEnabled) {
+        Optional<Skill> skill = viewProfile.findSkillByName(skillName);
+        skill.ifPresent(skill1 -> skill1.setEnabled(isEnabled));
+    }
+
+    private void setIsEnabledForAllSkills(Category category, boolean isEnabled) {
+        category.getSkills().forEach(skill -> skill.setEnabled(isEnabled));
+        category.getChildren().forEach(child -> setIsEnabledForAllSkills(child, isEnabled));
+    }
+
+    public void setIsEnabledForAllSkills(ViewProfile viewProfile, boolean isEnabled) {
+        setIsEnabledForAllSkills(viewProfile.getRootCategory(), isEnabled);
+    }
+
     /**
-     * Recursivley sets the display category or throws {@link DisplayCategoryNotFoundException} if the category
+     * Recursively sets the display category or throws {@link DisplayCategoryNotFoundException} if the category
      * can not be found.
      * <br/>
      * <br/>
-     * See {@linkplain ViewProfileService#setDisplayCategory(ViewProfile, int, String)} for doc.
+     * See {@linkplain ViewProfileService#setDisplayCategory(ViewProfile, String, String)}  for doc.
      */
     private void setDisplayCategory(ViewProfile viewProfile, Skill skill, String newDisplayCategoryName, Category currentCategory) {
         if(currentCategory != null) {
@@ -111,7 +129,7 @@ public class ViewProfileService {
     }
 
     /**
-     * Sets the display category of the skill at the position <code>skillIndex</code>
+     * Sets the display category of the skill with the given name.
      * <p>
      *     The new display category is identified by its {@link Category#name}, which is unique per view profile.
      *     The category identified by this name <bold>must</bold> be a direct or indirect parent of the skill at
@@ -121,14 +139,17 @@ public class ViewProfileService {
      *     Also sets the {@link ViewProfile#displayCategories}
      * </p>
      * @param viewProfile to be changed
-     * @param skillIndex index of the skill in the collection of {@link ViewProfile#skills}
+     * @param name name of the skill
      * @param newDisplayCategoryName of the category that is supposed to be the new display category.
      */
-    public void setDisplayCategory(ViewProfile viewProfile, int skillIndex, String newDisplayCategoryName) {
-        Skill skill = viewProfile.getSkills().get(skillIndex);
-        viewProfile.getDisplayCategories().remove(skill.getDisplayCategory());
-        setDisplayCategory(viewProfile, skill, newDisplayCategoryName, skill.getCategory());
-        viewProfile.getDisplayCategories().add(skill.getDisplayCategory());
+    public void setDisplayCategory(ViewProfile viewProfile, String name, String newDisplayCategoryName) {
+        Optional<Skill> mayBeSkill = viewProfile.findSkillByName(name);
+        if(mayBeSkill.isPresent()) {
+            Skill skill = mayBeSkill.get();
+            viewProfile.getDisplayCategories().remove(skill.getDisplayCategory());
+            setDisplayCategory(viewProfile, skill, newDisplayCategoryName, skill.getCategory());
+            viewProfile.getDisplayCategories().add(skill.getDisplayCategory());
+        }
     }
 
     public void setDescription(ViewProfile viewProfile, String newDescription) {
@@ -137,7 +158,7 @@ public class ViewProfileService {
 
     private void addNewCategory(Category current, String parentName, String newName) {
         if(parentName.equals(current.getName())) {
-            Category category = Category.builder().name(newName).parent(current).isDisplay(false).enabled(true).build();
+            Category category = new Category(newName, false, current, true);
             current.getChildren().add(category);
         } else {
             current.getChildren().forEach(category -> addNewCategory(category, parentName, newName));

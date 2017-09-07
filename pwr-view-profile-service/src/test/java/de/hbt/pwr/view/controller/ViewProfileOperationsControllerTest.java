@@ -123,7 +123,25 @@ public class ViewProfileOperationsControllerTest {
     }
 
     @Test
-    public void enabledAllSkillsInProfileAndReturns200() throws Exception {
+    public void enablesSkillAndReturns200() throws Exception {
+        String skillName = "Foo";
+        String url = urlBasePath() + "SKILL/visibility/" + isVisible;
+        mockMvc.perform(patch(url).param("skill-name", skillName).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService).should(times(1)).setIsEnabledForSkill(viewProfileReturned, skillName, isVisible);
+    }
+
+    @Test
+    public void enablesAllSkillsAndReturns200() throws  Exception {
+        String url = urlBasePath() + "SKILL/visibility/" + isVisible;
+        mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService).should(times(1)).setIsEnabledForAllSkills(viewProfileReturned, isVisible);
+    }
+
+
+    @Test
+    public void enabledAllSkillsInProjectAndReturns200() throws Exception {
         Integer projectIndex = 0;
         String url = urlBasePath() + "/PROJECT/" + projectIndex + "/SKILL/all/visibility/" + isVisible;
 
@@ -147,15 +165,16 @@ public class ViewProfileOperationsControllerTest {
      */
     @Test
     public void changesDisplayCategoryAndReturns200() throws Exception {
-        int skillIndex = 0;
+        String skillName = "skillSkill";
         String newDisplayCategoryName = "FooBar";
-        String url = urlBasePath() + "/SKILL/" + skillIndex + "/display-category";
+        String url = urlBasePath() + "/SKILL/display-category";
         mockMvc.perform(patch(url)
                 .param("display-category", newDisplayCategoryName)
+                .param("skill-name", skillName)
                 .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
         assertOwnerCheckAndRetrieval();
-        then(viewProfileService).should(times(1)).setDisplayCategory(viewProfileReturned, skillIndex, newDisplayCategoryName);
+        then(viewProfileService).should(times(1)).setDisplayCategory(viewProfileReturned, skillName, newDisplayCategoryName);
     }
 
     @Test

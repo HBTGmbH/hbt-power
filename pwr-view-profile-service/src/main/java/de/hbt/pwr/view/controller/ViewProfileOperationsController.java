@@ -63,6 +63,20 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @PatchMapping("/SKILL/visibility/{isEnabled}")
+    ResponseEntity<ViewProfile> setVisibilityForSkill(@PathVariable("initials") String initials,
+                                                      @PathVariable("viewProfileId") String viewProfileId,
+                                                      @RequestParam(value = "skill-name", required = false) String skillName,
+                                                      @PathVariable("isEnabled") Boolean isEnabled) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        if(skillName == null) {
+            viewProfileService.setIsEnabledForAllSkills(viewProfile, isEnabled);
+        } else {
+            viewProfileService.setIsEnabledForSkill(viewProfile, skillName, isEnabled);
+        }
+        return ResponseEntity.ok(viewProfile);
+    }
+
     @ApiOperation(value = "Sets the visibility for all entries",
             notes = "Sets the visibility for all entries of the given type in the defined view profile. " +
                     "This operation is persistent.",
@@ -183,13 +197,13 @@ public class ViewProfileOperationsController {
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
-    @PatchMapping("/SKILL/{skillIndex}/display-category")
+    @PatchMapping("/SKILL/display-category")
     ResponseEntity<ViewProfile> setDisplayCategory(@PathVariable("initials") String initials,
                                                    @PathVariable("viewProfileId") String viewProfileId,
-                                                   @PathVariable("skillIndex") int skillIndex,
+                                                   @RequestParam("skill-name") String skillName,
                                                    @RequestParam("display-category") String newDisplayCategoryName) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileService.setDisplayCategory(viewProfile, skillIndex, newDisplayCategoryName);
+        viewProfileService.setDisplayCategory(viewProfile, skillName, newDisplayCategoryName);
         return ResponseEntity.ok(viewProfile);
     }
 

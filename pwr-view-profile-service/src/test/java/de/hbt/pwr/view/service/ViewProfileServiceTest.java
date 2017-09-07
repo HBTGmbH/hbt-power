@@ -109,8 +109,8 @@ public class ViewProfileServiceTest {
 
     @Test
     public void shouldHaveAddedNewCategory() {
-        Category category = Category.builder().name("Category1").build();
-        Category newCategoryParent = Category.builder().name("Category2").build();
+        Category category = new Category("Category1");//Category.builder().name("Category1").build();
+        Category newCategoryParent = new Category("Category2");
         String newCategoryName = "Category3";
         newCategoryParent.setParent(category);
         ViewProfile viewProfile = new ViewProfile();
@@ -127,9 +127,9 @@ public class ViewProfileServiceTest {
     public void shouldThrowBecauseNameAlreadyExist() {
         final String category1Name = "Category1";
         final String category2Name = "Category2";
-        final Category category1 = Category.builder().name(category1Name).build();
-        final Category category2 = Category.builder().name(category2Name).build();
-        final Category root = Category.builder().name("root").build();
+        final Category category1 = new Category(category1Name);
+        final Category category2 = new Category(category2Name);
+        final Category root = new Category("root");
         category1.setParent(root);
         category2.setParent(root);
         ViewProfile viewProfile = new ViewProfile();
@@ -142,9 +142,9 @@ public class ViewProfileServiceTest {
     public void shouldThrowBecauseParentDoesNotExist() {
         final String category1Name = "Category1";
         final String category2Name = "Category2";
-        final Category category1 = Category.builder().name(category1Name).build();
-        final Category category2 = Category.builder().name(category2Name).build();
-        final Category root = Category.builder().name("root").build();
+        final Category category1 = new Category(category1Name);
+        final Category category2 = new Category(category2Name);
+        final Category root = new Category("root");
         category1.setParent(root);
         category2.setParent(root);
         ViewProfile viewProfile = new ViewProfile();

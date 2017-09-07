@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * Created by nt on 30.08.2017.
+ * Utility methods to convert between the various data models this service consumes.
+ * @author nt (nt@hbt.de) on 30.08.2017.
  */
 public class ModelConvertUtil {
     @NotNull
@@ -61,7 +62,7 @@ public class ModelConvertUtil {
     }
 
     @NotNull
-    public static Category mapCategory(SkillServiceCategory skillServiceCategory) {
+    private static Category mapCategory(SkillServiceCategory skillServiceCategory) {
         Category category = new Category();
         category.setName(skillServiceCategory.getQualifier());
         category.setIsDisplay(false);

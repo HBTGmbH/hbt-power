@@ -130,9 +130,9 @@ public class ViewProfileSortServiceTest {
 
     @Test
     public void DisplayCategoriesShouldBeSortedByName() {
-        Category categoryA = Category.builder().name("A").build();
-        Category categoryB = Category.builder().name("B").build();
-        Category categoryC = Category.builder().name("C").build();
+        Category categoryA = new Category("A");
+        Category categoryB = new Category("B");
+        Category categoryC = new Category("C");
         viewProfile.getDisplayCategories().addAll(Arrays.asList(categoryB, categoryA, categoryC));
         performSortAndAssert(NameComparableEntryType.DISPLAY_CATEGORY, categoryA, categoryB, categoryC);
     }

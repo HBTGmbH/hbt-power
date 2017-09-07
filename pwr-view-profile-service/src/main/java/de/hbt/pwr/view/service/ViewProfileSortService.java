@@ -1,6 +1,7 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
+import de.hbt.pwr.view.aspects.ViewProfileRestore;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
@@ -21,6 +22,7 @@ import java.util.Comparator;
  */
 @Service
 @ViewProfileAutoSave
+@ViewProfileRestore
 public class ViewProfileSortService {
 
     private static final Comparator<Skill> SkillByRatingAsc = Comparator.comparing(Skill::getRating);

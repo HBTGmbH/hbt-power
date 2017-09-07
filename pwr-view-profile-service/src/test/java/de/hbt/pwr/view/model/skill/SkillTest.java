@@ -10,7 +10,8 @@ public class SkillTest {
     @Test
     public void backReferenceShouldBeSetForDisplay() {
         Skill skill = Skill.builder().name("Skill1").build();
-        Category category = Category.builder().name("Category").build();
+
+        Category category =  new Category("Category");
 
         skill.setDisplayCategory(category);
         assertThat(category.getDisplaySkills()).contains(skill);

@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,17 +30,26 @@ public class DisplayCategoryTest {
         viewProfileService = new ViewProfileService(viewProfileRepository);
     }
 
+    @SuppressWarnings("ConstantConditions")
+    private Skill getSkillOrFail(String name) {
+        Optional<Skill> resultOptional = viewProfile.findSkillByName(name);
+        assertThat(resultOptional.isPresent()).isTrue();
+        return resultOptional.get();
+    }
+
     /**
      * A display category can be changed and is changed to the correct category
      */
     @Test
     public void displayCategoryShouldChange() {
-        Category category1 = Category.builder().name("Category1").build();
-        Category category2 = Category.builder().name("Category2").parent(category1).build();
-        Skill skill = Skill.builder().name("Skill1").category(category2).displayCategory(category1).build();
-        viewProfile.getSkills().add(skill);
-        viewProfileService.setDisplayCategory(viewProfile, 0, category1.getName());
-        assertThat(viewProfile.getSkills().get(0).getDisplayCategory()).isEqualTo(category1);
+        Category category1 = new Category("Category1");
+        Category category2 = new Category("Category2", category1);
+        Skill skill = Skill.builder().name("Skill1").category(category2).displayCategory(category2).build();
+        viewProfile.setRootCategory(category1);
+        viewProfileService.setDisplayCategory(viewProfile, skill.getName(), category1.getName());
+
+        Skill result = getSkillOrFail(skill.getName());
+        assertThat(result.getDisplayCategory()).isEqualTo(category1);
     }
 
     /**
@@ -47,16 +58,18 @@ public class DisplayCategoryTest {
      */
     @Test
     public void displayCategoryShouldChangeWithLowerOrderCategory() {
-        Category categoryHighHigh= Category.builder().name("CategoryHighHigh").build();
-        Category categoryHigh = Category.builder().name("CategoryHigh").parent(categoryHighHigh).build();
-        Category categoryMid = Category.builder().name("CategoryMid").parent(categoryHigh).build();
-        Category categoryLow = Category.builder().name("CategoryLow").parent(categoryMid).build();
+        Category categoryHighHigh= new Category("CategoryHighHigh");
+        Category categoryHigh = new Category("CategoryHigh", categoryHighHigh);
+        Category categoryMid = new Category("CategoryMid", categoryHigh);
+        Category categoryLow = new Category("CategoryLow", categoryMid);
         Skill skill1 = Skill.builder().name("Skill").category(categoryLow).displayCategory(categoryHighHigh).build();
-        Skill skill2 = Skill.builder().name("Skill2").category(categoryHighHigh).displayCategory(categoryHighHigh).build();
-        viewProfile.getSkills().add(skill2);
-        viewProfile.getSkills().add(skill1);
-        viewProfileService.setDisplayCategory(viewProfile, 1, categoryMid.getName());
-        assertThat(viewProfile.getSkills().get(1).getDisplayCategory()).isEqualTo(categoryMid);
+        Skill.builder().name("Skill2").category(categoryHighHigh).displayCategory(categoryHighHigh).build();
+        viewProfile.setRootCategory(categoryHighHigh);
+
+        viewProfileService.setDisplayCategory(viewProfile, skill1.getName(), categoryMid.getName());
+
+        Skill result = getSkillOrFail(skill1.getName());
+        assertThat(result.getDisplayCategory()).isEqualTo(categoryMid);
     }
 
     /**
@@ -65,14 +78,16 @@ public class DisplayCategoryTest {
      */
     @Test
     public void displayCategoryShouldChangeInList() {
-        Category oldCategory = Category.builder().name("Old").build();
-        Category newCategory = Category.builder().name("New").parent(oldCategory).build();
+        Category oldCategory = new Category("Old");
+        Category newCategory = new Category("New", oldCategory);
         Skill skill = Skill.builder().name("Skill").category(newCategory).displayCategory(oldCategory).build();
         viewProfile.getDisplayCategories().add(oldCategory);
-        viewProfile.getSkills().add(skill);
+        viewProfile.setRootCategory(oldCategory);
+
         // Precondition to this test
         assertThat(viewProfile.getDisplayCategories()).doesNotContain(newCategory);
-        viewProfileService.setDisplayCategory(viewProfile, 0, newCategory.getName());
+        Skill result = getSkillOrFail(skill.getName());
+        viewProfileService.setDisplayCategory(viewProfile, result.getName(), newCategory.getName());
         // Postconditions
         assertThat(viewProfile.getDisplayCategories()).doesNotContain(oldCategory);
         assertThat(viewProfile.getDisplayCategories()).contains(newCategory);
@@ -86,9 +101,10 @@ public class DisplayCategoryTest {
      */
     @Test(expected = DisplayCategoryNotFoundException.class)
     public void shouldThrowExceptionDueToWrongCategory() {
-        Category category = Category.builder().name("Category1").build();
+        Category category = new Category("Category1");
         Skill skill = Skill.builder().name("Skill").category(category).displayCategory(category).build();
-        viewProfile.getSkills().add(skill);
-        viewProfileService.setDisplayCategory(viewProfile, 0, "FooBarCategory123");
+        viewProfile.setRootCategory(category);
+        Skill result = getSkillOrFail(skill.getName());
+        viewProfileService.setDisplayCategory(viewProfile, result.getName(), "FooBarCategory123");
     }
 }
