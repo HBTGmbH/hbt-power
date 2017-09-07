@@ -9,6 +9,8 @@ import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
+import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
@@ -32,12 +34,16 @@ public class ViewProfileImporter {
 
     private final ViewProfileRepository viewProfileRepository;
 
+    private final ViewProfileSortService viewProfileSortService;
+
+
     @Autowired
-    public ViewProfileImporter(ProfileServiceClient profileServiceClient, SkillServiceClient skillServiceClient, SkillServiceFallback skillServiceFallback, ViewProfileRepository viewProfileRepository) {
+    public ViewProfileImporter(ProfileServiceClient profileServiceClient, SkillServiceClient skillServiceClient, SkillServiceFallback skillServiceFallback, ViewProfileRepository viewProfileRepository, ViewProfileSortService viewProfileSortService) {
         this.profileServiceClient = profileServiceClient;
         this.skillServiceClient = skillServiceClient;
         this.skillServiceFallback = skillServiceFallback;
         this.viewProfileRepository = viewProfileRepository;
+        this.viewProfileSortService = viewProfileSortService;
     }
 
 
@@ -188,7 +194,7 @@ public class ViewProfileImporter {
             if(skill.getCategory() == null) {
                 throw new RuntimeException("Constraint violation! Skill hat null category: " + skill.toString());
             }
-            ModelConvertUtil.setDisplayCategory(skill);
+            ModelConvertUtil.setDisplayCategory(skill, displayCategoriesByName);
         });
         category.getChildren().forEach(child -> setDisplayCategoriesForAllSkills(child, displayCategoriesByName));
     }
@@ -200,7 +206,26 @@ public class ViewProfileImporter {
         viewProfile.setDisplayCategories(new ArrayList<>(displayCategoriesByName.values()));
     }
 
+    private void applyInitialSorting(ViewProfile viewProfile) {
+        viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.SECTOR, true);
+        viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.KEY_SKILL, true);
+        viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.LANGUAGE, true);
+        viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.QUALIFICATION, true);
+        viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.TRAINING, true);
+        viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.PROJECT_ROLE, true);
+        viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.DISPLAY_CATEGORY, true);
 
+        viewProfileSortService.sortEntryByStartDate(viewProfile, StartEndDateComparableEntryType.CAREER, true);
+        viewProfileSortService.sortEntryByStartDate(viewProfile, StartEndDateComparableEntryType.EDUCATION, true);
+        viewProfileSortService.sortEntryByStartDate(viewProfile, StartEndDateComparableEntryType.PROJECT, true);
+
+        for(int projIndex = 0; projIndex < viewProfile.getProjects().size(); projIndex++) {
+            viewProfileSortService.sortSkillsInProjectByName(viewProfile, projIndex, true);
+        }
+        for(int displayIndex = 0; displayIndex < viewProfile.getDisplayCategories().size(); displayIndex++) {
+            viewProfileSortService.sortSkillsInDisplayByName(viewProfile, displayIndex, true);
+        }
+    }
 
     public ViewProfile importViewProfile(String initials) {
         ViewProfile result = new ViewProfile();
@@ -221,6 +246,7 @@ public class ViewProfileImporter {
         // Must be called after the skill tree has been built
         setDisplayCategories(result);
         viewProfileRepository.save(result);
+        applyInitialSorting(result);
         return result;
     }
 }

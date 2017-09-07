@@ -7,6 +7,8 @@ import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.model.LanguageLevel;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
+import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
+import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.junit.After;
@@ -24,6 +26,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 /**
  * Validates that the view profile import works for all
@@ -42,6 +46,9 @@ public class ViewProfileImporterEntryTest {
 
     @MockBean
     private ViewProfileRepository viewProfileRepository;
+
+    @MockBean
+    private ViewProfileSortService viewProfileSortService;
 
     private final String initials = "eu";
 
@@ -64,7 +71,8 @@ public class ViewProfileImporterEntryTest {
         viewProfile = new ViewProfile();
         profileToReturn = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profileToReturn);
-        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, null, viewProfileRepository);
+        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, null,
+                viewProfileRepository, viewProfileSortService);
     }
 
     @After
@@ -273,5 +281,84 @@ public class ViewProfileImporterEntryTest {
         ProjectRole expected3 = ProjectRole.builder().name("Role3").enabled(true).build();
 
         assertThat(viewProfile.getProjectRoles()).containsExactlyInAnyOrder(expected1, expected2, expected3);
+    }
+
+    private void testNameSorting(NameComparableEntryType type) {
+        invokeImport();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortEntryByName(viewProfile, type, true);
+    }
+
+    private void testStartDateSorting(StartEndDateComparableEntryType type) {
+        invokeImport();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortEntryByStartDate(viewProfile,type, true);
+    }
+
+    /**
+     * Newly imported view profiles have their sectors sorted from by name from 'a' - 'z' (alpha asc.)
+     */
+    @Test
+    public void shouldSortSectorsByNameAscending() {
+        testNameSorting(NameComparableEntryType.SECTOR);
+    }
+
+    /**
+     * Newly imported view profile have their career sorted from oldest to newest by start date
+     */
+    @Test
+    public void shouldSortCareersByStartDateAscending() {
+        testStartDateSorting(StartEndDateComparableEntryType.CAREER);
+    }
+
+    @Test
+    public void shouldSortEducationsByStartDateAscending() {
+        testStartDateSorting(StartEndDateComparableEntryType.EDUCATION);
+    }
+
+    @Test
+    public void shouldSortKeySkillsByNameAscending() {
+        testNameSorting(NameComparableEntryType.KEY_SKILL);
+    }
+
+    @Test
+    public void shouldSortLanguagesByNameAscending() {
+        testNameSorting(NameComparableEntryType.LANGUAGE);
+    }
+
+    @Test
+    public void shouldSortQualificationByNameAscending() {
+        testNameSorting(NameComparableEntryType.QUALIFICATION);
+    }
+
+    @Test
+    public void shouldSortTrainingByNameAscending() {
+        testNameSorting(NameComparableEntryType.TRAINING);
+    }
+
+    @Test
+    public void shouldSortProjectRolesByNameAscending() {
+        testNameSorting(NameComparableEntryType.PROJECT_ROLE);
+    }
+
+    @Test
+    public void shouldSortProejctByStartDateAsc() {
+        testStartDateSorting(StartEndDateComparableEntryType.PROJECT);
+    }
+
+    @Test
+    public void shouldSortDisplayCategoriesByNameAsc() {
+        testNameSorting(NameComparableEntryType.DISPLAY_CATEGORY);
+    }
+
+    @Test
+    public void shouldSortSkillsInProjectsByNameAsc() {
+        profileToReturn.getProjects().add(new ProfileProject());
+        invokeImport();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortSkillsInProjectByName(viewProfile, 0, true);
     }
 }

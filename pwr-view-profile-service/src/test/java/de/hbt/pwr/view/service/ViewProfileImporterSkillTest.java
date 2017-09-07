@@ -45,6 +45,9 @@ public class ViewProfileImporterSkillTest {
     @MockBean
     private ViewProfileRepository viewProfileRepository;
 
+    @MockBean
+    private ViewProfileSortService viewProfileSortService;
+
 
     private ViewProfileImporter viewProfileImporter;
 
@@ -71,7 +74,7 @@ public class ViewProfileImporterSkillTest {
     public void setUp() throws Exception {
         profile = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
-        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, skillServiceFallback, viewProfileRepository);
+        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, skillServiceFallback, viewProfileRepository, viewProfileSortService);
     }
 
     @After
