@@ -33,9 +33,9 @@ public class ViewProfileServiceTest {
     @MockBean
     private ViewProfileRepository viewProfileRepository;
 
-    private String testUserInitials = "tst";
+    private final String testUserInitials = "tst";
 
-    private String otherUserInitials = "oth";
+    private final String otherUserInitials = "oth";
 
     private final List<ViewProfile> testViewProfileListOfTestUser = Arrays.asList(
             ViewProfile.builder().name("VP1").id("VP1").ownerInitials(testUserInitials).build(),

@@ -16,6 +16,7 @@ public class SkillServiceCategory {
     private Boolean display = false;
 
     public SkillServiceCategory() {
+        // Default empty constructor for jackson
     }
 
     public SkillServiceCategory(String qualifier) {

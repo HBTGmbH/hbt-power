@@ -36,7 +36,6 @@ public class Skill implements ToggleableEntry, NameComparable {
         this.setDisplayCategory(displayCategory);
     }
 
-    // fixme / nt / test this
     public void setCategory(Category category) {
         this.category = category;
         if(this.category != null && !this.category.getSkills().contains(this)) {
@@ -44,7 +43,6 @@ public class Skill implements ToggleableEntry, NameComparable {
         }
     }
 
-    // fixme / nt / test this
     public void setDisplayCategory(Category displayCategory) {
         this.displayCategory = displayCategory;
         if(this.displayCategory != null && !this.displayCategory.getDisplaySkills().contains(this)) {

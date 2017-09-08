@@ -9,7 +9,7 @@ import java.util.Set;
 @Data
 public class ProfileProject {
 
-    private Long Id;
+    private Long Id; //NOSONAR
 
     private String name;
 

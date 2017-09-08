@@ -47,15 +47,16 @@ public class ViewProfileOperationsControllerTest {
     @MockBean
     private ViewProfileSortService viewProfileSortService;
 
+    @SuppressWarnings("unused")
     @MockBean
     // DO NOT REMOVE. Stops the container for crashing. Don't ask why ~nt
     private JedisConnectionFactory jedisConnectionFactory;
 
-    private ViewProfile viewProfileReturned = new ViewProfile();
+    private final ViewProfile viewProfileReturned = new ViewProfile();
 
-    private String initials = "tst";
+    private final String initials = "tst";
 
-    private String viewProfileId = "ABCD";
+    private final String viewProfileId = "ABCD";
 
     private final static Boolean isVisible = true;
 
@@ -308,5 +309,40 @@ public class ViewProfileOperationsControllerTest {
         then(viewProfileService)
                 .should(times(1))
                 .moveSkill(viewProfileReturned, skillName, categoryName);
+    }
+
+    @Test
+    public void shouldSortSkillsInProjectByNameAndReturn200() throws Exception {
+        int projectIndex = 0;
+        String url = urlBasePath() + "/PROJECT/" + projectIndex + "/SKILL/name/order";
+        mockMvc.perform(patch(url).param("do-ascending", "true")).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortSkillsInProjectByName(viewProfileReturned, projectIndex, true);
+    }
+
+    @Test
+    public void shouldSortSkillsInProjectByRatingAndReturn200() throws Exception {
+        int projectIndex = 0;
+        String url = urlBasePath() + "/PROJECT/" + projectIndex + "/SKILL/rating/order";
+        mockMvc.perform(patch(url).param("do-ascending", "true")).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortSkillsInProjectByRating(viewProfileReturned, projectIndex, true);
+    }
+
+    @Test
+    public void shouldMoveSkillInProjectAndReturn200() throws Exception {
+        int projectIndex = 0;
+        int sourceIndex = 0;
+        int targetIndex = 3;
+        String url = urlBasePath() + "/PROJECT/" + projectIndex + "/SKILL/position/" + sourceIndex + "/" + targetIndex;
+        mockMvc.perform(patch(url)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileSortService)
+                .should(times(1))
+                .moveSkillInProject(viewProfileReturned, projectIndex, sourceIndex, targetIndex);
     }
 }

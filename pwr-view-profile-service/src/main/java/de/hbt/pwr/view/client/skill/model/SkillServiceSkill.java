@@ -14,6 +14,7 @@ public class SkillServiceSkill {
     private Boolean custom;
 
     public SkillServiceSkill() {
+        /* Default Empty Constrcutor for jackson*/
     }
 
     public SkillServiceSkill(String qualifier) {

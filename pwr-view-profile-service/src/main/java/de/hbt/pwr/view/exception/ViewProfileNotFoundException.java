@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.exception;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class ViewProfileNotFoundException extends RuntimeException {
 
     @Getter
-    private String viewProfileId;
+    private final String viewProfileId;
 
     public ViewProfileNotFoundException(String viewProfileId) {
         super("The given id (" + viewProfileId + ") did not match a view profile.");
@@ -25,8 +26,13 @@ public class ViewProfileNotFoundException extends RuntimeException {
     @AllArgsConstructor
     @NoArgsConstructor
     static class InnerError {
-        private final String error = "ViewNotFound";
+        private static final String CODE = "ViewNotFound";
         private String viewProfileId;
+
+        @JsonProperty("code")
+        public String getCode() {
+            return CODE;
+        }
     }
 
 }

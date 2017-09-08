@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.exception;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hbt.pwr.view.model.skill.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
  */
 public class CategoryNotUniqueException extends RuntimeException {
     @Getter
-    private String newName;
+    private final String newName;
 
     public CategoryNotUniqueException(String newName) {
         super("A category with the name " + newName + " already exists.");
@@ -26,8 +27,18 @@ public class CategoryNotUniqueException extends RuntimeException {
     @AllArgsConstructor
     @NoArgsConstructor
     static class InnerError {
-        private final String code = "CategoryNotUnique";
-        private final String restriction = "Category must be unique in the whole view profile";
+        private static final String CODE = "CategoryNotUnique";
+        private static final String RESTRICTION = "Category must be unique in the whole view profile";
         private String targetName;
+
+        @JsonProperty("code")
+        public String getCode() {
+            return CODE;
+        }
+
+        @JsonProperty("restriction")
+        public String getRestriction() {
+            return RESTRICTION;
+        }
     }
 }

@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @ViewProfileAutoSave
@@ -29,10 +30,18 @@ public class ViewProfileService {
 
     @NotNull
     public List<String> getViewProfileIdsForInitials(@NotNull String initials) {
-        return StreamUtils.createStreamFromIterator(viewProfileRepository.findAll().iterator())
-                .filter(viewProfile -> viewProfile.getOwnerInitials().equals(initials))
-                .map(ViewProfile::getId)
-                .collect(Collectors.toList());
+        Stream<ViewProfile> streamFromIterator = null;
+        try {
+            streamFromIterator = StreamUtils.createStreamFromIterator(viewProfileRepository.findAll().iterator());
+            return streamFromIterator
+                    .filter(viewProfile -> viewProfile.getOwnerInitials().equals(initials))
+                    .map(ViewProfile::getId)
+                    .collect(Collectors.toList());
+        } finally {
+            if(streamFromIterator != null) {
+                streamFromIterator.close();
+            }
+        }
     }
 
     /**
@@ -169,12 +178,11 @@ public class ViewProfileService {
      */
     public void setDisplayCategory(ViewProfile viewProfile, String name, String newDisplayCategoryName) {
         Optional<Skill> mayBeSkill = viewProfile.findSkillByName(name);
-        if(mayBeSkill.isPresent()) {
-            Skill skill = mayBeSkill.get();
+        mayBeSkill.ifPresent(skill -> {
             viewProfile.getDisplayCategories().remove(skill.getDisplayCategory());
             setDisplayCategory(viewProfile, skill, newDisplayCategoryName, skill.getCategory());
             viewProfile.getDisplayCategories().add(skill.getDisplayCategory());
-        }
+        });
     }
 
     public void setDescription(ViewProfile viewProfile, String newDescription) {
@@ -188,17 +196,6 @@ public class ViewProfileService {
         } else {
             current.getChildren().forEach(category -> addNewCategory(category, parentName, newName));
         }
-    }
-
-    // TODO move to category object
-    private boolean categoryContains(@NotNull Category current, @NotNull String nameToFind) {
-        return nameToFind.equals(current.getName())
-                || current.getChildren().stream().anyMatch(category -> categoryContains(category, nameToFind));
-    }
-
-    // TODO move to category object
-    private boolean categoryDoesNotContain(@NotNull Category current, @NotNull String nameToFind) {
-        return !categoryContains(current, nameToFind);
     }
 
     /**
@@ -218,10 +215,10 @@ public class ViewProfileService {
     public void addNewCategory(@NotNull ViewProfile viewProfile,
                                @NotNull String parentName,
                                @NotNull String newCategoryName) {
-        if(categoryContains(viewProfile.getRootCategory(), newCategoryName)) {
+        if(viewProfile.getRootCategory().containsCategoryWithName(newCategoryName)) {
             throw new CategoryNotUniqueException(newCategoryName);
         }
-        if(categoryDoesNotContain(viewProfile.getRootCategory(), parentName)) {
+        if(!viewProfile.getRootCategory().containsCategoryWithName(parentName)) {
             throw new CategoryNotFoundException(parentName);
         }
         addNewCategory(viewProfile.getRootCategory(), parentName, newCategoryName);
@@ -241,24 +238,22 @@ public class ViewProfileService {
      *     When the {@link Skill} is moved, it's {@link Skill#displayCategory} is resetted and recalculcated
      *     according to already existing rules.
      * </p>
-     * TODO: What happens if no skill with the name exists? Currently, nothing happens. Throw exception?
      * @param viewProfile to be changed
      * @param skillName of the skill to be moved
      * @param parentCategoryName of the new category
      * @throws CategoryNotFoundException if no {@link Category} with the <code>parentCategoryName</code> exists
      */
     public void moveSkill(ViewProfile viewProfile, String skillName, String parentCategoryName) {
-        if(categoryDoesNotContain(viewProfile.getRootCategory(), parentCategoryName)) {
+        if(!viewProfile.getRootCategory().containsCategoryWithName(parentCategoryName)) {
             throw new CategoryNotFoundException(parentCategoryName);
         }
         Optional<Skill> skillOptional = viewProfile.findSkillByName(skillName);
-        if(skillOptional.isPresent()) {
-            Skill skill = skillOptional.get();
+        skillOptional.ifPresent(skill -> {
             // Important: Remove the skill from its parent list.
             skill.getCategory().getSkills().remove(skill);
             addSkill(skill, viewProfile.getRootCategory(), parentCategoryName);
             // This applies default display category rules to the skill ("best guess")
             ModelConvertUtil.setDisplayCategory(skill);
-        }
+        });
     }
 }

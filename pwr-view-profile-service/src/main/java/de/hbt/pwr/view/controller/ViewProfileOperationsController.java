@@ -276,6 +276,26 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @PatchMapping("/PROJECT/{projectIndex}/SKILL/name/order")
+    ResponseEntity<ViewProfile> sortSkillsByNameInProject(@PathVariable("initials") String initials,
+                                                          @PathVariable("viewProfileId") String viewProfileId,
+                                                          @PathVariable("projectIndex") int projectIndex,
+                                                          @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.sortSkillsInProjectByName(viewProfile, projectIndex, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/PROJECT/{projectIndex}/SKILL/rating/order")
+    ResponseEntity<ViewProfile> sortSkillsByRatingInProject(@PathVariable("initials") String initials,
+                                                          @PathVariable("viewProfileId") String viewProfileId,
+                                                          @PathVariable("projectIndex") int projectIndex,
+                                                          @RequestParam("do-ascending") boolean doAscending) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.sortSkillsInProjectByRating(viewProfile, projectIndex, doAscending);
+        return ResponseEntity.ok(viewProfile);
+    }
+
     @ApiOperation(value = "Moves a skill in a display category",
             notes = "Moves a skill from one index to another index in a given display category",
             response = ViewProfile.class,
@@ -295,6 +315,17 @@ public class ViewProfileOperationsController {
                                                            @PathVariable("targetIndex") int targetIndex) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileSortService.moveSkillInDisplayCategory(viewProfile, displayCategoryIndex, sourceIndex, targetIndex);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PatchMapping("/PROJECT/{projectIndex}/SKILL/position/{sourceIndex}/{targetIndex}")
+    ResponseEntity<ViewProfile> moveSkillInProject(@PathVariable("initials") String initials,
+                                                   @PathVariable("viewProfileId") String viewProfileId,
+                                                   @PathVariable("projectIndex") int projectIndex,
+                                                   @PathVariable("sourceIndex") int sourceIndex,
+                                                   @PathVariable("targetIndex") int targetIndex) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileSortService.moveSkillInProject(viewProfile, projectIndex, sourceIndex, targetIndex);
         return ResponseEntity.ok(viewProfile);
     }
 
@@ -417,7 +448,7 @@ public class ViewProfileOperationsController {
                     " provided category-name is not unique (a category with the same name alredy exists).",
                     response = ServiceError.class)
     })
-    @PostMapping("/CATEGORY")
+    @RequestMapping(value = "/CATEGORY", method = RequestMethod.POST)
     ResponseEntity<ViewProfile> addCategory(@PathVariable("initials") String initials,
                                             @PathVariable("viewProfileId") String viewProfileId,
                                             @RequestParam("parent-name") String parentName,

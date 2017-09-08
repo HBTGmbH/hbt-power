@@ -35,8 +35,8 @@ import static org.mockito.BDDMockito.given;
 public class ViewProfileIntegrationTests {
 
 
-    public static final Integer TEST_REDIS_PORT_INT = 24312;
-    public static final String TEST_REDIS_PORT_STRING = "24312";
+    private static final Integer TEST_REDIS_PORT_INT = 24312;
+    static final String TEST_REDIS_PORT_STRING = "24312";
 
     private static RedisServer redisServer;
 
@@ -72,11 +72,6 @@ public class ViewProfileIntegrationTests {
     @After
     public void stopRedis() {
         redisServer.stop();
-    }
-
-    @Test
-    public void contextLoads() {
-
     }
 
     private void addTestData() throws IOException {

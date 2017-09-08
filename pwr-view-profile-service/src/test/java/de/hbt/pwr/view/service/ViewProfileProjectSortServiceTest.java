@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -31,16 +30,6 @@ public class ViewProfileProjectSortServiceTest {
     public void setUp() {
         viewProfile = new ViewProfile();
         viewProfileSortService = new ViewProfileSortService();
-    }
-
-    @SuppressWarnings("Duplicates")
-    private Project addProject(String name, LocalDate startDate, LocalDate endDate) {
-        Project project = new Project();
-        project.setName(name);
-        project.setStartDate(startDate);
-        project.setEndDate(endDate);
-        viewProfile.getProjects().add(project);
-        return project;
     }
 
     private void addSkillProjectData() {

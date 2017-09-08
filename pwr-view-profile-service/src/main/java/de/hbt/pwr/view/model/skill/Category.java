@@ -7,6 +7,7 @@ import de.hbt.pwr.view.model.entries.sort.NameComparable;
 import lombok.*;
 import org.springframework.data.annotation.Transient;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +90,11 @@ public class Category implements ToggleableEntry, NameComparable {
     public void setChildren(List<Category> children) {
         this.children = children;
         this.children.forEach(category -> category.setParent(category));
+    }
+
+    public boolean containsCategoryWithName(@NotNull String nameToFind) {
+        return nameToFind.equals(name)
+                || children.stream().anyMatch(category -> category.containsCategoryWithName(nameToFind));
     }
 
     @Override

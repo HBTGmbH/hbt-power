@@ -28,12 +28,13 @@ public class ViewProfileRestoreAspect {
         });
     }
 
+    @SuppressWarnings("unused")
     @Pointcut("this(org.springframework.data.repository.CrudRepository)")
-    private void isCrudRepo() {}
+    private void isCrudRepo() {} //NOSONAR
 
 
     @AfterReturning(value = "isCrudRepo() && args(serializable)", returning = "viewProfile", argNames = "joinPoint,viewProfile,serializable")
-    private void anyViewProfileRestorable(JoinPoint joinPoint, ViewProfile viewProfile, Serializable serializable) {
+    private void anyViewProfileRestorable(JoinPoint joinPoint, ViewProfile viewProfile, Serializable serializable) { //NOSONAR
         LOG.debug(ViewProfileRestoreAspect.class + " invoked after returning from "
                 + joinPoint.getSignature().toString() + ". Performing bi reference restoring...");
         if(viewProfile != null) {

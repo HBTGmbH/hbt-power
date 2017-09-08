@@ -19,10 +19,6 @@ public class ViewProfileSkillSortTests {
     private ViewProfile viewProfile;
     private ViewProfileSortService viewProfileSortService;
 
-    private Category categoryC;
-    private Category categoryA;
-    private Category categoryB;
-
     private Skill skillA;
     private Skill skillB;
     private Skill skillC;

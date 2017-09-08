@@ -83,16 +83,6 @@ public class ViewProfileImporterSkillTest {
         reset(profileServiceClient);
     }
 
-    private Category makeCategory(String name, Category parent) {
-        Category category = new Category();
-        category.setName(name);
-        category.setEnabled(true);
-        if(parent != null) {
-            category.setParent(parent);
-        }
-        return category;
-    }
-
     private Skill makeSkill(String name) {
         Skill skill = new Skill();
         skill.setName(name);
@@ -253,7 +243,7 @@ public class ViewProfileImporterSkillTest {
         SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
         SkillServiceCategory secondHighest = new SkillServiceCategory("SecondHighest", highest);
         SkillServiceCategory center = new SkillServiceCategory("Center", secondHighest);
-        SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center);
+        new SkillServiceCategory("Lowest", center);
         SkillServiceSkill testSkill1 = new SkillServiceSkill("Fizzing", highest);
 
         profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
@@ -282,6 +272,7 @@ public class ViewProfileImporterSkillTest {
 
         Optional<Skill> skillOptional = viewProfile.findSkillByName(testSkill1.getQualifier());
         assertThat(skillOptional.isPresent()).isTrue();
+        //noinspection ConstantConditions
         assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(lowest.getQualifier());
     }
 
@@ -300,6 +291,7 @@ public class ViewProfileImporterSkillTest {
 
         Optional<Skill> skillOptional = viewProfile.findSkillByName(testSkill1.getQualifier());
         assertThat(skillOptional.isPresent()).isTrue();
+        //noinspection ConstantConditions
         assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(highest.getQualifier());
     }
 }

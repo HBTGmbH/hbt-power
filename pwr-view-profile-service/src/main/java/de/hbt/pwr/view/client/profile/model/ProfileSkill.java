@@ -13,6 +13,7 @@ public class ProfileSkill {
     private String comment;
 
     public ProfileSkill() {
+        // Default empty constructor for jackson
     }
 
     public ProfileSkill(String name) {

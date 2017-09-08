@@ -60,9 +60,9 @@ public class ViewProfileImporterEntryTest {
 
     private static final AtomicLong idCounter = new AtomicLong(0);
 
-    private static LocalDate defaultDate = LocalDate.of(2017, 3, 3);
-    private static LocalDate defaultEndDate = LocalDate.of(2017, 4, 27);
-    private static String defaultDegree = "Blumentopferde";
+    private static final LocalDate defaultDate = LocalDate.of(2017, 3, 3);
+    private static final LocalDate defaultEndDate = LocalDate.of(2017, 4, 27);
+    private static final String defaultDegree = "Blumentopferde";
 
     private final String entryName1 = "Entry1";
     private final String entryName2 = "Entry2";

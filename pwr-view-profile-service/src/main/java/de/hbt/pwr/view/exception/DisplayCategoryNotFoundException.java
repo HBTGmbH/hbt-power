@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.exception;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import lombok.AllArgsConstructor;
@@ -15,13 +16,13 @@ import lombok.NoArgsConstructor;
 public class DisplayCategoryNotFoundException extends RuntimeException {
 
     @Getter
-    private String viewProfileId;
+    private final String viewProfileId;
 
     @Getter
-    private String skillName;
+    private final String skillName;
 
     @Getter
-    private String wantedCategory;
+    private final String wantedCategory;
 
     public DisplayCategoryNotFoundException(String viewProfileId, String skillName, String wantedCategory) {
         super("Could not find " + wantedCategory + " as a direct or indirect category of the skill " + skillName + " in the view profile id=" + viewProfileId);
@@ -34,10 +35,20 @@ public class DisplayCategoryNotFoundException extends RuntimeException {
     @NoArgsConstructor
     @AllArgsConstructor
     static class InnerError {
-        private final String code = "NotAParent";
+        private static final String CODE = "NotAParent";
+        private static final String RESTRICTION = "Display category must be (in)direct parent of the skill";
         private String viewProfileId;
         private String skillName;
         private String targetCategoryName;
-        private final String restriction = "Display category must be (in)direct parent of the skill";
+
+        @JsonProperty("code")
+        public String getCode() {
+            return CODE;
+        }
+
+        @JsonProperty("restriction")
+        public String getRestriction() {
+            return RESTRICTION;
+        }
     }
 }

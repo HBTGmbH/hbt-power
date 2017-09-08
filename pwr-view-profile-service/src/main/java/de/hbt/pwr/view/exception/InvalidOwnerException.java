@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.exception;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,9 +16,9 @@ import lombok.NoArgsConstructor;
 public class InvalidOwnerException extends RuntimeException {
 
 
-    private String viewProfileId;
+    private final String viewProfileId;
 
-    private String initials;
+    private final String initials;
 
     public InvalidOwnerException(String viewProfileId, String initials) {
         super("The consultant " + initials + " does not own the view profile with id=" + viewProfileId);
@@ -29,8 +30,14 @@ public class InvalidOwnerException extends RuntimeException {
     @AllArgsConstructor
     @NoArgsConstructor
     static class InnerError {
-        private final String error = "InvalidOwner";
+        private static final String CODE = "InvalidOwner";
         private String viewProfileId;
         private String initials;
+
+        @JsonProperty("code")
+        public String getCode() {
+            return CODE;
+        }
     }
+
 }

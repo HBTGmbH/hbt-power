@@ -14,6 +14,7 @@ import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.ModelConvertUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,8 @@ public class ViewProfileImporter {
     private final ViewProfileRepository viewProfileRepository;
 
     private final ViewProfileSortService viewProfileSortService;
+
+    private static final Logger LOG = Logger.getLogger(ViewProfileImporter.class);
 
 
     @Autowired
@@ -120,7 +123,7 @@ public class ViewProfileImporter {
             if(index == -1) {
                 // Found a part of the tree where the category to merge can be merged into
                 toMerge.setParent(root);
-            } else if(toMerge.getChildren().size() > 0) {
+            } else if(!toMerge.getChildren().isEmpty()) {
                 // Means that the current 'root' had the category to merge as a child
                 // As a result, the recursion is increased in order to find a category
                 // into which the candidate fits.
@@ -132,7 +135,7 @@ public class ViewProfileImporter {
                 }
                 Category mergeChild = toMerge.getChildren().get(0);
                 merge(root.getChildren().get(index), mergeChild);
-            } else if(toMerge.getChildren().size() <= 0) {
+            } else if(toMerge.getChildren().isEmpty()) {
                 // when the category to merge has no more children, the end of the recursion is reached
                 // without any insertion happening. This means that the whole, initial branch hierarchy
                 // was already COMPLETELY included in the tree. As a result, only the skill needs to
@@ -241,6 +244,7 @@ public class ViewProfileImporter {
         try {
             profile = profileServiceClient.getSingleProfile(initials);
         } catch (RuntimeException e) {
+            LOG.error("Could not get profile from client for " + initials, e);
             // Usually, this will be a HystrixRuntimeException, but docs are missing a bit of information,
             // so we'll catch a general exception
             throw new NoProfileAvailableException(initials);

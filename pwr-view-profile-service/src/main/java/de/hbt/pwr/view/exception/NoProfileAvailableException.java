@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.exception;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hbt.pwr.view.client.profile.model.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
  */
 public class NoProfileAvailableException extends RuntimeException {
     @Getter
-    private String initials;
+    private final String initials;
 
     public NoProfileAvailableException(String initials) {
         super("No profile available for " + initials);
@@ -24,8 +25,18 @@ public class NoProfileAvailableException extends RuntimeException {
     @AllArgsConstructor
     @NoArgsConstructor
     static class InnerError {
-        private final String code = "ProfileNotFound";
-        private final String restriction = "Initials must represent an existing consultant";
+        private static final String CODE = "ProfileNotFound";
+        private static final String RESTRICTION = "Initials must represent an existing consultant";
         private String initials;
+
+        @JsonProperty("code")
+        public String getCode() {
+            return CODE;
+        }
+
+        @JsonProperty("restriction")
+        public String getRestriction() {
+            return RESTRICTION;
+        }
     }
 }

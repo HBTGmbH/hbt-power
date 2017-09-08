@@ -33,17 +33,19 @@ public class ViewProfileAutoSaveAspect {
      * annotated with {@link ViewProfileAutoSave}. Indirectly annoated methods have the {@link ViewProfileAutoSave}
      * annotation on a class level.
      */
+    @SuppressWarnings("unused")
     @Pointcut("@annotation(ViewProfileAutoSave) || @within(ViewProfileAutoSave)")
-    private void isAutoSave() {}
+    private void isAutoSave() {/* Empty because it merely defines the pointcut and the annotation needs a target */} //NOSONAR
 
-    @Pointcut("execution(public * *(..))") //this should work for the public pointcut
-    private void isPublicOperation() {}
+    @SuppressWarnings("unused")
+    @Pointcut("execution(public * *(..))")
+    private void isPublicOperation() {/* Empty because it merely defines the pointcut and the annotation needs a target */} //NOSONAR
 
     /**
      * Advice triggered when auto save of {@link ViewProfile} is supposed to happen.
      */
     @After("isAutoSave() && isPublicOperation() && args(viewProfile,..)")
-    private void anyViewProfileSavable(JoinPoint joinPoint, ViewProfile viewProfile) {
+    private void anyViewProfileSavable(JoinPoint joinPoint, ViewProfile viewProfile) { //NOSONAR
         LOG.debug(ViewProfileAutoSaveAspect.class + " invoked after " + joinPoint.getSignature().toString() + ". Performing auto-save...");
         if(viewProfile != null) {
             viewProfileRepository.save(viewProfile);

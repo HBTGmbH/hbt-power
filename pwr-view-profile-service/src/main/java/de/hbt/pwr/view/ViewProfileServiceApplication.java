@@ -83,6 +83,6 @@ public class ViewProfileServiceApplication {
     }
 
     public static void main(String[] args) {
-		SpringApplication.run(ViewProfileServiceApplication.class, args);
+		SpringApplication.run(ViewProfileServiceApplication.class, args); //NOSONAR
 	}
 }

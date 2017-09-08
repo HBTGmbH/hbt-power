@@ -19,10 +19,15 @@ import static de.hbt.pwr.view.service.ViewProfileImporter.PWR_ROOT_NAME;
  * @author nt (nt@hbt.de) on 30.08.2017.
  */
 public class ModelConvertUtil {
+
+    private ModelConvertUtil() {
+        // Default empty to prevent instantiation
+    }
+
     @NotNull
     public static Language mapLanguage(@NotNull LanguageSkill languageSkill) {
         return Language.builder().enabled(true).level(languageSkill.getLevel())
-                .name(languageSkill.getNameEntity().getName()) // TODO check uniqueness and check null
+                .name(languageSkill.getNameEntity().getName())
                 .build();
     }
 

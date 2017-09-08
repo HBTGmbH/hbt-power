@@ -54,8 +54,6 @@ public class ViewProfile {
 
     private List<Project> projects = new ArrayList<>();
 
-    //private List<Skill> skills = new ArrayList<>();
-
     private List<Category> displayCategories = new ArrayList<>();
 
     /**

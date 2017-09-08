@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ViewProfileController.class)
 @ActiveProfiles("test")
 public class ViewProfileExceptionHandlerTest {
+    @SuppressWarnings("unused")
     @MockBean
     // DO NOT REMOVE. Stops the container for crashing. Don't ask why ~nt
     private JedisConnectionFactory jedisConnectionFactory;
@@ -35,6 +36,7 @@ public class ViewProfileExceptionHandlerTest {
     @MockBean
     private ViewProfileService viewProfileService;
 
+    @SuppressWarnings("unused")
     @MockBean
     private ViewProfileImporter viewProfileImporter;
 
