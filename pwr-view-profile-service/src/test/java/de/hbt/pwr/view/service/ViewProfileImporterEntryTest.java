@@ -4,6 +4,7 @@ package de.hbt.pwr.view.service;
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.*;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
+import de.hbt.pwr.view.exception.NoProfileAvailableException;
 import de.hbt.pwr.view.model.LanguageLevel;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 
 /**
@@ -164,6 +166,12 @@ public class ViewProfileImporterEntryTest {
         profileToReturn.setDescription(description);
         invokeImport();
         assertThat(viewProfile.getDescription()).isEqualTo(description);
+    }
+
+    @Test
+    public void shouldHaveCorrectOwner() {
+        invokeImport();
+        assertThat(viewProfile.getOwnerInitials()).isEqualTo(initials);
     }
 
     /**
@@ -360,5 +368,11 @@ public class ViewProfileImporterEntryTest {
         then(viewProfileSortService)
                 .should(times(1))
                 .sortSkillsInProjectByName(viewProfile, 0, true);
+    }
+
+    @Test(expected = NoProfileAvailableException.class)
+    public void shouldThrowExceptionBecauseConsultantDoesNotExist() {
+        given(profileServiceClient.getSingleProfile(any())).willThrow(new RuntimeException());
+        invokeImport();
     }
 }

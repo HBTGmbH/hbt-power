@@ -37,6 +37,15 @@ public class ViewProfileService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Attempts to retrieve a {@link ViewProfile} by its {@link ViewProfile#id}. If successfully retrieved,
+     * the {@link ViewProfile#ownerInitials} is checked against <code>owner</code>.
+     * @param id of the view profile
+     * @param owner is the expected owner of the view profile
+     * @return the retrieved {@link ViewProfile}
+     * @throws ViewProfileNotFoundException if <code>id</code> does not represent a {@link ViewProfile}
+     * @throws InvalidOwnerException if <code>owner</code> does not match {@link ViewProfile#ownerInitials}
+     */
     @NotNull
     public ViewProfile getByIdAndCheckOwner(@NotNull String id, @NotNull String owner) {
         ViewProfile viewProfile = viewProfileRepository.findOne(id);
@@ -49,6 +58,13 @@ public class ViewProfileService {
         return viewProfile;
     }
 
+    /**
+     * Attempts to delete a {@link ViewProfile}.
+     * @param id of the view profile
+     * @param owner is the expected owner of the {@link ViewProfile}
+     * @throws ViewProfileNotFoundException if <code>id</code> does not represent a {@link ViewProfile}
+     * @throws InvalidOwnerException if <code>owner</code> does not match {@link ViewProfile#ownerInitials}
+     */
     public void deleteWithOwnerCheck(@NotNull String id, @NotNull String owner) {
         ViewProfile viewProfile = viewProfileRepository.findOne(id);
         if(viewProfile == null) {
@@ -176,9 +192,15 @@ public class ViewProfileService {
         }
     }
 
+    // TODO move to category object
     private boolean categoryContains(@NotNull Category current, @NotNull String nameToFind) {
         return nameToFind.equals(current.getName())
                 || current.getChildren().stream().anyMatch(category -> categoryContains(category, nameToFind));
+    }
+
+    // TODO move to category object
+    private boolean categoryDoesNotContain(@NotNull Category current, @NotNull String nameToFind) {
+        return !categoryContains(current, nameToFind);
     }
 
     /**
@@ -201,7 +223,7 @@ public class ViewProfileService {
         if(categoryContains(viewProfile.getRootCategory(), newCategoryName)) {
             throw new CategoryNotUniqueException(newCategoryName);
         }
-        if(!categoryContains(viewProfile.getRootCategory(), parentName)) {
+        if(categoryDoesNotContain(viewProfile.getRootCategory(), parentName)) {
             throw new CategoryNotFoundException(parentName);
         }
         addNewCategory(viewProfile.getRootCategory(), parentName, newCategoryName);
@@ -215,8 +237,20 @@ public class ViewProfileService {
         }
     }
 
+    /**
+     * Moves a skill from one {@link Category} to another {@link Category}.
+     * <p>
+     *     When the {@link Skill} is moved, it's {@link Skill#displayCategory} is resetted and recalculcated
+     *     according to already existing rules.
+     * </p>
+     * TODO: What happens if no skill with the name exists? Currently, nothing happens. Throw exception?
+     * @param viewProfile to be changed
+     * @param skillName of the skill to be moved
+     * @param parentCategoryName of the new category
+     * @throws CategoryNotFoundException if no {@link Category} with the <code>parentCategoryName</code> exists
+     */
     public void moveSkill(ViewProfile viewProfile, String skillName, String parentCategoryName) {
-        if(!categoryContains(viewProfile.getRootCategory(), parentCategoryName)) {
+        if(categoryDoesNotContain(viewProfile.getRootCategory(), parentCategoryName)) {
             throw new CategoryNotFoundException(parentCategoryName);
         }
         Optional<Skill> skillOptional = viewProfile.findSkillByName(skillName);

@@ -7,6 +7,7 @@ import de.hbt.pwr.view.client.profile.model.ProfileSkill;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
+import de.hbt.pwr.view.exception.NoProfileAvailableException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
@@ -227,9 +228,24 @@ public class ViewProfileImporter {
         }
     }
 
+    /**
+     * Imports a {@link Profile} and creates a {@link ViewProfile} for the consultant represented by <code>initials</code>.
+     * The imported {@link Profile} is always the most current profile available, either
+     * @param initials of the consultant whose profile is used.
+     * @return the newly persisted {@link ViewProfile}
+     */
     public ViewProfile importViewProfile(String initials) {
         ViewProfile result = new ViewProfile();
-        Profile reference = profileServiceClient.getSingleProfile(initials);
+        Profile reference = null;
+        try {
+            reference = profileServiceClient.getSingleProfile(initials);
+        } catch (RuntimeException e) {
+            // Usually, this will be a HystrixRuntimeException, but docs are missing a bit of information,
+            // so we'll catch a general exception
+            throw new NoProfileAvailableException(initials);
+        }
+
+
         result.setDescription(reference.getDescription());
         result.setOwnerInitials(initials); // FIXME misses test
 

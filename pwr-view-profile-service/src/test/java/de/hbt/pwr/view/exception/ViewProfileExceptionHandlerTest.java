@@ -76,4 +76,11 @@ public class ViewProfileExceptionHandlerTest {
         String url = "/view/fooBar";
         mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void shouldReturnBadRequestBecauseConsultantDoesNotExist() throws Exception {
+        given(viewProfileService.getViewProfileIdsForInitials("fooBar")).willThrow(new NoProfileAvailableException("fooBar"));
+        String url = "/view/fooBar";
+        mockMvc.perform(get(url)).andExpect(status().isBadRequest());
+    }
 }

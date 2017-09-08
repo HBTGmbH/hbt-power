@@ -12,7 +12,31 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(value = "/view", description = "Provides means to manage view profiles with basic CRUD operations on a per user base.")
+/**
+ * <strong>For documentation, launch the service and go to <a href="http://localhost:9008/swagger-ui.html"> the
+ * swagger UI documentation</a></strong> <em>(actual port may differ)</em>
+ * <p>
+ *     Contains 'elemental' operations for {@link ViewProfile}, create, read and delete. Updates are performed as partial
+ *     updates in the {@link ViewProfileOperationsController}
+ * </p>
+ * <p>
+ *     <strong>A note on security</strong>: View profiles are only accessible with the right combination of ID and initials. If the
+ *     {@link ViewProfile} with the given ID does not have the correct owner, an operation will fail. This itself
+ *     is only pseudo-security, as the initials may be changed at will. In later development stages, a security concept
+ *     based around the edge server may be implemented such that users will only ever be able to access their own
+ *     spaces of the services.
+ *     <br/>
+ *     <br/>
+ *     Example: User 'tst' can only access <code>/api/tst/**</code>, but not <code>/api/xyz/**</code>,
+ *     as the <code>/api/xyz/**</code> endpoints are protected by the security framework.
+ *     <br/>
+ *     <br/>
+ *     This is why this service checks the owner initials with the initials provided in the request.
+ * </p>
+ * @see  <a href="http://localhost:9008/swagger-ui.html">Swagger UI doc</a>
+ * @author nt (nt@hbt.de)
+ */
+@Api(value = "/view", description = "Creates, reads and deletes view profiles")
 @RequestMapping("/view")
 @Controller
 public class ViewProfileController {
@@ -34,7 +58,8 @@ public class ViewProfileController {
         httpMethod = "POST",
         produces = "application/json")
     @ApiResponses(value ={
-            @ApiResponse(code = 200, message = "Returns the newly created view profile in the response")
+            @ApiResponse(code = 200, message = "Returns the newly created view profile in the response", response = ViewProfile.class),
+            @ApiResponse(code = 400, message = "Could not retrieve profile for given initials", response = ServiceError.class)
     })
     @PostMapping(path = "/{initials}")
     public ResponseEntity<ViewProfile> createViewProfile(
@@ -66,8 +91,7 @@ public class ViewProfileController {
 
     @ApiOperation(
             value = "Returns a specified view profile.",
-            notes = "Returns the specified consultants view profile. Only returns the view profile" +
-                    "if it belongs to the consultant. ",
+            notes = "Returns the view profile with the given ID as long as it belongs to the consultant with the provided initials",
             response = String.class,
             responseContainer = "List",
             httpMethod = "GET",

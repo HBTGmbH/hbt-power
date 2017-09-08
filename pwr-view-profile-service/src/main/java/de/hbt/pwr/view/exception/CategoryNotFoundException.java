@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Thrown when a {@link Category} was not found.
- * Created by nt on 30.08.2017.
+ * @author nt (nt@hbt.de)
  */
 public class CategoryNotFoundException extends RuntimeException {
     @Getter
