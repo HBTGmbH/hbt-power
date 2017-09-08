@@ -1,7 +1,6 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
-import de.hbt.pwr.view.aspects.ViewProfileRestore;
 import de.hbt.pwr.view.exception.*;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 
 @Service
 @ViewProfileAutoSave
-@ViewProfileRestore
 public class ViewProfileService {
 
     private final ViewProfileRepository viewProfileRepository;

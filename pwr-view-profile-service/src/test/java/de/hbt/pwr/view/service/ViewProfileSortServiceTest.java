@@ -196,5 +196,4 @@ public class ViewProfileSortServiceTest {
         viewProfile.getTrainings().addAll(Arrays.asList(ed2, ed1, ed3));
         performStartEndDateSortAssert(StartEndDateComparableEntryType.TRAINING, ed1, ed2, ed3);
     }
-
 }

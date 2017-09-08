@@ -1,7 +1,6 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
-import de.hbt.pwr.view.aspects.ViewProfileRestore;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
@@ -22,7 +21,6 @@ import java.util.Comparator;
  */
 @Service
 @ViewProfileAutoSave
-@ViewProfileRestore
 public class ViewProfileSortService {
 
     private static final Comparator<Skill> SkillByRatingAsc = Comparator.comparing(Skill::getRating);
@@ -31,8 +29,13 @@ public class ViewProfileSortService {
     private static final Comparator<StartEndDateComparable> StartDateAsc = Comparator.comparing(StartEndDateComparable::getStartDate);
     private static final Comparator<StartEndDateComparable> StartDateDesc = Comparator.comparing(StartEndDateComparable::getStartDate).reversed();
 
-    private static final Comparator<StartEndDateComparable> EndDateAsc = Comparator.comparing(StartEndDateComparable::getEndDate);
-    private static final Comparator<StartEndDateComparable> EndDateDesc = Comparator.comparing(StartEndDateComparable::getEndDate).reversed();
+    private static final Comparator<StartEndDateComparable> EndDateAsc = (o1, o2) -> {
+        if(o1.getEndDate() == null || o2.getEndDate() == null) {
+            return StartDateAsc.compare(o1, o2);
+        }
+        return Comparator.comparing(StartEndDateComparable::getEndDate).compare(o1, o2);
+    };
+    private static final Comparator<StartEndDateComparable> EndDateDesc = EndDateAsc.reversed();
 
 
     private static final Comparator<NameComparable> ByNameAsc = Comparator.comparing(NameComparable::getName);

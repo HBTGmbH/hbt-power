@@ -271,7 +271,7 @@ public class ViewProfileImporterEntryTest {
     }
 
     @Test
-    public void shouldHaveEnabledProjectRoles() {
+    public void shouldHaveEnabledProjectRolesWithoutDuplicates() {
         ProfileProject profileProject1 = new ProfileProject();
         profileProject1.getProjectRoles().add(NameEntity.builder().name("Role1").build());
         profileProject1.getProjectRoles().add(NameEntity.builder().name("Role2").build());
@@ -290,6 +290,7 @@ public class ViewProfileImporterEntryTest {
 
         assertThat(viewProfile.getProjectRoles()).containsExactlyInAnyOrder(expected1, expected2, expected3);
     }
+
 
     private void testNameSorting(NameComparableEntryType type) {
         invokeImport();
@@ -352,8 +353,11 @@ public class ViewProfileImporterEntryTest {
     }
 
     @Test
-    public void shouldSortProejctByStartDateAsc() {
-        testStartDateSorting(StartEndDateComparableEntryType.PROJECT);
+    public void shouldSortProejctByEndDateDesc() {
+        invokeImport();
+        then(viewProfileSortService)
+                .should(times(1))
+                .sortEntryByEndDate(viewProfile,StartEndDateComparableEntryType.PROJECT, false);
     }
 
     @Test

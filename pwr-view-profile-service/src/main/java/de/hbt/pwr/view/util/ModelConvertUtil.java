@@ -67,6 +67,11 @@ public class ModelConvertUtil {
     }
 
     @NotNull
+    public static Skill mapFlatSkill(@NotNull ProfileSkill skill) {
+        return Skill.builder().name(skill.getName()).rating(skill.getRating()).enabled(true).build();
+    }
+
+    @NotNull
     private static Category mapCategory(SkillServiceCategory skillServiceCategory) {
         Category category = new Category();
         category.setName(skillServiceCategory.getQualifier());
@@ -78,6 +83,9 @@ public class ModelConvertUtil {
         return category;
     }
 
+    /**
+     * Maps a skill so that a partial skill tree with all parents mapped is created.
+     */
     @NotNull
     public static Skill mapSkill(SkillServiceSkill skillServiceSkill) {
         Skill skill = new Skill();
