@@ -81,13 +81,6 @@ export namespace NavigationActionCreator {
         }
     }
 
-    export function AsyncNavigateToViewProfile(viewProfileId: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            navigate(Paths.USER_VIEW_NO_ID + viewProfileId, dispatch);
-            dispatch(ProfileActionCreator.SelectViewProfile(viewProfileId));
-        }
-    }
-
     export function AsyncContinueToTarget() {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let target: string = getState().navigationSlice.targetLocation();

@@ -114,34 +114,6 @@ export function getAllCurrentlyUsedSkillNames(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/skills";
 }
 
-export function getPostViewProfileAPIString(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
-}
-
-export function GetPostMutateViewProfile(id: string) : string {
-    return getViewProfileString(id) + "/entries";
-}
-
-export function getViewProfileString(id: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/view/" + id;
-}
-
-export function deleteViewProfileString(id: string, initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view/" + id;
-}
-
-export function getAllViewProfilesString(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
-}
-
-export function postEditViewProfileDetails(id: string): string {
-    return getViewProfileString(id) + "/details";
-}
-
-export function postDuplicateViewProfile(id: string): string {
-    return getViewProfileString(id);
-}
-
 export function postGenerateProfile(initials: string): string {
     return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
 }

@@ -12,7 +12,6 @@ import {PowerLogin} from './modules/power-login_module';
 import {browserHistory, Route, Router} from 'react-router';
 import {PowerOverview} from './modules/home/power-overview_module';
 import {ConsultantProfile} from './modules/home/profile/profile_module';
-import {ViewProfileCard} from './modules/home/view/view-profile_module';
 import {NotificationInbox} from './modules/admin/notification/notification-inbox_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {NotificationTrashbox} from './modules/admin/notification/notification-trashbox_module';
@@ -93,7 +92,6 @@ class MyRouter extends React.Component<any, any> {
             <Route path={Paths.USER_BASE} component={PowerClient}>
                 <Route path={Paths.USER_HOME} component={PowerOverview}/>
                 <Route path={Paths.USER_PROFILE} component={ConsultantProfile}/>
-                <Route path={Paths.USER_VIEW} component={ViewProfileCard}/>
                 <Route path={Paths.USER_REPORTS} component={ExportDocumentList}/>
                 <Route path={Paths.USER_STATISTICS_NETWORK} component={ProfileNetworkGraph}/>
                 <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>

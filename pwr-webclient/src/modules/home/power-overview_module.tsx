@@ -2,23 +2,10 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../Store';
-import {
-    Card,
-    CardActions,
-    CardHeader,
-    CardText,
-    Dialog,
-    FontIcon,
-    IconButton,
-    RaisedButton,
-    TextField
-} from 'material-ui';
+import {Card, CardActions, CardHeader, CardText, FontIcon, RaisedButton} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
-import {ViewCard} from './view/view-card_module';
 import {Profile} from '../../model/Profile';
-import {ViewProfile} from '../../model/viewprofile/ViewProfile';
-import * as Immutable from 'immutable';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ProfileStatistics} from './profile-statistics_module';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
@@ -33,7 +20,6 @@ import {Paths} from '../../Paths';
 interface PowerOverviewProps {
     loggedInUser: ConsultantInfo;
     profile: Profile;
-    viewProfiles: Immutable.Map<string, ViewProfile>;
 }
 
 /**
@@ -54,9 +40,6 @@ interface PowerOverviewLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface PowerOverviewLocalState {
-    showCreateViewDialog: boolean;
-    viewProfileName: string;
-    viewProfileDescription: string;
 }
 
 /**
@@ -65,8 +48,6 @@ interface PowerOverviewLocalState {
 interface PowerOverviewDispatch {
     requestSingleProfile(initials: string): void;
     navigateTo(target: string): void;
-    createViewProfile(name: string, description: string, initials: string): void;
-    refreshViews(initials: string): void;
 }
 
 class PowerOverviewModule extends React.Component<
@@ -78,18 +59,12 @@ class PowerOverviewModule extends React.Component<
 
     constructor(props: PowerOverviewProps & PowerOverviewLocalProps & PowerOverviewDispatch) {
         super(props);
-        this.state = {
-            showCreateViewDialog: false,
-            viewProfileName: "" ,
-            viewProfileDescription: ""
-        }
     }
 
     static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
         return {
             loggedInUser: state.databaseReducer.loggedInUser(),
             profile: state.databaseReducer.profile(),
-            viewProfiles: state.databaseReducer.viewProfiles()
         };
     }
 
@@ -97,12 +72,6 @@ class PowerOverviewModule extends React.Component<
         return {
             requestSingleProfile: function(initials: string) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
-            },
-            createViewProfile: (name, description, initials) => {
-                dispatch(ProfileAsyncActionCreator.createView(initials, name, description))
-            },
-            refreshViews: (initials) => {
-                dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials))
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target))
         }
@@ -121,33 +90,6 @@ class PowerOverviewModule extends React.Component<
         this.props.navigateTo(Paths.USER_PROFILE);
     };
 
-    private changeViewProfileName(newName: string) {
-        this.setState({
-            viewProfileName: newName
-        });
-    }
-
-    private changeViewProfileDescription(newDesc: string) {
-        this.setState({
-            viewProfileDescription: newDesc
-        });
-    }
-
-    private showCreateViewDialog = () => {
-        this.setState({
-            showCreateViewDialog: true
-        })
-    };
-
-    private exitCreateViewDialog = () => {
-        this.resetLocalState();
-    };
-
-    private saveViewProfile = () => {
-        this.props.createViewProfile(this.state.viewProfileName, this.state.viewProfileDescription,
-            this.props.loggedInUser.initials());
-        this.exitCreateViewDialog();
-    };
 
     render() {
         return (
@@ -180,57 +122,7 @@ class PowerOverviewModule extends React.Component<
                                 title="Views"
                                 subtitle="Übersicht"
                             />
-                            <RaisedButton
-                                primary={true}
-                                label={PowerLocalize.get('Overview.NewView')}
-                                onClick={this.showCreateViewDialog}
-                                icon={ <FontIcon className="material-icons">add</FontIcon>}
-                                className="margin-5px"
-                            />
-                            <RaisedButton
-                                label={PowerLocalize.get('Overview.RefreshViews')}
-                                onClick={() => this.props.refreshViews(this.props.loggedInUser.initials())}
-                                icon={ <FontIcon className="material-icons">autorenew</FontIcon>}
-                                className="margin-5px"
-                            />
-                            <Dialog
-                                title={PowerLocalize.get('Overview.NewView.Dialog.Title')}
-                                open={this.state.showCreateViewDialog}
-                            >
-                                <TextField
-                                    floatingLabelText={PowerLocalize.get('ViewCard.Name')}
-                                    value={this.state.viewProfileName}
-                                    onChange={(evt, val) => this.changeViewProfileName(val)}
-                                />
-                                <br/>
-                                <TextField
-                                    floatingLabelText={PowerLocalize.get('ViewCard.Description')}
-                                    value={this.state.viewProfileDescription}
-                                    onChange={(evt, val) => this.changeViewProfileDescription(val)}
-                                />
-                                <br/>
-                                <IconButton iconClassName="material-icons"
-                                            onClick={this.saveViewProfile}
-                                            tooltip={PowerLocalize.get('Action.Save')}>
-                                    done
-                                </IconButton>
-                                <IconButton iconClassName="material-icons"
-                                            onClick={this.exitCreateViewDialog}
-                                            tooltip={PowerLocalize.get('Action.Undo')}>
-                                    undo
-                                </IconButton>
-                            </Dialog>
-                            <div className="row">
-                                {
-                                    this.props.viewProfiles.map(viewProfile => {
-                                        return (
-                                            <div className="col-md-4 padding-8px" key={"ViewProfileCard." + viewProfile.id()}>
-                                                <ViewCard viewProfileId={viewProfile.id()}/>
-                                            </div>
-                                        );
-                                    }).toArray()
-                                }
-                            </div>
+                            TODO
                         </Card>
                 </div>
             </div>
@@ -243,4 +135,4 @@ class PowerOverviewModule extends React.Component<
  * @author nt
  * @since 22.05.2017
  */
-export const PowerOverview: React.ComponentClass<PowerOverviewLocalProps> = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(PowerOverviewModule);;
+export const PowerOverview: React.ComponentClass<PowerOverviewLocalProps> = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(PowerOverviewModule);

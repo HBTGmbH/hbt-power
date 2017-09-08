@@ -5,7 +5,6 @@ import {APIProfile} from './APIProfile';
 import {Profile} from './Profile';
 import {doop} from 'doop';
 import {LoginStatus} from './LoginStatus';
-import {ViewProfile} from './viewprofile/ViewProfile';
 import {ConsultantInfo} from './ConsultantInfo';
 import {ExportDocument} from './ExportDocument';
 
@@ -43,9 +42,6 @@ export class InternalDatabase {
     public get profile() {return doop<Profile, this>();};
 
     @doop
-    public get viewProfiles() {return doop<Immutable.Map<string, ViewProfile>, this>();}
-
-    @doop
     public get exportDocuments() {return doop<Immutable.List<ExportDocument>, this>();}
 
     @doop
@@ -81,18 +77,11 @@ export class InternalDatabase {
      */
     @doop public get currentlyUsedSkillNames() {return doop<Immutable.Set<string>, this>()};
 
-    /**
-     * The profile that is currently being views and edited.
-     * @returns {Doop<string, this>}
-     */
-    @doop
-    public get activeViewProfileId() {return doop<string, this>();};
 
     constructor(
         apiRequestStatus: RequestStatus,
         languageLevels: Array<string>,
         profile: Profile,
-        viewProfiles: Immutable.Map<string, ViewProfile>,
         trainings: Immutable.Map<string, NameEntity>,
         educations: Immutable.Map<string, NameEntity>,
         languages: Immutable.Map<string, NameEntity>,
@@ -104,14 +93,12 @@ export class InternalDatabase {
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: ConsultantInfo,
         degrees: Immutable.List<string>,
-        activeViewProfileId: string,
         exportDocuments: Immutable.List<ExportDocument>,
         currentlyUsedSkillNames: Immutable.Set<string>
 ) {
         return this.APIRequestStatus(apiRequestStatus)
             .languageLevels(languageLevels)
             .profile(profile)
-            .viewProfiles(viewProfiles)
             .trainings(trainings)
             .educations(educations)
             .languages(languages)
@@ -123,7 +110,6 @@ export class InternalDatabase {
             .degrees(degrees)
             .careers(careers)
             .keySkills(keySkills)
-            .activeViewProfileId(activeViewProfileId)
             .exportDocuments(exportDocuments)
             .currentlyUsedSkillNames(currentlyUsedSkillNames);
     }
@@ -134,7 +120,6 @@ export class InternalDatabase {
             RequestStatus.Successful,
             ['BASIC', 'ADVANCED', 'BUSINESS_FLUENT', 'NATIVE'],
             Profile.createDefault(),
-            Immutable.Map<string, ViewProfile>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
             Immutable.Map<string, NameEntity>(),
@@ -146,7 +131,6 @@ export class InternalDatabase {
             Immutable.Map<string, NameEntity>(),
             ConsultantInfo.empty(),
             Immutable.List<string>(['Bachelor', 'Master', 'Doktor', 'Diplom']),
-            null,
             Immutable.List<ExportDocument>(),
             Immutable.Set<string>(),
         );

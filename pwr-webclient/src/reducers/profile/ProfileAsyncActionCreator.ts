@@ -1,9 +1,7 @@
 import * as redux from 'redux';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
-    deleteViewProfileString,
     getAllCurrentlyUsedSkillNames,
-    getAllViewProfilesString,
     getCareerSuggestionAPIString,
     getCompanySuggestionsAPIString,
     getConsultantApiString,
@@ -11,25 +9,18 @@ import {
     getExportDocuments,
     getKeySkillsSuggestionAPIString,
     getLangSuggestionAPIString,
-    GetPostMutateViewProfile,
-    getPostViewProfileAPIString,
     getProfileAPIString,
     getProjectRolesSuggestionAPIString,
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
     getTrainingSuggestionAPIString,
-    getViewProfileString,
-    postDuplicateViewProfile,
-    postEditViewProfileDetails,
     postGenerateProfile
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {InternalDatabase} from '../../model/InternalDatabase';
-import {AllConsultantsState, APIRequestType, ApplicationState, ProfileElementType} from '../../Store';
+import {AllConsultantsState, APIRequestType, ApplicationState} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
 import {ActionType} from '../ActionType';
-import {NameEntityUtil} from '../../utils/NameEntityUtil';
-import {ViewElement} from '../../model/viewprofile/ViewElement';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {APIExportDocument, ExportDocument} from '../../model/ExportDocument';
@@ -201,186 +192,12 @@ export class ProfileAsyncActionCreator {
                     type: ActionType.LogInUser,
                     consultantInfo: ConsultantInfo.fromAPI(response.data)
                 });
-                dispatch(ProfileAsyncActionCreator.getAllViewProfiles(initials));
                 dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.FailLogin());
-            });
-        };
-    }
-
-    public static createView(initials: string, name: string, description: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            let config: AxiosRequestConfig = {
-                params: {
-                    name: name,
-                    description: description
-                }
-            };
-            axios.post(getPostViewProfileAPIString(initials), null, config).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
-            }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    public static getViewProfile(id: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.get(getViewProfileString(id)).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
-            }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    public static deleteViewProfile(id: string, initials: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.delete(deleteViewProfileString(id, initials)).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.DeleteViewProfile(id));
-                dispatch(ProfileActionCreator.SucceedAPIRequest());
-            }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    public static getAllViewProfiles(initials: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            dispatch(ProfileActionCreator.ClearViewProfiles());
-            axios.get(getAllViewProfilesString(initials)).then(function(response: AxiosResponse) {
-                let ids: Array<string> = response.data;
-                ids.forEach(id => {
-                    dispatch(ProfileAsyncActionCreator.getViewProfile(id));
-                });
-                dispatch(ProfileActionCreator.SucceedAPIRequest());
-            }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    public static sortView(elementType: ProfileElementType,
-                           entryField: 'DATE' | 'DATE_START' | 'DATE_END' | 'NAME' | 'LEVEL' | 'DEGREE',
-                           naturalSortOrder: 'ASC' | 'DESC',
-                           viewProfileId: string
-                        ) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
-            let config: AxiosRequestConfig = {
-                params: {
-                    action: 'sort',
-                    entry: NameEntityUtil.typeToViewAPIString(elementType),
-                    order: naturalSortOrder,
-                    field: entryField
-                }
-            };
-            axios.post(GetPostMutateViewProfile(viewProfileId), [], config).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
-            }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    public static filterViewElements(elementType: ProfileElementType,
-                             viewProfileId: string,
-                             index: number,
-                             enabled: boolean,
-                             lookup: Immutable.List<ViewElement>
-    ) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            let currentIndexes: Set<number> = new Set<number>();
-            lookup.forEach((value, key, iter) => {
-                if(value.enabled()) currentIndexes.add(key);
-            });
-            if(enabled)
-                currentIndexes.add(index);
-            else
-                currentIndexes.delete(index);
-            let config: AxiosRequestConfig = {
-                params: {
-                    action: 'filter',
-                    entry: NameEntityUtil.typeToViewAPIString(elementType),
-                },
-                headers: {
-                    'Content-Type':'application/json'
-                }
-            };
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(GetPostMutateViewProfile(viewProfileId), Array.from(currentIndexes.values()), config).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
-            }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    public static swapViewElements(elementType: ProfileElementType, viewProfileId: string, index1: number, index2: number) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            let indexes: Array<number> = [index1, index2];
-            let config: AxiosRequestConfig = {
-                params: {
-                    action: 'swap',
-                    entry: NameEntityUtil.typeToViewAPIString(elementType),
-                },
-                headers: {
-                    'Content-Type':'application/json'
-                }
-            };
-            //dispatch(ProfileActionCreator.SwapIndexes(elementType, viewProfileId, index1, index2));
-            axios.post(GetPostMutateViewProfile(viewProfileId), JSON.stringify(indexes), config).then(function(response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
-            }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    public static editViewProfileDetails(viewProfileId: string, name: string, description: string, charsPerLine?: number) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            const data = {
-                name: name,
-                description: description,
-                descriptionCharsPerLine: charsPerLine
-            };
-            axios.post(postEditViewProfileDetails(viewProfileId), data).then(function (response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        };
-    }
-
-    /**
-     * Invokes duplication of a view profile by the API backend and parses the response as view profile, which is
-     * then added to the list of available view profiles.
-     * @param viewProfileId
-     * @returns {(dispatch:redux.Dispatch<AllConsultantsState>)=>undefined}
-     */
-    public static duplicateViewProfile(viewProfileId: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
-            axios.post(postDuplicateViewProfile(viewProfileId)).then(function (response: AxiosResponse) {
-                dispatch(ProfileActionCreator.ReceiveAPIViewProfile(response.data));
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
             });
         };
     }

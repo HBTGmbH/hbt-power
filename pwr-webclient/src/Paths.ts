@@ -35,8 +35,6 @@ export class Paths {
     public static readonly USER_BASE = '/app/';
     public static readonly USER_HOME = '/app/home';
     public static readonly USER_PROFILE = '/app/profile';
-    public static readonly USER_VIEW = '/app/view/:id';
-    public static readonly USER_VIEW_NO_ID = '/app/view/';
     public static readonly USER_REPORTS = '/app/reports';
     public static readonly USER_SEARCH = '/app/search';
     public static readonly USER_STATISTICS_NETWORK =  '/app/statistics/network';

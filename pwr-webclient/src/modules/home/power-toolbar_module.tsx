@@ -17,7 +17,6 @@ import {NavigationActionCreator} from '../../reducers/navigation/NavigationActio
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
     loggedInAsAdmin: boolean;
-    viewSelected: boolean;
     statisticsAvailable: boolean;
 }
 
@@ -60,7 +59,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return {
             loggedInUser: state.databaseReducer.loggedInUser(),
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
-            viewSelected: !isNullOrUndefined(state.databaseReducer.activeViewProfileId()),
             statisticsAvailable: state.statisticsReducer.available(),
         };
     }
@@ -138,13 +136,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
                 primaryText={PowerLocalize.get('Menu.BaseData')}
             />
-            {
-                this.props.viewSelected ?
-                <MenuItem
-                    onClick={() => this.props.navigateTo(Paths.USER_VIEW)}
-                    primaryText={PowerLocalize.get('Menu.View')}
-                /> : null
-            }
             <MenuItem
                 primaryText={PowerLocalize.get('Menu.Reports')}
                 onClick={this.loadExportDocuments}/>

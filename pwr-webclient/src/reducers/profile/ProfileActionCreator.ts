@@ -4,24 +4,16 @@ import {
     AbstractAction,
     AddSkillAction,
     ChangeStringValueAction,
-    ChangeViewProfileAction,
-    ChangeViewProfileCharsPerLineAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteProjectAction,
-    DeleteViewProfileAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
     SaveProjectAction,
-    SaveViewProfileAction,
-    SelectViewProfileAction,
-    SwapIndexAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ActionType} from '../ActionType';
-import {ViewProfile} from '../../model/viewprofile/ViewProfile';
-import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
@@ -133,34 +125,6 @@ export class ProfileActionCreator {
         }
     }
 
-    public static SaveViewProfile(viewProfile: ViewProfile): SaveViewProfileAction {
-        return {
-            type: ActionType.SaveViewProfile,
-            viewProfile: viewProfile
-        }
-    }
-
-    public static DeleteViewProfile(id: string): DeleteViewProfileAction {
-        return {
-            type: ActionType.DeleteViewProfile,
-            id: id
-        }
-    }
-
-    public static SelectViewProfile(id: string): SelectViewProfileAction {
-        return {
-            type: ActionType.SelectViewProfile,
-            id: id
-        }
-    }
-
-    public static ReceiveAPIViewProfile(apiViewProfile:APIViewProfile): ReceiveAPIResponseAction {
-        return {
-            type: ActionType.APIRequestSuccess,
-            payload: apiViewProfile,
-            requestType: APIRequestType.RequestCreateViewProfile
-        }
-    }
 
     public static SucceedAPIRequest(): AbstractAction {
         return {
@@ -171,40 +135,6 @@ export class ProfileActionCreator {
     public static FailLogin(): AbstractAction {
         return {
             type: ActionType.UserLoginFailed
-        }
-    }
-
-    public static SwapIndexes(elementType: ProfileElementType, viewProfileId: string, index1: number, index2: number): SwapIndexAction {
-        return {
-            type: ActionType.SwapIndex,
-            elementType: elementType,
-            viewProfileId: viewProfileId,
-            index1: index1,
-            index2: index2
-        }
-    }
-
-    public static ChangeViewProfileName(id: string, name: string): ChangeViewProfileAction {
-        return {
-            type: ActionType.ChangeViewProfileName,
-            viewProfileId: id,
-            val: name
-        }
-    }
-
-    public static ChangeViewProfileDescription(id: string, description: string): ChangeViewProfileAction {
-        return {
-            type: ActionType.ChangeViewProfileDescription,
-            viewProfileId: id,
-            val: description
-        }
-    }
-
-    public static ChangeViewProfileCharsPerLine(id: string, charsPerLine: number): ChangeViewProfileCharsPerLineAction{
-        return {
-            type: ActionType.ChangeViewProfileCharsPerLine,
-            viewProfileId: id,
-            val: charsPerLine
         }
     }
 
