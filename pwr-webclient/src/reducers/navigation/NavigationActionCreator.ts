@@ -1,7 +1,7 @@
 import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
-import {ApplicationState} from '../../Store';
+import {ApplicationState} from '../reducerIndex';
 import {Paths} from '../../Paths';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {browserHistory} from 'react-router';

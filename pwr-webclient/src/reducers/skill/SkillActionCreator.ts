@@ -2,7 +2,8 @@ import {APISkillCategory, SkillCategory} from '../../model/skill/SkillCategory';
 import {SkillActions} from './SkillActions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
-import {ApplicationState, RequestStatus} from '../../Store';
+import {ApplicationState} from '../reducerIndex';
+import {RequestStatus} from '../../Store';
 import {
     deleteBlacklistCategory,
     deleteCategory,

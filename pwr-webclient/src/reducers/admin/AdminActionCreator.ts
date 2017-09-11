@@ -26,7 +26,8 @@ import {
     postConsultantActionString
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import {ApplicationState, RequestStatus} from '../../Store';
+import {ApplicationState} from '../reducerIndex';
+import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {APIConsultant} from '../../model/APIProfile';

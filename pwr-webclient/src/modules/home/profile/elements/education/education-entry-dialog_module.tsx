@@ -1,6 +1,6 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {
     AutoComplete,
     Card,
@@ -140,7 +140,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
         let name: string = this.state.educationAutoComplete;
-        let education: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.educations);
+        let education: NameEntity = ProfileStore.findNameEntityByName(name, this.props.educations);
         let educationEntry: EducationEntry = this.state.entry;
         if(educationEntry.degree() == PowerLocalize.get("None")) educationEntry.degree(null);
         if(isNullOrUndefined(education)) {

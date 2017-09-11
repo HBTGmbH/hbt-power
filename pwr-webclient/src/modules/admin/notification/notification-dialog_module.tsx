@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {Dialog, FlatButton, RadioButton, RadioButtonGroup, RaisedButton, Step, StepLabel, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
@@ -10,6 +9,7 @@ import {Stepper} from 'material-ui/Stepper';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
 import {StringUtils} from '../../../utils/StringUtil';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
 
 /**

@@ -1,11 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../../Store';
 import {Color} from '../../../../utils/ColorUtil';
 import {Col, Grid, Row} from 'react-flexbox-grid';
 import {LinearProgress, TextField} from 'material-ui';
 import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
+import {ApplicationState} from '../../../../reducers/reducerIndex';
 
 interface DescriptionProps {
     abstractText: string;
@@ -71,7 +71,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         };
     }
 
-    public static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : DescriptionDispatch {
+    public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : DescriptionDispatch {
         return {
             changeAbstract : function(newAbstract: string) {
                 dispatch(ProfileActionCreator.changeAbstract(newAbstract));

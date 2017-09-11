@@ -1,6 +1,6 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {
     AutoComplete,
     Card,
@@ -94,7 +94,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
         let name: string = this.state.qualificationAutoCompleteValue;
-        let qualification: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.qualifications);
+        let qualification: NameEntity = ProfileStore.findNameEntityByName(name, this.props.qualifications);
         let qualificationEntry: QualificationEntry = this.state.qualificationEntry;
         if(isNullOrUndefined(qualification)) {
             qualification = NameEntity.createNew(name);

@@ -2,12 +2,12 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {ApplicationState} from '../../Store';
 import {BuildInfo} from '../../model/metadata/BuildInfo';
 import {Subheader} from 'material-ui';
 import {SingleBuildInfo} from './single-build-info_module';
 import {MetaDataActionCreator} from '../../reducers/metadata/MetaDataActions';
 import {Comparators} from '../../utils/Comparators';
+import {ApplicationState} from '../../reducers/reducerIndex';
 
 
 interface BuildInfoProps {

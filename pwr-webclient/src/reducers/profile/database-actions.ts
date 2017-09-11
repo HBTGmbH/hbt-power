@@ -1,6 +1,6 @@
 /**
  * @author nt | nt@hbt.de
- * Contains various actions that are dispatchable to the redux-store part represented by the {@link InternalDatabase}
+ * Contains various actions that are dispatchable to the redux-store part represented by the {@link ProfileStore}
  */
 
 import {APIRequestType, ProfileElementType} from '../../Store';

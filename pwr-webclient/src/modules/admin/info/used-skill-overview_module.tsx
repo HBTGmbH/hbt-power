@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import * as Immutable from 'immutable';
 import {AutoComplete, FontIcon, List, ListItem, makeSelectable, Paper, Subheader, TextField} from 'material-ui';
 import {ReactUtils} from '../../../utils/ReactUtils';
@@ -13,6 +12,7 @@ import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
 import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
 let SelectableList = wrapSelectableList(makeSelectable(List));

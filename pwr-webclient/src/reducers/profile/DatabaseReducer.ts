@@ -14,7 +14,7 @@ import {
     SaveProjectAction,
     UpdateSkillRatingAction
 } from './database-actions';
-import {InternalDatabase} from '../../model/InternalDatabase';
+import {ProfileStore} from '../../model/ProfileStore';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
@@ -36,23 +36,23 @@ export class DatabaseReducer {
         return res;
     }
 
-    private static HandleChangeAbstract(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
+    private static HandleChangeAbstract(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
         let newProfile: Profile = state.profile().description(action.value);
         return state.profile(newProfile);
     }
 
 
-    private static DeleteEntry(state: InternalDatabase, action: DeleteEntryAction):InternalDatabase {
+    private static DeleteEntry(state: ProfileStore, action: DeleteEntryAction):ProfileStore {
         let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile(), action);
         return state.profile(newProfile);
     }
 
-    private static CreateEntry(state: InternalDatabase, action: CreateEntryAction):InternalDatabase {
+    private static CreateEntry(state: ProfileStore, action: CreateEntryAction):ProfileStore {
         let newProfile: Profile = ProfileReducer.reducerHandleCreateEntry(state.profile(), <CreateEntryAction> action);
         return state.profile(newProfile);
     }
 
-    private static UpdateNameEntity(database: InternalDatabase, entity: NameEntity, type: ProfileElementType): InternalDatabase {
+    private static UpdateNameEntity(database: ProfileStore, entity: NameEntity, type: ProfileElementType): ProfileStore {
         switch(type) {
             case ProfileElementType.TrainingEntry:
                 return database.trainings(database.trainings().set(entity.id(), entity));
@@ -74,7 +74,7 @@ export class DatabaseReducer {
     }
 
 
-    private static SaveEntry(database: InternalDatabase, action: SaveEntryAction): InternalDatabase {
+    private static SaveEntry(database: ProfileStore, action: SaveEntryAction): ProfileStore {
         if(!isNullOrUndefined(action.nameEntity) && action.nameEntity.isNew) {
             database = DatabaseReducer.UpdateNameEntity(database, action.nameEntity, action.entryType);
         }
@@ -82,19 +82,19 @@ export class DatabaseReducer {
         return database.profile(profile);
     }
 
-    private static DeleteProject(database: InternalDatabase, action: DeleteProjectAction): InternalDatabase {
+    private static DeleteProject(database: ProfileStore, action: DeleteProjectAction): ProfileStore {
         let idToRemove: string = (<DeleteProjectAction> action).id;
         let newProfile: Profile = database.profile();
         newProfile = newProfile.projects(newProfile.projects().remove(idToRemove));
         return database.profile(newProfile);
     }
 
-    private static SaveProject(database: InternalDatabase, action: SaveProjectAction): InternalDatabase {
+    private static SaveProject(database: ProfileStore, action: SaveProjectAction): ProfileStore {
         // project with role IDs cleared.
         let project: Project = action.state.project.roleIds(action.state.project.roleIds().clear());
         project = project.roleIds(project.roleIds().clear());
         action.state.roles.forEach(role => {
-            let projectRole: NameEntity = InternalDatabase.findNameEntityByName(role, database.projectRoles());
+            let projectRole: NameEntity = ProfileStore.findNameEntityByName(role, database.projectRoles());
             if(isNullOrUndefined(projectRole)) {
                 projectRole = NameEntity.createNew(role);
                 database = database.projectRoles(database.projectRoles().set(projectRole.id(), projectRole));
@@ -103,7 +103,7 @@ export class DatabaseReducer {
         });
 
         // Fix end customer and broker
-        let broker: NameEntity = InternalDatabase.findNameEntityByName(action.state.brokerACValue, database.companies());
+        let broker: NameEntity = ProfileStore.findNameEntityByName(action.state.brokerACValue, database.companies());
         if(isNullOrUndefined(broker)) {
             broker = NameEntity.createNew(action.state.brokerACValue);
             database = database.companies(database.companies().set(broker.id(), broker));
@@ -111,7 +111,7 @@ export class DatabaseReducer {
         project = project.brokerId(broker.id());
 
         // End customer
-        let endCustomer: NameEntity = InternalDatabase.findNameEntityByName(action.state.clientACValue, database.companies());
+        let endCustomer: NameEntity = ProfileStore.findNameEntityByName(action.state.clientACValue, database.companies());
         if(isNullOrUndefined(endCustomer)) {
             endCustomer = NameEntity.createNew(action.state.clientACValue);
             database = database.companies(database.companies().set(endCustomer.id(), endCustomer));
@@ -122,23 +122,23 @@ export class DatabaseReducer {
         return database.profile(profile);
     }
 
-    private static CreateProject(database: InternalDatabase): InternalDatabase{
+    private static CreateProject(database: ProfileStore): ProfileStore{
         let newProfile: Profile = database.profile();
         let proj: Project = Project.createNew();
         newProfile = newProfile.projects(newProfile.projects().set(proj.id(), proj));
         return database.profile(newProfile);
     }
 
-    private static UpdateSkillRating(database: InternalDatabase, action: UpdateSkillRatingAction): InternalDatabase {
+    private static UpdateSkillRating(database: ProfileStore, action: UpdateSkillRatingAction): ProfileStore {
         return database.profile(ProfileReducer.reducerHandleUpdateSkillRating(database.profile(), action));
     }
 
-    private static DeleteSkill(database: InternalDatabase, action: DeleteSkillAction): InternalDatabase {
+    private static DeleteSkill(database: ProfileStore, action: DeleteSkillAction): ProfileStore {
         return database.profile(ProfileReducer.reducerHandleDeleteSkill(database.profile(), action));
     }
 
-    private static ApiRequestSuccessful(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
-        let newState: InternalDatabase;
+    private static ApiRequestSuccessful(state: ProfileStore, action: ReceiveAPIResponseAction): ProfileStore {
+        let newState: ProfileStore;
         switch(action.requestType) {
             case APIRequestType.RequestLanguages:
                 newState = state.languages(DatabaseReducer.AddAPINameEntities(action.payload, state.languages()));
@@ -183,29 +183,29 @@ export class DatabaseReducer {
         return newState.APIRequestStatus(RequestStatus.Successful);
     }
 
-    private static LogInUser(database: InternalDatabase, action: LoginAction): InternalDatabase {
+    private static LogInUser(database: ProfileStore, action: LoginAction): ProfileStore {
         database = database.loginStatus(LoginStatus.SUCCESS);
         return database.loggedInUser(action.consultantInfo);
     }
 
-    private static LogOutUser(database: InternalDatabase): InternalDatabase {
+    private static LogOutUser(database: ProfileStore): ProfileStore {
         database = database.loggedInUser(ConsultantInfo.empty());
         return database.profile(Profile.createDefault());
     }
 
-    private static AddSkill(state: InternalDatabase, action: AddSkillAction): InternalDatabase {
+    private static AddSkill(state: ProfileStore, action: AddSkillAction): ProfileStore {
         let profile = ProfileReducer.reducerHandleAddSkill(state.profile(), action);
         return state.profile(profile);
     }
 
-    public static SetUserInitials(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
+    public static SetUserInitials(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
         let loggedInUser = state.loggedInUser().initials(action.value);
         return state.loggedInUser(loggedInUser);
     }
 
-    public static Reduce(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
+    public static Reduce(state : ProfileStore, action: AbstractAction) : ProfileStore {
         if(isNullOrUndefined(state)) {
-            state = InternalDatabase.createWithDefaults();
+            state = ProfileStore.createWithDefaults();
         }
         console.debug('DatabaseReducer called for action type ' + ActionType[action.type]);
         switch(action.type) {

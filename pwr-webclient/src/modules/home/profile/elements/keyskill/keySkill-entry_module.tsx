@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {IconButton} from 'material-ui';
 import {KeySkillDialog} from './keySkill-entry-dialog_module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
@@ -10,6 +10,7 @@ import {KeySkillEntry} from '../../../../../model/KeySkillEntry';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.

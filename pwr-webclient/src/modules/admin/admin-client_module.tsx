@@ -3,11 +3,12 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {Avatar, FlatButton, FontIcon, List, ListItem, Paper, Toolbar, ToolbarGroup} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ApplicationState, RequestStatus} from '../../Store';
+import {RequestStatus} from '../../Store';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {RequestSnackbar} from '../general/request-snackbar_module.';
 import {Paths} from '../../Paths';
 import {browserHistory} from 'react-router';
+import {ApplicationState} from '../../reducers/reducerIndex';
 
 
 /**

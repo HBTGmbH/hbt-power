@@ -17,8 +17,9 @@ import {
     postGenerateProfile
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
-import {InternalDatabase} from '../../model/InternalDatabase';
-import {AllConsultantsState, APIRequestType, ApplicationState} from '../../Store';
+import {ProfileStore} from '../../model/ProfileStore';
+import {ApplicationState} from '../reducerIndex';
+import {APIRequestType} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -66,7 +67,7 @@ export class ProfileAsyncActionCreator {
      * @returns {(dispatch:redux.Dispatch<AllConsultantsState>)=>undefined}
      */
     public static requestSingleProfile(initials: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
             // Dispatch the action that sets the status to "Request Pendign" or similar
             dispatch(ProfileActionCreator.APIRequestPending());
             // Perform the actual request
@@ -83,7 +84,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static saveFullProfile(initials: string, profile: APIProfile) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.put(getProfileAPIString(initials), profile).then(function(response: AxiosResponse) {
                 console.info('Notifications: ', response.data.notifications);
@@ -95,7 +96,7 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    private static abstractAPISuggestionRequest(dispatch: redux.Dispatch<AllConsultantsState>, apiString: string, type:APIRequestType) {
+    private static abstractAPISuggestionRequest(dispatch: redux.Dispatch<ApplicationState>, apiString: string, type:APIRequestType) {
         dispatch(ProfileActionCreator.APIRequestPending());
         axios.get(apiString).then(function(response: AxiosResponse) {
             dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, type));
@@ -106,13 +107,13 @@ export class ProfileAsyncActionCreator {
     }
 
     public static requestLanguages() {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(dispatch, getLangSuggestionAPIString(), APIRequestType.RequestLanguages);
         };
     }
 
     public static requestEducations() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getEducationSuggestionAPIString(),
@@ -121,7 +122,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static requestQualifications() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getQualificationSuggestionAPIString(),
@@ -130,7 +131,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static requestTrainings() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getTrainingSuggestionAPIString(),
@@ -139,7 +140,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static requestSectors() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getSectorsSuggestionAPIString(),
@@ -148,7 +149,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static requestKeySkills() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getKeySkillsSuggestionAPIString(),
@@ -158,7 +159,7 @@ export class ProfileAsyncActionCreator {
 
 
     public static requestCareers() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getCareerSuggestionAPIString(),
@@ -167,7 +168,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static requestProjectRoles() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getProjectRolesSuggestionAPIString(),
@@ -176,7 +177,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static requestCompanies() {
-        return function(dispatch: redux.Dispatch<InternalDatabase>) {
+        return function(dispatch: redux.Dispatch<ProfileStore>) {
             ProfileAsyncActionCreator.abstractAPISuggestionRequest(
                 dispatch,
                 getCompanySuggestionsAPIString(),
@@ -185,7 +186,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static logInUser(initials: string) {
-        return function(dispatch: redux.Dispatch<InternalDatabase>, getState: () => ApplicationState) {
+        return function(dispatch: redux.Dispatch<ProfileStore>, getState: () => ApplicationState) {
             axios.get(getConsultantApiString(initials)).then(function(response: AxiosResponse) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                 dispatch({
@@ -203,7 +204,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static generatePDFProfile(initials: string, viewProfileId: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
             let config: AxiosRequestConfig = {
                 params: {
                     viewid: viewProfileId,
@@ -227,7 +228,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static generateDocXProfile(initials: string, viewProfileId: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
             let config: AxiosRequestConfig = {
                 params: {
                     viewid: viewProfileId,
@@ -251,7 +252,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static getAllExportDocuments(initials: string) {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getExportDocuments(initials)).then((response: AxiosResponse) => {
                 let apiExportDocs: Array<APIExportDocument> = response.data;
                 let exportDocs = apiExportDocs.map(value => ExportDocument.fromAPI(value));
@@ -264,7 +265,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static getAllCurrentlyUsedSkills() {
-        return function(dispatch: redux.Dispatch<AllConsultantsState>) {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getAllCurrentlyUsedSkillNames()).then((response: AxiosResponse) => {
                 let apiData: Array<String> = response.data;
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(apiData, APIRequestType.RequestSkillNames))

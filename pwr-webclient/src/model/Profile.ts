@@ -16,7 +16,7 @@ import {
     APITrainingEntry
 } from './APIProfile';
 import {isNullOrUndefined} from 'util';
-import {InternalDatabase} from './InternalDatabase';
+import {ProfileStore} from './ProfileStore';
 import {SectorEntry} from './SectorEntry';
 import {Project} from './Project';
 import {doop} from 'doop/built/doop';
@@ -203,7 +203,7 @@ export class Profile {
 
     // FIXME do not require database anymore, or refactor database so it doesn't contain
     // FIXME this profile anymore.
-    public serializeToApiProfile(database: InternalDatabase): APIProfile {
+    public serializeToApiProfile(database: ProfileStore): APIProfile {
         // Maps all career elements into an API format
         let training: Array<APITrainingEntry> = [];
         this.trainingEntries().forEach(trainingEntry => {

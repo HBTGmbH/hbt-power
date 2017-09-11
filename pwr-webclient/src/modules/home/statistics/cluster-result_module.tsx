@@ -1,10 +1,10 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantClusterInfo';
 import {ConsultantClusterOverview} from '../../general/statistics/consultant-cluster-info_module';
 import {isNullOrUndefined} from 'util';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 interface ClusterResultProps {
     consultantClusterInfo: ConsultantClusterInfo;

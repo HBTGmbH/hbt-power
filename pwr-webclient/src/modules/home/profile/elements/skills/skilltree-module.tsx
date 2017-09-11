@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../../../Store';
 import {List, Subheader} from 'material-ui';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {SkillChip} from './skill-chip_module';
@@ -13,6 +12,7 @@ import {AddSkillDialog} from './add-skill-dialog_module';
 import {SkillServiceSkill} from '../../../../../model/skill/SkillServiceSkill';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {isNullOrUndefined} from 'util';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 const distance = require("jaro-winkler");
 

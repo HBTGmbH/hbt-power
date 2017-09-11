@@ -1,9 +1,9 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {Network} from '../../../model/statistics/Network';
 import {ProfileNetworkGraph} from '../../general/statistics/profile-network_module';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 
 interface ProfileNetworkProps {

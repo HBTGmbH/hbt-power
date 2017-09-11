@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 
 import './index.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {store} from './reducers/reducerIndex';
+import {ApplicationState, store} from './reducers/reducerIndex';
 import {Provider} from 'react-redux';
 import {PowerClient} from './modules/home/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
@@ -45,7 +45,6 @@ import {fade} from 'material-ui/utils/colorManipulator';
 import {Paths} from './Paths';
 import {AdminSkillTree2} from './modules/admin/info/admin-skill-tree2_module';
 import {AdminProfileOverview} from './modules/admin/info/admin-profile-overview_module.';
-import {ApplicationState} from './Store';
 import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
 import injectTapEventPlugin = require('react-tap-event-plugin');
 
@@ -71,7 +70,7 @@ const pageLeavePreventer = (ev: any) => {
     let state: ApplicationState = store.getState() as ApplicationState;
     let changes = state.databaseReducer.profile().changesMade();
     console.log("Changes", changes);
-    return changes > 0 ? "Foo" : null;
+    return changes > 0 ? "DoNotLeave" : null;
 };
 
 /**

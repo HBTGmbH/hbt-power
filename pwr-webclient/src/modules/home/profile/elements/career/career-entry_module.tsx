@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {CareerEntry} from '../../../../../model/CareerEntry';
-import {ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {IconButton} from 'material-ui';
 import {formatToYear} from '../../../../../utils/DateUtil';
@@ -11,6 +11,7 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {CareerEntryDialog} from './career-entry-dialog_module';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.

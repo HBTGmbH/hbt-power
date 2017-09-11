@@ -1,11 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {ExportDocument} from '../../../model/ExportDocument';
 import * as Immutable from 'immutable';
 import {IconButton, Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
 import {StringUtils} from '../../../utils/StringUtil';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 import trimURL = StringUtils.trimURL;
 
 interface ExportDocumentListProps {

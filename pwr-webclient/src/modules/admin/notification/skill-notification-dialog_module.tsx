@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {
     Dialog,
     FlatButton,
@@ -19,6 +18,7 @@ import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAct
 import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import {SkillSearcher} from '../../general/skill-search_module';
 import {AdminNotificationReason} from '../../../model/admin/AdminNotificationReason';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
@@ -291,6 +291,7 @@ class SkillNotificationModuleModule extends React.Component<
         switch(this.props.status) {
             case SkillNotificationEditStatus.FETCHING_DATA:
                 index = 0;
+                break;
             case SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY:

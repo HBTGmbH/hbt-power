@@ -1,13 +1,13 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {FontIcon, RaisedButton, Tab, Table, TableBody, TableRow, TableRowColumn, Tabs} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {StringUtils} from '../../../utils/StringUtil';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
 
 /**

@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState, ProfileElementType} from '../../../Store';
+import {ProfileElementType} from '../../../Store';
 import {FontIcon, List, ListItem, makeSelectable, MenuItem, Paper, SelectField, Subheader} from 'material-ui';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -14,6 +14,7 @@ import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsAc
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
 import {ReactUtils} from '../../../utils/ReactUtils';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
 let SelectableList = wrapSelectableList(makeSelectable(List));

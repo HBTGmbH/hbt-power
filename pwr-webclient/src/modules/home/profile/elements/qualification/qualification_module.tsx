@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
@@ -10,6 +10,7 @@ import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileElement} from '../../profile-element_module';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 interface QualificationProps {
     qualificationEntries: Immutable.Map<string, QualificationEntry>;
@@ -50,7 +51,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : QualificationDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : QualificationDispatch {
         return {
             addQualificationEntry: function() {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.QualificationEntry));

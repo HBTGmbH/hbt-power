@@ -4,10 +4,10 @@ import * as redux from 'redux';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {NetworkNodeDetails} from './network-node-details_module.';
-import {ApplicationState} from '../../../Store';
 import {Network} from '../../../model/statistics/Network';
 import * as vis from 'vis';
 import {Edge, Node} from 'vis';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 interface ProfileNetworkGraphProps {
     network: Network;

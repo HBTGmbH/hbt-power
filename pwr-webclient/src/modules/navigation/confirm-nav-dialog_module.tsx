@@ -1,10 +1,10 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../Store';
 import {Dialog, FlatButton} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
+import {ApplicationState} from '../../reducers/reducerIndex';
 
 interface ConfirmNavDialogProps {
     dialogOpen: boolean;

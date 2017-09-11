@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../Store';
 import {Card, CardActions, CardHeader, CardText, FontIcon, RaisedButton} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
@@ -10,6 +9,7 @@ import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ProfileStatistics} from './profile-statistics_module';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../Paths';
+import {ApplicationState} from '../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.

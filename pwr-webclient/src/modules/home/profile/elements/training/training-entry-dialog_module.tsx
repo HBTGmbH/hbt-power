@@ -1,6 +1,6 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {
     AutoComplete,
     Card,
@@ -120,7 +120,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
         let name: string = this.state.trainingEntryValue;
-        let training: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.trainings);
+        let training: NameEntity = ProfileStore.findNameEntityByName(name, this.props.trainings);
         let sectorEntry: TrainingEntry = this.state.trainingEntry;
         // check if a sector with the name exists. If thats not the case, just create a new run. Server will handle the rest.
         if(isNullOrUndefined(training)) {

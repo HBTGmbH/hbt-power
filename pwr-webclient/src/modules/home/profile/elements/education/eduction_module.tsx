@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {EducationEntry} from '../../../../../model/EducationEntry';
@@ -10,6 +10,7 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {SingleEducationElement} from './education-entry_module';
 import {ProfileElement} from '../../profile-element_module';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 interface EducationProps {
 
@@ -56,7 +57,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : EducationDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : EducationDispatch {
         return {
             addEducationEntry: function() {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.EducationEntry))
