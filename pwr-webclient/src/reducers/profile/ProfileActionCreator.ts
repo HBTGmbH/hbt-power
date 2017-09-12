@@ -138,12 +138,6 @@ export class ProfileActionCreator {
         }
     }
 
-    public static ClearViewProfiles(): AbstractAction {
-        return {
-            type: ActionType.ClearViewProfiles
-        }
-    }
-
     public static SetUserInitials(initials: string): ChangeStringValueAction {
         return {
             type: ActionType.SetUserInitials,

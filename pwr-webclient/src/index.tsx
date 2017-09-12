@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import './index.css';
+import './../node_modules/react-toggle/style.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {ApplicationState, store} from './reducers/reducerIndex';
 import {Provider} from 'react-redux';
@@ -46,6 +47,7 @@ import {Paths} from './Paths';
 import {AdminSkillTree2} from './modules/admin/info/admin-skill-tree2_module';
 import {AdminProfileOverview} from './modules/admin/info/admin-profile-overview_module.';
 import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
+import {ViewProfileOverview} from './modules/home/view/view-profile-overview_module';
 import injectTapEventPlugin = require('react-tap-event-plugin');
 
 // For material ui tap touch support
@@ -65,7 +67,7 @@ store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
 store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
 
-
+// Prevents navigation
 const pageLeavePreventer = (ev: any) => {
     let state: ApplicationState = store.getState() as ApplicationState;
     let changes = state.databaseReducer.profile().changesMade();
@@ -96,6 +98,7 @@ class MyRouter extends React.Component<any, any> {
                 <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>
                 <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
                 <Route path={Paths.USER_SEARCH}  component={ConsultantSkillSearch}/>
+                <Route path={Paths.USER_VIEW_PROFILE}  component={ViewProfileOverview}/>
             </Route>
             <Route path={Paths.ADMIN_BASE} component={AdminClient}>
                 <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />

@@ -14,6 +14,7 @@ import {StatisticsStore} from '../model/statistics/StatisticsStore';
 import {SkillStore} from '../model/skill/SkillStore';
 import {MetaDataStore} from '../model/metadata/MetaDataStore';
 import {NavigationStore} from '../model/navigation/NavigationStore';
+import {ViewProfileStore} from '../model/view/ViewProfileStore';
 
 
 export interface ApplicationState {
@@ -23,6 +24,7 @@ export interface ApplicationState {
     skillReducer: SkillStore;
     metaDataReducer: MetaDataStore;
     navigationSlice: NavigationStore;
+    viewProfileSlice: ViewProfileStore;
 }
 
 

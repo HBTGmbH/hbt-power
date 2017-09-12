@@ -1,3 +1,4 @@
+import {SortableEntryField, SortableEntryType} from './model/view/NameComparableType';
 declare const POWER_API_HOST: string;
 
 declare const POWER_API_PORT: string;
@@ -19,6 +20,11 @@ declare const POWER_API_SUFFIX_SKILL: string;
 declare const POWER_PROFILE_META_INFO: string;
 
 declare const POWER_API_META_INFO_REPORT: string;
+
+// View Profile
+declare const POWER_API_HOST_VIEW: string;
+declare const POWER_API_PORT_VIEW: string;
+declare const POWER_API_SUFFIX_VIEW: string;
 
 
 export function getProfileBuildInfo(): string {
@@ -237,4 +243,43 @@ export function deleteCategory(parentId: number) {
 
 export function patchMoveSkill(skillId: number, newCategoryId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId + "/category/" + newCategoryId;
+}
+
+
+export namespace ViewProfileService {
+
+    function base() {
+        return POWER_API_HOST_VIEW + ":" + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
+    }
+
+    export function getViewProfile(initials: string, id: string) {
+       return base() + "/view/" + initials + "/" + id;
+    }
+
+    export function getViewProfileIds(initials: string) {
+        return base() + "/view/" + initials;
+    }
+
+    export function postViewProfile(initials: string) {
+        return getViewProfileIds(initials);
+    }
+
+    export function deleteViewProfile(initials: string, id: string) {
+        return getViewProfile(initials, id);
+    }
+
+    function patchBase(initials: string, id: string) {
+        return base() +  "/" + initials + "/view/" + id + "/";
+    }
+
+    export function patchMoveEntry(initials: string, id: string, movableEntry: string, sourceIndex: number, targetIndex: number) {
+        return patchBase(initials, id) + movableEntry + "/position/" + sourceIndex + "/" + targetIndex;
+    }
+
+    export function patchToggleEntry(initials: string, id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
+        return patchBase(initials, id) + toggleableEntry + "/" + index + "/visibility/" + isEnabled;
+    }
+    export function patchSortEntry(initials: string, id: string, entryType: SortableEntryType, field: SortableEntryField) {
+        return patchBase(initials, id) + SortableEntryType[entryType] + "/" + field + "/order";
+    }
 }

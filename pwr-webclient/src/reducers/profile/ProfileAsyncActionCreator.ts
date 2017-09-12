@@ -25,6 +25,7 @@ import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {APIExportDocument, ExportDocument} from '../../model/ExportDocument';
+import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
 
 export class ProfileAsyncActionCreator {
 
@@ -186,7 +187,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static logInUser(initials: string) {
-        return function(dispatch: redux.Dispatch<ProfileStore>, getState: () => ApplicationState) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             axios.get(getConsultantApiString(initials)).then(function(response: AxiosResponse) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                 dispatch({
@@ -196,6 +197,7 @@ export class ProfileAsyncActionCreator {
                 dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+                dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.FailLogin());

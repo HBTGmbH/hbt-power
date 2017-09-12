@@ -34,6 +34,7 @@ export class Paths {
 
     public static readonly USER_BASE = '/app/';
     public static readonly USER_HOME = '/app/home';
+    public static readonly USER_VIEW_PROFILE = '/app/view/:id';
     public static readonly USER_PROFILE = '/app/profile';
     public static readonly USER_REPORTS = '/app/reports';
     public static readonly USER_SEARCH = '/app/search';
@@ -63,7 +64,7 @@ export class Paths {
             // renew the cookie to hold another fixed period of time.
             Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
             store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
-            store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_HOME));
+            store.dispatch(NavigationActionCreator.AsyncNavigateTo(browserHistory.getCurrentLocation().pathname));
         } else {
             store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
         }
