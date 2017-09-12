@@ -7,7 +7,9 @@ export enum SortableEntryType {
     SECTOR,
     TRAINING,
     LANGUAGE,
-    DISPLAY_CATEGORY
+    PROJECT,
+    DISPLAY_CATEGORY,
+    SKILL
 }
 
-export type SortableEntryField = "name" | "end-date" | "start-date";
+export type SortableEntryField = "name" | "end-date" | "start-date" | "rating";

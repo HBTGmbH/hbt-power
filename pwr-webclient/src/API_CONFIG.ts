@@ -276,10 +276,22 @@ export namespace ViewProfileService {
         return patchBase(initials, id) + movableEntry + "/position/" + sourceIndex + "/" + targetIndex;
     }
 
+    export function patchMoveNestedEntry(initials: string, id: string, container: string, containerIndex: number, movableEntry: string, sourceIndex: number, targetIndex: number) {
+        return patchBase(initials, id) + container + "/" + containerIndex + "/" + movableEntry + "/position/" + sourceIndex + "/" + targetIndex;
+    }
+
     export function patchToggleEntry(initials: string, id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
         return patchBase(initials, id) + toggleableEntry + "/" + index + "/visibility/" + isEnabled;
     }
+    export function patchToggleNestedEntry(initials: string, id: string, container: string, containerIndex: number, toggleableEntry: string, index: number, isEnabled: boolean) {
+        return patchBase(initials, id) + container + "/" + containerIndex + "/" + toggleableEntry + "/" + index + "/visibility/" + isEnabled;
+    }
+
     export function patchSortEntry(initials: string, id: string, entryType: SortableEntryType, field: SortableEntryField) {
         return patchBase(initials, id) + SortableEntryType[entryType] + "/" + field + "/order";
+    }
+
+    export function patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number, entryType: SortableEntryType, field: SortableEntryField) {
+        return patchBase(initials, id) + container + "/" + containerIndex + "/" + SortableEntryType[entryType] + "/" + field + "/order";
     }
 }

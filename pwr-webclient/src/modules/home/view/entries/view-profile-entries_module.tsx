@@ -11,7 +11,8 @@ interface ViewProfileEntriesProps {
     toggleableEntryType: string;
     movableEntryType: string;
     headers: Array<JSX.Element | string>;
-    renderEntry(entry: any): Array<JSX.Element>;
+    moveDisabled?: boolean;
+    renderEntry(entry: any, entryIndex: number): Array<JSX.Element>;
     onToggle(toggleableEntryType: string, index: number, isEnabled: boolean): void;
     onMove(movableEntryType: string, sourceIndex: number, targetIndex: number): void;
 }
@@ -21,6 +22,10 @@ interface ViewProfileEntriesState {
 }
 
 export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps, ViewProfileEntriesState> {
+
+    public static defaultProps: Partial<ViewProfileEntriesProps> = {
+        moveDisabled: false
+    };
 
     private handleToggle = (entryIndex: number, checked: boolean) => {
         this.props.onToggle(this.props.toggleableEntryType, entryIndex, checked);
@@ -43,6 +48,27 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
 
     private DragHandle = SortableHandle(() => <FontIcon className="material-icons">drag_handle</FontIcon>); // This can be any component you want
 
+
+
+    private SortableItem = SortableElement((props: {entry: IViewEntry, entryIndex: number}) => {
+        return(
+            <tr>
+                <td>
+                    {this.props.moveDisabled ? "" : <this.DragHandle/>}
+                </td>
+                <td>
+                    <span style={{marginRight: '8px'}}>
+                        <Toggle
+                            checked={props.entry.enabled}
+                            onChange={(e: any) => this.handleToggle(props.entryIndex, e.target.checked)}
+                        />
+                     </span>
+                </td>
+                {this.props.renderEntry(props.entry, props.entryIndex)}
+            </tr>);
+    });
+
+
     private SortableList = SortableContainer((props: {entries: Array<IViewEntry>}) => {
         return(
         <div>
@@ -55,27 +81,23 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
                     </tr>
                 </thead>
                 <tbody>
-                    {props.entries.map((entry, index) => <this.SortableItem key={entry.name} entryIndex={index} index={index} entry={entry}/>)}
+                    {
+                        props.entries.map((entry, index) => {
+                            let id = 0; //FIXME bad bad hack
+                            if(this.props.movableEntryType === "PROJECT") {
+                                id = (entry as any).id;
+                            }
+                            return <this.SortableItem
+                                disabled={this.props.moveDisabled}
+                                key={this.props.movableEntryType + "_" + entry.name + "_" + id}
+                                entryIndex={index}
+                                index={index}
+                                entry={entry}/>
+                        })
+                    }
                 </tbody>
             </table>
         </div>);
-    });
-
-
-    private SortableItem = SortableElement((props: {entry: IViewEntry, entryIndex: number}) => {
-        return(
-            <tr>
-                <td><this.DragHandle/></td>
-                <td>
-                    <span style={{marginRight: '8px'}}>
-                        <Toggle
-                            checked={props.entry.enabled}
-                            onChange={(e: any) => this.handleToggle(props.entryIndex, e.target.checked)}
-                        />
-                     </span>
-                </td>
-                {this.props.renderEntry(props.entry)}
-            </tr>);
     });
 
     render() {

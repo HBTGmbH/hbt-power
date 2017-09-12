@@ -1,6 +1,7 @@
 import {ViewProjectRole} from './ViewProjectRole';
 import {ViewSkill} from './ViewSkill';
 export interface ViewProject {
+    id: number;
     name: string;
     description: string;
     client: string;

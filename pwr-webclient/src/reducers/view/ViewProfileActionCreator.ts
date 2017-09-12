@@ -15,6 +15,9 @@ export namespace ViewProfileActionCreator {
     import patchToggleEntry = ViewProfileService.patchToggleEntry;
     import SetSortInProgressAction = ViewProfileActions.SetSortInProgressAction;
     import patchSortEntry = ViewProfileService.patchSortEntry;
+    import patchMoveNestedEntry = ViewProfileService.patchMoveNestedEntry;
+    import patchToggleNestedEntry = ViewProfileService.patchToggleNestedEntry;
+    import patchSortNestedEntry = ViewProfileService.patchSortNestedEntry;
 
     /**
      * Constructs an action that sets a view profile into the store. If a view profile with the same ID exists, the
@@ -82,6 +85,37 @@ export namespace ViewProfileActionCreator {
         }
     }
 
+    export function AsyncMoveNestedEntry(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number,
+                                         movableEntry: string, sourceIndex: number, targetIndex: number) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            dispatch(ProfileActionCreator.APIRequestPending());
+            dispatch(SetSortInProgress(true));
+            axios.patch(patchMoveNestedEntry(initials, id, container, containerIndex, movableEntry, sourceIndex, targetIndex)).then((response: AxiosResponse) => {
+                succeedAndRead(response, dispatch);
+                dispatch(SetSortInProgress(false));
+            }).catch((error: AxiosError) => {
+                dispatch(ProfileActionCreator.APIRequestFailed());
+                dispatch(SetSortInProgress(false));
+                console.error(error);
+            });
+        }
+    }
+
+    export function AsyncToggleNestedEntry(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number,
+                                           toggleableEntry: string, index: number, isEnabled: boolean) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            axios.patch(patchToggleNestedEntry(initials, id, container, containerIndex, toggleableEntry, index, isEnabled)).then((response: AxiosResponse) => {
+                succeedAndRead(response, dispatch);
+            }).catch((error: AxiosError) => {
+                dispatch(ProfileActionCreator.APIRequestFailed());
+                console.error(error);
+            });
+        }
+    }
+
     export function AsyncToggleEntry(id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(ProfileActionCreator.APIRequestPending());
@@ -97,9 +131,25 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncAutoSortEntry(id: string, entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(ProfileActionCreator.APIRequestPending());
             let initials = getState().databaseReducer.loggedInUser().initials();
             let config: AxiosRequestConfig = {params: {"do-ascending": doAscending}};
             axios.patch(patchSortEntry(initials, id, entryType, field), null, config).then((response: AxiosResponse) => {
+                succeedAndRead(response, dispatch);
+            }).catch((error: AxiosError) => {
+                dispatch(ProfileActionCreator.APIRequestFailed());
+                console.error(error);
+            });
+        }
+    }
+
+    export function AsyncAutoSortNestedEntry(id: string, container: string, containerIndex: number,
+                                             entryType: SortableEntryType, field: SortableEntryField,  doAscending: boolean) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            let config: AxiosRequestConfig = {params: {"do-ascending": doAscending}};
+            axios.patch(patchSortNestedEntry(initials, id, container, containerIndex, entryType, field), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
                 dispatch(ProfileActionCreator.APIRequestFailed());

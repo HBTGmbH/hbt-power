@@ -37,7 +37,7 @@ export class EntrySortButton extends React.Component<EntrySortButtonProps, Entry
 
     render() {
         return (
-            <div>
+            <span>
                 <FlatButton
                     onTouchTap={this.changeOrder}
                 >
@@ -49,6 +49,6 @@ export class EntrySortButton extends React.Component<EntrySortButtonProps, Entry
                     thickness={2}
                     color="#dd6e78"
                 />
-            </div>);
+            </span>);
     }
 }
