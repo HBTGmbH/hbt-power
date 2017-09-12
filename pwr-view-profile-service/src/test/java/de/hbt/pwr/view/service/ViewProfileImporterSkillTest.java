@@ -294,4 +294,24 @@ public class ViewProfileImporterSkillTest {
         //noinspection ConstantConditions
         assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(highest.getQualifier());
     }
+
+    @Test
+    public void shouldHaveViewDescriptionSet() {
+        String description = "MyFooBarDescription";
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, "", description);
+        assertThat(viewProfile.getViewDescription()).isEqualTo(description);
+    }
+
+    @Test
+    public void shouldHaveNameSet() {
+        String name = "MyName";
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, name, "FooBarDadasda");
+        assertThat(viewProfile.getName()).isEqualTo(name);
+    }
+
+    @Test
+    public void creationDateShouldNotBeNull() {
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+        assertThat(viewProfile.getCreationDate()).isNotNull();
+    }
 }

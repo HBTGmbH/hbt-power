@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,9 +48,6 @@ public class ViewProfileImporter {
         this.viewProfileRepository = viewProfileRepository;
         this.viewProfileSortService = viewProfileSortService;
     }
-
-
-
 
     private List<Language> mapLanguages(Collection<LanguageSkill> profileLanguages) {
         return profileLanguages.stream().map(ModelConvertUtil::mapLanguage).collect(Collectors.toList());
@@ -189,8 +187,12 @@ public class ViewProfileImporter {
     }
 
 
-
-
+    /**
+     * Sets the display categories for all {@link Skill} that are either direct or indirect children to thie provided
+     * category.
+     * @param category that is the root of the current, partial tree
+     * @param displayCategoriesByName serves a collector for all display categories
+     */
     private void setDisplayCategoriesForAllSkills(Category category,  Map<String, Category> displayCategoriesByName) {
         category.getSkills().forEach(skill -> {
             // Because null categories might cause serious problems in the next call, check that
@@ -203,6 +205,11 @@ public class ViewProfileImporter {
         category.getChildren().forEach(child -> setDisplayCategoriesForAllSkills(child, displayCategoriesByName));
     }
 
+    /**
+     * Uses the skill tree to infer all display categories and returns them as list.
+     * @param root of the skill tree
+     * @return all inferred display categories.
+     */
     private List<Category> mapDisplayCategories(Category root) {
         // The map is there to collect all display categories for the list of display categories.
         // Map to avoid duplicates. Set won't do it.
@@ -238,7 +245,7 @@ public class ViewProfileImporter {
      * @param initials of the consultant whose profile is used.
      * @return the newly persisted {@link ViewProfile}
      */
-    public ViewProfile importViewProfile(String initials) {
+    public ViewProfile importViewProfile(String initials, String name, String viewDescription) {
         ViewProfile result = new ViewProfile();
         Profile profile;
         try {
@@ -250,9 +257,11 @@ public class ViewProfileImporter {
             throw new NoProfileAvailableException(initials);
         }
 
-
+        result.setCreationDate(LocalDate.now());
         result.setDescription(profile.getDescription());
         result.setOwnerInitials(initials);
+        result.setViewDescription(viewDescription);
+        result.setName(name);
 
         result.setLanguages(mapLanguages(profile.getLanguages()));
         result.setQualifications(mapQualifications(profile.getQualification()));
@@ -273,5 +282,15 @@ public class ViewProfileImporter {
         viewProfileRepository.save(result);
         applyInitialSorting(result);
         return result;
+    }
+
+    /**
+     * Imports a {@link Profile} and creates a {@link ViewProfile} for the consultant represented by <code>initials</code>.
+     * The imported {@link Profile} is always the most current profile available, either
+     * @param initials of the consultant whose profile is used.
+     * @return the newly persisted {@link ViewProfile}
+     */
+    public ViewProfile importViewProfile(String initials) {
+       return importViewProfile(initials,"View Profile of " + initials, "");
     }
 }

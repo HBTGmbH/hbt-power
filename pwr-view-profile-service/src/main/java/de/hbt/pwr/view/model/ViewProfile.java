@@ -25,12 +25,14 @@ public class ViewProfile {
 
     private String id;
 
+    private String viewDescription = "";
+
     @JsonProperty("owner")
     private String ownerInitials;
 
-    private String name;
+    private String name = "";
 
-    private String description;
+    private String description = "";
 
     private LocalDate creationDate;
 
@@ -78,5 +80,11 @@ public class ViewProfile {
 
     public Optional<Skill> findSkillByName(String name) {
         return findSkillByName(rootCategory, name);
+    }
+
+    public static class ViewProfileStub {
+        public String viewDescription;
+        public String name;
+        public String locale;
     }
 }

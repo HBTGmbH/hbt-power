@@ -20,6 +20,7 @@ public class ViewProfileRestoreAspect {
     private static final Logger LOG = Logger.getLogger(ViewProfileRestoreAspect.class);
 
     private void restore(Category category) {
+        // TODO include display category and make field transient
         category.getSkills().forEach(skill -> skill.setCategory(category));
         category.getDisplaySkills().forEach(skill -> skill.setDisplayCategory(category));
         category.getChildren().forEach(child -> {

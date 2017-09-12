@@ -63,8 +63,9 @@ public class ViewProfileController {
     })
     @PostMapping(path = "/{initials}")
     public ResponseEntity<ViewProfile> createViewProfile(
-            @ApiParam("Initials of the consultant for which the profile is created") @PathVariable("initials") String initials) {
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+            @ApiParam("Initials of the consultant for which the profile is created") @PathVariable("initials") String initials,
+            @RequestBody ViewProfile.ViewProfileStub data) {
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, data.name, data.viewDescription);
         return ResponseEntity.ok(viewProfile);
     }
 
