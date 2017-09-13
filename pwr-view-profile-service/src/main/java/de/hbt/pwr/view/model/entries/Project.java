@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"projectRoles", "skills"})
 public class Project implements ToggleableEntry, StartEndDateComparable {
+    private Long id;
     private String name;
     private String description;
     private String client;
@@ -26,7 +27,8 @@ public class Project implements ToggleableEntry, StartEndDateComparable {
     private List<Skill> skills = new ArrayList<>();
     private Boolean enabled;
 
-    public Project(String name, String description, String client, String broker, LocalDate startDate, LocalDate endDate, List<ProjectRole> projectRoles, List<Skill> skills, Boolean enabled) {
+    public Project(Long id, String name, String description, String client, String broker, LocalDate startDate, LocalDate endDate, List<ProjectRole> projectRoles, List<Skill> skills, Boolean enabled) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.client = client;

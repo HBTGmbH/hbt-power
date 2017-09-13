@@ -119,9 +119,22 @@ public class ViewProfileService {
     }
 
 
+    private void setIsEnabledForSkill(Skill skill, String name, boolean isEnabled) {
+        if(name.equals(skill.getName())) {
+            skill.setEnabled(isEnabled);
+        }
+    }
+
+    private void setIsEnabledForSkill(Category category, String skillName, boolean isEnabled) {
+        category.getSkills().forEach(skill -> setIsEnabledForSkill(skill, skillName, isEnabled));
+        category.getDisplaySkills().forEach(skill -> setIsEnabledForSkill(skill, skillName, isEnabled));
+        category.getChildren().forEach(child -> setIsEnabledForSkill(child, skillName, isEnabled));
+    }
+
     public void setIsEnabledForSkill(ViewProfile viewProfile, String skillName, boolean isEnabled) {
-        Optional<Skill> skill = viewProfile.findSkillByName(skillName);
-        skill.ifPresent(skill1 -> skill1.setEnabled(isEnabled));
+        //Optional<Skill> skill = viewProfile.findSkillByName(skillName);
+        //skill.ifPresent(skill1 -> skill1.setEnabled(isEnabled));
+        setIsEnabledForSkill(viewProfile.getRootCategory(), skillName, isEnabled);
     }
 
     /**
@@ -154,6 +167,7 @@ public class ViewProfileService {
         if(currentCategory != null) {
             if(currentCategory.getName().equals(newDisplayCategoryName)) {
                 skill.setDisplayCategory(currentCategory);
+                currentCategory.setIsDisplay(true);
             } else {
                 setDisplayCategory(viewProfile, skill, newDisplayCategoryName, currentCategory.getParent());
             }
@@ -179,9 +193,17 @@ public class ViewProfileService {
     public void setDisplayCategory(ViewProfile viewProfile, String name, String newDisplayCategoryName) {
         Optional<Skill> mayBeSkill = viewProfile.findSkillByName(name);
         mayBeSkill.ifPresent(skill -> {
-            viewProfile.getDisplayCategories().remove(skill.getDisplayCategory());
+            Category displayCategory = skill.getDisplayCategory();
+            displayCategory.getDisplaySkills().remove(skill);
+            if(displayCategory.getDisplaySkills().isEmpty()) {
+                displayCategory.setIsDisplay(false);
+                viewProfile.getDisplayCategories().remove(displayCategory);
+            }
+
             setDisplayCategory(viewProfile, skill, newDisplayCategoryName, skill.getCategory());
-            viewProfile.getDisplayCategories().add(skill.getDisplayCategory());
+            if(!viewProfile.getDisplayCategories().contains(skill.getDisplayCategory())) {
+                viewProfile.getDisplayCategories().add(skill.getDisplayCategory());
+            }
         });
     }
 

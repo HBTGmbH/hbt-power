@@ -92,10 +92,11 @@ public class ModelConvertUtil {
      * Maps a skill so that a partial skill tree with all parents mapped is created.
      */
     @NotNull
-    public static Skill mapSkill(SkillServiceSkill skillServiceSkill) {
+    public static Skill mapSkill(SkillServiceSkill skillServiceSkill, ProfileSkill profileSkill) {
         Skill skill = new Skill();
         skill.setEnabled(true);
         skill.setName(skillServiceSkill.getQualifier());
+        skill.setRating(profileSkill.getRating());
         if(skillServiceSkill.getCategory() != null) {
             Category category = mapCategory(skillServiceSkill.getCategory());
             skill.setCategory(category);

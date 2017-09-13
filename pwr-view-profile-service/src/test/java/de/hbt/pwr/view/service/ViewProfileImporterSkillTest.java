@@ -68,6 +68,8 @@ public class ViewProfileImporterSkillTest {
     private Skill resSkillB2a;
     private Skill resSkillB2b;
 
+    private static final int SKILL_RATING = 5;
+
     private Profile profile;
 
     @Before
@@ -87,7 +89,7 @@ public class ViewProfileImporterSkillTest {
         Skill skill = new Skill();
         skill.setName(name);
         skill.setEnabled(true);
-        skill.setRating(5);
+        skill.setRating(SKILL_RATING);
         return skill;
     }
 
@@ -124,7 +126,7 @@ public class ViewProfileImporterSkillTest {
 
         for (SkillServiceSkill skill : skills) {
             given(skillServiceClient.getSkillByName(skill.getQualifier())).willReturn(skill);
-            profile.getSkills().add(new ProfileSkill(skill.getQualifier(), 5));
+            profile.getSkills().add(new ProfileSkill(skill.getQualifier(), SKILL_RATING));
         }
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
 
@@ -171,6 +173,8 @@ public class ViewProfileImporterSkillTest {
         assertThat(viewProfile.findSkillByName(resSkillB1b.getName()).isPresent()).isTrue();
         assertThat(viewProfile.findSkillByName(resSkillB2a.getName()).isPresent()).isTrue();
         assertThat(viewProfile.findSkillByName(resSkillB2b.getName()).isPresent()).isTrue();
+
+        assertThat(viewProfile.findSkillByName(resSkillA1a.getName()).get().getRating()).isEqualTo(SKILL_RATING);
     }
 
     /**

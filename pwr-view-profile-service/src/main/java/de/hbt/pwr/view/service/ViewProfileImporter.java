@@ -87,6 +87,7 @@ public class ViewProfileImporter {
 
     private Project mapProject(ProfileProject profileProject) {
         Project result = new Project();
+        result.setId(profileProject.getId());
         result.setEndDate(profileProject.getEndDate());
         result.setStartDate(profileProject.getStartDate());
         result.setName(profileProject.getName());
@@ -164,7 +165,7 @@ public class ViewProfileImporter {
         if(skillServiceSkill == null) {
             skillServiceSkill = skillServiceFallback.getSkillByName(toAdd.getName());
         }
-        Skill skill = ModelConvertUtil.mapSkill(skillServiceSkill);
+        Skill skill = ModelConvertUtil.mapSkill(skillServiceSkill, toAdd);
         Category highestParent = skill.getCategory();
         while(highestParent.getParent() != null) {
             highestParent = highestParent.getParent();
