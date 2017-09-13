@@ -1,13 +1,13 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {FontIcon, GridTile, IconButton, IconMenu, MenuItem} from 'material-ui';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditDialog} from './consultant-edit-dialog_module';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.

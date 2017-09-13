@@ -2,15 +2,16 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {KeySkillEntry} from '../../../../../model/KeySkillEntry';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
 import {AutoComplete, Card, CardActions, CardHeader, CardMedia, Dialog, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.
@@ -90,7 +91,7 @@ class KeySkillDialogModule extends React.Component<
 
     private saveAndExit = () => {
         let name: string = this.state.autoCompleteValue;
-        let keySkill: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.keySkills);
+        let keySkill: NameEntity = ProfileStore.findNameEntityByName(name, this.props.keySkills);
         let keySkillEntry: KeySkillEntry = this.state.keySkillEntry;
         if(isNullOrUndefined(keySkill)) {
             keySkill = NameEntity.createNew(name);

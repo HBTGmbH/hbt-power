@@ -1,10 +1,9 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {Project} from '../../../../../model/Project';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
-import {ApplicationState} from '../../../../../Store';
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -14,6 +13,7 @@ import {ProjectDialogState} from './project-dialog_module';
 import {Profile} from '../../../../../model/Profile';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import {Comparators} from '../../../../../utils/Comparators';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -89,7 +89,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<InternalDatabase>): ProjectsDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ProfileStore>): ProjectsDispatch {
         return {
             deleteProject: function(id: string) {
                 dispatch(ProfileActionCreator.deleteProject(id));

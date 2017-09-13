@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../../../Store';
 import {AddSkillStep} from '../../../../../model/skill/AddSkillStep';
 import {
     Dialog,
@@ -21,6 +20,7 @@ import {SkillSearcher} from '../../../../general/skill-search_module';
 import {UnCategorizedSkillChoice} from '../../../../../model/skill/UncategorizedSkillChoice';
 import {LimitedTextField} from '../../../../general/limited-text-field-module.';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 
 interface AddSkillDialogProps {

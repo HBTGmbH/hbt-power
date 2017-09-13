@@ -1,7 +1,7 @@
 import {APIBuildInfo, BuildInfo} from '../../model/metadata/BuildInfo';
 import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
-import {ApplicationState} from '../../Store';
+import {ApplicationState} from '../reducerIndex';
 import * as redux from 'redux';
 import axios from 'axios';
 import {MetaDataStore} from '../../model/metadata/MetaDataStore';

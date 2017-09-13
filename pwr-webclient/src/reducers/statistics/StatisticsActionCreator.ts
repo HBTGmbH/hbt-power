@@ -1,6 +1,6 @@
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {ApplicationState} from '../../Store';
+import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {
     getConsultantClusterInfo,

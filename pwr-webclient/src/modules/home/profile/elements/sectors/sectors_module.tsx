@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {ProfileElement} from '../../profile-element_module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
@@ -10,6 +10,7 @@ import {SingleSectorModule} from './sector-entry_module';
 import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 interface SectorsProps {
     sectors: Immutable.Map<string, NameEntity>;
@@ -57,7 +58,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : SectorsDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : SectorsDispatch {
         return {
             deleteSectorEntry: function(sectorId: string){
                 dispatch(ProfileActionCreator.deleteEntry(sectorId, ProfileElementType.SectorEntry));

@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../Store';
 import {FlatButton, Paper, RaisedButton, TextField} from 'material-ui';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
@@ -11,6 +10,7 @@ import {Paths} from '../Paths';
 import {BottomBuildInfo} from './metadata/build-info_module';
 import {NavigationActionCreator} from '../reducers/navigation/NavigationActionCreator';
 import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';
+import {ApplicationState} from '../reducers/reducerIndex';
 /**
  * Properties that are managed by react-redux.
  *

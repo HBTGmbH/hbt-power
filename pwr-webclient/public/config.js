@@ -31,6 +31,16 @@ const POWER_API_PORT_SKILL = "9003";
 const POWER_API_SUFFIX_SKILL = "";
 //*/
 
+/*/
+const POWER_API_HOST_VIEW = "http://power02.corp.hbt.de";
+const POWER_API_PORT_VIEW: "9000";
+const POWER_API_SUFFIX_VIEW: "/pwr-view-service";
+/*/
+const POWER_API_HOST_VIEW = "http://localhost";
+const POWER_API_PORT_VIEW = "9008";
+const POWER_API_SUFFIX_VIEW = "";
+//*/
+
 const POWER_API_META_INFO_REPORT = "http://power02.corp.hbt.de:9000/pwr-report-service/meta";
 
 const GLOBAL_OPTIONS = {

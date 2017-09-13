@@ -35,12 +35,26 @@ const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat(language,
 const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsOnlyYear);
 const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDate);
 
-export function formatToShortDisplay(date: Date) {
+/**
+ * Formats a date to a 'short' display.
+ *
+ * Example: Jan 2017, Aug 2003
+ * @param date to be formatted
+ * @return formatted date or PowerLocalize.get("Today") if the date is null.
+ */
+export function formatToShortDisplay(date: Date): string {
     if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
     return format.format(date);
 }
 
-export function formatFullLocalizedDate(date: Date) {
+/**
+ * Formats a date to a full, human readable localized date.
+ *
+ * Examples: January 02, 2002, March 17, 2000
+ * @param date to be formatted
+ * @return formatted date or "???" if the date is null
+ */
+export function formatFullLocalizedDate(date: Date): string {
     if(isNullOrUndefined(date)) return "???";
     return formatFullDate.format(date);
 }

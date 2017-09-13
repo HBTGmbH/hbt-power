@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {Dialog, FlatButton} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.

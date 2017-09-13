@@ -1,6 +1,6 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {AutoComplete, Card, CardActions, CardHeader, CardMedia, Dialog, IconButton, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -85,7 +85,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
 
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
-        let sector: NameEntity = InternalDatabase.findNameEntityByName(this.state.sectorEntryValue, this.props.sectors);
+        let sector: NameEntity = ProfileStore.findNameEntityByName(this.state.sectorEntryValue, this.props.sectors);
         let sectorEntry: SectorEntry = this.props.sectorEntry;
         // check if a sector with the name exists. If thats not the case, just create a new run. Server will handle the rest.
         if(isNullOrUndefined(sector)) {

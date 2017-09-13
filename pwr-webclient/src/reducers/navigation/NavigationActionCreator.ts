@@ -1,7 +1,7 @@
 import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
-import {ApplicationState} from '../../Store';
+import {ApplicationState} from '../reducerIndex';
 import {Paths} from '../../Paths';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {browserHistory} from 'react-router';
@@ -78,13 +78,6 @@ export namespace NavigationActionCreator {
             } else {
                 navigate(target, dispatch);
             }
-        }
-    }
-
-    export function AsyncNavigateToViewProfile(viewProfileId: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            navigate(Paths.USER_VIEW_NO_ID + viewProfileId, dispatch);
-            dispatch(ProfileActionCreator.SelectViewProfile(viewProfileId));
         }
     }
 

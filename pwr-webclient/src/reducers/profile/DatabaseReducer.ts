@@ -4,34 +4,24 @@ import {
     AbstractAction,
     AddSkillAction,
     ChangeStringValueAction,
-    ChangeViewProfileAction,
-    ChangeViewProfileCharsPerLineAction,
     CreateEntryAction,
     DeleteEntryAction,
     DeleteProjectAction,
     DeleteSkillAction,
-    DeleteViewProfileAction,
     LoginAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
     SaveProjectAction,
-    SaveViewProfileAction,
-    SelectViewProfileAction,
-    SetSelectedIndexesAction,
-    SwapIndexAction,
     UpdateSkillRatingAction
 } from './database-actions';
-import {InternalDatabase} from '../../model/InternalDatabase';
+import {ProfileStore} from '../../model/ProfileStore';
 import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
 import {APINameEntity} from '../../model/APIProfile';
 import {ActionType} from '../ActionType';
-import {ViewElement} from '../../model/viewprofile/ViewElement';
 import * as Immutable from 'immutable';
-import {ViewProfile} from '../../model/viewprofile/ViewProfile';
-import {APIViewProfile} from '../../model/viewprofile/APIViewProfile';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ExportDocument} from '../../model/ExportDocument';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -46,30 +36,23 @@ export class DatabaseReducer {
         return res;
     }
 
-    private static HandleChangeAbstract(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
+    private static HandleChangeAbstract(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
         let newProfile: Profile = state.profile().description(action.value);
         return state.profile(newProfile);
     }
 
-    private static HandleReceiveViewProfile(state: InternalDatabase, apiViewProfile:APIViewProfile): InternalDatabase {
-        if(!isNullOrUndefined(apiViewProfile)) {
-            let viewProfile: ViewProfile = ViewProfile.fromAPI(apiViewProfile);
-            return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
-        }
-        return state;
-    }
 
-    private static DeleteEntry(state: InternalDatabase, action: DeleteEntryAction):InternalDatabase {
+    private static DeleteEntry(state: ProfileStore, action: DeleteEntryAction):ProfileStore {
         let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile(), action);
         return state.profile(newProfile);
     }
 
-    private static CreateEntry(state: InternalDatabase, action: CreateEntryAction):InternalDatabase {
+    private static CreateEntry(state: ProfileStore, action: CreateEntryAction):ProfileStore {
         let newProfile: Profile = ProfileReducer.reducerHandleCreateEntry(state.profile(), <CreateEntryAction> action);
         return state.profile(newProfile);
     }
 
-    private static UpdateNameEntity(database: InternalDatabase, entity: NameEntity, type: ProfileElementType): InternalDatabase {
+    private static UpdateNameEntity(database: ProfileStore, entity: NameEntity, type: ProfileElementType): ProfileStore {
         switch(type) {
             case ProfileElementType.TrainingEntry:
                 return database.trainings(database.trainings().set(entity.id(), entity));
@@ -91,7 +74,7 @@ export class DatabaseReducer {
     }
 
 
-    private static SaveEntry(database: InternalDatabase, action: SaveEntryAction): InternalDatabase {
+    private static SaveEntry(database: ProfileStore, action: SaveEntryAction): ProfileStore {
         if(!isNullOrUndefined(action.nameEntity) && action.nameEntity.isNew) {
             database = DatabaseReducer.UpdateNameEntity(database, action.nameEntity, action.entryType);
         }
@@ -99,19 +82,19 @@ export class DatabaseReducer {
         return database.profile(profile);
     }
 
-    private static DeleteProject(database: InternalDatabase, action: DeleteProjectAction): InternalDatabase {
+    private static DeleteProject(database: ProfileStore, action: DeleteProjectAction): ProfileStore {
         let idToRemove: string = (<DeleteProjectAction> action).id;
         let newProfile: Profile = database.profile();
         newProfile = newProfile.projects(newProfile.projects().remove(idToRemove));
         return database.profile(newProfile);
     }
 
-    private static SaveProject(database: InternalDatabase, action: SaveProjectAction): InternalDatabase {
+    private static SaveProject(database: ProfileStore, action: SaveProjectAction): ProfileStore {
         // project with role IDs cleared.
         let project: Project = action.state.project.roleIds(action.state.project.roleIds().clear());
         project = project.roleIds(project.roleIds().clear());
         action.state.roles.forEach(role => {
-            let projectRole: NameEntity = InternalDatabase.findNameEntityByName(role, database.projectRoles());
+            let projectRole: NameEntity = ProfileStore.findNameEntityByName(role, database.projectRoles());
             if(isNullOrUndefined(projectRole)) {
                 projectRole = NameEntity.createNew(role);
                 database = database.projectRoles(database.projectRoles().set(projectRole.id(), projectRole));
@@ -120,7 +103,7 @@ export class DatabaseReducer {
         });
 
         // Fix end customer and broker
-        let broker: NameEntity = InternalDatabase.findNameEntityByName(action.state.brokerACValue, database.companies());
+        let broker: NameEntity = ProfileStore.findNameEntityByName(action.state.brokerACValue, database.companies());
         if(isNullOrUndefined(broker)) {
             broker = NameEntity.createNew(action.state.brokerACValue);
             database = database.companies(database.companies().set(broker.id(), broker));
@@ -128,7 +111,7 @@ export class DatabaseReducer {
         project = project.brokerId(broker.id());
 
         // End customer
-        let endCustomer: NameEntity = InternalDatabase.findNameEntityByName(action.state.clientACValue, database.companies());
+        let endCustomer: NameEntity = ProfileStore.findNameEntityByName(action.state.clientACValue, database.companies());
         if(isNullOrUndefined(endCustomer)) {
             endCustomer = NameEntity.createNew(action.state.clientACValue);
             database = database.companies(database.companies().set(endCustomer.id(), endCustomer));
@@ -139,23 +122,23 @@ export class DatabaseReducer {
         return database.profile(profile);
     }
 
-    private static CreateProject(database: InternalDatabase): InternalDatabase{
+    private static CreateProject(database: ProfileStore): ProfileStore{
         let newProfile: Profile = database.profile();
         let proj: Project = Project.createNew();
         newProfile = newProfile.projects(newProfile.projects().set(proj.id(), proj));
         return database.profile(newProfile);
     }
 
-    private static UpdateSkillRating(database: InternalDatabase, action: UpdateSkillRatingAction): InternalDatabase {
+    private static UpdateSkillRating(database: ProfileStore, action: UpdateSkillRatingAction): ProfileStore {
         return database.profile(ProfileReducer.reducerHandleUpdateSkillRating(database.profile(), action));
     }
 
-    private static DeleteSkill(database: InternalDatabase, action: DeleteSkillAction): InternalDatabase {
+    private static DeleteSkill(database: ProfileStore, action: DeleteSkillAction): ProfileStore {
         return database.profile(ProfileReducer.reducerHandleDeleteSkill(database.profile(), action));
     }
 
-    private static ApiRequestSuccessful(state: InternalDatabase, action: ReceiveAPIResponseAction): InternalDatabase {
-        let newState: InternalDatabase;
+    private static ApiRequestSuccessful(state: ProfileStore, action: ReceiveAPIResponseAction): ProfileStore {
+        let newState: ProfileStore;
         switch(action.requestType) {
             case APIRequestType.RequestLanguages:
                 newState = state.languages(DatabaseReducer.AddAPINameEntities(action.payload, state.languages()));
@@ -190,9 +173,6 @@ export class DatabaseReducer {
             case APIRequestType.RequestCompanies:
                 newState = state.companies(DatabaseReducer.AddAPINameEntities(action.payload, state.companies()));
                 break;
-            case APIRequestType.RequestCreateViewProfile:
-                newState = DatabaseReducer.ReceiveViewProfile(state, action.payload);
-                break;
             case APIRequestType.RequestExportDocs:
                 newState = state.exportDocuments(Immutable.List<ExportDocument>(action.payload));
                 break;
@@ -203,153 +183,29 @@ export class DatabaseReducer {
         return newState.APIRequestStatus(RequestStatus.Successful);
     }
 
-    private static LogInUser(database: InternalDatabase, action: LoginAction): InternalDatabase {
+    private static LogInUser(database: ProfileStore, action: LoginAction): ProfileStore {
         database = database.loginStatus(LoginStatus.SUCCESS);
         return database.loggedInUser(action.consultantInfo);
     }
 
-    private static LogOutUser(database: InternalDatabase): InternalDatabase {
-        database = database.viewProfiles(database.viewProfiles().clear());
+    private static LogOutUser(database: ProfileStore): ProfileStore {
         database = database.loggedInUser(ConsultantInfo.empty());
         return database.profile(Profile.createDefault());
     }
 
-    private static SaveViewProfiles(state: InternalDatabase, action: SaveViewProfileAction): InternalDatabase {
-        return state.viewProfiles(state.viewProfiles().set(action.viewProfile.id(), action.viewProfile));
-    }
-
-    private static DeleteViewProfile(state: InternalDatabase, action: DeleteViewProfileAction): InternalDatabase {
-        return state.viewProfiles(state.viewProfiles().remove(action.id));
-    }
-
-    private static SelectViewProfile(state: InternalDatabase, action: SelectViewProfileAction): InternalDatabase {
-        return state.activeViewProfileId(action.id);
-    }
-
-    private static SetSelectedIndexes(state: InternalDatabase, action: SetSelectedIndexesAction): InternalDatabase {
-        let viewProfile = state.viewProfiles().get(action.viewProfileId);
-        let ref: Immutable.List<ViewElement> = null;
-        switch(action.elementType) {
-            case ProfileElementType.SectorEntry:
-                ref = viewProfile.viewSectorEntries();
-                break;
-            case ProfileElementType.EducationEntry:
-                ref = viewProfile.viewEducationEntries();
-                break;
-            case ProfileElementType.QualificationEntry:
-                ref = viewProfile.viewQualificationEntries();
-                break;
-            case ProfileElementType.TrainingEntry:
-                ref = viewProfile.viewTrainingEntries();
-                break;
-            case ProfileElementType.LanguageEntry:
-                ref = viewProfile.viewLanguageEntries();
-                break;
-        }
-        if(action.selectedIndexes == 'all') {
-            ref = Immutable.List<ViewElement>(ref.map(view => view.enabled(true)));
-        } else if(action.selectedIndexes == 'none') {
-            ref = Immutable.List<ViewElement>(ref.map(view => view.enabled(false)));
-            console.log(ref);
-        } else {
-            ref = Immutable.List<ViewElement>(ref.map(view => view.enabled(false)));
-            let array: Array<number> = action.selectedIndexes as Array<number>;
-            array.forEach(index => {
-                ref = ref.set(index, ref.get(index).enabled(true))
-            });
-            ref = ref.asImmutable();
-        }
-        switch(action.elementType) {
-            case ProfileElementType.SectorEntry:
-                viewProfile = viewProfile.viewSectorEntries(ref);
-                break;
-            case ProfileElementType.EducationEntry:
-                viewProfile = viewProfile.viewEducationEntries(ref);
-                break;
-            case ProfileElementType.QualificationEntry:
-                viewProfile = viewProfile.viewQualificationEntries(ref);
-                break;
-            case ProfileElementType.TrainingEntry:
-                viewProfile = viewProfile.viewTrainingEntries(ref);
-                break;
-            case ProfileElementType.LanguageEntry:
-                viewProfile = viewProfile.viewLanguageEntries(ref);
-                break;
-        }
-        return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
-    }
-
-    private static SwapListIndexes(list: Immutable.List<ViewElement>, index1: number, index2: number): Immutable.List<ViewElement> {
-        let v1 = list.get(index1);
-        let v2 = list.get(index2);
-        list = list.set(index2, v1);
-        list = list.set(index1, v2);
-        return list;
-    }
-
-    private static SwapIndexes(state: InternalDatabase, action: SwapIndexAction): InternalDatabase {
-        let viewProfile = state.viewProfiles().get(action.viewProfileId);
-        let list;
-        switch(action.elementType) {
-            case ProfileElementType.Project:
-                viewProfile = viewProfile.viewProjects(DatabaseReducer.SwapListIndexes(viewProfile.viewProjects(), action.index1, action.index2));
-                break;
-            case ProfileElementType.EducationEntry:
-                viewProfile = viewProfile.viewEducationEntries(DatabaseReducer.SwapListIndexes(viewProfile.viewEducationEntries(), action.index1, action.index2));
-                break;
-            case ProfileElementType.SectorEntry:
-                viewProfile = viewProfile.viewSectorEntries(DatabaseReducer.SwapListIndexes(viewProfile.viewSectorEntries(), action.index1, action.index2));
-                break;
-            case ProfileElementType.QualificationEntry:
-                viewProfile = viewProfile.viewQualificationEntries(DatabaseReducer.SwapListIndexes(viewProfile.viewQualificationEntries(), action.index1, action.index2));
-                break;
-            case ProfileElementType.TrainingEntry:
-                viewProfile = viewProfile.viewTrainingEntries(DatabaseReducer.SwapListIndexes(viewProfile.viewTrainingEntries(), action.index1, action.index2));
-                break;
-            case ProfileElementType.LanguageEntry:
-                viewProfile = viewProfile.viewLanguageEntries(DatabaseReducer.SwapListIndexes(viewProfile.viewLanguageEntries(), action.index1, action.index2));
-                break;
-        }
-        return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
-    }
-
-    private static ChangeViewProfileName(state: InternalDatabase, action: ChangeViewProfileAction): InternalDatabase {
-        let vp: ViewProfile = state.viewProfiles().get(action.viewProfileId).name(action.val);
-        return state.viewProfiles(state.viewProfiles().set(vp.id(), vp));
-    }
-
-    private static ChangeViewProfileDescription(state: InternalDatabase, action: ChangeViewProfileAction): InternalDatabase {
-        let vp: ViewProfile = state.viewProfiles().get(action.viewProfileId).description(action.val);
-        return state.viewProfiles(state.viewProfiles().set(vp.id(), vp));
-    }
-
-    private static ReceiveViewProfile(state: InternalDatabase, apiViewProfile:APIViewProfile): InternalDatabase {
-        if(!isNullOrUndefined(apiViewProfile)) {
-            let viewProfile: ViewProfile = ViewProfile.fromAPI(apiViewProfile);
-            return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
-        }
-        return state;
-    }
-
-    private static AddSkill(state: InternalDatabase, action: AddSkillAction): InternalDatabase {
+    private static AddSkill(state: ProfileStore, action: AddSkillAction): ProfileStore {
         let profile = ProfileReducer.reducerHandleAddSkill(state.profile(), action);
         return state.profile(profile);
     }
 
-    private static ChangeViewProfileCharsPerLine(state: InternalDatabase, changeViewProfileCharsPerLineAction: ChangeViewProfileCharsPerLineAction) {
-        let viewProfile = state.viewProfiles().get(changeViewProfileCharsPerLineAction.viewProfileId);
-        viewProfile = viewProfile.descriptionCharsPerLine(changeViewProfileCharsPerLineAction.val);
-        return state.viewProfiles(state.viewProfiles().set(viewProfile.id(), viewProfile));
-    }
-
-    public static SetUserInitials(state: InternalDatabase, action: ChangeStringValueAction): InternalDatabase {
+    public static SetUserInitials(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
         let loggedInUser = state.loggedInUser().initials(action.value);
         return state.loggedInUser(loggedInUser);
     }
 
-    public static Reduce(state : InternalDatabase, action: AbstractAction) : InternalDatabase {
+    public static Reduce(state : ProfileStore, action: AbstractAction) : ProfileStore {
         if(isNullOrUndefined(state)) {
-            state = InternalDatabase.createWithDefaults();
+            state = ProfileStore.createWithDefaults();
         }
         console.debug('DatabaseReducer called for action type ' + ActionType[action.type]);
         switch(action.type) {
@@ -367,18 +223,9 @@ export class DatabaseReducer {
             case ActionType.APIRequestSuccess: return DatabaseReducer.ApiRequestSuccessful(state, action as ReceiveAPIResponseAction);
             case ActionType.LogInUser: return DatabaseReducer.LogInUser(state, action as LoginAction);
             case ActionType.LogOutUser: return DatabaseReducer.LogOutUser(state);
-            case ActionType.SaveViewProfile: return DatabaseReducer.SaveViewProfiles(state, action as SaveViewProfileAction);
-            case ActionType.DeleteViewProfile: return DatabaseReducer.DeleteViewProfile(state, action as DeleteViewProfileAction);
-            case ActionType.SelectViewProfile: return DatabaseReducer.SelectViewProfile(state, action as SelectViewProfileAction);
-            case ActionType.SetSelectedIndexes: return DatabaseReducer.SetSelectedIndexes(state, action as SetSelectedIndexesAction);
             case ActionType.APIRequestSuccess_NoContent: return state.APIRequestStatus(RequestStatus.Successful);
             case ActionType.UserLoginFailed: return state.loginStatus(LoginStatus.REJECTED);
-            case ActionType.SwapIndex:return DatabaseReducer.SwapIndexes(state, action as SwapIndexAction);
-            case ActionType.ChangeViewProfileName: return DatabaseReducer.ChangeViewProfileName(state, action as ChangeViewProfileAction);
-            case ActionType.ChangeViewProfileDescription: return DatabaseReducer.ChangeViewProfileDescription(state, action as ChangeViewProfileAction);
             case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
-            case ActionType.ClearViewProfiles: return state.viewProfiles(state.viewProfiles().clear());
-            case ActionType.ChangeViewProfileCharsPerLine: return DatabaseReducer.ChangeViewProfileCharsPerLine(state, action as ChangeViewProfileCharsPerLineAction);
             case ActionType.SetUserInitials: return DatabaseReducer.SetUserInitials(state, action as ChangeStringValueAction);
             default:
                 return state;

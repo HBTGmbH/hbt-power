@@ -1,17 +1,3 @@
-import {InternalDatabase} from './model/InternalDatabase';
-import {AdminState} from './model/admin/AdminState';
-import {StatisticsStore} from './model/statistics/StatisticsStore';
-import {SkillStore} from './model/skill/SkillStore';
-import {MetaDataStore} from './model/metadata/MetaDataStore';
-import {NavigationStore} from './model/navigation/NavigationStore';
-
-/**
- * State encapsulating all consultants.
- */
-export interface AllConsultantsState {
-    requestingConsultants: boolean;
-}
-
 export enum RequestStatus {
     Pending,
     Successful,
@@ -52,16 +38,3 @@ export enum ProfileElementType {
     Company,
     ProjectRole
 }
-
-
-
-
-export interface ApplicationState {
-    databaseReducer: InternalDatabase;
-    adminReducer: AdminState;
-    statisticsReducer: StatisticsStore;
-    skillReducer: SkillStore;
-    metaDataReducer: MetaDataStore;
-    navigationSlice: NavigationStore;
-}
-

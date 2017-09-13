@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ProfileNetwork} from '../../admin/statistics/profile-network_module';
-import {ApplicationState} from '../../../Store';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 interface PersonalizedNetworkProps {
 

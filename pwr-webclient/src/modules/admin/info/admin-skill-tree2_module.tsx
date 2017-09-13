@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {ApplicationState} from '../../../Store';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
 import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {SkillTree} from '../../general/skill/skill-tree_module';
@@ -15,6 +14,7 @@ import {CategoryDeleteConfirmation} from '../../general/skill/category-delete-co
 import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 import {CategorySearcher} from './category-searcher_module';
 import {SetValueDialog} from '../../general/set-value-dialog_module';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;

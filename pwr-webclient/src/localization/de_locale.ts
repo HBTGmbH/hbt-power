@@ -78,12 +78,6 @@ export const de_locale : any = {
     "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
     "SkillOverview.Title": "Skills für Kategorie {0} (und Unterkategorien)",
     "ProjectSkills.Label": "Projektspezifische Skills",
-    "ViewCard.Name": "View-Name",
-    "ViewCard.Description": "Beschreibung",
-    "ViewCard.CreatedOn": "Erstellt am",
-    "Overview.NewView": "Neues View-Profil",
-    "Overview.NewView.Dialog.Title": "View Profil Erstellen",
-    "Overview.RefreshViews": "Views Aktualisieren",
     "NotificationInbox.AllMessages": "Alle",
     "NotificationInbox.TrashedMessages": "Gelöscht",
     "NotificationInbox.NewNameEntity": "Neuer Bezeichner",
@@ -190,7 +184,11 @@ export const de_locale : any = {
     "ConfirmNavDialog.Title": "Ungespeicherte Änderungen",
     "ConfirmNavDialog.Content": "Es gibt noch ungespeicherte Änderungen. Diese Aktion würde die Änderungen verwerfen.",
 
-
+    "ViewProfile.Create": "View Profil erstellen",
+    "ViewProfileDialog.Description": "View-Profil Beschreibung",
+    "ViewProfileDialog.Name": "View-Profil Name",
+    "ViewProfileDialog.Title.Create": "View Profil Erstellen",
+    "ViewProfileDialog.Title.Edit": "View Profil Bearbeiten",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
@@ -257,6 +255,7 @@ export const de_locale : any = {
     "Action.SearchSkill": "Skill suchen",
     "Action.Yes": "Ja",
     "Action.No": "Nein",
+    "Action.Create": "Erstellen",
 
     // == Enum localizations == //
     "SkillEntry": "Skill",

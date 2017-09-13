@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProfileElement} from '../../profile-element_module';
 import {TrainingEntry} from '../../../../../model/TrainingEntry';
@@ -9,6 +9,7 @@ import {SingleTrainingEntry} from './training-entry_module';
 import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 interface TrainingEntriesProps {
     trainingEntries: Immutable.Map<string, TrainingEntry>;
@@ -57,7 +58,7 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : TrainingEntryDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : TrainingEntryDispatch {
         return {
             saveTrainingEntry: function(trainingEntry: TrainingEntry, training: NameEntity) {
                 dispatch(ProfileActionCreator.saveEntry(trainingEntry, training, ProfileElementType.TrainingEntry));

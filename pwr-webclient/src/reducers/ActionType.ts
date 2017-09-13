@@ -9,18 +9,6 @@ export enum ActionType {
     AddSkill,
     SwapIndex,
     UserLoginFailed,
-
-    ChangeViewProfileName,
-    ChangeViewProfileDescription,
-    ChangeViewProfileCharsPerLine,
-    ReceiveViewProfile,
-    SortViewProfile,
-    SetSelectedIndexes,
-    SelectViewProfile,
-    DeleteViewProfile,
-    SaveViewProfile,
-    /* Clears all cached view profiles from the client */
-    ClearViewProfiles,
     ReplaceExportDocuments,
 
     SetUserInitials,
@@ -124,4 +112,9 @@ export enum ActionType {
     SetCurrentLocation,
     SetNavigationTarget,
     DropNavigationTarget,
+
+    // == View Profile
+    SetViewProfile,
+    RemoveViewProfile,
+    SetSortInProgress
 }
