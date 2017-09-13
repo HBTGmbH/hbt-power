@@ -11,7 +11,7 @@ interface ComparableNestedEntryButtonProps {
 }
 
 interface ComparableNestedEntryButtonLocalProps {
-    container: "PROJECT";
+    container: "PROJECT" | "DISPLAY_CATEGORY";
     containerIndex: number;
     viewProfileId: string;
     sortableEntryField: SortableEntryField;
@@ -24,7 +24,7 @@ interface ComparableNestedEntryButtonLocalState {
 }
 
 interface ComparableNestedEntryButtonDispatch {
-    sortNestedEntries(id: string, container: "PROJECT", containerIndex: number, type: SortableEntryType, field: SortableEntryField, doAscending: boolean): void;
+    sortNestedEntries(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number, type: SortableEntryType, field: SortableEntryField, doAscending: boolean): void;
 }
 
 class ComparableNestedEntryButtonModule extends React.Component<

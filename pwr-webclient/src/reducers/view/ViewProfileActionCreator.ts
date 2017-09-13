@@ -18,6 +18,8 @@ export namespace ViewProfileActionCreator {
     import patchMoveNestedEntry = ViewProfileService.patchMoveNestedEntry;
     import patchToggleNestedEntry = ViewProfileService.patchToggleNestedEntry;
     import patchSortNestedEntry = ViewProfileService.patchSortNestedEntry;
+    import patchToggleSkill = ViewProfileService.patchToggleSkill;
+    import patchSetDisplayCategory = ViewProfileService.patchSetDisplayCategory;
 
     /**
      * Constructs an action that sets a view profile into the store. If a view profile with the same ID exists, the
@@ -135,6 +137,34 @@ export namespace ViewProfileActionCreator {
             let initials = getState().databaseReducer.loggedInUser().initials();
             let config: AxiosRequestConfig = {params: {"do-ascending": doAscending}};
             axios.patch(patchSortEntry(initials, id, entryType, field), null, config).then((response: AxiosResponse) => {
+                succeedAndRead(response, dispatch);
+            }).catch((error: AxiosError) => {
+                dispatch(ProfileActionCreator.APIRequestFailed());
+                console.error(error);
+            });
+        }
+    }
+
+    export function AsyncToggleSkill(viewProfileId: string, skillName: string, isEnabled: boolean) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            let config: AxiosRequestConfig = {params: {"skill-name": skillName}};
+            axios.patch(patchToggleSkill(initials, viewProfileId, isEnabled), null, config).then((response: AxiosResponse) => {
+                succeedAndRead(response, dispatch);
+            }).catch((error: AxiosError) => {
+                dispatch(ProfileActionCreator.APIRequestFailed());
+                console.error(error);
+            });
+        }
+    }
+
+    export function AsyncSetDisplayCategory(viewProfileId: string, skillName: string, newDisplayCategoryName: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            let config: AxiosRequestConfig = {params: {"skill-name": skillName, "display-category": newDisplayCategoryName}};
+            axios.patch(patchSetDisplayCategory(initials, viewProfileId), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
                 dispatch(ProfileActionCreator.APIRequestFailed());

@@ -7,6 +7,7 @@ import {isNullOrUndefined} from 'util';
 import {Dialog, Tab, Tabs} from 'material-ui';
 import {ViewProfileEntriesOverview} from './view-profile-entries-overview_module';
 import {ViewProfileProjectsOverview} from './view-profile-projects-overview_module';
+import {ViewProfileSkillOverview} from './view-profile-skill-overview_module';
 
 interface ViewProfileOverviewProps {
     viewProfile: ViewProfile;
@@ -58,16 +59,21 @@ class ViewProfileOverviewModule extends React.Component<
                 >
                     <span style={{color: 'white', opacity: 1}}>Loading...</span>
                 </Dialog>
-                This is View Profile id = {this.props.params.id}
+                This is View Profile id = {viewProfileId}
                 <Tabs>
                     <Tab label="Entries">
                         <ViewProfileEntriesOverview
-                            viewProfileId={this.props.params.id}
+                            viewProfileId={viewProfileId}
                         />
                     </Tab>
                     <Tab label="Projects">
                         <ViewProfileProjectsOverview
-                            viewProfileId={this.props.params.id}
+                            viewProfileId={viewProfileId}
+                        />
+                    </Tab>
+                    <Tab label="Skills">
+                        <ViewProfileSkillOverview
+                            viewProfileId={viewProfileId}
                         />
                     </Tab>
                 </Tabs>

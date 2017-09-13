@@ -104,7 +104,7 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
         return (<div>
             <Paper>
                 <this.SortableList
-                    transitionDuration={250}
+                    transitionDuration={800}
                     entries={this.props.entries}
                     useDragHandle={true}
                     onSortEnd={this.onSortEnd}/>

@@ -291,6 +291,14 @@ export namespace ViewProfileService {
         return patchBase(initials, id) + SortableEntryType[entryType] + "/" + field + "/order";
     }
 
+    export function patchToggleSkill(initials: string, id: string, isEnabled: boolean) {
+        return patchBase(initials, id) + "/SKILL/visibility/" + isEnabled;
+    }
+
+    export function patchSetDisplayCategory(initials: string, id: string) {
+        return patchBase(initials, id) + "/SKILL/display-category";
+    }
+
     export function patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number, entryType: SortableEntryType, field: SortableEntryField) {
         return patchBase(initials, id) + container + "/" + containerIndex + "/" + SortableEntryType[entryType] + "/" + field + "/order";
     }

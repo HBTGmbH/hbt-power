@@ -29,6 +29,10 @@ export class ViewProfile {
     displayCategories: Array<ViewCategory>;
     rootCategory: ViewCategory;
 
+    private categoryParents: Map<string, ViewCategory>;
+    private skillParents: Map<string, ViewCategory>;
+    private skillDisplayCategories: Map<string, ViewCategory>;
+
     constructor(viewProfile: ViewProfile) {
         this.id = viewProfile.id;
         this.owner = viewProfile.owner;
@@ -48,5 +52,34 @@ export class ViewProfile {
         this.projects = viewProfile.projects;
         this.displayCategories = viewProfile.displayCategories;
         this.rootCategory = viewProfile.rootCategory;
+        this.categoryParents = new Map();
+        this.skillParents = new Map();
+        this.skillDisplayCategories = new Map();
+        this.gatherParents(this.rootCategory);
     }
+
+    private gatherParents(category: ViewCategory) {
+        category.skills.forEach(skill => {
+            this.skillParents.set(skill.name, category);
+        });
+        category.displaySkills.forEach(skill => {
+            this.skillDisplayCategories.set(skill.name, category);
+        });
+        category.children.forEach(child => {
+            this.categoryParents.set(child.name, category);
+            this.gatherParents(child);
+        });
+    }
+
+    public getCategoryForSkill(skillName: string): ViewCategory {
+        return this.skillParents.get(skillName);
+    }
+
+    public getCategoryForCategory(categoryName: string): ViewCategory {
+        return this.categoryParents.get(categoryName);
+    }
+    public getDisplayForSkill(skillName: string): ViewCategory {
+        return this.skillDisplayCategories.get(skillName);
+    }
+
 }

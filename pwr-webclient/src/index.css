@@ -86,6 +86,11 @@ body {
   color: red;
 }
 
+.bold-mui {
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: bold;
+}
+
 .highlighted-category {
   color: #ffc01b;
   margin-top: 8px;
