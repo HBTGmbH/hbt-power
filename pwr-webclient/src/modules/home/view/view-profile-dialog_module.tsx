@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dialog, FlatButton} from 'material-ui';
+import {Dialog, FlatButton, Slider, TextField} from 'material-ui';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -11,12 +11,13 @@ interface ViewProfileDialogProps {
     type?: "edit" | "new";
 
     onRequestClose(): void;
-    onSave?(name: string, description: string): void;
+    onSave?(name: string, description: string, charsPerLine: number): void;
 }
 
 interface ViewProfileDialogState {
     name: string;
     description: string;
+    charsPerLine: number;
 }
 
 export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, ViewProfileDialogState> {
@@ -33,7 +34,8 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     private resetState = (props: ViewProfileDialogProps) => {
         this.state = {
             name: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.name) ? "" : props.viewProfile.viewProfileInfo.name,
-            description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.viewDescription) ? "" : props.viewProfile.viewProfileInfo.viewDescription
+            description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.viewDescription) ? "" : props.viewProfile.viewProfileInfo.viewDescription,
+            charsPerLine: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.charsPerLine) ? -1 : props.viewProfile.viewProfileInfo.charsPerLine
         }
     };
 
@@ -51,6 +53,10 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         this.setField("description", description)
     };
 
+    private changeCharsPerLine = (e: any, charsPerLine: number) => {
+        this.setField("charsPerLine", charsPerLine);
+    };
+
     private closeAndReset = () => {
         this.resetState(this.props);
         this.props.onRequestClose();
@@ -58,7 +64,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     private closeAndSave = () => {
         if(!isNullOrUndefined(this.props.onSave)) {
-            this.props.onSave(this.state.name, this.state.description);
+            this.props.onSave(this.state.name, this.state.description, this.state.charsPerLine);
         }
     };
 
@@ -109,6 +115,20 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                               multiLine={true}
                               floatingLabelText={PowerLocalize.get("ViewProfileDialog.Description")}
             />
+            <div style={{width: "100%"}}>
+                <TextField
+                    value={this.state.charsPerLine}
+                    floatingLabelText="Chars Per Line"
+                    disabled={true}
+                />
+                <Slider
+                    value={this.state.charsPerLine}
+                    min={10}
+                    step={1}
+                    max={99}
+                    onChange={this.changeCharsPerLine}
+                />
+            </div>
         </Dialog>);
     }
 }

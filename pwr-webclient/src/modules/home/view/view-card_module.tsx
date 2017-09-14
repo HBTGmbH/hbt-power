@@ -26,6 +26,7 @@ interface ViewCardDispatch {
     deleteViewProfile(id: string): void;
     navigateTo(target: string): void;
     generate(viewProfileId: string): void;
+    updateViewProfile(viewProfileId: string, name: string, description: string, charsPerLine: number): void;
 }
 
 class ViewCardModule extends React.Component<
@@ -50,7 +51,10 @@ class ViewCardModule extends React.Component<
         return {
             deleteViewProfile: (id) => dispatch(ViewProfileActionCreator.AsyncDeleteViewProfile(id)),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId))
+            generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId)),
+            updateViewProfile: (viewProfileId, name, description, charsPerLine) => {
+                dispatch(ViewProfileActionCreator.AsyncUpdateViewProfile(viewProfileId, description, name, charsPerLine))
+            }
         };
     }
 
@@ -60,12 +64,18 @@ class ViewCardModule extends React.Component<
         })
     }
 
+    private handleUpdate = (name: string, description: string, charsPerLine: number) => {
+        this.props.updateViewProfile(this.props.viewProfileId, name, description, charsPerLine);
+        this.setDialogOpen(false);
+    };
+
     render() {
         return (
         <Card>
             <ViewProfileDialog
                 viewProfile={this.props.viewProfile}
                 onRequestClose={() => this.setDialogOpen(false)}
+                onSave={this.handleUpdate}
                 open={this.state.dialogOpen}
             />
             <CardHeader

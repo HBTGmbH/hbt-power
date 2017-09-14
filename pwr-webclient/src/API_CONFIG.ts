@@ -294,6 +294,10 @@ export namespace ViewProfileService {
         return base() +  "/view/" + initials + "/view/" + viewProfileId + "/report";
     }
 
+    export function patchPartialUpdate(initials: string, viewProfileId: string) {
+        return  base() +  "/view/" + initials + "/view/" + viewProfileId + "/info";
+    }
+
     export function getBuildInfo(): string {
         return base() + "/meta/info";
     }

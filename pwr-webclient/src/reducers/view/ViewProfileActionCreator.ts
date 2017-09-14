@@ -232,6 +232,24 @@ export namespace ViewProfileActionCreator {
         }
     }
 
+    export function AsyncUpdateViewProfile(viewProfileId: string, description: string, name: string, charsPerLine: number) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            let data = {
+                viewDescription: description,
+                name: name,
+                charsPerLine: charsPerLine
+            };
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.patch(ViewProfileService.patchPartialUpdate(initials, viewProfileId), data).then((response: AxiosResponse) => {
+                succeedAndRead(response, dispatch);
+            }).catch(function (error: any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
+
     /**
      * Loads all view profiles for the consultant that is currently logged in
      */

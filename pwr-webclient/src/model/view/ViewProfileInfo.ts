@@ -5,6 +5,7 @@ export class ViewProfileInfo {
     consultantBirthDate: Date;
     name: string;
     creationDate: Date;
+    charsPerLine: number;
 
     constructor(viewProfileInfo: ViewProfileInfo) {
         this.viewDescription = viewProfileInfo.viewDescription;
@@ -13,5 +14,6 @@ export class ViewProfileInfo {
         this.consultantBirthDate = new Date(viewProfileInfo.consultantBirthDate);
         this.name = viewProfileInfo.name;
         this.creationDate = new Date(viewProfileInfo.creationDate);
+        this.charsPerLine = viewProfileInfo.charsPerLine;
     }
 }
