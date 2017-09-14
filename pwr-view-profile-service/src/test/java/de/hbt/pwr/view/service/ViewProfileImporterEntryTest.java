@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDate;
@@ -378,5 +379,27 @@ public class ViewProfileImporterEntryTest {
     public void shouldThrowExceptionBecauseConsultantDoesNotExist() {
         given(profileServiceClient.getSingleProfile(any())).willThrow(new RuntimeException());
         invokeImport();
+    }
+
+    @Test
+    public void looksUpConsultantsAndSetsData() {
+        ConsultantInfo consultantInfo = new ConsultantInfo();
+        String firstName = "John";
+        String lastName = "Doe";
+        String title = "Dr.";
+        LocalDate birthDate = LocalDate.now();
+        consultantInfo.setFirstName(firstName);
+        consultantInfo.setLastName(lastName);
+        consultantInfo.setBirthDate(birthDate);
+        consultantInfo.setId(33L);
+        consultantInfo.setInitials(initials);
+        consultantInfo.setTitle(title);
+        given(profileServiceClient.getSingleProfile(initials)).willReturn(new Profile());
+        given(profileServiceClient.findByInitials(initials)).willReturn(ResponseEntity.ok(consultantInfo));
+        invokeImport();
+
+        String fullName = title + " " + firstName + " " + lastName;
+        assertThat(viewProfile.getConsultantName()).isEqualTo(fullName.trim());
+        assertThat(viewProfile.getConsultantBirthDate()).isEqualTo(birthDate);
     }
 }

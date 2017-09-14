@@ -30,6 +30,10 @@ public class ViewProfile {
     @JsonProperty("owner")
     private String ownerInitials;
 
+    private String consultantName;
+
+    private LocalDate consultantBirthDate;
+
     private String name = "";
 
     private String description = "";

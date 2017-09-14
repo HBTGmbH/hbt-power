@@ -1,7 +1,6 @@
-
 spring:
   application:
-    name: pwr-view-service
+    name: pwr-view-profile-service
   jackson:
     serialization:
       write_dates_as_timestamps: false
@@ -19,6 +18,21 @@ endpoints:
 feign:
   hystrix:
     enabled: true
+# Increase the timeout for communiction with the reprot serive so it doesn't die during report generation
+pwr-report-service:
+  ribbon:
+    ReadTimeout: 20000
+    ConnectTimeout: 10000
+hystrix:
+ command:
+   default:
+     execution:
+       timeout:
+         enabled: "false"
+       isolation:
+         strategy: "THREAD"
+         thread:
+           timeoutInMilliseconds: "20000"
 ---
 spring:
   profiles: local

@@ -1,5 +1,7 @@
 package de.hbt.pwr.view.controller;
 
+import de.hbt.pwr.view.client.report.ReportServiceClient;
+import de.hbt.pwr.view.client.report.model.ReportInfo;
 import de.hbt.pwr.view.exception.ServiceError;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileImporter;
@@ -45,10 +47,13 @@ public class ViewProfileController {
 
     private final ViewProfileService viewProfileService;
 
+    private final ReportServiceClient reportServiceClient;
+
     @Autowired
-    public ViewProfileController(ViewProfileImporter viewProfileImporter, ViewProfileService viewProfileService) {
+    public ViewProfileController(ViewProfileImporter viewProfileImporter, ViewProfileService viewProfileService, ReportServiceClient reportServiceClient) {
         this.viewProfileImporter = viewProfileImporter;
         this.viewProfileService = viewProfileService;
+        this.reportServiceClient = reportServiceClient;
     }
 
     @ApiOperation(value = "Creates a view profile for the given consultant",
@@ -123,5 +128,17 @@ public class ViewProfileController {
     public ResponseEntity deleteViewProfile(@PathVariable("initials") String initials, @PathVariable String id) {
         viewProfileService.deleteWithOwnerCheck(id, initials);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(path = "/{initials}/view/{viewProfileId}/report")
+    public ResponseEntity<String> generateReport(@PathVariable("initials") String initials, @PathVariable("viewProfileId") String viewProfileId) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        ReportInfo reportInfo = ReportInfo.builder()
+                .viewProfile(viewProfile)
+                .initials(initials)
+                .name(viewProfile.getConsultantName())
+                .birthDate(viewProfile.getConsultantBirthDate()).build();
+        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC");
+        return ResponseEntity.created(response.getHeaders().getLocation()).body(response.getHeaders().getLocation().toString());
     }
 }

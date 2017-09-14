@@ -132,8 +132,6 @@ public class ViewProfileService {
     }
 
     public void setIsEnabledForSkill(ViewProfile viewProfile, String skillName, boolean isEnabled) {
-        //Optional<Skill> skill = viewProfile.findSkillByName(skillName);
-        //skill.ifPresent(skill1 -> skill1.setEnabled(isEnabled));
         setIsEnabledForSkill(viewProfile.getRootCategory(), skillName, isEnabled);
     }
 

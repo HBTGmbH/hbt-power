@@ -16,6 +16,7 @@ import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.ModelConvertUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -240,6 +241,24 @@ public class ViewProfileImporter {
         }
     }
 
+    private void setConsultantData(ViewProfile viewProfile, String initials) {
+        ResponseEntity<ConsultantInfo> response = profileServiceClient.findByInitials(initials);
+        if(response != null) {
+            ConsultantInfo consultantInfo = response.getBody();
+            viewProfile.setConsultantBirthDate(consultantInfo.getBirthDate());
+            String fullName = consultantInfo.getFirstName() + " " + consultantInfo.getLastName();
+            if(consultantInfo.getTitle() != null && !consultantInfo.getTitle().isEmpty()) {
+                fullName = consultantInfo.getTitle() + " " + fullName;
+            }
+            viewProfile.setConsultantName(fullName);
+        } else {
+            LOG.error("Could not resolve consultant info for " + initials);
+            viewProfile.setConsultantBirthDate(LocalDate.now());
+            viewProfile.setConsultantName("ERROR COULD NOT RESOLVE NAME");
+        }
+
+    }
+
     /**
      * Imports a {@link Profile} and creates a {@link ViewProfile} for the consultant represented by <code>initials</code>.
      * The imported {@link Profile} is always the most current profile available, either
@@ -257,6 +276,8 @@ public class ViewProfileImporter {
             // so we'll catch a general exception
             throw new NoProfileAvailableException(initials);
         }
+
+        setConsultantData(result, initials);
 
         result.setCreationDate(LocalDate.now());
         result.setDescription(profile.getDescription());

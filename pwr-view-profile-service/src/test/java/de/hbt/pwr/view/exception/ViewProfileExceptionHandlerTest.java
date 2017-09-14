@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.exception;
 
+import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.controller.ViewProfileController;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
@@ -29,6 +30,11 @@ public class ViewProfileExceptionHandlerTest {
     @MockBean
     // DO NOT REMOVE. Stops the container for crashing. Don't ask why ~nt
     private JedisConnectionFactory jedisConnectionFactory;
+
+    // DO NOT REMOVE. Needs to exist so the app context loads properly.
+    @SuppressWarnings("unused")
+    @MockBean
+    private ReportServiceClient reportServiceClient;
 
     @Autowired
     private MockMvc mockMvc;
