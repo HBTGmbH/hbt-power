@@ -136,8 +136,8 @@ public class ViewProfileController {
         ReportInfo reportInfo = ReportInfo.builder()
                 .viewProfile(viewProfile)
                 .initials(initials)
-                .name(viewProfile.getConsultantName())
-                .birthDate(viewProfile.getConsultantBirthDate()).build();
+                .name(viewProfile.getViewProfileInfo().getConsultantName())
+                .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate()).build();
         ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC");
         return ResponseEntity.created(response.getHeaders().getLocation()).body(response.getHeaders().getLocation().toString());
     }

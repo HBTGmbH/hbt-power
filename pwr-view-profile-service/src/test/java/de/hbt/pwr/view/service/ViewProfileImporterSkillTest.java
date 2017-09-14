@@ -303,19 +303,19 @@ public class ViewProfileImporterSkillTest {
     public void shouldHaveViewDescriptionSet() {
         String description = "MyFooBarDescription";
         ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, "", description);
-        assertThat(viewProfile.getViewDescription()).isEqualTo(description);
+        assertThat(viewProfile.getViewProfileInfo().getViewDescription()).isEqualTo(description);
     }
 
     @Test
     public void shouldHaveNameSet() {
         String name = "MyName";
         ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, name, "FooBarDadasda");
-        assertThat(viewProfile.getName()).isEqualTo(name);
+        assertThat(viewProfile.getViewProfileInfo().getName()).isEqualTo(name);
     }
 
     @Test
     public void creationDateShouldNotBeNull() {
         ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
-        assertThat(viewProfile.getCreationDate()).isNotNull();
+        assertThat(viewProfile.getViewProfileInfo().getCreationDate()).isNotNull();
     }
 }

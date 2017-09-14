@@ -4,6 +4,7 @@ import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
 import de.hbt.pwr.view.exception.*;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
@@ -34,7 +35,7 @@ public class ViewProfileService {
         try {
             streamFromIterator = StreamUtils.createStreamFromIterator(viewProfileRepository.findAll().iterator());
             return streamFromIterator
-                    .filter(viewProfile -> viewProfile.getOwnerInitials().equals(initials))
+                    .filter(viewProfile -> viewProfile.getViewProfileInfo().getOwnerInitials().equals(initials))
                     .map(ViewProfile::getId)
                     .collect(Collectors.toList());
         } finally {
@@ -46,12 +47,12 @@ public class ViewProfileService {
 
     /**
      * Attempts to retrieve a {@link ViewProfile} by its {@link ViewProfile#id}. If successfully retrieved,
-     * the {@link ViewProfile#ownerInitials} is checked against <code>owner</code>.
+     * the {@link ViewProfileInfo#ownerInitials} is checked against <code>owner</code>.
      * @param id of the view profile
      * @param owner is the expected owner of the view profile
      * @return the retrieved {@link ViewProfile}
      * @throws ViewProfileNotFoundException if <code>id</code> does not represent a {@link ViewProfile}
-     * @throws InvalidOwnerException if <code>owner</code> does not match {@link ViewProfile#ownerInitials}
+     * @throws InvalidOwnerException if <code>owner</code> does not match {@link ViewProfileInfo#ownerInitials}
      */
     @NotNull
     public ViewProfile getByIdAndCheckOwner(@NotNull String id, @NotNull String owner) {
@@ -59,7 +60,7 @@ public class ViewProfileService {
         if(viewProfile == null) {
             throw new ViewProfileNotFoundException(id);
         }
-        if(!viewProfile.getOwnerInitials().equals(owner)) {
+        if(!viewProfile.getViewProfileInfo().getOwnerInitials().equals(owner)) {
             throw new InvalidOwnerException(id, owner);
         }
         return viewProfile;
@@ -70,14 +71,14 @@ public class ViewProfileService {
      * @param id of the view profile
      * @param owner is the expected owner of the {@link ViewProfile}
      * @throws ViewProfileNotFoundException if <code>id</code> does not represent a {@link ViewProfile}
-     * @throws InvalidOwnerException if <code>owner</code> does not match {@link ViewProfile#ownerInitials}
+     * @throws InvalidOwnerException if <code>owner</code> does not match {@link ViewProfileInfo#ownerInitials}
      */
     public void deleteWithOwnerCheck(@NotNull String id, @NotNull String owner) {
         ViewProfile viewProfile = viewProfileRepository.findOne(id);
         if(viewProfile == null) {
             throw new ViewProfileNotFoundException(id);
         }
-        if(!viewProfile.getOwnerInitials().equals(owner)) {
+        if(!viewProfile.getViewProfileInfo().getOwnerInitials().equals(owner)) {
             throw new InvalidOwnerException(id, owner);
         }
         viewProfileRepository.delete(id);

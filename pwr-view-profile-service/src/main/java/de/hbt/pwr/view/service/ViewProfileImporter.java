@@ -7,6 +7,7 @@ import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.exception.NoProfileAvailableException;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
@@ -241,20 +242,20 @@ public class ViewProfileImporter {
         }
     }
 
-    private void setConsultantData(ViewProfile viewProfile, String initials) {
+    private void setConsultantData(ViewProfileInfo viewProfileInfo, String initials) {
         ResponseEntity<ConsultantInfo> response = profileServiceClient.findByInitials(initials);
         if(response != null) {
             ConsultantInfo consultantInfo = response.getBody();
-            viewProfile.setConsultantBirthDate(consultantInfo.getBirthDate());
+            viewProfileInfo.setConsultantBirthDate(consultantInfo.getBirthDate());
             String fullName = consultantInfo.getFirstName() + " " + consultantInfo.getLastName();
             if(consultantInfo.getTitle() != null && !consultantInfo.getTitle().isEmpty()) {
                 fullName = consultantInfo.getTitle() + " " + fullName;
             }
-            viewProfile.setConsultantName(fullName);
+            viewProfileInfo.setConsultantName(fullName);
         } else {
             LOG.error("Could not resolve consultant info for " + initials);
-            viewProfile.setConsultantBirthDate(LocalDate.now());
-            viewProfile.setConsultantName("ERROR COULD NOT RESOLVE NAME");
+            viewProfileInfo.setConsultantBirthDate(LocalDate.now());
+            viewProfileInfo.setConsultantName("ERROR COULD NOT RESOLVE NAME");
         }
 
     }
@@ -277,14 +278,18 @@ public class ViewProfileImporter {
             throw new NoProfileAvailableException(initials);
         }
 
-        setConsultantData(result, initials);
 
-        result.setCreationDate(LocalDate.now());
+
+        ViewProfileInfo viewProfileInfo = new ViewProfileInfo();
+        viewProfileInfo.setCreationDate(LocalDate.now());
+        viewProfileInfo.setOwnerInitials(initials);
+        viewProfileInfo.setViewDescription(viewDescription);
+        viewProfileInfo.setName(name);
+        setConsultantData(viewProfileInfo, initials);
+
+        result.setViewProfileInfo(viewProfileInfo);
+
         result.setDescription(profile.getDescription());
-        result.setOwnerInitials(initials);
-        result.setViewDescription(viewDescription);
-        result.setName(name);
-
         result.setLanguages(mapLanguages(profile.getLanguages()));
         result.setQualifications(mapQualifications(profile.getQualification()));
         result.setTrainings(mapTrainings(profile.getTrainingEntries()));

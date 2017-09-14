@@ -5,6 +5,7 @@ import de.hbt.pwr.view.exception.CategoryNotUniqueException;
 import de.hbt.pwr.view.exception.InvalidOwnerException;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
@@ -38,15 +39,15 @@ public class ViewProfileServiceTest {
     private final String otherUserInitials = "oth";
 
     private final List<ViewProfile> testViewProfileListOfTestUser = Arrays.asList(
-            ViewProfile.builder().name("VP1").id("VP1").ownerInitials(testUserInitials).build(),
-            ViewProfile.builder().name("VP2").id("VP2").ownerInitials(testUserInitials).build(),
-            ViewProfile.builder().name("VP3").id("VP3").ownerInitials(testUserInitials).build(),
-            ViewProfile.builder().name("VP4").id("VP4").ownerInitials(testUserInitials).build()
+            ViewProfile.builder().viewProfileInfo(ViewProfileInfo.builder().name("VP1").ownerInitials(testUserInitials).build()).id("VP1").build(),
+            ViewProfile.builder().viewProfileInfo(ViewProfileInfo.builder().name("VP2").ownerInitials(testUserInitials).build()).id("VP2").build(),
+            ViewProfile.builder().viewProfileInfo(ViewProfileInfo.builder().name("VP3").ownerInitials(testUserInitials).build()).id("VP3").build(),
+            ViewProfile.builder().viewProfileInfo(ViewProfileInfo.builder().name("VP4").ownerInitials(testUserInitials).build()).id("VP4").build()
     );
 
     private final List<ViewProfile> testViewProfilesOfOtherUser = Arrays.asList(
-            ViewProfile.builder().name("O1").id("O1").ownerInitials(otherUserInitials).build(),
-            ViewProfile.builder().name("O2").id("O2").ownerInitials(otherUserInitials).build()
+            ViewProfile.builder().viewProfileInfo(ViewProfileInfo.builder().name("O1").ownerInitials(otherUserInitials).build()).id("O1").build(),
+            ViewProfile.builder().viewProfileInfo(ViewProfileInfo.builder().name("O2").ownerInitials(otherUserInitials).build()).id("O2").build()
     );
 
     @Before

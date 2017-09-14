@@ -172,7 +172,7 @@ public class ViewProfileImporterEntryTest {
     @Test
     public void shouldHaveCorrectOwner() {
         invokeImport();
-        assertThat(viewProfile.getOwnerInitials()).isEqualTo(initials);
+        assertThat(viewProfile.getViewProfileInfo().getOwnerInitials()).isEqualTo(initials);
     }
 
     /**
@@ -399,7 +399,7 @@ public class ViewProfileImporterEntryTest {
         invokeImport();
 
         String fullName = title + " " + firstName + " " + lastName;
-        assertThat(viewProfile.getConsultantName()).isEqualTo(fullName.trim());
-        assertThat(viewProfile.getConsultantBirthDate()).isEqualTo(birthDate);
+        assertThat(viewProfile.getViewProfileInfo().getConsultantName()).isEqualTo(fullName.trim());
+        assertThat(viewProfile.getViewProfileInfo().getConsultantBirthDate()).isEqualTo(birthDate);
     }
 }

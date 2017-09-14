@@ -1,6 +1,5 @@
 package de.hbt.pwr.view.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
@@ -10,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -25,22 +23,12 @@ public class ViewProfile {
 
     private String id;
 
-    private String viewDescription = "";
+    private Locale locale;
 
-    @JsonProperty("owner")
-    private String ownerInitials;
-
-    private String consultantName;
-
-    private LocalDate consultantBirthDate;
-
-    private String name = "";
 
     private String description = "";
 
-    private LocalDate creationDate;
-
-    private Locale locale;
+    private ViewProfileInfo viewProfileInfo = new ViewProfileInfo();
 
     private List<Career> careers = new ArrayList<>();
 
