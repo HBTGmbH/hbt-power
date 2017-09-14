@@ -32,8 +32,8 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     private resetState = (props: ViewProfileDialogProps) => {
         this.state = {
-            name: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.name) ? "" : props.viewProfile.name,
-            description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewDescription) ? "" : props.viewProfile.viewDescription
+            name: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.name) ? "" : props.viewProfile.viewProfileInfo.name,
+            description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.viewDescription) ? "" : props.viewProfile.viewProfileInfo.viewDescription
         }
     };
 

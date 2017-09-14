@@ -8,15 +8,17 @@ import {ViewTraining} from './ViewTraining';
 import {ViewProjectRole} from './ViewProjectRole';
 import {ViewProject} from './ViewProject';
 import {ViewCategory} from './ViewCategory';
+import {ViewProfileInfo} from './ViewProfileInfo';
 
 export class ViewProfile {
     id: string;
-    owner: string;
+    /*owner: string;
     name: string;
     viewDescription: string;
-    description: string;
-    creationDate: Date;
+    creationDate: Date;*/
+    viewProfileInfo: ViewProfileInfo;
     locale: string;
+    description: string;
     careers: Array<ViewCareer>;
     educations: Array<ViewEducation>;
     keySkills: Array<ViewKeySkill>;
@@ -35,11 +37,8 @@ export class ViewProfile {
 
     constructor(viewProfile: ViewProfile) {
         this.id = viewProfile.id;
-        this.owner = viewProfile.owner;
-        this.name = viewProfile.name;
-        this.viewDescription = viewProfile.viewDescription;
         this.description = viewProfile.description;
-        this.creationDate = new Date(viewProfile.creationDate);
+        this.viewProfileInfo = new ViewProfileInfo(viewProfile.viewProfileInfo);
         this.locale = viewProfile.locale;
         this.careers = viewProfile.careers;
         this.educations = viewProfile.educations;

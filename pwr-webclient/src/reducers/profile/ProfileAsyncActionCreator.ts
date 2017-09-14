@@ -1,20 +1,18 @@
 import * as redux from 'redux';
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import {
     getAllCurrentlyUsedSkillNames,
     getCareerSuggestionAPIString,
     getCompanySuggestionsAPIString,
     getConsultantApiString,
     getEducationSuggestionAPIString,
-    getExportDocuments,
     getKeySkillsSuggestionAPIString,
     getLangSuggestionAPIString,
     getProfileAPIString,
     getProjectRolesSuggestionAPIString,
     getQualificationSuggestionAPIString,
     getSectorsSuggestionAPIString,
-    getTrainingSuggestionAPIString,
-    postGenerateProfile
+    getTrainingSuggestionAPIString
 } from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
 import {ProfileStore} from '../../model/ProfileStore';
@@ -24,7 +22,6 @@ import {ProfileActionCreator} from './ProfileActionCreator';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
-import {APIExportDocument, ExportDocument} from '../../model/ExportDocument';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
 
 export class ProfileAsyncActionCreator {
@@ -203,67 +200,6 @@ export class ProfileAsyncActionCreator {
                 dispatch(ProfileActionCreator.FailLogin());
             });
         };
-    }
-
-    public static generatePDFProfile(initials: string, viewProfileId: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
-            let config: AxiosRequestConfig = {
-                params: {
-                    viewid: viewProfileId,
-                    type: "PDF"
-                },
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(postGenerateProfile(initials), null, config).then((response: AxiosResponse) => {
-                let location = response.data.filelocation;
-                console.info("Received location: ", location);
-                window.open(location, "_blank");
-                dispatch(ProfileActionCreator.SucceedAPIRequest());
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        }
-    }
-
-    public static generateDocXProfile(initials: string, viewProfileId: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
-            let config: AxiosRequestConfig = {
-                params: {
-                    viewid: viewProfileId,
-                    type: "DOC"
-                },
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-            dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(postGenerateProfile(initials), null, config).then((response: AxiosResponse) => {
-                let location = response.data.filelocation;
-                console.info("Received location: ", location);
-                window.open(location, "_blank");
-                dispatch(ProfileActionCreator.SucceedAPIRequest());
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        }
-    }
-
-    public static getAllExportDocuments(initials: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getExportDocuments(initials)).then((response: AxiosResponse) => {
-                let apiExportDocs: Array<APIExportDocument> = response.data;
-                let exportDocs = apiExportDocs.map(value => ExportDocument.fromAPI(value));
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(exportDocs, APIRequestType.RequestExportDocs));
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
-            });
-        }
     }
 
     public static getAllCurrentlyUsedSkills() {

@@ -21,7 +21,7 @@ const POWER_API_PORT_STATISTICS = "9007";
 const POWER_API_SUFFIX_STATISTICS = "";
 //*/
 
-/*/
+//*/
 const POWER_API_HOST_SKILL = "http://power02.corp.hbt.de";
 const POWER_API_PORT_SKILL = "9000";
  const POWER_API_SUFFIX_SKILL = "/pwr-skill-service";
@@ -31,10 +31,10 @@ const POWER_API_PORT_SKILL = "9003";
 const POWER_API_SUFFIX_SKILL = "";
 //*/
 
-/*/
+//*/
 const POWER_API_HOST_VIEW = "http://power02.corp.hbt.de";
-const POWER_API_PORT_VIEW: "9000";
-const POWER_API_SUFFIX_VIEW: "/pwr-view-service";
+const POWER_API_PORT_VIEW = "9000";
+const POWER_API_SUFFIX_VIEW = "/pwr-view-profile-service";
 /*/
 const POWER_API_HOST_VIEW = "http://localhost";
 const POWER_API_PORT_VIEW = "9008";

@@ -6,7 +6,6 @@ import {Profile} from './Profile';
 import {doop} from 'doop';
 import {LoginStatus} from './LoginStatus';
 import {ConsultantInfo} from './ConsultantInfo';
-import {ExportDocument} from './ExportDocument';
 
 
 /**
@@ -36,13 +35,7 @@ export class ProfileStore {
     public get loginStatus() {return doop<LoginStatus, this>();};
 
     @doop
-    public get authToken() {return doop<string, this>();}; //FIXME remove unused
-
-    @doop
     public get profile() {return doop<Profile, this>();};
-
-    @doop
-    public get exportDocuments() {return doop<Immutable.List<ExportDocument>, this>();}
 
     @doop
     public get trainings() {return doop<Immutable.Map<string, NameEntity>, this>();}
@@ -93,7 +86,6 @@ export class ProfileStore {
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: ConsultantInfo,
         degrees: Immutable.List<string>,
-        exportDocuments: Immutable.List<ExportDocument>,
         currentlyUsedSkillNames: Immutable.Set<string>
 ) {
         return this.APIRequestStatus(apiRequestStatus)
@@ -110,7 +102,6 @@ export class ProfileStore {
             .degrees(degrees)
             .careers(careers)
             .keySkills(keySkills)
-            .exportDocuments(exportDocuments)
             .currentlyUsedSkillNames(currentlyUsedSkillNames);
     }
 
@@ -131,7 +122,6 @@ export class ProfileStore {
             Immutable.Map<string, NameEntity>(),
             ConsultantInfo.empty(),
             Immutable.List<string>(['Bachelor', 'Master', 'Doktor', 'Diplom']),
-            Immutable.List<ExportDocument>(),
             Immutable.Set<string>(),
         );
     }

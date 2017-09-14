@@ -23,7 +23,6 @@ import {APINameEntity} from '../../model/APIProfile';
 import {ActionType} from '../ActionType';
 import * as Immutable from 'immutable';
 import {LoginStatus} from '../../model/LoginStatus';
-import {ExportDocument} from '../../model/ExportDocument';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 
 export class DatabaseReducer {
@@ -172,9 +171,6 @@ export class DatabaseReducer {
                 break;
             case APIRequestType.RequestCompanies:
                 newState = state.companies(DatabaseReducer.AddAPINameEntities(action.payload, state.companies()));
-                break;
-            case APIRequestType.RequestExportDocs:
-                newState = state.exportDocuments(Immutable.List<ExportDocument>(action.payload));
                 break;
             case APIRequestType.RequestSkillNames:
                 newState = state.currentlyUsedSkillNames(Immutable.Set<string>(action.payload));

@@ -5,7 +5,13 @@ import {ApplicationState} from '../reducerIndex';
 import * as redux from 'redux';
 import axios from 'axios';
 import {MetaDataStore} from '../../model/metadata/MetaDataStore';
-import {getProfileBuildInfo, getReportBuildInfo, getSkillBuildInfo, getStatisticsBuildsInfo} from '../../API_CONFIG';
+import {
+    getProfileBuildInfo,
+    getReportBuildInfo,
+    getSkillBuildInfo,
+    getStatisticsBuildsInfo,
+    ViewProfileService
+} from '../../API_CONFIG';
 
 export interface AddOrReplaceBuildInfoAction extends AbstractAction {
     service: string;
@@ -41,6 +47,7 @@ export namespace MetaDataActionCreator {
             dispatch(FetchBuildInfo(MetaDataStore.KEY_STATISTICS, getStatisticsBuildsInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_SKILL, getSkillBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_REPORT, getReportBuildInfo()));
+            dispatch(FetchBuildInfo(MetaDataStore.KEY_VIEW_PROFIE, ViewProfileService.getBuildInfo()));
         }
     }
 }

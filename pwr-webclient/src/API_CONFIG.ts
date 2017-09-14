@@ -120,14 +120,6 @@ export function getAllCurrentlyUsedSkillNames(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/skills";
 }
 
-export function postGenerateProfile(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
-}
-
-export function getExportDocuments(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
-}
-
 export function getProfileImageLocation(initials: string): string {
     return "/img/profile_pictures/foto_" + initials + ".jpg"
 }
@@ -142,10 +134,6 @@ export function getSkillUsageRelative(): string {
 
 export function getProfileStatistics(initials: string): string {
     return  POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/skill/common/" + initials;
-}
-
-export function getKMeansProfileNetwork(): string {
-    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/network/kmeans";
 }
 
 export function getKMedProfileNetwork(): string {
@@ -245,7 +233,6 @@ export function patchMoveSkill(skillId: number, newCategoryId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId + "/category/" + newCategoryId;
 }
 
-
 export namespace ViewProfileService {
 
     function base() {
@@ -302,4 +289,13 @@ export namespace ViewProfileService {
     export function patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number, entryType: SortableEntryType, field: SortableEntryField) {
         return patchBase(initials, id) + container + "/" + containerIndex + "/" + SortableEntryType[entryType] + "/" + field + "/order";
     }
+
+    export function postReport(initials: string, viewProfileId: string) {
+        return base() +  "/view/" + initials + "/view/" + viewProfileId + "/report";
+    }
+
+    export function getBuildInfo(): string {
+        return base() + "/meta/info";
+    }
+
 }

@@ -25,6 +25,7 @@ interface ViewCardLocalState {
 interface ViewCardDispatch {
     deleteViewProfile(id: string): void;
     navigateTo(target: string): void;
+    generate(viewProfileId: string): void;
 }
 
 class ViewCardModule extends React.Component<
@@ -48,7 +49,8 @@ class ViewCardModule extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewCardDispatch {
         return {
             deleteViewProfile: (id) => dispatch(ViewProfileActionCreator.AsyncDeleteViewProfile(id)),
-            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target))
+            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
+            generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId))
         };
     }
 
@@ -67,10 +69,10 @@ class ViewCardModule extends React.Component<
                 open={this.state.dialogOpen}
             />
             <CardHeader
-                title={this.props.viewProfile.name}
-                subtitle={"Created on " + formatFullLocalizedDate(this.props.viewProfile.creationDate)}
+                title={this.props.viewProfile.viewProfileInfo.name}
+                subtitle={"Created on " + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
             />
-            <h6 className="padding-left-16px">{this.props.viewProfile.viewDescription}</h6>
+            <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
             <CardActions>
                 <FlatButton
                     onTouchTap={() => this.setDialogOpen(true)}
@@ -83,6 +85,10 @@ class ViewCardModule extends React.Component<
                 <FlatButton
                     label={PowerLocalize.get("Action.Show")}
                     onTouchTap={() => this.props.navigateTo("/app/view/" + this.props.viewProfileId)}
+                />
+                <FlatButton
+                    label={PowerLocalize.get("Action.Generate.Word")}
+                    onTouchTap={() => this.props.generate(this.props.viewProfileId)}
                 />
             </CardActions>
         </Card>);

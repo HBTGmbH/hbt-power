@@ -11,7 +11,8 @@ import {
     getSkillUsageInfo,
     getSkillUsageRelative,
     getSkillUsagesAbsolute,
-    headStatisticsServiceAvailable
+    headStatisticsServiceAvailable,
+    ViewProfileService
 } from '../../API_CONFIG';
 import {APINetwork, APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
@@ -33,6 +34,7 @@ import {APIScatterSkill, ScatterSkill} from '../../model/statistics/ScatterSkill
 import {APIConsultant} from '../../model/APIProfile';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {NameEntity} from '../../model/NameEntity';
+import postReport = ViewProfileService.postReport;
 
 export class StatisticsActionCreator {
 

@@ -9,7 +9,6 @@ import {isNullOrUndefined} from 'util';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
-import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
@@ -44,7 +43,6 @@ interface ToolbarDispatch {
     logOutUser(): void;
     loadNetworkGraph(): void;
     loadConsultantClusterInfo(initials: string): void;
-    loadExportDocuments(initials: string): void;
     loadSkillStatistics(): void;
 }
 
@@ -72,7 +70,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
-            loadExportDocuments: (initials) => dispatch(ProfileAsyncActionCreator.getAllExportDocuments(initials)),
             loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
         };
     }
@@ -92,12 +89,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 <span>Poooower!   </span>
                 <span>&nbsp;2.0</span>
         </div>);
-    };
-
-    private loadExportDocuments = () => {
-        this.props.navigateTo(Paths.USER_REPORTS);
-        // FIXME move this into the async action.
-        this.props.loadExportDocuments(this.props.loggedInUser.initials());
     };
 
     private loadNetworkGraph = () => {
@@ -136,9 +127,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
                 primaryText={PowerLocalize.get('Menu.BaseData')}
             />
-            <MenuItem
-                primaryText={PowerLocalize.get('Menu.Reports')}
-                onClick={this.loadExportDocuments}/>
             {
                 this.props.statisticsAvailable ?
                     <MenuItem

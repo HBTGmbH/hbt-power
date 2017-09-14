@@ -27,7 +27,6 @@ import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCre
 import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_module';
 import {ClusterResult} from './modules/home/statistics/cluster-result_module';
 import {ConsultantSkillSearch} from './modules/general/search/consultant-skill-search_module.';
-import {ExportDocumentList} from './modules/home/export/export-document-list_module';
 import {getMuiTheme, spacing} from 'material-ui/styles';
 import {
     cyan500,
@@ -93,7 +92,6 @@ class MyRouter extends React.Component<any, any> {
             <Route path={Paths.USER_BASE} component={PowerClient}>
                 <Route path={Paths.USER_HOME} component={PowerOverview}/>
                 <Route path={Paths.USER_PROFILE} component={ConsultantProfile}/>
-                <Route path={Paths.USER_REPORTS} component={ExportDocumentList}/>
                 <Route path={Paths.USER_STATISTICS_NETWORK} component={ProfileNetworkGraph}/>
                 <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>
                 <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>

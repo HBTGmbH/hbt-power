@@ -216,7 +216,21 @@ export namespace ViewProfileActionCreator {
         }
     }
 
-
+    export function AsyncGenerateDocX(viewProfileId: string) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            dispatch(ProfileActionCreator.APIRequestPending());
+            axios.post(ViewProfileService.postReport(initials, viewProfileId)).then((response: AxiosResponse) => {
+                let location = response.data;
+                console.info("Received location: ", location);
+                window.open(location, "_blank");
+                dispatch(ProfileActionCreator.SucceedAPIRequest());
+            }).catch(function (error: any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
 
     /**
      * Loads all view profiles for the consultant that is currently logged in
