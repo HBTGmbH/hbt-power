@@ -139,11 +139,11 @@ public class ViewProfileController {
                 .initials(initials)
                 .name(viewProfile.getViewProfileInfo().getConsultantName())
                 .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate()).build();
-        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC");
+        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC", viewProfile.getViewProfileInfo().getCharsPerLine());
         return ResponseEntity.created(response.getHeaders().getLocation()).body(response.getHeaders().getLocation().toString());
     }
 
-    @PatchMapping(path = "/{initials}/view/{viewProfileId}")
+    @PatchMapping(path = "/{initials}/view/{viewProfileId}/info")
     public ResponseEntity<ViewProfile> partiallyUpdateInfo(@RequestBody ViewProfileInfo viewProfileInfo,
                                                            @PathVariable("initials") String initials,
                                                            @PathVariable("viewProfileId") String viewProfileId) {

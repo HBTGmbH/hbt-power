@@ -10,5 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "pwr-report-service")
 public interface ReportServiceClient {
     @PostMapping("/report")
-    ResponseEntity<String> generateReport(@RequestBody ReportInfo reportInfo, @RequestParam("type") String type);
+    ResponseEntity<String> generateReport(@RequestBody ReportInfo reportInfo,
+                                          @RequestParam("type") String type,
+                                          @RequestParam(value = "charsperline", required = false) Integer charsPerLine);
 }
