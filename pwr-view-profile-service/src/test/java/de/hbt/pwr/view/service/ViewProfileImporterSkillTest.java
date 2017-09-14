@@ -5,6 +5,7 @@ import de.hbt.pwr.view.client.profile.model.Profile;
 import de.hbt.pwr.view.client.profile.model.ProfileSkill;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.client.skill.SkillServiceFallback;
+import de.hbt.pwr.view.client.skill.model.LocalizedQualifier;
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.ViewProfile;
@@ -302,14 +303,14 @@ public class ViewProfileImporterSkillTest {
     @Test
     public void shouldHaveViewDescriptionSet() {
         String description = "MyFooBarDescription";
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, "", description);
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, "", description, "deu");
         assertThat(viewProfile.getViewProfileInfo().getViewDescription()).isEqualTo(description);
     }
 
     @Test
     public void shouldHaveNameSet() {
         String name = "MyName";
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, name, "FooBarDadasda");
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, name, "FooBarDadasda", "deu");
         assertThat(viewProfile.getViewProfileInfo().getName()).isEqualTo(name);
     }
 
@@ -317,5 +318,26 @@ public class ViewProfileImporterSkillTest {
     public void creationDateShouldNotBeNull() {
         ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
         assertThat(viewProfile.getViewProfileInfo().getCreationDate()).isNotNull();
+    }
+
+    @Test
+    public void shouldImportWithLocaleIfAvailable() {
+        SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
+        SkillServiceCategory center = new SkillServiceCategory("Center", highest);
+        SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center, true);
+        SkillServiceSkill testSkill1 = new SkillServiceSkill("German", lowest);
+        LocalizedQualifier localizedQualifier = new LocalizedQualifier("deu", "Deutsch");
+        LocalizedQualifier localizedQualifierCategory = new LocalizedQualifier("deu", "Niedrigste");
+        testSkill1.getQualifiers().add(localizedQualifier);
+        lowest.getQualifiers().add(localizedQualifierCategory);
+
+        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
+        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, "", "", "deu");
+
+        Optional<Skill> skillOptional = viewProfile.findSkillByName(localizedQualifier.getQualifier());
+        assertThat(skillOptional.isPresent()).isTrue();
+        assertThat(skillOptional.get().getName()).isEqualTo(localizedQualifier.getQualifier());
+        assertThat(skillOptional.get().getCategory().getName()).isEqualTo(localizedQualifierCategory.getQualifier());
     }
 }

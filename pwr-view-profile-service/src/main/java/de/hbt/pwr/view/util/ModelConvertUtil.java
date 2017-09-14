@@ -77,13 +77,13 @@ public class ModelConvertUtil {
     }
 
     @NotNull
-    private static Category mapCategory(SkillServiceCategory skillServiceCategory) {
+    private static Category mapCategory(SkillServiceCategory skillServiceCategory, String locale) {
         Category category = new Category();
-        category.setName(skillServiceCategory.getQualifier());
+        category.setName(skillServiceCategory.getLocalizedQualifier(locale));
         category.setIsDisplay(skillServiceCategory.getDisplay());
         category.setEnabled(true);
         if(skillServiceCategory.getCategory() != null) {
-            category.setParent(mapCategory(skillServiceCategory.getCategory()));
+            category.setParent(mapCategory(skillServiceCategory.getCategory(), locale));
         }
         return category;
     }
@@ -92,13 +92,13 @@ public class ModelConvertUtil {
      * Maps a skill so that a partial skill tree with all parents mapped is created.
      */
     @NotNull
-    public static Skill mapSkill(SkillServiceSkill skillServiceSkill, ProfileSkill profileSkill) {
+    public static Skill mapSkill(SkillServiceSkill skillServiceSkill, ProfileSkill profileSkill, String locale) {
         Skill skill = new Skill();
         skill.setEnabled(true);
-        skill.setName(skillServiceSkill.getQualifier());
+        skill.setName(skillServiceSkill.getLocalizedQualifier(locale));
         skill.setRating(profileSkill.getRating());
         if(skillServiceSkill.getCategory() != null) {
-            Category category = mapCategory(skillServiceSkill.getCategory());
+            Category category = mapCategory(skillServiceSkill.getCategory(), locale);
             skill.setCategory(category);
         }
         return skill;

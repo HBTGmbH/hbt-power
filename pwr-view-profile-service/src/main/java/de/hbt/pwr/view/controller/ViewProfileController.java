@@ -70,8 +70,12 @@ public class ViewProfileController {
     @PostMapping(path = "/{initials}")
     public ResponseEntity<ViewProfile> createViewProfile(
             @ApiParam("Initials of the consultant for which the profile is created") @PathVariable("initials") String initials,
-            @RequestBody ViewProfile.ViewProfileStub data) {
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, data.name, data.viewDescription);
+            @RequestBody ViewProfile.ViewProfileStub data,
+            @RequestParam(value = "locale", required = false) String locale) {
+        if(locale == null) {
+            locale = ViewProfileImporter.DEFAULT_LOCALE;
+        }
+        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, data.name, data.viewDescription, locale);
         return ResponseEntity.ok(viewProfile);
     }
 

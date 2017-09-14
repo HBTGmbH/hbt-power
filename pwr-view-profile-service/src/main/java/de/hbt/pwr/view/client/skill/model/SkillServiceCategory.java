@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 public class SkillServiceCategory {
@@ -32,5 +33,15 @@ public class SkillServiceCategory {
         this.qualifier = qualifier;
         this.category = category;
         this.display = display;
+    }
+
+    public String getLocalizedQualifier(String locale) {
+        if(locale == null) {
+            return qualifier;
+        }
+        Optional<String> name = qualifiers.stream()
+                .filter(localizedQualifier -> locale.equals(localizedQualifier.getLocale()))
+                .map(LocalizedQualifier::getQualifier).findAny();
+        return name.orElse(qualifier);
     }
 }

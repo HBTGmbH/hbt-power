@@ -29,6 +29,9 @@ public class ViewProfileImporter {
 
     public static final String PWR_ROOT_NAME = "root";
 
+    // FIXME move to props
+    public static final String DEFAULT_LOCALE = "deu";
+
     private final ProfileServiceClient profileServiceClient;
 
     private final SkillServiceClient skillServiceClient;
@@ -159,7 +162,7 @@ public class ViewProfileImporter {
      * @param root category
      * @param toAdd to add
      */
-    private Skill mergeIntoTree(Category root, ProfileSkill toAdd) {
+    private Skill mergeIntoTree(Category root, ProfileSkill toAdd, String locale) {
         SkillServiceSkill skillServiceSkill = skillServiceClient.getSkillByName(toAdd.getName());
         // Because the design of the skill service has a flaw here, the fallback won't trigger
         // because when a skill does not exist, null is returned instead of a 404.
@@ -167,7 +170,7 @@ public class ViewProfileImporter {
         if(skillServiceSkill == null) {
             skillServiceSkill = skillServiceFallback.getSkillByName(toAdd.getName());
         }
-        Skill skill = ModelConvertUtil.mapSkill(skillServiceSkill, toAdd);
+        Skill skill = ModelConvertUtil.mapSkill(skillServiceSkill, toAdd, locale);
         Category highestParent = skill.getCategory();
         while(highestParent.getParent() != null) {
             highestParent = highestParent.getParent();
@@ -182,9 +185,9 @@ public class ViewProfileImporter {
      * @param skills to be mapped into the tree
      * @return root category
      */
-    private Category buildSkillTree(Collection<ProfileSkill> skills) {
+    private Category buildSkillTree(Collection<ProfileSkill> skills, String locale) {
         Category root = new Category(PWR_ROOT_NAME);
-        skills.forEach(skill -> mergeIntoTree(root, skill));
+        skills.forEach(skill -> mergeIntoTree(root, skill, locale));
         // The map is there to collect all display categories for the list of display categories.
         return root;
     }
@@ -266,7 +269,7 @@ public class ViewProfileImporter {
      * @param initials of the consultant whose profile is used.
      * @return the newly persisted {@link ViewProfile}
      */
-    public ViewProfile importViewProfile(String initials, String name, String viewDescription) {
+    public ViewProfile importViewProfile(String initials, String name, String viewDescription, String locale) {
         ViewProfile result = new ViewProfile();
         Profile profile;
         try {
@@ -302,7 +305,7 @@ public class ViewProfileImporter {
 
         result.setProjectRoles(collectProjectRoles(profile.getProjects()));
 
-        Category root = buildSkillTree(profile.getSkills());
+        Category root = buildSkillTree(profile.getSkills(), locale);
         result.setRootCategory(root);
         // Must be called after the skill tree has been built
         result.setDisplayCategories(mapDisplayCategories(root));
@@ -319,6 +322,6 @@ public class ViewProfileImporter {
      * @return the newly persisted {@link ViewProfile}
      */
     public ViewProfile importViewProfile(String initials) {
-       return importViewProfile(initials,"View Profile of " + initials, "");
+       return importViewProfile(initials,"View Profile of " + initials, "",  DEFAULT_LOCALE);
     }
 }
