@@ -18,6 +18,7 @@ interface ViewProfileDialogState {
     name: string;
     description: string;
     charsPerLine: number;
+    locale: string;
 }
 
 export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, ViewProfileDialogState> {
@@ -35,7 +36,8 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         this.state = {
             name: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.name) ? "" : props.viewProfile.viewProfileInfo.name,
             description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.viewDescription) ? "" : props.viewProfile.viewProfileInfo.viewDescription,
-            charsPerLine: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.charsPerLine) ? -1 : props.viewProfile.viewProfileInfo.charsPerLine
+            charsPerLine: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.charsPerLine) ? 45 : props.viewProfile.viewProfileInfo.charsPerLine,
+            locale: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.locale) ? "deu": props.viewProfile.locale
         }
     };
 
@@ -55,6 +57,10 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     private changeCharsPerLine = (e: any, charsPerLine: number) => {
         this.setField("charsPerLine", charsPerLine);
+    };
+
+    private changeLocale = (e: any, locale: string) => {
+        this.setField("locale", locale);
     };
 
     private closeAndReset = () => {
@@ -114,6 +120,11 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                               fullWidth={true}
                               multiLine={true}
                               floatingLabelText={PowerLocalize.get("ViewProfileDialog.Description")}
+            />
+            <TextField onChange={this.changeLocale}
+                       value={this.state.locale}
+                       floatingLabelText="Profile Locale"
+                       disabled={this.props.type === "edit"}
             />
             <div style={{width: "100%"}}>
                 <TextField
