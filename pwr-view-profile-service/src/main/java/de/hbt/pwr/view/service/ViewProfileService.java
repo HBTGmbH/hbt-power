@@ -277,4 +277,20 @@ public class ViewProfileService {
             ModelConvertUtil.setDisplayCategory(skill);
         });
     }
+
+    public void updateInfo(ViewProfile viewProfile, ViewProfileInfo viewProfileInfo) {
+        if(viewProfileInfo.getConsultantBirthDate() != null) {
+            viewProfile.getViewProfileInfo().setConsultantBirthDate(viewProfileInfo.getConsultantBirthDate());
+        }
+        if(viewProfileInfo.getConsultantName() != null) {
+            viewProfile.getViewProfileInfo().setConsultantName(viewProfileInfo.getConsultantName());
+        }
+        if(viewProfileInfo.getName() != null) {
+            viewProfile.getViewProfileInfo().setName(viewProfileInfo.getName());
+        }
+        if(viewProfileInfo.getViewDescription() != null) {
+            viewProfile.getViewProfileInfo().setViewDescription(viewProfileInfo.getViewDescription());
+        }
+
+    }
 }

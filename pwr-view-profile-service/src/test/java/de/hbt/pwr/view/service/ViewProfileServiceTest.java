@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -197,5 +198,21 @@ public class ViewProfileServiceTest {
         ViewProfile viewProfile = new ViewProfile();
         viewProfile.setRootCategory(root);
         viewProfileService.moveSkill(viewProfile, skill.getName(), "asdasfjdapofj");
+    }
+
+    @Test
+    public void shouldPartiallyUpdateViewProfileInfo() {
+        ViewProfile viewProfile = new ViewProfile();
+        ViewProfileInfo viewProfileInfo = ViewProfileInfo.builder().name("adad")
+                .viewDescription("Desc")
+                .consultantBirthDate(LocalDate.now())
+                .consultantName("Name").build();
+        viewProfileService.updateInfo(viewProfile, viewProfileInfo);
+        ViewProfileInfo updatedInfo = viewProfile.getViewProfileInfo();
+        assertThat(updatedInfo.getConsultantBirthDate()).isEqualTo(viewProfileInfo.getConsultantBirthDate());
+        assertThat(updatedInfo.getConsultantName()).isEqualTo(viewProfileInfo.getConsultantName());
+        assertThat(updatedInfo.getName()).isEqualTo(viewProfileInfo.getName());
+        assertThat(updatedInfo.getViewDescription()).isEqualTo(viewProfileInfo.getViewDescription());
+
     }
 }

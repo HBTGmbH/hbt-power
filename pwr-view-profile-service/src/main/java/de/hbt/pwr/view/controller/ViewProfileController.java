@@ -4,6 +4,7 @@ import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.client.report.model.ReportInfo;
 import de.hbt.pwr.view.exception.ServiceError;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
@@ -140,5 +141,14 @@ public class ViewProfileController {
                 .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate()).build();
         ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC");
         return ResponseEntity.created(response.getHeaders().getLocation()).body(response.getHeaders().getLocation().toString());
+    }
+
+    @PatchMapping(path = "/{initials}/view/{viewProfileId}")
+    public ResponseEntity<ViewProfile> partiallyUpdateInfo(@RequestBody ViewProfileInfo viewProfileInfo,
+                                                           @PathVariable("initials") String initials,
+                                                           @PathVariable("viewProfileId") String viewProfileId) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.updateInfo(viewProfile, viewProfileInfo);
+        return ResponseEntity.ok(viewProfile);
     }
 }
