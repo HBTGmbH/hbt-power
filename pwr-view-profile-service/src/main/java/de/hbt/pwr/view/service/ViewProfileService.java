@@ -291,6 +291,9 @@ public class ViewProfileService {
         if(viewProfileInfo.getViewDescription() != null) {
             viewProfile.getViewProfileInfo().setViewDescription(viewProfileInfo.getViewDescription());
         }
+        if(viewProfileInfo.getCharsPerLine() != null) {
+            viewProfile.getViewProfileInfo().setCharsPerLine(viewProfileInfo.getCharsPerLine());
+        }
 
     }
 }

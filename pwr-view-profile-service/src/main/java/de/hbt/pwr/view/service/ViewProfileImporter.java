@@ -285,6 +285,7 @@ public class ViewProfileImporter {
         viewProfileInfo.setOwnerInitials(initials);
         viewProfileInfo.setViewDescription(viewDescription);
         viewProfileInfo.setName(name);
+        viewProfileInfo.setCharsPerLine(45);
         setConsultantData(viewProfileInfo, initials);
 
         result.setViewProfileInfo(viewProfileInfo);
