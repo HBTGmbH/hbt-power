@@ -2,10 +2,11 @@ import * as React from 'react';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
-import {formatString} from '../../../utils/StringUtil';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
 import {NotificationDialog} from './notification-dialog_module';
+import {StringUtils} from '../../../utils/StringUtil';
+import formatString = StringUtils.formatString;
 
 
 interface ProfileEntryNotificationTableLocalProps {

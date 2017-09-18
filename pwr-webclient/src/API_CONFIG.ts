@@ -1,3 +1,4 @@
+import {SortableEntryField, SortableEntryType} from './model/view/NameComparableType';
 declare const POWER_API_HOST: string;
 
 declare const POWER_API_PORT: string;
@@ -15,6 +16,32 @@ declare const POWER_API_HOST_SKILL: string;
 declare const POWER_API_PORT_SKILL: string;
 
 declare const POWER_API_SUFFIX_SKILL: string;
+
+declare const POWER_PROFILE_META_INFO: string;
+
+declare const POWER_API_META_INFO_REPORT: string;
+
+// View Profile
+declare const POWER_API_HOST_VIEW: string;
+declare const POWER_API_PORT_VIEW: string;
+declare const POWER_API_SUFFIX_VIEW: string;
+
+
+export function getProfileBuildInfo(): string {
+    return POWER_PROFILE_META_INFO + "/info";
+}
+
+export function getStatisticsBuildsInfo(): string {
+    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/meta/info";
+}
+
+export function getSkillBuildInfo(): string {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/meta/info";
+}
+
+export function getReportBuildInfo(): string {
+    return POWER_API_META_INFO_REPORT + "/info";
+}
 
 export function getSearchSkill(): string {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/search";
@@ -93,42 +120,6 @@ export function getAllCurrentlyUsedSkillNames(): string {
     return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE  + "/suggestions/skills";
 }
 
-export function getPostViewProfileAPIString(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
-}
-
-export function GetPostMutateViewProfile(id: string) : string {
-    return getViewProfileString(id) + "/entries";
-}
-
-export function getViewProfileString(id: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/view/" + id;
-}
-
-export function deleteViewProfileString(id: string, initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view/" + id;
-}
-
-export function getAllViewProfilesString(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/profiles/" + initials + "/view";
-}
-
-export function postEditViewProfileDetails(id: string): string {
-    return getViewProfileString(id) + "/details";
-}
-
-export function postDuplicateViewProfile(id: string): string {
-    return getViewProfileString(id);
-}
-
-export function postGenerateProfile(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
-}
-
-export function getExportDocuments(initials: string): string {
-    return POWER_API_HOST + ":" + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + "/consultants/" + initials + "/reports";
-}
-
 export function getProfileImageLocation(initials: string): string {
     return "/img/profile_pictures/foto_" + initials + ".jpg"
 }
@@ -143,10 +134,6 @@ export function getSkillUsageRelative(): string {
 
 export function getProfileStatistics(initials: string): string {
     return  POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/skill/common/" + initials;
-}
-
-export function getKMeansProfileNetwork(): string {
-    return POWER_API_HOST_STATISTICS + ":" + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS + "/statistics/network/kmeans";
 }
 
 export function getKMedProfileNetwork(): string {
@@ -210,6 +197,10 @@ export function deleteBlacklistCategory(id: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/blacklist/" + id;
 }
 
+export function patchSetIsDisplayCategory(categoryId: number, isDisplay: boolean) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + categoryId + "/display/" + isDisplay;
+}
+
 export function postLocaleToCategory(categoryId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + categoryId + "/locale";
 }
@@ -240,4 +231,75 @@ export function deleteCategory(parentId: number) {
 
 export function patchMoveSkill(skillId: number, newCategoryId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId + "/category/" + newCategoryId;
+}
+
+export namespace ViewProfileService {
+
+    function base() {
+        return POWER_API_HOST_VIEW + ":" + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
+    }
+
+    export function getViewProfile(initials: string, id: string) {
+       return base() + "/view/" + initials + "/" + id;
+    }
+
+    export function getViewProfileIds(initials: string) {
+        return base() + "/view/" + initials;
+    }
+
+    export function postViewProfile(initials: string) {
+        return getViewProfileIds(initials);
+    }
+
+    export function deleteViewProfile(initials: string, id: string) {
+        return getViewProfile(initials, id);
+    }
+
+    function patchBase(initials: string, id: string) {
+        return base() +  "/" + initials + "/view/" + id + "/";
+    }
+
+    export function patchMoveEntry(initials: string, id: string, movableEntry: string, sourceIndex: number, targetIndex: number) {
+        return patchBase(initials, id) + movableEntry + "/position/" + sourceIndex + "/" + targetIndex;
+    }
+
+    export function patchMoveNestedEntry(initials: string, id: string, container: string, containerIndex: number, movableEntry: string, sourceIndex: number, targetIndex: number) {
+        return patchBase(initials, id) + container + "/" + containerIndex + "/" + movableEntry + "/position/" + sourceIndex + "/" + targetIndex;
+    }
+
+    export function patchToggleEntry(initials: string, id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
+        return patchBase(initials, id) + toggleableEntry + "/" + index + "/visibility/" + isEnabled;
+    }
+    export function patchToggleNestedEntry(initials: string, id: string, container: string, containerIndex: number, toggleableEntry: string, index: number, isEnabled: boolean) {
+        return patchBase(initials, id) + container + "/" + containerIndex + "/" + toggleableEntry + "/" + index + "/visibility/" + isEnabled;
+    }
+
+    export function patchSortEntry(initials: string, id: string, entryType: SortableEntryType, field: SortableEntryField) {
+        return patchBase(initials, id) + SortableEntryType[entryType] + "/" + field + "/order";
+    }
+
+    export function patchToggleSkill(initials: string, id: string, isEnabled: boolean) {
+        return patchBase(initials, id) + "/SKILL/visibility/" + isEnabled;
+    }
+
+    export function patchSetDisplayCategory(initials: string, id: string) {
+        return patchBase(initials, id) + "/SKILL/display-category";
+    }
+
+    export function patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number, entryType: SortableEntryType, field: SortableEntryField) {
+        return patchBase(initials, id) + container + "/" + containerIndex + "/" + SortableEntryType[entryType] + "/" + field + "/order";
+    }
+
+    export function postReport(initials: string, viewProfileId: string) {
+        return base() +  "/view/" + initials + "/view/" + viewProfileId + "/report";
+    }
+
+    export function patchPartialUpdate(initials: string, viewProfileId: string) {
+        return  base() +  "/view/" + initials + "/view/" + viewProfileId + "/info";
+    }
+
+    export function getBuildInfo(): string {
+        return base() + "/meta/info";
+    }
+
 }

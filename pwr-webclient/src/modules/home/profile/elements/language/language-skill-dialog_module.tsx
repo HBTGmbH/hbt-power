@@ -1,6 +1,6 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {
     AutoComplete,
     Card,
@@ -19,7 +19,8 @@ import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-import {langLevelToLocalizedString} from '../../../../../utils/StringUtil';
+import {StringUtils} from '../../../../../utils/StringUtil';
+import langLevelToLocalizedString = StringUtils.langLevelToLocalizedString;
 
 
 interface EducationEntryDialogLocalProps {
@@ -102,7 +103,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
 
     private handleSaveButtonPress = (event: TouchTapEvent) => {
         let name: string = this.state.languageAutoCompleteValue;
-        let language: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.languages);
+        let language: NameEntity = ProfileStore.findNameEntityByName(name, this.props.languages);
         let languageSkill: LanguageSkill = this.state.languageSkill;
         if(isNullOrUndefined(language)) {
             language = NameEntity.createNew(name);

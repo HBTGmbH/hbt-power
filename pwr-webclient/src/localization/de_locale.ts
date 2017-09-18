@@ -78,12 +78,6 @@ export const de_locale : any = {
     "Project.Dialog.Roles.Title": "Projektrollen (max. 3)",
     "SkillOverview.Title": "Skills für Kategorie {0} (und Unterkategorien)",
     "ProjectSkills.Label": "Projektspezifische Skills",
-    "ViewCard.Name": "View-Name",
-    "ViewCard.Description": "Beschreibung",
-    "ViewCard.CreatedOn": "Erstellt am",
-    "Overview.NewView": "Neues View-Profil",
-    "Overview.NewView.Dialog.Title": "View Profil Erstellen",
-    "Overview.RefreshViews": "Views Aktualisieren",
     "NotificationInbox.AllMessages": "Alle",
     "NotificationInbox.TrashedMessages": "Gelöscht",
     "NotificationInbox.NewNameEntity": "Neuer Bezeichner",
@@ -120,7 +114,9 @@ export const de_locale : any = {
     "AdminClient.Info.SkillTree.Legend.Category": "Kategorie",
     "AdminClient.Info.SkillTree.Legend.Skill": "Skill",
     "AdminClient.Info.SkillTree.Legend.OwnItem": "Eigens erstellt",
+    "AdminClient.Info.SkillTree.Legend.IsDisplay": "Anzeige-Kategorie",
     "AdminClient.Info.SkillTree.Category.IsBlacklisted": "Auf der Blacklist",
+    "AdminClient.Info.SkillTree.Category.IsDisplay": "Anzeige-Kategorie",
     "AdminClient.Info.SkillTree.Category.Localizations": "Lokalisierungen",
     "AdminClient.Info.SkillTree.NewCategory.Name": "Kategorie-Name",
     "AdminClient.Info.SkillTree.NewSkill.Name": "Skill-Name",
@@ -183,7 +179,16 @@ export const de_locale : any = {
     "AddSkillDialog.ShowCategory.BtnValidCategory": "Richtige Kategorie",
     "AddSkillDialog.ShowCategory.BtnInvalidCategory": "Skill Ändern",
 
+    "ConfirmNavDialog.Action.NavigateAnyway": "Fortfahren",
+    "ConfirmNavDialog.Action.CancelNavigation": "Bleiben",
+    "ConfirmNavDialog.Title": "Ungespeicherte Änderungen",
+    "ConfirmNavDialog.Content": "Es gibt noch ungespeicherte Änderungen. Diese Aktion würde die Änderungen verwerfen.",
 
+    "ViewProfile.Create": "View Profil erstellen",
+    "ViewProfileDialog.Description": "View-Profil Beschreibung",
+    "ViewProfileDialog.Name": "View-Profil Name",
+    "ViewProfileDialog.Title.Create": "View Profil Erstellen",
+    "ViewProfileDialog.Title.Edit": "View Profil Bearbeiten",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
@@ -250,6 +255,7 @@ export const de_locale : any = {
     "Action.SearchSkill": "Skill suchen",
     "Action.Yes": "Ja",
     "Action.No": "Nein",
+    "Action.Create": "Erstellen",
 
     // == Enum localizations == //
     "SkillEntry": "Skill",

@@ -4,6 +4,25 @@ body {
   font-family: sans-serif;
 }
 
+.build-info-highlight {
+  font-family: Roboto;
+  color: white;
+  size: 14pt;
+  text-transform: uppercase;
+}
+
+.build-info-normal {
+  font-family: Roboto;
+  color: white;
+  size: 10pt;
+}
+
+.build-info-offline {
+  font-family: Roboto;
+  color: #db8388;
+  size: 10pt;
+}
+
 .fullWidth {
   width: 100%
 }
@@ -65,6 +84,11 @@ body {
 
 .error-text {
   color: red;
+}
+
+.bold-mui {
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: bold;
 }
 
 .highlighted-category {

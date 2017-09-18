@@ -2,7 +2,8 @@ import {APISkillCategory, SkillCategory} from '../../model/skill/SkillCategory';
 import {SkillActions} from './SkillActions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
-import {ApplicationState, RequestStatus} from '../../Store';
+import {ApplicationState} from '../reducerIndex';
+import {RequestStatus} from '../../Store';
 import {
     deleteBlacklistCategory,
     deleteCategory,
@@ -14,6 +15,7 @@ import {
     getSkillByName,
     getSkillsForCategory,
     patchMoveSkill,
+    patchSetIsDisplayCategory,
     postLocaleToCategory,
     postNewCategory,
     postNewSkill,
@@ -343,6 +345,19 @@ export namespace SkillActionCreator {
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
                 console.log(error);
+            });
+        }
+    }
+
+    export function AsyncSetIsDisplay(categoryId: number, isDisplay: boolean) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            beginAPICall(dispatch);
+            axios.patch(patchSetIsDisplayCategory(categoryId, isDisplay)).then((response: AxiosResponse) => {
+                let apiCategory: APISkillCategory = response.data;
+                dispatch(UpdateSkillCategory(SkillCategory.fromAPI(apiCategory)));
+                succeedAPICall(dispatch);
+            }).catch((error: AxiosError) => {
+                failAPICall(dispatch);
             });
         }
     }

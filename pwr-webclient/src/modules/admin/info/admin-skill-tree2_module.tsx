@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {ApplicationState} from '../../../Store';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
 import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {SkillTree} from '../../general/skill/skill-tree_module';
@@ -15,6 +14,7 @@ import {CategoryDeleteConfirmation} from '../../general/skill/category-delete-co
 import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 import {CategorySearcher} from './category-searcher_module';
 import {SetValueDialog} from '../../general/set-value-dialog_module';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
@@ -38,10 +38,11 @@ interface AdminSkillTree2LocalState {
 
 interface AdminSkillTree2Dispatch {
     loadTree(): void;
-    //loadSkillsForCategory(categoryId: number): void;
 
     whitelistCategory(categoryId: number): void;
     blacklistCategory(categoryId: number): void;
+
+    setIsDisplayCategory(categoryId: number, isDisplay: boolean): void;
 
     addLocalization(categoryId: number, language: string, qualifier: string): void;
     deleteLocalization(categoryId: number, language: string): void;
@@ -102,7 +103,8 @@ class AdminSkillTree2Module extends React.Component<
             createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.Skill.AsyncCreateSkill(qualifier, categoryId)),
             deleteSkill: skillId => dispatch(SkillActionCreator.Skill.AsyncDeleteSkill(skillId)),
             addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.Skill.AsyncAddSkillLocale(skillId, language, qualifier)),
-            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.Skill.AsyncDeleteSkillLocale(skillId, language))
+            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.Skill.AsyncDeleteSkillLocale(skillId, language)),
+            setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay))
         };
     }
 
@@ -130,6 +132,10 @@ class AdminSkillTree2Module extends React.Component<
         } else {
             this.props.whitelistCategory(this.state.selectedCategoryId);
         }
+    };
+
+    private handleCategoryIsDisplayCheck = (event: any, isChecked: boolean) => {
+        this.props.setIsDisplayCategory(this.state.selectedCategoryId, isChecked);
     };
 
     private handleAddCategoryLocale = (language: string, qualifier: string) => {
@@ -282,6 +288,12 @@ class AdminSkillTree2Module extends React.Component<
                 checked={selectedCategory.blacklisted()}
                 onCheck={this.handleCategoryBlacklistCheck}
             />
+            <Checkbox
+                style={{marginLeft: '16px'}}
+                label={PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsDisplay')}
+                checked={selectedCategory.isDisplay()}
+                onCheck={this.handleCategoryIsDisplayCheck}
+            />
             <Subheader>{PowerLocalize.get('AdminClient.Info.SkillTree.Category.Localizations')}</Subheader>
             <LocalizationTable
                 localizations={selectedCategory.qualifiers()}
@@ -403,6 +415,15 @@ class AdminSkillTree2Module extends React.Component<
                                     extension
                                 </FontIcon>
                                 {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.OwnItem')}
+                            </div>
+                            <div style={{marginLeft: '8px'}}>
+                                <FontIcon
+                                    className="material-icons"
+                                    style={{top: '6px', marginRight: '24px'}}
+                                >
+                                    airplay
+                                </FontIcon>
+                                {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.IsDisplay')}
                             </div>
                         </InfoPaper>
                     </div>

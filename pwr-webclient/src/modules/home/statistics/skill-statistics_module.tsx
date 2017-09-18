@@ -1,13 +1,13 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
 import {Card, CardHeader, CardText, Slider, Subheader} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 const Recharts = require('recharts');
 
 const TagCloud = require('react-tagcloud');

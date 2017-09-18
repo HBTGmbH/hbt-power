@@ -2,8 +2,9 @@ import * as React from 'react';
 import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantClusterInfo';
 import {Card, CardHeader, CardText, List, ListItem, Popover} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {formatString} from '../../../utils/StringUtil';
 import {AveragedSkill} from '../../../model/statistics/AveragedSkill';
+import {StringUtils} from '../../../utils/StringUtil';
+import formatString = StringUtils.formatString;
 
 const randomColor = require('randomcolor');
 const TagCloud = require('react-tagcloud');

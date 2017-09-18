@@ -3,7 +3,8 @@
  */
 import {de_locale} from './de_locale';
 import {isNullOrUndefined} from 'util';
-import {formatString} from '../utils/StringUtil';
+import {StringUtils} from '../utils/StringUtil';
+import formatString = StringUtils.formatString;
 
 /**
  * Quick localizer that localizes localizations. For localizing locales.

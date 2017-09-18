@@ -6,10 +6,11 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {SkillNotification} from '../../../model/admin/SkillNotification';
 import * as Immutable from 'immutable';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
-import {formatString} from '../../../utils/StringUtil';
 import {SkillNotificationDialog} from './skill-notification-dialog_module';
-import {ApplicationState} from '../../../Store';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
+import {StringUtils} from '../../../utils/StringUtil';
+import {ApplicationState} from '../../../reducers/reducerIndex';
+import formatString = StringUtils.formatString;
 
 interface SkillNotificationTableProps {
 

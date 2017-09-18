@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {SingleLanguage} from './language-skill_module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
@@ -10,6 +10,7 @@ import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileElement} from '../../profile-element_module';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;
@@ -65,7 +66,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : LanguageDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : LanguageDispatch {
         return {
             addLanguageSkill: function() {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.LanguageEntry));

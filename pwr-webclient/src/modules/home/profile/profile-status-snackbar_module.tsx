@@ -1,8 +1,9 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState, RequestStatus} from '../../../Store';
+import {RequestStatus} from '../../../Store';
 import {RequestSnackbar} from '../../general/request-snackbar_module.';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 interface ProfileSnackbarProps {
     APIRequestStatus: RequestStatus;
@@ -39,7 +40,7 @@ class ProfileSnackbarModule extends React.Component<ProfileSnackbarProps & Profi
         }
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ProfileSnackbarDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : ProfileSnackbarDispatch {
         return {
 
         }

@@ -2,30 +2,21 @@
  * Created by nt on 29.05.2017.
  */
 
+import {MetaDataActionCreator} from './metadata/MetaDataActions';
+import AddOrReplaceBuildInfo = MetaDataActionCreator.AddOrReplaceBuildInfo;
 export enum ActionType {
 
     AddSkill,
     SwapIndex,
     UserLoginFailed,
-
-    ChangeViewProfileName,
-    ChangeViewProfileDescription,
-    ChangeViewProfileCharsPerLine,
-    ReceiveViewProfile,
-    SortViewProfile,
-    SetSelectedIndexes,
-    SelectViewProfile,
-    DeleteViewProfile,
-    SaveViewProfile,
-    /* Clears all cached view profiles from the client */
-    ClearViewProfiles,
     ReplaceExportDocuments,
+
+    SetUserInitials,
 
     LogOutUser,
     DeleteSkill,
     UpdateSkillRating,
     LogInUser,
-    ShowProfile,
     CreateProject,
     DeleteProject,
     SaveProject,
@@ -38,7 +29,6 @@ export enum ActionType {
     APIRequestPending,
     ChangeLanguageSkillLevel,
 
-    ChangeInitials,
     ChangeFirstName,
     ChangeLastName,
     ChangeBirthDate,
@@ -112,5 +102,19 @@ export enum ActionType {
     SetCurrentChoice,
     SetAddSkillError,
     SetNoCategoryReason,
-    ResetAddSkillDialog
+    ResetAddSkillDialog,
+
+    // == MEta data
+    AddOrReplaceBuildInfo,
+    SetServiceAvaiabiltiy,
+
+    // == Navigation
+    SetCurrentLocation,
+    SetNavigationTarget,
+    DropNavigationTarget,
+
+    // == View Profile
+    SetViewProfile,
+    RemoveViewProfile,
+    SetSortInProgress
 }

@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {FontIcon, RaisedButton, Tab, Tabs} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -11,6 +10,7 @@ import {ProfileEntryNotificationTable} from './profile-entry-notification-table_
 import {ProfileUpdateNotificationTable} from './profile-update-notification-table_module';
 import {SkillNotificationTable} from './skill-notification-table_module';
 import {SkillNotification} from '../../../model/admin/SkillNotification';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.

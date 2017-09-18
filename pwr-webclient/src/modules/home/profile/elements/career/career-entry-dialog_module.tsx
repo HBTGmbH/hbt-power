@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {ApplicationState, ProfileElementType} from '../../../../../Store';
+import {ProfileElementType} from '../../../../../Store';
 import {
     AutoComplete,
     Card,
@@ -19,9 +19,10 @@ import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {CareerEntry} from '../../../../../model/CareerEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
-import {InternalDatabase} from '../../../../../model/InternalDatabase';
+import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
 
 /**
@@ -117,7 +118,7 @@ class CareerEntryDialogModule extends React.Component<
 
     private saveAndExit = () => {
         let name: string = this.state.autoCompleteValue;
-        let career: NameEntity = InternalDatabase.findNameEntityByName(name, this.props.careers);
+        let career: NameEntity = ProfileStore.findNameEntityByName(name, this.props.careers);
         let careerEntry: CareerEntry = this.state.careerEntry;
         if(isNullOrUndefined(career)) {
             career = NameEntity.createNew(name);

@@ -16,7 +16,7 @@ import {
     APITrainingEntry
 } from './APIProfile';
 import {isNullOrUndefined} from 'util';
-import {InternalDatabase} from './InternalDatabase';
+import {ProfileStore} from './ProfileStore';
 import {SectorEntry} from './SectorEntry';
 import {Project} from './Project';
 import {doop} from 'doop/built/doop';
@@ -28,34 +28,26 @@ import {KeySkillEntry} from './KeySkillEntry';
 @doop
 export class Profile {
 
-    @doop
-    public get id(){ return doop<number, this>();};
-    @doop
-    public get currentPosition(){ return doop<string, this>();}
-    @doop
-    public get description(){ return doop<string, this>();}
-    @doop
-    public get sectorEntries(){ return doop<Immutable.Map<string, SectorEntry>, this>();}
-    @doop
-    public get trainingEntries(){ return doop<Immutable.Map<string, TrainingEntry>, this>();}
-    @doop
-    public get careerEntries() {return doop<Immutable.Map<string, CareerEntry>, this>();}
-    @doop
-    public get educationEntries(){ return doop<Immutable.Map<string, EducationEntry>, this>();}
-    @doop
-    public get languageSkills(){ return doop<Immutable.Map<string, LanguageSkill>, this>();}
-    @doop
-    public get qualificationEntries(){ return doop<Immutable.Map<string, QualificationEntry>, this>();}
-    @doop
-    public get keySkillEntries() {return doop<Immutable.Map<string, KeySkillEntry>, this>();}
-    @doop
-    public get projects(){ return doop<Immutable.Map<string, Project>, this>();}
-    @doop
-    public get skills() { return doop<Immutable.Map<string, Skill>, this>()};
-    @doop
-    public get lastEdited() { return doop<Date, this>();}
-    @doop
-    public get lastEditedBy() {return doop<string, this>();}
+    @doop public get id(){ return doop<number, this>();};
+    @doop public get currentPosition(){ return doop<string, this>();}
+    @doop public get description(){ return doop<string, this>();}
+    @doop public get sectorEntries(){ return doop<Immutable.Map<string, SectorEntry>, this>();}
+    @doop public get trainingEntries(){ return doop<Immutable.Map<string, TrainingEntry>, this>();}
+    @doop public get careerEntries() {return doop<Immutable.Map<string, CareerEntry>, this>();}
+    @doop public get educationEntries(){ return doop<Immutable.Map<string, EducationEntry>, this>();}
+    @doop public get languageSkills(){ return doop<Immutable.Map<string, LanguageSkill>, this>();}
+    @doop public get qualificationEntries(){ return doop<Immutable.Map<string, QualificationEntry>, this>();}
+    @doop public get keySkillEntries() {return doop<Immutable.Map<string, KeySkillEntry>, this>();}
+    @doop public get projects(){ return doop<Immutable.Map<string, Project>, this>();}
+    @doop public get skills() { return doop<Immutable.Map<string, Skill>, this>()};
+    @doop public get lastEdited() { return doop<Date, this>();}
+    @doop public get lastEditedBy() {return doop<string, this>();}
+
+    /**
+     * Changes made to the profile since the last save operation was performed.
+     */
+    @doop public get changesMade() {return doop<number, this>();}
+
 
     constructor(
         id: number,
@@ -71,7 +63,8 @@ export class Profile {
         projects: Immutable.Map<string, Project>,
         skills: Immutable.Map<string, Skill>,
         lastEdited: Date,
-        lastEditedBy: string
+        lastEditedBy: string,
+        changesMade: number
     ) {
         return this.id(id)
             .currentPosition(currentPosition)
@@ -87,6 +80,7 @@ export class Profile {
             .lastEditedBy(lastEditedBy)
             .careerEntries(careerEntries)
             .keySkillEntries(keySkillEntries)
+            .changesMade(changesMade);
 
     }
 
@@ -209,7 +203,7 @@ export class Profile {
 
     // FIXME do not require database anymore, or refactor database so it doesn't contain
     // FIXME this profile anymore.
-    public serializeToApiProfile(database: InternalDatabase): APIProfile {
+    public serializeToApiProfile(database: ProfileStore): APIProfile {
         // Maps all career elements into an API format
         let training: Array<APITrainingEntry> = [];
         this.trainingEntries().forEach(trainingEntry => {
@@ -298,7 +292,8 @@ export class Profile {
             Profile.parseProjects(profile.projects),
             Profile.parseSkills(profile.skills),
             new Date(profile.lastEdited),
-            ""
+            "",
+            0
         );
     }
 
@@ -355,7 +350,8 @@ export class Profile {
             Immutable.Map<string, Project>(),
             Immutable.Map<string, Skill>(),
             new Date(), //FIXME
-            ""
+            "",
+            0
         );
     }
 

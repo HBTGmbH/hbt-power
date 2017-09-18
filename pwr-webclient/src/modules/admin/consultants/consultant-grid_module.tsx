@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {ApplicationState} from '../../../Store';
 import {FontIcon, GridList, RaisedButton} from 'material-ui';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
@@ -9,6 +8,7 @@ import {ConsultantTile} from './consultant-tile_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantCreateDialog} from './consultant-create-dialog_module';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 /**
  * Properties that are managed by react-redux.

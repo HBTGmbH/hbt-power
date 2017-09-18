@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AllConsultantsState, ApplicationState} from '../../../Store';
 import {CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
@@ -10,7 +9,7 @@ import {TrainingEntries} from './elements/training/training_module';
 import {EducationList} from './elements/education/eduction_module';
 import {Qualifications} from './elements/qualification/qualification_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {InternalDatabase} from '../../../model/InternalDatabase';
+import {ProfileStore} from '../../../model/ProfileStore';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {Projects} from './elements/project/projects-module';
 import {SkillTree} from './elements/skills/skilltree-module';
@@ -19,10 +18,11 @@ import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
 import {Careers} from './elements/career/career_module';
 import {KeySkills} from './elements/keyskill/keySkill_module';
+import {ApplicationState} from '../../../reducers/reducerIndex';
 
 
 interface ProfileProps {
-    database: InternalDatabase;
+    database: ProfileStore;
     loggedInUser: ConsultantInfo;
 }
 
@@ -47,7 +47,7 @@ interface ProfileLocalState {
 
 interface ProfileDispatch {
     reloadProfile(initials: string): void;
-    saveProfile(initials: string, database: InternalDatabase): void;
+    saveProfile(initials: string, database: ProfileStore): void;
 }
 
 class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & ProfileDispatch, ProfileLocalState> {
@@ -62,12 +62,12 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     private readonly cardToolbarStyle = {
     };
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<AllConsultantsState>) : ProfileDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : ProfileDispatch {
         return {
             reloadProfile: function(initials: string) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
             },
-            saveProfile: function(initials: string, database: InternalDatabase) {
+            saveProfile: function(initials: string, database: ProfileStore) {
                 dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()));
             }
         };
