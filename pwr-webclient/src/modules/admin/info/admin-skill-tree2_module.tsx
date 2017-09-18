@@ -5,7 +5,7 @@ import * as Immutable from 'immutable';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
 import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {SkillTree} from '../../general/skill/skill-tree_module';
-import {Checkbox, FontIcon, Paper, RaisedButton, Subheader} from 'material-ui';
+import {Checkbox, FontIcon, Paper, RaisedButton, Subheader, TextField} from 'material-ui';
 import {InfoPaper} from '../../general/info-paper_module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LocalizationTable} from '../../general/skill/localization-table_module';
@@ -56,6 +56,9 @@ interface AdminSkillTree2Dispatch {
     moveSkill(newCategory: number, oldCategory: number, skillId: number): void;
     createSkill(qualifier: string, categoryId: number): void;
     deleteSkill(skillId: number): void;
+
+    toggleOpen(categoryId: number): void;
+    filter(searchTerm: string): void;
 }
 
 class AdminSkillTree2Module extends React.Component<
@@ -104,7 +107,9 @@ class AdminSkillTree2Module extends React.Component<
             deleteSkill: skillId => dispatch(SkillActionCreator.Skill.AsyncDeleteSkill(skillId)),
             addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.Skill.AsyncAddSkillLocale(skillId, language, qualifier)),
             deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.Skill.AsyncDeleteSkillLocale(skillId, language)),
-            setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay))
+            setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
+            toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
+            filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm))
         };
     }
 
@@ -359,9 +364,14 @@ class AdminSkillTree2Module extends React.Component<
             />
             <div className="row">
                 <Paper className="col-md-8">
+                    <TextField
+                        floatingLabelText={PowerLocalize.get("Action.Search")}
+                        onChange={(e: any, v: string) => {this.props.filter(v)}}
+                    />
                     <SkillTree
                         root={this.props.root}
                         onCategorySelect={this.handleCategorySelect}
+                        onNestedListToggle={this.props.toggleOpen}
                         onSkillSelect={this.handleSkillSelect}
                         expandOnClick={false}
                         categoriesById={this.props.categoriesById}

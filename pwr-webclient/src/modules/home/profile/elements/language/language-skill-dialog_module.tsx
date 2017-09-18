@@ -19,8 +19,6 @@ import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-import {StringUtils} from '../../../../../utils/StringUtil';
-import langLevelToLocalizedString = StringUtils.langLevelToLocalizedString;
 
 
 interface EducationEntryDialogLocalProps {
@@ -69,7 +67,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
     }
 
     private static renderSingleDropDownElement(languageLevel: string, idx: number) {
-        return (<MenuItem value={languageLevel} primaryText={langLevelToLocalizedString(languageLevel)} key={languageLevel}/>);
+        return (<MenuItem value={languageLevel} primaryText={PowerLocalize.langLevelToLocalizedString(languageLevel)} key={languageLevel}/>);
     }
 
     private getLanguageName = () => {

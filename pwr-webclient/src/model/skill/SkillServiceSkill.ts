@@ -3,6 +3,7 @@ import {APISkillCategory} from './SkillCategory';
 import {isNullOrUndefined} from 'util';
 import {APILocalizedQualifier, LocalizedQualifier} from './LocalizedQualifier';
 import * as Immutable from 'immutable';
+import {StringUtils} from '../../utils/StringUtil';
 
 export interface APISkillServiceSkill {
     id: number;
@@ -36,5 +37,13 @@ export class SkillServiceSkill {
             categoryId,
             api.custom,
             Immutable.List<LocalizedQualifier>(qualifiers));
+    }
+
+    public anyFuzzyMatch(searchTerm: string){
+        let match = StringUtils.filterFuzzy(searchTerm, this.qualifier());
+        this.qualifiers().forEach(qualifier => {
+            match = match || StringUtils.filterFuzzy(searchTerm, qualifier.qualifier())
+        });
+        return match;
     }
 }

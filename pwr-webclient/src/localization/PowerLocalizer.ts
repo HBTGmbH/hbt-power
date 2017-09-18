@@ -4,6 +4,7 @@
 import {de_locale} from './de_locale';
 import {isNullOrUndefined} from 'util';
 import {StringUtils} from '../utils/StringUtil';
+
 import formatString = StringUtils.formatString;
 
 /**
@@ -63,5 +64,10 @@ export class PowerLocalize {
     public static getFormatted(field: string, ...args: string[]): string {
         let val = PowerLocalize.get(field);
         return formatString(val, ...args);
+    }
+
+
+    public static langLevelToLocalizedString(level: string): string {
+        return PowerLocalize.get("LanguageLevel." + level);
     }
 }

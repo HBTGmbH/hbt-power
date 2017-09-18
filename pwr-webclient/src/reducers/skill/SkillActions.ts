@@ -27,6 +27,14 @@ export namespace SkillActions {
         currentChoice: UnCategorizedSkillChoice;
     }
 
+    export interface SetTreeChildrenOpenAction extends AbstractAction {
+        categoryId: number;
+    }
+
+    export interface FilterTreeAction extends AbstractAction {
+        searchTerm: string;
+    }
+
     /**
      * Actions that invokes an update of id, qualifier and localizations for a given category
      * Children remain unchanged.

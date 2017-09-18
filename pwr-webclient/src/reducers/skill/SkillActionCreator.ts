@@ -45,6 +45,8 @@ export namespace SkillActionCreator {
     import RemoveSkillAction = SkillActions.RemoveSkillAction;
     import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
     import BatchAddSkillsAction = SkillActions.BatchAddSkillsAction;
+    import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
+    import FilterTreeAction = SkillActions.FilterTreeAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -123,6 +125,20 @@ export namespace SkillActionCreator {
         }
     }
 
+    export function SetTreeChildrenOpen(categoryId: number): SetTreeChildrenOpenAction {
+        return {
+            type: ActionType.SetTreeChildrenOpen,
+            categoryId: categoryId,
+        }
+    }
+
+    export function FilterTree(searchTerm: string): FilterTreeAction {
+        return {
+            type: ActionType.FilterTree,
+            searchTerm: searchTerm
+        }
+    }
+
     function SetNoCategoryReason(reason: string): ChangeStringValueAction {
         return {
             type: ActionType.SetNoCategoryReason,
@@ -173,6 +189,8 @@ export namespace SkillActionCreator {
             skills: skills
         }
     }
+
+
 
     let currentAPICalls = 0;
 

@@ -20,6 +20,8 @@ export namespace SkillReducer {
     import RemoveSkillServiceSkillAction = SkillActions.RemoveSkillAction;
     import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
     import BatchAddSkillsAction = SkillActions.BatchAddSkillsAction;
+    import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
+    import FilterTreeAction = SkillActions.FilterTreeAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if(!isNullOrUndefined(category)) {
@@ -166,6 +168,22 @@ export namespace SkillReducer {
             case ActionType.SetNoCategoryReason: {
                 let act = action as ChangeStringValueAction;
                 return skillStore.noCategoryReason(act.value);
+            }
+            case ActionType.SetTreeChildrenOpen: {
+                let act = action as SetTreeChildrenOpenAction;
+                let root = skillStore.skillTreeRoot();
+                root.toggleOpen(act.categoryId);
+                return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root));
+            }
+            case ActionType.FilterTree: {
+                let act = action as FilterTreeAction;
+                let root = skillStore.skillTreeRoot();
+                root.clearFilter();
+                if(!isNullOrUndefined(act.searchTerm) && act.searchTerm.length > 0) {
+                    root.filter(act.searchTerm, skillStore.skillsById(), skillStore.categoriesById());
+                    console.log("Filtered root", root);
+                }
+                return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root));
             }
             default:
                 return skillStore;

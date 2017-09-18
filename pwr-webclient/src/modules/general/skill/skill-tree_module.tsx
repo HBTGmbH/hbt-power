@@ -11,11 +11,12 @@ let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface SkillTreeProps {
     root: SkillTreeNode;
+
     /**
      * Invoked when a category is expanded and needs its children loaded
      * @param categoryId of the category that has been expanded
      */
-    onLoadChildren?(categoryId: number): void;
+    onNestedListToggle?(categoryId: number): void;
 
     /**
      * Invokes when a category has been clicked
@@ -43,6 +44,7 @@ interface SkillTreeProps {
      * See categoriesbyId, but for skills
      */
     skillsById: Immutable.Map<number, SkillServiceSkill>;
+
 }
 
 interface SkillTreeState {
@@ -63,7 +65,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
 
     public static defaultProps: Partial<SkillTreeProps> = {
         expandOnClick: true,
-        onLoadChildren: () => {},
+        onNestedListToggle: () => {},
         onCategorySelect: () => {},
         onSkillSelect: () => {}
     };
@@ -88,6 +90,10 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
     >
         warning
     </FontIcon>;
+
+    private getSkill = (skillId: number):SkillServiceSkill => {
+        return this.props.skillsById.get(skillId);
+    };
 
 
     private mapTo = (skillTreeNode: SkillTreeNode): JSX.Element => {
@@ -116,9 +122,10 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             key={skillCategory.qualifier()}
             value={SkillTree.CATEGORY_PREFIX + skillCategory.id().toString()}
             nestedItems={this.renderNestedItems(skillTreeNode)}
-            onNestedListToggle={() => this.props.onLoadChildren(skillCategory.id())}
+            onNestedListToggle={() => this.props.onNestedListToggle(skillCategory.id())}
             leftIcon={<FontIcon className="material-icons">label</FontIcon>}
             primaryTogglesNestedList={this.props.expandOnClick}
+            open={skillTreeNode.open}
         >
             {skillCategory.qualifier()}
             {blacklistIcon}
@@ -140,8 +147,8 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
     };
 
     private renderNestedItems = (skillTreeNode: SkillTreeNode): Array<JSX.Element> => {
-        let res: Array<JSX.Element> = skillTreeNode.childNodes.map(this.mapTo);
-        skillTreeNode.skillIds.forEach(skillId => res.push(this.mapSkill(skillId)));
+        let res: Array<JSX.Element> = skillTreeNode.childNodes.filter(childNode => childNode.visible).map(this.mapTo);
+        skillTreeNode.skillNodes.filter(skillNode => skillNode.visible).forEach(skillNode => res.push(this.mapSkill(skillNode.skillId)));
         return res;
     };
 
@@ -161,6 +168,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
     };
 
     render() {
+        console.debug("Invoking re-render of tree", this.props.root);
         return (<SelectableList selectedIndex={this.state.selectedIndex} onSelect={this.handleOnSelect}>
             {this.renderNestedItems(this.props.root)}
         </SelectableList>);
