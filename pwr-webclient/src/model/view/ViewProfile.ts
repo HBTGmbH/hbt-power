@@ -10,6 +10,11 @@ import {ViewProject} from './ViewProject';
 import {ViewCategory} from './ViewCategory';
 import {ViewProfileInfo} from './ViewProfileInfo';
 
+/**
+ * Note: Can be mutable because view profiles are never partially edited in the client
+ * They are always complete replaced by the value the API returns -> immutability would be
+ * unnecessary overhead
+ */
 export class ViewProfile {
     id: string;
     viewProfileInfo: ViewProfileInfo;

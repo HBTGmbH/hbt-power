@@ -130,3 +130,7 @@ body {
   position: sticky;
   top: 0;
 }
+
+.float-right {
+  float: right
+}

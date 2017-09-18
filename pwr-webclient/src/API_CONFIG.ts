@@ -298,6 +298,10 @@ export namespace ViewProfileService {
         return  base() +  "/view/" + initials + "/view/" + viewProfileId + "/info";
     }
 
+    export function patchDescription(initials: string, viewProfileId: string) {
+        return patchBase(initials, viewProfileId) + "DESCRIPTION";
+    }
+
     export function getBuildInfo(): string {
         return base() + "/meta/info";
     }

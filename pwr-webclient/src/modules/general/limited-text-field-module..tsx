@@ -42,6 +42,8 @@ interface LimitedTextFieldProps {
     onToggleEdit?(disabled: boolean): void;
 
     id?: string;
+
+    rows?: number;
 }
 
 interface LimitedTextFieldState {
@@ -75,7 +77,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         floatingLabelText: null,
         useToggleEditButton: false,
         onToggleEdit: () => {},
-        disabled:false
+        disabled:false,
+        rows: 1
     };
 
     private interceptOnChange = (e: FormEvent<{}>, newValue: string) => {
@@ -102,6 +105,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                 <div style={{width: this.props.fullWidth ? '100%' : 350}}>
                     <div style={{width:this.props.fullWidth ? '85%' : 256, float:'left'}}>
                         <TextField
+                            rows={this.props.rows}
                             id={this.props.id}
                             value={this.props.value}
                             disabled={this.props.disabled}

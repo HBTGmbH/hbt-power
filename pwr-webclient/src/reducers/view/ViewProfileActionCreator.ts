@@ -266,4 +266,18 @@ export namespace ViewProfileActionCreator {
             });
         }
     }
+
+    export function AsyncSetDescription(description: string, viewProfileId: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let initials = getState().databaseReducer.loggedInUser().initials();
+            dispatch(ProfileActionCreator.APIRequestPending());
+            let config: AxiosRequestConfig = {headers: {"Content-Type": "text/plain"}};
+            axios.patch(ViewProfileService.patchDescription(initials, viewProfileId), description, config).then((response: AxiosResponse) => {
+                succeedAndRead(response, dispatch);
+            }).catch(function (error: any) {
+                console.error(error);
+                dispatch(ProfileActionCreator.APIRequestFailed());
+            });
+        }
+    }
 }
