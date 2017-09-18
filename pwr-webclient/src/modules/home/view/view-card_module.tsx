@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Card, CardActions, CardHeader, FlatButton} from 'material-ui';
+import {Card, CardActions, CardHeader, FontIcon, RaisedButton} from 'material-ui';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileDialog} from './view-profile-dialog_module';
@@ -80,26 +80,41 @@ class ViewCardModule extends React.Component<
             />
             <CardHeader
                 title={this.props.viewProfile.viewProfileInfo.name}
-                subtitle={"Created on " + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
+                subtitle={PowerLocalize.get("ViewProfileCard.Subtitle") + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
             />
             <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
             <CardActions>
-                <FlatButton
-                    onTouchTap={() => this.setDialogOpen(true)}
-                    label={PowerLocalize.get("Action.Edit")}
-                />
-                <FlatButton
-                    label={PowerLocalize.get("Action.Delete")}
-                    onTouchTap={() => this.props.deleteViewProfile(this.props.viewProfileId)}
-                />
-                <FlatButton
-                    label={PowerLocalize.get("Action.Show")}
-                    onTouchTap={() => this.props.navigateTo("/app/view/" + this.props.viewProfileId)}
-                />
-                <FlatButton
-                    label={PowerLocalize.get("Action.Generate.Word")}
-                    onTouchTap={() => this.props.generate(this.props.viewProfileId)}
-                />
+                <div>
+                    <RaisedButton
+                        className="mui-margin"
+                        onTouchTap={() => this.setDialogOpen(true)}
+                        label={PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
+                        icon={<FontIcon className="material-icons">info</FontIcon>}
+                    />
+                    <RaisedButton
+                        className="mui-margin"
+                        label={PowerLocalize.get("ViewProfileCard.Action.Edit")}
+                        onTouchTap={() => this.props.navigateTo("/app/view/" + this.props.viewProfileId)}
+                        icon={<FontIcon className="material-icons">edit</FontIcon>}
+                    />
+                </div>
+                <div>
+                    <RaisedButton
+                        className="mui-margin"
+                        label={PowerLocalize.get("Action.Delete")}
+                        secondary={true}
+                        icon={<FontIcon className="material-icons">delete</FontIcon>}
+                        onTouchTap={() => this.props.deleteViewProfile(this.props.viewProfileId)}
+                    />
+                    <RaisedButton
+                        className="mui-margin"
+                        primary={true}
+                        label={PowerLocalize.get("Action.Generate.Word")}
+                        onTouchTap={() => this.props.generate(this.props.viewProfileId)}
+                        icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
+                    />
+
+                </div>
             </CardActions>
         </Card>);
     }

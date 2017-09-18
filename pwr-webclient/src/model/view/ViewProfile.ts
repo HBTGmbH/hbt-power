@@ -12,10 +12,6 @@ import {ViewProfileInfo} from './ViewProfileInfo';
 
 export class ViewProfile {
     id: string;
-    /*owner: string;
-    name: string;
-    viewDescription: string;
-    creationDate: Date;*/
     viewProfileInfo: ViewProfileInfo;
     locale: string;
     description: string;
@@ -40,15 +36,15 @@ export class ViewProfile {
         this.description = viewProfile.description;
         this.viewProfileInfo = new ViewProfileInfo(viewProfile.viewProfileInfo);
         this.locale = viewProfile.locale;
-        this.careers = viewProfile.careers;
-        this.educations = viewProfile.educations;
+        this.careers = viewProfile.careers.map(ViewCareer.of);
+        this.educations = viewProfile.educations.map(ViewEducation.of);
         this.keySkills = viewProfile.keySkills;
         this.languages = viewProfile.languages;
-        this.qualifications = viewProfile.qualifications;
+        this.qualifications = viewProfile.qualifications.map(ViewQualification.of);
         this.sectors = viewProfile.sectors;
-        this.trainings = viewProfile.trainings;
+        this.trainings = viewProfile.trainings.map(ViewTraining.of);
         this.projectRoles = viewProfile.projectRoles;
-        this.projects = viewProfile.projects;
+        this.projects = viewProfile.projects.map(ViewProject.of);
         this.displayCategories = viewProfile.displayCategories;
         this.rootCategory = viewProfile.rootCategory;
         this.categoryParents = new Map();

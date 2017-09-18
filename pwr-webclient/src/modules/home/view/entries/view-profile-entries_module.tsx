@@ -1,8 +1,9 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
-import {FontIcon, Paper} from 'material-ui';
+import {Card, CardHeader, FontIcon} from 'material-ui';
 import {IViewEntry} from '../../../../model/view/IViewEntry';
+import {isNullOrUndefined} from 'util';
 
 const Toggle = require('react-toggle').default;
 
@@ -12,6 +13,7 @@ interface ViewProfileEntriesProps {
     movableEntryType: string;
     headers: Array<JSX.Element | string>;
     moveDisabled?: boolean;
+    title?: string;
     renderEntry(entry: any, entryIndex: number): Array<JSX.Element>;
     onToggle(toggleableEntryType: string, index: number, isEnabled: boolean): void;
     onMove(movableEntryType: string, sourceIndex: number, targetIndex: number): void;
@@ -102,13 +104,18 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
 
     render() {
         return (<div>
-            <Paper>
+            <Card>
+                {
+                    !isNullOrUndefined(this.props.title) ? <CardHeader
+                        title={this.props.title}
+                    /> : null
+                }
                 <this.SortableList
                     transitionDuration={800}
                     entries={this.props.entries}
                     useDragHandle={true}
                     onSortEnd={this.onSortEnd}/>
-            </Paper>
+            </Card>
         </div>);
     }
 }

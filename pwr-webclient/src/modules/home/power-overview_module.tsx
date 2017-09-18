@@ -117,10 +117,10 @@ class PowerOverviewModule extends React.Component<
                 <div className="col-md-12">
                         <Card>
                             <CardText>
-                                <h3>Stammdaten</h3>
+                                <h3>{PowerLocalize.get("Overview.Base.BaseData")}</h3>
                             </CardText>
                             <CardText>
-                                <h4>Letzte Aktualisierung:</h4>
+                                <h4>{PowerLocalize.get("Overview.Base.LastEdited")}</h4>
                                 {this.props.profile.lastEdited().toLocaleString()}
                             </CardText>
                             <CardText>
@@ -140,8 +140,8 @@ class PowerOverviewModule extends React.Component<
 
                         <Card>
                             <CardHeader
-                                title="Views"
-                                subtitle="Übersicht"
+                                title={PowerLocalize.get("Overview.ViewProfiles.Title")}
+                                subtitle={PowerLocalize.get("Overview.ViewProfiles.Subtitle")}
                             />
                             <ViewProfileDialog
                                 onRequestClose={() => this.setViewDialogOpen(false)}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dialog, FlatButton, Slider, TextField} from 'material-ui';
+import {Dialog, FlatButton, FontIcon, Slider, TextField} from 'material-ui';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -77,18 +77,24 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     private renderActions = () => {
         let actions = [];
         let label = "";
+        let icon = "";
         if(this.props.type === "edit") {
             label = PowerLocalize.get("Action.Save");
+            icon = "save";
         } else {
             label = PowerLocalize.get("Action.Create");
+            icon = "add";
         }
         actions.push(<FlatButton
+            primary={true}
             label={label}
             onTouchTap={this.closeAndSave}
+            icon={<FontIcon className="material-icons">{icon}</FontIcon>}
         />);
         actions.push(<FlatButton
             label={PowerLocalize.get("Action.Close")}
             onTouchTap={this.props.onRequestClose}
+            icon={<FontIcon className="material-icons">close</FontIcon>}
         />);
         return actions;
     };
@@ -123,13 +129,13 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             />
             <TextField onChange={this.changeLocale}
                        value={this.state.locale}
-                       floatingLabelText="Profile Locale"
+                       floatingLabelText={PowerLocalize.get("ViewProfileDialog.Locale")}
                        disabled={this.props.type === "edit"}
             />
             <div style={{width: "100%"}}>
                 <TextField
                     value={this.state.charsPerLine}
-                    floatingLabelText="Chars Per Line"
+                    floatingLabelText={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
                     disabled={true}
                 />
                 <Slider

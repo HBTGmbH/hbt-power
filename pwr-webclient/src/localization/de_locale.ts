@@ -20,9 +20,14 @@ export const de_locale : any = {
     "KeySkill.Plural": "Spezialgebiete",
     "KeySkill.Abbreviation": "Spez.Gb.",
     "Skill.Singular": "Skill",
+    "Skill.Plural": "Skills",
     "Sector.Singular": "Branche",
     "Sector.Plural": "Branchen",
     "Sector.Abbreviation": "Bra.",
+    "ProjectRole.Singular": "Projektrolle",
+    "ProjectRole.Plural": "Projektrollen",
+    "Project.Singular": "Projekt",
+    "Project.Plural": "Projekte",
     "Today": "Heute",
     "Begin": "Beginn",
     "End": "Ende",
@@ -48,6 +53,10 @@ export const de_locale : any = {
 
     // == Component Specific Localizations == //
     "Toolbar.LoggedInAs": "Eingeloggt als",
+    "Overview.ViewProfiles.Title": "View-Profile",
+    "Overview.ViewProfiles.Subtitle": "Übersicht",
+    "Overview.Base.LastEdited": "Zulätzt geändert:",
+    "Overview.Base.BaseData": "Stammdaten:",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
     "TrainingEntries.Qualifier": "Weiterbildung",
@@ -189,6 +198,22 @@ export const de_locale : any = {
     "ViewProfileDialog.Name": "View-Profil Name",
     "ViewProfileDialog.Title.Create": "View Profil Erstellen",
     "ViewProfileDialog.Title.Edit": "View Profil Bearbeiten",
+    "ViewProfileDialog.Locale": "View Profil Sprache",
+    "ViewProfileDialog.CharsPerLine": "Zeichen pro Zeile (Silbentrenner)",
+    "ViewProfileCard.Subtitle": "Erstellt am ",
+    "ViewProfileCard.Action.Edit": "View Profil bearbeiten",
+    "ViewProfileCard.Action.EditInfo": "Infos bearbeiten",
+    "ViewProfileOveview.Entries": "Einträge",
+    "ViewProfileOveview.Projects": "Projekte",
+    "ViewProfileOveview.Skills": "Skills",
+    "ViewEntryField.Name": "Name",
+    "ViewEntryField.StartDate": "Start-Datum",
+    "ViewEntryField.EndDate": "End-Datum",
+    "ViewEntryField.Degree": "Abschluss",
+    "ViewEntryField.Date": "Abschluss",
+    "ViewEntryField.Level": "Sprach-Level",
+
+
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

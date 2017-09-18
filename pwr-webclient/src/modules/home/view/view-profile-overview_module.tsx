@@ -8,6 +8,7 @@ import {Dialog, Tab, Tabs} from 'material-ui';
 import {ViewProfileEntriesOverview} from './view-profile-entries-overview_module';
 import {ViewProfileProjectsOverview} from './view-profile-projects-overview_module';
 import {ViewProfileSkillOverview} from './view-profile-skill-overview_module';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface ViewProfileOverviewProps {
     viewProfile: ViewProfile;
@@ -59,19 +60,18 @@ class ViewProfileOverviewModule extends React.Component<
                 >
                     <span style={{color: 'white', opacity: 1}}>Loading...</span>
                 </Dialog>
-                This is View Profile id = {viewProfileId}
                 <Tabs>
-                    <Tab label="Entries">
+                    <Tab label={PowerLocalize.get("ViewProfileOveview.Entries")}>
                         <ViewProfileEntriesOverview
                             viewProfileId={viewProfileId}
                         />
                     </Tab>
-                    <Tab label="Projects">
+                    <Tab label={PowerLocalize.get("ViewProfileOveview.Projects")}>
                         <ViewProfileProjectsOverview
                             viewProfileId={viewProfileId}
                         />
                     </Tab>
-                    <Tab label="Skills">
+                    <Tab label={PowerLocalize.get("ViewProfileOveview.Skills")}>
                         <ViewProfileSkillOverview
                             viewProfileId={viewProfileId}
                         />

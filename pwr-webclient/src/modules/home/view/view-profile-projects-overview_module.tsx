@@ -11,6 +11,7 @@ import {ViewProject} from '../../../model/view/ViewProject';
 import {ViewSkill} from '../../../model/view/ViewSkill';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EntryRenderers} from './entries/EntryRenderers';
+import {formatToShortDisplay} from '../../../utils/DateUtil';
 
 
 interface ViewProfileProjectsOverviewProps {
@@ -90,7 +91,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                     <CardTitle
                         title={entry.name}
                         actAsExpander={true}
-                        subtitle={'From ' + entry.startDate + ' to ' + entry.endDate}
+                        subtitle={'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}
                     />
                     <CardMedia
                         expandable={true}

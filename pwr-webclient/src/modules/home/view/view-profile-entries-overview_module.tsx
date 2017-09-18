@@ -8,6 +8,7 @@ import {FlatButton} from 'material-ui';
 import {ViewProfileEntries} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {EntryRenderers} from './entries/EntryRenderers';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 
 interface ViewProfileEntriesOverviewProps {
@@ -58,6 +59,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
             <div className="row">
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("Sector.Plural")}
                         movableEntryType="SECTOR"
                         toggleableEntryType="SECTOR"
                         renderEntry={EntryRenderers.renderSector}
@@ -69,6 +71,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("Career.Plural")}
                         movableEntryType="CAREER"
                         toggleableEntryType="CAREER"
                         renderEntry={EntryRenderers.renderCareer}
@@ -82,13 +85,14 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("Education.Plural")}
                         movableEntryType="EDUCATION"
                         toggleableEntryType="EDUCATION"
                         renderEntry={EntryRenderers.renderEducation}
                         headers={[EntryRenderers.renderNameButton(SortableEntryType.EDUCATION, this.props.viewProfileId),
                             EntryRenderers.renderStartDate(SortableEntryType.EDUCATION, this.props.viewProfileId),
                             EntryRenderers.renderEndDate(SortableEntryType.EDUCATION, this.props.viewProfileId),
-                            <FlatButton label="Degree" disabled={true}/>]}
+                            <FlatButton label={PowerLocalize.get("ViewEntryField.Degree")}  disabled={true}/>]}
                         entries={this.props.viewProfile.educations}
                         onMove={this.handleMove}
                         onToggle={this.handleToggle}
@@ -96,6 +100,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("KeySkill.Plural")}
                         movableEntryType="KEY_SKILL"
                         toggleableEntryType="KEY_SKILL"
                         renderEntry={EntryRenderers.renderKeySkill}
@@ -107,10 +112,12 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("Language.Plural")}
                         movableEntryType="LANGUAGE"
                         toggleableEntryType="LANGUAGE"
                         renderEntry={EntryRenderers.renderLanguage}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.LANGUAGE, this.props.viewProfileId), <FlatButton label="Level" disabled={true}/>]}
+                        headers={[EntryRenderers.renderNameButton(SortableEntryType.LANGUAGE, this.props.viewProfileId),
+                            <FlatButton label={PowerLocalize.get("ViewEntryField.Level")} disabled={true}/>]}
                         entries={this.props.viewProfile.languages}
                         onMove={this.handleMove}
                         onToggle={this.handleToggle}
@@ -118,6 +125,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("Qualification.Plural")}
                         movableEntryType="QUALIFICATION"
                         toggleableEntryType="QUALIFICATION"
                         renderEntry={EntryRenderers.renderQualification}
@@ -129,6 +137,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("Training.Plural")}
                         movableEntryType="TRAINING"
                         toggleableEntryType="TRAINING"
                         renderEntry={EntryRenderers.renderTraining}
@@ -142,6 +151,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
+                        title={PowerLocalize.get("ProjectRole.Plural")}
                         movableEntryType="PROJECT_ROLE"
                         toggleableEntryType="PROJECT_ROLE"
                         renderEntry={EntryRenderers.renderProjectRole}
