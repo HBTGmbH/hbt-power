@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {AutoComplete, Chip, DatePicker, Dialog, IconButton, TextField} from 'material-ui';
+import * as redux from 'redux';
+import {AutoComplete, Chip, DatePicker, Dialog, IconButton, Subheader, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {Project} from '../../../../../model/Project';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -8,11 +9,15 @@ import * as Immutable from 'immutable';
 import ChipInput from './../../../../../external_libs/ChipInput';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
-import {SkillSearcher} from '../../../../general/skill-search_module';
 import {Profile} from '../../../../../model/Profile';
 import {isNullOrUndefined} from 'util';
+import {AddSkillDialog} from '../skills/add-skill-dialog_module';
+import {connect} from 'react-redux';
+import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
+import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 
-interface ProjectDialogProps {
+interface ProjectDialogLocalProps {
     open: boolean;
     project: Project;
     projectRoles: Immutable.Map<string, NameEntity>;
@@ -20,22 +25,39 @@ interface ProjectDialogProps {
     profile: Profile;
     onClose(): void;
     onSave(state: ProjectDialogState): void;
+
+}
+
+interface ProjectDialogDispatch {
+    onOpenAddSkill(projectId: string): void;
+    removeSkillFromProject(projectId: string, skillId: string): void;
 }
 
 export interface ProjectDialogState {
     project: Project;
     roles: Immutable.List<string>;
-    rawSkills: Immutable.Set<string>;
     clientACValue: string; // Autocomplete value of the client field
     brokerACValue: string; // Autocomplete value of the broker field
 }
 
-export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDialogState> {
+class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & ProjectDialogDispatch, ProjectDialogState> {
 
 
-    public constructor(props: ProjectDialogProps) {
+    public constructor(props: ProjectDialogLocalProps & ProjectDialogDispatch) {
         super(props);
         this.forceReset(props);
+    }
+
+    static mapStateToProps(state: ApplicationState, localProps: ProjectDialogLocalProps): {} {
+        return {
+        };
+    }
+
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProjectDialogDispatch {
+        return {
+            onOpenAddSkill: projectId => dispatch(SkillActionCreator.SetAddToProjectId(projectId)),
+            removeSkillFromProject: (projectId, skillId) => dispatch(ProfileActionCreator.RemoveSkillFromProject(skillId, projectId))
+        };
     }
 
     private updateProject(project: Project) {
@@ -44,45 +66,38 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         });
     }
 
-    private forceReset(props: ProjectDialogProps) {
+    private forceReset(props: ProjectDialogLocalProps) {
         let roles: Array<string> = [];
         props.project.roleIds().forEach(id => {
             roles.push(NameEntityUtil.getNullTolerantName(id, props.projectRoles));
-        });
-        let rawSkills = Immutable.Set<string>();
-        props.project.skillIDs().forEach(id => {
-            rawSkills = rawSkills.add(this.props.profile.getSkillName(id));
         });
         this.state = {
             project: props.project,
             roles: Immutable.List<string>(roles),
             clientACValue: NameEntityUtil.getNullTolerantName(props.project.endCustomerId(), props.companies),
             brokerACValue: NameEntityUtil.getNullTolerantName(props.project.brokerId(), props.companies),
-            rawSkills: rawSkills
         };
     }
 
-    private componentWillReceiveProps(props: ProjectDialogProps) {
+    private componentWillReceiveProps(props: ProjectDialogLocalProps) {
         if(this.props.open == false && props.open == true) {
             this.forceReset(props);
         }
     }
 
-    private handleDeleteSkill = (skill : string) => {
-        this.setState({
-            rawSkills: this.state.rawSkills.remove(skill)
-        })
+    private handleDeleteSkill = (skillId : string) => {
+       this.props.removeSkillFromProject(this.props.project.id(), skillId);
     };
 
     private renderSkills = () => {
-        return this.state.rawSkills.map(skill => {
+        return this.props.project.skillIDs().map(skillId => {
            return (
                <Chip
-                   key={'SkillChip_' + skill}
+                   key={'SkillChip_' + skillId}
                    style={{margin: 4}}
-                   onRequestDelete={() => {this.handleDeleteSkill(skill)}}
+                   onRequestDelete={() => {this.handleDeleteSkill(skillId)}}
                >
-               {skill}
+               {this.props.profile.getSkill(skillId).name()}
                </Chip>);
         });
     };
@@ -150,12 +165,12 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         });
     };
 
-    private handleSkillRequest = (qualifier: string) => {
+   /* private handleSkillRequest = (qualifier: string) => {
         this.setState({
             rawSkills: this.state.rawSkills.add(qualifier)
         });
 
-    };
+    };*/
 
     private renderEndDateChoice = () => {
         if(isNullOrUndefined(this.state.project.endDate())) {
@@ -305,13 +320,11 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
                             </div>
                         </div>
 
-                        <div className="row">
+                        <div className="row mui-margin">
                             <div className="col-md-10  col-md-offset-1">
-                                <SkillSearcher
-                                    floatingLabelText={PowerLocalize.get('ProjectSkills.Label')}
-                                    id={'ProjectDialog.SkillSearcher.' + this.props.project.id()}
-                                    onNewRequest={this.handleSkillRequest}
-                                    maxHeight={250}
+                                <Subheader>Skills</Subheader>
+                                <AddSkillDialog
+                                    onOpen={() => this.props.onOpenAddSkill(this.props.project.id())}
                                 />
                             </div>
                         </div>
@@ -328,3 +341,5 @@ export class ProjectDialog extends React.Component<ProjectDialogProps, ProjectDi
         );
     }
 }
+
+export const ProjectDialog: React.ComponentClass<ProjectDialogLocalProps> = connect(ProjectDialogModule.mapStateToProps, ProjectDialogModule.mapDispatchToProps)(ProjectDialogModule);

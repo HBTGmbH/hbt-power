@@ -7,7 +7,8 @@ import AddOrReplaceBuildInfo = MetaDataActionCreator.AddOrReplaceBuildInfo;
 export enum ActionType {
 
     AddSkill,
-    SwapIndex,
+    RemoveSkillFromProject,
+    SwapIndex, // TODO still used?
     UserLoginFailed,
     ReplaceExportDocuments,
 
@@ -104,6 +105,8 @@ export enum ActionType {
     SetCurrentChoice,
     SetAddSkillError,
     SetNoCategoryReason,
+    SetDoneMessage,
+    SetAddToProjectId,
     ResetAddSkillDialog,
 
     // == MEta data

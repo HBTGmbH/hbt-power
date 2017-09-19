@@ -39,7 +39,7 @@ export namespace SkillReducer {
     function resetAddSkillDialog(skillStore: SkillStore): SkillStore {
         return skillStore.currentChoice(UnCategorizedSkillChoice.PROCEED_WITH_COMMENT)
             .addSkillError(null).skillComment("").currentSkillName("").currentSkillRating(1)
-            .currentAddSkillStep(AddSkillStep.NONE)
+            .currentAddSkillStep(AddSkillStep.NONE).doneState("").addToProjectId("");
     }
 
     /**
@@ -101,8 +101,7 @@ export namespace SkillReducer {
                 let root = skillStore.skillTreeRoot();
                 root.addSkillToTree(act.categoryId, act.toAdd);
                 root = Object.assign(SkillTreeNode.root(), root);
-                let store =  addOrUpdateSkill(skillStore, act.toAdd).skillTreeRoot(root);
-                return store;
+                return addOrUpdateSkill(skillStore, act.toAdd).skillTreeRoot(root);
             }
             case ActionType.MoveSkill: {
                 let act = action as MoveSkillAction;
@@ -147,6 +146,10 @@ export namespace SkillReducer {
                 let act = action as SetAddSkillStepAction;
                 return skillStore.currentAddSkillStep(act.step);
             }
+            case ActionType.SetDoneMessage: {
+                let act = action as ChangeStringValueAction;
+                return skillStore.doneState(act.value);
+            }
             case ActionType.StepBackToSkillInfo: {
                 return resetAddSkillDialog(skillStore).currentAddSkillStep(AddSkillStep.SKILL_INFO);
             }
@@ -161,6 +164,10 @@ export namespace SkillReducer {
             case ActionType.SetAddSkillError: {
                 let act = action as ChangeStringValueAction;
                 return skillStore.addSkillError(act.value);
+            }
+            case ActionType.SetAddToProjectId: {
+                let act = action as ChangeStringValueAction;
+                return skillStore.addToProjectId(act.value);
             }
             case ActionType.ResetAddSkillDialog: {
                 return resetAddSkillDialog(skillStore);

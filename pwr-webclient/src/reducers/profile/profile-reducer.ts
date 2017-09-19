@@ -4,6 +4,7 @@ import {
     CreateEntryAction,
     DeleteEntryAction,
     DeleteSkillAction,
+    RemoveSkillFromProjectAction,
     SaveEntryAction,
     UpdateSkillRatingAction
 } from './database-actions';
@@ -138,23 +139,8 @@ export class ProfileReducer {
      * @param rawSkills
      * @returns {Profile}
      */
-    public static reducerHandleSaveProject(profile: Profile, project: Project, rawSkills: Immutable.Set<string>): Profile {
-        // Check raw skills. If no skill with the name exists, add it to profile.
-        let projectSkillIds = project.skillIDs().clear();
-       rawSkills.forEach(skillName => {
-            let skill: Skill = profile.getSkillByName(skillName);
-            if(isNullOrUndefined(skill)) {
-                skill = Skill.createNew(skillName);
-                profile = profile.skills(profile.skills().set(skill.id(), skill));
-            }
-            // Always add the skill id. IDs are represents by a set, so add can always be performed
-            // without creating duplicates.
-            projectSkillIds = projectSkillIds.add(skill.id());
-        });
-        project = project.skillIDs(projectSkillIds);
-        return profile
-            .projects(profile.projects().set(project.id(), project))
-            .changesMade(profile.changesMade());
+    public static reducerHandleSaveProject(profile: Profile, project: Project): Profile {
+        return profile.projects(profile.projects().set(project.id(), project)).changesMade(profile.changesMade());
     }
 
     /**
@@ -181,6 +167,17 @@ export class ProfileReducer {
         return profile.changesMade(profile.changesMade() + 1);
     }
 
+    public static reducerHandleRemoveSkillFromProject(profile: Profile, action: RemoveSkillFromProjectAction): Profile {
+        let project = profile.getProject(action.projectId);
+        if(!isNullOrUndefined(project)) {
+            project = project.skillIDs(project.skillIDs().remove(action.skillId));
+            let projects = (profile.projects());
+            projects = projects.set(project.id(), project);
+            profile = profile.projects(projects);
+        }
+        return profile;
+    }
+
     public static reducerHandleUpdateSkillRating(profile: Profile, action: UpdateSkillRatingAction): Profile {
         let skill: Skill = profile.getSkill(action.id);
         skill = skill.rating(action.rating);
@@ -191,13 +188,20 @@ export class ProfileReducer {
     }
 
     public static reducerHandleAddSkill(profile: Profile, action: AddSkillAction): Profile {
-        if(!profile.getSkillByName(action.skillName)) {
+        let skill = profile.getSkillByName(action.skillName);
+        if(isNullOrUndefined(skill)) {
             let skills = profile.skills();
-            let skill = Skill.of(action.skillName, action.rating, action.comment);
+            skill = Skill.of(action.skillName, action.rating, action.comment);
             skills = skills.set(skill.id(), skill);
-            return profile.skills(skills).changesMade(profile.changesMade() + 1);
-        } else {
-            return profile;
+            profile = profile.skills(skills).changesMade(profile.changesMade() + 1);
         }
+        if(!isNullOrUndefined(action.projectId)) {
+            let project = profile.projects().get(action.projectId);
+            project = project.skillIDs(project.skillIDs().add(skill.id()));
+            let projects = profile.projects();
+            projects = projects.set(project.id(), project);
+            profile = profile.projects(projects);
+        }
+        return profile;
     }
 }

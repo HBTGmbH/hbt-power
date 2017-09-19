@@ -21,6 +21,7 @@ import {UnCategorizedSkillChoice} from '../../../../../model/skill/Uncategorized
 import {LimitedTextField} from '../../../../general/limited-text-field-module.';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import {isNullOrUndefined} from 'util';
 
 
 interface AddSkillDialogProps {
@@ -31,6 +32,7 @@ interface AddSkillDialogProps {
     currentChoice: UnCategorizedSkillChoice;
     skillComment: string;
     addSkillError: string | undefined | null;
+    doneState: string;
     /**
      * Reason why no category could be found.
      */
@@ -39,7 +41,7 @@ interface AddSkillDialogProps {
 }
 
 interface AddSkillDialogLocalProps {
-
+    onOpen?(): void;
 }
 
 interface AddSkillDialogLocalState {
@@ -71,7 +73,8 @@ class AddSkillDialogModule extends React.Component<
             currentChoice: state.skillReducer.currentChoice(),
             skillComment: state.skillReducer.skillComment(),
             addSkillError: state.skillReducer.addSkillError(),
-            noCategoryReason: state.skillReducer.noCategoryReason()
+            noCategoryReason: state.skillReducer.noCategoryReason(),
+            doneState: state.skillReducer.doneState()
         };
     }
 
@@ -86,6 +89,13 @@ class AddSkillDialogModule extends React.Component<
             closeDialog: () => dispatch(SkillActionCreator.ResetAddSkillDialog())
         };
     }
+
+    private handleOpen = () => {
+        if(!isNullOrUndefined(this.props.onOpen)) {
+            this.props.onOpen();
+        }
+        this.props.progress();
+    };
 
     private mapStepIndex = () => {
         switch(this.props.addSkillStep) {
@@ -214,9 +224,21 @@ class AddSkillDialogModule extends React.Component<
     };
 
     private renderDone = (): JSX.Element  => {
-        return <div style={{textAlign: "center"}}>
-            {PowerLocalize.get("AddSkillDialog.Done")}<br/>
-            <IconButton
+        let btn;
+        if(this.props.doneState === "SKILL_EXISTS") {
+            btn = <div>
+                    <IconButton
+                        iconClassName="material-icons"
+                        iconStyle={{color: "green"}}
+                        onClick={this.props.progress}
+                        size={80}
+                    >
+                        info
+                    </IconButton><br/>
+                    Skill Already Exists
+                </div>
+        } else {
+           btn = <IconButton
                 iconClassName="material-icons"
                 iconStyle={{color: "green"}}
                 onClick={this.props.progress}
@@ -224,6 +246,11 @@ class AddSkillDialogModule extends React.Component<
             >
                 check_circle
             </IconButton>
+        }
+
+        return <div style={{textAlign: "center"}}>
+            {PowerLocalize.get("AddSkillDialog.Done")}<br/>
+            {btn}
         </div>;
     };
 
@@ -249,7 +276,7 @@ class AddSkillDialogModule extends React.Component<
         <div>
             <RaisedButton
                 label={PowerLocalize.get("AddSkillDialog.Title")}
-                onClick={this.props.progress}
+                onClick={this.handleOpen}
             />
             <Dialog
                 open={this.props.addSkillStep !== AddSkillStep.NONE}

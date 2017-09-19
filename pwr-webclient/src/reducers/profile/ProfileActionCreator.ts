@@ -116,14 +116,25 @@ export class ProfileActionCreator {
         }
     }
 
-    public static AddSkill(skillName: string, rating: number, comment: string): AddSkillAction {
+    public static AddSkill(skillName: string, rating: number, comment: string, projectId?: string): AddSkillAction {
         return {
             type: ActionType.AddSkill,
             skillName: skillName,
             rating: rating,
-            comment: comment
+            comment: comment,
+            projectId: projectId
         }
     }
+
+    public static RemoveSkillFromProject(skillId: string, projectId: string) {
+        return {
+            type: ActionType.RemoveSkillFromProject,
+            skillId: skillId,
+            projectId: projectId
+        }
+    }
+
+
 
 
     public static SucceedAPIRequest(): AbstractAction {

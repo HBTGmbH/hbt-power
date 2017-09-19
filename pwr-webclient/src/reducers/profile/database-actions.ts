@@ -90,6 +90,13 @@ export interface AddSkillAction extends AbstractAction {
     skillName: string;
     rating: number;
     comment: string;
+    projectId?: string
+}
+
+export interface RemoveSkillFromProjectAction extends AbstractAction {
+    type: ActionType.RemoveSkillFromProject;
+    skillId: string;
+    projectId: string;
 }
 
 

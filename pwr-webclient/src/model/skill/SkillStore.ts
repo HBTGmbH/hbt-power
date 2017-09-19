@@ -11,6 +11,7 @@ import {SkillTreeNode} from './SkillTreeNode';
  */
 @doop
 export class SkillStore {
+
     /**
      * Skill tree root for the global, large skill tree.
      * @returns {Doop<SkillCategory, this>}
@@ -76,6 +77,14 @@ export class SkillStore {
      */
     @doop public get noCategoryReason() {return doop<string, this>()};
 
+    @doop public get doneState() {return doop<string, this>()};
+
+    /**
+     * Defines if the skill in the add skill dialog is supposed to be assgiedn to a project.
+     * If this value is empty (=""), it means that the skill isnt added to any project.
+     */
+    @doop public get addToProjectId() {return doop<string, this>()};
+
 
 
 
@@ -86,12 +95,13 @@ export class SkillStore {
                         currentChoice: UnCategorizedSkillChoice, skillComment: string, addSkillError: string,
                         noCategoryReason: string, categoriesById: Immutable.Map<number, SkillCategory>,
                         skillsByQualifier: Immutable.Map<string, SkillServiceSkill>,
-                        profileOnlySkillQualifiers: Immutable.Set<string>
+                        profileOnlySkillQualifiers: Immutable.Set<string>,
+                        doneState: string, addToProjectId: string
     ) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
             .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById)
-            .skillsByQualifier(skillsByQualifier);
+            .skillsByQualifier(skillsByQualifier).doneState(doneState).addToProjectId(addToProjectId);
     }
 
     public static empty() {
@@ -100,7 +110,7 @@ export class SkillStore {
             AddSkillStep.NONE, 1, "",
             UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>(),
             Immutable.Map<string, SkillServiceSkill>(),
-            Immutable.Set<string>());
+            Immutable.Set<string>(), "", "");
     }
 
     public skillWithQualifierExists(qualifier: string) {

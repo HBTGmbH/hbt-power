@@ -104,6 +104,13 @@ export namespace SkillActionCreator {
         }
     }
 
+    export function SetDoneMessage(msg: string): ChangeStringValueAction {
+        return {
+            type: ActionType.SetDoneMessage,
+            value: msg
+        }
+    }
+
     export function ChangeSkillComment(comment: string): ChangeStringValueAction {
         return {
             type: ActionType.ChangeSkillComment,
@@ -136,6 +143,13 @@ export namespace SkillActionCreator {
         return {
             type: ActionType.FilterTree,
             searchTerm: searchTerm
+        }
+    }
+
+    export function SetAddToProjectId(projectId: string): ChangeStringValueAction {
+        return {
+            type: ActionType.SetAddToProjectId,
+            value: projectId
         }
     }
 
@@ -614,37 +628,43 @@ export namespace SkillActionCreator {
                 dispatch(SetAddSkillStep(AddSkillStep.SKILL_INFO))
             } else if (step === AddSkillStep.SKILL_INFO) {
                 let skillName = state.currentSkillName();
-                let hierarchy = state.categorieHierarchiesBySkillName().get(state.currentSkillName());
-                if(!isNullOrUndefined(hierarchy)) {
-                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
+                let skill = getState().databaseReducer.profile().getSkillByName(skillName);
+                if(!isNullOrUndefined(skill)) {
+                    dispatch(SetAddSkillStep(AddSkillStep.DONE));
+                    dispatch(SetDoneMessage("SKILL_EXISTS"));
                 } else {
-                    dispatch(SetAddSkillStep(AddSkillStep.CATEGORY_REQUEST_PENDING));
-                    let config: AxiosRequestConfig = {params: {qualifier: skillName}};
-                    axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
-                        if(response.status === 200) {
-                            if(response.data.category != null) {
-                                dispatch(ReadSkillHierarchy(response.data));
-                                dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY))
-                            } else {
+                    let hierarchy = state.categorieHierarchiesBySkillName().get(state.currentSkillName());
+                    if(!isNullOrUndefined(hierarchy)) {
+                        dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
+                    } else {
+                        dispatch(SetAddSkillStep(AddSkillStep.CATEGORY_REQUEST_PENDING));
+                        let config: AxiosRequestConfig = {params: {qualifier: skillName}};
+                        axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
+                            if(response.status === 200) {
+                                if(response.data.category != null) {
+                                    dispatch(ReadSkillHierarchy(response.data));
+                                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY))
+                                } else {
+                                    dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
+                                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
+                                }
+                            } else if(response.status === 204){
                                 dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
                                 dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
+                            } else {
+                                dispatch(SetNoCategoryReason("SERVER_ERROR"));
+                                dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                             }
-                        } else if(response.status === 204){
-                            dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
+                        }).catch(function (error: AxiosError) {
+                            console.error(error);
+                            if(!isNullOrUndefined(error.response) && (error.response.status === 400 || error.response.status === 404)) {
+                                dispatch(SetNoCategoryReason("SERVICE_NOT_AVAILABLE"));
+                            } else {
+                                dispatch(SetNoCategoryReason("UNKNOWN"));
+                            }
                             dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
-                        } else {
-                            dispatch(SetNoCategoryReason("SERVER_ERROR"));
-                            dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
-                        }
-                    }).catch(function (error: AxiosError) {
-                        console.error(error);
-                        if(!isNullOrUndefined(error.response) && (error.response.status === 400 || error.response.status === 404)) {
-                            dispatch(SetNoCategoryReason("SERVICE_NOT_AVAILABLE"));
-                        } else {
-                            dispatch(SetNoCategoryReason("UNKNOWN"));
-                        }
-                        dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
-                    });
+                        });
+                    }
                 }
             } else if (step === AddSkillStep.SHOW_CATEGORY) {
                 dispatch(SetAddSkillStep(AddSkillStep.DONE));
@@ -657,7 +677,11 @@ export namespace SkillActionCreator {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
                 }
             } else if (step === AddSkillStep.DONE) {
-                dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment()));
+                if(state.addToProjectId().length > 0) {
+                    dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment(), state.addToProjectId()));
+                } else if (state.doneState() !== "SKILL_EXISTS") {
+                    dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment()));
+                }
                 dispatch(ResetAddSkillDialog());
             }
         }

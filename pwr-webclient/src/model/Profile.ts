@@ -38,7 +38,15 @@ export class Profile {
     @doop public get languageSkills(){ return doop<Immutable.Map<string, LanguageSkill>, this>();}
     @doop public get qualificationEntries(){ return doop<Immutable.Map<string, QualificationEntry>, this>();}
     @doop public get keySkillEntries() {return doop<Immutable.Map<string, KeySkillEntry>, this>();}
+
+    /**
+     * Projects by id
+     */
     @doop public get projects(){ return doop<Immutable.Map<string, Project>, this>();}
+
+    /**
+     * Skills by id
+     */
     @doop public get skills() { return doop<Immutable.Map<string, Skill>, this>()};
     @doop public get lastEdited() { return doop<Date, this>();}
     @doop public get lastEditedBy() {return doop<string, this>();}

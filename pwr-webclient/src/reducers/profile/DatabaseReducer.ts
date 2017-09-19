@@ -10,6 +10,7 @@ import {
     DeleteSkillAction,
     LoginAction,
     ReceiveAPIResponseAction,
+    RemoveSkillFromProjectAction,
     SaveEntryAction,
     SaveProjectAction,
     UpdateSkillRatingAction
@@ -90,7 +91,7 @@ export class DatabaseReducer {
 
     private static SaveProject(database: ProfileStore, action: SaveProjectAction): ProfileStore {
         // project with role IDs cleared.
-        let project: Project = action.state.project.roleIds(action.state.project.roleIds().clear());
+        let project: Project = database.profile().projects().get(action.state.project.id());
         project = project.roleIds(project.roleIds().clear());
         action.state.roles.forEach(role => {
             let projectRole: NameEntity = ProfileStore.findNameEntityByName(role, database.projectRoles());
@@ -117,7 +118,7 @@ export class DatabaseReducer {
         }
         project = project.endCustomerId(endCustomer.id());
 
-        let profile: Profile = ProfileReducer.reducerHandleSaveProject(database.profile(), project, action.state.rawSkills);
+        let profile: Profile = ProfileReducer.reducerHandleSaveProject(database.profile(), project);
         return database.profile(profile);
     }
 
@@ -223,6 +224,10 @@ export class DatabaseReducer {
             case ActionType.UserLoginFailed: return state.loginStatus(LoginStatus.REJECTED);
             case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
             case ActionType.SetUserInitials: return DatabaseReducer.SetUserInitials(state, action as ChangeStringValueAction);
+            case ActionType.RemoveSkillFromProject: {
+                let profile = ProfileReducer.reducerHandleRemoveSkillFromProject(state.profile(), action as RemoveSkillFromProjectAction);
+                return state.profile(profile);
+            }
             default:
                 return state;
         }
