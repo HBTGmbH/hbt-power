@@ -492,7 +492,7 @@ export class AdminActionCreator {
 
     public static AsyncRedirectToUser(initials: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(ProfileAsyncActionCreator.logInUser(initials));
+            dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_HOME));
         };
     }
 
