@@ -19,6 +19,7 @@
     "@types/react-sortable-hoc": "0.6.0",
     "@types/react-tap-event-plugin": "0.0.30",
     "@types/vis": "4.18.2",
+    "react-scripts-ts": "1.1.8",
     "axios": "0.16.1",
     "doop": "2.2.1",
     "es6-promise": "4.1.0",
@@ -52,12 +53,11 @@
     "recharts": "1.0.0-alpha.1",
     "redux-logger": "3.0.1",
     "redux-thunk": "2.2.0",
-    "vis": "^4.20.0"
+    "vis": "^4.20.0",
+    "ts-jest": "20.0.6"
   },
   "devDependencies": {
-    "@types/jest": "19.2.3",
-    "react-scripts-ts": "1.1.8",
-    "ts-jest": "^20.0.6"
+
   },
   "scripts": {
     "start": "react-scripts-ts start",
