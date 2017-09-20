@@ -121,5 +121,6 @@ export enum ActionType {
     // == View Profile
     SetViewProfile,
     RemoveViewProfile,
-    SetSortInProgress
+    SetSortInProgress,
+    ResetViewState
 }

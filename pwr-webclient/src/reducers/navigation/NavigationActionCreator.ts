@@ -5,8 +5,9 @@ import {ApplicationState} from '../reducerIndex';
 import {Paths} from '../../Paths';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {browserHistory} from 'react-router';
-import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
+import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
+import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;
@@ -68,12 +69,9 @@ export namespace NavigationActionCreator {
                 } else {
                     navigate(Paths.APP_ROOT, dispatch);
                     dispatch(ProfileActionCreator.logOutUser());
+                    dispatch(ViewProfileActionCreator.ResetViewState());
                 }
-            } else if(target === Paths.USER_SPECIAL_LOGIN) {
-                let initials: string = state.databaseReducer.loggedInUser().initials();
-                Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-                navigate(Paths.USER_HOME, dispatch);
-            } else if(currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && changes > 0) {
+            } if(currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && changes > 0) {
                 dispatch(SetNavigationTarget(target));
             } else {
                 navigate(target, dispatch);
@@ -89,6 +87,7 @@ export namespace NavigationActionCreator {
                     navigate(Paths.APP_ROOT, dispatch);
                     Cookies.remove(COOKIE_INITIALS_NAME);
                     dispatch(ProfileActionCreator.logOutUser());
+                    dispatch(ViewProfileActionCreator.ResetViewState());
                     break;
                 }
                 default:

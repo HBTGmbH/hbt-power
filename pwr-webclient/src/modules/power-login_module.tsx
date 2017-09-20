@@ -8,9 +8,9 @@ import {LoginStatus} from '../model/LoginStatus';
 import {Link} from 'react-router';
 import {Paths} from '../Paths';
 import {BottomBuildInfo} from './metadata/build-info_module';
-import {NavigationActionCreator} from '../reducers/navigation/NavigationActionCreator';
 import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../reducers/reducerIndex';
+import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 /**
  * Properties that are managed by react-redux.
  *
@@ -49,7 +49,7 @@ interface PowerLoginLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface PowerLoginDispatch {
-    logInUser(): void;
+    logInUser(initials: string): void;
     setUserInitials(value: string): void;
 }
 
@@ -74,7 +74,7 @@ class PowerLoginModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerLoginDispatch {
         return {
-            logInUser: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGIN)),
+            logInUser: (initials) => dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_HOME)),
             setUserInitials: (value) => dispatch(ProfileActionCreator.SetUserInitials(value))
         }
     }
@@ -82,12 +82,12 @@ class PowerLoginModule extends React.Component<
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
         if(event.key == 'Enter') {
-            this.props.logInUser();
+            this.props.logInUser(this.props.initials);
         }
     };
 
     private handleProgressButtonClick = () => {
-        this.props.logInUser();
+        this.props.logInUser(this.props.initials);
     };
 
     private handleFieldValueChange = (irrelevantFormEvent: any, value: string) => {

@@ -7,6 +7,7 @@ import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ViewProfileService} from '../../API_CONFIG';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {SortableEntryField, SortableEntryType} from '../../model/view/NameComparableType';
+import {AbstractAction} from '../profile/database-actions';
 
 export namespace ViewProfileActionCreator {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
@@ -31,6 +32,12 @@ export namespace ViewProfileActionCreator {
         return {
             type: ActionType.SetViewProfile,
             viewProfile: viewProfile
+        }
+    }
+
+    export function ResetViewState(): AbstractAction {
+        return {
+            type: ActionType.ResetViewState
         }
     }
 

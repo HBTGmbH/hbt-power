@@ -23,6 +23,11 @@ import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
+import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import {Paths} from '../../Paths';
+import {isNullOrUndefined} from 'util';
+import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
+import * as Cookies from 'js-cookie';
 
 export class ProfileAsyncActionCreator {
 
@@ -183,7 +188,7 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    public static logInUser(initials: string) {
+    public static logInUser(initials: string, navTarget?: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             axios.get(getConsultantApiString(initials)).then(function(response: AxiosResponse) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
@@ -195,9 +200,14 @@ export class ProfileAsyncActionCreator {
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                 dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
+                Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
+                if(!isNullOrUndefined(navTarget)) {
+                    dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
+                }
             }).catch(function(error:any) {
                 ProfileAsyncActionCreator.logAxiosError(error);
                 dispatch(ProfileActionCreator.FailLogin());
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT));
             });
         };
     }

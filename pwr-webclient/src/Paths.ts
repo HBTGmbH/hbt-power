@@ -30,7 +30,6 @@ export class Paths {
     public static readonly ADMIN_INFO_NAME_ENTITY = '/admin/home/info/names';
 
     public static readonly USER_SPECIAL_LOGOUT = '##LOGOUT_USER##';
-    public static readonly USER_SPECIAL_LOGIN = '##LOGIN_USER##';
 
     public static readonly USER_BASE = '/app/';
     public static readonly USER_HOME = '/app/home';
@@ -63,8 +62,11 @@ export class Paths {
             const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
             // renew the cookie to hold another fixed period of time.
             Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-            store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials));
-            store.dispatch(NavigationActionCreator.AsyncNavigateTo(browserHistory.getCurrentLocation().pathname));
+            if(location.pathname !== Paths.APP_ROOT) {
+                store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, location.pathname));
+            } else {
+                store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, Paths.USER_HOME));
+            }
         } else {
             store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
         }

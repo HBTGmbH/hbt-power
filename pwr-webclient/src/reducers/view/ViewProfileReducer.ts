@@ -28,6 +28,9 @@ export namespace ViewProfileReducer {
                 let act: SetSortInProgressAction = action as SetSortInProgressAction;
                 return store.sortInProgress(act.inProgress);
             }
+            case ActionType.ResetViewState: {
+                return ViewProfileStore.empty();
+            }
         }
         return store;
     }
