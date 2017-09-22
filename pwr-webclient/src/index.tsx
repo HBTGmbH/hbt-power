@@ -83,7 +83,6 @@ window.onbeforeunload = pageLeavePreventer;
 
 
 
-@DragDropContext(HTML5Backend)
 class MyRouter extends React.Component<any, any> {
     render() {
         return (<Router history={browserHistory}>

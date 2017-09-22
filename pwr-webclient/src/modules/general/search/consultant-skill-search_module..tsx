@@ -53,7 +53,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
         });
     };
 
-    public componentDidUpdate = (prevProps: ConsultantSkillSearchProps, prevState: ConsultantSkillSearchState) => {
+    public componentDidUpdate(prevProps: ConsultantSkillSearchProps, prevState: ConsultantSkillSearchState) {
         if(this.state.currentSearchSkills != prevState.currentSearchSkills) this.executeSearch();
     };
 

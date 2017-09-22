@@ -79,7 +79,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         };
     }
 
-    private componentWillReceiveProps(props: ProjectDialogLocalProps) {
+    public componentWillReceiveProps(props: ProjectDialogLocalProps) {
         if(this.props.open == false && props.open == true) {
             this.forceReset(props);
         }

@@ -62,7 +62,7 @@ class NameEntityOverviewModule extends React.Component<
         };
     }
 
-    public componentDidMount = () => {
+    public componentDidMount() {
         this.props.requestAllNameEntities();
     };
 
@@ -156,6 +156,7 @@ class NameEntityOverviewModule extends React.Component<
                         style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}
                     >
                         <FontIcon
+
                             style={{verticalAlign: 'middle'}}
                             className="material-icons"
                             color={POWER_MUI_THEME.baseTheme.palette.alternateTextColor}
