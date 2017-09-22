@@ -3,6 +3,7 @@ import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {ViewProfileActions} from './ViewProfileActions';
+
 export namespace ViewProfileReducer {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
     import RemoveViewProfileAction = ViewProfileActions.RemoveViewProfileAction;
@@ -30,6 +31,9 @@ export namespace ViewProfileReducer {
             }
             case ActionType.ResetViewState: {
                 return ViewProfileStore.empty();
+            }
+            case ActionType.ClearViewProfiles: {
+                return store.viewProfiles(store.viewProfiles().clear());
             }
         }
         return store;

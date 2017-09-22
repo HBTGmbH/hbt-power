@@ -3,7 +3,6 @@
  */
 
 import {MetaDataActionCreator} from './metadata/MetaDataActions';
-import AddOrReplaceBuildInfo = MetaDataActionCreator.AddOrReplaceBuildInfo;
 export enum ActionType {
 
     AddSkill,
@@ -122,5 +121,6 @@ export enum ActionType {
     SetViewProfile,
     RemoveViewProfile,
     SetSortInProgress,
-    ResetViewState
+    ResetViewState,
+    ClearViewProfiles,
 }
