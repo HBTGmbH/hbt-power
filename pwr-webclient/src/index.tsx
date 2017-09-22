@@ -17,8 +17,6 @@ import {NotificationInbox} from './modules/admin/notification/notification-inbox
 import {AdminClient} from './modules/admin/admin-client_module';
 import {NotificationTrashbox} from './modules/admin/notification/notification-trashbox_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
-import HTML5Backend from 'react-dnd-html5-backend';
-import {DragDropContext} from 'react-dnd';
 
 import {ConsultantGrid} from './modules/admin/consultants/consultant-grid_module';
 import {SkillStatistics} from './modules/home/statistics/skill-statistics_module';
@@ -28,25 +26,14 @@ import {ProfileNetworkGraph} from './modules/general/statistics/profile-network_
 import {ClusterResult} from './modules/home/statistics/cluster-result_module';
 import {ConsultantSkillSearch} from './modules/general/search/consultant-skill-search_module.';
 import {getMuiTheme, spacing} from 'material-ui/styles';
-import {
-    cyan500,
-    darkBlack,
-    deepOrange500,
-    fullBlack,
-    grey100,
-    grey300,
-    grey500,
-    indigo50,
-    indigo500,
-    indigo800,
-    white
-} from 'material-ui/styles/colors';
+import {darkBlack, fullBlack, fullWhite, white} from 'material-ui/styles/colors';
 import {fade} from 'material-ui/utils/colorManipulator';
 import {Paths} from './Paths';
 import {AdminSkillTree2} from './modules/admin/info/admin-skill-tree2_module';
 import {AdminProfileOverview} from './modules/admin/info/admin-profile-overview_module.';
 import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
 import {ViewProfileOverview} from './modules/home/view/view-profile-overview_module';
+import {Color} from './utils/ColorUtil';
 import injectTapEventPlugin = require('react-tap-event-plugin');
 
 // For material ui tap touch support
@@ -114,18 +101,18 @@ const powerTheme = {
     spacing: spacing,
     fontFamily: 'Roboto, sans-serif',
     palette: {
-        primary1Color: indigo500,
-        primary2Color: indigo800,
-        primary3Color: indigo50,
-        accent1Color: deepOrange500,
-        accent2Color: grey100,
-        accent3Color: grey500,
-        textColor: darkBlack,
-        alternateTextColor: white,
+        primary1Color: Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
+        primary2Color: Color.HBT_2017_MEDIUM_BLUE.toCSSRGBString(),
+        primary3Color: Color.HBT_2017_LIGHT_BLUE.toCSSRGBString(),
+        accent1Color: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
+        accent2Color: Color.HBT_2017_SPOT_COLOR_2.toCSSRGBString(),
+        accent3Color: Color.HBT_2017_GRAY.toCSSRGBString(),
+        textColor: Color.HBT_2017_TEXT_BLACK.toCSSRGBString(),
+        alternateTextColor:  Color.HBT_2017_TEXT_WHITE.toCSSRGBString(),
         canvasColor: white,
-        borderColor: grey300,
-        disabledColor: fade(darkBlack, 0.3),
-        pickerHeaderColor: cyan500,
+        borderColor: fade(fullWhite, 0.3),
+        disabledColor: fade(Color.HBT_2017_DARK_BLUE.toCSSRGBString(), 0.3),
+        pickerHeaderColor: Color.HBT_2017_SPOT_COLOR_1.toCSSRGBString(),
         clockCircleColor: fade(darkBlack, 0.07),
         shadowColor: fullBlack,
     },

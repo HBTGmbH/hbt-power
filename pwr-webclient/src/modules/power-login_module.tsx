@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
-import {FlatButton, Paper, RaisedButton, TextField} from 'material-ui';
+import {FlatButton, RaisedButton, TextField} from 'material-ui';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
 import {Link} from 'react-router';
@@ -11,6 +11,7 @@ import {BottomBuildInfo} from './metadata/build-info_module';
 import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../reducers/reducerIndex';
 import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
+
 /**
  * Properties that are managed by react-redux.
  *
@@ -109,37 +110,24 @@ class PowerLoginModule extends React.Component<
     render() {
         return (
             <div>
-                <div className="row">
-                    <div className="col-md-4 col-md-offset-4">
-                        <Paper style={{height: "400px"}}>
+                <div className="vertical-align">
+                    <div style={{padding: "64px", backgroundColor: "white"}}>
+                        <div className="vertical-align">
+                            <img className="img-responsive logo-medium" src="/img/HBT002_Logo_pos.png"/>
+                        </div>
+                        <div className="vertical-align">
+                            <h1>Profilauswahl HBT Power</h1>
+                        </div>
+                        <div className="fittingContainer">
+                            <div className="vertical-align">
+                                {this.renderInputField()}
+                            </div>
+                            <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
                             <br/>
-                            <div className="row">
-                                <div className="col-md-4 col-md-offset-1">
-                                    <img className="img-responsive" src="/img/logo_hbt.png"/>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-offset-1">
-                                    <h1>Profilauswahl</h1>
-                                    <h4>Weiter zu HBT Power</h4>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-offset-1">
-                                    {this.renderInputField()}
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-offset-1">
-                                    <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
-                                </div>
-                            </div>
-                            <div className="row" style={{marginTop: "20px"}}>
-                                <div className="col-md-offset-1">
-                                    <Link to={Paths.ADMIN_LOGIN}><FlatButton label="Admin"/></Link>
-                                </div>
-                            </div>
-                        </Paper>
+                            <br/>
+                            <Link to={Paths.ADMIN_LOGIN}><FlatButton label="Admin"/></Link>
+                        </div>
+
                     </div>
                 </div>
                 <div className="vertical-align" style={{marginTop: "50px"}}>

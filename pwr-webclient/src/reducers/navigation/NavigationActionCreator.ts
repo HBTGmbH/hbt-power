@@ -68,6 +68,7 @@ export namespace NavigationActionCreator {
                     dispatch(SetNavigationTarget(target));
                 } else {
                     navigate(Paths.APP_ROOT, dispatch);
+                    Cookies.remove(COOKIE_INITIALS_NAME);
                     dispatch(ProfileActionCreator.logOutUser());
                     dispatch(ViewProfileActionCreator.ResetViewState());
                 }

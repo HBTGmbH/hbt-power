@@ -9,7 +9,6 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Link} from 'react-router';
 import {Paths} from '../../Paths';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import construct = Reflect.construct;
 
 /**
  * Properties that are managed by react-redux.
@@ -115,7 +114,7 @@ class AdminLoginModule extends React.Component<
                 <Paper style={{padding: "30px"}}>
                     <div  className="fittingContainer">
                         <div className="vertical-align">
-                            <img src="/img/logo_hbt.png" style={{width: "200px"}}/>
+                            <img className="logo-medium" src="/img/HBT002_Logo_pos.png"/>
                         </div>
                         <div className="vertical-align">
                             <h1>Admin-Login</h1>

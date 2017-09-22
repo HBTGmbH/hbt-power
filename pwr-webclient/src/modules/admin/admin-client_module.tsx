@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Avatar, FlatButton, FontIcon, List, ListItem, Paper, Toolbar, ToolbarGroup} from 'material-ui';
+import {AppBar, FontIcon, IconButton, List, ListItem, Paper} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {RequestStatus} from '../../Store';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
@@ -94,32 +94,20 @@ class AdminClientModule extends React.Component<
         return (
             <div>
                 <Paper zDepth={3}>
-                    <Toolbar style={{height: '100px', backgroundColor:'SlateGray'}}>
-                        <ToolbarGroup>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <img className="img-responsive" src="/img/HBTBlueWithText.png"/>
-                                </div>
-                                <div className="col-md-5" style={{paddingTop:'40px'}}>
-                                    <span style={{fontSize:'2.3em', fontStyle:'oblique', color: 'white'}}>Poooower!   </span>
-                                    <span style={{fontSize:'2.3em', color: 'white'}}>&nbsp;2.0</span>
-                                </div>
-                            </div>
-                        </ToolbarGroup>
-                        <ToolbarGroup lastChild={true}>
-                            <div style={{marginRight: '30px', textAlign: 'right', color:'white'}} >
-                                <span style={{paddingRight:'15px'}}>{PowerLocalize.get('Toolbar.LoggedInAs') + ': admin'}</span>
-                                <br/>
-                                <FlatButton
-                                    label={PowerLocalize.get('Tooolbar.LogOut')}
-                                    onClick={this.props.logOutAdmin}
-                                />
-                            </div>
-                            <div style={{marginRight: '50px'}}>
-                                <Avatar size={70} src="/img/crazy_lama.jpg" />
-                            </div>
-                        </ToolbarGroup>
-                    </Toolbar>
+                    <AppBar
+                        iconElementLeft={<span/>}
+                        iconElementRight={<IconButton
+                            tooltip={PowerLocalize.get('Tooolbar.LogOut')}
+                            iconClassName="material-icons"
+                            onClick={this.props.logOutAdmin}
+                        >input</IconButton>}
+                        title={ <div className="vertical-align" style={{height: "100%"}}>
+                            <img className="img-responsive logo-small" src="/img/HBT002_Logo_neg.png"
+                            />
+                        </div>}
+                    >
+
+                    </AppBar>
                 </Paper>
                 <div className="row">
                     <div className="col-md-2">

@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AppBar, FlatButton, FontIcon, IconButton, IconMenu, MenuItem} from 'material-ui';
+import {AppBar, FontIcon, IconButton, IconMenu, MenuItem} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -12,6 +12,7 @@ import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActio
 import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
+import {Color} from '../../utils/ColorUtil';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -85,10 +86,11 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     private renderPower = () => {
         return (
-        <div>
-                <span>Poooower!   </span>
-                <span>&nbsp;2.0</span>
-        </div>);
+            <div className="vertical-align" style={{height: "100%"}}>
+                <img className="img-responsive logo-small" src="/img/HBT002_Logo_neg.png"
+                />
+            </div>
+          );
     };
 
     private loadNetworkGraph = () => {
@@ -115,6 +117,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     private renderMenu = () => {
         return (<IconMenu
+            iconStyle={{color:Color.HBT_2017_TEXT_WHITE.toCSSRGBString()}}
             iconButtonElement={<IconButton iconClassName="material-icons">menu</IconButton>}
             anchorOrigin={{horizontal: 'left', vertical: 'top'}}
             targetOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -127,6 +130,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
                 primaryText={PowerLocalize.get('Menu.BaseData')}
             />
+
             {
                 this.props.statisticsAvailable ?
                     <MenuItem
@@ -168,25 +172,34 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             <AppBar
                 title={this.renderPower()}
                 iconElementLeft={this.renderMenu()}
+                iconElementRight={
+                    <div style={{"color": "white"}}>
+                        <span>
+                              {PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}
+                        </span>
+                        {
+                            this.props.loggedInAsAdmin ?
+                                <IconButton
+                                    iconStyle={{"color": "white"}}
+                                    tooltip={PowerLocalize.get('Tooolbar.ToAdminOverview')}
+                                    iconClassName="material-icons"
+                                    onClick={() => this.props.navigateTo(Paths.ADMIN_CONSULTANTS)}
+                                >
+                                    home
+                                </IconButton>
+                                 : null
+                        }
+
+                        <IconButton
+                            iconStyle={{"color": "white"}}
+                            tooltip={PowerLocalize.get('Tooolbar.LogOut')}
+                            iconClassName="material-icons"
+                            onClick={this.logOutUser}
+                        >
+                            input
+                        </IconButton>
+                    </div>}
             >
-                <div style={{display: 'flex', alignItems: 'center'}}>
-                    <span style={{marginRight: '20px'}}>
-                    {PowerLocalize.get('Toolbar.LoggedInAs') + ': ' + this.getInitials()}
-                    </span>
-                    {
-                        this.props.loggedInAsAdmin ?
-                            <FlatButton
-                                label={PowerLocalize.get('Tooolbar.ToAdminOverview')}
-                                onClick={() => this.props.navigateTo(Paths.ADMIN_CONSULTANTS)}
-                            />
-                            :
-                            null
-                    }
-                    <FlatButton
-                        onClick={this.logOutUser}
-                        label={PowerLocalize.get('Tooolbar.LogOut')}
-                    />
-                </div>
             </AppBar>
         );
     }
