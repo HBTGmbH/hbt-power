@@ -96,14 +96,16 @@ export class Project {
     public toAPI(companies: Immutable.Map<string, NameEntity>,
                  roles: Immutable.Map<string, NameEntity>,
                  skills: Immutable.Map<string, Skill>): APIProject {
+        let company = companies.get(this.brokerId());
+        let customer = companies.get(this.endCustomerId());
         return {
             id: this.isNew() ? null : Number(this.id()),
             description: this.description(),
             name: this.name(),
             endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate(),
             startDate: this.startDate(),
-            broker: companies.get(this.brokerId()).toAPI(),
-            client: companies.get(this.endCustomerId()).toAPI(),
+            broker: isNullOrUndefined(company) ? null : company.toAPI(),
+            client:  isNullOrUndefined(customer) ? null : customer.toAPI(),
             projectRoles: this.rolesToAPI(roles),
             skills: this.skillsToAPI(skills)
         }
