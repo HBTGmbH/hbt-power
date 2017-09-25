@@ -145,11 +145,11 @@ export class Project {
         return new Project(
             String(project.id),
             project.name,
-            String(project.client.id),
-            new Date(project.startDate),
+            isNullOrUndefined(project.client) ? null : String(project.client.id),
+            isNullOrUndefined(project.startDate) ? null : new Date(project.startDate),
             isNullOrUndefined(project.endDate) ? null : new Date(project.endDate),
             project.description,
-            String(project.broker.id),
+            isNullOrUndefined(project.broker) ? null : String(project.broker.id),
             Project.parseRoles(project),
             false,
             Project.parseSkills(project)
