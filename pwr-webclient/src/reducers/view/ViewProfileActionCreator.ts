@@ -35,6 +35,12 @@ export namespace ViewProfileActionCreator {
         }
     }
 
+    export function ClearViewProfiles(): AbstractAction {
+        return {
+            type: ActionType.ClearViewProfiles
+        }
+    }
+
     export function ResetViewState(): AbstractAction {
         return {
             type: ActionType.ResetViewState
@@ -263,6 +269,7 @@ export namespace ViewProfileActionCreator {
     export function AsyncLoadAllViewProfiles() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let initials = getState().databaseReducer.loggedInUser().initials();
+            dispatch(ClearViewProfiles());
             dispatch(ProfileActionCreator.APIRequestPending());
             axios.get(ViewProfileService.getViewProfileIds(initials)).then((response: AxiosResponse) => {
                 let ids: Array<string> = response.data;

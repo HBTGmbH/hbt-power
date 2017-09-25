@@ -2,6 +2,12 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background-color: rgba(140, 140, 170, 1.0);
+}
+
+html,
+body {
+  height: 100%;
 }
 
 .build-info-highlight {
@@ -59,6 +65,11 @@ body {
 
 .padding-left-16px {
   padding-left: 16px;
+}
+
+.aspect-1-1 {
+  padding-top: 100%;
+  width: 100%;
 }
 
 .vertical-align {
@@ -133,4 +144,20 @@ body {
 
 .float-right {
   float: right
+}
+
+.float-left {
+  float: left
+}
+
+.logo-small {
+  height: 48px
+}
+
+.logo-medium {
+  height: 92px
+}
+
+.power-name-logo {
+  color: rgb(70, 230, 230)
 }
