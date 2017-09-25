@@ -506,6 +506,7 @@ export class AdminActionCreator {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let apiConsultant: APIConsultant = {
                 profile: null,
+                active: true,
                 initials: consultantInfo.initials(),
                 firstName: consultantInfo.firstName(),
                 lastName: consultantInfo.lastName(),
@@ -531,8 +532,10 @@ export class AdminActionCreator {
 
     public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
         return function(dispatch: redux.Dispatch<AdminState>) {
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
             let apiConsultant: APIConsultant = {
                 profile: null,
+                active: consultantInfo.active(),
                 initials: consultantInfo.initials(),
                 firstName: consultantInfo.firstName(),
                 lastName: consultantInfo.lastName(),
@@ -540,8 +543,10 @@ export class AdminActionCreator {
                 birthDate: !isNullOrUndefined(consultantInfo.birthDate()) ? consultantInfo.birthDate().toISOString() : null
             };
             axios.patch(patchConsultantActionString(consultantInfo.initials()), apiConsultant).then(function (response: AxiosResponse) {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
                 dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(response.data)));
             }).catch(function (error: any) {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
                 AdminActionCreator.logAxiosError(error);
             });
         };

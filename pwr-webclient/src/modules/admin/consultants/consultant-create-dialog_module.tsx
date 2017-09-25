@@ -106,6 +106,12 @@ class ConsultantCreateDialogModule extends React.Component<
         })
     };
 
+    private setActive = (val: boolean) => {
+        this.setState({
+            consultantInfo: this.state.consultantInfo.active(val)
+        })
+    };
+
     private setBirthDate = (val: Date) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.birthDate(val)
@@ -140,10 +146,12 @@ class ConsultantCreateDialogModule extends React.Component<
                     lastName = {this.state.consultantInfo.lastName()}
                     title = {this.state.consultantInfo.title()}
                     birthDate={this.state.consultantInfo.birthDate()}
+                    active={this.state.consultantInfo.active()}
                     onFirstNameChange={this.setFirstName}
                     onLastNameChange={this.setLastName}
                     onTitleChange={this.setTitle}
                     onBirthDateChange={this.setBirthDate}
+                    onActiveChange={this.setActive}
                 >
                     <LimitedTextField
                         maxCharacters={100}

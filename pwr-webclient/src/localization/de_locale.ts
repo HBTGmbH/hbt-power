@@ -213,7 +213,7 @@ export const de_locale : any = {
     "ViewEntryField.Date": "Abschluss",
     "ViewEntryField.Level": "Sprach-Level",
 
-
+    "ConsultantEdit.Active": "Aktiv",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

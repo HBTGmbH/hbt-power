@@ -1,7 +1,6 @@
 import {doop} from 'doop';
 import {APIConsultant} from './APIProfile';
 import {isNullOrUndefined} from 'util';
-import has = Reflect.has;
 @doop
 export class ConsultantInfo {
 
@@ -17,18 +16,23 @@ export class ConsultantInfo {
     public get title() {return doop<string, this>()};
     @doop
     public get birthDate() {return doop<Date, this>()};
+    @doop
+    public get active() {return doop<boolean, this>()};
 
-    private constructor(initials: string, firstName: string, lastName: string, hasProfile: boolean, title: string, birthDate: Date) {
-        return this.initials(initials).firstName(firstName).lastName(lastName).hasProfile(hasProfile).title(title).birthDate(birthDate);
+
+    private constructor(initials: string, firstName: string, lastName: string, hasProfile: boolean, title: string,
+                        birthDate: Date, active: boolean) {
+        return this.initials(initials).firstName(firstName).lastName(lastName).hasProfile(hasProfile).title(title)
+            .birthDate(birthDate).active(active);
     }
 
     public static fromAPI(apiConsultant: APIConsultant) {
         return new ConsultantInfo(apiConsultant.initials, apiConsultant.firstName, apiConsultant.lastName,
-            !isNullOrUndefined(apiConsultant.profile), apiConsultant.title, new Date(apiConsultant.birthDate));
+            !isNullOrUndefined(apiConsultant.profile), apiConsultant.title, new Date(apiConsultant.birthDate), apiConsultant.active);
     }
 
     public static empty() {
-        return new ConsultantInfo("", "", "", false, "", new Date());
+        return new ConsultantInfo("", "", "", false, "", new Date(), true);
     }
 
     /**

@@ -108,4 +108,5 @@ export interface APIConsultant {
     title: string;
     profile: APIProfile;
     birthDate: string;
+    active: boolean;
 }

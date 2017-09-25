@@ -2,7 +2,7 @@ import * as React from 'react';
 import {LimitedTextField} from '../../general/limited-text-field-module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
-import {DatePicker} from 'material-ui';
+import {Checkbox, DatePicker} from 'material-ui';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 
 interface ConsultantEditFieldsProps {
@@ -10,10 +10,12 @@ interface ConsultantEditFieldsProps {
     lastName: string;
     title: string;
     birthDate: Date;
+    active: boolean;
     onFirstNameChange(val: string): void;
     onLastNameChange(val: string): void;
     onTitleChange(val: string): void;
     onBirthDateChange(val: Date): void;
+    onActiveChange(active: boolean): void;
 }
 
 interface ConsultantEditFieldsState {
@@ -51,6 +53,11 @@ export class ConsultantEditFields extends React.Component<ConsultantEditFieldsPr
                 value={this.props.birthDate}
                 formatDate={formatFullLocalizedDate}
                 onChange={(e: null, date: Date) => this.props.onBirthDateChange(date)}
+            />
+            <Checkbox checked={this.props.active}
+                      onCheck={(e, v) => this.props.onActiveChange(v)}
+                      label={PowerLocalize.get("ConsultantEdit.Active")}
+
             />
         </div>);
     }

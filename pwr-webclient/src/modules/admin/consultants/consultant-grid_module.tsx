@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {FontIcon, GridList, RaisedButton} from 'material-ui';
+import {Checkbox, FontIcon, GridList, RaisedButton} from 'material-ui';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
 import {ConsultantTile} from './consultant-tile_module';
@@ -9,6 +9,8 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantCreateDialog} from './consultant-create-dialog_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+
+const Toggle = require('react-toggle').default;
 
 /**
  * Properties that are managed by react-redux.
@@ -39,6 +41,7 @@ interface ConsultantGridLocalProps {
  */
 interface ConsultantGridLocalState {
     createDialogOpen: boolean;
+    showInactive: boolean;
 }
 
 /**
@@ -46,6 +49,7 @@ interface ConsultantGridLocalState {
  */
 interface ConsultantGridDispatch {
     refreshConsultants(): void;
+
 }
 
 class ConsultantGridModule extends React.Component<
@@ -56,7 +60,8 @@ class ConsultantGridModule extends React.Component<
     constructor(props: ConsultantGridProps & ConsultantGridLocalProps & ConsultantGridDispatch) {
         super(props);
         this.state = {
-            createDialogOpen: false
+            createDialogOpen: false,
+            showInactive: false
         }
     }
 
@@ -84,6 +89,12 @@ class ConsultantGridModule extends React.Component<
         })
     };
 
+    private filterInactive = (v: ConsultantInfo) => {
+        if(!this.state.showInactive) {
+            return v.active();
+        }
+        return true;
+    };
 
     render() {
         return (
@@ -106,6 +117,11 @@ class ConsultantGridModule extends React.Component<
                             icon={<FontIcon className="material-icons">add</FontIcon>}
                             onClick={this.showDialog}
                         />
+                        <Checkbox
+                            label={"Show inactive"}
+                            checked={this.state.showInactive}
+                            onCheck={(e, v) => this.setState({showInactive: v})}
+                        />
                     </div>
                 </div>
                 <GridList
@@ -114,7 +130,9 @@ class ConsultantGridModule extends React.Component<
                     padding={5}
                 >
                     {
-                        this.props.consultantsByInitials.map(consultantInfo => {
+                        this.props.consultantsByInitials
+                            .filter(this.filterInactive)
+                            .map(consultantInfo => {
                             return <ConsultantTile key={"ConsultantTile." + consultantInfo.initials()} initials={consultantInfo.initials()}/>
                         }).toArray()
                     }

@@ -102,6 +102,7 @@ class ConsultantTileModule extends React.Component<
                 primaryText={PowerLocalize.get("ConsultantTile.EditProfile")}
                 rightIcon={<FontIcon className="material-icons">edit</FontIcon>}
                 onTouchTap={() => this.props.redirectToUser(this.props.initials)}
+                disabled={!this.props.consultantInfo.active()}
             />
             <MenuItem
                 primaryText={PowerLocalize.get("ConsultantTile.EditConsultant")}
@@ -131,9 +132,8 @@ class ConsultantTileModule extends React.Component<
                     cols={1}
                     rows={1}
                     style={{width: "300px", height: "300px"}}
-
                 >
-                    <img src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
+                        <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"} src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
                 </GridTile>
             </div>);
     }
