@@ -127,7 +127,7 @@ class ConsultantTileModule extends React.Component<
                     actionIcon={this.renderMenu()}
                     actionPosition="right"
                     titlePosition="top"
-                    titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
+                    titleBackground="linear-gradient(to bottom, rgba(70,230,230,0.7) 0%,rgba(70,230,230,0.3) 70%,rgba(70,230,230,0) 100%)"
                     cols={1}
                     rows={1}
                     style={{width: "300px", height: "300px"}}

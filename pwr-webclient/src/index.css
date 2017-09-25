@@ -67,6 +67,11 @@ body {
   padding-left: 16px;
 }
 
+.aspect-1-1 {
+  padding-top: 100%;
+  width: 100%;
+}
+
 .vertical-align {
   display: flex !important;
   align-items: center;
