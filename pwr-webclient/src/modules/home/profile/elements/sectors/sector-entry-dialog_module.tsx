@@ -115,6 +115,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                                     floatingLabelText={PowerLocalize.get('Sector.Singular')}
                                     id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
                                     value={this.state.sectorEntryValue}
+                                    searchText={this.state.sectorEntryValue}
                                     dataSource={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleSectorFieldInput}
                                     onNewRequest={this.handleSectorFieldRequest}

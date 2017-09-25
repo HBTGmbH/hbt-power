@@ -144,6 +144,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                                     floatingLabelText={PowerLocalize.get('Qualification.Singular')}
                                     id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
                                     value={this.state.qualificationAutoCompleteValue}
+                                    searchText={this.state.qualificationAutoCompleteValue}
                                     dataSource={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleQualificationFieldInput}
                                     onNewRequest={this.handleLanguageFieldRequest}

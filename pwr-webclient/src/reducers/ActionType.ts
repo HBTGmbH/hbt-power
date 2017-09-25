@@ -2,7 +2,6 @@
  * Created by nt on 29.05.2017.
  */
 
-import {MetaDataActionCreator} from './metadata/MetaDataActions';
 export enum ActionType {
 
     AddSkill,

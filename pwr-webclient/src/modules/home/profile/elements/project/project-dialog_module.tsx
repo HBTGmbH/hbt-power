@@ -77,6 +77,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
             clientACValue: NameEntityUtil.getNullTolerantName(props.project.endCustomerId(), props.companies),
             brokerACValue: NameEntityUtil.getNullTolerantName(props.project.brokerId(), props.companies),
         };
+        console.log(this.state);
     }
 
     public componentWillReceiveProps(props: ProjectDialogLocalProps) {
@@ -273,6 +274,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                         id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                         floatingLabelText={PowerLocalize.get('Broker.Singular')}
                                         value={this.state.brokerACValue}
+                                        searchText={this.state.brokerACValue}
                                         dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                         onUpdateInput={(txt) => {this.setState({brokerACValue: txt})}}
                                         onNewRequest={this.handleBrokerRequest}
@@ -285,6 +287,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                     floatingLabelText={PowerLocalize.get('Customer.Singular')}
                                     id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                     value={this.state.clientACValue}
+                                    searchText={this.state.clientACValue}
                                     dataSourceConfig={{text:'name', value:'id'}}
                                     dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEndCustomerInput}
