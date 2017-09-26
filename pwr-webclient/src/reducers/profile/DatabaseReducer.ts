@@ -92,6 +92,11 @@ export class DatabaseReducer {
     private static SaveProject(database: ProfileStore, action: SaveProjectAction): ProfileStore {
         // project with role IDs cleared.
         let project: Project = database.profile().projects().get(action.state.project.id());
+        project = project.description(action.state.project.description());
+        project = project.name(action.state.project.name());
+        project = project.endDate(action.state.project.endDate());
+        project = project.startDate(action.state.project.startDate());
+        project = project.isNew(action.state.project.isNew());
         project = project.roleIds(project.roleIds().clear());
         action.state.roles.forEach(role => {
             let projectRole: NameEntity = ProfileStore.findNameEntityByName(role, database.projectRoles());

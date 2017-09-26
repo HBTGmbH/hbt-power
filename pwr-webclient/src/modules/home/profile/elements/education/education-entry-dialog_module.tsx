@@ -206,6 +206,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                                     id={'Education.Education.' + this.props.educationEntry.id()}
                                     value={this.state.educationAutoComplete}
+                                    searchText={this.state.educationAutoComplete}
                                     dataSource={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEducationFieldInput}
                                     onNewRequest={this.handleEducationFieldRequest}

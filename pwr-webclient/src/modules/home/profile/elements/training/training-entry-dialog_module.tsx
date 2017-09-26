@@ -173,6 +173,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     floatingLabelText={PowerLocalize.get('Training.Singular')}
                                     id={'TrainingEntry.Dialog.AC.' + this.props.trainingEntry.id}
                                     value={this.state.trainingEntryValue}
+                                    searchText={this.state.trainingEntryValue}
                                     dataSource={this.props.trainings.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleEducationFieldInput}
                                     onNewRequest={this.handleEducationFieldRequest}

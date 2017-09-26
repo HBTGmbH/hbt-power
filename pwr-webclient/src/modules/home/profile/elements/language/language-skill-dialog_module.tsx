@@ -148,6 +148,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                     floatingLabelText={PowerLocalize.get('Language.Singular')}
                                     id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
                                     value={this.state.languageAutoCompleteValue}
+                                    searchText={this.state.languageAutoCompleteValue}
                                     dataSource={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
                                     onUpdateInput={this.handleLanguageFieldInput}
                                     onNewRequest={this.handleLanguageFieldRequest}

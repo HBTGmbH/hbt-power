@@ -6,6 +6,7 @@ import {Profile} from './Profile';
 import {doop} from 'doop';
 import {LoginStatus} from './LoginStatus';
 import {ConsultantInfo} from './ConsultantInfo';
+import {isNullOrUndefined} from 'util';
 
 
 /**
@@ -238,10 +239,16 @@ export class ProfileStore {
         console.info('Parsing companies...');
         let companies = this.companies();
         profileFromAPI.projects.forEach(project => {
-            let company: NameEntity = NameEntity.fromAPI(project.broker);
-            companies = companies.set(company.id(), company);
-            company = NameEntity.fromAPI(project.client);
-            companies = companies.set(company.id(), company);
+            if(!isNullOrUndefined(project.broker)) {
+                let broker = NameEntity.fromAPI(project.broker);
+                companies = companies.set(broker.id(), broker);
+            }
+
+            if(!isNullOrUndefined(project.client)) {
+                let client =  NameEntity.fromAPI(project.client);
+                companies = companies.set(client.id(), client);
+            }
+
         });
         console.info('...done');
         console.info('Parsing project roles...');
