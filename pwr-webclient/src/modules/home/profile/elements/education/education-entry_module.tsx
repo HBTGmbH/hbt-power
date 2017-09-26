@@ -53,7 +53,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
     constructor(props: EducationEntryLocalProps) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.educationEntry.isNew()
         }
     }
 

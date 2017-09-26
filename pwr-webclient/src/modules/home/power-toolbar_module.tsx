@@ -168,7 +168,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 onTouchTap={this.loadNetworkGraph}
                             />,
                             <MenuItem
-                                key="Menu.Statistics.Network"
+                                key="Menu.Statistics.Network.Clusterinfo"
                                 primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
                                 onTouchTap={this.loadConsultantClusterInfo}
                             />,

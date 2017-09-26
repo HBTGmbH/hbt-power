@@ -60,7 +60,7 @@ class SingleCareerEntryModule extends React.Component<
     constructor(props: SingleCareerEntryProps & SingleCareerEntryLocalProps & SingleCareerEntryDispatch) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.careerEntry.isNew()
         }
     }
 

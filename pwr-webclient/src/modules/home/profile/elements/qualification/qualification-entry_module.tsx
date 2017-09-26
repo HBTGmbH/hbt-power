@@ -54,7 +54,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
     constructor(props: QualificationEntryLocalProps) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.qualificationEntry.isNew()
         };
     }
 
