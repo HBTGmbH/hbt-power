@@ -198,7 +198,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     {
                                         this.props.degrees.map((degree,key) => <MenuItem key={key} value={degree} primaryText={degree}/>)
                                     }
-                                    <MenuItem value={PowerLocalize.get('None')} primaryText={PowerLocalize.get('None')}/>
+                                    <MenuItem value={" "} primaryText={PowerLocalize.get('None')}/>
                                 </SelectField>
                             </div>
                             <div className="col-md-5 col-sm-6">

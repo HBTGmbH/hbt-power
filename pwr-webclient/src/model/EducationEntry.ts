@@ -8,6 +8,13 @@ import {isNullOrUndefined} from 'util';
 
 @doop
 export class EducationEntry {
+
+    /**
+     * Cant' use null here because it messes up material uis dropdown style.
+     * @type {string}
+     */
+    public static NO_DEGREE_VALUE = " ";
+
     /**
      * DO NOT CHANGE THIS.NEVER.
      */
@@ -55,7 +62,7 @@ export class EducationEntry {
             new Date(apiEducation.startDate),
             new Date(apiEducation.endDate),
             String(apiEducation.nameEntity.id),
-            apiEducation.degree,
+            isNullOrUndefined(apiEducation.degree) ? EducationEntry.NO_DEGREE_VALUE : apiEducation.degree,
             false);
     }
 
@@ -69,6 +76,10 @@ export class EducationEntry {
     }
 
 
+    public hasNoDegree() {
+        return isNullOrUndefined(this.degree()) || this.degree() === EducationEntry.NO_DEGREE_VALUE;
+    }
+
     public toAPIEducationEntry(educations: Immutable.Map<string, NameEntity>): APIEducationStep {
         console.log(this);
         return {
@@ -76,7 +87,7 @@ export class EducationEntry {
             startDate: this.startDate().toISOString(),
             endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate().toISOString(),
             nameEntity: this.nameEntityId() == null ? null : educations.get(this.nameEntityId()).toAPI(),
-            degree: this.degree()
+            degree: this.degree().trim().length > 0 ? this.degree() : null
         }
     }
 }
