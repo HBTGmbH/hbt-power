@@ -79,20 +79,7 @@ public class ViewProfileController {
         return ResponseEntity.ok(viewProfile);
     }
 
-    @ApiOperation(
-            value = "Returns a consultant's view profile ids",
-            notes = "Returns all view profile ids of a given consultant. " +
-                    "A consultant is always represented by their unique initials. Does not " +
-                    "validate if the initials belong to a consultant. If the consultant does not" +
-                    " exist, the endpoint returns an empty list.",
-            response = String.class,
-            responseContainer = "List",
-            httpMethod = "GET",
-            produces = "application/json"
-    )
-    @ApiResponses(value ={
-            @ApiResponse(code = 200, message = "Success. All view profile IDs are in response."),
-    })
+
     @GetMapping(path = "/{initials}")
     public ResponseEntity< List<String>> getAllViewProfiles(@PathVariable("initials") String initials) {
         List<String> ids = viewProfileService.getViewProfileIdsForInitials(initials);

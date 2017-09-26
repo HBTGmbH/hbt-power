@@ -50,6 +50,7 @@ public class ViewProfile {
 
     private List<Category> displayCategories = new ArrayList<>();
 
+
     /**
      */
     private Category rootCategory;

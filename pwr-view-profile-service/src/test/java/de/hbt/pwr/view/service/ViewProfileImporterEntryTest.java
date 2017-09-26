@@ -382,6 +382,19 @@ public class ViewProfileImporterEntryTest {
     }
 
     @Test
+    public void shouldKeepNullDegrees() {
+        EducationEntry educationEntry = new EducationEntry();
+        educationEntry.setDegree(null);
+        educationEntry.setStartDate(LocalDate.now());
+        educationEntry.setEndDate(null);
+        educationEntry.setNameEntity(new NameEntity(-1L, "Test", NameEntityType.EDUCATION));
+        profileToReturn.getEducation().add(educationEntry);
+        invokeImport();
+        assertThat(viewProfile.getEducations().get(0).getDegree()).isNull();
+
+    }
+
+    @Test
     public void looksUpConsultantsAndSetsData() {
         ConsultantInfo consultantInfo = new ConsultantInfo();
         String firstName = "John";
