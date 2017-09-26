@@ -382,7 +382,7 @@ public class ViewProfileImporterEntryTest {
     }
 
     @Test
-    public void shouldKeepNullDegrees() {
+    public void shouldConvertNullDegreeToEmptyString() {
         EducationEntry educationEntry = new EducationEntry();
         educationEntry.setDegree(null);
         educationEntry.setStartDate(LocalDate.now());
@@ -390,7 +390,8 @@ public class ViewProfileImporterEntryTest {
         educationEntry.setNameEntity(new NameEntity(-1L, "Test", NameEntityType.EDUCATION));
         profileToReturn.getEducation().add(educationEntry);
         invokeImport();
-        assertThat(viewProfile.getEducations().get(0).getDegree()).isNull();
+        assertThat(viewProfile.getEducations().get(0).getDegree()).isNotNull();
+        assertThat(viewProfile.getEducations().get(0).getDegree()).isEmpty();
 
     }
 

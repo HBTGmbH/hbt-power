@@ -6,6 +6,7 @@ import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -46,8 +47,12 @@ public class ModelConvertUtil {
 
     @NotNull
     public static Education mapEducation(@NotNull EducationEntry educationEntry) {
-        return Education.builder().degree(educationEntry.getDegree()).enabled(true).endDate(educationEntry.getEndDate())
-                .name(educationEntry.getNameEntity().getName()).startDate(educationEntry.getStartDate()).build();
+        return Education.builder()
+                .degree(StringUtils.defaultString(educationEntry.getDegree()))
+                .enabled(true)
+                .endDate(educationEntry.getEndDate())
+                .name(educationEntry.getNameEntity().getName())
+                .startDate(educationEntry.getStartDate()).build();
     }
 
     @NotNull
