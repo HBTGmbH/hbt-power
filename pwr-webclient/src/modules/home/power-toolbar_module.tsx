@@ -13,11 +13,13 @@ import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {Color} from '../../utils/ColorUtil';
+import {ViewProfile} from '../../model/view/ViewProfile';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
     loggedInAsAdmin: boolean;
     statisticsAvailable: boolean;
+    viewProfiles: Array<ViewProfile>;
 }
 
 /**
@@ -59,6 +61,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             loggedInUser: state.databaseReducer.loggedInUser(),
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available(),
+            viewProfiles: state.viewProfileSlice.viewProfiles().toArray()
         };
     }
 
@@ -115,6 +118,18 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         this.props.navigateTo(Paths.USER_SPECIAL_LOGOUT);
     };
 
+    private renderViewProfile = (viewProfile: ViewProfile) => {
+        let text = viewProfile.viewProfileInfo.name;
+        if(text.trim() === "") {
+            text = viewProfile.id;
+        }
+        return <MenuItem
+            key={viewProfile.id}
+            primaryText={text}
+            onTouchTap={() => this.props.navigateTo("/app/view/" + viewProfile.id)}
+        />;
+    };
+
     private renderMenu = () => {
         return (<IconMenu
             iconStyle={{color:Color.HBT_2017_TEXT_WHITE.toCSSRGBString()}}
@@ -124,12 +139,22 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         >
             <MenuItem
                 primaryText={PowerLocalize.get('Menu.Home')}
-                onClick={() => this.props.navigateTo(Paths.USER_HOME)}
+                onTouchTap={() => this.props.navigateTo(Paths.USER_HOME)}
             />
             <MenuItem
-                onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
+                onTouchTap={() => this.props.navigateTo(Paths.USER_PROFILE)}
                 primaryText={PowerLocalize.get('Menu.BaseData')}
             />
+            {
+                this.props.viewProfiles.length > 0 ?
+                    <MenuItem
+                        primaryText={PowerLocalize.get('Menu.ViewProfile')}
+                        rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
+                        menuItems={this.props.viewProfiles.map(this.renderViewProfile)}
+                    />
+                    : null
+
+            }
 
             {
                 this.props.statisticsAvailable ?
@@ -140,17 +165,17 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             <MenuItem
                                 key="Menu.Statistics.Network"
                                 primaryText={PowerLocalize.get('Menu.Statistics.Network')}
-                                onClick={this.loadNetworkGraph}
+                                onTouchTap={this.loadNetworkGraph}
                             />,
                             <MenuItem
                                 key="Menu.Statistics.Network"
                                 primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
-                                onClick={this.loadConsultantClusterInfo}
+                                onTouchTap={this.loadConsultantClusterInfo}
                             />,
                             <MenuItem
                                 key="Menu.Statistics.Skills"
                                 primaryText={PowerLocalize.get('Menu.Statistics.Skills')}
-                                onClick={this.loadSkillStatistics}
+                                onTouchTap={this.loadSkillStatistics}
                             />
                         ]}
                     />
@@ -159,7 +184,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             }
            <MenuItem
                primaryText={PowerLocalize.get('Menu.Search')}
-               onClick={() => this.props.navigateTo(Paths.USER_SEARCH)}
+               onTouchTap={() => this.props.navigateTo(Paths.USER_SEARCH)}
            />
         </IconMenu>);
     };

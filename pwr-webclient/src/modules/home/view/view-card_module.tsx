@@ -71,7 +71,7 @@ class ViewCardModule extends React.Component<
 
     render() {
         return (
-        <Card>
+        <Card className="fullWidth">
             <ViewProfileDialog
                 viewProfile={this.props.viewProfile}
                 onRequestClose={() => this.setDialogOpen(false)}
@@ -97,8 +97,6 @@ class ViewCardModule extends React.Component<
                         onTouchTap={() => this.props.navigateTo("/app/view/" + this.props.viewProfileId)}
                         icon={<FontIcon className="material-icons">edit</FontIcon>}
                     />
-                </div>
-                <div>
                     <RaisedButton
                         className="mui-margin"
                         label={PowerLocalize.get("Action.Delete")}
@@ -113,7 +111,6 @@ class ViewCardModule extends React.Component<
                         onTouchTap={() => this.props.generate(this.props.viewProfileId)}
                         icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
                     />
-
                 </div>
             </CardActions>
         </Card>);

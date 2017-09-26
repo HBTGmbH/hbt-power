@@ -1,17 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {
-    AutoComplete,
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    DatePicker,
-    Dialog,
-    IconButton,
-    TouchTapEvent
-} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -120,44 +110,37 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
         return (
             <Dialog
                 open={this.props.open}
+                title={PowerLocalize.get('Qualification.Dialog.Title')}
                 modal={false}
                 onRequestClose={this.closeDialog}
+                autoScrollBodyContent={true}
+                actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
-                <Card>
-                    <CardHeader
-                        title={PowerLocalize.get('Qualification.Dialog.Title')}
-                    />
-                    <CardMedia>
-                        <div className="row">
-                            <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                                <DatePicker
-                                    floatingLabelText={PowerLocalize.get('Begin')}
-                                    id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
-                                    container="inline"
-                                    value={this.state.qualificationEntry.date()}
-                                    onChange={this.handleChangeDate}
-                                    formatDate={formatToShortDisplay}
-                                />
-                            </div>
-                            <div className="col-md-5 col-sm-6">
-                                <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('Qualification.Singular')}
-                                    id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
-                                    value={this.state.qualificationAutoCompleteValue}
-                                    searchText={this.state.qualificationAutoCompleteValue}
-                                    dataSource={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
-                                    onUpdateInput={this.handleQualificationFieldInput}
-                                    onNewRequest={this.handleLanguageFieldRequest}
-                                    filter={AutoComplete.fuzzyFilter}
-                                />
-                            </div>
-                        </div>
-                    </CardMedia>
-                    <CardActions>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                    </CardActions>
-                </Card>
+                <div className="row">
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        <DatePicker
+                            floatingLabelText={PowerLocalize.get('Begin')}
+                            id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
+                            container="inline"
+                            value={this.state.qualificationEntry.date()}
+                            onChange={this.handleChangeDate}
+                            formatDate={formatToShortDisplay}
+                        />
+                    </div>
+                    <div className="col-md-5 col-sm-6">
+                        <AutoComplete
+                            floatingLabelText={PowerLocalize.get('Qualification.Singular')}
+                            id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
+                            value={this.state.qualificationAutoCompleteValue}
+                            searchText={this.state.qualificationAutoCompleteValue}
+                            dataSource={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
+                            onUpdateInput={this.handleQualificationFieldInput}
+                            onNewRequest={this.handleLanguageFieldRequest}
+                            filter={AutoComplete.fuzzyFilter}
+                        />
+                    </div>
+                </div>
             </Dialog>
         );
     }

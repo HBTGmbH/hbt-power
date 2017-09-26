@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, Card, CardActions, CardHeader, CardMedia, Dialog, IconButton, TouchTapEvent} from 'material-ui';
+import {AutoComplete, Dialog, IconButton, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -103,32 +103,24 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                 open={this.props.open}
                 modal={false}
                 onRequestClose={this.closeDialog}
+                title={PowerLocalize.get('SectorEntry.Dialog.Title')}
+                actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
-                <Card>
-                    <CardHeader
-                        title={PowerLocalize.get('SectorEntry.Dialog.Title')}
-                    />
-                    <CardMedia>
-                        <div className="row">
-                            <div className="col-md-offset-3">
-                                <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('Sector.Singular')}
-                                    id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
-                                    value={this.state.sectorEntryValue}
-                                    searchText={this.state.sectorEntryValue}
-                                    dataSource={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
-                                    onUpdateInput={this.handleSectorFieldInput}
-                                    onNewRequest={this.handleSectorFieldRequest}
-                                    filter={AutoComplete.fuzzyFilter}
-                                />
-                            </div>
-                        </div>
-                    </CardMedia>
-                    <CardActions>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                    </CardActions>
-                </Card>
+                <div className="row">
+                    <div className="col-md-offset-3">
+                        <AutoComplete
+                            floatingLabelText={PowerLocalize.get('Sector.Singular')}
+                            id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
+                            value={this.state.sectorEntryValue}
+                            searchText={this.state.sectorEntryValue}
+                            dataSource={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
+                            onUpdateInput={this.handleSectorFieldInput}
+                            onNewRequest={this.handleSectorFieldRequest}
+                            filter={AutoComplete.fuzzyFilter}
+                        />
+                    </div>
+                </div>
             </Dialog>
         );
     }

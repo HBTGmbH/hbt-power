@@ -9,7 +9,7 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
-import {AutoComplete, Card, CardActions, CardHeader, CardMedia, Dialog, IconButton} from 'material-ui';
+import {AutoComplete, Dialog, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 
@@ -111,32 +111,24 @@ class KeySkillDialogModule extends React.Component<
             open={this.props.open}
             modal={false}
             onRequestClose={this.closeDialog}
+            title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
+            actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+            <IconButton size={20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
         >
-            <Card>
-                <CardHeader
-                    title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
-                />
-                <CardMedia>
-                    <div className="row">
-                        <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                            <AutoComplete
-                                floatingLabelText={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
-                                id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
-                                value={this.state.autoCompleteValue}
-                                searchText={this.state.autoCompleteValue}
-                                dataSource={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}
-                                onUpdateInput={this.handleAutoCompleteInput}
-                                onNewRequest={this.handleAutoCompleteInput}
-                                filter={AutoComplete.fuzzyFilter}
-                            />
-                        </div>
-                    </div>
-                </CardMedia>
-                <CardActions>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                </CardActions>
-            </Card>
+            <div className="row">
+                <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                    <AutoComplete
+                        floatingLabelText={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
+                        id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
+                        value={this.state.autoCompleteValue}
+                        searchText={this.state.autoCompleteValue}
+                        dataSource={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}
+                        onUpdateInput={this.handleAutoCompleteInput}
+                        onNewRequest={this.handleAutoCompleteInput}
+                        filter={AutoComplete.fuzzyFilter}
+                    />
+                </div>
+            </div>
         </Dialog>);
     }
 }

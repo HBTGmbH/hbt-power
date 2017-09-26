@@ -1,19 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {
-    AutoComplete,
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    DatePicker,
-    Dialog,
-    IconButton,
-    MenuItem,
-    SelectField,
-    TouchTapEvent
-} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {EducationEntry} from '../../../../../model/EducationEntry';
@@ -158,68 +146,61 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 open={this.props.open}
                 modal={false}
                 onRequestClose={this.closeDialog}
+                title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
+                autoScrollBodyContent={true}
+                actions={[ <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
-                <Card>
-                    <CardHeader
-                        title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
-                    />
-                    <CardMedia>
-                        <div className="row">
-                            <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                                <DatePicker
-                                    floatingLabelText={PowerLocalize.get('Begin')}
-                                    id={'EducationEntry.StartDate' + this.props.educationEntry.id}
-                                    container="inline"
-                                    value={this.state.entry.startDate()}
-                                    onChange={this.handleChangeStartDate}
-                                    formatDate={formatToShortDisplay}
-                                />
-                            </div>
-                            <div className="col-md-5 col-sm-6">
-                                <DatePicker
-                                    floatingLabelText={PowerLocalize.get('End')}
-                                    id={'EducationEntry.EndDate' + this.props.educationEntry.id}
-                                    container="inline"
-                                    value={this.state.entry.endDate()}
-                                    onChange={this.handleChangeEndDate}
-                                    formatDate={formatToShortDisplay}
-                                />
-                            </div>
-                        </div>
+                <div className="row">
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        <DatePicker
+                            floatingLabelText={PowerLocalize.get('Begin')}
+                            id={'EducationEntry.StartDate' + this.props.educationEntry.id}
+                            container="inline"
+                            value={this.state.entry.startDate()}
+                            onChange={this.handleChangeStartDate}
+                            formatDate={formatToShortDisplay}
+                        />
+                    </div>
+                    <div className="col-md-5 col-sm-6">
+                        <DatePicker
+                            floatingLabelText={PowerLocalize.get('End')}
+                            id={'EducationEntry.EndDate' + this.props.educationEntry.id}
+                            container="inline"
+                            value={this.state.entry.endDate()}
+                            onChange={this.handleChangeEndDate}
+                            formatDate={formatToShortDisplay}
+                        />
+                    </div>
+                </div>
 
-                        <div className="row">
-                            <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                                <SelectField
-                                    value={this.state.entry.degree()}
-                                    onChange={this.handleDegreeSelect}
-                                    hintText={PowerLocalize.get('AcademicDegree.Singular')}
-                                    floatingLabelText={PowerLocalize.get('AcademicDegree.Singular')}
-                                >
-                                    {
-                                        this.props.degrees.map((degree,key) => <MenuItem key={key} value={degree} primaryText={degree}/>)
-                                    }
-                                    <MenuItem value={" "} primaryText={PowerLocalize.get('None')}/>
-                                </SelectField>
-                            </div>
-                            <div className="col-md-5 col-sm-6">
-                                <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
-                                    id={'Education.Education.' + this.props.educationEntry.id()}
-                                    value={this.state.educationAutoComplete}
-                                    searchText={this.state.educationAutoComplete}
-                                    dataSource={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
-                                    onUpdateInput={this.handleEducationFieldInput}
-                                    onNewRequest={this.handleEducationFieldRequest}
-                                    filter={AutoComplete.fuzzyFilter}
-                                />
-                            </div>
-                        </div>
-                    </CardMedia>
-                    <CardActions>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                    </CardActions>
-                </Card>
+                <div className="row">
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        <SelectField
+                            value={this.state.entry.degree()}
+                            onChange={this.handleDegreeSelect}
+                            hintText={PowerLocalize.get('AcademicDegree.Singular')}
+                            floatingLabelText={PowerLocalize.get('AcademicDegree.Singular')}
+                        >
+                            {
+                                this.props.degrees.map((degree,key) => <MenuItem key={key} value={degree} primaryText={degree}/>)
+                            }
+                            <MenuItem value={" "} primaryText={PowerLocalize.get('None')}/>
+                        </SelectField>
+                    </div>
+                    <div className="col-md-5 col-sm-6">
+                        <AutoComplete
+                            floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
+                            id={'Education.Education.' + this.props.educationEntry.id()}
+                            value={this.state.educationAutoComplete}
+                            searchText={this.state.educationAutoComplete}
+                            dataSource={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
+                            onUpdateInput={this.handleEducationFieldInput}
+                            onNewRequest={this.handleEducationFieldRequest}
+                            filter={AutoComplete.fuzzyFilter}
+                        />
+                    </div>
+                </div>
             </Dialog>
         );
     }

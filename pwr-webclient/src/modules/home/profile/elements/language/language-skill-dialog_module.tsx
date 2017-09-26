@@ -1,18 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {
-    AutoComplete,
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    Dialog,
-    IconButton,
-    MenuItem,
-    SelectField,
-    TouchTapEvent
-} from 'material-ui';
+import {AutoComplete, Dialog, IconButton, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -126,41 +115,34 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                 open={this.props.open}
                 modal={false}
                 onRequestClose={this.closeDialog}
+                autoScrollBodyContent={true}
+                title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
+                actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
-                <Card>
-                    <CardHeader
-                        title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
-                    />
-                    <CardMedia>
-                        <div className="row">
-                            <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                                <SelectField
-                                    value={this.state.languageSkill.level()}
-                                    onChange={this.handleLevelChange}
-                                    floatingLabelText={PowerLocalize.get('LanguageLevel.Singular')}
-                                >
-                                    {
-                                        this.props.languageLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
-                                    }
-                                </SelectField>
-                            </div>
-                                <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('Language.Singular')}
-                                    id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
-                                    value={this.state.languageAutoCompleteValue}
-                                    searchText={this.state.languageAutoCompleteValue}
-                                    dataSource={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
-                                    onUpdateInput={this.handleLanguageFieldInput}
-                                    onNewRequest={this.handleLanguageFieldRequest}
-                                    filter={AutoComplete.fuzzyFilter}
-                                />
-                        </div>
-                    </CardMedia>
-                    <CardActions>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                    </CardActions>
-                </Card>
+                <div className="row">
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        <SelectField
+                            value={this.state.languageSkill.level()}
+                            onChange={this.handleLevelChange}
+                            floatingLabelText={PowerLocalize.get('LanguageLevel.Singular')}
+                        >
+                            {
+                                this.props.languageLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
+                            }
+                        </SelectField>
+                    </div>
+                        <AutoComplete
+                            floatingLabelText={PowerLocalize.get('Language.Singular')}
+                            id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
+                            value={this.state.languageAutoCompleteValue}
+                            searchText={this.state.languageAutoCompleteValue}
+                            dataSource={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
+                            onUpdateInput={this.handleLanguageFieldInput}
+                            onNewRequest={this.handleLanguageFieldRequest}
+                            filter={AutoComplete.fuzzyFilter}
+                        />
+                </div>
             </Dialog>
         );
     }

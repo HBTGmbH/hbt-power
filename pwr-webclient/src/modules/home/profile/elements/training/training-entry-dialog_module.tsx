@@ -1,17 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {
-    AutoComplete,
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    DatePicker,
-    Dialog,
-    IconButton,
-    TouchTapEvent
-} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton, TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -138,12 +128,11 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                 open={this.props.open}
                 modal={false}
                 onRequestClose={this.closeDialog}
+                title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
+                autoScrollBodyContent={true}
+                actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
-                <Card>
-                    <CardHeader
-                        title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
-                    />
-                    <CardMedia>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                                 <DatePicker
@@ -181,12 +170,6 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                 />
                             </div>
                         </div>
-                    </CardMedia>
-                    <CardActions>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                    </CardActions>
-                </Card>
             </Dialog>
         );
     }

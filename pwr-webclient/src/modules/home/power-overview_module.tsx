@@ -114,53 +114,53 @@ class PowerOverviewModule extends React.Component<
     render() {
         return (
             <div className="row">
-                <div className="col-md-12">
-                        <Card>
-                            <CardText>
-                                <h3>{PowerLocalize.get("Overview.Base.BaseData")}</h3>
-                            </CardText>
-                            <CardText>
-                                <h4>{PowerLocalize.get("Overview.Base.LastEdited")}</h4>
-                                {this.props.profile.lastEdited().toLocaleString()}
-                            </CardText>
-                            <CardText>
-                                <ProfileStatistics/>
-                            </CardText>
-                            <CardActions>
-                                <RaisedButton
-                                    label={PowerLocalize.get('Action.Edit')}
-                                    labelPosition="before"
-                                    primary={true}
-                                    icon={ <FontIcon className="material-icons">edit</FontIcon>}
-                                    onClick={this.handleEditButtonClick}
-                                />
-                            </CardActions>
-                        </Card>
-                        <br/>
-
-                        <Card>
-                            <CardHeader
-                                title={PowerLocalize.get("Overview.ViewProfiles.Title")}
-                                subtitle={PowerLocalize.get("Overview.ViewProfiles.Subtitle")}
+                <div className="col-md-5 col-md-offset-1 fullWidth">
+                    <Card style={{marginTop: "8px"}}>
+                        <CardText>
+                            <h3 className="hbt-dark-blue-text">{PowerLocalize.get("Overview.Base.BaseData")}</h3>
+                        </CardText>
+                        <CardText>
+                            <h4 className="hbt-dark-blue-text">{PowerLocalize.get("Overview.Base.LastEdited")}</h4>
+                            {this.props.profile.lastEdited().toLocaleString()}
+                        </CardText>
+                        <CardText>
+                            <ProfileStatistics/>
+                        </CardText>
+                        <CardActions>
+                            <RaisedButton
+                                label={PowerLocalize.get('Action.Edit')}
+                                labelPosition="before"
+                                primary={true}
+                                icon={ <FontIcon className="material-icons">edit</FontIcon>}
+                                onClick={this.handleEditButtonClick}
                             />
-                            <ViewProfileDialog
-                                onRequestClose={() => this.setViewDialogOpen(false)}
-                                open={this.state.createViewDialogOpen}
-                                onSave={this.handleCreateViewProfile}
-                                type="new"
-                            />
-                            <FlatButton
-                                label={PowerLocalize.get("ViewProfile.Create")}
-                                onTouchTap={() => this.setViewDialogOpen(true)}
-                            />
-                            <div className="row">
-                               {this.props.viewProfiles.map(viewProfile => {
-                                   return <div className="col-md-4" key={viewProfile.id}>
-                                       <ViewCard viewProfileId={viewProfile.id}/>
-                                   </div>
-                               })}
-                            </div>
-                        </Card>
+                        </CardActions>
+                    </Card>
+                </div>
+                <div className="col-md-5 fullWidth">
+                    <Card style={{ marginTop: "8px"}}>
+                        <CardHeader
+                            title={PowerLocalize.get("Overview.ViewProfiles.Title")}
+                            subtitle={PowerLocalize.get("Overview.ViewProfiles.Subtitle")}
+                        />
+                        <ViewProfileDialog
+                            onRequestClose={() => this.setViewDialogOpen(false)}
+                            open={this.state.createViewDialogOpen}
+                            onSave={this.handleCreateViewProfile}
+                            type="new"
+                        />
+                        <FlatButton
+                            label={PowerLocalize.get("ViewProfile.Create")}
+                            onTouchTap={() => this.setViewDialogOpen(true)}
+                        />
+                        <div className="row">
+                            {this.props.viewProfiles.map(viewProfile => {
+                                return <div className="col-md-6 fullWidth" key={viewProfile.id}>
+                                    <ViewCard viewProfileId={viewProfile.id}/>
+                                </div>
+                            })}
+                        </div>
+                    </Card>
                 </div>
             </div>
             );
