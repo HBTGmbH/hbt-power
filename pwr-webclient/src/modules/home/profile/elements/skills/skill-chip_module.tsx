@@ -17,6 +17,7 @@ import {StarRating} from '../../../../star-rating_module.';
 interface SkillChipLocalProps {
     skill: Skill;
     style?: CSSProperties;
+    textColor?: string;
     className?: string;
     onRatingChange(newRating: number, id: string): void;
     onDelete(id: string): void;
@@ -50,7 +51,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                 style={this.props.style}
                 className={this.props.className}
             >
-                {this.props.skill.name()}
+                <span style={{color: this.props.textColor}}>{this.props.skill.name()}</span>
                 <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
                 <IconButton  id={"Skill.Delete." + this.props.skill.id()}
                              onClick={this.handleDelete}

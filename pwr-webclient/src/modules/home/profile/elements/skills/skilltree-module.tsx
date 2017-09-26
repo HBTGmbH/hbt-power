@@ -13,6 +13,7 @@ import {SkillServiceSkill} from '../../../../../model/skill/SkillServiceSkill';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import {Color} from '../../../../../utils/ColorUtil';
 
 const distance = require("jaro-winkler");
 
@@ -116,12 +117,13 @@ class SkillTreeModule extends React.Component<
         let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
         let style = {
             margin: "4px",
-            backgroundColor: custom ? "red" : "#9c9c9c"
+            backgroundColor: custom ? "red" : Color.HBT_2017_GRAY.toCSSRGBString()
         };
         return (<SkillChip
             style={style}
             key={skill.id()}
             skill={skill}
+            textColor={"white"}
             onDelete={this.props.onSkillDelete}
             onRatingChange={this.props.changeSkillRating}
         />)
