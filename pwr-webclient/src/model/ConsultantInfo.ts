@@ -1,6 +1,7 @@
 import {doop} from 'doop';
 import {APIConsultant} from './APIProfile';
 import {isNullOrUndefined} from 'util';
+
 @doop
 export class ConsultantInfo {
 

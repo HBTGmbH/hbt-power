@@ -30,9 +30,8 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
 
     constructor(props: SingleSectorLocalProps) {
         super(props);
-        let id: string = props.sectorEntry.sectorId();
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.sectorEntry.isNew()
         };
     }
 

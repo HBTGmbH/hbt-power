@@ -7,7 +7,6 @@ import {formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {EducationEntryDialogModule} from './education-entry-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
-import {isNullOrUndefined} from 'util';
 
 
 /**
@@ -54,7 +53,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
     constructor(props: EducationEntryLocalProps) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.educationEntry.isNew()
         }
     }
 
@@ -121,7 +120,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {isNullOrUndefined(this.props.educationEntry.degree()) ? "---": this.props.educationEntry.degree()}
+                    {this.props.educationEntry.hasNoDegree() ? "---": this.props.educationEntry.degree()}
                     </div>
                 </td>
                 <td>

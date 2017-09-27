@@ -101,37 +101,31 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <Divider/>
 
                         <div className="row">
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth">
                                 <ProfileDescription
                                 hintText={PowerLocalize.get("Profile.Description")}
                                 initialMaxCharacters={500}
                             />
                             </div>
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth">
                                 <LanguageSkills/>
                             </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth ">
                                 <TrainingEntries/>
                             </div>
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth">
                                 <EducationList/>
                             </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth">
                                 <Qualifications/>
                             </div>
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth">
                                 <Sectors/>
                             </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth">
                                 <KeySkills/>
                             </div>
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-6 col-sm-12 fullWidth">
                                 <Careers/>
                             </div>
                         </div>

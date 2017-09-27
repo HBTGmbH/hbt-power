@@ -32,7 +32,7 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
     constructor(props: SingleLanguageProps) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.languageSkill.isNew()
         }
     }
 

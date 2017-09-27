@@ -162,7 +162,17 @@ body {
   color: rgb(70, 230, 230)
 }
 
+.hbt-dark-blue-text {
+  color: rgb(25, 30, 85)
+}
+
 .disabled-consultant-img {
   opacity: 0.4;
   filter: alpha(opacity=40);
 }
+
+.dashboard-element {
+  padding: 8px;
+  margin-top: 8px;
+}
+

@@ -59,7 +59,7 @@ class SingleKeySkillModule extends React.Component<
     constructor(props: SingleKeySkillProps & SingleKeySkillLocalProps & SingleKeySkillDispatch) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.keySkillEntry.isNew()
         }
     }
 

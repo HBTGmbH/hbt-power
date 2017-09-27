@@ -64,10 +64,8 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
 
     constructor(props: TrainingEntryLocalProps) {
         super(props);
-        // only show the date picker when there is a date.
-        let showDatePicker = props.trainingEntry.endDate != null;
         this.state = {
-            dialogOpen: false
+            dialogOpen: props.trainingEntry.isNew()
         };
     }
 

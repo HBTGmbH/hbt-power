@@ -7,6 +7,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Profile} from '../../model/Profile';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
+import {Paper} from 'material-ui';
 
 const Recharts = require('recharts');
 
@@ -45,28 +46,7 @@ class ProfileStatisticsModule extends React.Component<
         return {};
     }
 
-    private renderCommonSkills = () => {
-        let commonSkills: String = '';
-        let prefix = '';
-        this.props.profileSkillMetrics.commonSkills().forEach(com => {
-            commonSkills += prefix;
-            commonSkills += com;
-            prefix = ' ,';
-        });
-        return commonSkills;
-    };
 
-    private renderMissingSkills = () => {
-        if(this.props.profileSkillMetrics.missingSkills().size == 0) return PowerLocalize.get('None');
-        let missingSkills: String = '';
-        let prefix = '';
-        this.props.profileSkillMetrics.missingSkills().forEach(com => {
-            missingSkills += prefix;
-            missingSkills += com;
-            prefix = ' ,';
-        });
-        return missingSkills;
-    };
 
     private renderElementCounts = () => {
         let langCount = this.props.profile.languageSkills().count();
@@ -87,7 +67,7 @@ class ProfileStatisticsModule extends React.Component<
         ];
 
         return(
-            <Recharts.BarChart style={{width: '100% !important'}} width={700} height={200} layout="horizontal" data={data}>
+            <Recharts.BarChart style={{width: '100% !important'}} width={300} height={200} layout="horizontal" data={data}>
                 <Recharts.XAxis dataKey="name"/>
                 <Recharts.YAxis />
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
@@ -108,19 +88,22 @@ class ProfileStatisticsModule extends React.Component<
         }
         if(isNullOrUndefined(this.props.profileSkillMetrics))
             return <div/>;
-        return (<div>
-            <h4>Profil-Statistiken</h4>
-            <h5>Standard-Skills, die auch in diesem Profil vorhanden sind:</h5> {this.renderCommonSkills()}
-            <h5>Standard-Skills, die diesem Profil fehlen:</h5> {this.renderMissingSkills()}
-            <h5>Profilbefüllung</h5>
-            <div className="row">
-                <div className="col-md-6">
-                    {this.renderElementCounts()}
+        return (
+            <Paper className="dashboard-element">
+                <div className="row">
+                    <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
+
+                    </div>
+
+                    <div className="col-md-12 col-xs-12 col-sm-12">
+
+                    </div>
+                    <div className="col-md-12 col-xs-12 col-sm-12">
+                        <h5>Profilbefüllung</h5>
+                        {this.renderElementCounts()}
+                    </div>
                 </div>
-            </div>
-
-
-        </div>);
+            </Paper>);
     }
 }
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import {IconButton} from 'material-ui';
+import {Color} from '../utils/ColorUtil';
 
 interface StarRatingProps {
     rating: number;
@@ -12,7 +13,7 @@ interface StarRatingState {
 }
 
 const styleYellow: CSSProperties = {
-    color: "yellow"
+    color: Color.HBT_2017_HIGHLIGHT.toCSSRGBString()
 };
 
 const styleDefault: CSSProperties = {

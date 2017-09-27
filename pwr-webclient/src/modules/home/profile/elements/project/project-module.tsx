@@ -28,7 +28,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     public constructor(props: ProjectModuleProps) {
         super(props);
         this.state = {
-            dialogIsOpen: false
+            dialogIsOpen: props.project.isNew()
         };
     }
 

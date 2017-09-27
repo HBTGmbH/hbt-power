@@ -3,17 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ProfileElementType} from '../../../../../Store';
-import {
-    AutoComplete,
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    DatePicker,
-    Dialog,
-    IconButton,
-    TextField
-} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton, TextField} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {CareerEntry} from '../../../../../model/CareerEntry';
@@ -172,58 +162,51 @@ class CareerEntryDialogModule extends React.Component<
         return (<Dialog
             open={this.props.open}
             modal={false}
+            title={PowerLocalize.get('CareerEntry.Dialog.Title')}
             onRequestClose={this.closeDialog}
+            autoScrollBodyContent={true}
+            actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+            <IconButton size={20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
         >
-            <Card>
-                <CardHeader
-                    title={PowerLocalize.get('CareerEntry.Dialog.Title')}
-                />
-                <CardMedia>
-                    <div className="row">
-                        <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                            <DatePicker
-                                floatingLabelText={PowerLocalize.get('Begin')}
-                                id={'CareerEntry.Dialog.StartDate' + this.props.careerEntry.id()}
-                                container="inline"
-                                value={this.state.careerEntry.startDate()}
-                                onChange={this.changeStartDate}
-                                formatDate={formatToShortDisplay}
-                            />
-                        </div>
-                        <div className="col-md-5 col-sm-6">
-                            <IconButton
-                                style={{width: "20%", float:"left", marginTop: "20px"}}
-                                iconClassName="material-icons"
-                                onClick={this.handleEndDateButtonClick}
-                            >
-                                {this.getEndDateButtonIconName()}
-                            </IconButton>
-                            {this.renderEndDateChoice()}
+            <div className="row">
+                <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                    <DatePicker
+                        floatingLabelText={PowerLocalize.get('Begin')}
+                        id={'CareerEntry.Dialog.StartDate' + this.props.careerEntry.id()}
+                        container="inline"
+                        value={this.state.careerEntry.startDate()}
+                        onChange={this.changeStartDate}
+                        formatDate={formatToShortDisplay}
+                    />
+                </div>
+                <div className="col-md-5 col-sm-6">
+                    <IconButton
+                        style={{width: "20%", float:"left", marginTop: "20px"}}
+                        iconClassName="material-icons"
+                        onClick={this.handleEndDateButtonClick}
+                    >
+                        {this.getEndDateButtonIconName()}
+                    </IconButton>
+                    {this.renderEndDateChoice()}
 
-                        </div>
-                    </div>
+                </div>
+            </div>
 
-                    <div className="row">
-                        <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+            <div className="row">
+                <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
 
-                            <AutoComplete
-                                floatingLabelText={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
-                                id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}
-                                value={this.state.autoCompleteValue}
-                                searchText={this.state.autoCompleteValue}
-                                dataSource={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
-                                onUpdateInput={this.handleAutoCompleteInput}
-                                onNewRequest={this.handleAutoCompleteInput}
-                                filter={AutoComplete.fuzzyFilter}
-                            />
-                        </div>
-                    </div>
-                </CardMedia>
-                <CardActions>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>
-                </CardActions>
-            </Card>
+                    <AutoComplete
+                        floatingLabelText={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
+                        id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}
+                        value={this.state.autoCompleteValue}
+                        searchText={this.state.autoCompleteValue}
+                        dataSource={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
+                        onUpdateInput={this.handleAutoCompleteInput}
+                        onNewRequest={this.handleAutoCompleteInput}
+                        filter={AutoComplete.fuzzyFilter}
+                    />
+                </div>
+            </div>
         </Dialog>);
     }
 }
