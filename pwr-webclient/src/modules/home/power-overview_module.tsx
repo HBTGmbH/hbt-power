@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {FlatButton, Paper} from 'material-ui';
+import {FontIcon, Paper, RaisedButton} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Profile} from '../../model/Profile';
@@ -114,38 +114,51 @@ class PowerOverviewModule extends React.Component<
         return (
             <div className="row">
                 <div className="col-md-5 col-md-offset-1">
-                    <BaseDataDashboardElement/>
-                </div>
-                <div className="col-md-5 fullWidth">
-                    <CommonSkillsDashboardElement/>
-                </div>
-                <div className="col-md-5 col-md-offset-1">
-                    <MissingCommonDashboardElement/>
-                </div>
-                <div className="col-md-5 fullWidth">
-                    <ProfileStatistics/>
-                </div>
-                <div className="col-md-10 col-md-offset-1 col-xs-12">
-                    <Paper className="dashboard-element">
-                        <span className="col-md-3 col-sm-6" style={{fontSize: "16px", fontWeight: "bold", marginTop: "8px"}}>{PowerLocalize.get('Overview.ViewProfiles.Title')}</span>
-                        <ViewProfileDialog
-                            onRequestClose={() => this.setViewDialogOpen(false)}
-                            open={this.state.createViewDialogOpen}
-                            onSave={this.handleCreateViewProfile}
-                            type="new"
-                        />
-                        <FlatButton
-                            label={PowerLocalize.get('ViewProfile.Create')}
-                            onTouchTap={() => this.setViewDialogOpen(true)}
-                        />
-                        <div className="row">
-                            {this.props.viewProfiles.map(viewProfile => {
-                                return <div className="col-md-5 fullWidth mui-margin" key={viewProfile.id}>
-                                    <ViewCard viewProfileId={viewProfile.id}/>
-                                </div>;
-                            })}
+                    <div className="row">
+                        <div className="col-md-12">
+                            <BaseDataDashboardElement/>
                         </div>
-                    </Paper>
+                        <div className="col-md-12">
+                            <CommonSkillsDashboardElement/>
+                        </div>
+                        <div className="col-md-12">
+                            <MissingCommonDashboardElement/>
+                        </div>
+                        <div className="col-md-12">
+                            <ProfileStatistics/>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-5">
+                    <div className="row">
+                        <div className="col-md-12">
+                            <Paper className="dashboard-element">
+                                <div className="mui-margin">
+                                    <span style={{fontSize: "16px", fontWeight: "bold"}}>{PowerLocalize.get('Overview.ViewProfiles.Title')}</span><br/>
+                                </div>
+                                <ViewProfileDialog
+                                    onRequestClose={() => this.setViewDialogOpen(false)}
+                                    open={this.state.createViewDialogOpen}
+                                    onSave={this.handleCreateViewProfile}
+                                    type="new"
+                                />
+                                <RaisedButton
+                                    primary={true}
+                                    className="mui-margin"
+                                    label={PowerLocalize.get('ViewProfile.Create')}
+                                    onTouchTap={() => this.setViewDialogOpen(true)}
+                                    icon={<FontIcon className="material-icons">add</FontIcon>}
+                                />
+                                <div className="row">
+                                    {this.props.viewProfiles.map(viewProfile => {
+                                        return <div className="col-md-12 fullWidth" style={{marginTop: "8px"}} key={viewProfile.id}>
+                                            <ViewCard viewProfileId={viewProfile.id}/>
+                                        </div>;
+                                    })}
+                                </div>
+                            </Paper>
+                        </div>
+                    </div>
                 </div>
             </div>
             );
