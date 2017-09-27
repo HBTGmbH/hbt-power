@@ -5,6 +5,7 @@ import {AddSkillStep} from './AddSkillStep';
 import {UnCategorizedSkillChoice} from './UncategorizedSkillChoice';
 import {SkillServiceSkill} from './SkillServiceSkill';
 import {SkillTreeNode} from './SkillTreeNode';
+import {isNullOrUndefined} from 'util';
 
 /**
  * Replication of the skill service data; Stores skill service data in various forms.
@@ -44,6 +45,11 @@ export class SkillStore {
      */
     @doop public get categorieHierarchiesBySkillName() {return doop<Immutable.Map<string, string>, this>()};
 
+    /**
+     * Used to restore the backward reference from a skill category back to its parent.
+     * @return {Doop<Map<string, string>, this>}
+     */
+    @doop public get parentCategoryIdById() {return doop<Map<number, number>, this>()};
 
     // == The following refer to the create skill dialog == //
 
@@ -96,12 +102,13 @@ export class SkillStore {
                         noCategoryReason: string, categoriesById: Immutable.Map<number, SkillCategory>,
                         skillsByQualifier: Immutable.Map<string, SkillServiceSkill>,
                         profileOnlySkillQualifiers: Immutable.Set<string>,
-                        doneState: string, addToProjectId: string
+                        doneState: string, addToProjectId: string,
+                        parentCategoryIdById: Map<number, number>
     ) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
             .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById)
-            .skillsByQualifier(skillsByQualifier).doneState(doneState).addToProjectId(addToProjectId);
+            .skillsByQualifier(skillsByQualifier).doneState(doneState).addToProjectId(addToProjectId).parentCategoryIdById(parentCategoryIdById);
     }
 
     public static empty() {
@@ -110,7 +117,27 @@ export class SkillStore {
             AddSkillStep.NONE, 1, "",
             UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>(),
             Immutable.Map<string, SkillServiceSkill>(),
-            Immutable.Set<string>(), "", "");
+            Immutable.Set<string>(), "", "",
+            new Map<number, number>());
+    }
+
+    /**
+     * Resolves the reverse category hierarchy for a category. The reverse category hierachy
+     * starts at the category with the given ID and then proceeds upward in the hierarchy.
+     * @param {number} categoryId
+     */
+    public getInverseCategoryHierarchy(categoryId: number) {
+        let resString = "";
+        let delimiter = "";
+        let currentCategory = this.categoriesById().get(categoryId);
+        while(!isNullOrUndefined(currentCategory)) {
+            resString += delimiter;
+            resString += currentCategory.qualifier();
+            let parentId = this.parentCategoryIdById().get(currentCategory.id());
+            currentCategory = this.categoriesById().get(parentId);
+            delimiter = " <= ";
+        }
+        return resString;
     }
 
     public skillWithQualifierExists(qualifier: string) {

@@ -167,18 +167,22 @@ class AddSkillDialogModule extends React.Component<
                 {PowerLocalize.get("AddSkillDialog.ShowCategory.Introduction.2")}<br/>
                 {PowerLocalize.get("AddSkillDialog.ShowCategory.Introduction.3")}
             </div>
-            <div className="vertical-align">
-                <RaisedButton
-                    label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnValidCategory")}
-                    style={{marginRight: "6px"}}
-                    onClick={this.props.progress}
-                />
-                <RaisedButton
-                    label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnInvalidCategory")}
-                    secondary={true}
-                    style={{marginLeft: "6px"}}
-                    onClick={this.props.stepBackToSkillInfo}
-                />
+            <div className="row">
+                <div className="col-md-6">
+                    <RaisedButton
+                        className="mui-margin"
+                        label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnValidCategory")}
+                        onClick={this.props.progress}
+                    />
+                </div>
+                <div className="col-md-6">
+                    <RaisedButton
+                        className="mui-margin"
+                        label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnInvalidCategory")}
+                        secondary={true}
+                        onClick={this.props.stepBackToSkillInfo}
+                    />
+                </div>
             </div>
 
         </div>;

@@ -8,6 +8,7 @@ import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {SkillTreeNode} from '../../model/skill/SkillTreeNode';
+
 export namespace SkillReducer {
     import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;
     import AddSkillToTreeAction = SkillActions.AddSkillToTreeAction;
@@ -82,10 +83,13 @@ export namespace SkillReducer {
                 let map = skillStore.categoriesById();
                 map = map.set(act.toAdd.id(), act.toAdd);
 
+                let categoryIdMap = skillStore.parentCategoryIdById();
+                categoryIdMap.set(act.toAdd.id(), act.parentId);
+
                 let root = skillStore.skillTreeRoot();
                 root.addCategoryToTree(act.parentId, act.toAdd, map);
                 root = Object.assign(SkillTreeNode.root(), root);
-                return skillStore.skillTreeRoot(root).categoriesById(map);
+                return skillStore.skillTreeRoot(root).categoriesById(map).parentCategoryIdById(categoryIdMap);
             }
             case ActionType.RemoveSkillCategory: {
                 let act = action as RemoveSkillCategoryAction;

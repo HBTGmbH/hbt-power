@@ -4,6 +4,7 @@ import {AutoComplete, Dialog, List, ListItem, makeSelectable, TextField} from 'm
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
+import {SkillStore} from '../../../model/skill/SkillStore';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
 
@@ -14,6 +15,7 @@ interface CategorySearcherProps {
     open: boolean;
     onRequestClose(): void;
     onSelectCategory(categoryId: number): void;
+    skillStore: SkillStore;
 }
 
 interface CategorySearcherLocalState {
@@ -32,14 +34,32 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
         };
     }
 
+    componentDidUpdate(oldProps: CategorySearcherProps) {
+        if(oldProps.open === false && this.props.open === true) {
+            this.setState({
+                selected: -1,
+                filterText: ''
+            })
+        }
+    }
+
     private mapListItem = (category: SkillCategory) => {
-        return  <ListItem value={category.id()} key={category.id()}>{category.qualifier()}</ListItem>;
+        return  <ListItem
+            value={category.id()}
+            key={category.id()}
+        >
+            <div>
+                <span style={{fontWeight: "bold"}}>{category.qualifier()}</span><br/>
+                <span style={{fontSize: "10px", fontStyle: "italic"}}>{this.props.skillStore.getInverseCategoryHierarchy(category.id())}</span>
+            </div>
+        </ListItem>;
     };
 
     private handleSelect = (event: any, index: number) => {
         this.setState({
             selected: index
         });
+        console.log("selected", index);
         this.props.onSelectCategory(index);
     };
 
