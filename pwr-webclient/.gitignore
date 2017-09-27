@@ -161,5 +161,5 @@ typings/
 # End of https://www.gitignore.io/api/node,webstorm,intellij
 
 ### static images that don't need to be version controlled ###
-public/img/**
+public/img/profile_pictures/**
 build/*

@@ -34,7 +34,6 @@ import {APIScatterSkill, ScatterSkill} from '../../model/statistics/ScatterSkill
 import {APIConsultant} from '../../model/APIProfile';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {NameEntity} from '../../model/NameEntity';
-import postReport = ViewProfileService.postReport;
 
 export class StatisticsActionCreator {
 
@@ -148,6 +147,7 @@ export class StatisticsActionCreator {
     public static AsyncGetProfileStatistics(initials: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getProfileStatistics(initials)).then(function (response: AxiosResponse) {
+                console.log("statistics data", response.data);
                 dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(response.data)));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
             }).catch(function(error:any) {

@@ -171,3 +171,8 @@ body {
   filter: alpha(opacity=40);
 }
 
+.dashboard-element {
+  padding: 8px;
+  margin-top: 8px;
+}
+

@@ -1,19 +1,21 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Card, CardActions, CardHeader, CardText, FlatButton, FontIcon, RaisedButton} from 'material-ui';
+import {Card, CardHeader, FlatButton} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Profile} from '../../model/Profile';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ProfileStatistics} from './profile-statistics_module';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
-import {Paths} from '../../Paths';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {ViewProfile} from '../../model/view/ViewProfile';
 import {ViewCard} from './view/view-card_module';
 import {ViewProfileActionCreator} from '../../reducers/view/ViewProfileActionCreator';
 import {ViewProfileDialog} from './view/view-profile-dialog_module';
+import {BaseDataDashboardElement} from './dashboard/base-data-dahboard-element_module';
+import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-element_module';
+import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
 
 /**
  * Properties that are managed by react-redux.
@@ -85,25 +87,22 @@ class PowerOverviewModule extends React.Component<
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             createViewProfile: (description, name) => dispatch(ViewProfileActionCreator.AsyncCreateViewProfile(description, name)),
-        }
+        };
     }
 
     private setViewDialogOpen(isOpen: boolean) {
         this.setState({
             createViewDialogOpen: isOpen
-        })
+        });
     }
 
     private resetLocalState = () => {
         this.state = {
             createViewDialogOpen: false
-        }
+        };
     };
 
-    private handleEditButtonClick = () => {
-        this.props.requestSingleProfile(this.props.loggedInUser.initials());
-        this.props.navigateTo(Paths.USER_PROFILE);
-    };
+
 
     private handleCreateViewProfile = (name: string, description: string) => {
         this.props.createViewProfile(name, description);
@@ -114,34 +113,23 @@ class PowerOverviewModule extends React.Component<
     render() {
         return (
             <div className="row">
-                <div className="col-md-5 col-md-offset-1 fullWidth">
-                    <Card style={{marginTop: "8px"}}>
-                        <CardText>
-                            <h3 className="hbt-dark-blue-text">{PowerLocalize.get("Overview.Base.BaseData")}</h3>
-                        </CardText>
-                        <CardText>
-                            <h4 className="hbt-dark-blue-text">{PowerLocalize.get("Overview.Base.LastEdited")}</h4>
-                            {this.props.profile.lastEdited().toLocaleString()}
-                        </CardText>
-                        <CardText>
-                            <ProfileStatistics/>
-                        </CardText>
-                        <CardActions>
-                            <RaisedButton
-                                label={PowerLocalize.get('Action.Edit')}
-                                labelPosition="before"
-                                primary={true}
-                                icon={ <FontIcon className="material-icons">edit</FontIcon>}
-                                onClick={this.handleEditButtonClick}
-                            />
-                        </CardActions>
-                    </Card>
+                <div className="col-md-5 col-md-offset-1">
+                    <BaseDataDashboardElement/>
                 </div>
                 <div className="col-md-5 fullWidth">
-                    <Card style={{ marginTop: "8px"}}>
+                    <CommonSkillsDashboardElement/>
+                </div>
+                <div className="col-md-5 col-md-offset-1">
+                    <MissingCommonDashboardElement/>
+                </div>
+                <div className="col-md-5 fullWidth">
+                    <ProfileStatistics/>
+                </div>
+                <div className="col-md-10 col-md-offset-1 col-xs-12 fullWidth">
+                    <Card style={{ marginTop: '8px'}}>
                         <CardHeader
-                            title={PowerLocalize.get("Overview.ViewProfiles.Title")}
-                            subtitle={PowerLocalize.get("Overview.ViewProfiles.Subtitle")}
+                            title={PowerLocalize.get('Overview.ViewProfiles.Title')}
+                            subtitle={PowerLocalize.get('Overview.ViewProfiles.Subtitle')}
                         />
                         <ViewProfileDialog
                             onRequestClose={() => this.setViewDialogOpen(false)}
@@ -150,14 +138,14 @@ class PowerOverviewModule extends React.Component<
                             type="new"
                         />
                         <FlatButton
-                            label={PowerLocalize.get("ViewProfile.Create")}
+                            label={PowerLocalize.get('ViewProfile.Create')}
                             onTouchTap={() => this.setViewDialogOpen(true)}
                         />
                         <div className="row">
                             {this.props.viewProfiles.map(viewProfile => {
-                                return <div className="col-md-6 fullWidth" key={viewProfile.id}>
+                                return <div className="col-md-5 fullWidth mui-margin" key={viewProfile.id}>
                                     <ViewCard viewProfileId={viewProfile.id}/>
-                                </div>
+                                </div>;
                             })}
                         </div>
                     </Card>

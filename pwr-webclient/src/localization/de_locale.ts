@@ -55,7 +55,7 @@ export const de_locale : any = {
     "Toolbar.LoggedInAs": "Eingeloggt als",
     "Overview.ViewProfiles.Title": "View-Profile",
     "Overview.ViewProfiles.Subtitle": "Übersicht",
-    "Overview.Base.LastEdited": "Zulätzt geändert",
+    "Overview.Base.LastEdited": "Zuletzt geändert",
     "Overview.Base.BaseData": "Stammdaten",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
@@ -280,6 +280,7 @@ export const de_locale : any = {
     "Action.Yes": "Ja",
     "Action.No": "Nein",
     "Action.Create": "Erstellen",
+    "Action.ShowMore": "Mehr",
 
     // == Enum localizations == //
     "SkillEntry": "Skill",
