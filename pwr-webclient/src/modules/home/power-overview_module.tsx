@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Card, CardHeader, FlatButton} from 'material-ui';
+import {FlatButton, Paper} from 'material-ui';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Profile} from '../../model/Profile';
@@ -125,12 +125,9 @@ class PowerOverviewModule extends React.Component<
                 <div className="col-md-5 fullWidth">
                     <ProfileStatistics/>
                 </div>
-                <div className="col-md-10 col-md-offset-1 col-xs-12 fullWidth">
-                    <Card style={{ marginTop: '8px'}}>
-                        <CardHeader
-                            title={PowerLocalize.get('Overview.ViewProfiles.Title')}
-                            subtitle={PowerLocalize.get('Overview.ViewProfiles.Subtitle')}
-                        />
+                <div className="col-md-10 col-md-offset-1 col-xs-12">
+                    <Paper className="dashboard-element">
+                        <span className="col-md-3 col-sm-6" style={{fontSize: "16px", fontWeight: "bold", marginTop: "8px"}}>{PowerLocalize.get('Overview.ViewProfiles.Title')}</span>
                         <ViewProfileDialog
                             onRequestClose={() => this.setViewDialogOpen(false)}
                             open={this.state.createViewDialogOpen}
@@ -148,7 +145,7 @@ class PowerOverviewModule extends React.Component<
                                 </div>;
                             })}
                         </div>
-                    </Card>
+                    </Paper>
                 </div>
             </div>
             );
