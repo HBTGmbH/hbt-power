@@ -1,6 +1,8 @@
 import {doop} from 'doop';
 import {BuildInfo} from './BuildInfo';
 import * as Immutable from 'immutable';
+import {ClientBuildInfo} from './ClientBuildInfo';
+
 /**
  * Created by nt on 21.08.2017.
  */
@@ -15,11 +17,13 @@ export class MetaDataStore {
 
     @doop public get buildInfoByService() { return doop<Immutable.Map<string, BuildInfo>, this>()};
 
-    private constructor(buildInfoByService: Immutable.Map<string, BuildInfo>) {
-        return this.buildInfoByService(buildInfoByService);
+    @doop public get clientBuildInfo() {return doop<ClientBuildInfo, this>()};
+
+    private constructor(buildInfoByService: Immutable.Map<string, BuildInfo>, clientBuildInfo: ClientBuildInfo) {
+        return this.buildInfoByService(buildInfoByService).clientBuildInfo(clientBuildInfo);
     }
 
     public static empty() {
-        return new MetaDataStore(Immutable.Map<string, BuildInfo>());
+        return new MetaDataStore(Immutable.Map<string, BuildInfo>(), null);
     }
 }

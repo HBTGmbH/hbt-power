@@ -124,7 +124,7 @@ class PowerOverviewModule extends React.Component<
                         <div className="col-md-12">
                             <MissingCommonDashboardElement/>
                         </div>
-                        <div className="col-md-12">
+                        <div className="col-md-12 fullWidth">
                             <ProfileStatistics/>
                         </div>
                     </div>
