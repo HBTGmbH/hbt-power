@@ -55,7 +55,7 @@ export const de_locale : any = {
     "Toolbar.LoggedInAs": "Eingeloggt als",
     "Overview.ViewProfiles.Title": "View-Profile",
     "Overview.ViewProfiles.Subtitle": "Übersicht",
-    "Overview.Base.LastEdited": "Zuletzt geändert",
+    "Overview.Base.LastEdited": "Deine letzte Profilaktualisierung war am",
     "Overview.Base.BaseData": "Stammdaten",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",

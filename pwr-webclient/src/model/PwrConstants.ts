@@ -20,6 +20,13 @@ export const DESCRIPTION_CHARS_PER_LINE_LOWER = 20;
 
 export const DESCRIPTION_CHARS_PER_LINE_UPPER = 200;
 
+
+export const GREETINGS = ["Moin", "Hallo"];
+
+export function getRandomGreeting() {
+    return GREETINGS[Math.floor(Math.random()*GREETINGS.length)]
+}
+
 export declare const GLOBAL_OPTIONS: {
     defaultCharsPerLine: number;
 };
