@@ -7,7 +7,7 @@ import {isNullOrUndefined} from 'util';
 interface SkillSearcherProps {
     floatingLabelText?: string;
     maxResults?: number;
-    maxHeight?: number;
+    maxHeight?: number | string;
     id: string;
     value?: string;
     initialValue?: string;
@@ -100,7 +100,8 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 searchText={this.state.searchText}
                 onNewRequest={this.handleRequest}
                 onUpdateInput={this.requestSkills}
-                menuProps={{maxHeight: this.props.maxHeight}}
+                listStyle={{overflow: 'auto', maxHeight: this.props.maxHeight}}
+                menuProps={{maxHeight: this.props.maxHeight, overflow: 'auto'}}
                 filter={AutoComplete.noFilter}
             />)
     }

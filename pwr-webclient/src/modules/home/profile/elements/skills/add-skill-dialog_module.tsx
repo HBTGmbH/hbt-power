@@ -4,13 +4,13 @@ import * as redux from 'redux';
 import {AddSkillStep} from '../../../../../model/skill/AddSkillStep';
 import {
     Dialog,
-    Divider,
     IconButton,
     RadioButton,
     RadioButtonGroup,
     RaisedButton,
     RefreshIndicator,
     Step,
+    StepContent,
     StepLabel
 } from 'material-ui';
 import {Stepper} from 'material-ui/Stepper';
@@ -114,22 +114,28 @@ class AddSkillDialogModule extends React.Component<
     };
 
     private renderSkillInfo = (): JSX.Element  => {
-        return <div>
-            <SkillSearcher
-                onValueChange={this.props.changeSkillName}
-                resetOnRequest={false}
-                id="AddSkill.Searcher"
-                floatingLabelText={PowerLocalize.get("Action.SearchSkill")}
-            />
-            <StarRating
-                rating={this.props.skillRating}
-                onRatingChange={this.props.changeSkillRating}
-            />
-            <RaisedButton
-                label={PowerLocalize.get("AddSkillDialog.ButtonProceed")}
-                onClick={this.props.progress}
-            />
-
+        return <div className="row">
+            <div className="col-md-6">
+                <SkillSearcher
+                    onValueChange={this.props.changeSkillName}
+                    resetOnRequest={false}
+                    maxHeight={"400px"}
+                    id="AddSkill.Searcher"
+                    floatingLabelText={PowerLocalize.get("Action.SearchSkill")}
+                />
+            </div>
+            <div className="col-md-6">
+                <StarRating
+                    rating={this.props.skillRating}
+                    onRatingChange={this.props.changeSkillRating}
+                />
+            </div>
+            <div className="col-md-6">
+                <RaisedButton
+                    label={PowerLocalize.get("AddSkillDialog.ButtonProceed")}
+                    onClick={this.props.progress}
+                />
+            </div>
         </div>;
     };
 
@@ -280,28 +286,34 @@ class AddSkillDialogModule extends React.Component<
             />
             <Dialog
                 open={this.props.addSkillStep !== AddSkillStep.NONE}
+                autoScrollBodyContent={true}
+                style={{width: "100%", position: "absolute"}}
+                contentStyle={{width: "100%"}}
+                title={PowerLocalize.get("AddSkillDialog.Title")}
+                actions={[<IconButton iconClassName="material-icons" onClick={this.props.closeDialog}>
+                    close
+                </IconButton>]}
             >
-                <span style={{textAlign: "right"}}>
-                   <IconButton iconClassName="material-icons" onClick={this.props.closeDialog}>
-                        close
-                   </IconButton>
-                </span>
-                <Divider style={{float: "none"}}/>
-
-                <Stepper activeStep={this.mapStepIndex()}>
+                <Stepper activeStep={this.mapStepIndex()} orientation="vertical">
                     <Step>
                         <StepLabel>{PowerLocalize.get("AddSkillDialog.Step.0")}</StepLabel>
+                        <StepContent>
+                            {this.renderStepContent()}
+                        </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>{PowerLocalize.get("AddSkillDialog.Step.1")}</StepLabel>
+                        <StepContent>
+                            {this.renderStepContent()}
+                        </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>{PowerLocalize.get("AddSkillDialog.Step.2")}</StepLabel>
+                        <StepContent>
+                            {this.renderStepContent()}
+                        </StepContent>
                     </Step>
                 </Stepper>
-                <div style={{width: "100%"}}>
-                    {this.renderStepContent()}
-                </div>
             </Dialog>
         </div>);
     }

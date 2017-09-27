@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import * as redux from 'redux';
-import {List, Subheader} from 'material-ui';
+import {Subheader} from 'material-ui';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {SkillChip} from './skill-chip_module';
 import {Skill} from '../../../../../model/Skill';
@@ -119,14 +119,14 @@ class SkillTreeModule extends React.Component<
             margin: "4px",
             backgroundColor: custom ? "red" : Color.HBT_2017_GRAY.toCSSRGBString()
         };
-        return (<SkillChip
+        return (<div className="col-md-12"><SkillChip
             style={style}
             key={skill.id()}
             skill={skill}
             textColor={"white"}
             onDelete={this.props.onSkillDelete}
             onRatingChange={this.props.changeSkillRating}
-        />)
+        /></div>)
     };
 
     private renderSkills = () => {
@@ -141,10 +141,12 @@ class SkillTreeModule extends React.Component<
         return (
             <div>
                 <AddSkillDialog/>
-                <List>
+                <div>
                     <Subheader>Rot = Unbekannter Skill</Subheader>
+                    <div className="row">
                     {this.renderSkills()}
-                </List>
+                    </div>
+                </div>
             </div>
         );
     }
