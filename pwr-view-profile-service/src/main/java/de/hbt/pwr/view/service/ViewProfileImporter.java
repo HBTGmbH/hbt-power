@@ -163,6 +163,7 @@ public class ViewProfileImporter {
      * @param toAdd to add
      */
     private Skill mergeIntoTree(Category root, ProfileSkill toAdd, String locale) {
+        LOG.debug("Merging " + toAdd.getName() + " into the tree.");
         SkillServiceSkill skillServiceSkill = skillServiceClient.getSkillByName(toAdd.getName());
         // Because the design of the skill service has a flaw here, the fallback won't trigger
         // because when a skill does not exist, null is returned instead of a 404.
@@ -172,7 +173,7 @@ public class ViewProfileImporter {
         }
         Skill skill = ModelConvertUtil.mapSkill(skillServiceSkill, toAdd, locale);
         Category highestParent = skill.getCategory();
-        while(highestParent.getParent() != null) {
+        while(highestParent != null && highestParent.getParent() != null) {
             highestParent = highestParent.getParent();
         }
         merge(root, highestParent);
