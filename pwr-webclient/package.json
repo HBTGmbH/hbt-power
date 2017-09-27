@@ -1,6 +1,6 @@
 {
   "name": "webclient",
-  "version": "0.3.0",
+  "version": "1.2.0",
   "private": true,
   "dependencies": {
     "@types/isomorphic-fetch": "0.0.34",
