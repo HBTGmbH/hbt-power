@@ -54,6 +54,7 @@ export const de_locale : any = {
     // == Component Specific Localizations == //
     "Toolbar.LoggedInAs": "Eingeloggt als",
     "Overview.ViewProfiles.Title": "View-Profile",
+    "Overview.ViewProfiles.Description": "View-Profile Ordnen die ungeordneten Profildaten und ermöglichen eine Profilgenerierung",
     "Overview.ViewProfiles.Subtitle": "Übersicht",
     "Overview.Base.LastEdited": "Deine letzte Profilaktualisierung war am",
     "Overview.Base.BaseData": "Stammdaten",

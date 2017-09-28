@@ -76,7 +76,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                     <RaisedButton
                         style={{marginTop: "8px"}}
                         label={PowerLocalize.get('Action.Edit')}
-                        labelPosition="before"
+                        labelPosition="after"
                         primary={true}
                         icon={ <FontIcon className="material-icons">edit</FontIcon>}
                         onClick={this.handleEditButtonClick}

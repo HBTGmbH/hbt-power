@@ -8,6 +8,7 @@ import {Profile} from '../../model/Profile';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {Paper} from 'material-ui';
+import {Color} from '../../utils/ColorUtil';
 
 const Recharts = require('recharts');
 
@@ -65,8 +66,6 @@ class ProfileStatisticsModule extends React.Component<
             {name: PowerLocalize.get('Career.Abbreviation'),value: careerCount},
             {name: PowerLocalize.get('KeySkill.Abbreviation'),value: keySkillCount},
         ];
-
-        //style={{width: '100% !important'}} width={300} height={200}
         return(
                 <Recharts.ResponsiveContainer minHeight={200} maxHeight={400}>
                     <Recharts.BarChart  layout="horizontal" data={data}>
@@ -74,10 +73,9 @@ class ProfileStatisticsModule extends React.Component<
                         <Recharts.YAxis />
                         <Recharts.CartesianGrid strokeDasharray="3 3" />
                         <Recharts.Tooltip />
-                        <Recharts.Legend />
                         <Recharts.Bar
                             dataKey="value"
-                            fill="#8884d8"
+                            fill={Color.HBT_2017_DARK_BLUE.toCSSRGBString()}
                             layout="horizontal"
                         />
                     </Recharts.BarChart>
@@ -98,9 +96,13 @@ class ProfileStatisticsModule extends React.Component<
                         Profil-Daten-Überblick
                     </span>
                 </div>
+                <div className="col-md-12 vertical-align fullWidth">
+                    Gibt dir einen kurzen Überblick über den Befüllungsgrad deines Profils.
+                </div>
                 <div style={{paddingRight: "10%", paddingLeft: "5%"}}>
                 {this.renderElementCounts()}
                 </div>
+                <div style={{marginBottom: "35px"}}/>
             </Paper>);
     }
 }

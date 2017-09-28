@@ -2,9 +2,11 @@ import {NameEntity} from '../model/NameEntity';
 import {SkillCategory} from '../model/skill/SkillCategory';
 import {Skill} from '../model/Skill';
 import {AdminNotification} from '../model/admin/AdminNotification';
-import {SkillTreeNode} from '../model/skill/SkillTreeNode';
+import {SkillNode, SkillTreeNode} from '../model/skill/SkillTreeNode';
 import {Project} from '../model/Project';
 import {BuildInfo} from '../model/metadata/BuildInfo';
+import {SkillServiceSkill} from '../model/skill/SkillServiceSkill';
+
 export class Comparators {
 
     public static getNameEntityComparator(asc: boolean) {
@@ -54,6 +56,12 @@ export class Comparators {
     public static getSkillTreeNodeComparator(categoriesById: Immutable.Map<number, SkillCategory>) {
         return function(s1: SkillTreeNode, s2: SkillTreeNode) {
             return Comparators.compareString(categoriesById.get(s2.skillCategoryId).qualifier(), categoriesById.get(s1.skillCategoryId).qualifier());
+        }
+    }
+
+    public static getSkillTreeSkillNodeComparator(skillsById: Immutable.Map<number, SkillServiceSkill>) {
+        return function(s1: SkillNode, s2: SkillNode) {
+            return Comparators.compareString(skillsById.get(s2.skillId).qualifier(), skillsById.get(s1.skillId).qualifier());
         }
     }
 

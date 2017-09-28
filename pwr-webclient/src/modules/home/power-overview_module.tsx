@@ -136,6 +136,9 @@ class PowerOverviewModule extends React.Component<
                                 <div className="mui-margin">
                                     <span style={{fontSize: "16px", fontWeight: "bold"}}>{PowerLocalize.get('Overview.ViewProfiles.Title')}</span><br/>
                                 </div>
+                                <div className="mui-margin">
+                                    <span>{PowerLocalize.get('Overview.ViewProfiles.Description')}</span>
+                                </div>
                                 <ViewProfileDialog
                                     onRequestClose={() => this.setViewDialogOpen(false)}
                                     open={this.state.createViewDialogOpen}

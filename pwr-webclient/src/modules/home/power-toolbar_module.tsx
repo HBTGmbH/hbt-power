@@ -140,16 +140,19 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             <MenuItem
                 primaryText={PowerLocalize.get('Menu.Home')}
                 onTouchTap={() => this.props.navigateTo(Paths.USER_HOME)}
+                leftIcon={<FontIcon className="material-icons">home</FontIcon>}
             />
             <MenuItem
                 onTouchTap={() => this.props.navigateTo(Paths.USER_PROFILE)}
                 primaryText={PowerLocalize.get('Menu.BaseData')}
+                leftIcon={<FontIcon className="material-icons">person</FontIcon>}
             />
             {
                 this.props.viewProfiles.length > 0 ?
                     <MenuItem
                         primaryText={PowerLocalize.get('Menu.ViewProfile')}
                         rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
+                        leftIcon={<FontIcon className="material-icons">remove_red_eye</FontIcon>}
                         menuItems={this.props.viewProfiles.map(this.renderViewProfile)}
                     />
                     : null
@@ -161,21 +164,25 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     <MenuItem
                         primaryText={PowerLocalize.get('Menu.Statistics')}
                         rightIcon={<FontIcon className="material-icons">keyboard_arrow_right</FontIcon>}
+                        leftIcon={<FontIcon className="material-icons">insert_chart</FontIcon>}
                         menuItems={[
                             <MenuItem
                                 key="Menu.Statistics.Network"
                                 primaryText={PowerLocalize.get('Menu.Statistics.Network')}
                                 onTouchTap={this.loadNetworkGraph}
+                                leftIcon={<FontIcon className="material-icons">collections</FontIcon>}
                             />,
                             <MenuItem
                                 key="Menu.Statistics.Network.Clusterinfo"
                                 primaryText={PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
                                 onTouchTap={this.loadConsultantClusterInfo}
+                                leftIcon={<FontIcon className="material-icons">info</FontIcon>}
                             />,
                             <MenuItem
                                 key="Menu.Statistics.Skills"
                                 primaryText={PowerLocalize.get('Menu.Statistics.Skills')}
                                 onTouchTap={this.loadSkillStatistics}
+                                leftIcon={<FontIcon className="material-icons">palette</FontIcon>}
                             />
                         ]}
                     />
@@ -185,6 +192,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
            <MenuItem
                primaryText={PowerLocalize.get('Menu.Search')}
                onTouchTap={() => this.props.navigateTo(Paths.USER_SEARCH)}
+               leftIcon={<FontIcon className="material-icons">search</FontIcon>}
            />
         </IconMenu>);
     };
