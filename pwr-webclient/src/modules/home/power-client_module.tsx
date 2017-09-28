@@ -11,7 +11,6 @@ export class PowerClient extends React.Component<{}, {}> {
             <div style={{marginTop: "30px"}}>
                 {this.props.children}
             </div>
-
             <ProfileSnackbar/>
         </div>
     }
