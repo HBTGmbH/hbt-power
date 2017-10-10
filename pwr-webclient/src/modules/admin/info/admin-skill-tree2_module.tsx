@@ -15,9 +15,11 @@ import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 import {CategorySearcher} from './category-searcher_module';
 import {SetValueDialog} from '../../general/set-value-dialog_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {SkillStore} from '../../../model/skill/SkillStore';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
+    skillStore: SkillStore;
     categoriesById: Immutable.Map<number, SkillCategory>;
     skillsById: Immutable.Map<number, SkillServiceSkill>;
 }
@@ -84,6 +86,7 @@ class AdminSkillTree2Module extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: AdminSkillTree2LocalProps): AdminSkillTree2Props {
         return {
+            skillStore: state.skillReducer,
             root: state.skillReducer.skillTreeRoot(),
             categoriesById: state.skillReducer.categoriesById(),
             skillsById: state.skillReducer.skillsById()
@@ -258,6 +261,7 @@ class AdminSkillTree2Module extends React.Component<
                 onClick={this.openCategorySearcher}
             />
             <CategorySearcher
+                skillStore={this.props.skillStore}
                 open={this.state.categorySearcherOpen}
                 categories={this.props.categoriesById.toArray()}
                 onRequestClose={this.closeCategorySearcher}

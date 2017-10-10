@@ -8,10 +8,12 @@ import {SingleBuildInfo} from './single-build-info_module';
 import {MetaDataActionCreator} from '../../reducers/metadata/MetaDataActions';
 import {Comparators} from '../../utils/Comparators';
 import {ApplicationState} from '../../reducers/reducerIndex';
+import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 
 
 interface BuildInfoProps {
     buildInfo: Immutable.Map<string, BuildInfo>;
+    clientInfo: ClientBuildInfo;
 }
 
 interface BuildInfoLocalProps {
@@ -37,7 +39,8 @@ class BuildInfoModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: BuildInfoLocalProps): BuildInfoProps {
         return {
-            buildInfo: state.metaDataReducer.buildInfoByService()
+            buildInfo: state.metaDataReducer.buildInfoByService(),
+            clientInfo: state.metaDataReducer.clientBuildInfo(),
         }
     }
 
@@ -47,6 +50,23 @@ class BuildInfoModule extends React.Component<
         }
     }
 
+   private renderClientInfo = (info: ClientBuildInfo) =>  (info != null ?
+            <span>
+        <span className="build-info-highlight">Webclient</span>
+        <span className="build-info-normal"> version </span>
+        <span className="build-info-highlight">{info.version}</span>
+        <span className="build-info-normal"> built on </span>
+        <span className="build-info-highlight">{info.date.toUTCString()}</span>
+        <span className="build-info-normal"> built by </span>
+        <span className="build-info-highlight">{info.builder}</span>
+    </span> :
+            <span>
+        <span className="build-info-highlight">Webclient Build Info </span>
+        <span className="build-info-normal"> is </span>
+        <span className="build-info-offline">unavailable </span>
+    </span>
+    );
+
     render() {
         return (<div>
             <Subheader>Service-Summary</Subheader>
@@ -55,6 +75,10 @@ class BuildInfoModule extends React.Component<
                 .sort(Comparators.getBuildInfoComparator(true))
                 .map(buildInfo => <div key={buildInfo.name()}><SingleBuildInfo buildInfo={buildInfo}/><br/></div>)
                 .toArray()}
+            </div>
+            <Subheader>Client-Info</Subheader>
+            <div style={{paddingLeft: "16px"}}>
+                {this.renderClientInfo(this.props.clientInfo)}
             </div>
         </div>);
     }

@@ -1,6 +1,7 @@
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
+
 const optionsShortDisplay: DateTimeFormatOptions = {
     year: "numeric",
     month: "short"
@@ -26,6 +27,14 @@ const optionsFullDate: DateTimeFormatOptions = {
     month: "long"
 };
 
+const optionsFullDateTime: DateTimeFormatOptions = {
+    year: "numeric",
+    day: "2-digit",
+    month: "long",
+    hour: "numeric",
+    minute: "numeric"
+};
+
 let language = navigator.language;
 if(isNullOrUndefined(language)) language = "de";
 
@@ -34,6 +43,7 @@ const formatTimeOnly:Intl.DateTimeFormat = new Intl.DateTimeFormat(language, opt
 const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsDayAndMonth);
 const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsOnlyYear);
 const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDate);
+const formatFullDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDateTime);
 
 /**
  * Formats a date to a 'short' display.
@@ -45,6 +55,11 @@ const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, op
 export function formatToShortDisplay(date: Date): string {
     if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
     return format.format(date);
+}
+
+export function formatToFullLocalizedDateTime(date: Date): string {
+    if(isNullOrUndefined(date)) return "???";
+    return formatFullDateTime.format(date);
 }
 
 /**

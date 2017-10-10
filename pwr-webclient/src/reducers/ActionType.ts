@@ -109,6 +109,7 @@ export enum ActionType {
 
     // == MEta data
     AddOrReplaceBuildInfo,
+    AddOrReplaceClientInfo,
     SetServiceAvaiabiltiy,
 
     // == Navigation

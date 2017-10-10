@@ -44,5 +44,6 @@ const POWER_API_SUFFIX_VIEW = "";
 const POWER_API_META_INFO_REPORT = "http://power02.corp.hbt.de:9000/pwr-report-service/meta";
 
 const GLOBAL_OPTIONS = {
-    defaultCharsPerLine: 32
+    defaultCharsPerLine: 32,
+    greetings: ["Moin", "Hallo", "Ahoi", "Willkommen"]
 };

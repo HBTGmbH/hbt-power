@@ -11,8 +11,7 @@ import {
     getSkillUsageInfo,
     getSkillUsageRelative,
     getSkillUsagesAbsolute,
-    headStatisticsServiceAvailable,
-    ViewProfileService
+    headStatisticsServiceAvailable
 } from '../../API_CONFIG';
 import {APINetwork, APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';

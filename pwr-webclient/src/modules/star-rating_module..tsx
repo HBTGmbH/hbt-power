@@ -31,7 +31,7 @@ const getStyle = (starPosition: number, rating: number) => {
 
 
 export const StarRating: React.SFC<StarRatingProps> = (props: StarRatingProps) => (<span>
-            <IconButton onClick={() => props.onRatingChange(1)} iconClassName="material-icons" iconStyle={getStyle(1, props.rating)}>star_rate</IconButton>
+            <IconButton  onClick={() => props.onRatingChange(1)} iconClassName="material-icons" iconStyle={getStyle(1, props.rating)}>star_rate</IconButton>
             <IconButton  onClick={() => props.onRatingChange(2)} iconClassName="material-icons" iconStyle={getStyle(2, props.rating)}>star_rate</IconButton>
             <IconButton  onClick={() => props.onRatingChange(3)} iconClassName="material-icons" iconStyle={getStyle(3, props.rating)}>star_rate</IconButton>
             <IconButton  onClick={() => props.onRatingChange(4)} iconClassName="material-icons" iconStyle={getStyle(4, props.rating)}>star_rate</IconButton>

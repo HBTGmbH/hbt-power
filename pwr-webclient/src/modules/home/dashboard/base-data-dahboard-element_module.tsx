@@ -8,9 +8,12 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
+import {getRandomGreeting} from '../../../model/PwrConstants';
+import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 
 interface BaseDataDashboardElementProps {
     initials: string;
+    name: string;
     lastEdited: Date;
 }
 
@@ -32,6 +35,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
     static mapStateToProps(state: ApplicationState, localProps: BaseDataDashboardElementLocalProps): BaseDataDashboardElementProps {
         return {
             initials: state.databaseReducer.loggedInUser().initials(),
+            name: state.databaseReducer.loggedInUser().firstName(),
             lastEdited: state.databaseReducer.profile().lastEdited()
         }
     }
@@ -51,18 +55,28 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
     };
 
     render() {
-        return (<Paper className="dashboard-element">
-            <div className="vertical-align row">
-                <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
+        return (
+        <Paper className="dashboard-element">
+            <div className="row">
+                <div className="col-md-12 vertical-align fullWidth">
+                        <span style={{fontSize: "16px", fontWeight: "bold", marginTop: "8px"}}>
+                            {getRandomGreeting()} {this.props.name}!
+                        </span>
+                </div>
+                <div className="col-md-12 vertical-align fullWidth">
                     <Avatar  size={80} src={getProfileImageLocation(this.props.initials)} />
                 </div>
-                <span className="col-md-3 col-sm-6" style={{fontSize: "16px", fontWeight: "bold", marginTop: "8px"}}>{PowerLocalize.get("Overview.Base.BaseData")}</span>
-                <span className="col-md-3 col-sm-6" style={{marginTop: "8px"}}>{PowerLocalize.get("Overview.Base.LastEdited")} : {this.props.lastEdited.toLocaleString()} </span>
-                <div className="col-md-3 col-sm-12">
+                <div className="col-md-12 vertical-align fullWidth" style={{marginTop: "8px"}}>
+                    {PowerLocalize.get("Overview.Base.LastEdited")}
+                </div>
+                <div className="col-md-12 vertical-align fullWidth" style={{marginTop: "8px"}}>
+                    {formatToFullLocalizedDateTime(this.props.lastEdited)}
+                </div>
+                <div className="col-md-12 vertical-align fullWidth">
                     <RaisedButton
                         style={{marginTop: "8px"}}
                         label={PowerLocalize.get('Action.Edit')}
-                        labelPosition="before"
+                        labelPosition="after"
                         primary={true}
                         icon={ <FontIcon className="material-icons">edit</FontIcon>}
                         onClick={this.handleEditButtonClick}

@@ -1,6 +1,6 @@
 {
   "name": "webclient",
-  "version": "0.3.0",
+  "version": "1.2.0",
   "private": true,
   "dependencies": {
     "@types/isomorphic-fetch": "0.0.34",
@@ -65,6 +65,7 @@
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "compileInfo": "node ./compileBuildInfo.js"
   }
 }

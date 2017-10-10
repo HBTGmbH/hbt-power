@@ -8,6 +8,7 @@ import {Profile} from '../../model/Profile';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {Paper} from 'material-ui';
+import {Color} from '../../utils/ColorUtil';
 
 const Recharts = require('recharts');
 
@@ -65,20 +66,20 @@ class ProfileStatisticsModule extends React.Component<
             {name: PowerLocalize.get('Career.Abbreviation'),value: careerCount},
             {name: PowerLocalize.get('KeySkill.Abbreviation'),value: keySkillCount},
         ];
-
         return(
-            <Recharts.BarChart style={{width: '100% !important'}} width={300} height={200} layout="horizontal" data={data}>
-                <Recharts.XAxis dataKey="name"/>
-                <Recharts.YAxis />
-                <Recharts.CartesianGrid strokeDasharray="3 3" />
-                <Recharts.Tooltip />
-                <Recharts.Legend />
-                <Recharts.Bar
-                    dataKey="value"
-                    fill="#8884d8"
-                    layout="horizontal"
-                />
-            </Recharts.BarChart>
+                <Recharts.ResponsiveContainer minHeight={200} maxHeight={400}>
+                    <Recharts.BarChart  layout="horizontal" data={data}>
+                        <Recharts.XAxis dataKey="name"/>
+                        <Recharts.YAxis />
+                        <Recharts.CartesianGrid strokeDasharray="3 3" />
+                        <Recharts.Tooltip />
+                        <Recharts.Bar
+                            dataKey="value"
+                            fill={Color.HBT_2017_DARK_BLUE.toCSSRGBString()}
+                            layout="horizontal"
+                        />
+                    </Recharts.BarChart>
+                </Recharts.ResponsiveContainer>
         );
     };
 
@@ -90,19 +91,18 @@ class ProfileStatisticsModule extends React.Component<
             return <div/>;
         return (
             <Paper className="dashboard-element">
-                <div className="row">
-                    <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-
-                    </div>
-
-                    <div className="col-md-12 col-xs-12 col-sm-12">
-
-                    </div>
-                    <div className="col-md-12 col-xs-12 col-sm-12">
-                        <h5>Profilbefüllung</h5>
-                        {this.renderElementCounts()}
-                    </div>
+                <div className="col-md-12 vertical-align fullWidth">
+                    <span style={{fontSize: "16px", fontWeight: "bold", marginTop: "8px"}}>
+                        Profil-Daten-Überblick
+                    </span>
                 </div>
+                <div className="col-md-12 vertical-align fullWidth">
+                    Gibt dir einen kurzen Überblick über den Befüllungsgrad deines Profils.
+                </div>
+                <div style={{paddingRight: "10%", paddingLeft: "5%"}}>
+                {this.renderElementCounts()}
+                </div>
+                <div style={{marginBottom: "35px"}}/>
             </Paper>);
     }
 }

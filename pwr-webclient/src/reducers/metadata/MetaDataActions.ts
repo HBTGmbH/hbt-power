@@ -12,10 +12,15 @@ import {
     getStatisticsBuildsInfo,
     ViewProfileService
 } from '../../API_CONFIG';
+import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 
 export interface AddOrReplaceBuildInfoAction extends AbstractAction {
     service: string;
     buildInfo: BuildInfo;
+}
+
+export interface AddOrReplaceClientInfoAction extends AbstractAction {
+    info: ClientBuildInfo
 }
 
 export namespace MetaDataActionCreator {
@@ -25,6 +30,13 @@ export namespace MetaDataActionCreator {
             type: ActionType.AddOrReplaceBuildInfo,
             service: service,
             buildInfo: buildInfo
+        }
+    }
+
+    export function AddOrReplaceClientInfo(info: ClientBuildInfo): AddOrReplaceClientInfoAction {
+        return {
+            type: ActionType.AddOrReplaceClientInfo,
+            info: info
         }
     }
 
@@ -41,6 +53,21 @@ export namespace MetaDataActionCreator {
         }
     }
 
+    function FetchClientBuildInfo() {
+        return function(dispatch: redux.Dispatch<ApplicationState>) {
+            axios.get("/build_info.json").then(response => {
+                if(response.data != null) {
+                    dispatch(AddOrReplaceClientInfo(response.data));
+                } else {
+                    dispatch(AddOrReplaceClientInfo(null));
+                }
+            }).catch(error => {
+                console.error(error);
+                dispatch(AddOrReplaceClientInfo(null));
+            })
+        }
+    }
+
     export function FetchAllBuildInfo() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(FetchBuildInfo(MetaDataStore.KEY_PROFILE, getProfileBuildInfo()));
@@ -48,6 +75,7 @@ export namespace MetaDataActionCreator {
             dispatch(FetchBuildInfo(MetaDataStore.KEY_SKILL, getSkillBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_REPORT, getReportBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_VIEW_PROFIE, ViewProfileService.getBuildInfo()));
+            dispatch(FetchClientBuildInfo());
         }
     }
 }
