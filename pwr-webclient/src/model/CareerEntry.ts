@@ -4,6 +4,7 @@ import {EducationEntry} from './EducationEntry';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {isNullOrUndefined} from 'util';
+import {DateUtils} from "../utils/DateUtil";
 @doop
 export class CareerEntry {
     /**
@@ -69,8 +70,8 @@ export class CareerEntry {
     public toAPI(careers: Immutable.Map<string, NameEntity>): APICareerEntry {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
-            startDate: this.startDate().toISOString(),
-            endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate().toISOString(),
+            startDate: DateUtils.formatLocaleDateToIso(this.startDate()),
+            endDate: DateUtils.formatLocaleDateToIso(this.endDate()),
             nameEntity: this.nameEntityId() == null ? null : careers.get(this.nameEntityId()).toAPI()
         }
     }

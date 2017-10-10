@@ -5,6 +5,7 @@ import {NameEntity} from './NameEntity';
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {Skill} from './Skill';
 import {isNullOrUndefined} from 'util';
+import {DateUtils} from "../utils/DateUtil";
 
 @doop
 export class Project {
@@ -102,8 +103,8 @@ export class Project {
             id: this.isNew() ? null : Number(this.id()),
             description: this.description(),
             name: this.name(),
-            endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate(),
-            startDate: this.startDate(),
+            endDate: DateUtils.formatLocaleDateToIso(this.endDate()),
+            startDate: DateUtils.formatLocaleDateToIso(this.startDate()),
             broker: isNullOrUndefined(company) ? null : company.toAPI(),
             client:  isNullOrUndefined(customer) ? null : customer.toAPI(),
             projectRoles: this.rolesToAPI(roles),

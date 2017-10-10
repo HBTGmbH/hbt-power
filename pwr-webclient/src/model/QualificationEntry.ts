@@ -3,6 +3,7 @@ import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {doop} from 'doop';
+import {DateUtils} from "../utils/DateUtil";
 
 @doop
 export class QualificationEntry {
@@ -46,7 +47,7 @@ export class QualificationEntry {
     public toAPIQualificationEntry(qualifications: Immutable.Map<string, NameEntity>): APIQualificationEntry {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
-            date: this.date().toISOString(),
+            date: DateUtils.formatLocaleDateToIso(this.date()),
             nameEntity: this.qualificationId() == UNDEFINED_ID ? null : qualifications.get(this.qualificationId()).toAPI()
         }
     }

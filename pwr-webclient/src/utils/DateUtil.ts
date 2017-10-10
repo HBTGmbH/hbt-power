@@ -75,3 +75,22 @@ export function formatToYear(date: Date) {
     if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
     return formatOnlyYear.format(date);
 }
+
+export namespace DateUtils {
+    export function formatLocaleDateToIso(date: Date) : string{
+        if(isNullOrUndefined(date)) {
+            return null;
+        }
+        const dateString = date.toLocaleDateString("de-De");
+        let splitted: Array<string> = dateString.split(".").reverse();
+        splitted = splitted.map(splitString => {
+            if(splitString.length === 1) {
+                return "0" + splitString;
+            }
+            return splitString;
+        });
+        console.debug("splitted", splitted);
+        return splitted.join("-");
+    }
+}
+

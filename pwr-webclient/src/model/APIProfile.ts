@@ -57,8 +57,8 @@ export interface APIProject {
     id: number;
     name: string;
     description: string;
-    endDate: Date;
-    startDate: Date;
+    endDate: string;
+    startDate: string;
     broker: APINameEntity;
     client: APINameEntity;
     skills: Array<APISkill>;

@@ -4,6 +4,7 @@ import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {doop} from 'doop';
 import {isNullOrUndefined} from 'util';
+import {DateUtils} from "../utils/DateUtil";
 
 
 @doop
@@ -84,8 +85,8 @@ export class EducationEntry {
         console.log(this);
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
-            startDate: this.startDate().toISOString(),
-            endDate: isNullOrUndefined(this.endDate()) ? null : this.endDate().toISOString(),
+            startDate: DateUtils.formatLocaleDateToIso(this.startDate()),
+            endDate: DateUtils.formatLocaleDateToIso(this.endDate()),
             nameEntity: this.nameEntityId() == null ? null : educations.get(this.nameEntityId()).toAPI(),
             degree: this.degree().trim().length > 0 ? this.degree() : null
         }
