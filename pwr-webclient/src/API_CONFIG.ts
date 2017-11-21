@@ -1,6 +1,8 @@
 import {SortableEntryField, SortableEntryType} from './model/view/NameComparableType';
 declare const POWER_API_HOST: string;
 
+declare const POWER_API_PREFIX: string;
+
 declare const POWER_API_PORT: string;
 
 declare const POWER_API_SUFFIX_PROFILE: string;
@@ -31,6 +33,11 @@ declare const POWER_API_SUFFIX_VIEW: string;
 export function getImagePath(): string {
     return POWER_IMAGE_PATH;
 }
+
+export function getApiPrefix(): string {
+    return POWER_API_PREFIX;
+}
+
 
 export function getProfileBuildInfo(): string {
     return POWER_PROFILE_META_INFO + "/info";

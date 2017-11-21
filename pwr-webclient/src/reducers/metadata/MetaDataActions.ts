@@ -6,6 +6,7 @@ import * as redux from 'redux';
 import axios from 'axios';
 import {MetaDataStore} from '../../model/metadata/MetaDataStore';
 import {
+    getApiPrefix,
     getProfileBuildInfo,
     getReportBuildInfo,
     getSkillBuildInfo,
@@ -55,7 +56,7 @@ export namespace MetaDataActionCreator {
 
     function FetchClientBuildInfo() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get("/build_info.json").then(response => {
+            axios.get(getApiPrefix()+"/build_info.json").then(response => {
                 if(response.data != null) {
                     dispatch(AddOrReplaceClientInfo(response.data));
                 } else {
