@@ -9,6 +9,7 @@ import {RequestSnackbar} from '../general/request-snackbar_module.';
 import {Paths} from '../../Paths';
 import {browserHistory} from 'react-router';
 import {ApplicationState} from '../../reducers/reducerIndex';
+import {getImagePath} from "../../API_CONFIG";
 
 
 /**
@@ -102,7 +103,7 @@ class AdminClientModule extends React.Component<
                             onClick={this.props.logOutAdmin}
                         >input</IconButton>}
                         title={ <div className="vertical-align" style={{height: "100%"}}>
-                            <img className="img-responsive logo-small" src="/img/HBT002_Logo_neg.png"
+                            <img className="img-responsive logo-small" src={getImagePath()+"/HBT002_Logo_neg.png"}
                             />
                         </div>}
                     >

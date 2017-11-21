@@ -9,6 +9,7 @@ import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
+import {getImagePath} from "../../../API_CONFIG";
 
 interface MissingCommonDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -70,7 +71,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar  size={80} src={"/img/icon_chart.svg"} />
+                        <Avatar  size={80} src={getImagePath()+"/icon_chart.svg"} />
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                         Standard-Skills, die diesem Profil fehlen: {this.renderMissingSkills()}

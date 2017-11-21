@@ -9,6 +9,7 @@ import {isNullOrUndefined} from 'util';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
+import {getImagePath} from "../../../API_CONFIG";
 
 interface CommonSkillsDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -69,7 +70,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar  size={80} src={"/img/statistics_icon.svg"} />
+                        <Avatar  size={80} src={getImagePath()+"/statistics_icon.svg"}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                     Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}

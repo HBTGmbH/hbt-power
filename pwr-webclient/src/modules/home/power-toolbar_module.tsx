@@ -14,6 +14,7 @@ import {NavigationActionCreator} from '../../reducers/navigation/NavigationActio
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {Color} from '../../utils/ColorUtil';
 import {ViewProfile} from '../../model/view/ViewProfile';
+import {getImagePath} from "../../API_CONFIG";
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -90,7 +91,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private renderPower = () => {
         return (
             <div className="vertical-align" style={{height: "100%"}}>
-                <img className="img-responsive logo-small" src="/img/HBT002_Logo_neg.png"
+                <img className="img-responsive logo-small" src={getImagePath()+"/HBT002_Logo_neg.png"}
                 />
             </div>
           );
