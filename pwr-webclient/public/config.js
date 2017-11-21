@@ -17,6 +17,8 @@ const POWER_API_SUFFIX_VIEW = "/power/api/pwr-view-profile-service";
 
 const POWER_API_META_INFO_REPORT = "https://power.hbt.de/power/api/pwr-report-service/meta";
 
+const POWER_IMAGE_PATH = "/power/img";
+
 const GLOBAL_OPTIONS = {
     defaultCharsPerLine: 32,
     greetings: ["Moin", "Hallo", "Ahoi", "Willkommen"]

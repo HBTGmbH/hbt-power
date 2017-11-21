@@ -11,6 +11,7 @@ import {BottomBuildInfo} from './metadata/build-info_module';
 import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../reducers/reducerIndex';
 import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
+import {getImagePath} from '../API_CONFIG';
 
 /**
  * Properties that are managed by react-redux.
@@ -113,7 +114,7 @@ class PowerLoginModule extends React.Component<
                 <div className="vertical-align">
                     <div style={{padding: "64px", backgroundColor: "white"}}>
                         <div className="vertical-align">
-                            <img className="img-responsive logo-medium" src="/img/HBT002_Logo_pos.png"/>
+                            <img className="img-responsive logo-medium" src={getImagePath()+"/HBT002_Logo_pos.png"}/>
                         </div>
                         <div className="vertical-align">
                             <h1>Profilauswahl HBT Power</h1>

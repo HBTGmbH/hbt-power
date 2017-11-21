@@ -21,11 +21,16 @@ declare const POWER_PROFILE_META_INFO: string;
 
 declare const POWER_API_META_INFO_REPORT: string;
 
+declare const POWER_IMAGE_PATH: string;
+
 // View Profile
 declare const POWER_API_HOST_VIEW: string;
 declare const POWER_API_PORT_VIEW: string;
 declare const POWER_API_SUFFIX_VIEW: string;
 
+export function getImagePath(): string {
+    return POWER_IMAGE_PATH;
+}
 
 export function getProfileBuildInfo(): string {
     return POWER_PROFILE_META_INFO + "/info";
@@ -121,7 +126,7 @@ export function getAllCurrentlyUsedSkillNames(): string {
 }
 
 export function getProfileImageLocation(initials: string): string {
-    return "/img/profile_pictures/foto_" + initials + ".jpg"
+    return POWER_IMAGE_PATH + "/profile_pictures/foto_" + initials + ".jpg"
 }
 
 export function getSkillUsagesAbsolute(): string {
