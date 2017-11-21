@@ -16,7 +16,7 @@ import {NavigationActionCreator} from './reducers/navigation/NavigationActionCre
  * Paths used for routing. Central point of configuration for routing information.
  */
 export class Paths {
-    public static readonly APP_ROOT = '/power/';
+    public static readonly APP_ROOT = '/';
     public static readonly ADMIN_LOGIN = '/power/login';
 
 
