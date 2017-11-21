@@ -123,6 +123,7 @@ class PowerLoginModule extends React.Component<
                             <div className="vertical-align">
                                 {this.renderInputField()}
                             </div>
+                            <br/>
                             <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
                             <br/>
                             <br/>
