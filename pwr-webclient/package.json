@@ -2,7 +2,7 @@
   "name": "webclient",
   "version": "1.2.1",
   "private": true,
-  "homepage": "/power/",
+  "homepage": "",
   "dependencies": {
     "@types/isomorphic-fetch": "0.0.34",
     "@types/jest": "20.0.2",
