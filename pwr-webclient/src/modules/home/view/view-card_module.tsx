@@ -87,14 +87,14 @@ class ViewCardModule extends React.Component<
                 <div>
                     <RaisedButton
                         className="mui-margin"
-                        onTouchTap={() => this.setDialogOpen(true)}
+                        onClick={() => this.setDialogOpen(true)}
                         label={PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
                         icon={<FontIcon className="material-icons">info</FontIcon>}
                     />
                     <RaisedButton
                         className="mui-margin"
                         label={PowerLocalize.get("ViewProfileCard.Action.Edit")}
-                        onTouchTap={() => this.props.navigateTo("/app/view/" + this.props.viewProfileId)}
+                        onClick={() => this.props.navigateTo("/app/view/" + this.props.viewProfileId)}
                         icon={<FontIcon className="material-icons">edit</FontIcon>}
                     />
                     <RaisedButton
@@ -102,13 +102,13 @@ class ViewCardModule extends React.Component<
                         label={PowerLocalize.get("Action.Delete")}
                         secondary={true}
                         icon={<FontIcon className="material-icons">delete</FontIcon>}
-                        onTouchTap={() => this.props.deleteViewProfile(this.props.viewProfileId)}
+                        onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
                     />
                     <RaisedButton
                         className="mui-margin"
                         primary={true}
                         label={PowerLocalize.get("Action.Generate.Word")}
-                        onTouchTap={() => this.props.generate(this.props.viewProfileId)}
+                        onClick={() => this.props.generate(this.props.viewProfileId)}
                         icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
                     />
                 </div>

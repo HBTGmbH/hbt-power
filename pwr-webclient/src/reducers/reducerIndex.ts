@@ -1,4 +1,4 @@
-import {applyMiddleware, combineReducers, createStore} from 'redux';
+import {applyMiddleware, combineReducers, createStore, Reducer} from 'redux';
 import {AdminReducer} from './admin/AdminReducer';
 import {DatabaseReducer} from './profile/DatabaseReducer';
 import {StatisticsReducer} from './statistics/StatisticsReducer';
@@ -15,6 +15,8 @@ import {SkillStore} from '../model/skill/SkillStore';
 import {MetaDataStore} from '../model/metadata/MetaDataStore';
 import {NavigationStore} from '../model/navigation/NavigationStore';
 import {ViewProfileStore} from '../model/view/ViewProfileStore';
+import {routerMiddleware, RouterState} from 'react-router-redux';
+import createHistory from 'history/createBrowserHistory';
 
 
 export interface ApplicationState {
@@ -25,6 +27,7 @@ export interface ApplicationState {
     metaDataReducer: MetaDataStore;
     navigationSlice: NavigationStore;
     viewProfileSlice: ViewProfileStore;
+    router: Reducer<RouterState>;
 }
 
 
@@ -38,10 +41,14 @@ const ApplicationStore = combineReducers({
     viewProfileSlice: ViewProfileReducer.reduce,
 });
 
+export const PWR_HISTORY = createHistory();
+const reactRouterMiddleware = routerMiddleware(PWR_HISTORY);
+
 export const store = createStore(
     ApplicationStore,
     applyMiddleware(
-        thunkMiddleware
+        thunkMiddleware,
+        reactRouterMiddleware
     )
 );
 

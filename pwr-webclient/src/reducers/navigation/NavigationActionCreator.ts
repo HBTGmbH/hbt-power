@@ -1,10 +1,9 @@
 import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
-import {ApplicationState} from '../reducerIndex';
+import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {Paths} from '../../Paths';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
-import {browserHistory} from 'react-router';
 import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
@@ -49,7 +48,7 @@ export namespace NavigationActionCreator {
 
     function navigate(to: string, dispatch: redux.Dispatch<ApplicationState>): void {
         console.debug("Navigating to " + to);
-        browserHistory.push(to);
+        PWR_HISTORY.push(to);
         dispatch(SetCurrentLocation(to));
     }
 

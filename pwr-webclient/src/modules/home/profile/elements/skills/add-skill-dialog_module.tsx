@@ -18,7 +18,7 @@ import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreat
 import {StarRating} from '../../../../star-rating_module.';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {UnCategorizedSkillChoice} from '../../../../../model/skill/UncategorizedSkillChoice';
-import {LimitedTextField} from '../../../../general/limited-text-field-module.';
+import {LimitedTextField} from '../../../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {isNullOrUndefined} from 'util';
@@ -238,10 +238,9 @@ class AddSkillDialogModule extends React.Component<
         if(this.props.doneState === "SKILL_EXISTS") {
             btn = <div>
                     <IconButton
-                        iconClassName="material-icons"
+                        iconClassName="material-icons icon-size-80"
                         iconStyle={{color: "green"}}
                         onClick={this.props.progress}
-                        size={80}
                     >
                         info
                     </IconButton><br/>
@@ -249,10 +248,9 @@ class AddSkillDialogModule extends React.Component<
                 </div>
         } else {
            btn = <IconButton
-                iconClassName="material-icons"
+                iconClassName="material-icons icon-size-80"
                 iconStyle={{color: "green"}}
                 onClick={this.props.progress}
-                size={80}
             >
                 check_circle
             </IconButton>

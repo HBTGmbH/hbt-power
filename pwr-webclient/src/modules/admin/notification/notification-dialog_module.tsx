@@ -149,7 +149,7 @@ class NotificationDialogModule extends React.Component<
     private closeDialog = () => {
         this.props.onRequestClose();
         this.resetDialog();
-    }
+    };
 
     private renderStepper = () => {
         // Unfortunately, this is necessary because the Stepper will attempt to render null or false
@@ -184,13 +184,13 @@ class NotificationDialogModule extends React.Component<
             <FlatButton
                 label={PowerLocalize.get('Action.Previous')}
                 disabled={this.state.stepIndex == 0}
-                onTouchTap={this.backStep}
+                onClick={this.backStep}
                 style={{marginRight: 12}}
             />
             <RaisedButton
                 label={this.stepperHasFinished() ? PowerLocalize.get('Action.Execute') : PowerLocalize.get('Action.Next')}
                 primary={true}
-                onTouchTap={this.progressStep}
+                onClick={this.progressStep}
             />
         </div>;
     };

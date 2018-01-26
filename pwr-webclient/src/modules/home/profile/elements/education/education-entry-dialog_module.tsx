@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, DatePicker, Dialog, IconButton, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton, MenuItem, SelectField} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {EducationEntry} from '../../../../../model/EducationEntry';
@@ -9,6 +9,7 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+import {ReactUtils} from '../../../../../utils/ReactUtils';
 
 
 interface EducationEntryDialogLocalProps {
@@ -114,11 +115,11 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         this.setState({educationAutoComplete: chosenRequest});
     };
 
-    private handleCloseButtonPress = (event: TouchTapEvent) => {
+    private handleCloseButtonPress = (event: any) => {
         this.closeDialog();
     };
 
-    private handleDegreeSelect = (event: TouchTapEvent, index: number, value: string) => {
+    private handleDegreeSelect = (event: any, index: number, value: string) => {
         let entry = this.state.entry;
         entry = entry.degree(value);
         this.setState({
@@ -126,7 +127,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         });
     };
 
-    private handleSaveButtonPress = (event: TouchTapEvent) => {
+    private handleSaveButtonPress = (event: any) => {
         let name: string = this.state.educationAutoComplete;
         let education: NameEntity = ProfileStore.findNameEntityByName(name, this.props.educations);
         let educationEntry: EducationEntry = this.state.entry;
@@ -148,8 +149,9 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 onRequestClose={this.closeDialog}
                 title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
                 autoScrollBodyContent={true}
-                actions={[ <IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[
+                    <IconButton style={ReactUtils.BTN_SIZE_20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton style={ReactUtils.BTN_SIZE_20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                 <div className="row">
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">

@@ -99,9 +99,9 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         {this.props.project.description()}
                     </CardText>
                     <CardActions expandable={true}>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.openDialog}
+                        <IconButton iconClassName="material-icons icon-size-20" onClick={this.openDialog}
                                     tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                        <IconButton size={20} iconClassName="material-icons" onClick={this.deleteButtonPress}
+                        <IconButton iconClassName="material-icons icon-size-20" onClick={this.deleteButtonPress}
                                     tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     </CardActions>
                 </Card>

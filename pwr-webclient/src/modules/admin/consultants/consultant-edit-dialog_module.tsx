@@ -145,17 +145,17 @@ class ConsultantEditDialogModule extends React.Component<
         <FlatButton
             label={PowerLocalize.get("Action.Save")}
             primary={true}
-            onTouchTap={this.saveAndClose}
+            onClick={this.saveAndClose}
         />,
         <FlatButton
             label={PowerLocalize.get("ConsultantTile.EditProfile")}
             primary={true}
-            onTouchTap={() => {this.props.redirectToUser(this.props.initials)}}
+            onClick={() => {this.props.redirectToUser(this.props.initials)}}
         />,
         <FlatButton
             label={PowerLocalize.get("Action.Exit")}
             primary={true}
-            onTouchTap={this.resetAndClose}
+            onClick={this.resetAndClose}
         />,
     ];
 

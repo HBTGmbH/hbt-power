@@ -13,6 +13,7 @@ import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import {ReactUtils} from '../../../../../utils/ReactUtils';
 
 
 /**
@@ -73,13 +74,13 @@ class CareerEntryDialogModule extends React.Component<
     static mapStateToProps(state: ApplicationState, localProps: CareerEntryDialogLocalProps): CareerEntryDialogProps {
         return {
             careers: state.databaseReducer.careers()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): CareerEntryDialogDispatch {
         return {
             saveEntry: (entry, nameEntity) => dispatch(ProfileActionCreator.saveEntry(entry, nameEntity, ProfileElementType.CareerEntry))
-        }
+        };
     }
 
     private closeDialog = () => {
@@ -89,21 +90,21 @@ class CareerEntryDialogModule extends React.Component<
     private changeStartDate = (evt: any, date: Date) => {
         this.setState({
             careerEntry: this.state.careerEntry.startDate(date)
-        })
+        });
     };
 
     private changeEndDate = (evt: any, date: Date) => {
         console.log(date);
         this.setState({
             careerEntry: this.state.careerEntry.endDate(date)
-        })
+        });
 
     };
 
     private handleAutoCompleteInput = (value: string) => {
         this.setState({
             autoCompleteValue: value
-        })
+        });
     };
 
     private saveAndExit = () => {
@@ -124,9 +125,9 @@ class CareerEntryDialogModule extends React.Component<
 
     private getEndDateButtonIconName = () => {
         if(isNullOrUndefined(this.state.careerEntry.endDate())) {
-            return "date_range";
+            return 'date_range';
         }
-        return "today";
+        return 'today';
     };
 
     private handleEndDateButtonClick = () => {
@@ -140,21 +141,21 @@ class CareerEntryDialogModule extends React.Component<
     private renderEndDateChoice = () => {
         if(isNullOrUndefined(this.state.careerEntry.endDate())) {
             return <TextField
-                style={{width: "80%", float: "left"}}
+                style={{width: '80%', float: 'left'}}
                 floatingLabelText={PowerLocalize.get('End')}
                 disabled={true}
-                value={PowerLocalize.get("Today")}
-            />
+                value={PowerLocalize.get('Today')}
+            />;
         } else {
             return <DatePicker
-                style={{width: "80%", float: "left"}}
+                style={{width: '80%', float: 'left'}}
                 floatingLabelText={PowerLocalize.get('End')}
                 id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
                 container="inline"
                 value={this.state.careerEntry.endDate()}
                 onChange={this.changeEndDate}
                 formatDate={formatToShortDisplay}
-            />
+            />;
         }
     };
 
@@ -165,8 +166,10 @@ class CareerEntryDialogModule extends React.Component<
             title={PowerLocalize.get('CareerEntry.Dialog.Title')}
             onRequestClose={this.closeDialog}
             autoScrollBodyContent={true}
-            actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-            <IconButton size={20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+            actions={[
+                <IconButton style={ReactUtils.BTN_SIZE_20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                <IconButton style={ReactUtils.BTN_SIZE_20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]
+            }
         >
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
@@ -181,7 +184,7 @@ class CareerEntryDialogModule extends React.Component<
                 </div>
                 <div className="col-md-5 col-sm-6">
                     <IconButton
-                        style={{width: "20%", float:"left", marginTop: "20px"}}
+                        style={{width: '20%', float:'left', marginTop: '20px'}}
                         iconClassName="material-icons"
                         onClick={this.handleEndDateButtonClick}
                     >

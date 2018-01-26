@@ -10,6 +10,11 @@ export namespace ReactUtils {
         style?: CSSProperties;
     }
 
+    export const BTN_SIZE_20 = {
+        width: 20,
+        height: 20
+    };
+
     export function wrapSelectableList(ComposedComponent: any) {
         return class SelectableList extends React.Component<SelectableListProps, {}> {
 

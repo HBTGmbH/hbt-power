@@ -6,7 +6,6 @@ import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import {SingleQualificationEntry} from './qualification-entry_module';
 import * as Immutable from 'immutable';
-import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileElement} from '../../profile-element_module';
@@ -65,7 +64,7 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
         };
     }
 
-    private handleAddElement = (event: TouchTapEvent) => {
+    private handleAddElement = () => {
         this.props.addQualificationEntry();
     };
 

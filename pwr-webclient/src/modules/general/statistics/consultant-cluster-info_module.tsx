@@ -66,7 +66,6 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
         {
             const color = randomColor();
             return(<div
-                disabled={true}
                 key={skillName}
                 style={{color: color, borderRadius: "20px", margin: "5px", padding: "5px", border: "1px solid " + color}}
             >

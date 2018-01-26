@@ -116,8 +116,8 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
         return(
             <tr>
                 <td>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     <TrainingEntryDialog
                         trainingEntry={this.props.trainingEntry}
                         trainings={this.props.trainings}

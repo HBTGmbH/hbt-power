@@ -101,13 +101,13 @@ class ConsultantTileModule extends React.Component<
             <MenuItem
                 primaryText={PowerLocalize.get("ConsultantTile.EditProfile")}
                 rightIcon={<FontIcon className="material-icons">edit</FontIcon>}
-                onTouchTap={() => this.props.redirectToUser(this.props.initials)}
+                onClick={() => this.props.redirectToUser(this.props.initials)}
                 disabled={!this.props.consultantInfo.active()}
             />
             <MenuItem
                 primaryText={PowerLocalize.get("ConsultantTile.EditConsultant")}
                 rightIcon={<FontIcon className="material-icons">person</FontIcon>}
-                onTouchTap={this.showEditDialog}
+                onClick={this.showEditDialog}
             />
         </IconMenu>)
     };

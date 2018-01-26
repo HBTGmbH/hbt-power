@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, Dialog, IconButton, MenuItem, SelectField, TouchTapEvent} from 'material-ui';
+import {AutoComplete, Dialog, IconButton, MenuItem, SelectField} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -83,12 +83,12 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
         this.setState({languageAutoCompleteValue: chosenRequest});
     };
 
-    private handleCloseButtonPress = (event: TouchTapEvent) => {
+    private handleCloseButtonPress = () => {
         this.closeDialog();
     };
 
 
-    private handleSaveButtonPress = (event: TouchTapEvent) => {
+    private handleSaveButtonPress = () => {
         let name: string = this.state.languageAutoCompleteValue;
         let language: NameEntity = ProfileStore.findNameEntityByName(name, this.props.languages);
         let languageSkill: LanguageSkill = this.state.languageSkill;
@@ -100,7 +100,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
         this.closeDialog();
     };
 
-    private handleLevelChange = (event: TouchTapEvent, index: number, value: string) => {
+    private handleLevelChange = (ignoredEvent: any, index: number, value: string) => {
         let skill: LanguageSkill = this.state.languageSkill;
         skill = skill.level(value);
         this.setState({
@@ -117,8 +117,8 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                 onRequestClose={this.closeDialog}
                 autoScrollBodyContent={true}
                 title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
-                actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                 <div className="row">
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">

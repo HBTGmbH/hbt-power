@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {FlatButton} from 'material-ui';
+
 const MorphIcon = require('react-svg-buttons').MorphIcon;
 
 interface EntrySortButtonProps {
@@ -39,7 +40,7 @@ export class EntrySortButton extends React.Component<EntrySortButtonProps, Entry
         return (
             <span>
                 <FlatButton
-                    onTouchTap={this.changeOrder}
+                    onClick={this.changeOrder}
                 >
                     {this.props.label}
                 </FlatButton>

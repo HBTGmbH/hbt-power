@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, DatePicker, Dialog, IconButton, TouchTapEvent} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -103,12 +103,12 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         this.setState({trainingEntryValue: chosenRequest});
     };
 
-    private handleCloseButtonPress = (event: TouchTapEvent) => {
+    private handleCloseButtonPress = () => {
         this.closeDialog();
     };
 
 
-    private handleSaveButtonPress = (event: TouchTapEvent) => {
+    private handleSaveButtonPress = () => {
         let name: string = this.state.trainingEntryValue;
         let training: NameEntity = ProfileStore.findNameEntityByName(name, this.props.trainings);
         let sectorEntry: TrainingEntry = this.state.trainingEntry;
@@ -130,8 +130,8 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                 onRequestClose={this.closeDialog}
                 title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 autoScrollBodyContent={true}
-                actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[<IconButton iconClassName="material-icons icon-size-80" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton iconClassName="material-icons icon-size-80" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">

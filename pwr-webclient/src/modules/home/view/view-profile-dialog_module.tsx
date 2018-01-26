@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Dialog, FlatButton, FontIcon, Slider, TextField} from 'material-ui';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {LimitedTextField} from '../../general/limited-text-field-module.';
+import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 
@@ -88,12 +88,12 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         actions.push(<FlatButton
             primary={true}
             label={label}
-            onTouchTap={this.closeAndSave}
+            onClick={this.closeAndSave}
             icon={<FontIcon className="material-icons">{icon}</FontIcon>}
         />);
         actions.push(<FlatButton
             label={PowerLocalize.get("Action.Close")}
-            onTouchTap={this.props.onRequestClose}
+            onClick={this.props.onRequestClose}
             icon={<FontIcon className="material-icons">close</FontIcon>}
         />);
         return actions;

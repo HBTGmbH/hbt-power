@@ -7,7 +7,6 @@ import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../../model/SectorEntry';
 import {SingleSectorModule} from './sector-entry_module';
-import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
@@ -72,7 +71,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         };
     }
 
-    private handleAddElement = (event: TouchTapEvent) => {
+    private handleAddElement = () => {
         this.props.addSectorEntry();
     };
 

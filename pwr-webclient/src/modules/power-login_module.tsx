@@ -5,7 +5,7 @@ import * as redux from 'redux';
 import {FlatButton, RaisedButton, TextField} from 'material-ui';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {Paths} from '../Paths';
 import {BottomBuildInfo} from './metadata/build-info_module';
 import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';

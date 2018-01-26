@@ -149,7 +149,7 @@ class PowerOverviewModule extends React.Component<
                                     primary={true}
                                     className="mui-margin"
                                     label={PowerLocalize.get('ViewProfile.Create')}
-                                    onTouchTap={() => this.setViewDialogOpen(true)}
+                                    onClick={() => this.setViewDialogOpen(true)}
                                     icon={<FontIcon className="material-icons">add</FontIcon>}
                                 />
                                 <div className="row">

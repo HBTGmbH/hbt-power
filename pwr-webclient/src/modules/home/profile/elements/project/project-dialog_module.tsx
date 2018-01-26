@@ -218,16 +218,14 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                 title={PowerLocalize.get('ProjectDialog.Title')}
                 actions={[
                     (<IconButton
-                        size={20}
-                        iconClassName="material-icons"
+                        iconClassName="material-icons icon-size-20"
                         onClick={this.handleSaveButtonPress}
                         tooltip={PowerLocalize.get('Action.Save')}
                     >
                         save
                     </IconButton>),
                     (<IconButton
-                        size={20}
-                        iconClassName="material-icons"
+                        iconClassName="material-icons icon-size-20"
                         onClick={this.handleCloseButtonPress}
                         tooltip={PowerLocalize.get('Action.Exit')}
                     >

@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {Color} from '../../../../utils/ColorUtil';
-import {Col, Grid, Row} from 'react-flexbox-grid';
 import {LinearProgress, TextField} from 'material-ui';
 import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
@@ -90,7 +89,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
 
     render() {
         return(
-            <Grid fluid>
+            <div>
                 <TextField
                     hintText = {this.props.hintText}
                     floatingLabelText = {this.props.hintText}
@@ -100,8 +99,6 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
                     onChange={this.handleTextChange}
                     value={this.props.abstractText}
                 />
-                <Row>
-                    <Col xs={12} sm={8} md={3} lg={3} >
                         <LinearProgress
                             min={0}
                             max={this.state.maxCharacters}
@@ -109,10 +106,8 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
                             mode="determinate"
                             color={this.state.currentBarColor}
                         />
-                    </Col>
                     <div>Zeichen: {this.props.abstractText.length}/{this.state.maxCharacters}</div>
-                </Row>
-            </Grid>
+            </div>
         );
     }
 }

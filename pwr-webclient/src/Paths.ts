@@ -7,7 +7,6 @@ import {
 import {isNullOrUndefined} from 'util';
 import * as Cookies from 'js-cookie';
 import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
-import {browserHistory} from 'react-router';
 import {AdminActionCreator} from './reducers/admin/AdminActionCreator';
 import {store} from './reducers/reducerIndex';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
@@ -54,11 +53,10 @@ export class Paths {
     };
 
     public restorePath() {
-        let location = browserHistory.getCurrentLocation();
-        console.info('Current history location is ', browserHistory.getCurrentLocation());
-        if(this.adminAvailableInCookies()) {
+        console.info('Current history location is ',location.pathname );
+        if (this.adminAvailableInCookies()) {
             store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
-        }else if(this.userAvailableInCookies()) {
+        } else if(this.userAvailableInCookies()) {
             const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
             // renew the cookie to hold another fixed period of time.
             Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});

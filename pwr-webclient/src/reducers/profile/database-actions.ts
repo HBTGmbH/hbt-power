@@ -9,8 +9,9 @@ import {NameEntity} from '../../model/NameEntity';
 import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {Action} from 'redux';
 
-export interface AbstractAction {
+export interface AbstractAction extends Action{
     type: ActionType;
 }
 

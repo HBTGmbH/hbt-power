@@ -6,10 +6,10 @@ import {Checkbox, Paper, RaisedButton, TextField} from 'material-ui';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {Paths} from '../../Paths';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {getImagePath} from "../../API_CONFIG";
+import {getImagePath} from '../../API_CONFIG';
 
 /**
  * Properties that are managed by react-redux.

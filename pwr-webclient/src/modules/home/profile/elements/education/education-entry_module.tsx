@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IconButton, TouchTapEvent} from 'material-ui';
+import {IconButton} from 'material-ui';
 import {EducationEntry} from '../../../../../model/EducationEntry';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
@@ -64,13 +64,13 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
 
 
 
-    private handleFieldTouchClick = (event: TouchTapEvent) => {
+    private handleFieldTouchClick = () => {
         this.setState({
             dialogOpen: true
         });
     };
 
-    private handleEditButtonPress = (event: TouchTapEvent) => {
+    private handleEditButtonPress = () => {
         this.setState({
             dialogOpen: true
         });
@@ -87,7 +87,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         this.props.onSave(entry, name);
     };
 
-    private handleDeleteButtonPress = (event: TouchTapEvent) => {
+    private handleDeleteButtonPress = () => {
         this.props.onDelete(this.props.educationEntry.id());
     };
 
@@ -97,8 +97,8 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         return(
             <tr>
                 <td>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleEditButtonPress} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton size={20} iconClassName="material-icons" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleEditButtonPress} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     <EducationEntryDialogModule
                         open={this.state.dialogOpen}
                         educationEntry={this.props.educationEntry}

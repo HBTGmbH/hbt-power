@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ProfileElementType} from '../../../../../Store';
-import {TouchTapEvent} from 'material-ui';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {EducationEntry} from '../../../../../model/EducationEntry';
 import * as Immutable from 'immutable';
@@ -71,7 +70,7 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
         };
     }
 
-    private handleAddElement = (event: TouchTapEvent) => {
+    private handleAddElement = () => {
         this.props.addEducationEntry();
     };
 

@@ -10,7 +10,7 @@ import {ViewProfileProjectsOverview} from './view-profile-projects-overview_modu
 import {ViewProfileSkillOverview} from './view-profile-skill-overview_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
-import {LimitedTextField} from '../../general/limited-text-field-module.';
+import {LimitedTextField} from '../../general/limited-text-field-module';
 
 interface ViewProfileOverviewProps {
     viewProfile: ViewProfile;
@@ -112,7 +112,7 @@ class ViewProfileOverviewModule extends React.Component<
                             className="mui-margin float-right"
                             primary={true}
                             label={PowerLocalize.get("Action.Generate.Word")}
-                            onTouchTap={() => this.props.generate(this.props.viewProfile.id)}
+                            onClick={() => this.props.generate(this.props.viewProfile.id)}
                             icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
                         />
                     </div>

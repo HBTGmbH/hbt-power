@@ -6,7 +6,6 @@ import {SingleLanguage} from './language-skill_module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
-import {TouchTapEvent} from 'material-ui';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileElement} from '../../profile-element_module';
@@ -80,7 +79,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         };
     }
 
-    private handleAddElement = (event: TouchTapEvent) => {
+    private handleAddElement = () => {
         this.props.addLanguageSkill();
     };
 

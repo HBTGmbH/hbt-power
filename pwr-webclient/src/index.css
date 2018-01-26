@@ -176,3 +176,22 @@ body {
   margin-top: 8px;
 }
 
+.icon-ok-button {
+  color: green;
+  size: 80px;
+}
+
+.icon-size-70 {
+  size: 70px;
+}
+
+.icon-size-20 {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-size-80 {
+  width: 80px;
+  height: 80px;
+}
+

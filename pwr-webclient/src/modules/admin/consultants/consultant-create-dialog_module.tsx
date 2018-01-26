@@ -5,7 +5,7 @@ import {Dialog, FlatButton} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {LimitedTextField} from '../../general/limited-text-field-module.';
+import {LimitedTextField} from '../../general/limited-text-field-module';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 
@@ -124,12 +124,12 @@ class ConsultantCreateDialogModule extends React.Component<
         <FlatButton
             label={PowerLocalize.get("Action.Save")}
             primary={true}
-            onTouchTap={this.saveAndReset}
+            onClick={this.saveAndReset}
         />,
         <FlatButton
             label={PowerLocalize.get("Action.Exit")}
             primary={true}
-            onTouchTap={this.closeAndReset}
+            onClick={this.closeAndReset}
         />,
     ];
 

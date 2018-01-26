@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Card, CardHeader, CardMedia, Divider, IconButton, TouchTapEvent} from 'material-ui';
+import {Card, CardHeader, CardMedia, Divider, IconButton} from 'material-ui';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface ProfileElementLocalProps {
@@ -14,7 +14,7 @@ interface ProfileElementLocalProps {
      * Callback that is executed when the add button onClick event is invoked.
      * @param event
      */
-    onAddElement(event: TouchTapEvent): void;
+    onAddElement(): void;
 
     header?: JSX.Element;
 }

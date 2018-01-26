@@ -100,8 +100,8 @@ class SingleKeySkillModule extends React.Component<
         return (
             <tr>
             <td>
-                <IconButton size={20} iconClassName="material-icons" onClick={this.openDialog} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton size={20} iconClassName="material-icons" onClick={this.deleteEntry} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                <IconButton iconClassName="material-icons icon-size-20" onClick={this.openDialog} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                <IconButton iconClassName="material-icons icon-size-20" onClick={this.deleteEntry} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                 <KeySkillDialog
                     open={this.state.dialogOpen}
                     keySkillEntry={this.props.keySkillEntry}

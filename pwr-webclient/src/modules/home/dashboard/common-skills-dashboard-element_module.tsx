@@ -9,7 +9,7 @@ import {isNullOrUndefined} from 'util';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
-import {getImagePath} from "../../../API_CONFIG";
+import {getImagePath} from '../../../API_CONFIG';
 
 interface CommonSkillsDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -82,7 +82,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                             labelPosition="before"
                             primary={true}
                             icon={ <FontIcon className="material-icons">open_in_new</FontIcon>}
-                            onTouchTap={() => this.loadSkillStatistics()}
+                            onClick={() => this.loadSkillStatistics()}
                         />
                     </div>
                 </div>

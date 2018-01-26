@@ -9,7 +9,7 @@ import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
-import {getImagePath} from "../../../API_CONFIG";
+import {getImagePath} from '../../../API_CONFIG';
 
 interface MissingCommonDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -83,7 +83,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                             labelPosition="before"
                             primary={true}
                             icon={ <FontIcon className="material-icons">open_in_new</FontIcon>}
-                            onTouchTap={() => this.loadSkillStatistics()}
+                            onClick={() => this.loadSkillStatistics()}
                         />
                     </div>
                 </div>

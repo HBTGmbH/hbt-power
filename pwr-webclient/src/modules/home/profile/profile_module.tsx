@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar, TouchTapEvent} from 'material-ui';
+import {CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar} from 'material-ui';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -77,11 +77,11 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
 
 
-    private handleReloadProfile = (event: TouchTapEvent) => {
+    private handleReloadProfile = () => {
         this.props.reloadProfile(this.props.loggedInUser.initials());
     };
 
-    private handleSaveProfile = (event: TouchTapEvent) => {
+    private handleSaveProfile = () => {
         this.props.saveProfile(this.props.loggedInUser.initials(), this.props.database);
     };
 
@@ -101,31 +101,31 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <Divider/>
 
                         <div className="row">
-                            <div className="col-md-6 col-sm-12 fullWidth">
+                            <div className="col-md-6 col-sm-12">
                                 <ProfileDescription
                                 hintText={PowerLocalize.get("Profile.Description")}
                                 initialMaxCharacters={500}
                             />
                             </div>
-                            <div className="col-md-6 col-sm-12 fullWidth">
+                            <div className="col-md-6 col-sm-12">
                                 <LanguageSkills/>
                             </div>
-                            <div className="col-md-6 col-sm-12 fullWidth ">
+                            <div className="col-md-6 col-sm-12 ">
                                 <TrainingEntries/>
                             </div>
-                            <div className="col-md-6 col-sm-12 fullWidth">
+                            <div className="col-md-6 col-sm-12">
                                 <EducationList/>
                             </div>
-                            <div className="col-md-6 col-sm-12 fullWidth">
+                            <div className="col-md-6 col-sm-12">
                                 <Qualifications/>
                             </div>
-                            <div className="col-md-6 col-sm-12 fullWidth">
+                            <div className="col-md-6 col-sm-12">
                                 <Sectors/>
                             </div>
-                            <div className="col-md-6 col-sm-12 fullWidth">
+                            <div className="col-md-6 col-sm-12">
                                 <KeySkills/>
                             </div>
-                            <div className="col-md-6 col-sm-12 fullWidth">
+                            <div className="col-md-6 col-sm-12">
                                 <Careers/>
                             </div>
                         </div>

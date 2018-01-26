@@ -112,8 +112,9 @@ class KeySkillDialogModule extends React.Component<
             modal={false}
             onRequestClose={this.closeDialog}
             title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
-            actions={[<IconButton size={20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-            <IconButton size={20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+            actions={[
+                <IconButton iconClassName="material-icons icon-size-20" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                <IconButton iconClassName="material-icons icon-size-20" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
         >
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">

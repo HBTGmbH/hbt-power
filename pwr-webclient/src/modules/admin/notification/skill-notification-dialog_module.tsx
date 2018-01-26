@@ -236,9 +236,8 @@ class SkillNotificationModuleModule extends React.Component<
         return <div style={{textAlign: 'center'}}>
             Success<br/>
             <IconButton
+                className="icon-ok-button "
                 iconClassName="material-icons"
-                iconStyle={{color: 'green'}}
-                size={80}
             >
                 check_circle
             </IconButton>
@@ -261,7 +260,7 @@ class SkillNotificationModuleModule extends React.Component<
                 Consider validating the skill category after change; If you are sure the changed skill is correct, this is not necessary.
             </p>
         </div>
-    }
+    };
 
     private renderContent() {
         switch(this.props.status) {
@@ -377,7 +376,7 @@ class SkillNotificationModuleModule extends React.Component<
                 key="SkillNotDlg.CloseAndReset"
                 label="Cancel"
                 primary={true}
-                onTouchTap={this.props.closeAndReset}
+                onClick={this.props.closeAndReset}
             />]}
         >
             {this.renderContent()}

@@ -17,7 +17,6 @@ import {AdminNotification} from '../../model/admin/AdminNotification';
 import {ActionType} from '../ActionType';
 import {RequestStatus} from '../../Store';
 import * as Immutable from 'immutable';
-import {browserHistory} from 'react-router';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {LoginStatus} from '../../model/LoginStatus';
 import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
@@ -28,7 +27,7 @@ import {Comparators} from '../../utils/Comparators';
 import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
-import set = Reflect.set;
+import {PWR_HISTORY} from '../reducerIndex';
 
 export class AdminReducer {
 
@@ -97,7 +96,7 @@ export class AdminReducer {
     }
 
     public static NaviagateTo(state: AdminState, action: NavigateAction) {
-        browserHistory.push(action.location);
+        PWR_HISTORY.push(action.location);
         return state;
     }
 
@@ -114,7 +113,7 @@ export class AdminReducer {
     }
 
     public static LogInAdmin(state: AdminState, action: AbstractAction): AdminState {
-        browserHistory.push(Paths.ADMIN_INBOX);
+        PWR_HISTORY.push(Paths.ADMIN_INBOX);
         return state.loginStatus(LoginStatus.SUCCESS);
     }
 
@@ -127,7 +126,7 @@ export class AdminReducer {
     }
 
     public static LogOutAdmin(state: AdminState): AdminState {
-        browserHistory.push(Paths.APP_ROOT);
+        PWR_HISTORY.push(Paths.APP_ROOT);
         Cookies.remove(COOKIE_ADMIN_USERNAME);
         Cookies.remove(COOKIE_ADMIN_PASSWORD);
         return AdminState.createDefault();
