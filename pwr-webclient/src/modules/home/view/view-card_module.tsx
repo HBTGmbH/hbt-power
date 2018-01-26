@@ -9,6 +9,7 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileDialog} from './view-profile-dialog_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
+import {Paths} from '../../../Paths';
 
 interface ViewCardProps {
     viewProfile: ViewProfile;
@@ -94,7 +95,7 @@ class ViewCardModule extends React.Component<
                     <RaisedButton
                         className="mui-margin"
                         label={PowerLocalize.get("ViewProfileCard.Action.Edit")}
-                        onClick={() => this.props.navigateTo("/app/view/" + this.props.viewProfileId)}
+                        onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", this.props.viewProfileId))}
                         icon={<FontIcon className="material-icons">edit</FontIcon>}
                     />
                     <RaisedButton

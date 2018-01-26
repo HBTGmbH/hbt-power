@@ -73,10 +73,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         };
     }
 
-
-
-
-
     private handleReloadProfile = () => {
         this.props.reloadProfile(this.props.loggedInUser.initials());
     };

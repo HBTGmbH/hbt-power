@@ -70,7 +70,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return {
             logOutUser: function() {
                 dispatch(ProfileActionCreator.logOutUser());
-                dispatch(AdminActionCreator.LogOutAdmin());
+                dispatch(AdminActionCreator.AsyncLogOutAdmin());
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
@@ -127,7 +127,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return <MenuItem
             key={viewProfile.id}
             primaryText={text}
-            onClick={() => this.props.navigateTo("/app/view/" + viewProfile.id)}
+            onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", viewProfile.id))}
         />;
     };
 

@@ -46,7 +46,6 @@ export enum ActionType {
 
     RequestNotificationTrashing,
 
-    AdminNavigate,
     AdminRequestStatus,
 
     ChangeUsername,

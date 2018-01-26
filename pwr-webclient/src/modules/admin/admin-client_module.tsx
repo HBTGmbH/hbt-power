@@ -17,6 +17,7 @@ import {SkillStatistics} from '../home/statistics/skill-statistics_module';
 import {ProfileNetwork} from './statistics/profile-network_module';
 import {AdminSkillTree2} from './info/admin-skill-tree2_module';
 import {AdminProfileOverview} from './info/admin-profile-overview_module.';
+import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 
 
 /**
@@ -83,9 +84,9 @@ class AdminClientModule extends React.Component<
             getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
             navigateToInbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass));},
             navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass));},
-            navigateToConsultants: () => {dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_CONSULTANTS));},
+            navigateToConsultants: () => {dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));},
             navigateToSkillStatistics: () => {dispatch(AdminActionCreator.AsyncNavigateToStatistics());},
-            logOutAdmin: () => {dispatch(AdminActionCreator.LogOutAdmin());},
+            logOutAdmin: () => {dispatch(AdminActionCreator.AsyncLogOutAdmin());},
             navigateToNetwork: () => {dispatch(AdminActionCreator.AsyncNavigateToNetwork());}
         };
     }

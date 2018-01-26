@@ -4,7 +4,6 @@ import {isNullOrUndefined} from 'util';
 import {
     ChangeLoginStatusAction,
     ChangeRequestStatusAction,
-    NavigateAction,
     OpenSkillNotificationDialogAction,
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
@@ -21,13 +20,11 @@ import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {LoginStatus} from '../../model/LoginStatus';
 import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
-import {Paths} from '../../Paths';
 import {APIProfileEntryNotification, ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {Comparators} from '../../utils/Comparators';
 import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
-import {PWR_HISTORY} from '../reducerIndex';
 
 export class AdminReducer {
 
@@ -95,11 +92,6 @@ export class AdminReducer {
         return state.requestStatus(RequestStatus.Pending);
     }
 
-    public static NaviagateTo(state: AdminState, action: NavigateAction) {
-        PWR_HISTORY.push(action.location);
-        return state;
-    }
-
     public static ChangeUsername(state: AdminState, action: ChangeStringValueAction) {
         return state.adminName(action.value);
     }
@@ -113,7 +105,6 @@ export class AdminReducer {
     }
 
     public static LogInAdmin(state: AdminState, action: AbstractAction): AdminState {
-        PWR_HISTORY.push(Paths.ADMIN_INBOX);
         return state.loginStatus(LoginStatus.SUCCESS);
     }
 
@@ -126,7 +117,6 @@ export class AdminReducer {
     }
 
     public static LogOutAdmin(state: AdminState): AdminState {
-        PWR_HISTORY.push(Paths.APP_ROOT);
         Cookies.remove(COOKIE_ADMIN_USERNAME);
         Cookies.remove(COOKIE_ADMIN_PASSWORD);
         return AdminState.createDefault();
@@ -175,8 +165,6 @@ export class AdminReducer {
                 return AdminReducer.FailRequest(state);
             case ActionType.RequestNotificationTrashing:
                 return AdminReducer.RequestNotificationTrashing(state, action as ChangeRequestStatusAction);
-            case ActionType.AdminNavigate:
-                return AdminReducer.NaviagateTo(state, action as NavigateAction);
             case ActionType.AdminRequestStatus:
                 return state.requestStatus((action as ChangeRequestStatusAction).requestStatus);
             case ActionType.ChangeAdminLoginStatus:

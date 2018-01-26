@@ -4,7 +4,6 @@ import {APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
     ChangeLoginStatusAction,
     ChangeRequestStatusAction,
-    NavigateAction,
     OpenSkillNotificationDialogAction,
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
@@ -26,7 +25,7 @@ import {
     postConsultantActionString
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import {ApplicationState} from '../reducerIndex';
+import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -43,6 +42,7 @@ import {APISkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {SkillActionCreator} from '../skill/SkillActionCreator';
 import {APISkillCategory} from '../../model/skill/SkillCategory';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
+import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 
 export class AdminActionCreator {
     private static logAxiosError(error: any) {
@@ -120,13 +120,6 @@ export class AdminActionCreator {
         return {
             type: ActionType.RequestNotificationTrashing,
             requestStatus: RequestStatus.Failiure
-        };
-    }
-
-    public static NavigateTo(to: string): NavigateAction {
-        return {
-            type: ActionType.AdminNavigate,
-            location: to
         };
     }
 
@@ -221,14 +214,14 @@ export class AdminActionCreator {
     public static AsyncNavigateToStatistics() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(StatisticsActionCreator.AsyncRequestSkillUsages());
-            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_STATISTICS_SKILL));
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_STATISTICS_SKILL));
         };
     }
 
     public static AsyncNavigateToNetwork() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(StatisticsActionCreator.AsyncRequestNetwork());
-            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_STATISTICS_NETWORK));
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_STATISTICS_NETWORK));
         };
     }
 
@@ -328,16 +321,16 @@ export class AdminActionCreator {
     }
 
     public static AsyncNavigateToInbox(username: string, password: string) {
-        return function(dispatch: redux.Dispatch<AdminState>){
+        return function(dispatch: redux.Dispatch<ApplicationState>){
             dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
-            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_INBOX));
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_INBOX));
         };
     }
 
     public static AsyncNavigateToTrashbox(username: string, password: string) {
-        return function(dispatch: redux.Dispatch<AdminState>){
+        return function(dispatch: redux.Dispatch<ApplicationState>){
             dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
-            dispatch(AdminActionCreator.NavigateTo(Paths.ADMIN_TRASHBOX));
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TRASHBOX));
         };
     }
 
@@ -439,6 +432,13 @@ export class AdminActionCreator {
         };
     }
 
+    public static AsyncLogOutAdmin() {
+        return function(dispatch: redux.Dispatch<AdminState>) {
+            PWR_HISTORY.push(Paths.APP_ROOT);
+            dispatch(AdminActionCreator.LogOutAdmin());
+        }
+    }
+
     /**
      *
      * @param username
@@ -466,14 +466,14 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
                 dispatch(AdminActionCreator.AsyncGetAllConsultants());
                 dispatch(AdminActionCreator.LogInAdmin());
+                PWR_HISTORY.push(Paths.ADMIN_INBOX);
             }).catch(function(error:AxiosError) {
-                console.log(error.code);
+                AdminActionCreator.logAxiosError(error);
                 if(!isNullOrUndefined(error.response) && error.response.status === 401) {
                     dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
                 } else {
                     dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.UNAVAILABLE));
                 }
-                AdminActionCreator.logAxiosError(error);
             });
         };
     }

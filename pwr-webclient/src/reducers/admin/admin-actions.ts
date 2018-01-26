@@ -34,10 +34,6 @@ export interface ChangeRequestStatusAction extends AbstractAction {
     requestStatus: RequestStatus;
 }
 
-export interface NavigateAction extends AbstractAction {
-    location: string;
-}
-
 export interface ChangeLoginStatusAction extends AbstractAction {
     status: LoginStatus;
 }

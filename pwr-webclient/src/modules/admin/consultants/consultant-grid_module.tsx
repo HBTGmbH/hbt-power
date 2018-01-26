@@ -104,39 +104,39 @@ class ConsultantGridModule extends React.Component<
                     onRequestClose={this.hideDialog}
                 />
                 <div className="row">
-                    <div className="col-md-9">
-                        <RaisedButton
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.Update')}
-                            icon={<FontIcon className="material-icons">refresh</FontIcon>}
-                            onClick={this.props.refreshConsultants}
-                        />
-                        <RaisedButton
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.CreateNewConsultant')}
-                            icon={<FontIcon className="material-icons">add</FontIcon>}
-                            onClick={this.showDialog}
-                        />
-                        <Checkbox
-                            label={"Show inactive"}
-                            checked={this.state.showInactive}
-                            onCheck={(e, v) => this.setState({showInactive: v})}
-                        />
-                    </div>
+                    <RaisedButton
+                        style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
+                        label={PowerLocalize.get('Action.Update')}
+                        icon={<FontIcon className="material-icons">refresh</FontIcon>}
+                        onClick={this.props.refreshConsultants}
+                    />
+                    <RaisedButton
+                        style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
+                        label={PowerLocalize.get('Action.CreateNewConsultant')}
+                        icon={<FontIcon className="material-icons">add</FontIcon>}
+                        onClick={this.showDialog}
+                    />
+                    <Checkbox
+                        label={"Show inactive"}
+                        checked={this.state.showInactive}
+                        onCheck={(e, v) => this.setState({showInactive: v})}
+                    />
                 </div>
-                <GridList
-                    cols={4}
-                    cellHeight={310}
-                    padding={5}
-                >
+                <div className="row">
+                    <GridList
+                        cols={4}
+                        cellHeight={310}
+                        padding={5}
+                    >
                     {
                         this.props.consultantsByInitials
                             .filter(this.filterInactive)
                             .map(consultantInfo => {
-                            return <ConsultantTile key={"ConsultantTile." + consultantInfo.initials()} initials={consultantInfo.initials()}/>
-                        }).toArray()
+                                return <ConsultantTile key={"ConsultantTile." + consultantInfo.initials()} initials={consultantInfo.initials()}/>
+                            }).toArray()
                     }
-                </GridList>
+                    </GridList>
+                </div>
             </div>
         );
     }

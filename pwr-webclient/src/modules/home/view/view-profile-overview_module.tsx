@@ -19,7 +19,7 @@ interface ViewProfileOverviewProps {
 
 
 interface ViewProfileOverviewLocalProps {
-    params?: any;
+    match?: any;
 }
 
 interface ViewProfileOverviewLocalState {
@@ -39,7 +39,7 @@ class ViewProfileOverviewModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileOverviewLocalProps): ViewProfileOverviewProps {
         return {
-            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.params.id),
+            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.match.params.id),
             isInProgress: state.viewProfileSlice.sortInProgress()
         };
     }
@@ -81,7 +81,7 @@ class ViewProfileOverviewModule extends React.Component<
         if (isNullOrUndefined(this.props.viewProfile)) {
             return <div>Does not exist</div>;
         } else {
-            let viewProfileId = this.props.params.id;
+            let viewProfileId = this.props.match.params.id;
             return (<div>
                 <Dialog
                     open={this.props.isInProgress}
