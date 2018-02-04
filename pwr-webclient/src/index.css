@@ -97,6 +97,11 @@ body {
   color: red;
 }
 
+.warning-note {
+  color: orange;
+  font-size: 13px;
+}
+
 .bold-mui {
   color: rgba(0, 0, 0, 0.87);
   font-weight: bold;

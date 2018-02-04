@@ -1,4 +1,5 @@
 import {SortableEntryField, SortableEntryType} from './model/view/NameComparableType';
+
 declare const POWER_API_HOST: string;
 
 declare const POWER_API_PREFIX: string;
@@ -243,6 +244,17 @@ export function deleteCategory(parentId: number) {
 
 export function patchMoveSkill(skillId: number, newCategoryId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId + "/category/" + newCategoryId;
+}
+
+export namespace AdminService {
+
+    function base() {
+       return POWER_API_HOST + ":" + POWER_API_PORT  + POWER_API_SUFFIX_PROFILE;
+    }
+
+    export function patchRenameSkill(): string {
+        return base() + "/admin/skills/name";
+    }
 }
 
 export namespace ViewProfileService {

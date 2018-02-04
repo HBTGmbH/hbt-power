@@ -8,6 +8,7 @@ import {ProfileEntryNotification} from './ProfileEntryNotification';
 import {SkillNotification} from './SkillNotification';
 import {SkillNotificationEditStatus} from './SkillNotificationEditStatus';
 import {SkillNotificationAction} from './SkillNotificationAction';
+import {AxiosRequestConfig} from 'axios';
 
 @doop
 export class AdminState {
@@ -94,5 +95,14 @@ export class AdminState {
             RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>(),
             "",
             SkillNotificationEditStatus.CLOSED, null, "", SkillNotificationAction.ACTION_OK, false);
+    }
+
+    public adminAuthConfig(): AxiosRequestConfig {
+        return {
+            auth: {
+                username: this.adminName(),
+                password: this.adminPass()
+            }
+        };
     }
 }

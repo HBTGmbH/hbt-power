@@ -15,6 +15,7 @@ import {
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
 import {
+    AdminService,
     getAdminAuthAPIString,
     getAllConsultantsString,
     getNotificationAPIString,
@@ -43,6 +44,7 @@ import {SkillActionCreator} from '../skill/SkillActionCreator';
 import {APISkillCategory} from '../../model/skill/SkillCategory';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import patchRenameSkill = AdminService.patchRenameSkill;
 
 export class AdminActionCreator {
     private static logAxiosError(error: any) {
@@ -640,5 +642,22 @@ export class AdminActionCreator {
                 }
             }
         }
+    }
+
+    public static AsyncChangeSkillName(oldName: string, newName: string) {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let config = getState().adminReducer.adminAuthConfig();
+            config.params = {
+                oldname: oldName,
+                newname: newName
+            };
+            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
+            axios.patch(patchRenameSkill(), null, config).then(result => {
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
+            }).catch(error => {
+                console.error(error);
+                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
+            })
+        };
     }
 }

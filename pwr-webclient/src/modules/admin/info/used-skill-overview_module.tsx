@@ -2,7 +2,17 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {AutoComplete, FontIcon, List, ListItem, makeSelectable, Paper, Subheader, TextField} from 'material-ui';
+import {
+    AutoComplete,
+    FontIcon,
+    List,
+    ListItem,
+    makeSelectable,
+    Paper,
+    RaisedButton,
+    Subheader,
+    TextField
+} from 'material-ui';
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {Comparators} from '../../../utils/Comparators';
@@ -13,6 +23,7 @@ import {isNullOrUndefined} from 'util';
 import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {EditSkillDialog} from './skill/edit-skill-dialog_module';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
 let SelectableList = wrapSelectableList(makeSelectable(List));
@@ -30,6 +41,7 @@ interface UsedSkillOverviewLocalProps {
 interface UsedSkillOverviewLocalState {
     selectedSkillName: string;
     filterString: string;
+    editOpen: boolean;
 }
 
 interface UsedSkillOverviewDispatch {
@@ -48,6 +60,7 @@ class UsedSkillOverviewModule extends React.Component<
         this.state = {
             selectedSkillName: '',
             filterString: '',
+            editOpen: false
         };
     }
 
@@ -79,6 +92,17 @@ class UsedSkillOverviewModule extends React.Component<
         this.props.getSkillHierarchy(skillName);
     };
 
+    private closeEditDialog = () => {
+        this.setState({
+            editOpen: false
+        })
+    };
+
+    private openEditDialog = () => {
+        this.setState({
+            editOpen: true
+        })
+    };
 
     render() {
         let res = null;
@@ -90,6 +114,11 @@ class UsedSkillOverviewModule extends React.Component<
         let values: Immutable.List<ConsultantInfo> = this.props.skillUsageInfo.get(this.state.selectedSkillName);
         return (
             <div className="row">
+                <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
+                                 skillToEdit={this.state.selectedSkillName}
+                                 open={this.state.editOpen}
+                                 onRequestClose={this.closeEditDialog}
+                />
                 <div className="col-md-8">
                     <Paper>
                         <TextField
@@ -140,6 +169,13 @@ class UsedSkillOverviewModule extends React.Component<
 
                                 }
                             </div>
+                            <RaisedButton primary={true}
+                                          icon={<FontIcon className="material-icons">edit</FontIcon>}
+                                          onClick={this.openEditDialog}
+                                          label={PowerLocalize.get("Action.Edit")}
+                                          className="mui-margin"
+                            />
+
                             <Subheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.UsedBy")}</Subheader>
                             <List>
                             {
