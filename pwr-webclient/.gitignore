@@ -163,3 +163,6 @@ typings/
 ### static images that don't need to be version controlled ###
 public/img/profile_pictures/**
 build/*
+
+### Config files ###
+public/config.js
