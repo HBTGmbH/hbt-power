@@ -289,7 +289,7 @@ class AddSkillDialogModule extends React.Component<
             <Dialog
                 open={this.props.addSkillStep !== AddSkillStep.NONE}
                 autoScrollBodyContent={true}
-                style={{width: "100%", position: "absolute"}}
+                style={{width: "100%"}}
                 contentStyle={{width: "100%"}}
                 title={PowerLocalize.get("AddSkillDialog.Title")}
                 actions={[<IconButton iconClassName="material-icons" onClick={this.props.closeDialog}>
