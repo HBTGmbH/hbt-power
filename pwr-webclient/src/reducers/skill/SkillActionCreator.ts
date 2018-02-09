@@ -30,6 +30,8 @@ import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import {SkillServiceError} from '../../model/skill/SkillServiceError';
 
 
 export namespace SkillActionCreator {
@@ -37,7 +39,6 @@ export namespace SkillActionCreator {
     import AddSkillToTreeAction = SkillActions.AddSkillToTreeAction;
     import ReadSkillHierarchyAction = SkillActions.ReadSkillHierarchyAction;
     import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
-    import Timer = NodeJS.Timer;
     import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
     import UpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
     import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
@@ -208,6 +209,18 @@ export namespace SkillActionCreator {
 
     let currentAPICalls = 0;
 
+    function handleSkillServiceError(error: AxiosError) {
+        console.error(error);
+        if (error.response && error.response.data) {
+            let response: SkillServiceError = error.response.data;
+            NavigationActionCreator.showError(response.errorType + ": " + response.message);
+        } else if (error.response) {
+            NavigationActionCreator.showError("Generic Error " + error.response.status);
+        } else {
+            NavigationActionCreator.showError("An unknown error occurred");
+        }
+    }
+
     function beginAPICall(dispatch: redux.Dispatch<ApplicationState>) {
         if(currentAPICalls === 0) {
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
@@ -260,9 +273,7 @@ export namespace SkillActionCreator {
             axios.get(getRootCategoryIds()).then(function (response: AxiosResponse) {
                 let categories: number[] = response.data;
                 categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 99)));
-            }).catch(function (error: any) {
-                console.log(error);
-            });
+            }).catch(handleSkillServiceError);
         };
     }
 
@@ -270,9 +281,7 @@ export namespace SkillActionCreator {
         axios.get(getCategoryChildrenByCategoryId(categoryId)).then(function (response: AxiosResponse) {
             let data: number[] = response.data;
             data.forEach((value, index, array) => dispatch(AsyncUpdateCategory(value, true)));
-        }).catch(function (error: any) {
-            console.log(error);
-        });
+        }).catch(handleSkillServiceError);
     }
 
     export function AsyncUpdateCategory(categoryId: number, fullRecursive?: boolean) {
@@ -285,9 +294,7 @@ export namespace SkillActionCreator {
                 if(doRecursive) {
                     InvokeChildUpdate(categoryId, dispatch);
                 }
-            }).catch(function (error: any) {
-                console.log(error);
-            });
+            }).catch(handleSkillServiceError);
         };
     }
 
@@ -302,9 +309,7 @@ export namespace SkillActionCreator {
                     dispatch(AsyncLoadChildrenIntoTree(category.id(), remainingDepth));
                 }
 
-            }).catch(function (error: any) {
-                console.log(error);
-            });
+            }).catch(handleSkillServiceError);
         };
     }
 
@@ -317,7 +322,7 @@ export namespace SkillActionCreator {
                 skills.forEach(apiSkill => dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(apiSkill))));
             }).catch(function (error: any) {
                 failAPICall(dispatch);
-                console.log(error);
+                handleSkillServiceError(error);
             });
         };
     }
@@ -333,7 +338,7 @@ export namespace SkillActionCreator {
                     dispatch(ReadSkillHierarchy(response.data));
                 }).catch(function (error: any) {
                     failAPICall(dispatch);
-                    console.error(error);
+                    handleSkillServiceError(error);
                 });
             }
         };
@@ -358,7 +363,7 @@ export namespace SkillActionCreator {
                 dispatch(AsyncUpdateCategory(categoryId, true));
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
-                console.log(error);
+                handleSkillServiceError(error);
             });
         }
     }
@@ -376,7 +381,7 @@ export namespace SkillActionCreator {
                 dispatch(AsyncUpdateCategory(categoryId, true));
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
-                console.log(error);
+                handleSkillServiceError(error);
             });
         }
     }
@@ -390,6 +395,7 @@ export namespace SkillActionCreator {
                 succeedAPICall(dispatch);
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
+                handleSkillServiceError(error);
             });
         }
     }
@@ -415,6 +421,7 @@ export namespace SkillActionCreator {
             }).catch((error: AxiosError) => {
                 console.log(error);
                 failAPICall(dispatch);
+                handleSkillServiceError(error);
             });
         }
     }
@@ -427,6 +434,7 @@ export namespace SkillActionCreator {
             }).catch((error: AxiosError) => {
                 console.log(error);
                 failAPICall(dispatch);
+                handleSkillServiceError(error);
             });
         }
     }
@@ -441,6 +449,7 @@ export namespace SkillActionCreator {
                 dispatch(AddCategoryToTree(parentId, SkillCategory.fromAPI(data)));
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
+                handleSkillServiceError(error);
             });
         }
     }
@@ -455,6 +464,7 @@ export namespace SkillActionCreator {
                 succeedAPICall(dispatch);
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
+                handleSkillServiceError(error);
             })
         }
     }
@@ -533,6 +543,7 @@ export namespace SkillActionCreator {
                     }, (error) => {
                         console.error(error);
                         failAPICall(dispatch);
+                        handleSkillServiceError(error);
                     });
                 }
 
@@ -547,6 +558,7 @@ export namespace SkillActionCreator {
                     succeedAPICall(dispatch);
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
+                    handleSkillServiceError(error);
                 });
             }
         }
@@ -561,6 +573,7 @@ export namespace SkillActionCreator {
                     dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(data)));
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
+                    handleSkillServiceError(error);
                 });
             }
         }
@@ -573,6 +586,7 @@ export namespace SkillActionCreator {
                     succeedAPICall(dispatch);
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
+                    handleSkillServiceError(error);
                 })
             }
         }
@@ -593,6 +607,7 @@ export namespace SkillActionCreator {
                     succeedAPICall(dispatch);
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
+                    handleSkillServiceError(error);
                 })
             }
         }
@@ -611,6 +626,7 @@ export namespace SkillActionCreator {
                     succeedAPICall(dispatch);
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
+                    handleSkillServiceError(error);
                 })
             }
         }

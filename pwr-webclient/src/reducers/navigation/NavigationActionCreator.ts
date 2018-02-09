@@ -18,6 +18,26 @@ export interface SetCurrentLocationAction extends AbstractAction {
 
 export namespace NavigationActionCreator {
 
+    let alertContainer: any = null;
+
+    export function setAlertContainer(container: any) {
+        alertContainer = container;
+    }
+
+    export function showError(msg: string) {
+        alertContainer.show(msg, {
+            time: 0,
+            type: 'error',
+        })
+    }
+
+    export function showSuccess(msg: string) {
+       alertContainer.show(msg, {
+            time: 10000,
+            type: 'success',
+        })
+    }
+
     /**
      * Sets the navigation target for an intercepted navigation action.
      * Continue or drop are possible when a target is set.

@@ -30,6 +30,7 @@
     "numeral": "^2.0.6",
     "randomcolor": "0.5.3",
     "react": "16.2.0",
+    "react-alert": "^2.1.2",
     "react-dom": "16.2.0",
     "react-grid-layout": "0.16.2",
     "react-redux": "5.0.5",

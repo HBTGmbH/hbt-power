@@ -21,6 +21,9 @@ import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
 import {Color} from './utils/ColorUtil';
 import {Route} from 'react-router-dom';
 import {ConnectedRouter} from 'react-router-redux';
+import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
+
+const AlertContainer = require('react-alert').default;
 
 const paths = new Paths();
 paths.restorePath();
@@ -74,6 +77,14 @@ const powerTheme = {
 
 export const POWER_MUI_THEME = getMuiTheme(powerTheme);
 
+const alertOptions = {
+    offset: 14,
+    position: 'bottom left',
+    theme: 'dark',
+    time: 0,
+    transition: 'scale'
+};
+
 
 let App = (
     <MuiThemeProvider muiTheme={POWER_MUI_THEME}>
@@ -85,6 +96,7 @@ let App = (
                     <Route path={Paths.USER_BASE} component={PowerClient}/>
                     <Route path={Paths.ADMIN_BASE} component={AdminClient}/>
                     <ConfirmNavDialog/>
+                    <AlertContainer  ref={(a:any) => NavigationActionCreator.setAlertContainer(a)}{...alertOptions}/>
                 </div>
             </ConnectedRouter>
         </Provider>
