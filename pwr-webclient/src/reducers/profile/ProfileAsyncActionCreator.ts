@@ -28,27 +28,24 @@ import {Paths} from '../../Paths';
 import {isNullOrUndefined} from 'util';
 import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
+import {ProfileServiceError} from '../../model/ProfileServiceError';
 
 export class ProfileAsyncActionCreator {
 
-    private static logAxiosError(error: any) {
+    private static handleProfileServiceError(error: any) {
         if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
+            let serviceError = error.response.data as ProfileServiceError;
+            NavigationActionCreator.showError("Error " + error.response.status + ":" + serviceError.message);
             console.error(error.response.data);
             console.error(error.response.status);
             console.error(error.response.headers);
         } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
             console.error(error.request);
+            NavigationActionCreator.showError("An unknown error occurred.");
         } else {
-            // Something happened in setting up the request that triggered an Error
-            console.error('Error', error.message);
+            NavigationActionCreator.showError("An unknown error occurred.");
         }
     }
-
 
     public static requestAllNameEntities() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
@@ -79,7 +76,7 @@ export class ProfileAsyncActionCreator {
                 // Parse the dates.
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile));
             }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
+                ProfileAsyncActionCreator.handleProfileServiceError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
 
@@ -93,7 +90,7 @@ export class ProfileAsyncActionCreator {
                 console.info('Notifications: ', response.data.notifications);
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveProfile));
             }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
+                ProfileAsyncActionCreator.handleProfileServiceError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
         };
@@ -104,7 +101,7 @@ export class ProfileAsyncActionCreator {
         axios.get(apiString).then(function(response: AxiosResponse) {
             dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, type));
         }).catch(function(error:any) {
-            ProfileAsyncActionCreator.logAxiosError(error);
+            ProfileAsyncActionCreator.handleProfileServiceError(error);
             dispatch(ProfileActionCreator.APIRequestFailed());
         });
     }
@@ -205,7 +202,7 @@ export class ProfileAsyncActionCreator {
                     dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
                 }
             }).catch(function(error:any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
+                ProfileAsyncActionCreator.handleProfileServiceError(error);
                 dispatch(ProfileActionCreator.FailLogin());
                 dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT));
             });
@@ -218,7 +215,7 @@ export class ProfileAsyncActionCreator {
                 let apiData: Array<String> = response.data;
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(apiData, APIRequestType.RequestSkillNames))
             }).catch(function (error: any) {
-                ProfileAsyncActionCreator.logAxiosError(error);
+                ProfileAsyncActionCreator.handleProfileServiceError(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
         }
