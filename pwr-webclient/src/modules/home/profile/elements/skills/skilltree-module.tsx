@@ -17,41 +17,19 @@ import {Color} from '../../../../../utils/ColorUtil';
 
 const distance = require("jaro-winkler");
 
-/**
- * Properties that are managed by react-redux.
- *
- * Each property defined here will also need a corresponding mapping in the {@link SkillTree.mapStateToProps} method,
- * otherwise the component will not render and update correctly.
- */
 interface SkillTreeProps {
     skills: Immutable.Map<string, Skill>;
     serviceSkillsByQualifier: Immutable.Map<string, SkillServiceSkill>;
 }
 
-/**
- * Local properties of this module.
- *
- * These properties are used to initialize the local state and to control everything that is solely used for the display layer.
- *
- * Data that is intended not only for display needs to be placed in the {@link SkillTreeProps} and will then be
- * managed by redux.
- */
 interface SkillTreeLocalProps {
 
 }
 
-/**
- * Local state of the module.
- *
- * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
- */
 interface SkillTreeLocalState {
     searchText: string;
 }
 
-/**
- * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
- */
 interface SkillTreeDispatch {
     changeSkillRating(rating: number, id: string): void;
     onSkillDelete(id: string): void;
@@ -119,18 +97,19 @@ class SkillTreeModule extends React.Component<
             margin: "4px",
             backgroundColor: custom ? "red" : Color.HBT_2017_GRAY.toCSSRGBString()
         };
-        return (<div className="col-md-12"><SkillChip
-            style={style}
-            key={skill.id()}
-            skill={skill}
-            textColor={"white"}
-            onDelete={this.props.onSkillDelete}
-            onRatingChange={this.props.changeSkillRating}
-        /></div>)
+        return <div className="col-md-12" key={skill.id()}>
+            <SkillChip
+                style={style}
+                skill={skill}
+                textColor={"white"}
+                onDelete={this.props.onSkillDelete}
+                onRatingChange={this.props.changeSkillRating}
+            />
+        </div>;
     };
 
     private renderSkills = () => {
-        return this.props.skills.sort(Comparators.compareSkills).map(skill => this.mapSkill(skill));
+        return this.props.skills.sort(Comparators.compareSkills).map(this.mapSkill).toArray();
     };
 
     private getSkillSearcherHeight = () => {
@@ -144,7 +123,7 @@ class SkillTreeModule extends React.Component<
                 <div>
                     <Subheader>Rot = Unbekannter Skill</Subheader>
                     <div className="row">
-                    {this.renderSkills()}
+                        {this.renderSkills()}
                     </div>
                 </div>
             </div>

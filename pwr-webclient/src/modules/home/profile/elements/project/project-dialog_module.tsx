@@ -6,7 +6,6 @@ import {Project} from '../../../../../model/Project';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
-import ChipInput from './../../../../../external_libs/ChipInput';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {Profile} from '../../../../../model/Profile';
@@ -16,6 +15,8 @@ import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+
+const ChipInput = require("material-ui-chip-input").default;
 
 interface ProjectDialogLocalProps {
     open: boolean;
@@ -298,6 +299,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                             <div className="col-md-offset-1 col-md-10">
                                 <ChipInput
                                     floatingLabelText={PowerLocalize.get('Project.Dialog.Roles.Title')}
+
                                     value={this.state.roles.toArray()}
                                     dataSource={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
                                     style={{'width': '100%'}}

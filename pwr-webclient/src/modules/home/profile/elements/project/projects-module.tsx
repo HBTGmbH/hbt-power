@@ -107,7 +107,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         let x = index * 3 % 12;
         let y = Math.floor(index/3) * 3;
         return (
-            <div key={key} data-grid={{x: x, y:y, w: 3, h: 3, isDraggable: false}}>
+            <div key={key} data-grid={{x: x, y:y, w: 2.95, h: 3, isDraggable: false}}>
                 <ProjectCard
                     project={value}
                     onSave={this.props.saveProject}
@@ -130,13 +130,11 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
     render() {
         return (
             <div>
-                <div>
-                    <ResponsiveReactGridLayout className="layout"
-                                               breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
-                                               cols={{lg: 12, md: 9, sm: 6, xs: 3, xxs: 3}}>
-                        {this.renderProjects()}
-                    </ResponsiveReactGridLayout>
-                </div>
+                <ResponsiveReactGridLayout
+                    className="layout" breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+                                           cols={{lg: 12, md: 9, sm: 6, xs: 3, xxs: 3}}>
+                    {this.renderProjects()}
+                </ResponsiveReactGridLayout>
                 <br/>
                 <div style={{textAlign: 'center'}}>
                     <IconButton
