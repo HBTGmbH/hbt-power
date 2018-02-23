@@ -488,7 +488,6 @@ export namespace SkillActionCreator {
 
         const checkAndInvoke = (skills: Array<SkillServiceSkill>, skillsChanged: number, remainingRequests: number, dsp: redux.Dispatch<ApplicationState>) => {
             if(remainingRequests <= 0) {
-                dsp(ProfileActionCreator.SucceedAPIRequest());
                 if(skillsChanged != 0) {
                     dsp(BatchAddSkills(skills));
                 }
@@ -504,8 +503,6 @@ export namespace SkillActionCreator {
                 });
                 let remaining = filteredQualifiers.length;
                 if(remaining > 0) {
-                    dispatch(ProfileActionCreator.APIRequestPending());
-
                     for(let i = 0; i < filteredQualifiers.length; i++) {
                         getSkillByQualifier(filteredQualifiers[i], skill => {
                             remaining--;
