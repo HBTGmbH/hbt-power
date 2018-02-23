@@ -130,8 +130,8 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                 onRequestClose={this.closeDialog}
                 title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 autoScrollBodyContent={true}
-                actions={[<IconButton iconClassName="material-icons icon-size-80" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton iconClassName="material-icons icon-size-80" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">

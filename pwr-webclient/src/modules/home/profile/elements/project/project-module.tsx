@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Card, CardActions, CardHeader, CardText, IconButton, Paper} from 'material-ui';
+import {Card, CardActions, CardHeader, CardText, IconButton} from 'material-ui';
 import {Project} from '../../../../../model/Project';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialog, ProjectDialogState} from './project-dialog_module';
@@ -78,8 +78,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
 
     render () {
         return (
-            <Paper zDepth={1} style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}}>
-                <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100% "}} initiallyExpanded={true}>
+                <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100%"}} initiallyExpanded={true}>
                     <CardHeader
                         title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
                         subtitle={this.renderTitle()}
@@ -105,7 +104,6 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                                     tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     </CardActions>
                 </Card>
-            </Paper>
         );
     }
 }

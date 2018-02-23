@@ -238,7 +238,7 @@ class AddSkillDialogModule extends React.Component<
         if(this.props.doneState === "SKILL_EXISTS") {
             btn = <div>
                     <IconButton
-                        iconClassName="material-icons icon-size-80"
+                        iconClassName="material-icons icon-size-20"
                         iconStyle={{color: "green"}}
                         onClick={this.props.progress}
                     >
@@ -248,7 +248,7 @@ class AddSkillDialogModule extends React.Component<
                 </div>
         } else {
            btn = <IconButton
-                iconClassName="material-icons icon-size-80"
+                iconClassName="material-icons icon-size-20"
                 iconStyle={{color: "green"}}
                 onClick={this.props.progress}
             >

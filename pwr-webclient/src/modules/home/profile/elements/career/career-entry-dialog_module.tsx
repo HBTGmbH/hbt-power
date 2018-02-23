@@ -13,7 +13,6 @@ import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
-import {ReactUtils} from '../../../../../utils/ReactUtils';
 
 
 /**
@@ -167,8 +166,8 @@ class CareerEntryDialogModule extends React.Component<
             onRequestClose={this.closeDialog}
             autoScrollBodyContent={true}
             actions={[
-                <IconButton style={ReactUtils.BTN_SIZE_20} iconClassName="material-icons" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                <IconButton style={ReactUtils.BTN_SIZE_20} iconClassName="material-icons" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]
+                <IconButton iconClassName="material-icons icon-size-20" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                <IconButton iconClassName="material-icons icon-size-20" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]
             }
         >
             <div className="row">

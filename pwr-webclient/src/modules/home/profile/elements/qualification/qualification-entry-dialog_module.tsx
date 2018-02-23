@@ -117,8 +117,8 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                 actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
                     <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
-                <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                <div className="entry-dlg-content">
+                    <div>
                         <DatePicker
                             floatingLabelText={PowerLocalize.get('Begin')}
                             id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
@@ -128,8 +128,9 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                             formatDate={formatToShortDisplay}
                         />
                     </div>
-                    <div className="col-md-5 col-sm-6">
+                    <div>
                         <AutoComplete
+                            fullWidth={true}
                             floatingLabelText={PowerLocalize.get('Qualification.Singular')}
                             id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
                             value={this.state.qualificationAutoCompleteValue}

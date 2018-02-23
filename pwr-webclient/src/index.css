@@ -200,3 +200,6 @@ body {
   height: 80px;
 }
 
+.entry-dlg-content {
+    margin-right: 24px;
+}

@@ -2,11 +2,11 @@ import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import * as Immutable from 'immutable';
 import {List, ListItem, Paper} from 'material-ui';
-// Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
-import ChipInput from './../../../external_libs/ChipInput';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {getSearchSkill, postFindConsultantBySkills} from '../../../API_CONFIG';
 import {APISkill} from '../../../model/APIProfile';
+// Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
+const ChipInput = require("material-ui-chip-input").default;
 
 
 interface ConsultantSkillInfo {
@@ -117,7 +117,6 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
                     onRequestAdd={this.handleAddSkill}
                     onRequestDelete={this.handleRemoveSkill}
                     onUpdateInput={this.handleUpdateInput}
-
                 />
             </div>
             <div className="row" style={{paddingLeft: "20px"}}>

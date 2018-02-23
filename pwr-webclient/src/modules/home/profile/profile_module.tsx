@@ -87,50 +87,56 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     render() {
         return(
-           <Paper>
+           <Paper className="mui-margin">
                 <Tabs>
-                    <Tab label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
-                        <CardHeader
-                            title={isNullOrUndefined(this.props.loggedInUser) ? "" : this.props.loggedInUser.getFullName()}
-                            avatar={getProfileImageLocation(this.getInitials())}
-                        />
-                        <Divider/>
-
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12">
-                                <ProfileDescription
-                                hintText={PowerLocalize.get("Profile.Description")}
-                                initialMaxCharacters={500}
+                    <Tab
+                        label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
+                        <div className="mui-margin">
+                            <CardHeader
+                                title={isNullOrUndefined(this.props.loggedInUser) ? "" : this.props.loggedInUser.getFullName()}
+                                avatar={getProfileImageLocation(this.getInitials())}
                             />
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <LanguageSkills/>
-                            </div>
-                            <div className="col-md-6 col-sm-12 ">
-                                <TrainingEntries/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <EducationList/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <Qualifications/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <Sectors/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <KeySkills/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <Careers/>
+                            <Divider/>
+                            <div className="row">
+                                <div className="col-md-6 col-sm-12">
+                                    <ProfileDescription
+                                    hintText={PowerLocalize.get("Profile.Description")}
+                                    initialMaxCharacters={500}
+                                />
+                                </div>
+                                <div className="col-md-6 col-sm-12">
+                                    <LanguageSkills/>
+                                </div>
+                                <div className="col-md-6 col-sm-12 ">
+                                    <TrainingEntries/>
+                                </div>
+                                <div className="col-md-6 col-sm-12">
+                                    <EducationList/>
+                                </div>
+                                <div className="col-md-6 col-sm-12">
+                                    <Qualifications/>
+                                </div>
+                                <div className="col-md-6 col-sm-12">
+                                    <Sectors/>
+                                </div>
+                                <div className="col-md-6 col-sm-12">
+                                    <KeySkills/>
+                                </div>
+                                <div className="col-md-6 col-sm-12">
+                                    <Careers/>
+                                </div>
                             </div>
                         </div>
                     </Tab>
                     <Tab label={PowerLocalize.get("ProfileModule.Tabs.Projects.Title")}>
-                        <Projects/>
+                        <div className="mui-margin">
+                            <Projects/>
+                        </div>
                     </Tab>
                     <Tab label="Skills">
-                        <SkillTree/>
+                        <div className="mui-margin">
+                            <SkillTree/>
+                        </div>
                     </Tab>
                 </Tabs>
                 <Toolbar style={this.cardToolbarStyle}>

@@ -47,7 +47,6 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
     render() {
         return (
             <Chip
-                key={"Skill."+ this.props.skill.id()}
                 style={this.props.style}
                 className={this.props.className}
             >
@@ -64,9 +63,6 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                     </IconButton>
                     {this.props.skill.isNew() ? <FontIcon className="material-icons">fiber_new</FontIcon>: false}
                 </div>
-
-
-
             </Chip>);
     }
 }
