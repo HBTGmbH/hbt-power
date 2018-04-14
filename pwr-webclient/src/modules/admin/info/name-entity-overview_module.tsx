@@ -150,7 +150,7 @@ class NameEntityOverviewModule extends React.Component<
     private renderInfoBox = (nameEntities: Array<NameEntity>) => {
         if(this.state.selectedIndex != -1 ) {
             let ne = nameEntities[this.state.selectedIndex];
-            return <div>
+            return <div >
                 <div className="vertical-align" style={{backgroundColor: POWER_MUI_THEME.baseTheme.palette.primary2Color, height: '56px'}}>
                     <div
                         style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}

@@ -142,6 +142,16 @@ body {
   font-feature-settings: 'liga';
 }
 
+#skill-tree-info-panel {
+  position: fixed;
+  width: 450px;
+}
+
+#admin-info-panel {
+  position: fixed;
+  width: 444px;
+}
+
 .sticky-top {
   position: sticky;
   top: 0;

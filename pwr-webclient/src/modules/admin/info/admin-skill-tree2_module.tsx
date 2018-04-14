@@ -383,7 +383,7 @@ class AdminSkillTree2Module extends React.Component<
                     />
                 </Paper>
                 <div className="col-md-4">
-                    <div className="sticky-top">
+                    <div id="skill-tree-info-panel">
                         <InfoPaper minHeight="200px" sticky={false}>
                             <this.Info/>
                         </InfoPaper>
