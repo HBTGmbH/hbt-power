@@ -15,6 +15,10 @@ export interface AbstractAction extends Action{
     type: ActionType;
 }
 
+export interface ChangeBoolValueAction extends AbstractAction {
+    value: boolean;
+}
+
 export interface ChangeStringValueAction extends AbstractAction {
     /**
      * The new abstract text.

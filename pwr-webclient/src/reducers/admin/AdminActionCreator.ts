@@ -1,4 +1,4 @@
-import {AbstractAction, ChangeStringValueAction} from '../profile/database-actions';
+import {AbstractAction, ChangeBoolValueAction, ChangeStringValueAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import {APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
@@ -234,9 +234,12 @@ export class AdminActionCreator {
         }
     }
 
-
-
-
+    public static SetFilterNonCustomSkills(doFilter: boolean): ChangeBoolValueAction {
+        return {
+            type: ActionType.SetCustomSkillFiltering,
+            value: doFilter
+        }
+    }
 
     public static AsyncRequestNotifications(username: string, password: string) {
         return function(dispatch: redux.Dispatch<AdminState>) {

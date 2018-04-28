@@ -140,8 +140,8 @@ class UsedSkillOverviewModule extends React.Component<
                     </Paper>
                 </div>
                 {this.state.selectedSkillName !== "" ?
-                    <div className="col-md-4" >
-                        <Paper style={{width: '100%', minHeight: '400px', position: "sticky", top: 0}}>
+                    <div className="col-md-4"  >
+                        <Paper id="admin-info-panel">
                             <div className="vertical-align" style={{backgroundColor: POWER_MUI_THEME.baseTheme.palette.primary1Color, height: '56px'}}>
                                 <div
                                     style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}

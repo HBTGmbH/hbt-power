@@ -40,6 +40,9 @@ export class SkillServiceSkill {
     }
 
     public anyFuzzyMatch(searchTerm: string){
+        if (!searchTerm || searchTerm.length <= 0) {
+            return true;
+        }
         let match = StringUtils.filterFuzzy(searchTerm, this.qualifier());
         this.qualifiers().forEach(qualifier => {
             match = match || StringUtils.filterFuzzy(searchTerm, qualifier.qualifier())
