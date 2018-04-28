@@ -56,7 +56,7 @@
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject",
     "compileInfo": "node ./compileBuildInfo.js",
-    "increment-release": "node ./scripts/increment-release-version.js",
-    "increment-snapshot": "node ./scripts/increment-snapshot-version.js"
+    "incrementRelease": "node ./scripts/increment-release-version.js",
+    "incrementSnapshot": "node ./scripts/increment-snapshot-version.js"
   }
 }
