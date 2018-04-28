@@ -1,6 +1,6 @@
 {
   "name": "webclient",
-  "version": "1.2.3-SNAPSHOT",
+  "version": "1.3.1-SNAPTSHOT",
   "private": true,
   "homepage": "",
   "dependencies": {
@@ -55,6 +55,8 @@
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject",
-    "compileInfo": "node ./compileBuildInfo.js"
+    "compileInfo": "node ./compileBuildInfo.js",
+    "increment-release": "node ./scripts/increment-release-version.js",
+    "increment-snapshot": "node ./scripts/increment-snapshot-version.js"
   }
 }
