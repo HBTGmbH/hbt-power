@@ -1,5 +1,10 @@
 import {SkillStore} from '../../model/skill/SkillStore';
-import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../profile/database-actions';
+import {
+    AbstractAction,
+    ChangeBoolValueAction,
+    ChangeNumberValueAction,
+    ChangeStringValueAction
+} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {SkillActions} from './SkillActions';
@@ -190,11 +195,15 @@ export namespace SkillReducer {
                 let act = action as FilterTreeAction;
                 let root = skillStore.skillTreeRoot();
                 root.clearFilter();
-                if(!isNullOrUndefined(act.searchTerm) && act.searchTerm.length > 0) {
-                    root.filter(act.searchTerm, skillStore.skillsById(), skillStore.categoriesById());
-                    console.log("Filtered root", root);
-                }
-                return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root));
+                root.filter(skillStore.filterNonCustomSkills(), act.searchTerm, skillStore.skillsById(), skillStore.categoriesById());
+                return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root)).filterTerm(act.searchTerm);
+            }
+            case ActionType.SetCustomSkillFiltering: {
+                let act = action as ChangeBoolValueAction;
+                let root = skillStore.skillTreeRoot();
+                root.clearFilter();
+                root.filter(act.value, skillStore.filterTerm(), skillStore.skillsById(), skillStore.categoriesById());
+                return skillStore.filterNonCustomSkills(act.value).skillTreeRoot(SkillTreeNode.shallowCopy(root));
             }
             default:
                 return skillStore;

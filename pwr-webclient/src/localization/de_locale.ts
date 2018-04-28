@@ -130,6 +130,7 @@ export const de_locale : any = {
     "AdminClient.Info.SkillTree.Category.Localizations": "Lokalisierungen",
     "AdminClient.Info.SkillTree.NewCategory.Name": "Kategorie-Name",
     "AdminClient.Info.SkillTree.NewSkill.Name": "Skill-Name",
+    "AdminClient.Info.SkillTree.Filter.OnlyCustom": "Nur Eigene Skills",
     "AdminClient.Infos.UsedSkills.UsedBy": "Skill benutzt von:",
     "AdminClient.Infos.UsedSkills.SkillHiearchy": "Skill-Hiearchie",
     "AdminClient.Infos.UsedSkills.SkillQualifier": "Name",

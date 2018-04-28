@@ -118,14 +118,14 @@ export class SkillTreeNode {
         }
     }
 
-    public filter(searchTerm: string, skillsById: Immutable.Map<number, SkillServiceSkill>, skillCategoriesById: Immutable.Map<number, SkillCategory>) {
+    public filter(onlyCustomSkills: boolean, searchTerm: string, skillsById: Immutable.Map<number, SkillServiceSkill>, skillCategoriesById: Immutable.Map<number, SkillCategory>) {
         let visible = false;
         this.childNodes.forEach(childNode => {
             // MUST execute filter first.
-            visible = childNode.filter(searchTerm, skillsById, skillCategoriesById) || visible;
+            visible = childNode.filter(onlyCustomSkills, searchTerm, skillsById, skillCategoriesById) || visible;
         });
         this.skillNodes.forEach(skillNode => {
-            skillNode.visible = skillsById.get(skillNode.skillId).anyFuzzyMatch(searchTerm);
+            skillNode.visible = this.nodeIsVisible(searchTerm, onlyCustomSkills, skillsById.get(skillNode.skillId));
             visible = visible || skillNode.visible;
         });
         this.visible = visible;
@@ -138,7 +138,17 @@ export class SkillTreeNode {
         this.open = false;
         this.skillNodes.forEach(childNode => childNode.visible = true);
         this.childNodes.forEach(childNode => childNode.clearFilter());
+    }
 
+    protected nodeIsVisible(searchTerm: string, showOnlyCustom: boolean, skill: SkillServiceSkill) {
+        if (showOnlyCustom) {
+            if (!skill.isCustom()) {
+                return false;
+            }
+            return skill.anyFuzzyMatch(searchTerm);
+        } else {
+            return skill.anyFuzzyMatch(searchTerm);
+        }
     }
 
 }

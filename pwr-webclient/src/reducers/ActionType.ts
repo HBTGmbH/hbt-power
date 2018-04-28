@@ -47,6 +47,7 @@ export enum ActionType {
     RequestNotificationTrashing,
 
     AdminRequestStatus,
+    SetCustomSkillFiltering,
 
     ChangeUsername,
     ChangePassword,

@@ -91,6 +91,10 @@ export class SkillStore {
      */
     @doop public get addToProjectId() {return doop<string, this>()};
 
+    @doop public get filterNonCustomSkills() {return doop<boolean, this>()};
+
+    @doop public get filterTerm() {return doop<string, this>()};
+
 
 
 
@@ -103,12 +107,15 @@ export class SkillStore {
                         skillsByQualifier: Immutable.Map<string, SkillServiceSkill>,
                         profileOnlySkillQualifiers: Immutable.Set<string>,
                         doneState: string, addToProjectId: string,
-                        parentCategoryIdById: Map<number, number>
+                        parentCategoryIdById: Map<number, number>,
+                        filterNonCustomSkills: boolean,
+                        filterTerm: string
     ) {
         return this.skillTreeRoot(skillTreeRoot).categorieHierarchiesBySkillName(categorieHierarchiesBySkillName).currentAddSkillStep(currentAddSkillStep)
             .currentSkillName(currentSkillName).currentSkillRating(currentSkillRating).currentChoice(currentChoice).skillComment(skillComment)
             .addSkillError(addSkillError).noCategoryReason(noCategoryReason).categoriesById(categoriesById).skillsById(skillsById)
-            .skillsByQualifier(skillsByQualifier).doneState(doneState).addToProjectId(addToProjectId).parentCategoryIdById(parentCategoryIdById);
+            .skillsByQualifier(skillsByQualifier).doneState(doneState).addToProjectId(addToProjectId).parentCategoryIdById(parentCategoryIdById)
+            .filterNonCustomSkills(filterNonCustomSkills).filterTerm(filterTerm);
     }
 
     public static empty() {
@@ -118,7 +125,8 @@ export class SkillStore {
             UnCategorizedSkillChoice.PROCEED_WITH_COMMENT, "", null, "",Immutable.Map<number, SkillCategory>(),
             Immutable.Map<string, SkillServiceSkill>(),
             Immutable.Set<string>(), "", "",
-            new Map<number, number>());
+            new Map<number, number>(),
+            false, "");
     }
 
     /**
@@ -142,5 +150,9 @@ export class SkillStore {
 
     public skillWithQualifierExists(qualifier: string) {
         return this.skillsByQualifier().has(qualifier);
+    }
+
+    public retrieveTree = (filterNonCustoom: boolean) => {
+
     }
 }

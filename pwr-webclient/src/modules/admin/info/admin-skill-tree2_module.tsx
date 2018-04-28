@@ -16,12 +16,14 @@ import {CategorySearcher} from './category-searcher_module';
 import {SetValueDialog} from '../../general/set-value-dialog_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {SkillStore} from '../../../model/skill/SkillStore';
+import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
     skillStore: SkillStore;
     categoriesById: Immutable.Map<number, SkillCategory>;
     skillsById: Immutable.Map<number, SkillServiceSkill>;
+    filterNonCustomSkills: boolean;
 }
 
 interface AdminSkillTree2LocalProps {
@@ -61,6 +63,8 @@ interface AdminSkillTree2Dispatch {
 
     toggleOpen(categoryId: number): void;
     filter(searchTerm: string): void;
+
+    changeFilterNonCustomSkills(doFiltering: boolean): void;
 }
 
 class AdminSkillTree2Module extends React.Component<
@@ -89,16 +93,14 @@ class AdminSkillTree2Module extends React.Component<
             skillStore: state.skillReducer,
             root: state.skillReducer.skillTreeRoot(),
             categoriesById: state.skillReducer.categoriesById(),
-            skillsById: state.skillReducer.skillsById()
+            skillsById: state.skillReducer.skillsById(),
+            filterNonCustomSkills: state.skillReducer.filterNonCustomSkills()
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminSkillTree2Dispatch {
         return {
             loadTree: () => dispatch(SkillActionCreator.AsyncLoadRootChildrenIntoTree()),
-            /*loadSkillsForCategory: categoryId => {
-                dispatch(SkillActionCreator.AsyncLoadChildrenIntoTree(categoryId, 2));
-            },*/
             whitelistCategory: categoryId => dispatch(SkillActionCreator.AsyncWhitelistCategory(categoryId)),
             blacklistCategory: categoryId => dispatch(SkillActionCreator.AsyncBlacklistCategory(categoryId)),
             addLocalization: (categoryId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddLocale(categoryId, language, qualifier)),
@@ -112,7 +114,8 @@ class AdminSkillTree2Module extends React.Component<
             deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.Skill.AsyncDeleteSkillLocale(skillId, language)),
             setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
-            filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm))
+            filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
+            changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering)))
         };
     }
 
@@ -218,6 +221,10 @@ class AdminSkillTree2Module extends React.Component<
             selectedCategoryId: this.NO_ID,
             deleteConfirmationOpen: false
         })
+    };
+
+    private handleCheckFilterNonCustom = (event: any, isInputChecked: boolean) => {
+        this.props.changeFilterNonCustomSkills(isInputChecked);
     };
 
     private openCategorySearcher = () => {
@@ -371,6 +378,11 @@ class AdminSkillTree2Module extends React.Component<
                     <TextField
                         floatingLabelText={PowerLocalize.get("Action.Search")}
                         onChange={(e: any, v: string) => {this.props.filter(v)}}
+                    />
+                    <Checkbox
+                        onCheck={this.handleCheckFilterNonCustom}
+                        checked={this.props.filterNonCustomSkills}
+                        label={PowerLocalize.get("AdminClient.Info.SkillTree.Filter.OnlyCustom")}
                     />
                     <SkillTree
                         root={this.props.root}
