@@ -2,6 +2,8 @@ import * as Immutable from 'immutable';
 import {doop} from 'doop';
 import {SkillServiceSkill} from './SkillServiceSkill';
 import {APILocalizedQualifier, LocalizedQualifier} from './LocalizedQualifier';
+import {TCategoryNode} from './tree/TCategoryNode';
+
 export interface APISkillCategory {
     id: number;
     qualifier: string;
@@ -21,7 +23,7 @@ export class SkillCategory {
 
     @doop public get qualifiers() {return doop<Immutable.List<LocalizedQualifier>, this>()};
 
-    @doop public get categories() {return doop<Immutable.List<SkillCategory>, this>()};
+    //@doop public get categories() {return doop<Immutable.List<SkillCategory>, this>()};
 
     @doop public get skills() {return doop<Immutable.List<SkillServiceSkill>, this>()};
 
@@ -33,10 +35,9 @@ export class SkillCategory {
 
     private constructor(id: number, qualifier: string,
                         qualifiers: Immutable.List<LocalizedQualifier>,
-                        categories: Immutable.List<SkillCategory>,
                         skills: Immutable.List<SkillServiceSkill>, blacklisted: boolean,
                         isCustom: boolean, isDisplay: boolean) {
-        return this.id(id).qualifier(qualifier).qualifiers(qualifiers).categories(categories).skills(skills)
+        return this.id(id).qualifier(qualifier).qualifiers(qualifiers).skills(skills)
             .blacklisted(blacklisted).isCustom(isCustom).isDisplay(isDisplay);
     }
 
@@ -44,7 +45,6 @@ export class SkillCategory {
         return new SkillCategory(id,
             qualifier,
             Immutable.List<LocalizedQualifier>(),
-            Immutable.List<SkillCategory>(),
             Immutable.List<SkillServiceSkill>(),
             false,
             false,
@@ -56,10 +56,20 @@ export class SkillCategory {
         return new SkillCategory(apiSkillCategory.id,
             apiSkillCategory.qualifier,
             Immutable.List<LocalizedQualifier>(qualifiers),
-            Immutable.List<SkillCategory>(),
             Immutable.List<SkillServiceSkill>(),
             apiSkillCategory.blacklisted,
             apiSkillCategory.custom,
             apiSkillCategory.display);
+    }
+
+    public static fromTCategoryNode(node: TCategoryNode) {
+        let qualifiers: LocalizedQualifier[] = node.qualifiers.map(value => LocalizedQualifier.fromAPI(value));
+        return new SkillCategory(node.id,
+            node.qualifier,
+            Immutable.List<LocalizedQualifier>(qualifiers),
+            Immutable.List<SkillServiceSkill>(),
+            node.blacklisted,
+            node.custom,
+            node.display);
     }
 }
