@@ -11,9 +11,8 @@ import {
     deleteLocaleFromCategory,
     getCategoryById,
     getCategoryChildrenByCategoryId,
-    getRootCategoryIds,
+    getFullTree,
     getSkillByName,
-    getSkillsForCategory,
     patchMoveSkill,
     patchSetIsDisplayCategory,
     postLocaleToCategory,
@@ -32,6 +31,7 @@ import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {SkillServiceError} from '../../model/skill/SkillServiceError';
+import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
 
 
 export namespace SkillActionCreator {
@@ -48,6 +48,7 @@ export namespace SkillActionCreator {
     import BatchAddSkillsAction = SkillActions.BatchAddSkillsAction;
     import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
     import FilterTreeAction = SkillActions.FilterTreeAction;
+    import InitializeTreeAction = SkillActions.InitializeTreeAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -205,6 +206,12 @@ export namespace SkillActionCreator {
         }
     }
 
+    function InitializeTree(root: TCategoryNode): InitializeTreeAction {
+        return {
+            type: ActionType.LoadTree,
+            root: root
+        }
+    }
 
 
     let currentAPICalls = 0;
@@ -259,23 +266,6 @@ export namespace SkillActionCreator {
         });
     }
 
-    export function AsyncLoadChildrenIntoTree(parentId: number, currentDepth: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            wrappedGetCall(getCategoryChildrenByCategoryId(parentId), dispatch, response => {
-                let data: number[] = response.data;
-                data.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(parentId, value, currentDepth - 1)));
-            });
-        };
-    }
-
-    export function AsyncLoadRootChildrenIntoTree() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getRootCategoryIds()).then(function (response: AxiosResponse) {
-                let categories: number[] = response.data;
-                categories.forEach((value, index, array) => dispatch(AsyncLoadCategoryIntoTree(-1, value, 99)));
-            }).catch(handleSkillServiceError);
-        };
-    }
 
     function InvokeChildUpdate(categoryId: number, dispatch: redux.Dispatch<ApplicationState>) {
         axios.get(getCategoryChildrenByCategoryId(categoryId)).then(function (response: AxiosResponse) {
@@ -298,34 +288,6 @@ export namespace SkillActionCreator {
         };
     }
 
-    export function AsyncLoadCategoryIntoTree(parentId: number, id: number, remainingDepth: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getCategoryById(id)).then(function (response: AxiosResponse) {
-                let data: APISkillCategory = response.data;
-                let category = SkillCategory.fromAPI(data);
-                dispatch(AddCategoryToTree(parentId, category));
-                dispatch(AsyncLoadSkillsForCategory(category.id()));
-                if (remainingDepth > 0) {
-                    dispatch(AsyncLoadChildrenIntoTree(category.id(), remainingDepth));
-                }
-
-            }).catch(handleSkillServiceError);
-        };
-    }
-
-    export function AsyncLoadSkillsForCategory(categoryId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            beginAPICall(dispatch);
-            axios.get(getSkillsForCategory(categoryId)).then(function (response: AxiosResponse) {
-                succeedAPICall(dispatch);
-                let skills: Array<APISkillServiceSkill> = response.data;
-                skills.forEach(apiSkill => dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(apiSkill))));
-            }).catch(function (error: any) {
-                failAPICall(dispatch);
-                handleSkillServiceError(error);
-            });
-        };
-    }
 
     export function AsyncRequestSkillHierarchy(skillName: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
@@ -632,6 +594,18 @@ export namespace SkillActionCreator {
         }
     }
 
+    export function AsyncLoadTree() {
+        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            beginAPICall(dispatch);
+            axios.get(getFullTree()).then((response: AxiosResponse) => {
+                dispatch(InitializeTree(response.data));
+                succeedAPICall(dispatch);
+            }).catch((error: AxiosError) => {
+                failAPICall(dispatch);
+                handleSkillServiceError(error);
+            })
+        }
+    };
 
 
     export function AsyncProgressAddSkill() {

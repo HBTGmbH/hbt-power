@@ -13,6 +13,7 @@ import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {SkillTreeNode} from '../../model/skill/SkillTreeNode';
+import {SkillTreeBuilder} from './SkillTreeBuilder';
 
 export namespace SkillReducer {
     import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;
@@ -28,6 +29,7 @@ export namespace SkillReducer {
     import BatchAddSkillsAction = SkillActions.BatchAddSkillsAction;
     import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
     import FilterTreeAction = SkillActions.FilterTreeAction;
+    import InitializeTreeAction = SkillActions.InitializeTreeAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if(!isNullOrUndefined(category)) {
@@ -93,7 +95,7 @@ export namespace SkillReducer {
 
                 let root = skillStore.skillTreeRoot();
                 root.addCategoryToTree(act.parentId, act.toAdd, map);
-                root = Object.assign(SkillTreeNode.root(), root);
+                root = SkillTreeNode.shallowCopy(root);
                 return skillStore.skillTreeRoot(root).categoriesById(map).parentCategoryIdById(categoryIdMap);
             }
             case ActionType.RemoveSkillCategory: {
@@ -102,14 +104,14 @@ export namespace SkillReducer {
 
                 let root = skillStore.skillTreeRoot();
                 root.removeCategoryFromTree(act.id);
-                root = Object.assign(SkillTreeNode.root(), root);
+                root = SkillTreeNode.shallowCopy(root);
                 return skillStore.skillTreeRoot(root).categoriesById(categoriesById);
             }
             case ActionType.AddSkillToTree: {
                 let act = action as AddSkillToTreeAction;
                 let root = skillStore.skillTreeRoot();
                 root.addSkillToTree(act.categoryId, act.toAdd);
-                root = Object.assign(SkillTreeNode.root(), root);
+                root = SkillTreeNode.shallowCopy(root);
                 return addOrUpdateSkill(skillStore, act.toAdd).skillTreeRoot(root);
             }
             case ActionType.MoveSkill: {
@@ -119,7 +121,7 @@ export namespace SkillReducer {
                 let root = skillStore.skillTreeRoot();
                 root.removeSkillFromTree(act.originCategoryId, act.skillId);
                 root.addSkillIdToTree(act.targetCategoryId, act.skillId);
-                root = Object.assign(SkillTreeNode.root(), root);
+                root = SkillTreeNode.shallowCopy(root);
                 return addOrUpdateSkill(skillStore, skill).skillTreeRoot(root);
             }
             case ActionType.RemoveSkillServiceSkill: {
@@ -127,7 +129,7 @@ export namespace SkillReducer {
                 let skill = skillStore.skillsById().get(act.skillId)
                 let root = skillStore.skillTreeRoot();
                 root.removeSkillFromTree(skill.categoryId(), skill.id());
-                root = Object.assign(SkillTreeNode.root(), root);
+                root = SkillTreeNode.shallowCopy(root);
                 return addOrUpdateSkill(skillStore, skill).skillTreeRoot(root);
             }
             case ActionType.ReadSkillHierarchy: {
@@ -195,15 +197,24 @@ export namespace SkillReducer {
                 let act = action as FilterTreeAction;
                 let root = skillStore.skillTreeRoot();
                 root.clearFilter();
-                root.filter(skillStore.filterNonCustomSkills(), act.searchTerm, skillStore.skillsById(), skillStore.categoriesById());
+                if (skillStore.filterNonCustomSkills() || (act.searchTerm && act.searchTerm.length >= 0)) {
+                    root.filter(skillStore.filterNonCustomSkills(), act.searchTerm, skillStore.skillsById(), skillStore.categoriesById());
+                }
                 return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root)).filterTerm(act.searchTerm);
             }
             case ActionType.SetCustomSkillFiltering: {
                 let act = action as ChangeBoolValueAction;
                 let root = skillStore.skillTreeRoot();
                 root.clearFilter();
-                root.filter(act.value, skillStore.filterTerm(), skillStore.skillsById(), skillStore.categoriesById());
+                if (act.value || ( skillStore.filterTerm() &&  skillStore.filterTerm().length >= 0)) {
+                    root.filter(act.value, skillStore.filterTerm(), skillStore.skillsById(), skillStore.categoriesById());
+                }
                 return skillStore.filterNonCustomSkills(act.value).skillTreeRoot(SkillTreeNode.shallowCopy(root));
+            }
+            case ActionType.LoadTree: {
+                let act = action as InitializeTreeAction;
+                let result = SkillTreeBuilder.for(act.root).build();
+                return skillStore.skillsById(result.skillsById).categoriesById(result.categoriesById).skillTreeRoot(result.tree);
             }
             default:
                 return skillStore;
