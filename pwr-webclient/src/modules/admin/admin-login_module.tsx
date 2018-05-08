@@ -151,6 +151,11 @@ class AdminLoginModule extends React.Component<
                                     onCheck={this.handleRememberCheckboxCheck}
                                 />
                             </div>
+                            <div className="vertical-align"  style={{marginTop: "15px", marginBottom: "15px", height: "30px"}}>
+                                {
+                                    this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span>   </span>
+                                }
+                            </div>
                             <div>
                                 <RaisedButton style={{float: "left", marginRight: "5px"}} onClick={this.handleAttemptLogIn}  label={PowerLocalize.get("Action.Login")} primary={true}/>
                                 <Link style={{float: "right", marginLeft: "5px"}} to={Paths.APP_ROOT}><RaisedButton label="Zurück"/></Link>
