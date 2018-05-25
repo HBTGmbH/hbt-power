@@ -125,7 +125,7 @@ class SkillTreeModule extends React.Component<
                     <div className="row">
                         {this.renderSkills()}
                     </div>
-                </div>
+                </div>#
             </div>
         );
     }
