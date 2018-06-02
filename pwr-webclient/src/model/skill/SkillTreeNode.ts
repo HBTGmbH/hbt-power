@@ -46,25 +46,6 @@ export class SkillTreeNode {
             skillTreeNode.skillNodes, skillTreeNode.open, skillTreeNode.visible);
     }
 
-
-    /**
-     * Returns the index of the child category in the childNodes list.
-     * @param childId
-     * @returns {number|any} index or -1 when not found.
-     */
-    private getChildIndex(childId: number): number {
-        return this.childNodes.findIndex(child => child.skillCategoryId == childId);
-    }
-
-    private removeCategoryFromChildren(categoryId: number) {
-        this.childNodes = this.childNodes.filter(childNode => childNode.skillCategoryId !== categoryId);
-    }
-
-
-    private hasSkill(skillIdToFind: number): boolean {
-        return this.skillNodes.some(skillNodes => skillNodes.skillId === skillIdToFind);
-    }
-
     /**
      * Recursively adds the given category to the tree, below the node with the given ID.
      * If the category is already in the tree, nothing happens.
@@ -140,6 +121,12 @@ export class SkillTreeNode {
         this.childNodes.forEach(childNode => childNode.clearFilter());
     }
 
+    public sort(categoriesById: Immutable.Map<number, SkillCategory>, skillsById: Immutable.Map<number, SkillServiceSkill>) {
+        this.childNodes.sort(Comparators.getSkillTreeNodeComparator(categoriesById));
+        this.skillNodes.sort(Comparators.getSkillTreeSkillNodeComparator(skillsById));
+        this.childNodes.forEach(childNode => childNode.sort(categoriesById, skillsById));
+    }
+
     protected nodeIsVisible(searchTerm: string, showOnlyCustom: boolean, skill: SkillServiceSkill) {
         if (showOnlyCustom) {
             if (!skill.isCustom()) {
@@ -151,4 +138,20 @@ export class SkillTreeNode {
         }
     }
 
+    /**
+     * Returns the index of the child category in the childNodes list.
+     * @param childId
+     * @returns {number|any} index or -1 when not found.
+     */
+    private getChildIndex(childId: number): number {
+        return this.childNodes.findIndex(child => child.skillCategoryId == childId);
+    }
+
+    private removeCategoryFromChildren(categoryId: number) {
+        this.childNodes = this.childNodes.filter(childNode => childNode.skillCategoryId !== categoryId);
+    }
+
+    private hasSkill(skillIdToFind: number): boolean {
+        return this.skillNodes.some(skillNodes => skillNodes.skillId === skillIdToFind);
+    }
 }

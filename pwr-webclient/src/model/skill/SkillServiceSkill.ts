@@ -4,6 +4,7 @@ import {isNullOrUndefined} from 'util';
 import {APILocalizedQualifier, LocalizedQualifier} from './LocalizedQualifier';
 import * as Immutable from 'immutable';
 import {StringUtils} from '../../utils/StringUtil';
+import {TSkillNode} from './tree/TSkillNode';
 
 export interface APISkillServiceSkill {
     id: number;
@@ -36,6 +37,15 @@ export class SkillServiceSkill {
             api.qualifier,
             categoryId,
             api.custom,
+            Immutable.List<LocalizedQualifier>(qualifiers));
+    }
+
+    public static fromTSkillNode(node: TSkillNode, categoryId: number) {
+        let qualifiers = node.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
+        return new SkillServiceSkill(node.id,
+            node.qualifier,
+            categoryId,
+            node.custom,
             Immutable.List<LocalizedQualifier>(qualifiers));
     }
 
