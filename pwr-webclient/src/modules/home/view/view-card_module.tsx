@@ -7,6 +7,7 @@ import {Card, CardActions, CardHeader, FontIcon, RaisedButton} from 'material-ui
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileDialog} from './view-profile-dialog_module';
+import {ViewProfileGenerator} from './view-profile-generator_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
@@ -21,6 +22,7 @@ interface ViewCardLocalProps {
 
 interface ViewCardLocalState {
     dialogOpen: boolean;
+    generatorOpen: boolean;
 }
 
 interface ViewCardDispatch {
@@ -38,7 +40,8 @@ class ViewCardModule extends React.Component<
     constructor(props: ViewCardLocalProps & ViewCardProps & ViewCardDispatch) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: false,
+            generatorOpen : false
         }
     }
 
@@ -64,10 +67,16 @@ class ViewCardModule extends React.Component<
             dialogOpen: open
         })
     }
+    private setGeneratorOpen(open : boolean){
+        this.setState({
+            generatorOpen: open
+        })
+    }
 
     private handleUpdate = (name: string, description: string, charsPerLine: number) => {
         this.props.updateViewProfile(this.props.viewProfileId, name, description, charsPerLine);
         this.setDialogOpen(false);
+        this.setGeneratorOpen(false);
     };
 
     render() {
@@ -78,6 +87,12 @@ class ViewCardModule extends React.Component<
                 onRequestClose={() => this.setDialogOpen(false)}
                 onSave={this.handleUpdate}
                 open={this.state.dialogOpen}
+            />
+
+            <ViewProfileGenerator
+                open={this.state.generatorOpen}
+                onRequestClose={() => this.setGeneratorOpen(false)}
+                generate={() => this.props.generate(this.props.viewProfileId)}
             />
             <CardHeader
                 title={this.props.viewProfile.viewProfileInfo.name}
@@ -109,7 +124,8 @@ class ViewCardModule extends React.Component<
                         className="mui-margin"
                         primary={true}
                         label={PowerLocalize.get("Action.Generate.Word")}
-                        onClick={() => this.props.generate(this.props.viewProfileId)}
+                        //onClick={() => this.props.generate(this.props.viewProfileId)}//
+                        onClick={() => this.setGeneratorOpen(true)}
                         icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
                     />
                 </div>

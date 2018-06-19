@@ -228,6 +228,10 @@ export const de_locale : any = {
 
     "ConsultantEdit.Active": "Aktiv",
 
+    "Generator.Title": "Templates",
+    "Generator.TemplateList": "Alle Templates",
+    "Generator.Template.New": "Neu",
+
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",
     "Profile.Description": "Werbetext",
