@@ -231,6 +231,8 @@ export const de_locale : any = {
     "Generator.Title": "Templates",
     "Generator.TemplateList": "Alle Templates",
     "Generator.Template.New": "Neu",
+    "Action.Generate.NewTemplate": "Neues Template",
+    "Generator.DescriptionPlaceholder": "Wähle ein Template für den Export.",
 
     // == Specific Specific Localizations == //
     "HBT.CompanyPosition": "HBT Stellung",

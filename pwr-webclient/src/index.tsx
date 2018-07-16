@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 
 import './index.css';
 import './../node_modules/react-toggle/style.css';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {ApplicationState, PWR_HISTORY, store} from './reducers/reducerIndex';
 import {Provider} from 'react-redux';
 import {PowerClient} from './modules/home/power-client_module';
@@ -13,9 +12,9 @@ import {PowerLogin} from './modules/power-login_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
-import {getMuiTheme, spacing} from 'material-ui/styles';
-import {darkBlack, fullBlack, fullWhite, white} from 'material-ui/styles/colors';
-import {fade} from 'material-ui/utils/colorManipulator';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core';
+//import {darkBlack, fullBlack, fullWhite, white,} from '@material-ui/core/colors';
+//import {fade} from '@material-ui/utils/colorManipulator';
 import {Paths} from './Paths';
 import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
 import {Color} from './utils/ColorUtil';
@@ -36,6 +35,7 @@ store.dispatch(ProfileAsyncActionCreator.requestTrainings());
 store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
+// TODO hier templates laden ??!
 store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
 
@@ -55,7 +55,7 @@ window.onbeforeunload = pageLeavePreventer;
 
 
 const powerTheme = {
-    spacing: spacing,
+    //spacing: spacing,
     fontFamily: 'Roboto, sans-serif',
     palette: {
         primary1Color: Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
@@ -66,16 +66,28 @@ const powerTheme = {
         accent3Color: Color.HBT_2017_GRAY.toCSSRGBString(),
         textColor: Color.HBT_2017_TEXT_BLACK.toCSSRGBString(),
         alternateTextColor:  Color.HBT_2017_TEXT_WHITE.toCSSRGBString(),
-        canvasColor: white,
-        borderColor: fade(fullWhite, 0.3),
-        disabledColor: fade(Color.HBT_2017_DARK_BLUE.toCSSRGBString(), 0.3),
+        //canvasColor: white,
+        //borderColor: fade(fullWhite, 0.3),
+        //disabledColor: fade(Color.HBT_2017_DARK_BLUE.toCSSRGBString(), 0.3),
         pickerHeaderColor: Color.HBT_2017_SPOT_COLOR_1.toCSSRGBString(),
-        clockCircleColor: fade(darkBlack, 0.07),
-        shadowColor: fullBlack,
+        //clockCircleColor: fade(darkBlack, 0.07),
+        //shadowColor: fullBlack,
     },
 };
 
-export const POWER_MUI_THEME = getMuiTheme(powerTheme);
+const newPowerTheme = {
+    palette: {
+        primary: {
+            main : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
+        },
+        secondary :{
+            main : Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
+        } ,
+    },
+
+};
+
+export const POWER_MUI_THEME = createMuiTheme(newPowerTheme);
 
 const alertOptions = {
     offset: 14,
@@ -87,7 +99,7 @@ const alertOptions = {
 
 
 let App = (
-    <MuiThemeProvider muiTheme={POWER_MUI_THEME}>
+    <MuiThemeProvider theme={POWER_MUI_THEME}>
         <Provider store={store}>
             <ConnectedRouter history={PWR_HISTORY}>
                 <div>

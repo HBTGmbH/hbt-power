@@ -221,7 +221,7 @@ export namespace ViewProfileActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let initials = getState().databaseReducer.loggedInUser().initials();
             axios.get(ViewProfileService.getViewProfile(initials, id)).then((response: AxiosResponse) => {
-                succeedAndRead(response, dispatch);;
+                succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
                 dispatch(ProfileActionCreator.APIRequestFailed());
                 console.error(error);
@@ -229,11 +229,11 @@ export namespace ViewProfileActionCreator {
         }
     }
 
-    export function AsyncGenerateDocX(viewProfileId: string) {
+    export function AsyncGenerateDocX(viewProfileId: string, templateId : string) {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let initials = getState().databaseReducer.loggedInUser().initials();
             dispatch(ProfileActionCreator.APIRequestPending());
-            axios.post(ViewProfileService.postReport(initials, viewProfileId)).then((response: AxiosResponse) => {
+            axios.post(ViewProfileService.postReport(initials, viewProfileId, templateId)).then((response: AxiosResponse) => {
                 let location = response.data;
                 console.info("Received location: ", location);
                 window.open(location, "_blank");
@@ -294,4 +294,8 @@ export namespace ViewProfileActionCreator {
             });
         }
     }
+
+
+
+
 }

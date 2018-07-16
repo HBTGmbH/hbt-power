@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Dialog, FlatButton} from 'material-ui';
+import {Dialog, Button,DialogActions} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
@@ -29,7 +29,7 @@ interface ConsultantCreateDialogProps {
  */
 interface ConsultantCreateDialogLocalProps {
     show: boolean;
-    onRequestClose(): void;
+    onClose(): void;
 }
 
 /**
@@ -74,12 +74,12 @@ class ConsultantCreateDialogModule extends React.Component<
         this.setState ({
             consultantInfo: ConsultantInfo.empty()
         });
-        this.props.onRequestClose();
+        this.props.onClose();
     };
 
     private saveAndReset = () => {
         this.props.createConsultant(this.state.consultantInfo);
-        this.props.onRequestClose();
+        this.props.onClose();
     };
 
     private setFirstName = (val: string) => {
@@ -121,16 +121,21 @@ class ConsultantCreateDialogModule extends React.Component<
 
     private readonly dialogActions = [
 
-        <FlatButton
-            label={PowerLocalize.get("Action.Save")}
-            primary={true}
+        <Button
+            variant={'flat'}
+            color={'primary'}
             onClick={this.saveAndReset}
-        />,
-        <FlatButton
-            label={PowerLocalize.get("Action.Exit")}
-            primary={true}
+        >
+            {PowerLocalize.get("Action.Save")}
+        </Button>
+        ,
+        <Button
+            variant={'flat'}
+            color={'primary'}
             onClick={this.closeAndReset}
-        />,
+        >
+            {PowerLocalize.get("Action.Exit")}
+        </Button>,
     ];
 
     render() {
@@ -138,8 +143,7 @@ class ConsultantCreateDialogModule extends React.Component<
             <Dialog
                 title={PowerLocalize.get('ConsultantTile.CreateConsultant')}
                 open={this.props.show}
-                actions={this.dialogActions}
-                onRequestClose={this.closeAndReset}
+                onClose={this.closeAndReset}
             >
                 <ConsultantEditFields
                     firstName = {this.state.consultantInfo.firstName()}
@@ -156,10 +160,14 @@ class ConsultantCreateDialogModule extends React.Component<
                     <LimitedTextField
                         maxCharacters={100}
                         value={this.state.consultantInfo.initials()}
-                        floatingLabelText={PowerLocalize.get('Initials.Singular')}
+                        label={PowerLocalize.get('Initials.Singular')}
                         onChange={(e, v) => this.setInitials(v)}
                     />
+
                 </ConsultantEditFields>
+                <DialogActions>
+                    {this.dialogActions}
+                </DialogActions>
             </Dialog>
         </div>);
     }

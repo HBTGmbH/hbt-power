@@ -7,7 +7,7 @@ import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActio
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {IconButton} from 'material-ui';
+import {IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialogState} from './project-dialog_module';
 import {Profile} from '../../../../../model/Profile';
@@ -139,7 +139,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
                 <div style={{textAlign: 'center'}}>
                     <IconButton
                         style={{display:'inline-block'}}
-                        iconClassName="material-icons"
+                        className="material-icons"
                         onClick={this.props.addProject}
                         tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
                 </div>

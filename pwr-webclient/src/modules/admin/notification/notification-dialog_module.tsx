@@ -1,17 +1,18 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Dialog, FlatButton, RadioButton, RadioButtonGroup, RaisedButton, Step, StepLabel, TextField} from 'material-ui';
+import {Dialog, Button, Radio, RadioGroup, Step, StepLabel, TextField,Stepper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
-import {Stepper} from 'material-ui/Stepper';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
+import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 
+// TODO radio button ohne form
 /**
  * Properties that are managed by react-redux.
  *
@@ -34,7 +35,7 @@ interface NotificationDialogLocalProps {
     open: boolean;
     index: number;
 
-    onRequestClose(): void;
+    onClose(): void;
 
 }
 
@@ -147,7 +148,7 @@ class NotificationDialogModule extends React.Component<
     };
 
     private closeDialog = () => {
-        this.props.onRequestClose();
+        this.props.onClose();
         this.resetDialog();
     };
 
@@ -181,17 +182,22 @@ class NotificationDialogModule extends React.Component<
 
     private renderStepperControl = () => {
         return <div style={{marginTop: 12}}>
-            <FlatButton
-                label={PowerLocalize.get('Action.Previous')}
+            <Button
+                variant={'flat'}
+
                 disabled={this.state.stepIndex == 0}
                 onClick={this.backStep}
                 style={{marginRight: 12}}
-            />
-            <RaisedButton
-                label={this.stepperHasFinished() ? PowerLocalize.get('Action.Execute') : PowerLocalize.get('Action.Next')}
-                primary={true}
+            >
+                {PowerLocalize.get('Action.Previous')}
+            </Button>
+            <Button
+                variant={'raised'}
+                color={'primary'}
                 onClick={this.progressStep}
-            />
+            >
+                {this.stepperHasFinished() ? PowerLocalize.get('Action.Execute') : PowerLocalize.get('Action.Next')}
+            </Button>
         </div>;
     };
 
@@ -209,26 +215,32 @@ class NotificationDialogModule extends React.Component<
     private renderStepperContentIndex1 = () => {
         return (
             <div >
-                <RadioButtonGroup
+                <RadioGroup
                     name="notificationActions"
-                    defaultSelected="ok"
+                    //defaultSelected="ok"
                     onChange={this.setAction}
                     style={{width: "100%"}}
                 >
-                    <RadioButton
-                        value="ok"
-                        label={PowerLocalize.get('Action.OK')}
+                    <FormControlLabel value={""} control={
+                        <Radio value="ok"/>
+                    } label={PowerLocalize.get('Action.OK')}
                     />
 
-                    <RadioButton
-                        value="delete"
-                        label={PowerLocalize.get('Action.Delete')}
+                    <FormControlLabel control={
+                        <Radio
+                            value="delete"
+                        />} label={PowerLocalize.get('Action.Delete')}
                     />
-                    <RadioButton
-                        value="edit"
-                        label={PowerLocalize.get('Action.Edit')}
+
+                    <FormControlLabel control={
+                        <Radio
+                            value="edit"
+                        />} label={PowerLocalize.get('Action.Edit')}
                     />
-                </RadioButtonGroup>
+                </RadioGroup>
+
+
+
                 <div  style={{width: "100%", marginTop: "16px", marginBottom: "16px"}}>
                     <strong>{PowerLocalize.get('Action.OK') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionOK.Description")}<br/><br/>
                     <strong>{PowerLocalize.get('Action.Delete') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionDelete.Description")}<br/><br/>
@@ -241,9 +253,9 @@ class NotificationDialogModule extends React.Component<
     private renderStepperContentIndex2 = () => {
         return (<div>
                 <TextField
-                    floatingLabelText={PowerLocalize.get("NotificationDialog.EditNameEntity")}
+                    label={PowerLocalize.get("NotificationDialog.EditNameEntity")}
                     value={this.state.nameEntityName}
-                    onChange={this.changeNameEntityName}
+                    onChange={() => this.changeNameEntityName}
                     />
             </div>
         )
@@ -272,9 +284,8 @@ class NotificationDialogModule extends React.Component<
         if(!isNullOrUndefined(this.props.notification)) {
             return (<div>
                 <Dialog
-                    modal={false}
                     open={this.props.open}
-                    onRequestClose={this.closeDialog}
+                    onClose={this.closeDialog}
                     title={this.renderTitle()}
                 >
                     {this.renderStepperContent()}

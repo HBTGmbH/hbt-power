@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as redux from 'redux';
 import * as React from 'react';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {Table, TableBody, TableHead, TableCell, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {SkillNotification} from '../../../model/admin/SkillNotification';
 import * as Immutable from 'immutable';
@@ -11,6 +11,8 @@ import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
+
+// TODO Tabelle prüfen
 
 interface SkillNotificationTableProps {
 
@@ -65,15 +67,15 @@ class SkillNotificationTableModule extends React.Component<
                 key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
                 selected={this.props.selectedRows.indexOf(key) !== -1}
             >
-                <TableRowColumn>{notification.adminNotification().initials()}</TableRowColumn>
-                <TableRowColumn
+                <TableCell>{notification.adminNotification().initials()}</TableCell>
+                <TableCell
                     className="cursor-pointer"
                 >
                     {formatString(PowerLocalize.get("NotificationInbox.SkillNotification.SubjectTextTemplate"),
                         notification.skill().name())
                     }
-                </TableRowColumn>
-                <TableRowColumn>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableRowColumn>
+                </TableCell>
+                <TableCell>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableCell>
             </TableRow>
         )
     };
@@ -95,13 +97,13 @@ class SkillNotificationTableModule extends React.Component<
                    onRowSelection={this.handleRowSelection}
                    onCellClick={this.handleCellClick}
             >
-                <TableHeader>
+                <TableHead>
                     <TableRow>
-                        <TableHeaderColumn>{PowerLocalize.get('Initials.Singular')}</TableHeaderColumn>
-                        <TableHeaderColumn>{PowerLocalize.get('Subject.Singular')}</TableHeaderColumn>
-                        <TableHeaderColumn>{PowerLocalize.get('Date.Singular')}</TableHeaderColumn>
+                        <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
+                        <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
+                        <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
                     </TableRow>
-                </TableHeader>
+                </TableHead>
                 <TableBody deselectOnClickaway={false}
                 >
                     {

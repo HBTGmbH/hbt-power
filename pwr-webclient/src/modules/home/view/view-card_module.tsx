@@ -3,11 +3,11 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Card, CardActions, CardHeader, FontIcon, RaisedButton} from 'material-ui';
+import {Card, CardActions, CardHeader, Icon, Button} from '@material-ui/core';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileDialog} from './view-profile-dialog_module';
-import {ViewProfileGenerator} from './view-profile-generator_module';
+import {ProfileGenerator} from './view-profile-generator_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
@@ -28,7 +28,7 @@ interface ViewCardLocalState {
 interface ViewCardDispatch {
     deleteViewProfile(id: string): void;
     navigateTo(target: string): void;
-    generate(viewProfileId: string): void;
+    //generate(viewProfileId: string, templateId: string): void;
     updateViewProfile(viewProfileId: string, name: string, description: string, charsPerLine: number): void;
 }
 
@@ -41,7 +41,8 @@ class ViewCardModule extends React.Component<
         super(props);
         this.state = {
             dialogOpen: false,
-            generatorOpen : false
+            generatorOpen : false,
+
         }
     }
 
@@ -55,7 +56,7 @@ class ViewCardModule extends React.Component<
         return {
             deleteViewProfile: (id) => dispatch(ViewProfileActionCreator.AsyncDeleteViewProfile(id)),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId)),
+            //generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
             updateViewProfile: (viewProfileId, name, description, charsPerLine) => {
                 dispatch(ViewProfileActionCreator.AsyncUpdateViewProfile(viewProfileId, description, name, charsPerLine))
             }
@@ -79,20 +80,21 @@ class ViewCardModule extends React.Component<
         this.setGeneratorOpen(false);
     };
 
+
     render() {
         return (
         <Card className="fullWidth">
             <ViewProfileDialog
                 viewProfile={this.props.viewProfile}
-                onRequestClose={() => this.setDialogOpen(false)}
+                onClose={() => this.setDialogOpen(false)}
                 onSave={this.handleUpdate}
                 open={this.state.dialogOpen}
             />
 
-            <ViewProfileGenerator
+            <ProfileGenerator
                 open={this.state.generatorOpen}
-                onRequestClose={() => this.setGeneratorOpen(false)}
-                generate={() => this.props.generate(this.props.viewProfileId)}
+                onClose={() => this.setGeneratorOpen(false)}
+                viewProfileId={this.props.viewProfile.id}
             />
             <CardHeader
                 title={this.props.viewProfile.viewProfileInfo.name}
@@ -101,32 +103,35 @@ class ViewCardModule extends React.Component<
             <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
             <CardActions>
                 <div>
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         className="mui-margin"
                         onClick={() => this.setDialogOpen(true)}
                         label={PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
-                        icon={<FontIcon className="material-icons">info</FontIcon>}
+                        icon={<Icon className="material-icons">info</Icon>}
                     />
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         className="mui-margin"
                         label={PowerLocalize.get("ViewProfileCard.Action.Edit")}
                         onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", this.props.viewProfileId))}
-                        icon={<FontIcon className="material-icons">edit</FontIcon>}
+                        icon={<Icon className="material-icons">edit</Icon>}
                     />
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         className="mui-margin"
                         label={PowerLocalize.get("Action.Delete")}
                         secondary={true}
-                        icon={<FontIcon className="material-icons">delete</FontIcon>}
+                        icon={<Icon className="material-icons">delete</Icon>}
                         onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
                     />
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         className="mui-margin"
-                        primary={true}
+                        color={'primary'}
                         label={PowerLocalize.get("Action.Generate.Word")}
-                        //onClick={() => this.props.generate(this.props.viewProfileId)}//
                         onClick={() => this.setGeneratorOpen(true)}
-                        icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
+                        icon={<Icon className="material-icons">open_in_new</Icon>}
                     />
                 </div>
             </CardActions>

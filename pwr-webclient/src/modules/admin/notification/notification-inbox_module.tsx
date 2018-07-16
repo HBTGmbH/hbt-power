@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
-import {FontIcon, RaisedButton, Tab, Tabs} from 'material-ui';
+import {Icon, Button, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
@@ -129,23 +129,28 @@ class NotificationInboxModule extends React.Component<
             <div>
                 <div className="row">
                     <div className="col-md-9">
-                        <RaisedButton
+                        <Button
+                            variant={'raised'}
                             style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.Update')}
-                            icon={<FontIcon className="material-icons">refresh</FontIcon>}
                             onClick={() => this.props.getNotifications(this.props.username, this.props.password)}
-                        />
-                        <RaisedButton
+                        >
+                            {PowerLocalize.get('Action.Update')}
+                            <Icon className="material-icons">refresh</Icon>
+                        </Button>
+
+                        <Button
+                            variant={'raised'}
                             style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.Delete')}
-                            icon={<FontIcon className="material-icons">delete</FontIcon>}
                             onClick={this.handleTrashNotifications}
-                        />
+                        >
+                            {PowerLocalize.get('Action.Delete')}
+                            <Icon className="material-icons">delete</Icon>
+                        </Button>
                     </div>
                 </div>
-                <Tabs>
+                <Tabs value={false}>
                     <Tab
-                        icon={<FontIcon className="material-icons">add_box</FontIcon>}
+                        icon={<Icon className="material-icons">add_box</Icon>}
                         label={PowerLocalize.get("NotificationInbox.NewNameEntity")}
                     >
                         <ProfileEntryNotificationTable
@@ -155,7 +160,7 @@ class NotificationInboxModule extends React.Component<
                         />
                     </Tab>
                     <Tab
-                        icon={<FontIcon className="material-icons">color_lens</FontIcon>}
+                        icon={<Icon className="material-icons">color_lens</Icon>}
                         label={PowerLocalize.get("NotificationInbox.Skills")}
                     >
                         <SkillNotificationTable
@@ -165,7 +170,7 @@ class NotificationInboxModule extends React.Component<
                         />
                     </Tab>
                     <Tab
-                        icon={<FontIcon className="material-icons">autorenew</FontIcon>}
+                        icon={<Icon className="material-icons">autorenew</Icon>}
                         label={PowerLocalize.get("NotificationInbox.ProfileUpdates")}
                     >
                         <ProfileUpdateNotificationTable

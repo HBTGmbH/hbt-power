@@ -123,4 +123,10 @@ export enum ActionType {
     SetSortInProgress,
     ResetViewState,
     ClearViewProfiles,
+
+    // == Templates
+    SetTemplate,
+    RemoveTemplate,
+    ResetTemplate,
+    ClearTemplates,
 }

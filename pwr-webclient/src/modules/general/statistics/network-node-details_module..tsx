@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Card, CardHeader, CardText, Subheader} from 'material-ui';
+import {Card, CardHeader, CardContent, ListSubheader} from '@material-ui/core';
 import {Network} from '../../../model/statistics/Network';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Properties} from 'vis';
@@ -39,8 +39,8 @@ export class NetworkNodeDetails extends React.Component<NetworkNodeDetailsProps,
             <CardHeader
                 title={PowerLocalize.get('ProfileNetwork.NodeDetails.Title') + ' ' + this.getInitialsByNodeId(this.props.selectedNodeProperties.nodes[0])}
             />
-            <CardText>
-                <Subheader>{PowerLocalize.get('ProfileNetwork.Details.Connections')}</Subheader>
+            <CardContent>
+                <ListSubheader>{PowerLocalize.get('ProfileNetwork.Details.Connections')}</ListSubheader>
                 <table className="table">
                     <thead>
                     <tr>
@@ -59,7 +59,7 @@ export class NetworkNodeDetails extends React.Component<NetworkNodeDetailsProps,
                     }
                     </tbody>
                 </table>
-            </CardText>
+            </CardContent>
         </Card>);
     }
 }

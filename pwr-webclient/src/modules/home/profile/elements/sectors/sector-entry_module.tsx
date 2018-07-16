@@ -1,7 +1,7 @@
 import {SectorEntry} from '../../../../../model/SectorEntry';
 import * as Immutable from 'immutable';
 import * as React from 'react';
-import {IconButton} from 'material-ui';
+import {IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {SectorEntryDialog} from './sector-entry-dialog_module';
@@ -72,8 +72,8 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         return(
             <tr>
                 <td>
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     <SectorEntryDialog
                         open={this.state.dialogOpen}
                         sectorEntry={this.props.sectorEntry}

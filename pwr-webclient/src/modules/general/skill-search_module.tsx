@@ -1,11 +1,13 @@
 import * as React from 'react';
-import {AutoComplete} from 'material-ui';
+import {AutoComplete} from '@material-ui/core';
 import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
 
+// TODO autocomplete
+
 interface SkillSearcherProps {
-    floatingLabelText?: string;
+    label?: string;
     maxResults?: number;
     maxHeight?: number | string;
     id: string;
@@ -49,7 +51,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     }
 
     public static defaultProps: Partial<SkillSearcherProps> = {
-        floatingLabelText: "",
+        label: "",
         maxResults: 10,
         maxHeight: null,
         onNewRequest: request => {},
@@ -94,7 +96,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
             <AutoComplete
                 id={this.props.id}
                 anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                floatingLabelText={this.props.floatingLabelText}
+                label={this.props.label}
                 dataSource={this.state.skills}
                 value={this.state.searchText}
                 searchText={this.state.searchText}

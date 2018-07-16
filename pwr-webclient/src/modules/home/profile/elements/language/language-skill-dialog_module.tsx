@@ -1,13 +1,15 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, Dialog, IconButton, MenuItem, SelectField} from 'material-ui';
+import {AutoComplete, Dialog, IconButton, MenuItem, Select} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+
+//TODO AutoComplete
 
 
 interface EducationEntryDialogLocalProps {
@@ -114,26 +116,26 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
             <Dialog
                 open={this.props.open}
                 modal={false}
-                onRequestClose={this.closeDialog}
+                onClose={this.closeDialog}
                 autoScrollBodyContent={true}
                 title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
-                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[<IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                 <div className="row">
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        <SelectField
+                        <Select
                             value={this.state.languageSkill.level()}
-                            onChange={this.handleLevelChange}
-                            floatingLabelText={PowerLocalize.get('LanguageLevel.Singular')}
+                            onChange={() => this.handleLevelChange}
+                            label={PowerLocalize.get('LanguageLevel.Singular')}
                         >
                             {
                                 this.props.languageLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
                             }
-                        </SelectField>
+                        </Select>
                     </div>
                         <AutoComplete
-                            floatingLabelText={PowerLocalize.get('Language.Singular')}
+                            label={PowerLocalize.get('Language.Singular')}
                             id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
                             value={this.state.languageAutoCompleteValue}
                             searchText={this.state.languageAutoCompleteValue}

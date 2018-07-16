@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, DatePicker, Dialog, IconButton} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -9,7 +9,8 @@ import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-
+// TODO AutoComplete
+// TODO DatePicker
 
 interface QualificationEntryDialogProps {
 
@@ -112,15 +113,15 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                 open={this.props.open}
                 title={PowerLocalize.get('Qualification.Dialog.Title')}
                 modal={false}
-                onRequestClose={this.closeDialog}
+                onClose={this.closeDialog}
                 autoScrollBodyContent={true}
-                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[<IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                 <div className="entry-dlg-content">
                     <div>
                         <DatePicker
-                            floatingLabelText={PowerLocalize.get('Begin')}
+                            label={PowerLocalize.get('Begin')}
                             id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
                             container="inline"
                             value={this.state.qualificationEntry.date()}
@@ -131,7 +132,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                     <div>
                         <AutoComplete
                             fullWidth={true}
-                            floatingLabelText={PowerLocalize.get('Qualification.Singular')}
+                            label={PowerLocalize.get('Qualification.Singular')}
                             id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
                             value={this.state.qualificationAutoCompleteValue}
                             searchText={this.state.qualificationAutoCompleteValue}

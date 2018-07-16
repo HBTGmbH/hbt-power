@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import * as redux from 'redux';
-import {Subheader} from 'material-ui';
+import {ListSubheader} from '@material-ui/core';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {SkillChip} from './skill-chip_module';
 import {Skill} from '../../../../../model/Skill';
@@ -121,7 +121,7 @@ class SkillTreeModule extends React.Component<
             <div>
                 <AddSkillDialog/>
                 <div>
-                    <Subheader>Rot = Unbekannter Skill</Subheader>
+                    <ListSubheader>Rot = Unbekannter Skill</ListSubheader>
                     <div className="row">
                         {this.renderSkills()}
                     </div>

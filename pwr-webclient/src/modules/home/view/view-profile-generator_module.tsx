@@ -3,50 +3,89 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Card, CardActions, CardHeader, Dialog, FlatButton, FontIcon, List, ListItem, RaisedButton} from 'material-ui';
+import {
+    Dialog,
+    Button,
+    Icon,
+    List,
+    ListItem,
+} from '@material-ui/core';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ViewProfileDialog} from './view-profile-dialog_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
-import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
-import {Paths} from '../../../Paths';
-import {isNullOrUndefined} from 'util';
+import {Template} from '../../../model/view/Template';
 
 
 interface ViewProfileGeneratorProps{
+    viewProfile?: ViewProfile;
+    template?: Template;
+    allTemplates?: Array<Template>;
+
+}
+
+interface ViewProfileGeneratorLocalProps{
     open: boolean;
-    viewProfiles?: ViewProfile[];
+    viewProfileId : string;
+    onClose() : void;
 
-    onRequestClose() : void;
-    generate(): void;
 }
-
 interface ViewProfileGeneratorState {
-    activeTemplateId : number;
+    activeTemplateId : string;
+    activeTemplateNumber: number;
 }
 
-export class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps,ViewProfileGeneratorState>{
 
-    constructor(props : ViewProfileGeneratorProps){
+interface ViewProfileGeneratorDispatch{
+    generate(viewProfileId: string, templateId: string) : void;
+}
+
+class ViewProfileGenerator extends React.Component<
+    ViewProfileGeneratorProps
+    & ViewProfileGeneratorLocalProps
+    & ViewProfileGeneratorDispatch,
+    ViewProfileGeneratorState>{
+
+    static mapStateToProps(state: ApplicationState, localProps: ViewProfileGeneratorLocalProps): ViewProfileGeneratorProps {
+        return{
+            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.viewProfileId),
+            allTemplates: state.templateSlice.templates().toArray(),
+        };
+    }
+
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileGeneratorDispatch {
+        return {
+            generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
+        };
+    }
+
+    constructor(props : ViewProfileGeneratorProps
+        & ViewProfileGeneratorLocalProps
+        & ViewProfileGeneratorDispatch){
         super(props);
         this.resetState(props);
     }
 
-    private resetState(props: ViewProfileGeneratorProps){
+    private resetState(props: ViewProfileGeneratorProps
+        & ViewProfileGeneratorLocalProps
+        & ViewProfileGeneratorDispatch){
         this.state={
-            activeTemplateId: null,
+            activeTemplateId : "",
+            activeTemplateNumber: -1,
         }
     }
 
-    private setTemplateId(id:number){
+    private setTemplateId(id: string,localNumber : number){
         this.setState(
-            {activeTemplateId: id}
+            {
+                activeTemplateId: id,
+                activeTemplateNumber: localNumber,
+            }
         )
     }
 
     private closeAndReset = () => {
         this.resetState(this.props);
-        this.props.onRequestClose();
+        this.props.onClose();
     };
 
 
@@ -56,70 +95,96 @@ export class ViewProfileGenerator extends React.Component<ViewProfileGeneratorPr
         let label = "";
         let icon = "";
 
-        actions.push(<FlatButton
+        // New Template
+        actions.push(<Button
+            variant={'flat'}
             className="mui-margin"
-            primary={true}
-            disabled={this.state.activeTemplateId === null}
-            label={PowerLocalize.get("Action.Generate.Word")}
-            onClick={this.props.generate}
-            icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
+            color={'primary'}
+            label={PowerLocalize.get("Action.Generate.NewTemplate")}
+            //onClick={}
+            icon={<Icon className="material-icons">add</Icon>}
         />);
-        actions.push(<FlatButton
+        // Generate
+        actions.push(<Button
+            variant={'raised'}
+            className="mui-margin"
+            color={'primary'}
+            disabled={this.state.activeTemplateId === ""}
+            label={PowerLocalize.get("Action.Generate.Word")}
+            onClick={() => this.props.generate(this.props.viewProfileId, this.state.activeTemplateId)}
+            icon={<Icon className="material-icons">open_in_new</Icon>}
+        />);
+        // Close
+        actions.push(<Button
             label={PowerLocalize.get("Action.Close")}
-            onClick={this.props.onRequestClose}
-            icon={<FontIcon className="material-icons">close</FontIcon>}
+            onClick={this.props.onClose}
+            icon={<Icon className="material-icons">close</Icon>}
         />);
 
-        actions.push(<FlatButton
+        /*actions.push(<FlatButton
             label={"SetActiveProfile"}
             onClick={() => this.setTemplateId(1)}
             />
 
-        )
+        );
+        */
         return actions;
     };
 
-            // TODO alle templates
+    private renderListItems = () => {
+        let items = [];
+        let label = "";
+
+        // TODO localize
+        if (this.props.allTemplates.length === 0){
+            items.push(
+                <p key={"noTemp"}> Keine Templates vorhanden.</p>
+            )
+        }
+        // TODO bessere schleife
+        for (let i = 0; i < this.props.allTemplates.length; i++){
+            let temp = this.props.allTemplates[i];
+            items.push(
+                <ListItem title={temp.name} className={"Template"} key={"TempalteItem_" + i} onClick={() => this.setTemplateId(temp.id,i)}>
+                    {temp.name}
+                </ListItem>
+            );
+        }
+        return items;
+    }
+
+
+    // TODO neues Template erstellen anzeigen / Dialog o.ä.
     render() {
         return (
             <Dialog
                 title={PowerLocalize.get("Generator.Title")}
                 open={this.props.open}
-                onRequestClose={this.closeAndReset}
+                onClose={this.closeAndReset}
                 actions={this.renderActions()}
             >
-                <div className="col-md-3" >
-                    <h4>{PowerLocalize.get("Generator.TemplateList")}</h4>
-                    <div style={{maxHeight: "80%", overflow: "auto"}}>
-                        <List style={{maxHeight:'100%',  overflow: "auto"}}>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
-                            <ListItem title={"Template"} className={"Hallo"}>Template</ListItem>
+                <div className="col-md-4">
+                    <h4 className="row">{PowerLocalize.get("Generator.TemplateList")}</h4>
+                    <div className="row" style={{ maxHeight: 300, overflow: 'auto' }}>
+                        <List>
+                            {this.renderListItems()}
                         </List>
-                    </div>
-                    <div className="fittingContainer">
-                        <RaisedButton
-                            className="mui-margin"
-                            label={PowerLocalize.get("Generator.Template.New")}
-                            icon={<FontIcon className="material-icons">add</FontIcon>}
-                        />
                     </div>
                 </div>
                 <div className="col-md-6" color="red">
-                        <h1>Preview</h1>
-                    <div className="row"></div>
+                    <h4> {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].name : " "}</h4>
+                    <div style={{height: '60%'}}>
+                        {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].description : PowerLocalize.get("Generator.DescriptionPlaceholder")}
+                    </div>
+                    <div>
+                        <hr/>
+                        {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].createUser + "  |  " : " "}
+                        {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].createdDate : " "}
+                    </div>
                 </div>
-
             </Dialog>
         )
-
-        // TODO weiter - mp
     }
 }
 
+export const ProfileGenerator: React.ComponentClass<ViewProfileGeneratorLocalProps> = connect(ViewProfileGenerator.mapStateToProps, ViewProfileGenerator.mapDispatchToProps)(ViewProfileGenerator);

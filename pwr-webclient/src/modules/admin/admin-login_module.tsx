@@ -2,7 +2,10 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
-import {Checkbox, Paper, RaisedButton, TextField} from 'material-ui';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
@@ -109,6 +112,8 @@ class AdminLoginModule extends React.Component<
         })
     };
 
+    // TODO localize
+    // TODO TextField errorText checken
     render() {
         return (
             <div className="fittingContainer vertical-align">
@@ -127,28 +132,27 @@ class AdminLoginModule extends React.Component<
                             <div className="vertical-align">
                                 <TextField
                                     className="fullWidth"
-                                    floatingLabelText={PowerLocalize.get("Username.Singular")}
+                                    label={PowerLocalize.get("Username.Singular")}
                                     value={this.props.username}
-                                    onChange={(evt,val) => this.props.changeUsername(val)}
+                                    onChange={(evt) => this.props.changeUsername(evt.target.value)}
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
                             </div>
                             <div className="vertical-align">
                                 <TextField
                                     className="fullWidth"
-                                    floatingLabelText={PowerLocalize.get("Password.Singular")}
-                                    value={this.props.password}
-                                    onChange={(evt,val) => this.props.changePassword(val)}
-                                    errorText={this.getErrorText()}
+                                    label={PowerLocalize.get("Password.Singular")}
+                                    value={(this.getErrorText() === null) ? this.getErrorText() : this.props.password}
+                                    onChange={(evt) => this.props.changePassword(evt.target.value)}
                                     type="password"
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
                             </div>
                             <div className="vertical-align" style={{marginTop: "15px", marginBottom: "15px"}}>
                                 <Checkbox
-                                    label={PowerLocalize.get("AdminClient.Login.Remember")}
+                                    value={PowerLocalize.get("AdminClient.Login.Remember")}
                                     checked={this.state.rememberLogin}
-                                    onCheck={this.handleRememberCheckboxCheck}
+                                    onChange={this.handleRememberCheckboxCheck}
                                 />
                             </div>
                             <div className="vertical-align"  style={{marginTop: "15px", marginBottom: "15px", height: "30px"}}>
@@ -157,8 +161,8 @@ class AdminLoginModule extends React.Component<
                                 }
                             </div>
                             <div>
-                                <RaisedButton style={{float: "left", marginRight: "5px"}} onClick={this.handleAttemptLogIn}  label={PowerLocalize.get("Action.Login")} primary={true}/>
-                                <Link style={{float: "right", marginLeft: "5px"}} to={Paths.APP_ROOT}><RaisedButton label="Zurück"/></Link>
+                                <Button variant={'raised'} style={{float: "left", marginRight: "5px"}} onClick={this.handleAttemptLogIn} color={'primary'} >{PowerLocalize.get("Action.Login")}</Button>
+                                <Link style={{float: "right", marginLeft: "5px"}} to={Paths.APP_ROOT}><Button variant={'raised'} />{"Zurück"}</Link>
                             </div>
                         </div>
                     </div>

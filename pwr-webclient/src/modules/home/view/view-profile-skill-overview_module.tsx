@@ -6,7 +6,7 @@ import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {ViewSkill} from '../../../model/view/ViewSkill';
 import {ViewProfileEntries} from './entries/view-profile-entries_module';
-import {Card, CardText, CardTitle, Subheader} from 'material-ui';
+import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
 import {EntryRenderers} from './entries/EntryRenderers';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
@@ -120,15 +120,15 @@ class ViewProfileSkillOverviewModule extends React.Component<
         res.push(
             <td key={'ViewCategory_' + entry.name}>
                 <Card>
-                    <CardTitle
+                    <CardHeader
                         title={entry.name}
                         actAsExpander={true}
                         subtitle={entry.displaySkills.length + ' Skills'}
                     />
-                    <CardText
+                    <CardContent
                         expandable={true}
                     >
-                        <Subheader>Skills</Subheader>
+                        <ListSubheader>Skills</ListSubheader>
                         <ViewProfileEntries
                             movableEntryType="SKILL"
                             toggleableEntryType="SKILL"
@@ -153,7 +153,7 @@ class ViewProfileSkillOverviewModule extends React.Component<
                             onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('DISPLAY_CATEGORY', entryIndex, type, sourceIndex, targetIndex)}
                             onToggle={(type, index, isEnabled) => this.handleSkillToggle(entry.displaySkills, index, isEnabled)}
                         />
-                    </CardText>
+                    </CardContent>
                 </Card>
             </td>);
         return res;
@@ -166,7 +166,7 @@ class ViewProfileSkillOverviewModule extends React.Component<
                     <EditViewSkillDialog
                         skill={this.state.editSkill}
                         open={this.state.editSkillOpen}
-                        onRequestClose={this.closeEditSkillDialog}
+                        onClose={this.closeEditSkillDialog}
                         viewProfile={this.props.viewProfile}
                         onSetDisplayCategory={this.handleChangeDisplayCategory}
                     />

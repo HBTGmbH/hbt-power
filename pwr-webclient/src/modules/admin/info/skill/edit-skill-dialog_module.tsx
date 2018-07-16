@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
-import {Dialog, FlatButton, RaisedButton, Step, StepLabel, Stepper} from 'material-ui';
+import {Dialog, Button, Step, StepLabel, Stepper} from '@material-ui/core';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {SkillSearcher} from '../../../general/skill-search_module';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
@@ -19,7 +19,7 @@ interface EditSkillDialogLocalProps {
     open: boolean;
     skillToEdit: string;
     skillInfo: Immutable.List<ConsultantInfo>;
-    onRequestClose(): void;
+    onClose(): void;
 
 }
 
@@ -73,7 +73,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
         }
         if (newIndex === 3) {
             this.props.changeSkillName(this.props.skillToEdit, this.state.newSkillName);
-            this.props.onRequestClose();
+            this.props.onClose();
         }
         this.setState({
             stepIndex: newIndex
@@ -126,7 +126,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
                 </p>
                 <SkillSearcher
                     id="EditSkillDialog.SkillSearcher"
-                    floatingLabelText={PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.NewSkillLabel")}
+                    label={PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.NewSkillLabel")}
                     initialValue={this.state.newSkillName}
                     value={this.state.newSkillName}
                     onValueChange={this.changeNewSkillName}
@@ -164,9 +164,9 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
             return <div/>
         }
         return (<Dialog title={PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.Title", this.props.skillToEdit)}
-                        autoScrollBodyContent={true}
+                        scroll={'body'}
             open={this.props.open}
-            onRequestClose={this.props.onRequestClose}>
+            onClose={this.props.onClose}>
                 <Stepper activeStep={this.state.stepIndex}>
                     <Step>
                         <StepLabel>{PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Step1")}</StepLabel>
@@ -182,18 +182,22 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
                     <div>
                         {this.getStepContent(this.state.stepIndex)}
                         <div style={{marginTop: 12}}>
-                            <FlatButton
+                            <Button
+                                variant={'flat'}
                                 className="mui-margin"
-                                label={PowerLocalize.get("Action.Back")}
                                 disabled={this.state.stepIndex === 0}
                                 onClick={this.stepBack}
-                            />
-                            <RaisedButton
+                            >
+                                {PowerLocalize.get("Action.Back")}
+                            </Button>
+                            <Button
+                                variant={'raised'}
                                 className="mui-margin"
-                                label={this.state.stepIndex === 2 ? PowerLocalize.get("Action.Finish") : PowerLocalize.get("Action.Next")}
-                                primary={true}
+                                color={'primary'}
                                 onClick={this.stepForth}
-                            />
+                            >
+                                {this.state.stepIndex === 2 ? PowerLocalize.get("Action.Finish") : PowerLocalize.get("Action.Next")}
+                            </Button>
                         </div>
                     </div>
                 </div>

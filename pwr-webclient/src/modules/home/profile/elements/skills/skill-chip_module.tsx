@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import {Skill} from '../../../../../model/Skill';
-import {Chip, FontIcon, IconButton} from 'material-ui';
+import {Chip, Icon, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {StarRating} from '../../../../star-rating_module.';
 
@@ -57,11 +57,11 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                                  onClick={this.handleDelete}
                                  tooltip={PowerLocalize.get("Action.Delete")}
                                  tooltipPosition="top-right"
-                                 iconClassName="material-icons"
+                                 className="material-icons"
                     >
                         delete
                     </IconButton>
-                    {this.props.skill.isNew() ? <FontIcon className="material-icons">fiber_new</FontIcon>: false}
+                    {this.props.skill.isNew() ? <Icon className="material-icons">fiber_new</Icon>: false}
                 </div>
             </Chip>);
     }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {RequestStatus} from '../../Store';
-import {CircularProgress, FontIcon, Snackbar} from 'material-ui';
+import {CircularProgress, Icon, Snackbar} from '@material-ui/core';
 
 interface RequestSnackbarProps {
     APIRequestStatus: RequestStatus;
@@ -15,13 +15,13 @@ export class RequestSnackbar extends React.Component<RequestSnackbarProps, Reque
     private static renderSingleSnackbar(requestStatus: RequestStatus) {
         let msgSuccess: JSX.Element = (
             <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'green', fontSize: 45}}>done</FontIcon>
+                <Icon className="material-icons col-md-2 col-md-offset-5" style={{color: 'green', fontSize: 45}}>done</Icon>
             </div>
         );
 
         let msgFail: JSX.Element = (
             <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'red', fontSize: 45}}>error</FontIcon>
+                <Icon className="material-icons col-md-2 col-md-offset-5" style={{color: 'red', fontSize: 45}}>error</Icon>
             </div>
         );
 

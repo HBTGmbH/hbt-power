@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {FontIcon, Paper, RaisedButton} from 'material-ui';
+import {Icon, Paper, Button} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Profile} from '../../model/Profile';
@@ -140,17 +140,18 @@ class PowerOverviewModule extends React.Component<
                                     <span>{PowerLocalize.get('Overview.ViewProfiles.Description')}</span>
                                 </div>
                                 <ViewProfileDialog
-                                    onRequestClose={() => this.setViewDialogOpen(false)}
+                                    onClose={() => this.setViewDialogOpen(false)}
                                     open={this.state.createViewDialogOpen}
                                     onSave={this.handleCreateViewProfile}
                                     type="new"
                                 />
-                                <RaisedButton
-                                    primary={true}
+                                <Button
+                                    variant={'raised'}
+                                    color={'primary'}
                                     className="mui-margin"
                                     label={PowerLocalize.get('ViewProfile.Create')}
                                     onClick={() => this.setViewDialogOpen(true)}
-                                    icon={<FontIcon className="material-icons">add</FontIcon>}
+                                    icon={<Icon className="material-icons">add</Icon>}
                                 />
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {

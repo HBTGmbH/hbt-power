@@ -1,7 +1,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AppBar, FontIcon, IconButton, List, ListItem, Paper} from 'material-ui';
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem/ListItem';
+import Icon from '@material-ui/core/Icon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {RequestStatus} from '../../Store';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
@@ -12,12 +20,13 @@ import {ApplicationState} from '../../reducers/reducerIndex';
 import {getImagePath} from '../../API_CONFIG';
 import {NotificationInbox} from './notification/notification-inbox_module';
 import {NotificationTrashbox} from './notification/notification-trashbox_module';
-import {ConsultantGrid} from './consultants/consultant-grid_module';
+import {ConsultantGrid} from '../../../../../test-app/src/modules/admin/consultants/consultant-grid_module';
 import {SkillStatistics} from '../home/statistics/skill-statistics_module';
 import {ProfileNetwork} from './statistics/profile-network_module';
 import {AdminSkillTree2} from './info/admin-skill-tree2_module';
 import {AdminProfileOverview} from './info/admin-profile-overview_module.';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
+
 
 
 /**
@@ -41,7 +50,8 @@ interface AdminClientProps {
  * managed by redux.
  */
 interface AdminClientLocalProps {
-
+    listOpen1: boolean;
+    listOpen2: boolean;
 }
 
 /**
@@ -102,19 +112,21 @@ class AdminClientModule extends React.Component<
     render() {
         return (
             <div>
-                <Paper zDepth={3}>
+                <Paper elevation={3}>
                     <AppBar
-                        iconElementLeft={<span/>}
-                        iconElementRight={<IconButton
-                            tooltip={PowerLocalize.get('Tooolbar.LogOut')}
-                            iconClassName="material-icons"
-                            onClick={this.props.logOutAdmin}
-                        >input</IconButton>}
-                        title={ <div className="vertical-align" style={{height: '100%'}}>
-                            <img className="img-responsive logo-small" src={getImagePath()+'/HBT002_Logo_neg.png'}
-                            />
-                        </div>}
+                        title={ 'Der Title - admin_client_module'
+                           /* <div className="vertical-align" style={{height: '100%'}}>
+                                <img className="img-responsive logo-small" src={getImagePath()+'/HBT002_Logo_neg.png'}/>
+                            </div>*/
+                        }
                     >
+                        <IconButton/>
+                        <IconButton
+                            className={"material-icons"}
+                            onClick={this.props.logOutAdmin}
+                        >
+                            input
+                        </IconButton>
 
                     </AppBar>
                 </Paper>
@@ -122,73 +134,111 @@ class AdminClientModule extends React.Component<
                     <div className="col-md-2">
                         <Paper  style={{marginTop:'55px'}}>
                             <List>
-                                <ListItem primaryText="Postkorb"
-                                          leftIcon={<FontIcon className="material-icons">inbox</FontIcon>}
-                                          open={true}
-                                          nestedItems={[
-                                              <ListItem
-                                                  primaryText="Inbox"
-                                                  leftIcon={<FontIcon className="material-icons">inbox</FontIcon>}
-                                                  key="AdminClient.Overview.Mail.Inbox"
-                                                  onClick={this.handleInboxButtonClick}
-                                              />,
-                                              <ListItem
-                                                  primaryText="Trashbin"
-                                                  leftIcon={<FontIcon className="material-icons">delete</FontIcon>}
-                                                  key="AdminClient.Overview.Mail.Trashbin"
-                                                  onClick={this.handleTrashboxButtonClick}
-                                              />
-                                          ]}
-                                />
-                                <ListItem
-                                    primaryText="Berater"
-                                    leftIcon={<FontIcon className="material-icons">people</FontIcon>}
-                                    onClick={this.props.navigateToConsultants}
-                                >
+                                <ListItem key = "Postkorb" >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">inbox</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={"Postkorb"}/>
                                 </ListItem>
 
+                                          <Collapse in = {true}>
+                                              <ListItem
+                                                  key="AdminClient.Overview.Mail.Inbox"
+                                                  onClick={this.handleInboxButtonClick}
+                                              >
+                                                  <ListItemIcon>
+                                                      <Icon className="material-icons">inbox</Icon>
+                                                  </ListItemIcon>
+                                                  <ListItemText primary={"Inbox"}/>
+                                              </ListItem>,
+                                              <ListItem
+                                                  key="AdminClient.Overview.Mail.Trashbin"
+                                                  onClick={this.handleTrashboxButtonClick}
+                                              >
+                                                  <ListItemIcon>
+                                                      <Icon className="material-icons">delete</Icon>
+                                                  </ListItemIcon>
+                                                  <ListItemText primary={"Trashbin"}/>
+                                              </ListItem>
+                                          </Collapse>
+
                                 <ListItem
-                                    primaryText={PowerLocalize.get('AdminClient.Menu.Info')}
-                                    leftIcon={<FontIcon className="material-icons">info_outline</FontIcon>}
-                                    open={true}
-                                    nestedItems={[
-                                        <Link to={Paths.ADMIN_INFO_NAME_ENTITY}>
+                                    key = "Berater"
+                                    onClick={this.props.navigateToConsultants}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">people</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={"Berater"}/>
+                                </ListItem>
+
+                                <ListItem key = {PowerLocalize.get('AdminClient.Menu.Info')}>
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">info_outline</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info')}/>
+                                </ListItem>
+
+                                <Collapse in={true}>
+                                    <List>
+
+                                        <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={ "Link01"}>
                                             <ListItem
                                                 key="AdminClient.Menu.Info.ProfileElements"
-                                                primaryText={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}
-                                                leftIcon={<FontIcon className="material-icons">dehaze</FontIcon>}
-                                            />
+                                            >
+                                                <ListItemIcon>
+                                                    <Icon className="material-icons">dehaze</Icon>
+                                                </ListItemIcon>
+                                                <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
+                                            </ListItem>
                                         </Link>,
-                                        <Link to={Paths.ADMIN_INFO_SKILLTREE}>
+                                        <Link to={Paths.ADMIN_INFO_SKILLTREE} key={ "Link02"}>
                                             <ListItem
                                                 key="AdminClient.Menu.Info.SkillTree"
-                                                primaryText={PowerLocalize.get('AdminClient.Menu.Info.SkillTree')}
-                                                leftIcon={<FontIcon className="material-icons">device_hub</FontIcon>}
-                                            />
+                                            >
+                                                <ListItemIcon>
+                                                    <Icon className="material-icons">device_hub</Icon>
+                                                </ListItemIcon>
+                                                <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.SkillTree')}/>
+                                            </ListItem>
                                         </Link>
-                                    ]}
-                                >
-                                </ListItem>
+                                    </List>
+                                </Collapse>
+
+
+
                                 <ListItem
-                                    primaryText={PowerLocalize.get('AdminClient.Menu.Statistics')}
-                                    leftIcon={<FontIcon className="material-icons">insert_chart</FontIcon>}
-                                    open={true}
-                                    nestedItems={[
+                                    key = {PowerLocalize.get('AdminClient.Menu.Statistics')}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">insert_chart</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics')}/>
+                                </ListItem>
+
+                                <Collapse in = {true}>
                                         <ListItem
-                                            primaryText={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}
-                                            leftIcon={<FontIcon className="material-icons">palette</FontIcon>}
+                                            button
                                             key="AdminClient.Menu.Statistics.Skills"
                                             onClick={this.props.navigateToSkillStatistics}
-                                        />,
+                                        >
+                                            <ListItemIcon>
+                                                <Icon className="material-icons">palette</Icon>
+                                            </ListItemIcon>
+                                            <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}/>
+                                        </ListItem>,
                                         <ListItem
-                                            primaryText={PowerLocalize.get('AdminClient.Menu.Statistics.Network')}
-                                            leftIcon={<FontIcon className="material-icons">collections</FontIcon>}
+                                            button
                                             key="AdminClient.Menu.Statistics.Network"
                                             onClick={this.props.navigateToNetwork}
-                                        />
-                                    ]}
-                                >
-                                </ListItem>
+                                        >
+                                            <ListItemIcon>
+                                                <Icon className="material-icons">collections</Icon>
+                                            </ListItemIcon>
+                                            <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Network')}/>
+                                        </ListItem>
+                                </Collapse>
+
                             </List>
                         </Paper>
                     </div>

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {isNullOrUndefined} from 'util';
-import {Avatar, FontIcon, Paper, RaisedButton} from 'material-ui';
+import {Avatar, Icon, Paper, Button} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
@@ -77,12 +77,13 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                         Standard-Skills, die diesem Profil fehlen: {this.renderMissingSkills()}
                     </span>
                     <div className="col-md-3 col-sm-12">
-                        <RaisedButton
+                        <Button
+                            variant={'raised'}
                             style={{marginTop: "8px"}}
                             label={PowerLocalize.get('Action.ShowMore')}
                             labelPosition="before"
-                            primary={true}
-                            icon={ <FontIcon className="material-icons">open_in_new</FontIcon>}
+                            color={'primary'}
+                            icon={ <Icon className="material-icons">open_in_new</Icon>}
                             onClick={() => this.loadSkillStatistics()}
                         />
                     </div>

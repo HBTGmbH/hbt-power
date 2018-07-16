@@ -5,15 +5,15 @@ import {AddSkillStep} from '../../../../../model/skill/AddSkillStep';
 import {
     Dialog,
     IconButton,
-    RadioButton,
-    RadioButtonGroup,
-    RaisedButton,
-    RefreshIndicator,
+    Radio,
+    RadioGroup,
+    Button,
+    CircularProgress,
     Step,
     StepContent,
-    StepLabel
-} from 'material-ui';
-import {Stepper} from 'material-ui/Stepper';
+    StepLabel,
+    Stepper
+} from '@material-ui/core';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {StarRating} from '../../../../star-rating_module.';
 import {SkillSearcher} from '../../../../general/skill-search_module';
@@ -121,7 +121,7 @@ class AddSkillDialogModule extends React.Component<
                     resetOnRequest={false}
                     maxHeight={"400px"}
                     id="AddSkill.Searcher"
-                    floatingLabelText={PowerLocalize.get("Action.SearchSkill")}
+                    label={PowerLocalize.get("Action.SearchSkill")}
                 />
             </div>
             <div className="col-md-6">
@@ -131,7 +131,8 @@ class AddSkillDialogModule extends React.Component<
                 />
             </div>
             <div className="col-md-6">
-                <RaisedButton
+                <Button
+                    variant={'raised'}
                     label={PowerLocalize.get("AddSkillDialog.ButtonProceed")}
                     onClick={this.props.progress}
                 />
@@ -143,7 +144,7 @@ class AddSkillDialogModule extends React.Component<
         return(
         <div>
             <div className="vertical-align">
-                <RefreshIndicator
+                <CircularProgress
                     size={40}
                     left={0}
                     top={0}
@@ -169,14 +170,16 @@ class AddSkillDialogModule extends React.Component<
             </div>
             <div className="row">
                 <div className="col-md-6">
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         className="mui-margin"
                         label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnValidCategory")}
                         onClick={this.props.progress}
                     />
                 </div>
                 <div className="col-md-6">
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         className="mui-margin"
                         label={PowerLocalize.get("AddSkillDialog.ShowCategory.BtnInvalidCategory")}
                         secondary={true}
@@ -194,21 +197,21 @@ class AddSkillDialogModule extends React.Component<
             {this.props.noCategoryReason}<br/>
             <span>{PowerLocalize.get("AddSkillDialog.EditOptions.ChoiceText")}</span>
             <div style={{width: "100%", height: "150px"}}>
-                <RadioButtonGroup
+                <RadioGroup
                     name="choice"
                     style={{margin: "20px"}}
                     valueSelected={this.props.currentChoice}
                     onChange={(e, v: any) => this.props.setCurrentChoice(v)}
                 >
-                    <RadioButton
+                    <Radio
                         value={UnCategorizedSkillChoice.PROCEED_WITH_COMMENT}
                         label={PowerLocalize.get(UnCategorizedSkillChoice[UnCategorizedSkillChoice.PROCEED_WITH_COMMENT])}
                     />
-                    <RadioButton
+                    <Radio
                         value={UnCategorizedSkillChoice.PROCEED_ANYWAY}
                         label={PowerLocalize.get(UnCategorizedSkillChoice[UnCategorizedSkillChoice.PROCEED_ANYWAY])}
                     />
-                </RadioButtonGroup>
+                </RadioGroup>
                 {
                     this.props.currentChoice === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT ?
                         <LimitedTextField
@@ -226,7 +229,8 @@ class AddSkillDialogModule extends React.Component<
                 }
 
             </div>
-            <RaisedButton
+            <Button
+                variant={'raised'}
                 label={PowerLocalize.get("AddSkillDialog.ButtonProceed")}
                 onClick={this.props.progress}
             />
@@ -238,7 +242,7 @@ class AddSkillDialogModule extends React.Component<
         if(this.props.doneState === "SKILL_EXISTS") {
             btn = <div>
                     <IconButton
-                        iconClassName="material-icons icon-size-20"
+                        className="material-icons icon-size-20"
                         iconStyle={{color: "green"}}
                         onClick={this.props.progress}
                     >
@@ -248,7 +252,7 @@ class AddSkillDialogModule extends React.Component<
                 </div>
         } else {
            btn = <IconButton
-                iconClassName="material-icons icon-size-20"
+                className="material-icons icon-size-20"
                 iconStyle={{color: "green"}}
                 onClick={this.props.progress}
             >
@@ -282,7 +286,8 @@ class AddSkillDialogModule extends React.Component<
     render() {
         return (
         <div>
-            <RaisedButton
+            <Button
+                variant={'raised'}
                 label={PowerLocalize.get("AddSkillDialog.Title")}
                 onClick={this.handleOpen}
             />
@@ -292,7 +297,7 @@ class AddSkillDialogModule extends React.Component<
                 style={{width: "100%"}}
                 contentStyle={{width: "100%"}}
                 title={PowerLocalize.get("AddSkillDialog.Title")}
-                actions={[<IconButton iconClassName="material-icons" onClick={this.props.closeDialog}>
+                actions={[<IconButton className="material-icons" onClick={this.props.closeDialog}>
                     close
                 </IconButton>]}
             >

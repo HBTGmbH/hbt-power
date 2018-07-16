@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FormEvent} from 'react';
-import {FontIcon, IconButton, LinearProgress, TextField} from 'material-ui';
+import {Icon, IconButton, LinearProgress, TextField} from '@material-ui/core';
 import {isNullOrUndefined} from 'util';
 
 interface LimitedTextFieldProps {
@@ -30,7 +30,7 @@ interface LimitedTextFieldProps {
      */
     fullWidth?: boolean;
 
-    floatingLabelText?: string;
+    label?: string;
 
     /**
      * Shows the toggle edit button. Only works as controlled component. Edit button will forward the toggle request
@@ -74,7 +74,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         multiLine: false,
         fullWidth: false,
         errorText: '',
-        floatingLabelText: null,
+        label: null,
         useToggleEditButton: false,
         onToggleEdit: () => {},
         disabled:false,
@@ -109,11 +109,11 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             id={this.props.id}
                             value={this.props.value}
                             disabled={this.props.disabled}
-                            onChange={this.interceptOnChange}
+                            onChange={() => this.interceptOnChange}
                             multiLine={this.props.multiLine}
                             fullWidth={this.props.fullWidth}
                             errorText={isNullOrUndefined(this.state.errorText) ? this.props.overrideErrorText : this.state.errorText}
-                            floatingLabelText={this.props.floatingLabelText}
+                            label={this.props.label}
                         />
                     </div>
 
@@ -121,9 +121,9 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                         this.props.useToggleEditButton ?
                             <div style={{width:this.props.fullWidth ? '15%' : 72, paddingTop: "30px", float:'left'}}>
                                 <IconButton tooltip="Font Icon" onClick={this.handleEditButtonPress}>
-                                    <FontIcon className="material-icons icon-size-70">
+                                    <Icon className="material-icons icon-size-70">
                                         {this.props.disabled ? "edit" : "save"}
-                                    </FontIcon>
+                                    </Icon>
                                 </IconButton>
                             </div>
                             :

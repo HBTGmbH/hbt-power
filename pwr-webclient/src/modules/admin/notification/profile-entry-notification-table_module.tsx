@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {Table, TableBody, TableHead, TableCell, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
@@ -7,7 +7,9 @@ import {formatToMailDisplay} from '../../../utils/DateUtil';
 import {NotificationDialog} from './notification-dialog_module';
 import {StringUtils} from '../../../utils/StringUtil';
 import formatString = StringUtils.formatString;
+import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 
+// TODO Tabelle prüfen
 
 interface ProfileEntryNotificationTableLocalProps {
     profileEntryNotifications: Immutable.List<ProfileEntryNotification>;
@@ -37,8 +39,8 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
                 key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
                 selected={this.props.selectedRows.indexOf(key) != -1}
             >
-                <TableRowColumn>{notification.adminNotification().initials()}</TableRowColumn>
-                <TableRowColumn
+                <TableCell>{notification.adminNotification().initials()}</TableCell>
+                <TableCell
                     className="cursor-pointer"
                 >
                     {formatString(
@@ -46,8 +48,8 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
                         notification.nameEntity().name(),
                         NameEntityUtil.typeToLocalizedType(notification.nameEntity()))
                     }
-                </TableRowColumn>
-                <TableRowColumn>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableRowColumn>
+                </TableCell>
+                <TableCell>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableCell>
             </TableRow>
         )
     };
@@ -90,19 +92,24 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
             <NotificationDialog
                 index={this.state.selectedNotification}
                 open={this.state.notificationDialogOpen}
-                onRequestClose={this.hideNotificationDialog}
+                onClose={this.hideNotificationDialog}
             />
-            <Table multiSelectable={true}
-                    onRowSelection={this.props.onRowSelection}
-                    onCellClick={this.handleCellClick}
-            >
-                <TableHeader>
+            <Table>
+                <TableHead>
                     <TableRow>
-                        <TableHeaderColumn>{PowerLocalize.get('Initials.Singular')}</TableHeaderColumn>
-                        <TableHeaderColumn>{PowerLocalize.get('Subject.Singular')}</TableHeaderColumn>
-                        <TableHeaderColumn>{PowerLocalize.get('Date.Singular')}</TableHeaderColumn>
+                        <TableCell padding={"checkbox"}>
+                            <Checkbox indeterminate={numSelected > 0 && numSelected < rowCount}
+                                      checked={numSelected === rowCount}
+                                      onChange={onSelectAllClick}
+                            />
+
+
+                        </TableCell>
+                        <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
+                        <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
+                        <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
                     </TableRow>
-                </TableHeader>
+                </TableHead>
                 <TableBody deselectOnClickaway={false}
                 >
                     {

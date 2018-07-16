@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Checkbox, Dialog} from 'material-ui';
+import {Checkbox, Dialog} from '@material-ui/core';
 import {ViewSkill} from '../../../../model/view/ViewSkill';
 import {isNullOrUndefined} from 'util';
 import {ViewProfile} from '../../../../model/view/ViewProfile';
@@ -9,7 +9,7 @@ interface EditViewSkillDialogProps {
     open: boolean;
     viewProfile: ViewProfile;
     skill: ViewSkill;
-    onRequestClose(): void;
+    onClose(): void;
     onSetDisplayCategory(skillName: string, newDisplayCategoryName: string): void;
 }
 
@@ -59,7 +59,7 @@ export class EditViewSkillDialog extends React.Component<EditViewSkillDialogProp
             return (<Dialog
                 title={"Display Category for " + this.props.skill.name}
                 open={this.props.open}
-                onRequestClose={this.props.onRequestClose}
+                onClose={this.props.onClose}
             >
                 Current Category Tree (Selected is display) <br/>
                 <span className="bold-mui" style={{marginLeft: "40px"}}>{this.props.skill.name}</span>

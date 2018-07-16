@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ProfileElementType} from '../../../Store';
-import {FontIcon, List, ListItem, makeSelectable, MenuItem, Paper, SelectField, Subheader} from 'material-ui';
+import {Icon, List, ListItem, MenuItem, Paper, Select, ListSubheader} from '@material-ui/core';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../model/NameEntity';
@@ -16,8 +16,9 @@ import {isNullOrUndefined} from 'util';
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
+import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 
-let SelectableList = wrapSelectableList(makeSelectable(List));
+//let SelectableList = wrapSelectableList(makeSelectable(List));
 
 
 interface NameEntityOverviewProps {
@@ -146,38 +147,39 @@ class NameEntityOverviewModule extends React.Component<
             return null;
         }
     };
-
+    // TODO color POWER_MUI_THEME ist anders
+//  V0.20.x  -> Icon color: =POWER_MUI_THEME.baseTheme.palette.alternateTextColor
     private renderInfoBox = (nameEntities: Array<NameEntity>) => {
         if(this.state.selectedIndex != -1 ) {
             let ne = nameEntities[this.state.selectedIndex];
-            return <div >
-                <div className="vertical-align" style={{backgroundColor: POWER_MUI_THEME.baseTheme.palette.primary2Color, height: '56px'}}>
+            return (<div >
+                <div className="vertical-align" style={{ height: '56px'}}>
                     <div
-                        style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}
+                        style={{fontSize: 18}}
                     >
-                        <FontIcon
+                        <Icon
 
                             style={{verticalAlign: 'middle'}}
                             className="material-icons"
-                            color={POWER_MUI_THEME.baseTheme.palette.alternateTextColor}
+                            color={'default'}
                         >
                             info_outline
-                        </FontIcon>
+                        </Icon>
                         <span style={{marginLeft: '5px'}}>
                         Info
                         </span>
                     </div>
                 </div>
-                <Subheader>Bezeichnung</Subheader>
+                <ListSubheader>Bezeichnung</ListSubheader>
                 <span className="padding-left-16px">{ne.name()}</span>
-                <Subheader>Benutzt von</Subheader>
+                <ListSubheader>Benutzt von</ListSubheader>
                 {this.renderUsedBy(ne)}
-            </div>;
+            </div>);
         } else {
             return null;
         }
     };
-
+    //TODO selectableList https://github.com/mui-org/material-ui/issues/7619
     render() {
         let nameEntites = this.getNameEntitiesByField(this.state.selectedField);
         return (
@@ -185,29 +187,31 @@ class NameEntityOverviewModule extends React.Component<
                 <div className="row" style={{marginBottom: '16px'}}>
                     <div className="col-md-12">
                         <Paper style={{paddingLeft: '16px'}}>
-                            <SelectField
-                                floatingLabelText={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}
+                            <Select
+                                //lable={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}
                                 value={this.state.selectedField}
-                                onChange={this.handleSelect}
+                                onChange={() => this.handleSelect}
                             >
                                 {
                                     NameEntityUtil
                                         .getProfileElementTypes()
                                         .filter((value, index, array) => !(value === ProfileElementType.Project || value === ProfileElementType.SkillEntry))
-                                        .map((value, index, array) => <MenuItem key={value} value={value} primaryText={PowerLocalize.get(ProfileElementType[value])}/>)
+                                        .map((value, index, array) => <MenuItem key={value} value={value} ><ListItemText primary={PowerLocalize.get(ProfileElementType[value])}/></MenuItem>)
                                 }
-                            </SelectField>
+                            </Select>
                         </Paper>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-8">
                         <Paper>
+                            <List>
                             <SelectableList selectedIndex={this.state.selectedIndex} onSelect={this.handleIndexSelect}>
                                 {
                                     nameEntites.map((ne, key) =>  <ListItem value={key} key={key}>{ne.name()}</ListItem>)
                                 }
                             </SelectableList>
+                            </List>
                         </Paper>
                     </div>
                     <div className="col-md-4">

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {Table, TableBody, TableHead, TableCell, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
@@ -20,13 +20,13 @@ const mapRow = (notification: AdminNotification, key: number, props: ProfileUpda
             key={"NotificationInbox.TableRow.Not." + notification.id()}
             selected={props.selectedRows.indexOf(key) !== -1}
         >
-            <TableRowColumn>{notification.initials()}</TableRowColumn>
-            <TableRowColumn
+            <TableCell>{notification.initials()}</TableCell>
+            <TableCell
                 className="cursor-pointer"
             >
                 {PowerLocalize.get("NotificationInbox.ProfileUpdateNotification.SubjectText")}
-            </TableRowColumn>
-            <TableRowColumn>{formatToMailDisplay(notification.occurrence())}</TableRowColumn>
+            </TableCell>
+            <TableCell>{formatToMailDisplay(notification.occurrence())}</TableCell>
         </TableRow>
     )
 };
@@ -47,15 +47,15 @@ const handleRowSelection = (rows: string | Array<number>, props: ProfileUpdateNo
 export const ProfileUpdateNotificationTable = (props: ProfileUpdateNotificationTableProps) =>  (
     <div>
         <Table multiSelectable={true}
-               onRowSelection={rows => handleRowSelection(rows, props)}
+               onRowSelection={(rows:any) => handleRowSelection(rows, props)}
         >
-            <TableHeader>
+            <TableHead>
                 <TableRow>
-                    <TableHeaderColumn>{PowerLocalize.get('Initials.Singular')}</TableHeaderColumn>
-                    <TableHeaderColumn>{PowerLocalize.get('Subject.Singular')}</TableHeaderColumn>
-                    <TableHeaderColumn>{PowerLocalize.get('Date.Singular')}</TableHeaderColumn>
+                    <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
+                    <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
+                    <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
                 </TableRow>
-            </TableHeader>
+            </TableHead>
             <TableBody deselectOnClickaway={false}
             >
                 {

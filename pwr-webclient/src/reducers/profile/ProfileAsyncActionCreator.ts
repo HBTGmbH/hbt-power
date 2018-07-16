@@ -29,6 +29,7 @@ import {isNullOrUndefined} from 'util';
 import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {ProfileServiceError} from '../../model/ProfileServiceError';
+import {TemplateActionCreator} from '../template/TemplateActionCreator';
 
 export class ProfileAsyncActionCreator {
 
@@ -197,6 +198,8 @@ export class ProfileAsyncActionCreator {
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                 dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
+                console.log("TEST TEST TEST --- load all Templates");
+                dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                 Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
                 if(!isNullOrUndefined(navTarget)) {
                     dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));

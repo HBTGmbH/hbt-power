@@ -3,19 +3,22 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {
     Dialog,
-    FlatButton,
+    Button,
+    FormControl,
+    FormControlLabel,
     IconButton,
-    RadioButton,
-    RadioButtonGroup,
-    RaisedButton,
-    RefreshIndicator
-} from 'material-ui';
+    Radio,
+    RadioGroup,
+    CircularProgress,
+    Step,
+    Stepper,
+    StepLabel
+} from '@material-ui/core';
 
 import {SkillNotificationEditStatus} from '../../../model/admin/SkillNotificationEditStatus';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {isNullOrUndefined} from 'util';
 import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAction';
-import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import {SkillSearcher} from '../../general/skill-search_module';
 import {AdminNotificationReason} from '../../../model/admin/AdminNotificationReason';
 import {ApplicationState} from '../../../reducers/reducerIndex';
@@ -107,7 +110,7 @@ class SkillNotificationModuleModule extends React.Component<
     private renderPending = () => {
         return <div>
             <div className="vertical-align">
-                <RefreshIndicator
+                <CircularProgress
                     size={40}
                     left={0}
                     top={0}
@@ -146,29 +149,25 @@ class SkillNotificationModuleModule extends React.Component<
         </div>;
     };
 
+    // TODO Radio Button prüfen
     private NotificationActions = () => {
         return <div>
-            <p>
-                Please choose one of the action below to resolve the notification.
-            </p>
-            <RadioButtonGroup
-                name="notificationAction"
-                valueSelected={this.props.skillNotificationSelectedAction}
-                onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {this.props.setSkillNotificationAction(value as any);}}
-            >
-            <RadioButton
-                value={SkillNotificationAction.ACTION_OK}
-                label="Accept Skill"
-            />
-            <RadioButton
-                value={SkillNotificationAction.ACTION_EDIT}
-                label="Edit Skill"
-            />
-            <RadioButton
-                value={SkillNotificationAction.ACTION_DELETE}
-                label="Delete Skill"
-            />
-            </RadioButtonGroup>
+            <FormControl>
+                <p>
+                    Please choose one of the action below to resolve the notification.
+                </p>
+
+                <RadioGroup
+                    name="notificationAction"
+                    valueSelected={this.props.skillNotificationSelectedAction}
+                    onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {this.props.setSkillNotificationAction(value as any);}}
+                >
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_OK}/>} label="Accept Skill" />
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_EDIT}/>} label="Edit Skill" />
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_DELETE}/>} label="Delete Skill" />
+
+                </RadioGroup>
+            </FormControl>
         </div>
     }
 
@@ -186,7 +185,7 @@ class SkillNotificationModuleModule extends React.Component<
     private renderInfoCategoryPending = () => {
         return <div>
             <this.SkillInfo/>
-            <RefreshIndicator
+            <CircularProgress
                 size={40}
                 left={0}
                 top={0}
@@ -205,7 +204,8 @@ class SkillNotificationModuleModule extends React.Component<
             <this.SkillInfo/>
             <p>
                 This skill was not yet categorized.
-                <FlatButton
+                <Button
+                    variant={'flat'}
                     label="Categorize now."
                     secondary={true}
                     onClick={() => this.props.categorizeSkill(this.props.skillName)}
@@ -237,7 +237,7 @@ class SkillNotificationModuleModule extends React.Component<
             Success<br/>
             <IconButton
                 className="icon-ok-button "
-                iconClassName="material-icons"
+                className="material-icons"
             >
                 check_circle
             </IconButton>
@@ -329,7 +329,8 @@ class SkillNotificationModuleModule extends React.Component<
     private renderController = () => {
         switch(this.props.status) {
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING:
-                return (<RaisedButton
+                return (<Button
+                    variant={'raised'}
                     secondary={true}
                     label="Categorize"
                     onClick={() => this.props.categorizeSkill(this.props.skillName)}
@@ -339,7 +340,8 @@ class SkillNotificationModuleModule extends React.Component<
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR:
                 let label = this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT ? "Continue" : "Finish";
-                return (<RaisedButton
+                return (<Button
+                    variant={'raised'}
                     label={label}
                     secondary={true}
                     onClick={this.props.progressFromActionSelection}
@@ -347,13 +349,15 @@ class SkillNotificationModuleModule extends React.Component<
             case SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG:
                 return (
                     <div>
-                        <RaisedButton
+                        <Button
+                            variant={'raised'}
                             label="Validate"
-                            primary={true}
+                            color={'primary'}
 
                             onClick={() => this.props.categorizeSkill(this.props.newName)}
                         />
-                        <RaisedButton
+                        <Button
+                            variant={'raised'}
                             label="Finish"
                             secondary={true}
                             style={{marginLeft: "8px"}}
@@ -372,10 +376,11 @@ class SkillNotificationModuleModule extends React.Component<
     render() {
         return (<Dialog
             open={this.props.status !== SkillNotificationEditStatus.CLOSED}
-            actions={[<FlatButton
+            actions={[<Button
+                variant={'flat'}
                 key="SkillNotDlg.CloseAndReset"
                 label="Cancel"
-                primary={true}
+                color={'primary'}
                 onClick={this.props.closeAndReset}
             />]}
         >

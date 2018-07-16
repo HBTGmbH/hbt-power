@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, DatePicker, Dialog, IconButton} from 'material-ui';
+import {AutoComplete, DatePicker, Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -10,6 +10,8 @@ import {TrainingEntry} from '../../../../../model/TrainingEntry';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 
+// TODO Autocomplete
+// TODO DatePicker
 
 interface TrainingEntryDialogProps {
     /**
@@ -127,16 +129,16 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
             <Dialog
                 open={this.props.open}
                 modal={false}
-                onRequestClose={this.closeDialog}
+                onClose={this.closeDialog}
                 title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 autoScrollBodyContent={true}
-                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[<IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                                 <DatePicker
-                                    floatingLabelText={PowerLocalize.get('Begin')}
+                                    label={PowerLocalize.get('Begin')}
                                     id={'TrainingEntry.StartDate' + this.props.trainingEntry.id}
                                     container="inline"
                                     value={this.state.trainingEntry.startDate()}
@@ -146,7 +148,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                             </div>
                             <div className="col-md-5 col-sm-6">
                                 <DatePicker
-                                    floatingLabelText={PowerLocalize.get('End')}
+                                    label={PowerLocalize.get('End')}
                                     id={'TrainingEntry.EndDate' + this.props.trainingEntry.id}
                                     container="inline"
                                     value={this.state.trainingEntry.endDate()}
@@ -159,7 +161,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('Training.Singular')}
+                                    label={PowerLocalize.get('Training.Singular')}
                                     id={'TrainingEntry.Dialog.AC.' + this.props.trainingEntry.id}
                                     value={this.state.trainingEntryValue}
                                     searchText={this.state.trainingEntryValue}

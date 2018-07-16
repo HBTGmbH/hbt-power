@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Checkbox, FontIcon, GridList, RaisedButton} from 'material-ui';
+import {Checkbox, Icon, GridList, Button} from '@material-ui/core';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
 import {ConsultantTile} from './consultant-tile_module';
@@ -9,6 +9,8 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantCreateDialog} from './consultant-create-dialog_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import FormControl from '@material-ui/core/FormControl/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 
 const Toggle = require('react-toggle').default;
 
@@ -96,37 +98,50 @@ class ConsultantGridModule extends React.Component<
         return true;
     };
 
+// TODO Checkbox on Change
     render() {
         return (
             <div>
                 <ConsultantCreateDialog
                     show={this.state.createDialogOpen}
-                    onRequestClose={this.hideDialog}
+                    onClose={this.hideDialog}
                 />
                 <div className="row">
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                        label={PowerLocalize.get('Action.Update')}
-                        icon={<FontIcon className="material-icons">refresh</FontIcon>}
+
                         onClick={this.props.refreshConsultants}
-                    />
-                    <RaisedButton
+                    >
+                        <Icon className="material-icons">refresh</Icon>
+                        {PowerLocalize.get('Action.Update')}
+                        </Button>
+                    <Button
+                        variant={'raised'}
                         style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                        label={PowerLocalize.get('Action.CreateNewConsultant')}
-                        icon={<FontIcon className="material-icons">add</FontIcon>}
                         onClick={this.showDialog}
-                    />
-                    <Checkbox
-                        label={"Show inactive"}
-                        checked={this.state.showInactive}
-                        onCheck={(e, v) => this.setState({showInactive: v})}
-                    />
+                    >
+                        <Icon className="material-icons">add</Icon>
+                        {PowerLocalize.get('Action.CreateNewConsultant')}
+                    </Button>
+                    <FormControl>
+                        <FormControlLabel control={
+                            <Checkbox
+                                checked={this.state.showInactive}
+                                onChange={(e: object, v: boolean) => this.setState({showInactive: v})}
+
+                            />
+                        }
+                                          label={"Show inactive"}
+                                          />
+
+                    </FormControl>
                 </div>
                 <div className="row">
                     <GridList
                         cols={4}
                         cellHeight={310}
-                        padding={5}
+                        spacing={5}
                     >
                     {
                         this.props.consultantsByInitials

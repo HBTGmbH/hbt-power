@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {Dialog, FlatButton, TextField} from 'material-ui';
+import {Dialog, Button, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 
 interface SetValueDialogProps {
     open: boolean;
-    onRequestClose(): void;
+    onClose(): void;
     onOk(value: string): void;
-    floatingLabelText?: string;
+    label?: string;
 }
 
 interface SetValueDialogState {
@@ -16,7 +16,7 @@ interface SetValueDialogState {
 export class SetValueDialog extends React.Component<SetValueDialogProps, SetValueDialogState> {
 
     public static defaultProps: Partial<SetValueDialogProps> = {
-        floatingLabelText: ""
+        label: ""
     };
 
     constructor(props: SetValueDialogProps) {
@@ -36,24 +36,26 @@ export class SetValueDialog extends React.Component<SetValueDialogProps, SetValu
     render() {
         return (<Dialog
             open={this.props.open}
-            onRequestClose={this.props.onRequestClose}
+            onClose={this.props.onClose}
             actions={[
-                <FlatButton
-                    primary={true}
+                <Button
+                    variant={'flat'}
+                    color={'primary'}
                     label={PowerLocalize.get('Action.OK')}
                     onClick={this.invokeOk}
 
                 />,
-                <FlatButton
+                <Button
+                    variant={'flat'}
                     secondary={true}
                     label={PowerLocalize.get('Action.Close')}
-                    onClick={this.props.onRequestClose}
+                    onClick={this.props.onClose}
                 />
             ]}
         >
             <TextField
-                floatingLabelText={this.props.floatingLabelText}
-                onChange={(e, v) => this.setState({value: v})}
+                label={this.props.label}
+                onChange={(e) => this.setState({value: e.target.value})}
                 value={this.state.value}
             />
         </Dialog>);

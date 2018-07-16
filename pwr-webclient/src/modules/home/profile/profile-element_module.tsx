@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Card, CardHeader, CardMedia, Divider, IconButton} from 'material-ui';
+import {Card, CardHeader, CardMedia, Divider, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface ProfileElementLocalProps {
@@ -62,7 +62,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                             </table>
                         </div>
                         <div style={{textAlign: "center"}}>
-                            <IconButton style={{display:"inline-block"}} iconClassName="material-icons" onClick={this.props.onAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
+                            <IconButton style={{display:"inline-block"}} className="material-icons" onClick={this.props.onAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
                         </div>
                     </CardMedia>
                 </Card>

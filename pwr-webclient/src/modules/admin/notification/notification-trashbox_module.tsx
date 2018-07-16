@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {FontIcon, RaisedButton, Tab, Table, TableBody, TableRow, TableRowColumn, Tabs} from 'material-ui';
+import {Icon, Button, Tab, Table, TableBody, TableRow, TableCell, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
@@ -74,15 +74,15 @@ class NotificationTrashboxModule extends React.Component<
     private renderNotificationAsTableRow = (notification: AdminNotification) => {
         return (
             <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()}>
-                <TableRowColumn>{notification.initials()}</TableRowColumn>
-                <TableRowColumn>
+                <TableCell>{notification.initials()}</TableCell>
+                <TableCell>
                     {formatString(
                         PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
                         "TODO",
                         "TODO")
                     }
-                </TableRowColumn>
-                <TableRowColumn>{formatToMailDisplay(notification.occurrence())}</TableRowColumn>
+                </TableCell>
+                <TableCell>{formatToMailDisplay(notification.occurrence())}</TableCell>
             </TableRow>
         )
     };
@@ -93,28 +93,33 @@ class NotificationTrashboxModule extends React.Component<
             <div>
                 <div className="row">
                     <div className="col-md-9">
-                        <RaisedButton
+                        <Button
+                            variant={'raised'}
                             style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.Update')}
-                            icon={<FontIcon className="material-icons">refresh</FontIcon>}
                             onClick={() => this.props.getTrashedNotifications(this.props.username, this.props.password)}
-                        />
-                        <RaisedButton
+                        >
+                            {PowerLocalize.get('Action.Update')}
+                            <Icon className="material-icons">refresh</Icon>
+                        </Button>
+                        <Button
+                            variant={'raised'}
                             style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.FinalDelete')}
-                            icon={<FontIcon className="material-icons">delete</FontIcon>}
+
                             onClick={() => this.props.finalDeleteTrashed(this.props.username, this.props.password)}
-                        />
+                        >
+                            {PowerLocalize.get('Action.FinalDelete')}
+                            <Icon className="material-icons">delete</Icon>
+                        </Button>
                     </div>
                 </div>
-                <Tabs>
+                <Tabs value={false}>
                     <Tab
-                        icon={<FontIcon className="material-icons">delete</FontIcon>}
+                        icon={<Icon className="material-icons">delete</Icon>}
                         label={PowerLocalize.get("NotificationInbox.TrashedMessages")}
                     >
                         <Table>
                             <TableBody
-                                displayRowCheckbox={false}
+                               // displayRowCheckbox={false}
                             >
                                 {
                                     this.props.notifications.map(this.renderNotificationAsTableRow).toArray()

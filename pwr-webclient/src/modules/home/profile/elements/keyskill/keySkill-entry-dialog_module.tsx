@@ -9,9 +9,11 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
-import {AutoComplete, Dialog, IconButton} from 'material-ui';
+import {AutoComplete, Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+
+//TODO AutoComplete
 
 /**
  * Properties that are managed by react-redux.
@@ -110,16 +112,16 @@ class KeySkillDialogModule extends React.Component<
         return (<Dialog
             open={this.props.open}
             modal={false}
-            onRequestClose={this.closeDialog}
+            onClose={this.closeDialog}
             title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
             actions={[
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                <IconButton className="material-icons icon-size-20" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
         >
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                     <AutoComplete
-                        floatingLabelText={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
+                        label={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
                         id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
                         value={this.state.autoCompleteValue}
                         searchText={this.state.autoCompleteValue}

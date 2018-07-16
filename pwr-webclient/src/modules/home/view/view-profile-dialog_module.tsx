@@ -1,16 +1,19 @@
 import * as React from 'react';
-import {Dialog, FlatButton, FontIcon, Slider, TextField} from 'material-ui';
+import {Dialog, Button, Icon, Slider, TextField} from '@material-ui/core';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+
+// TODO slider
 
 interface ViewProfileDialogProps {
     open: boolean;
     viewProfile?: ViewProfile;
     type?: "edit" | "new";
 
-    onRequestClose(): void;
+    onClose(): void;
     onSave?(name: string, description: string, charsPerLine: number): void;
 }
 
@@ -65,7 +68,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     private closeAndReset = () => {
         this.resetState(this.props);
-        this.props.onRequestClose();
+        this.props.onClose();
     };
 
     private closeAndSave = () => {
@@ -85,17 +88,21 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             label = PowerLocalize.get("Action.Create");
             icon = "add";
         }
-        actions.push(<FlatButton
-            primary={true}
-            label={label}
+        actions.push(<Button
+            variant={'flat'}
+            color={'primary'}
             onClick={this.closeAndSave}
-            icon={<FontIcon className="material-icons">{icon}</FontIcon>}
-        />);
-        actions.push(<FlatButton
-            label={PowerLocalize.get("Action.Close")}
-            onClick={this.props.onRequestClose}
-            icon={<FontIcon className="material-icons">close</FontIcon>}
-        />);
+        >
+            {label}
+            <Icon className="material-icons">{icon}</Icon>
+        </Button>);
+        actions.push(<Button
+            variant={'flat'}
+            onClick={this.props.onClose}
+        >
+            <Icon className="material-icons">close</Icon>
+            {PowerLocalize.get("Action.Close")}
+            </Button>);
         return actions;
     };
 
@@ -111,31 +118,33 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         return (<Dialog
             title={this.renderTitle()}
             open={this.props.open}
-            onRequestClose={this.closeAndReset}
-            actions={this.renderActions()}
+            onClose={this.closeAndReset}
         >
+            <DialogActions>
+                {this.renderActions()}
+            </DialogActions>
             <LimitedTextField onChange={this.changeName}
                               maxCharacters={250}
                               value={this.state.name}
                               fullWidth={true}
-                              floatingLabelText={PowerLocalize.get("ViewProfileDialog.Name")}
+                              label={PowerLocalize.get("ViewProfileDialog.Name")}
             />
             <LimitedTextField onChange={this.changeDescription}
                               maxCharacters={500}
                               value={this.state.description}
                               fullWidth={true}
                               multiLine={true}
-                              floatingLabelText={PowerLocalize.get("ViewProfileDialog.Description")}
+                              label={PowerLocalize.get("ViewProfileDialog.Description")}
             />
-            <TextField onChange={this.changeLocale}
+            <TextField onChange={()=>this.changeLocale}
                        value={this.state.locale}
-                       floatingLabelText={PowerLocalize.get("ViewProfileDialog.Locale")}
+                       label={PowerLocalize.get("ViewProfileDialog.Locale")}
                        disabled={this.props.type === "edit"}
             />
             <div style={{width: "100%"}}>
                 <TextField
                     value={this.state.charsPerLine}
-                    floatingLabelText={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
+                    label={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
                     disabled={true}
                 />
                 <Slider

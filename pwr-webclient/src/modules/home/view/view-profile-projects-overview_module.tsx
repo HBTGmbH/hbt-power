@@ -4,7 +4,7 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
-import {Card, CardMedia, CardTitle, FlatButton, Subheader} from 'material-ui';
+import {Card, CardMedia, CardHeader, Button, ListSubheader} from '@material-ui/core';
 import {ViewProfileEntries} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewProject} from '../../../model/view/ViewProject';
@@ -88,15 +88,15 @@ class ViewProfileProjectsOverviewModule extends React.Component<
         res.push(
             <td key={'ViewProject_' + entry.name + entry.broker + entry.client}>
                 <Card>
-                    <CardTitle
+                    <CardHeader
                         title={entry.name}
-                        actAsExpander={true}
-                        subtitle={'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}
+                        //actAsExpander={true}
+                        subheader={'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}
                     />
                     <CardMedia
-                        expandable={true}
+                        //expandable={true}
                     >
-                        <Subheader>Skills</Subheader>
+                        <ListSubheader>Skills</ListSubheader>
                         <ViewProfileEntries
                             movableEntryType="SKILL"
                             toggleableEntryType="SKILL"
@@ -120,7 +120,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                             onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', entryIndex, type, sourceIndex, targetIndex)}
                             onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', entryIndex, type, index, isEnabled)}
                         />
-                        <Subheader>Project Roles</Subheader>
+                        <ListSubheader>Project Roles</ListSubheader>
                         <ViewProfileEntries
                             movableEntryType="ROLE"
                             toggleableEntryType="ROLE"
@@ -146,7 +146,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                     toggleableEntryType="PROJECT"
                     renderEntry={this.renderProjects}
                     headers={[<span>
-                                <FlatButton label="Name" disabled={true}/>
+                        <Button variant={'flat'} disabled={true}>Name</Button>
                                 {EntryRenderers.renderStartDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
                                 {EntryRenderers.renderEndDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
                             </span>]}

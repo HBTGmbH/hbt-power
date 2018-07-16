@@ -4,7 +4,7 @@ import * as redux from 'redux';
 import {CareerEntry} from '../../../../../model/CareerEntry';
 import {ProfileElementType} from '../../../../../Store';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {IconButton} from 'material-ui';
+import {IconButton} from '@material-ui/core';
 import {formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -100,8 +100,8 @@ class SingleCareerEntryModule extends React.Component<
     render() {
         return (<tr>
             <td>
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.openDialog} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                <IconButton className="material-icons icon-size-20" onClick={this.openDialog} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                 {<CareerEntryDialog
                     open={this.state.dialogOpen}
                     requestClose={this.closeDialog}

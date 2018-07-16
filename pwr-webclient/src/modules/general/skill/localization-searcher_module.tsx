@@ -1,16 +1,19 @@
 import * as React from 'react';
 import {LanguageUtils} from '../../../utils/LanguageUtils';
 import {ReactUtils} from '../../../utils/ReactUtils';
-import {AutoComplete, Dialog, List, ListItem, makeSelectable, TextField} from 'material-ui';
+import {AutoComplete, Dialog, List, ListItem, makeSelectable, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 import ISOData = LanguageUtils.ISO639_2DataSet;
+
+// TODO AutoComplete
+// TODO makeSelectable
 
 let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface LocalizationSearcherProps {
     open: boolean;
-    onRequestClose?(): void;
+    onClose?(): void;
     onSelectIsoData?(data: ISOData): void;
     maxHeight?: string;
 }
@@ -37,7 +40,7 @@ export class LocalizationSearcher extends React.Component<LocalizationSearcherPr
     }
 
     public static defaultProps: Partial<LocalizationSearcherProps> = {
-        onRequestClose: () => {},
+        onClose: () => {},
         onSelectIsoData: data => {},
         maxHeight: '400px'
     };
@@ -81,14 +84,14 @@ export class LocalizationSearcher extends React.Component<LocalizationSearcherPr
         return (
         <Dialog
             open={this.props.open}
-            onRequestClose={this.props.onRequestClose}
+            onClose={this.props.onClose}
             title={PowerLocalize.get("LocalizationSearcher.Title")}
         >
             {PowerLocalize.get("LocalizationSearcher.Explanation")}
             <TextField
                 value={this.state.searchString}
-                onChange={this.handleSearchStringChange}
-                floatingLabelText={PowerLocalize.get("LocalizationSearcher.SearchString")}
+                onChange={() => this.handleSearchStringChange}
+                label={PowerLocalize.get("LocalizationSearcher.SearchString")}
             />
             <div style={{maxHeight: this.props.maxHeight, overflow: 'auto'}}>
                 <List>

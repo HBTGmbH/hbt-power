@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Card, CardActions, CardHeader, CardText, IconButton} from 'material-ui';
+import {Card, CardActions, CardHeader, CardContent, IconButton} from '@material-ui/core';
 import {Project} from '../../../../../model/Project';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialog, ProjectDialogState} from './project-dialog_module';
@@ -93,14 +93,14 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         projectRoles={this.props.projectRoles}
                        profile={this.props.profile}
                     />
-                    <CardText expandable={true} >
+                    <CardContent expandable={true} >
                         <label>Kurzbeschreibung</label><br/>
                         {this.props.project.description()}
-                    </CardText>
+                    </CardContent>
                     <CardActions expandable={true}>
-                        <IconButton iconClassName="material-icons icon-size-20" onClick={this.openDialog}
+                        <IconButton className="material-icons icon-size-20" onClick={this.openDialog}
                                     tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                        <IconButton iconClassName="material-icons icon-size-20" onClick={this.deleteButtonPress}
+                        <IconButton className="material-icons icon-size-20" onClick={this.deleteButtonPress}
                                     tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     </CardActions>
                 </Card>

@@ -1,7 +1,9 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
-import {FontIcon, Paper} from 'material-ui';
+import {Icon, Paper} from '@material-ui/core';
 import {POWER_MUI_THEME} from '../../index';
+
+// TODO icon Color
 
 interface InfoPaperProps {
     minHeight?: string;
@@ -37,13 +39,13 @@ export class InfoPaper extends React.Component<InfoPaperProps, InfoPaperState> {
                     <div
                         style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}
                     >
-                        <FontIcon
+                        <Icon
                             style={{verticalAlign: 'middle'}}
                             className="material-icons"
-                            color={POWER_MUI_THEME.baseTheme.palette.alternateTextColor}
+                            color={'default'}
                         >
                             {this.props.materialIconName}
-                        </FontIcon>
+                        </Icon>
                         <span style={{marginLeft: '5px'}}>
                             {this.props.title}
                         </span>

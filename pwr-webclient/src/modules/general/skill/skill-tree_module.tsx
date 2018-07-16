@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {FontIcon, List, ListItem, makeSelectable} from 'material-ui';
+import {Icon, List, ListItem, makeSelectable} from '@material-ui/core';
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';
 import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
+// TODO make Selectable
 
 let SelectableList = wrapSelectableList(makeSelectable(List));
 
@@ -70,26 +71,26 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         onSkillSelect: () => {}
     };
 
-    private static CustomIcon = (props: {margin: string}) => <FontIcon
+    private static CustomIcon = (props: {margin: string}) => <Icon
             className="material-icons"
             style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
         >
             extension
-        </FontIcon>;
+        </Icon>;
 
-    private static DisplayIcon = (props: {margin: string}) => <FontIcon
+    private static DisplayIcon = (props: {margin: string}) => <Icon
         className="material-icons"
         style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
     >
         airplay
-    </FontIcon>;
+    </Icon>;
 
-    private static BlacklistedIcon = (props: {margin: string}) => <FontIcon
+    private static BlacklistedIcon = (props: {margin: string}) => <Icon
         className="material-icons blacklisted-icon"
         style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
     >
         warning
-    </FontIcon>;
+    </Icon>;
 
     private getSkill = (skillId: number):SkillServiceSkill => {
         return this.props.skillsById.get(skillId);
@@ -123,7 +124,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             value={SkillTree.CATEGORY_PREFIX + skillCategory.id().toString()}
             nestedItems={this.renderNestedItems(skillTreeNode)}
             onNestedListToggle={() => this.props.onNestedListToggle(skillCategory.id())}
-            leftIcon={<FontIcon className="material-icons">label</FontIcon>}
+            leftIcon={<Icon className="material-icons">label</Icon>}
             primaryTogglesNestedList={this.props.expandOnClick}
             open={skillTreeNode.open}
         >
@@ -139,7 +140,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         return <ListItem
             key={skill.qualifier()}
             value={SkillTree.SKILL_PREFIX + skill.id().toString()}
-            leftIcon={<FontIcon className="material-icons">label_outline</FontIcon>}
+            leftIcon={<Icon className="material-icons">label_outline</Icon>}
         >
             {skill.qualifier()}
             {skill.isCustom() ? <SkillTree.CustomIcon margin={"24px"}/> : false}

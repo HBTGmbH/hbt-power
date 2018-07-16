@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {Dialog, FlatButton} from 'material-ui';
+import {Dialog, Button,DialogActions} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
@@ -30,7 +30,7 @@ interface ConsultantEditDialogProps {
 interface ConsultantEditDialogLocalProps {
     initials: string;
     show: boolean;
-    onRequestClose(): void;
+    onClose(): void;
 }
 
 /**
@@ -125,7 +125,7 @@ class ConsultantEditDialogModule extends React.Component<
     };
 
     private closeDialog = () => {
-        this.props.onRequestClose();
+        this.props.onClose();
     };
 
     private resetAndClose = () => {
@@ -142,21 +142,29 @@ class ConsultantEditDialogModule extends React.Component<
 
     private readonly dialogActions = [
 
-        <FlatButton
-            label={PowerLocalize.get("Action.Save")}
-            primary={true}
+        <Button
+            variant={'flat'}
+            color={'primary'}
             onClick={this.saveAndClose}
-        />,
-        <FlatButton
-            label={PowerLocalize.get("ConsultantTile.EditProfile")}
-            primary={true}
+        >
+            {PowerLocalize.get("Action.Save")}
+        </Button>,
+
+        <Button
+            variant={'flat'}
+            color={'primary'}
             onClick={() => {this.props.redirectToUser(this.props.initials)}}
-        />,
-        <FlatButton
-            label={PowerLocalize.get("Action.Exit")}
-            primary={true}
+        >
+            {PowerLocalize.get("ConsultantTile.EditProfile")}
+            </Button>,
+
+        <Button
+            variant={'flat'}
+            color={'primary'}
             onClick={this.resetAndClose}
-        />,
+        >
+            {PowerLocalize.get("Action.Exit")}
+        </Button>,
     ];
 
     render() {
@@ -164,8 +172,7 @@ class ConsultantEditDialogModule extends React.Component<
             <Dialog
                 title={PowerLocalize.get('ConsultantTile.EditConsultant')}
                 open={this.props.show}
-                actions={this.dialogActions}
-                onRequestClose={this.closeDialog}
+                onClose={this.closeDialog}
             >
                 <ConsultantEditFields
                     firstName = {this.state.consultantInfo.firstName()}
@@ -179,6 +186,9 @@ class ConsultantEditDialogModule extends React.Component<
                     onBirthDateChange={this.setBirthDate}
                     onActiveChange={this.setActive}
                 />
+                <DialogActions>
+                    {this.dialogActions}
+                </DialogActions>
             </Dialog>
         </div>);
     }

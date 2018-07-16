@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, Dialog, IconButton} from 'material-ui';
+import {AutoComplete, Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -9,6 +9,7 @@ import {SectorEntry} from '../../../../../model/SectorEntry';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 
+// TODO AutoComplete
 
 interface SectorEntryDialogProps {
     /**
@@ -102,15 +103,15 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
             <Dialog
                 open={this.props.open}
                 modal={false}
-                onRequestClose={this.closeDialog}
+                onClose={this.closeDialog}
                 title={PowerLocalize.get('SectorEntry.Dialog.Title')}
-                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                actions={[<IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
             >
                 <div className="row">
                     <div className="col-md-offset-3">
                         <AutoComplete
-                            floatingLabelText={PowerLocalize.get('Sector.Singular')}
+                            label={PowerLocalize.get('Sector.Singular')}
                             id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
                             value={this.state.sectorEntryValue}
                             searchText={this.state.sectorEntryValue}

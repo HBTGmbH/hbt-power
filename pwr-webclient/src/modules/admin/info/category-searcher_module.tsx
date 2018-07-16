@@ -1,19 +1,21 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {AutoComplete, Dialog, List, ListItem, makeSelectable, TextField} from 'material-ui';
+import {Dialog, List, ListItem, TextField} from '@material-ui/core';//AutoComplete,makeSelectable,
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
 import {SkillStore} from '../../../model/skill/SkillStore';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
+// TODO autocomplete
+// TODO makeSelectable
 
-let SelectableList = wrapSelectableList(makeSelectable(List));
+//let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface CategorySearcherProps {
     categories: Array<SkillCategory>;
     open: boolean;
-    onRequestClose(): void;
+    onClose(): void;
     onSelectCategory(categoryId: number): void;
     skillStore: SkillStore;
 }
@@ -69,10 +71,11 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
         });
     };
 
+
     private renderCategories = () => {
         let categories = this.props.categories;
         if(this.state.filterText !== "") {
-            categories = categories.filter(categorie => AutoComplete.fuzzyFilter(this.state.filterText, categorie.qualifier()));
+            //categories = categories.filter(categorie => AutoComplete.fuzzyFilter(this.state.filterText, categorie.qualifier()));
         }
         categories.sort(Comparators.compareCategories);
         return categories.map(this.mapListItem);
@@ -81,19 +84,19 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     render() {
         return (<Dialog
             open={this.props.open}
-            onRequestClose={this.props.onRequestClose}
+            onClose={this.props.onClose}
         >
             <TextField
-                floatingLabelText={PowerLocalize.get("Action.Search")}
+                label={PowerLocalize.get("Action.Search")}
                 value={this.state.filterText}
-                onChange={this.handleFilterTextChange}
+                onChange={() => this.handleFilterTextChange}
             />
-            <SelectableList selectedIndex={this.state.selected}
-                            onSelect={this.handleSelect}
+            <List //selectedIndex={this.state.selected}
+                            //onSelect={this.handleSelect}
                             style={{maxHeight: "400px", overflow: "auto"}}
             >
                 {this.renderCategories()}
-            </SelectableList>
+            </List>
         </Dialog>);
     }
 }

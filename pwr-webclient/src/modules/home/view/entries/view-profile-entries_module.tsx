@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
-import {Card, CardHeader, FontIcon} from 'material-ui';
+import {Card, CardHeader, Icon} from '@material-ui/core';
 import {IViewEntry} from '../../../../model/view/IViewEntry';
 import {isNullOrUndefined} from 'util';
 
@@ -48,7 +48,7 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
     };
 
 
-    private DragHandle = SortableHandle(() => <FontIcon className="material-icons">drag_handle</FontIcon>); // This can be any component you want
+    private DragHandle = SortableHandle(() => <Icon className="material-icons">drag_handle</Icon>); // This can be any component you want
 
 
 

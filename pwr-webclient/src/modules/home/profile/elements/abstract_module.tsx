@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {Color} from '../../../../utils/ColorUtil';
-import {LinearProgress, TextField} from 'material-ui';
+import {LinearProgress, TextField} from '@material-ui/core';
 import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 
@@ -86,17 +86,17 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
             currentBarColor: DescriptionModule.calcColor(newString.length, this.state.maxCharacters).toCSSRGBString()
         });
     };
-
+    // TODO LinearProgress Color
     render() {
         return(
             <div>
                 <TextField
                     hintText = {this.props.hintText}
-                    floatingLabelText = {this.props.hintText}
+                    label = {this.props.hintText}
                     fullWidth = {true}
                     multiLine={true}
                     rows={10}
-                    onChange={this.handleTextChange}
+                    onChange={() => this.handleTextChange}
                     value={this.props.abstractText}
                 />
                         <LinearProgress
@@ -104,7 +104,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
                             max={this.state.maxCharacters}
                             value={this.props.abstractText.length}
                             mode="determinate"
-                            color={this.state.currentBarColor}
+                            color={'primary'}
                         />
                     <div>Zeichen: {this.props.abstractText.length}/{this.state.maxCharacters}</div>
             </div>

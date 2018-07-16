@@ -2,7 +2,7 @@
  *
  */
 import * as React from 'react';
-import {IconButton} from 'material-ui';
+import {IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
@@ -72,8 +72,8 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
         return(
         <tr>
             <td>
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleEditButtonPress} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonPress} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                 <LanguageSkillDialog
                     languageSkill={this.props.languageSkill}
                     languages={this.props.languages}

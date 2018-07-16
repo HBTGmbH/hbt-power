@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IconButton} from 'material-ui';
+import {IconButton} from '@material-ui/core';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
@@ -116,8 +116,8 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
         return(
             <tr>
                 <td>
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
                     <TrainingEntryDialog
                         trainingEntry={this.props.trainingEntry}
                         trainings={this.props.trainings}

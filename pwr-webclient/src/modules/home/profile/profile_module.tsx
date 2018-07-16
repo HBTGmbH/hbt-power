@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar} from 'material-ui';
+import {CardHeader, Divider, IconButton, Paper, Tab, Tabs, Toolbar} from '@material-ui/core';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -19,6 +19,7 @@ import {isNullOrUndefined} from 'util';
 import {Careers} from './elements/career/career_module';
 import {KeySkills} from './elements/keyskill/keySkill_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 
 interface ProfileProps {
@@ -88,7 +89,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     render() {
         return(
            <Paper className="mui-margin">
-                <Tabs>
+                <Tabs value={false}>
                     <Tab
                         label={PowerLocalize.get("ProfileModule.Tabs.Profile.Title")}>
                         <div className="mui-margin">
@@ -140,9 +141,14 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     </Tab>
                 </Tabs>
                 <Toolbar style={this.cardToolbarStyle}>
-                    <IconButton iconClassName="material-icons" onClick={this.handleSaveProfile} tooltip={PowerLocalize.get('Action.Save')}>done</IconButton>
-                    <IconButton iconClassName="material-icons" onClick={this.handleReloadProfile} tooltip={PowerLocalize.get('Action.Undo')}>undo</IconButton>
-                </Toolbar>
+                    <Tooltip title={PowerLocalize.get('Action.Save')} >
+                        <IconButton className="material-icons" onClick={this.handleSaveProfile}>done</IconButton>
+                    </Tooltip>
+                    <Tooltip title={PowerLocalize.get('Action.Undo')} >
+                        <IconButton className="material-icons" onClick={this.handleReloadProfile} >undo</IconButton>
+                    </Tooltip>
+           </Toolbar>
+
            </Paper>
         );
     }

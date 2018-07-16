@@ -17,6 +17,8 @@ import {NavigationStore} from '../model/navigation/NavigationStore';
 import {ViewProfileStore} from '../model/view/ViewProfileStore';
 import {routerMiddleware, RouterState} from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
+import {TemplateStore} from '../model/view/TemplateStore';
+import {TemplateReducer} from './template/TemplateReducer';
 
 
 export interface ApplicationState {
@@ -27,6 +29,7 @@ export interface ApplicationState {
     metaDataReducer: MetaDataStore;
     navigationSlice: NavigationStore;
     viewProfileSlice: ViewProfileStore;
+    templateSlice: TemplateStore;
     router: Reducer<RouterState>;
 }
 
@@ -39,6 +42,7 @@ const ApplicationStore = combineReducers({
     metaDataReducer: MetaDataReducer.reduce,
     navigationSlice: NavigationReducer.reduce,
     viewProfileSlice: ViewProfileReducer.reduce,
+    templateSlice: TemplateReducer.reduce,
 });
 
 export const PWR_HISTORY = createHistory();

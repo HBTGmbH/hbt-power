@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Dialog, FlatButton} from 'material-ui';
+import {Dialog, Button} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface CategoryDeleteConfirmationProps {
@@ -32,12 +32,14 @@ export class CategoryDeleteConfirmation extends React.Component<CategoryDeleteCo
             open={this.props.open}
             modal={true}
             actions={[
-                <FlatButton
-                    primary={true}
+                <Button
+                    variant={'flat'}
+                    color={'primary'}
                     label={PowerLocalize.get("Action.No")}
                     onClick={this.props.onDeclineDelete}
                 />,
-                <FlatButton
+                <Button
+                    variant={'flat'}
                     secondary={true}
                     label={PowerLocalize.get("Action.Yes")}
                     onClick={this.props.onAcceptDelete}

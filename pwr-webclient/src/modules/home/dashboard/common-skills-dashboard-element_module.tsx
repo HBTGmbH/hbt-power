@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Avatar, FontIcon, Paper, RaisedButton} from 'material-ui';
+import {Avatar, Icon, Paper, Button} from '@material-ui/core';
 import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
@@ -76,12 +76,13 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                     Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}
                 </span>
                     <div className="col-md-3 col-sm-12">
-                        <RaisedButton
+                        <Button
+                            variant={'raised'}
                             style={{marginTop: "8px"}}
                             label={PowerLocalize.get('Action.ShowMore')}
                             labelPosition="before"
-                            primary={true}
-                            icon={ <FontIcon className="material-icons">open_in_new</FontIcon>}
+                            color={'primary'}
+                            icon={ <Icon className="material-icons">open_in_new</Icon>}
                             onClick={() => this.loadSkillStatistics()}
                         />
                     </div>
