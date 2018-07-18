@@ -14,6 +14,7 @@ import {Profile} from '../../../../../model/Profile';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import {Comparators} from '../../../../../utils/Comparators';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -137,11 +138,15 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
                 </ResponsiveReactGridLayout>
                 <br/>
                 <div style={{textAlign: 'center'}}>
+                    <Tooltip title={PowerLocalize.get('Action.New')}>
                     <IconButton
                         style={{display:'inline-block'}}
                         className="material-icons"
                         onClick={this.props.addProject}
-                        tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
+                    >
+                        add
+                    </IconButton>
+                    </Tooltip>
                 </div>
             </div>
         );

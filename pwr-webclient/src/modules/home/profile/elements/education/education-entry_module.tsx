@@ -7,6 +7,7 @@ import {formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {EducationEntryDialogModule} from './education-entry-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 
 /**
@@ -97,8 +98,13 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         return(
             <tr>
                 <td>
-                    <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonPress} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <Tooltip title={PowerLocalize.get('Action.Edit')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonPress}>edit</IconButton>
+                    </Tooltip>
+                    <Tooltip title={PowerLocalize.get('Action.Delete')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress}>delete</IconButton>
+                    </Tooltip>
+
                     <EducationEntryDialogModule
                         open={this.state.dialogOpen}
                         educationEntry={this.props.educationEntry}

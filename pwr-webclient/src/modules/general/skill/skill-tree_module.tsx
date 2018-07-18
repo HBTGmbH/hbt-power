@@ -1,14 +1,16 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Icon, List, ListItem, makeSelectable} from '@material-ui/core';
+import {Icon, List, ListItem} from '@material-ui/core';
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';
 import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
+import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 
 // TODO make Selectable
 
-let SelectableList = wrapSelectableList(makeSelectable(List));
+
+//let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface SkillTreeProps {
     root: SkillTreeNode;
@@ -118,15 +120,15 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             currentMargin += 24
         }
 
-
+    // Todo nesting
         return <ListItem
             key={skillCategory.qualifier()}
             value={SkillTree.CATEGORY_PREFIX + skillCategory.id().toString()}
-            nestedItems={this.renderNestedItems(skillTreeNode)}
-            onNestedListToggle={() => this.props.onNestedListToggle(skillCategory.id())}
-            leftIcon={<Icon className="material-icons">label</Icon>}
-            primaryTogglesNestedList={this.props.expandOnClick}
-            open={skillTreeNode.open}
+            //children={this.renderNestedItems(skillTreeNode)}
+           //onNestedListToggle={() => this.props.onNestedListToggle(skillCategory.id())}
+            //leftIcon={<Icon className="material-icons">label</Icon>}
+            //primaryTogglesNestedList={this.props.expandOnClick}
+            //open={skillTreeNode.open}
         >
             {skillCategory.qualifier()}
             {blacklistIcon}
@@ -140,8 +142,10 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         return <ListItem
             key={skill.qualifier()}
             value={SkillTree.SKILL_PREFIX + skill.id().toString()}
-            leftIcon={<Icon className="material-icons">label_outline</Icon>}
         >
+            <ListItemIcon>
+                <Icon className="material-icons">label_outline</Icon>
+            </ListItemIcon>
             {skill.qualifier()}
             {skill.isCustom() ? <SkillTree.CustomIcon margin={"24px"}/> : false}
         </ListItem>;
@@ -170,8 +174,10 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
 
     render() {
         console.debug("Invoking re-render of tree", this.props.root);
-        return (<SelectableList selectedIndex={this.state.selectedIndex} onSelect={this.handleOnSelect}>
+        return (
+            <List //selectedIndex={this.state.selectedIndex} //onSelect={this.handleOnSelect}
+                >
             {this.renderNestedItems(this.props.root)}
-        </SelectableList>);
+        </List>);
     }
 }

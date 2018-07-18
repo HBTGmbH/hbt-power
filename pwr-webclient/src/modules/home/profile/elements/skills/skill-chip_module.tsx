@@ -4,6 +4,7 @@ import {Skill} from '../../../../../model/Skill';
 import {Chip, Icon, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {StarRating} from '../../../../star-rating_module.';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 
 /**
@@ -53,14 +54,14 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                 <div className="vertical-align" style={{maxWidth: "100%"}}>
                     <div><span style={{color: this.props.textColor}}>{this.props.skill.name()}</span></div>
                     <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
-                    <IconButton  id={"Skill.Delete." + this.props.skill.id()}
-                                 onClick={this.handleDelete}
-                                 tooltip={PowerLocalize.get("Action.Delete")}
-                                 tooltipPosition="top-right"
-                                 className="material-icons"
-                    >
-                        delete
-                    </IconButton>
+                    <Tooltip title={PowerLocalize.get("Action.Delete")} placement={"right-end"}>
+                        <IconButton  id={"Skill.Delete." + this.props.skill.id()}
+                                     onClick={this.handleDelete}
+                                     className="material-icons"
+                        >
+                            delete
+                        </IconButton>
+                    </Tooltip>
                     {this.props.skill.isNew() ? <Icon className="material-icons">fiber_new</Icon>: false}
                 </div>
             </Chip>);

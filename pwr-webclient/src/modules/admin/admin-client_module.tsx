@@ -20,12 +20,15 @@ import {ApplicationState} from '../../reducers/reducerIndex';
 import {getImagePath} from '../../API_CONFIG';
 import {NotificationInbox} from './notification/notification-inbox_module';
 import {NotificationTrashbox} from './notification/notification-trashbox_module';
-import {ConsultantGrid} from '../../../../../test-app/src/modules/admin/consultants/consultant-grid_module';
+import {ConsultantGrid} from './consultants/consultant-grid_module';
 import {SkillStatistics} from '../home/statistics/skill-statistics_module';
 import {ProfileNetwork} from './statistics/profile-network_module';
 import {AdminSkillTree2} from './info/admin-skill-tree2_module';
 import {AdminProfileOverview} from './info/admin-profile-overview_module.';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
+import Toolbar from '@material-ui/core/Toolbar/Toolbar';
+import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
+import Divider from '@material-ui/core/Divider/Divider';
 
 
 
@@ -112,57 +115,58 @@ class AdminClientModule extends React.Component<
     render() {
         return (
             <div>
-                <Paper elevation={3}>
-                    <AppBar
-                        title={ 'Der Title - admin_client_module'
-                           /* <div className="vertical-align" style={{height: '100%'}}>
-                                <img className="img-responsive logo-small" src={getImagePath()+'/HBT002_Logo_neg.png'}/>
-                            </div>*/
-                        }
-                    >
-                        <IconButton/>
-                        <IconButton
-                            className={"material-icons"}
-                            onClick={this.props.logOutAdmin}
-                        >
-                            input
-                        </IconButton>
+                <div className="row vertical-align">
+                    <Paper elevation={3}>
+                        <AppBar>
+                            <Toolbar>
+                                <div className="vertical-align" style={{height: '100%'}}>
+                                    <img className="img-responsive logo-small" src={getImagePath()+'/HBT002_Logo_neg.png'}/>
+                                </div>
+                                <IconButton color={'secondary'} onClick={this.props.logOutAdmin} style={{float:'left'}}>
+                                    <Icon   className={"material-icons"}> input</Icon>
+                                </IconButton>
+                            </Toolbar>
+                        </AppBar>
+                    </Paper>
+                </div>
 
-                    </AppBar>
-                </Paper>
                 <div className="row">
                     <div className="col-md-2">
-                        <Paper  style={{marginTop:'55px'}}>
+                        <Paper  style={{marginTop:'70px'}}>
                             <List>
+                                {/*NOTE ListSubheader
                                 <ListItem key = "Postkorb" >
                                     <ListItemIcon>
                                         <Icon className="material-icons">inbox</Icon>
                                     </ListItemIcon>
                                     <ListItemText primary={"Postkorb"}/>
-                                </ListItem>
+                                </ListItem>*/}
+                                <ListSubheader>Postkorb</ListSubheader>
+                                    <ListItem
+                                        button
+                                        key="AdminClient.Overview.Mail.Inbox"
+                                        onClick={this.handleInboxButtonClick}
+                                    >
+                                        <ListItemIcon>
+                                            <Icon className="material-icons">inbox</Icon>
+                                        </ListItemIcon>
+                                        <ListItemText primary={"Inbox"}/>
+                                    </ListItem>
+                                    <ListItem
+                                        button
+                                        key="AdminClient.Overview.Mail.Trashbin"
+                                        onClick={this.handleTrashboxButtonClick}
+                                    >
+                                        <ListItemIcon>
+                                            <Icon className="material-icons">delete</Icon>
+                                        </ListItemIcon>
+                                        <ListItemText primary={"Trashbin"}/>
+                                    </ListItem>
 
-                                          <Collapse in = {true}>
-                                              <ListItem
-                                                  key="AdminClient.Overview.Mail.Inbox"
-                                                  onClick={this.handleInboxButtonClick}
-                                              >
-                                                  <ListItemIcon>
-                                                      <Icon className="material-icons">inbox</Icon>
-                                                  </ListItemIcon>
-                                                  <ListItemText primary={"Inbox"}/>
-                                              </ListItem>,
-                                              <ListItem
-                                                  key="AdminClient.Overview.Mail.Trashbin"
-                                                  onClick={this.handleTrashboxButtonClick}
-                                              >
-                                                  <ListItemIcon>
-                                                      <Icon className="material-icons">delete</Icon>
-                                                  </ListItemIcon>
-                                                  <ListItemText primary={"Trashbin"}/>
-                                              </ListItem>
-                                          </Collapse>
-
+                            <Divider/>
+                                <ListSubheader>Mitarbeiter</ListSubheader>
                                 <ListItem
+                                    button
                                     key = "Berater"
                                     onClick={this.props.navigateToConsultants}
                                 >
@@ -171,19 +175,19 @@ class AdminClientModule extends React.Component<
                                     </ListItemIcon>
                                     <ListItemText primary={"Berater"}/>
                                 </ListItem>
-
-                                <ListItem key = {PowerLocalize.get('AdminClient.Menu.Info')}>
+                            <Divider/>
+                                <ListSubheader>Informationen</ListSubheader>
+                                {/*<ListItem key = {PowerLocalize.get('AdminClient.Menu.Info')}>
                                     <ListItemIcon>
                                         <Icon className="material-icons">info_outline</Icon>
                                     </ListItemIcon>
                                     <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info')}/>
-                                </ListItem>
+                                </ListItem>*/}
 
-                                <Collapse in={true}>
                                     <List>
-
                                         <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={ "Link01"}>
                                             <ListItem
+                                                button
                                                 key="AdminClient.Menu.Info.ProfileElements"
                                             >
                                                 <ListItemIcon>
@@ -191,10 +195,12 @@ class AdminClientModule extends React.Component<
                                                 </ListItemIcon>
                                                 <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
                                             </ListItem>
-                                        </Link>,
-                                        <Link to={Paths.ADMIN_INFO_SKILLTREE} key={ "Link02"}>
+                                        </Link>
+                                        <Link to={Paths.ADMIN_INFO_SKILLTREE}>
                                             <ListItem
+                                                button
                                                 key="AdminClient.Menu.Info.SkillTree"
+                                                // TODO link wieder sichtbar machen ohne style änderung durch unterstreichen, semantisch so nicht richtig-mp
                                             >
                                                 <ListItemIcon>
                                                     <Icon className="material-icons">device_hub</Icon>
@@ -203,20 +209,20 @@ class AdminClientModule extends React.Component<
                                             </ListItem>
                                         </Link>
                                     </List>
-                                </Collapse>
+                                <Divider/>
 
 
 
-                                <ListItem
+                                {/*<ListItem
                                     key = {PowerLocalize.get('AdminClient.Menu.Statistics')}
                                 >
                                     <ListItemIcon>
                                         <Icon className="material-icons">insert_chart</Icon>
                                     </ListItemIcon>
                                     <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics')}/>
-                                </ListItem>
+                                </ListItem>*/}
 
-                                <Collapse in = {true}>
+                                <ListSubheader>Statistiken</ListSubheader>
                                         <ListItem
                                             button
                                             key="AdminClient.Menu.Statistics.Skills"
@@ -226,7 +232,7 @@ class AdminClientModule extends React.Component<
                                                 <Icon className="material-icons">palette</Icon>
                                             </ListItemIcon>
                                             <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}/>
-                                        </ListItem>,
+                                        </ListItem>
                                         <ListItem
                                             button
                                             key="AdminClient.Menu.Statistics.Network"
@@ -237,8 +243,6 @@ class AdminClientModule extends React.Component<
                                             </ListItemIcon>
                                             <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Network')}/>
                                         </ListItem>
-                                </Collapse>
-
                             </List>
                         </Paper>
                     </div>

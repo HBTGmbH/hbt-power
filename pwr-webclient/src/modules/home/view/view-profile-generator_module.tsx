@@ -14,6 +14,7 @@ import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {Template} from '../../../model/view/Template';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
 
 interface ViewProfileGeneratorProps{
@@ -100,34 +101,27 @@ class ViewProfileGenerator extends React.Component<
             variant={'flat'}
             className="mui-margin"
             color={'primary'}
-            label={PowerLocalize.get("Action.Generate.NewTemplate")}
             //onClick={}
-            icon={<Icon className="material-icons">add</Icon>}
-        />);
+        >
+            <Icon className="material-icons">add</Icon>
+            {PowerLocalize.get("Action.Generate.NewTemplate")}</Button>);
         // Generate
         actions.push(<Button
             variant={'raised'}
             className="mui-margin"
             color={'primary'}
             disabled={this.state.activeTemplateId === ""}
-            label={PowerLocalize.get("Action.Generate.Word")}
             onClick={() => this.props.generate(this.props.viewProfileId, this.state.activeTemplateId)}
-            icon={<Icon className="material-icons">open_in_new</Icon>}
-        />);
+        >
+            <Icon className="material-icons">open_in_new</Icon>
+            {PowerLocalize.get("Action.Generate.Word")}</Button>);
         // Close
         actions.push(<Button
-            label={PowerLocalize.get("Action.Close")}
             onClick={this.props.onClose}
-            icon={<Icon className="material-icons">close</Icon>}
-        />);
-
-        /*actions.push(<FlatButton
-            label={"SetActiveProfile"}
-            onClick={() => this.setTemplateId(1)}
-            />
-
-        );
-        */
+        >
+            <Icon className="material-icons">close</Icon>
+            {PowerLocalize.get("Action.Close")}
+            </Button>);
         return actions;
     };
 
@@ -161,7 +155,6 @@ class ViewProfileGenerator extends React.Component<
                 title={PowerLocalize.get("Generator.Title")}
                 open={this.props.open}
                 onClose={this.closeAndReset}
-                actions={this.renderActions()}
             >
                 <div className="col-md-4">
                     <h4 className="row">{PowerLocalize.get("Generator.TemplateList")}</h4>
@@ -182,6 +175,8 @@ class ViewProfileGenerator extends React.Component<
                         {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].createdDate : " "}
                     </div>
                 </div>
+
+                <DialogActions>{this.renderActions()}</DialogActions>
             </Dialog>
         )
     }

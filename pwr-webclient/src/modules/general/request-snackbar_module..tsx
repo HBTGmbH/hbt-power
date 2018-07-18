@@ -7,27 +7,28 @@ interface RequestSnackbarProps {
 }
 
 interface RequestSnackbarState {
-
+    open:boolean;
 }
 
+// TODO Snackbox muss wieder verschwinden -mp
 export class RequestSnackbar extends React.Component<RequestSnackbarProps, RequestSnackbarState> {
 
     private static renderSingleSnackbar(requestStatus: RequestStatus) {
         let msgSuccess: JSX.Element = (
             <div className="row">
-                <Icon className="material-icons col-md-2 col-md-offset-5" style={{color: 'green', fontSize: 45}}>done</Icon>
+                <Icon className="material-icons" style={{color: 'green', fontSize: 45}}>done</Icon>
             </div>
         );
-
+// col-md-offset-5   col-md-2
         let msgFail: JSX.Element = (
             <div className="row">
-                <Icon className="material-icons col-md-2 col-md-offset-5" style={{color: 'red', fontSize: 45}}>error</Icon>
+                <Icon className="material-icons " style={{color: 'red', fontSize: 45}}>error</Icon>
             </div>
         );
 
         let msgPending: JSX.Element = (
             <div className="row">
-                <div className="col-md-2 col-md-offset-5">
+                <div className="">
                     <CircularProgress size={40}/>
                 </div>
             </div>
@@ -45,7 +46,7 @@ export class RequestSnackbar extends React.Component<RequestSnackbarProps, Reque
         }
 
 
-        return (<Snackbar open={true} message={msg}/>);
+        return (<Snackbar open={true} autoHideDuration={3000} message={msg}/>);
     }
 
     render() {

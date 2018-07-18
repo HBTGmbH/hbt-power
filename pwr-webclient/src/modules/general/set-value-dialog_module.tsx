@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Dialog, Button, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
 interface SetValueDialogProps {
     open: boolean;
@@ -37,27 +38,27 @@ export class SetValueDialog extends React.Component<SetValueDialogProps, SetValu
         return (<Dialog
             open={this.props.open}
             onClose={this.props.onClose}
-            actions={[
-                <Button
-                    variant={'flat'}
-                    color={'primary'}
-                    label={PowerLocalize.get('Action.OK')}
-                    onClick={this.invokeOk}
-
-                />,
-                <Button
-                    variant={'flat'}
-                    secondary={true}
-                    label={PowerLocalize.get('Action.Close')}
-                    onClick={this.props.onClose}
-                />
-            ]}
         >
             <TextField
                 label={this.props.label}
                 onChange={(e) => this.setState({value: e.target.value})}
                 value={this.state.value}
             />
+            <DialogActions>
+                <Button
+                    variant={'flat'}
+                    color={'primary'}
+                    onClick={this.invokeOk}
+
+                >
+                    {PowerLocalize.get('Action.OK')}
+                </Button>
+                <Button
+                    variant={'flat'}
+                    color={'secondary'}
+                    onClick={this.props.onClose}
+                >{PowerLocalize.get('Action.Close')}</Button>
+            </DialogActions>
         </Dialog>);
     }
 }

@@ -11,6 +11,7 @@ import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActio
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 /**
  * Properties that are managed by react-redux.
@@ -100,8 +101,13 @@ class SingleKeySkillModule extends React.Component<
         return (
             <tr>
             <td>
-                <IconButton className="material-icons icon-size-20" onClick={this.openDialog} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton className="material-icons icon-size-20" onClick={this.deleteEntry} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                <Tooltip title={PowerLocalize.get('Action.Edit')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.openDialog}>edit</IconButton>
+                </Tooltip>
+                <Tooltip title={PowerLocalize.get('Action.Delete')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.deleteEntry}>delete</IconButton>
+                </Tooltip>
+
                 <KeySkillDialog
                     open={this.state.dialogOpen}
                     keySkillEntry={this.props.keySkillEntry}

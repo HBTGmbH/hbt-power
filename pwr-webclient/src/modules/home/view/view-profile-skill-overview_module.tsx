@@ -13,6 +13,10 @@ import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
 import {isNullOrUndefined} from 'util';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
+import Icon from '@material-ui/core/Icon/Icon';
 
 interface ViewProfileSkillOverviewProps {
     viewProfile: ViewProfile;
@@ -119,16 +123,13 @@ class ViewProfileSkillOverviewModule extends React.Component<
         let res: Array<JSX.Element> = [];
         res.push(
             <td key={'ViewCategory_' + entry.name}>
-                <Card>
-                    <CardHeader
-                        title={entry.name}
-                        actAsExpander={true}
-                        subtitle={entry.displaySkills.length + ' Skills'}
-                    />
-                    <CardContent
-                        expandable={true}
-                    >
-                        <ListSubheader>Skills</ListSubheader>
+                <ExpansionPanel>
+                    <ExpansionPanelSummary expandIcon={<Icon className={'material-ui'}>arrow_down</Icon>}>
+                        {entry.name}{/* TODO header ExpansionPanels*/}
+                        {entry.displaySkills.length + ' Skills'} {/* TODO subheader ExpansionPanel*/}
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+
                         <ViewProfileEntries
                             movableEntryType="SKILL"
                             toggleableEntryType="SKILL"
@@ -148,13 +149,14 @@ class ViewProfileSkillOverviewModule extends React.Component<
                                     label="Rating"
                                     containerIndex={entryIndex}
                                 />
-                                ]}
+                            ]}
                             entries={entry.displaySkills}
                             onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('DISPLAY_CATEGORY', entryIndex, type, sourceIndex, targetIndex)}
                             onToggle={(type, index, isEnabled) => this.handleSkillToggle(entry.displaySkills, index, isEnabled)}
                         />
-                    </CardContent>
-                </Card>
+
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
             </td>);
         return res;
     };

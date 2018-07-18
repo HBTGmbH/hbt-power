@@ -17,6 +17,8 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LanguageUtils} from '../../../utils/LanguageUtils';
 import {LocalizationSearcher} from './localization-searcher_module';
 import ISOData = LanguageUtils.ISO639_2DataSet;
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 interface LocalizationTableProps {
     localizations: Immutable.List<LocalizedQualifier>;
@@ -118,7 +120,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         });
         this.closeSearcher();
     };
-        // TODO tabelle head anpassen
+        // TODO tabelle, head anpassen
     render() {
         return (
             <div>
@@ -126,21 +128,6 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                     open={this.state.addOpen}
                     onClose={this.closeDialog}
                     title={PowerLocalize.getFormatted('LocalizationTable.Title.Template', this.props.termToLocalize)}
-                    actions={[
-                        <Button
-                            variant={'flat'}
-                            color={'primary'}
-                            label={PowerLocalize.get('Action.OK')}
-                            onClick={this.invokeAdd}
-
-                        />,
-                        <Button
-                            variant={'flat'}
-                            secondary={true}
-                            label={PowerLocalize.get('Action.Close')}
-                            onClick={this.closeDialog}
-                        />
-                    ]}
                 >
                     <LocalizationSearcher
                         open={this.state.searcherOpen}
@@ -150,12 +137,12 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                     {PowerLocalize.get('LocalizationTable.Content.Description')}<br/>
                     <Button
                         variant={'flat'}
-                        label={PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
-                        labelPosition="before"
                         color={'primary'}
                         onClick={() => window.open("https://www.loc.gov/standards/iso639-2/php/code_list.php")}
-                        icon={<Icon className="material-icons">open_in_new</Icon>}
-                    /><br/>
+                    >
+                        {PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
+                        <Icon className="material-icons">open_in_new</Icon>
+                    </Button><br/>
                     {PowerLocalize.get('LocalizationTable.Content.LocalizationRemarks')}
                     <div>
                         <div>
@@ -164,13 +151,14 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                                 value={this.state.locale}
                                 onChange={(e) => this.setLocale(e.target.value)}
                             />
+                            <Tooltip title={PowerLocalize.get('Action.Search')}>
                             <IconButton
                                 className="material-icons"
-                                tooltip={PowerLocalize.get('Action.Search')}
                                 onClick={this.openSearcher}
                             >
                                 search
                             </IconButton>
+                            </Tooltip>
                         </div>
                         <div>
                             <TextField
@@ -180,11 +168,24 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                             />
                         </div>
                     </div>
+                    <DialogActions>
+                        <Button
+                            variant={'flat'}
+                            color={'primary'}
+                            onClick={this.invokeAdd}
+
+                        >{PowerLocalize.get('Action.OK')}</Button>,
+                        <Button
+                            variant={'flat'}
+                            color={'secondary'}
+                            onClick={this.closeDialog}
+                        >{PowerLocalize.get('Action.Close')}</Button>
+                    </DialogActions>
                 </Dialog>
                 <Table>
                     <TableHead
-                        displaySelectAll={false}
-                        adjustForCheckbox={false}
+                        //displaySelectAll={false}
+                        //adjustForCheckbox={false}
                     >
                         <TableRow>
                             <TableCell>ISO-3 Language Code</TableCell>
@@ -192,18 +193,20 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                             <TableCell/>
                         </TableRow>
                     </TableHead>
-                    <TableBody displayRowCheckbox={false}>
+                    <TableBody //displayRowCheckbox={false}
+                         >
                         {this.props.localizations.map(this.mapLocalizedRow)}
                     </TableBody>
                 </Table>
                 <div className="vertical-align fullWidth">
+                    <Tooltip title={PowerLocalize.get('Action.Add')}>
                     <IconButton
                         className="material-icons"
                         onClick={this.openDialog}
-                        tooltip={PowerLocalize.get('Action.Add')}
                     >
                         add
                     </IconButton>
+                    </Tooltip>
                 </div>
             </div>
         );

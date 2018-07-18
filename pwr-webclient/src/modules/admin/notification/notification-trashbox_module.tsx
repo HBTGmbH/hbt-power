@@ -9,6 +9,7 @@ import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
+import Paper from '@material-ui/core/Paper/Paper';
 
 /**
  * Properties that are managed by react-redux.
@@ -73,7 +74,7 @@ class NotificationTrashboxModule extends React.Component<
 
     private renderNotificationAsTableRow = (notification: AdminNotification) => {
         return (
-            <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()}>
+            <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()} style={{backgroundColor:'white'}}>
                 <TableCell>{notification.initials()}</TableCell>
                 <TableCell>
                     {formatString(
@@ -90,12 +91,12 @@ class NotificationTrashboxModule extends React.Component<
 
     render() {
         return (
-            <div>
+            <div style={{marginTop:'70px'}}>
                 <div className="row">
                     <div className="col-md-9">
                         <Button
                             variant={'raised'}
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
+                            style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
                             onClick={() => this.props.getTrashedNotifications(this.props.username, this.props.password)}
                         >
                             {PowerLocalize.get('Action.Update')}
@@ -103,8 +104,7 @@ class NotificationTrashboxModule extends React.Component<
                         </Button>
                         <Button
                             variant={'raised'}
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-
+                            style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
                             onClick={() => this.props.finalDeleteTrashed(this.props.username, this.props.password)}
                         >
                             {PowerLocalize.get('Action.FinalDelete')}
@@ -112,22 +112,24 @@ class NotificationTrashboxModule extends React.Component<
                         </Button>
                     </div>
                 </div>
-                <Tabs value={false}>
+                <div style={{backgroundColor:'#191e55'}}>{/* TODO die richtigen Farben einfügen*/}
+                <Tabs value={0} centered fullWidth textColor={'secondary'}>
                     <Tab
                         icon={<Icon className="material-icons">delete</Icon>}
                         label={PowerLocalize.get("NotificationInbox.TrashedMessages")}
                     >
-                        <Table>
-                            <TableBody
-                               // displayRowCheckbox={false}
-                            >
-                                {
-                                    this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
-                                }
-                            </TableBody>
-                        </Table>
                     </Tab>
                 </Tabs>
+
+
+                <Table>
+                    <TableBody>
+                        {
+                            this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
+                        }
+                    </TableBody>
+                </Table>
+                </div>
             </div>
 
         )

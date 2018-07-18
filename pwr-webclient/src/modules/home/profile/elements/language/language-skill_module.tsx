@@ -9,6 +9,7 @@ import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 interface SingleLanguageState {
     dialogOpen: boolean;
@@ -72,8 +73,13 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
         return(
         <tr>
             <td>
-                <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonPress} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                <Tooltip title={PowerLocalize.get('Action.Edit')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonPress}>edit</IconButton>
+                </Tooltip>
+                <Tooltip title={PowerLocalize.get('Action.Delete')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress}>delete</IconButton>
+                </Tooltip>
+
                 <LanguageSkillDialog
                     languageSkill={this.props.languageSkill}
                     languages={this.props.languages}

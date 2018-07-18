@@ -149,10 +149,11 @@ class PowerOverviewModule extends React.Component<
                                     variant={'raised'}
                                     color={'primary'}
                                     className="mui-margin"
-                                    label={PowerLocalize.get('ViewProfile.Create')}
                                     onClick={() => this.setViewDialogOpen(true)}
-                                    icon={<Icon className="material-icons">add</Icon>}
-                                />
+                                >
+                                    <Icon className="material-icons">add</Icon>
+                                    {PowerLocalize.get('ViewProfile.Create')}
+                                </Button>
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {
                                         return <div className="col-md-12 fullWidth" style={{marginTop: "8px"}} key={viewProfile.id}>

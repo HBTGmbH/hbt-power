@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
-import {Icon, Button, Tab, Tabs} from '@material-ui/core';
+import {Button, Icon, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
@@ -47,6 +47,7 @@ interface NotificationInboxLocalState {
     selectedProfileEntryRows: Array<number>;
     selectedProfileUpdateRows: Array<number>;
     selectedSkillRows: Array<number>;
+    tabValue: number;
 }
 
 /**
@@ -68,6 +69,7 @@ class NotificationInboxModule extends React.Component<
             selectedProfileEntryRows: [],
             selectedProfileUpdateRows: [],
             selectedSkillRows: [],
+            tabValue:0,
         }
     }
 
@@ -124,9 +126,16 @@ class NotificationInboxModule extends React.Component<
         })
     };
 
+
+
+    private handleTabChange = (event:any, value:number) => {
+      this.setState({
+          tabValue: value
+      })
+    };
     render() {
         return (
-            <div>
+            <div style={{marginTop:'70px'}}>
                 <div className="row">
                     <div className="col-md-9">
                         <Button
@@ -148,39 +157,58 @@ class NotificationInboxModule extends React.Component<
                         </Button>
                     </div>
                 </div>
-                <Tabs value={false}>
-                    <Tab
-                        icon={<Icon className="material-icons">add_box</Icon>}
-                        label={PowerLocalize.get("NotificationInbox.NewNameEntity")}
+                <div style={{backgroundColor:'#191e55'}}>{/* TODO die richtigen Farben einfügen*/}
+                    <Tabs
+                        value={this.state.tabValue}
+                        centered
+                        onChange={this.handleTabChange}
+                        indicatorColor={'secondary'}
+                        //style={{backgroundColor:"dark-blue"}}
+                        textColor={'secondary'}
+                        fullWidth
+                        scrollButtons={'off'}
                     >
+                        <Tab //TODO  wenn nicht ausgewählt, die Farbe ändern
+                            icon={<Icon className="material-icons">add_box</Icon>}
+                            label={PowerLocalize.get("NotificationInbox.NewNameEntity")}
+                            value={0}
+                        >
+                        </Tab>
+                        <Tab
+                            icon={<Icon className="material-icons">color_lens</Icon>}
+                            label={PowerLocalize.get("NotificationInbox.Skills")}
+                            value={1}
+                        >
+                        </Tab>
+                        <Tab
+                            icon={<Icon className="material-icons">autorenew</Icon>}
+                            label={PowerLocalize.get("NotificationInbox.ProfileUpdates")}
+                            value={2}
+                        >
+                        </Tab>
+                    </Tabs>
+                </div>
+                <div>
+                    {this.state.tabValue === 0 ?
                         <ProfileEntryNotificationTable
-                            profileEntryNotifications={this.props.profileEntryNotifications}
-                            onRowSelection={rows => this.setState({selectedProfileEntryRows: rows})}
-                            selectedRows={this.state.selectedProfileEntryRows}
-                        />
-                    </Tab>
-                    <Tab
-                        icon={<Icon className="material-icons">color_lens</Icon>}
-                        label={PowerLocalize.get("NotificationInbox.Skills")}
-                    >
-                        <SkillNotificationTable
-                            skillNotifications={this.props.skillNotifications}
-                            selectedRows={this.state.selectedSkillRows}
-                            onRowSelection={rows => this.setState({selectedSkillRows: rows})}
-                        />
-                    </Tab>
-                    <Tab
-                        icon={<Icon className="material-icons">autorenew</Icon>}
-                        label={PowerLocalize.get("NotificationInbox.ProfileUpdates")}
-                    >
-                        <ProfileUpdateNotificationTable
-                            profileUpdateNotifications={this.props.profileUpdateNotifications}
-                            selectedRows={this.state.selectedProfileUpdateRows}
-                            onRowSelection={rows => this.setState({selectedProfileUpdateRows: rows})}
-                        />
-                    </Tab>
+                        profileEntryNotifications={this.props.profileEntryNotifications}
+                        onRowSelection={rows => this.setState({selectedProfileEntryRows: rows})}
+                        selectedRows={this.state.selectedProfileEntryRows}
+                    />:<span> </span>}
 
-                </Tabs>
+                    {this.state.tabValue === 1 ?
+                    <SkillNotificationTable
+                        skillNotifications={this.props.skillNotifications}
+                        selectedRows={this.state.selectedSkillRows}
+                        onRowSelection={rows => this.setState({selectedSkillRows: rows})}
+                    />:<span> </span>}
+                    {this.state.tabValue === 2 ?
+                    <ProfileUpdateNotificationTable
+                        profileUpdateNotifications={this.props.profileUpdateNotifications}
+                        selectedRows={this.state.selectedProfileUpdateRows}
+                        onRowSelection={rows => this.setState({selectedProfileUpdateRows: rows})}
+                    />:<span> </span>}
+                </div>
             </div>);
     }
 }

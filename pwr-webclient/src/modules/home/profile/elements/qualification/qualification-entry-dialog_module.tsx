@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, DatePicker, Dialog, IconButton} from '@material-ui/core';
+import { Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -9,8 +9,10 @@ import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-// TODO AutoComplete
-// TODO DatePicker
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import TextField from '@material-ui/core/TextField/TextField';
+
 
 interface QualificationEntryDialogProps {
 
@@ -112,25 +114,29 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
             <Dialog
                 open={this.props.open}
                 title={PowerLocalize.get('Qualification.Dialog.Title')}
-                modal={false}
+                //modal={false}
                 onClose={this.closeDialog}
-                autoScrollBodyContent={true}
-                actions={[<IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                scroll={'paper'}
             >
                 <div className="entry-dlg-content">
                     <div>
-                        <DatePicker
+                        {/* <DatePicker
                             label={PowerLocalize.get('Begin')}
                             id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
                             container="inline"
                             value={this.state.qualificationEntry.date()}
                             onChange={this.handleChangeDate}
                             formatDate={formatToShortDisplay}
+                        />*/}
+                        <TextField
+                            label={PowerLocalize.get('Begin')}
+                            id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
+                            value={this.state.qualificationEntry.date().toDateString()}
+                            role={"date"}
                         />
                     </div>
                     <div>
-                        <AutoComplete
+                        {/*TODO <AutoComplete
                             fullWidth={true}
                             label={PowerLocalize.get('Qualification.Singular')}
                             id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
@@ -140,9 +146,24 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                             onUpdateInput={this.handleQualificationFieldInput}
                             onNewRequest={this.handleLanguageFieldRequest}
                             filter={AutoComplete.fuzzyFilter}
+                        />*/}
+                        <TextField
+                            fullWidth={true}
+                            label={PowerLocalize.get('Qualification.Singular')}
+                            id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
+                            value={this.state.qualificationAutoCompleteValue}
                         />
                     </div>
                 </div>
+                <DialogActions>
+                    <Tooltip title = {PowerLocalize.get('Action.Save')} >
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>
+                    </Tooltip>
+                    <Tooltip title={PowerLocalize.get('Action.Exit')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} >close</IconButton>
+                    </Tooltip>
+                </DialogActions>
+
             </Dialog>
         );
     }

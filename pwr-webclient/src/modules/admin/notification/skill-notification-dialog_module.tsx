@@ -22,6 +22,7 @@ import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAct
 import {SkillSearcher} from '../../general/skill-search_module';
 import {AdminNotificationReason} from '../../../model/admin/AdminNotificationReason';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
@@ -112,11 +113,11 @@ class SkillNotificationModuleModule extends React.Component<
             <div className="vertical-align">
                 <CircularProgress
                     size={40}
-                    left={0}
-                    top={0}
+                    //left={0}
+                    //top={0}
                     style={{position: 'relative', marginBottom: '8px'}}
-                    loadingColor="#FF9800"
-                    status="loading"
+                    //loadingColor="#FF9800"
+                    //status="loading"
                 />
             </div>
             <div className="vertical-align">
@@ -159,12 +160,12 @@ class SkillNotificationModuleModule extends React.Component<
 
                 <RadioGroup
                     name="notificationAction"
-                    valueSelected={this.props.skillNotificationSelectedAction}
+                    //valueSelected={this.props.skillNotificationSelectedAction}
                     onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {this.props.setSkillNotificationAction(value as any);}}
                 >
-                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_OK}/>} label="Accept Skill" />
-                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_EDIT}/>} label="Edit Skill" />
-                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_DELETE}/>} label="Delete Skill" />
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_OK.toString()}/>} label="Accept Skill" />
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_EDIT.toString()}/>} label="Edit Skill" />
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_DELETE.toString()}/>} label="Delete Skill" />
 
                 </RadioGroup>
             </FormControl>
@@ -187,11 +188,11 @@ class SkillNotificationModuleModule extends React.Component<
             <this.SkillInfo/>
             <CircularProgress
                 size={40}
-                left={0}
-                top={0}
+                //left={0}
+                //top={0}
                 style={{position: 'relative', marginBottom: '8px'}}
-                loadingColor="#FF9800"
-                status="loading"
+                //loadingColor="#FF9800"
+                //status="loading"
             />
             <p>
                 Categorization pending...
@@ -206,10 +207,9 @@ class SkillNotificationModuleModule extends React.Component<
                 This skill was not yet categorized.
                 <Button
                     variant={'flat'}
-                    label="Categorize now."
-                    secondary={true}
+                    color={'secondary'}
                     onClick={() => this.props.categorizeSkill(this.props.skillName)}
-                />
+                >Categorize now.</Button>
             </p>
             <this.NotificationActions/>
         </div>;
@@ -236,8 +236,8 @@ class SkillNotificationModuleModule extends React.Component<
         return <div style={{textAlign: 'center'}}>
             Success<br/>
             <IconButton
-                className="icon-ok-button "
-                className="material-icons"
+                className="icon-ok-button ,material-icons"
+                //className="material-icons"
             >
                 check_circle
             </IconButton>
@@ -331,38 +331,34 @@ class SkillNotificationModuleModule extends React.Component<
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING:
                 return (<Button
                     variant={'raised'}
-                    secondary={true}
-                    label="Categorize"
+                    color={'secondary'}
                     onClick={() => this.props.categorizeSkill(this.props.skillName)}
                     disabled={true}
-                />);
+                >Categorize</Button>);
             case SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR:
                 let label = this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT ? "Continue" : "Finish";
                 return (<Button
                     variant={'raised'}
-                    label={label}
-                    secondary={true}
+                    color={'secondary'}
                     onClick={this.props.progressFromActionSelection}
-                />);
+                >{label}</Button>);
             case SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG:
                 return (
                     <div>
                         <Button
                             variant={'raised'}
-                            label="Validate"
                             color={'primary'}
 
                             onClick={() => this.props.categorizeSkill(this.props.newName)}
-                        />
+                        >Validate</Button>
                         <Button
                             variant={'raised'}
-                            label="Finish"
-                            secondary={true}
+                            color={'secondary'}
                             style={{marginLeft: "8px"}}
                             onClick={this.props.invokeSkillNotificationEditAction}
-                        />
+                        >Finish</Button>
                     </div>
                 );
             case SkillNotificationEditStatus.DISPLAY_ERROR:
@@ -376,17 +372,20 @@ class SkillNotificationModuleModule extends React.Component<
     render() {
         return (<Dialog
             open={this.props.status !== SkillNotificationEditStatus.CLOSED}
-            actions={[<Button
-                variant={'flat'}
-                key="SkillNotDlg.CloseAndReset"
-                label="Cancel"
-                color={'primary'}
-                onClick={this.props.closeAndReset}
-            />]}
         >
             {this.renderContent()}
             {this.renderStepper()}
             {this.renderController()}
+            <DialogActions>
+                <Button
+                variant={'flat'}
+                key="SkillNotDlg.CloseAndReset"
+                color={'primary'}
+                onClick={this.props.closeAndReset}
+                >
+                    Cancle
+                </Button>
+            </DialogActions>
         </Dialog>);
     }
 }

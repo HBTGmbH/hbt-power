@@ -206,11 +206,9 @@ class NameEntityOverviewModule extends React.Component<
                     <div className="col-md-8">
                         <Paper>
                             <List>
-                            <SelectableList selectedIndex={this.state.selectedIndex} onSelect={this.handleIndexSelect}>
                                 {
-                                    nameEntites.map((ne, key) =>  <ListItem value={key} key={key}>{ne.name()}</ListItem>)
+                                    nameEntites.map((ne, key) =>  <ListItem  onClick={(e:any) => this.handleIndexSelect(e,e.target.value)} value={key} key={key}>{ne.name()}</ListItem>)
                                 }
-                            </SelectableList>
                             </List>
                         </Paper>
                     </div>

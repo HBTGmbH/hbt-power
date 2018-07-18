@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {AutoComplete} from '@material-ui/core';
 import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
+import FormControl from '@material-ui/core/FormControl/FormControl';
+import TextField from '@material-ui/core/TextField/TextField';
 
-// TODO autocomplete
 
 interface SkillSearcherProps {
     label?: string;
@@ -92,8 +92,22 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         this.props.onNewRequest(request);
     };
     render() {
+        // TODO Autocomplete Textfield
         return (
-            <AutoComplete
+            <FormControl>
+                <TextField
+                    id={"autocomplete"}
+                    label={"skill-research"}
+                    onChange={()=>this.handleRequest}
+
+                />
+            </FormControl>
+            )
+    }
+}
+
+
+/* <AutoComplete
                 id={this.props.id}
                 anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 label={this.props.label}
@@ -105,6 +119,4 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 listStyle={{overflow: 'auto', maxHeight: this.props.maxHeight}}
                 menuProps={{maxHeight: this.props.maxHeight, overflow: 'auto'}}
                 filter={AutoComplete.noFilter}
-            />)
-    }
-}
+            />*/

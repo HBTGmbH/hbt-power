@@ -55,9 +55,10 @@ export class AscDescButton extends React.Component<AscDescButtonProps, AscDescBu
             <Button
                 variant={'flat'}
                 onClick={this.handleButtonPress}
-                label={this.props.label}
-                labelPosition="before"
-                icon={<Icon className="material-icons">{this.state.currentIconName}</Icon>}
-            />)
+
+            >
+                <Icon className="material-icons">{this.state.currentIconName}</Icon>
+                {this.props.label}
+                </Button>)
     }
 }

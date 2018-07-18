@@ -8,6 +8,8 @@ import {NotificationDialog} from './notification-dialog_module';
 import {StringUtils} from '../../../utils/StringUtil';
 import formatString = StringUtils.formatString;
 import Checkbox from '@material-ui/core/Checkbox/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup/FormGroup';
+import withTheme from '@material-ui/core/styles/withTheme';
 
 // TODO Tabelle prüfen
 
@@ -38,7 +40,15 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
             <TableRow
                 key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
                 selected={this.props.selectedRows.indexOf(key) != -1}
+                style={{backgroundColor:"white"}}
+                onClick={event => this.handleRowSelection}
+                hover
             >
+                <TableCell padding={'checkbox'}>
+                    <FormGroup>
+                        <Checkbox checked={this.props.selectedRows.indexOf(key) !== -1}/>
+                    </FormGroup>
+                </TableCell>
                 <TableCell>{notification.adminNotification().initials()}</TableCell>
                 <TableCell
                     className="cursor-pointer"
@@ -96,22 +106,18 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
             />
             <Table>
                 <TableHead>
-                    <TableRow>
+                    <TableRow style={{backgroundColor:'white'}}>
                         <TableCell padding={"checkbox"}>
-                            <Checkbox indeterminate={numSelected > 0 && numSelected < rowCount}
-                                      checked={numSelected === rowCount}
-                                      onChange={onSelectAllClick}
-                            />
-
-
+                            <FormGroup>
+                                <Checkbox/>
+                            </FormGroup>
                         </TableCell>
                         <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
                         <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
                         <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody deselectOnClickaway={false}
-                >
+                <TableBody>
                     {
                         this.props.profileEntryNotifications.map(this.mapRow).toArray()
                     }

@@ -12,6 +12,7 @@ import * as Immutable from 'immutable';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {CareerEntryDialog} from './career-entry-dialog_module';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 /**
  * Properties that are managed by react-redux.
@@ -100,9 +101,13 @@ class SingleCareerEntryModule extends React.Component<
     render() {
         return (<tr>
             <td>
-                <IconButton className="material-icons icon-size-20" onClick={this.openDialog} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
-                {<CareerEntryDialog
+                <Tooltip title={PowerLocalize.get('Action.Edit')} >
+                    <IconButton className="material-icons icon-size-20" onClick={this.openDialog}>edit</IconButton>
+                </Tooltip>
+                <Tooltip title={PowerLocalize.get('Action.Delete')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} >delete</IconButton>
+                </Tooltip>
+                    {<CareerEntryDialog
                     open={this.state.dialogOpen}
                     requestClose={this.closeDialog}
                     careerEntry={this.props.careerEntry}

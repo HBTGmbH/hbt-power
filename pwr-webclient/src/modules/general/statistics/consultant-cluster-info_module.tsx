@@ -134,9 +134,9 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
             <div className="row">
                 <Popover
                     open={this.state.skillInfoPopoverOpen}
-                    anchorEl={this.state.skillInfoPopoverAnchor}
+                    //anchorEl={this.state.skillInfoPopoverAnchor}
                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                    //targetOrigin={{horizontal: 'left', vertical: 'top'}}
                     onClose={() => this.setState({skillInfoPopoverOpen: false})}
                 >
                     {this.getSkillInfo()}
@@ -145,7 +145,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.ClusterInitials.Title')}
-                            subtitle={PowerLocalize.get('ClusterInfo.ClusterInitials.Subtitle')}
+                            subheader={PowerLocalize.get('ClusterInfo.ClusterInitials.Subtitle')}
                         />
                         <CardContent>
                             <List>
@@ -158,7 +158,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.Recommendations.Title')}
-                            subtitle={PowerLocalize.get('ClusterInfo.Recommendations.Subtitle')}
+                            subheader={PowerLocalize.get('ClusterInfo.Recommendations.Subtitle')}
                         />
                         <CardContent>
                             <List>
@@ -171,7 +171,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.Skills.Title')}
-                            subtitle={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills().size))}
+                            subheader={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills().size))}
                         />
                         <CardContent>
                             <TCloud
@@ -188,7 +188,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.CommonSkills.Title')}
-                            subtitle={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills().size))}
+                            subheader={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills().size))}
                         />
                         <CardContent className="row">
                             {this.renderCommonSkills()}

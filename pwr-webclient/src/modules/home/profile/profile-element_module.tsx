@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Card, CardHeader, CardMedia, Divider, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 interface ProfileElementLocalProps {
     /**
@@ -46,13 +47,14 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                 <br/>
                 <Card>
                     <CardHeader
-                        actAsExpander={true}
+                        //actAsExpander={true}
                         title={this.props.title}
-                        subtitle={this.props.subtitle}
+                        subheader={this.props.subtitle}
                     >
                     </CardHeader>
                     <Divider/>
-                    <CardMedia expandable={true}>
+                    <CardMedia //expandable={true}
+                    >
                         <div className="table-responsive">
                             <table className="table table-striped table-condensed">
                                 {this.props.header}
@@ -62,7 +64,11 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                             </table>
                         </div>
                         <div style={{textAlign: "center"}}>
-                            <IconButton style={{display:"inline-block"}} className="material-icons" onClick={this.props.onAddElement} tooltip={PowerLocalize.get('Action.New')}>add</IconButton>
+                            <Tooltip title={PowerLocalize.get('Action.New')}>
+                                <IconButton style={{display:"inline-block"}} className="material-icons" onClick={this.props.onAddElement} >
+                                    add
+                                </IconButton>
+                            </Tooltip>
                         </div>
                     </CardMedia>
                 </Card>

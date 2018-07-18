@@ -13,7 +13,11 @@ import {Link} from 'react-router-dom';
 import {Paths} from '../../Paths';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {getImagePath} from '../../API_CONFIG';
+import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup/FormGroup';
 
+
+const rootLink = (props:any) => <Link to={Paths.APP_ROOT}/>;
 /**
  * Properties that are managed by react-redux.
  *
@@ -148,21 +152,28 @@ class AdminLoginModule extends React.Component<
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
                             </div>
-                            <div className="vertical-align" style={{marginTop: "15px", marginBottom: "15px"}}>
-                                <Checkbox
-                                    value={PowerLocalize.get("AdminClient.Login.Remember")}
-                                    checked={this.state.rememberLogin}
-                                    onChange={this.handleRememberCheckboxCheck}
-                                />
+                            <div className="vertical-align" style={{float: "left", marginTop: "10px", marginBottom: "10px"}}>
+                                <FormGroup>
+                                    <FormControlLabel control={
+                                        <Checkbox
+                                            style={{ marginRight: "5px"}}
+                                            checked={this.state.rememberLogin}
+                                            onChange={this.handleRememberCheckboxCheck}
+                                        />
+                                    }
+                                    label={PowerLocalize.get("AdminClient.Login.Remember")}
+                                    />
+                                </FormGroup>
                             </div>
                             <div className="vertical-align"  style={{marginTop: "15px", marginBottom: "15px", height: "30px"}}>
                                 {
-                                    this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span>   </span>
+                                    this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span> Test label Test label Test label Test  </span>
                                 }
                             </div>
-                            <div>
+                            <div className={'vertical-align'}>
                                 <Button variant={'raised'} style={{float: "left", marginRight: "5px"}} onClick={this.handleAttemptLogIn} color={'primary'} >{PowerLocalize.get("Action.Login")}</Button>
-                                <Link style={{float: "right", marginLeft: "5px"}} to={Paths.APP_ROOT}><Button variant={'raised'} />{"Zurück"}</Link>
+                                <Button variant={'flat'} style={{float: "right", marginRight: "5px"}}  //component={ rootLink }
+                                >{"Zurück"}</Button>
                             </div>
                         </div>
                     </div>

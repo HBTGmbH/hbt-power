@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ProfileElementType} from '../../../../../Store';
-import {AutoComplete, DatePicker, Dialog, IconButton, TextField} from '@material-ui/core';
+import {Dialog, IconButton, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {CareerEntry} from '../../../../../model/CareerEntry';
@@ -13,9 +13,9 @@ import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
-// TODO AutoComplete
-// TODO Date Picker
 
 /**
  * Properties that are managed by react-redux.
@@ -142,13 +142,21 @@ class CareerEntryDialogModule extends React.Component<
     private renderEndDateChoice = () => {
         if(isNullOrUndefined(this.state.careerEntry.endDate())) {
             return <TextField
+                id={"test"}
                 style={{width: '80%', float: 'left'}}
-                lable={PowerLocalize.get('End')}
+                label={PowerLocalize.get('End')}
                 disabled={true}
                 value={PowerLocalize.get('Today')}
             />;
         } else {
-            return <DatePicker
+            return <TextField
+                style={{width: '80%', float: 'left'}}
+                label={PowerLocalize.get('End')}
+                id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
+                role={"date"}
+                value={this.state.careerEntry.endDate().toDateString()}
+            />;
+            {/*<DatePicker
                 style={{width: '80%', float: 'left'}}
                 label={PowerLocalize.get('End')}
                 id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
@@ -156,31 +164,35 @@ class CareerEntryDialogModule extends React.Component<
                 value={this.state.careerEntry.endDate()}
                 onChange={this.changeEndDate}
                 formatDate={formatToShortDisplay}
-            />;
+            />*/}
+
+
         }
     };
 
     render() {
         return (<Dialog
             open={this.props.open}
-            modal={false}
             title={PowerLocalize.get('CareerEntry.Dialog.Title')}
             onClose={this.closeDialog}
-            autoScrollBodyContent={true}
-            actions={[
-                <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                <IconButton className="material-icons icon-size-20" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]
-            }
+            scroll={'paper'}
+
         >
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                    <DatePicker
+                    {/*<DatePicker
                         label={PowerLocalize.get('Begin')}
                         id={'CareerEntry.Dialog.StartDate' + this.props.careerEntry.id()}
                         container="inline"
                         value={this.state.careerEntry.startDate()}
                         onChange={this.changeStartDate}
                         formatDate={formatToShortDisplay}
+                    />*/}
+                    <TextField
+                        label={PowerLocalize.get('Begin')}
+                        id={'CareerEntry.Dialog.StartDate' + this.props.careerEntry.id()}
+                        role={"date"}
+                        value={this.state.careerEntry.startDate().toDateString()}
                     />
                 </div>
                 <div className="col-md-5 col-sm-6">
@@ -199,7 +211,7 @@ class CareerEntryDialogModule extends React.Component<
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
 
-                    <AutoComplete
+                    {/*}TODO <AutoComplete
                         label={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
                         id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}
                         value={this.state.autoCompleteValue}
@@ -208,9 +220,22 @@ class CareerEntryDialogModule extends React.Component<
                         onUpdateInput={this.handleAutoCompleteInput}
                         onNewRequest={this.handleAutoCompleteInput}
                         filter={AutoComplete.fuzzyFilter}
+                    />*/}
+                    <TextField
+                        label={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
+                        id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}
+                        value={this.state.autoCompleteValue}
                     />
                 </div>
             </div>
+            <DialogActions>
+                <Tooltip title={PowerLocalize.get('Action.Save')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit} >save</IconButton>
+                </Tooltip>
+                <Tooltip title={PowerLocalize.get('Action.Exit')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.resetAndExit}>close</IconButton>
+                </Tooltip>
+            </DialogActions>
         </Dialog>);
     }
 }

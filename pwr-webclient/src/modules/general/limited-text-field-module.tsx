@@ -110,9 +110,9 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             value={this.props.value}
                             disabled={this.props.disabled}
                             onChange={() => this.interceptOnChange}
-                            multiLine={this.props.multiLine}
+                            //multiLine={this.props.multiLine}
                             fullWidth={this.props.fullWidth}
-                            errorText={isNullOrUndefined(this.state.errorText) ? this.props.overrideErrorText : this.state.errorText}
+                            //errorText={isNullOrUndefined(this.state.errorText) ? this.props.overrideErrorText : this.state.errorText}
                             label={this.props.label}
                         />
                     </div>
@@ -120,7 +120,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                     {
                         this.props.useToggleEditButton ?
                             <div style={{width:this.props.fullWidth ? '15%' : 72, paddingTop: "30px", float:'left'}}>
-                                <IconButton tooltip="Font Icon" onClick={this.handleEditButtonPress}>
+                                <IconButton //tooltip="Font Icon"
+                                            onClick={this.handleEditButtonPress}>
                                     <Icon className="material-icons icon-size-70">
                                         {this.props.disabled ? "edit" : "save"}
                                     </Icon>
@@ -132,7 +133,10 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                 </div>
                 <div style={{width: this.props.fullWidth ? "100%" : 256}}>
                     <div style={{width:'85%', float:'left', marginTop:'7px'}}>
-                        <LinearProgress mode="determinate" max={this.props.maxCharacters} value={this.props.value.length}/>
+                        <LinearProgress
+                            variant={'determinate'}
+                            value={this.props.value.length / this.props.maxCharacters}
+                        />
                     </div>
                     <div style={{width: '10%', float:'left'}}>
                         {this.props.value.length + '/' + this.props.maxCharacters}

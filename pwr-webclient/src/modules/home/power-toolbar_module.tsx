@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AppBar, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
+import {AppBar, Icon, IconButton, Menu, MenuItem, WithStyles} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -19,6 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import Collapse from '@material-ui/core/Collapse/Collapse';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -44,6 +45,7 @@ interface ToolbarLocalProps {
  */
 interface ToolbarLocalState {
     menuOpen: boolean;
+    statisticsOpen : boolean;
 }
 
 interface ToolbarDispatch {
@@ -58,7 +60,10 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     constructor(props: ToolbarProps & ToolbarLocalProps & ToolbarDispatch) {
         super(props);
-        this.state = {menuOpen: false};
+        this.state = {
+            menuOpen: false,
+            statisticsOpen: true,
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps) : ToolbarProps {
@@ -140,29 +145,34 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     //TODO Menu -> IconButton
     private renderMenu = () => {
-        return (<Menu
-            iconStyle={{color:Color.HBT_2017_TEXT_WHITE.toCSSRGBString()}}
-            iconButtonElement={<IconButton className="material-icons">menu</IconButton>}
-            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-            targetOrigin={{horizontal: 'left', vertical: 'top'}}
-        >
-            <MenuItem
-                onClick={() => this.props.navigateTo(Paths.USER_HOME)}
+        return (<div>
+            <IconButton onClick={()=>this.setState({menuOpen : !this.state.menuOpen})}>
+                <Icon className="material-icons">menu</Icon>
+            </IconButton>
+            <Menu
+                open={this.state.menuOpen}
+                // iconStyle={{color:Color.HBT_2017_TEXT_WHITE.toCSSRGBString()}}
+                // iconButtonElement={}
+                // anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                // targetOrigin={{horizontal: 'left', vertical: 'top'}}
             >
-                <Icon className="material-icons">home</Icon>
-                <ListItemText>
-                    {PowerLocalize.get('Menu.Home')}
-                </ListItemText>
-            </MenuItem>
-            <MenuItem
-                onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
-            >
-                <Icon className="material-icons">person</Icon>
-                <ListItemText>
-                    {PowerLocalize.get('Menu.BaseData')}
-                </ListItemText>
-            </MenuItem>
-            {this.props.viewProfiles.length > 0 ?
+                <MenuItem
+                    onClick={() => this.props.navigateTo(Paths.USER_HOME)}
+                >
+                    <Icon className="material-icons">home</Icon>
+                    <ListItemText>
+                        {PowerLocalize.get('Menu.Home')}
+                    </ListItemText>
+                </MenuItem>
+                <MenuItem
+                    onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
+                >
+                    <Icon className="material-icons">person</Icon>
+                    <ListItemText>
+                        {PowerLocalize.get('Menu.BaseData')}
+                    </ListItemText>
+                </MenuItem>
+                {this.props.viewProfiles.length > 0 ?
                     <MenuItem>
                         <Icon className="material-icons">remove_red_eye</Icon>
                         <ListItemText>
@@ -172,17 +182,25 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
                         {this.props.viewProfiles.map(this.renderViewProfile)}
                     </MenuItem>
+
                     : null
 
-            }
+                }
 
             {
-                this.props.statisticsAvailable ?
-                    <MenuItem
-                        primaryText={PowerLocalize.get('Menu.Statistics')}
-                        rightIcon={<Icon className="material-icons">keyboard_arrow_right</Icon>}
-                        leftIcon={<Icon className="material-icons">insert_chart</Icon>}
-                        menuItems={[
+                this.props.statisticsAvailable ? (
+                    <div>
+                    <MenuItem button onClick={()=> this.setState({statisticsOpen: !this.state.statisticsOpen})}>
+                        <ListItemIcon>
+                            <Icon className="material-icons">insert_chart</Icon>
+                        </ListItemIcon>
+                        <ListItemText primary={PowerLocalize.get('Menu.Statistics')}/>
+                        <ListItemIcon>
+                            <Icon className="material-icons">keyboard_arrow_right</Icon>
+                        </ListItemIcon>
+                    </MenuItem>
+                    <Collapse in={this.state.statisticsOpen}>
+
                             <MenuItem
                                 key="Menu.Statistics.Network"
                                 onClick={this.loadNetworkGraph}
@@ -193,7 +211,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 <ListItemText>
                                     {PowerLocalize.get('Menu.Statistics.Network')}
                                 </ListItemText>
-                            </MenuItem>,
+                            </MenuItem>
                             <MenuItem
                                 key="Menu.Statistics.Network.Clusterinfo"
                                 onClick={this.loadConsultantClusterInfo}
@@ -204,7 +222,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 <ListItemText>
                                     {PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
                                 </ListItemText>
-                            </MenuItem>,
+                            </MenuItem>
                             <MenuItem
                                 key="Menu.Statistics.Skills"
                                 onClick={this.loadSkillStatistics}
@@ -216,8 +234,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                     {PowerLocalize.get('Menu.Statistics.Skills')}
                                 </ListItemText>
                             </MenuItem>
-                        ]}
-                    />
+                    </Collapse>
+                    </div>
+                )
                 :
                 null
             }
@@ -232,7 +251,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                </ListItemText>
 
            </MenuItem>
-        </Menu>);
+        </Menu>
+            </div>
+    );
     };
 
     /**
@@ -279,4 +300,4 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     }
 }
 
-export const PowerToolbar: React.ComponentClass<ToolbarLocalProps> = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(PowerToolbarModule);;
+export const PowerToolbar: React.ComponentClass<ToolbarLocalProps> = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(PowerToolbarModule);

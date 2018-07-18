@@ -98,7 +98,7 @@ class ViewCardModule extends React.Component<
             />
             <CardHeader
                 title={this.props.viewProfile.viewProfileInfo.name}
-                subtitle={PowerLocalize.get("ViewProfileCard.Subtitle") + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
+                subheader={PowerLocalize.get("ViewProfileCard.Subtitle") + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
             />
             <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
             <CardActions>
@@ -107,32 +107,36 @@ class ViewCardModule extends React.Component<
                         variant={'raised'}
                         className="mui-margin"
                         onClick={() => this.setDialogOpen(true)}
-                        label={PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
-                        icon={<Icon className="material-icons">info</Icon>}
-                    />
+                    >
+                        <Icon className="material-icons">info</Icon>
+                        {PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
+                    </Button>
                     <Button
                         variant={'raised'}
                         className="mui-margin"
-                        label={PowerLocalize.get("ViewProfileCard.Action.Edit")}
                         onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", this.props.viewProfileId))}
-                        icon={<Icon className="material-icons">edit</Icon>}
-                    />
+                    >
+                        <Icon className="material-icons">edit</Icon>
+                        {PowerLocalize.get("ViewProfileCard.Action.Edit")}
+                    </Button>
                     <Button
                         variant={'raised'}
                         className="mui-margin"
-                        label={PowerLocalize.get("Action.Delete")}
-                        secondary={true}
-                        icon={<Icon className="material-icons">delete</Icon>}
+                        color={'secondary'}
                         onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
-                    />
+                    >
+                        <Icon className="material-icons">delete</Icon>
+                        {PowerLocalize.get("Action.Delete")}
+                    </Button>
                     <Button
                         variant={'raised'}
                         className="mui-margin"
                         color={'primary'}
-                        label={PowerLocalize.get("Action.Generate.Word")}
                         onClick={() => this.setGeneratorOpen(true)}
-                        icon={<Icon className="material-icons">open_in_new</Icon>}
-                    />
+                    >
+                        <Icon className="material-icons">open_in_new</Icon>
+                        {PowerLocalize.get("Action.Generate.Word")}
+                    </Button>
                 </div>
             </CardActions>
         </Card>);

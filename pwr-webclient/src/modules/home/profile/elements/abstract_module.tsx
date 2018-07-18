@@ -91,19 +91,17 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         return(
             <div>
                 <TextField
-                    hintText = {this.props.hintText}
+                    helperText = {this.props.hintText}
                     label = {this.props.hintText}
                     fullWidth = {true}
-                    multiLine={true}
+                    multiline={true}
                     rows={10}
                     onChange={() => this.handleTextChange}
                     value={this.props.abstractText}
                 />
                         <LinearProgress
-                            min={0}
-                            max={this.state.maxCharacters}
-                            value={this.props.abstractText.length}
-                            mode="determinate"
+                            value={this.props.abstractText.length/this.state.maxCharacters}
+                            variant={'determinate'}
                             color={'primary'}
                         />
                     <div>Zeichen: {this.props.abstractText.length}/{this.state.maxCharacters}</div>

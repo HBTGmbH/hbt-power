@@ -70,7 +70,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar  size={80} src={getImagePath()+"/statistics_icon.svg"}/>
+                        <Avatar  sizes={'80'} src={getImagePath()+"/statistics_icon.svg"}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                     Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}
@@ -79,12 +79,12 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                         <Button
                             variant={'raised'}
                             style={{marginTop: "8px"}}
-                            label={PowerLocalize.get('Action.ShowMore')}
-                            labelPosition="before"
                             color={'primary'}
-                            icon={ <Icon className="material-icons">open_in_new</Icon>}
                             onClick={() => this.loadSkillStatistics()}
-                        />
+                        >
+                            {PowerLocalize.get('Action.ShowMore')}
+                            <Icon className="material-icons">open_in_new</Icon>
+                        </Button>
                     </div>
                 </div>
             </Paper>);

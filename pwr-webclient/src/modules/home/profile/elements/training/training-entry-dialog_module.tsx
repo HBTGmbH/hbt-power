@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, DatePicker, Dialog, IconButton} from '@material-ui/core';
+import {Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -9,9 +9,9 @@ import * as Immutable from 'immutable';
 import {TrainingEntry} from '../../../../../model/TrainingEntry';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-
-// TODO Autocomplete
-// TODO DatePicker
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import TextField from '@material-ui/core/TextField/TextField';
 
 interface TrainingEntryDialogProps {
     /**
@@ -28,7 +28,7 @@ interface TrainingEntryDialogProps {
 
     /**
      * Invoked when the save button is pressed.
-     * @param entry
+     * @param trainingEntry
      * @param nameEntity
      */
     onSave(trainingEntry: TrainingEntry, nameEntity: NameEntity): void;
@@ -128,39 +128,41 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         return (
             <Dialog
                 open={this.props.open}
-                modal={false}
+                //modal={false}
                 onClose={this.closeDialog}
                 title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
-                autoScrollBodyContent={true}
-                actions={[<IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                scroll={'paper'}
             >
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                                <DatePicker
+                                {/* TODO DatePicker*/}
+                                <TextField
                                     label={PowerLocalize.get('Begin')}
                                     id={'TrainingEntry.StartDate' + this.props.trainingEntry.id}
-                                    container="inline"
-                                    value={this.state.trainingEntry.startDate()}
-                                    onChange={this.handleChangeStartDate}
-                                    formatDate={formatToShortDisplay}
+                                    //container="inline"
+                                    //value={this.state.trainingEntry.startDate()}
+                                    //onChange={this.handleChangeStartDate}
+                                    //formatDate={formatToShortDisplay}
+                                    type="date"
                                 />
                             </div>
                             <div className="col-md-5 col-sm-6">
-                                <DatePicker
+                                {/* TODO DatePicker*/}
+                                <TextField
                                     label={PowerLocalize.get('End')}
                                     id={'TrainingEntry.EndDate' + this.props.trainingEntry.id}
-                                    container="inline"
-                                    value={this.state.trainingEntry.endDate()}
-                                    onChange={this.handleChangeEndDate}
-                                    formatDate={formatToShortDisplay}
+                                    // container="inline"
+                                    // value={this.state.trainingEntry.endDate()}
+                                    // onChange={this.handleChangeEndDate}
+                                    // formatDate={formatToShortDisplay}
+                                    type="date"
                                 />
                             </div>
                         </div>
 
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
-                                <AutoComplete
+                                {/*} TODO <AutoComplete
                                     label={PowerLocalize.get('Training.Singular')}
                                     id={'TrainingEntry.Dialog.AC.' + this.props.trainingEntry.id}
                                     value={this.state.trainingEntryValue}
@@ -169,9 +171,23 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     onUpdateInput={this.handleEducationFieldInput}
                                     onNewRequest={this.handleEducationFieldRequest}
                                     filter={AutoComplete.fuzzyFilter}
+                                />*/}
+                                <TextField
+                                    label={PowerLocalize.get('Training.Singular')}
+                                    id={'TrainingEntry.Dialog.AC.' + this.props.trainingEntry.id}
+                                    value={this.state.trainingEntryValue}
                                 />
                             </div>
                         </div>
+                <DialogActions>
+                    <Tooltip title={PowerLocalize.get('Action.Save')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>
+                    </Tooltip>
+                    <Tooltip title={PowerLocalize.get('Action.Exit')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} >close</IconButton>
+                    </Tooltip>
+
+                </DialogActions>
             </Dialog>
         );
     }

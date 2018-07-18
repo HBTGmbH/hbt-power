@@ -11,6 +11,8 @@ import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
+import Checkbox from '@material-ui/core/Checkbox/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup/FormGroup';
 
 // TODO Tabelle prüfen
 
@@ -48,7 +50,7 @@ class SkillNotificationTableModule extends React.Component<
             onDialogOpen: id => dispatch(AdminActionCreator.AsyncOpenSkillNotificationDialog(id)),
         }
     }
-
+// TODO check function of RowSelect -mp
     private handleRowSelection = (rows: string | Array<number>) => {
         let selectedIndexes: Array<number> = [];
         if(rows === "all") {
@@ -64,9 +66,17 @@ class SkillNotificationTableModule extends React.Component<
     private mapRow = (notification: SkillNotification, key: number) => {
         return (
             <TableRow
+                hover
                 key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
                 selected={this.props.selectedRows.indexOf(key) !== -1}
+                onClick={event => this.handleRowSelection}
+                style={{backgroundColor:'white'}}
             >
+                <TableCell padding={"checkbox"}>
+                    <FormGroup>
+                        <Checkbox checked={this.props.selectedRows.indexOf(key) !== -1}/>
+                    </FormGroup>
+                </TableCell>
                 <TableCell>{notification.adminNotification().initials()}</TableCell>
                 <TableCell
                     className="cursor-pointer"
@@ -93,19 +103,20 @@ class SkillNotificationTableModule extends React.Component<
     render() {
         return ( <div>
             <SkillNotificationDialog/>
-            <Table multiSelectable={true}
-                   onRowSelection={this.handleRowSelection}
-                   onCellClick={this.handleCellClick}
-            >
+            <Table>
                 <TableHead>
-                    <TableRow>
+                    <TableRow style={{backgroundColor:'white'}}>
+                        <TableCell padding={'checkbox'}>
+                            <FormGroup>
+                                <Checkbox />
+                            </FormGroup>
+                        </TableCell>
                         <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
                         <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
                         <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody deselectOnClickaway={false}
-                >
+                <TableBody>
                     {
                         this.props.skillNotifications.map(this.mapRow).toArray()
                     }

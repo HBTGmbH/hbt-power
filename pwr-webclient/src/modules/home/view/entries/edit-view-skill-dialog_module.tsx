@@ -4,6 +4,7 @@ import {ViewSkill} from '../../../../model/view/ViewSkill';
 import {isNullOrUndefined} from 'util';
 import {ViewProfile} from '../../../../model/view/ViewProfile';
 import {ViewCategory} from '../../../../model/view/ViewCategory';
+import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 
 interface EditViewSkillDialogProps {
     open: boolean;
@@ -46,11 +47,11 @@ export class EditViewSkillDialog extends React.Component<EditViewSkillDialogProp
         return this.state.parents.map(parent =>
             <div key={parent.name}>
                 <span className="bold-mui" style={{marginLeft: "40px"}}>|</span>
-                <Checkbox
+                <FormControlLabel label={parent.name} control={<Checkbox
                     checked={this.isDisplayCategoryOf(parent.name)}
-                    label=  {parent.name}
-                    onCheck={() => this.props.onSetDisplayCategory(this.props.skill.name, parent.name)}
-                />
+                    onChange={()=>this.props.onSetDisplayCategory(this.props.skill.name, parent.name)}
+                />} />
+
             </div>)
     };
 

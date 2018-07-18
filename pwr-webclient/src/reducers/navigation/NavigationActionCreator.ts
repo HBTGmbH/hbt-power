@@ -21,6 +21,7 @@ export namespace NavigationActionCreator {
     let alertContainer: any = null;
 
     export function setAlertContainer(container: any) {
+        console.log("Init Container", container);
         alertContainer = container;
     }
 

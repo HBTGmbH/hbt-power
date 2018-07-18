@@ -8,6 +8,7 @@ import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {Profile} from '../../../../../model/Profile';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 interface ProjectModuleProps {
     project: Project;
@@ -78,11 +79,12 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
 
     render () {
         return (
-                <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100%"}} initiallyExpanded={true}>
+                <Card style={{backgroundColor: this.props.backgroundColor, width: "100%", height: "100%"}} //initiallyExpanded={true}
+                >
                     <CardHeader
                         title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
-                        subtitle={this.renderTitle()}
-                        actAsExpander={true}
+                        subheader={this.renderTitle()}
+                        //actAsExpander={true}
                     />
                     <ProjectDialog key={'projectDialog.' + this.props.project.id()}
                         open={this.state.dialogIsOpen}
@@ -93,15 +95,22 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         projectRoles={this.props.projectRoles}
                        profile={this.props.profile}
                     />
-                    <CardContent expandable={true} >
+                    <CardContent //expandable={true}
+                    >
                         <label>Kurzbeschreibung</label><br/>
                         {this.props.project.description()}
                     </CardContent>
-                    <CardActions expandable={true}>
-                        <IconButton className="material-icons icon-size-20" onClick={this.openDialog}
-                                    tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                        <IconButton className="material-icons icon-size-20" onClick={this.deleteButtonPress}
-                                    tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <CardActions //expandable={true}
+                    >
+                        <Tooltip title={PowerLocalize.get('Action.Edit')}>
+                            <IconButton className="material-icons icon-size-20" onClick={this.openDialog}
+                                    >edit</IconButton>
+                        </Tooltip>
+
+                        <Tooltip title={PowerLocalize.get('Action.Delete')}>
+                            <IconButton className="material-icons icon-size-20" onClick={this.deleteButtonPress}
+                                    >delete</IconButton>
+                        </Tooltip>
                     </CardActions>
                 </Card>
         );

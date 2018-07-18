@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dialog, Button, Icon, Slider, TextField} from '@material-ui/core';
+import {Button, Dialog, Icon, TextField} from '@material-ui/core';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -147,13 +147,13 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                     label={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
                     disabled={true}
                 />
-                <Slider
+                {/*<Slider
                     value={this.state.charsPerLine}
                     min={10}
                     step={1}
                     max={99}
                     onChange={this.changeCharsPerLine}
-                />
+                />*/}
             </div>
         </Dialog>);
     }

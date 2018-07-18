@@ -71,7 +71,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar  size={80} src={getImagePath()+"/icon_chart.svg"} />
+                        <Avatar  sizes={'80'} src={getImagePath()+"/icon_chart.svg"} />
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                         Standard-Skills, die diesem Profil fehlen: {this.renderMissingSkills()}
@@ -80,12 +80,12 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                         <Button
                             variant={'raised'}
                             style={{marginTop: "8px"}}
-                            label={PowerLocalize.get('Action.ShowMore')}
-                            labelPosition="before"
                             color={'primary'}
-                            icon={ <Icon className="material-icons">open_in_new</Icon>}
                             onClick={() => this.loadSkillStatistics()}
-                        />
+                        >
+                            {PowerLocalize.get('Action.ShowMore')}
+                            <Icon className="material-icons">open_in_new</Icon>
+                        </Button>
                     </div>
                 </div>
             </Paper>);

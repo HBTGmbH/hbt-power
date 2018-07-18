@@ -76,13 +76,27 @@ const powerTheme = {
 };
 
 const newPowerTheme = {
+    typography:{
+        fontSize:24,
+        fontFamily:[
+            "Roboto",
+            "sans-serif",].join(','),
+    },
     palette: {
         primary: {
+            light: Color.HBT_2017_LIGHT_BLUE.toCSSRGBString(),
             main : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
+            dark : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
+
         },
         secondary :{
-            main : Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
-        } ,
+            light: Color.HBT_2017_LIGHT_BLUE.toCSSRGBString(),
+            main : "#FFFFFF",//Color.HBT_2017_GRAY.toCSSRGBString(),
+            dark : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
+        },
+        error:{
+            main: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
+        },
     },
 
 };

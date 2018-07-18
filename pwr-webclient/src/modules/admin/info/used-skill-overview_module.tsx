@@ -3,11 +3,11 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {
-    AutoComplete,
+    //AutoComplete,
     Icon,
     List,
     ListItem,
-    makeSelectable,
+    //makeSelectable,
     Paper,
     Button,
     ListSubheader,
@@ -28,7 +28,7 @@ import wrapSelectableList = ReactUtils.wrapSelectableList;
 // TODO Autocomplete
 // TODO makeSelectable
 
-let SelectableList = wrapSelectableList(makeSelectable(List));
+//let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface UsedSkillOverviewProps {
     usedSkillNames: Immutable.Set<string>;
@@ -109,7 +109,7 @@ class UsedSkillOverviewModule extends React.Component<
     render() {
         let res = null;
         if(this.state.filterString !== "") {
-            res = this.props.usedSkillNames.filter((value) => AutoComplete.defaultFilter(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
+            //res = this.props.usedSkillNames.filter((value) => AutoComplete.defaultFilter(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
@@ -129,7 +129,10 @@ class UsedSkillOverviewModule extends React.Component<
                             label={PowerLocalize.get("Action.Search")}
                             style={{paddingLeft: "8px"}}
                         />
-                        <SelectableList selectedIndex={this.state.selectedSkillName} onSelect={this.handleSkillSelect}>
+                        <List
+                            //selectedIndex={this.state.selectedSkillName}
+                            //onSelect={this.handleSkillSelect}
+                            >
                             {res.map((name, key) =>
                                 <ListItem
                                     value={name}
@@ -138,7 +141,7 @@ class UsedSkillOverviewModule extends React.Component<
                                 >
                                 {name}
                                 </ListItem>)}
-                        </SelectableList>
+                        </List>
                     </Paper>
                 </div>
                 {this.state.selectedSkillName !== "" ?

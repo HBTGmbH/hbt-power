@@ -161,12 +161,16 @@ class ConsultantTileModule extends React.Component<
                     rows={1}
                     style={{width: "300px", height: "300px"}}
                 >
-                    <Button onClick={this.handleMenuClick}>
-                        <Icon className="material-icons">open_menu</Icon>
-                    </Button>
-                        <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"} src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
+
+                    <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"} src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
                     <GridListTileBar
-                        actionIcon={this.renderMenu()}
+                        title={this.props.consultantInfo.getFullName()}
+                        //actionIcon={this.renderMenu()
+                        actionIcon={
+                            <Button onClick={this.handleMenuClick}>
+                                <Icon className="material-icons" style={{color:"white"}}>menu</Icon>
+                            </Button>
+                        }
                     />
                 </GridListTile>
             </div>);
