@@ -117,7 +117,7 @@ export const de_locale : any = {
     "AdminClient.Menu.Info": "Informationen",
     "AdminClient.Menu.Info.SkillTree": "Skill-Baum",
     "AdminClient.Menu.Info.ProfileElements": "Profil-Elemente",
-    "AdminClient.Menu.Info.ProfileElements.ElementTypes": "Profil-Element Typen",
+    "AdminClient.Menu.Info.ProfileElements.ElementTypes": "Typ",
     "AdminClient.Overview.Skills": "Skill-Übersicht",
     "AdminClient.Overview.NameEntity": "Eintrags-Namen-Übersicht",
     "AdminClient.Info.SkillTree.Legend": "Legende",

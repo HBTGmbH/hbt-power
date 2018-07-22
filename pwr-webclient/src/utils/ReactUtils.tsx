@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
+import {Theme} from '@material-ui/core';
 
 
 export namespace ReactUtils {
@@ -35,4 +36,8 @@ export namespace ReactUtils {
             }
         };
     }
+}
+
+export interface ThemeProps {
+    theme: Theme;
 }

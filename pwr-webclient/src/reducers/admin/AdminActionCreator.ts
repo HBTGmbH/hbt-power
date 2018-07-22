@@ -433,7 +433,7 @@ export class AdminActionCreator {
             Promise.all([
                 dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
                 dispatch(AdminActionCreator.ChangePassword(storedPassword))]
-            ).then(() => dispatch(AdminActionCreator.AsyncValidateAuthentication(storedUsername, storedPassword, true)));
+            ).then(() => dispatch(AdminActionCreator.AsyncValidateAuthentication(storedUsername, storedPassword, true, true)));
         };
     }
 
@@ -444,15 +444,7 @@ export class AdminActionCreator {
         }
     }
 
-    /**
-     *
-     * @param username
-     * @param password
-     * @param rememberLogin
-     * @returns {(dispatch:redux.Dispatch<AdminState>)=>undefined}
-     * @constructor
-     */
-    public static AsyncValidateAuthentication(username: string, password: string, rememberLogin?: boolean) {
+    public static AsyncValidateAuthentication(username: string, password: string, rememberLogin?: boolean, restoreRoute?: boolean) {
         return function(dispatch: redux.Dispatch<AdminState>) {
             let config = {
                 auth: {
@@ -468,10 +460,10 @@ export class AdminActionCreator {
                     Cookies.set(COOKIE_ADMIN_PASSWORD, password, COOKIE_ADMIN_EXPIRATION_TIME);
                 }
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.INITIALS));
-                dispatch(AdminActionCreator.AsyncRequestNotifications(username, password));
-                dispatch(AdminActionCreator.AsyncGetAllConsultants());
                 dispatch(AdminActionCreator.LogInAdmin());
-                PWR_HISTORY.push(Paths.ADMIN_INBOX);
+                if (!restoreRoute) {
+                    PWR_HISTORY.push(Paths.ADMIN_INBOX);
+                }
             }).catch(function(error:AxiosError) {
                 AdminActionCreator.logAxiosError(error);
                 if(!isNullOrUndefined(error.response) && error.response.status === 401) {

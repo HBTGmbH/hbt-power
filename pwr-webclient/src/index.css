@@ -213,3 +213,7 @@ body {
 .entry-dlg-content {
     margin-right: 24px;
 }
+
+.admin-app-bar-spacer {
+  margin-top: 64px;
+}

@@ -5,15 +5,12 @@ import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 
 
+export namespace TemplateReducer {
 
-export namespace TemplateReducer{
-
-    import RemoveTemplateAction = TemplateActions.RemoveTemplateAction
+    import RemoveTemplateAction = TemplateActions.RemoveTemplateAction;
     import SetTemplateAction = TemplateActions.SetTemplateAction;
 
     export function reduce(store: TemplateStore, action: AbstractAction){
-        console.log("TemplateReducer called with action type " + ActionType[action.type]);
-
         if (isNullOrUndefined(store)) {
             return TemplateStore.empty();
         }

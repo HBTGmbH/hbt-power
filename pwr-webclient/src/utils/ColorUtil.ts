@@ -29,6 +29,8 @@ export class Color {
 
     public static readonly HBT_2017_HIGHLIGHT = new Color(255, 142, 1);
 
+    public static readonly HBT_2017_WHITE = new Color(255, 255, 255);
+
     constructor(r: number, g: number, b: number, a?: number) {
         this.r = Math.round(r);
         this.g = Math.round(g);
@@ -60,5 +62,9 @@ export class Color {
 
     public toCSSRGBString() : string {
        return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
+    }
+
+    public toCSSRGBAString(alpha: number | string) {
+        return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + "," + alpha + ")";
     }
 }

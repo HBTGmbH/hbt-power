@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {Dialog, Button,DialogActions} from '@material-ui/core';
+import {Button, Dialog, DialogActions} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
@@ -64,7 +64,6 @@ class ConsultantEditDialogModule extends React.Component<
             editDisabled: false,
             consultantInfo: props.consultantInfo,
         };
-        console.log(this.state);
     }
 
 
@@ -112,13 +111,6 @@ class ConsultantEditDialogModule extends React.Component<
     };
 
     private setBirthDate = (val: Date) => {
-        console.log("date:", val);
-        console.log("toISOString:", val.toISOString());
-        console.log("toLocaleString:", val.toLocaleString());
-        console.log("toLocaleDateString:", val.toLocaleDateString());
-        console.log("toLocaleTimeString:", val.toLocaleTimeString());
-        console.log("toUTCString:", val.toUTCString());
-        console.log("toTimeString:", val.toTimeString());
         this.setState({
             consultantInfo: this.state.consultantInfo.birthDate(val)
         })
@@ -143,6 +135,7 @@ class ConsultantEditDialogModule extends React.Component<
     private readonly dialogActions = [
 
         <Button
+            key="save"
             variant={'flat'}
             color={'primary'}
             onClick={this.saveAndClose}
@@ -151,6 +144,7 @@ class ConsultantEditDialogModule extends React.Component<
         </Button>,
 
         <Button
+            key="edit"
             variant={'flat'}
             color={'primary'}
             onClick={() => {this.props.redirectToUser(this.props.initials)}}
@@ -162,6 +156,7 @@ class ConsultantEditDialogModule extends React.Component<
             variant={'flat'}
             color={'primary'}
             onClick={this.resetAndClose}
+            key="exit"
         >
             {PowerLocalize.get("Action.Exit")}
         </Button>,

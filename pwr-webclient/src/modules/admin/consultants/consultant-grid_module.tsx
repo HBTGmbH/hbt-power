@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Checkbox, Icon, GridList, Button} from '@material-ui/core';
+import {Button, Checkbox, GridList, Icon} from '@material-ui/core';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
 import {ConsultantTile} from './consultant-tile_module';
@@ -14,41 +14,19 @@ import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabe
 
 const Toggle = require('react-toggle').default;
 
-/**
- * Properties that are managed by react-redux.
- *
- * Each property defined here will also need a corresponding mapping in the {@link ConsultantGrid.mapStateToProps} method,
- * otherwise the component will not render and update correctly.
- */
 interface ConsultantGridProps {
     consultantsByInitials: Immutable.Map<string, ConsultantInfo>;
 }
 
-/**
- * Local properties of this module.
- *
- * These properties are used to initialize the local state and to control everything that is solely used for the display layer.
- *
- * Data that is intended not only for display needs to be placed in the {@link ConsultantGridProps} and will then be
- * managed by redux.
- */
 interface ConsultantGridLocalProps {
 
 }
 
-/**
- * Local state of the module.
- *
- * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
- */
 interface ConsultantGridLocalState {
     createDialogOpen: boolean;
     showInactive: boolean;
 }
 
-/**
- * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
- */
 interface ConsultantGridDispatch {
     refreshConsultants(): void;
 
@@ -77,6 +55,10 @@ class ConsultantGridModule extends React.Component<
         return {
             refreshConsultants: () => dispatch(AdminActionCreator.AsyncGetAllConsultants())
         }
+    }
+
+    public componentDidMount() {
+        this.props.refreshConsultants();
     }
 
     private showDialog = () => {

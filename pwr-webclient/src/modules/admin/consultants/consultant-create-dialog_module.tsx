@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Dialog, Button,DialogActions} from '@material-ui/core';
+import {Button, Dialog, DialogActions} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
@@ -122,6 +122,7 @@ class ConsultantCreateDialogModule extends React.Component<
     private readonly dialogActions = [
 
         <Button
+            key="save"
             variant={'flat'}
             color={'primary'}
             onClick={this.saveAndReset}
@@ -130,6 +131,7 @@ class ConsultantCreateDialogModule extends React.Component<
         </Button>
         ,
         <Button
+            key="exit"
             variant={'flat'}
             color={'primary'}
             onClick={this.closeAndReset}

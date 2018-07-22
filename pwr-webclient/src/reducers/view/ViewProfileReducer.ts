@@ -8,8 +8,8 @@ export namespace ViewProfileReducer {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
     import RemoveViewProfileAction = ViewProfileActions.RemoveViewProfileAction;
     import SetSortInProgressAction = ViewProfileActions.SetSortInProgressAction;
+
     export function reduce(store: ViewProfileStore, action: AbstractAction) {
-        console.debug("ViewProfileReducer called with action type " + ActionType[action.type]);
         if(isNullOrUndefined(store)) {
             return ViewProfileStore.empty();
         }
