@@ -16,12 +16,13 @@ interface NameEntityInfoBoxState {
 class NameEntityInfoBoxModule extends React.Component<NameEntityInfoBoxProps & ThemeProps, NameEntityInfoBoxState> {
 
     private renderUsedBy = () => {
-        return <List>
-            {this.props.usedBy.map((value, key) => <ListItem key={key}>{value.initials()}</ListItem>)}
+        return <List style={{paddingTop:'5px'}}>
+            {this.props.usedBy.map((value, key) => <ListItem style={{paddingLeft:'30px', paddingTop:'5px'}} key={key}>{value.initials()}</ListItem>)}
         </List>;
     };
 
     render() {
+        // TODO lokalisieren
         return (<div >
             <div className="vertical-align" style={{ height: '56px',  backgroundColor: this.props.theme.palette.primary.main}}>
                 <div style={{fontSize: 18, color: this.props.theme.palette.secondary.main}}>
@@ -32,7 +33,7 @@ class NameEntityInfoBoxModule extends React.Component<NameEntityInfoBoxProps & T
                 </div>
             </div>
             <ListSubheader>Bezeichnung</ListSubheader>
-            <span className="padding-left-16px">{this.props.nameEntity.name()}</span>
+            <span style={{paddingLeft:'30px'}}>{this.props.nameEntity.name()}</span>
             <ListSubheader>Benutzt von</ListSubheader>
             {this.renderUsedBy()}
         </div>);

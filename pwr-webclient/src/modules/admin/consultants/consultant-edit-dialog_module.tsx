@@ -7,6 +7,8 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 
 /**
  * Properties that are managed by react-redux.
@@ -136,27 +138,30 @@ class ConsultantEditDialogModule extends React.Component<
 
         <Button
             key="save"
-            variant={'flat'}
+            variant={'raised'}
             color={'primary'}
             onClick={this.saveAndClose}
+            style={{width:'30%', height:'10%'}}
         >
             {PowerLocalize.get("Action.Save")}
         </Button>,
 
         <Button
             key="edit"
-            variant={'flat'}
+            variant={'raised'}
             color={'primary'}
             onClick={() => {this.props.redirectToUser(this.props.initials)}}
+            style={{width:'30%', height:'10%'}}
         >
             {PowerLocalize.get("ConsultantTile.EditProfile")}
             </Button>,
 
         <Button
-            variant={'flat'}
+            variant={'raised'}
             color={'primary'}
             onClick={this.resetAndClose}
             key="exit"
+            style={{width:'30%', height:'10%'}}
         >
             {PowerLocalize.get("Action.Exit")}
         </Button>,
@@ -169,18 +174,21 @@ class ConsultantEditDialogModule extends React.Component<
                 open={this.props.show}
                 onClose={this.closeDialog}
             >
-                <ConsultantEditFields
-                    firstName = {this.state.consultantInfo.firstName()}
-                    lastName = {this.state.consultantInfo.lastName()}
-                    title = {this.state.consultantInfo.title()}
-                    birthDate={this.state.consultantInfo.birthDate()}
-                    active={this.state.consultantInfo.active()}
-                    onFirstNameChange={this.setFirstName}
-                    onLastNameChange={this.setLastName}
-                    onTitleChange={this.setTitle}
-                    onBirthDateChange={this.setBirthDate}
-                    onActiveChange={this.setActive}
-                />
+                <DialogTitle>{PowerLocalize.get('ConsultantTile.EditConsultant')}</DialogTitle>
+                <DialogContent>
+                    <ConsultantEditFields
+                        firstName = {this.state.consultantInfo.firstName()}
+                        lastName = {this.state.consultantInfo.lastName()}
+                        title = {this.state.consultantInfo.title()}
+                        birthDate={this.state.consultantInfo.birthDate()}
+                        active={this.state.consultantInfo.active()}
+                        onFirstNameChange={this.setFirstName}
+                        onLastNameChange={this.setLastName}
+                        onTitleChange={this.setTitle}
+                        onBirthDateChange={this.setBirthDate}
+                        onActiveChange={this.setActive}
+                    />
+                </DialogContent>
                 <DialogActions>
                     {this.dialogActions}
                 </DialogActions>

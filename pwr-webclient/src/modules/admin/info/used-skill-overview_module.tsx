@@ -133,14 +133,17 @@ class UsedSkillOverviewModule extends React.Component<
                             //selectedIndex={this.state.selectedSkillName}
                             //onSelect={this.handleSkillSelect}
                             >
-                            {res.map((name, key) =>
-                                <ListItem
-                                    value={name}
-                                    key={name}
-                                    onChange={(e:any) => console.log(e)}
-                                >
-                                {name}
-                                </ListItem>)}
+                            {/*TODO null error check*/}
+                            {res === null ? <ListItem>ERROR</ListItem> :
+                                res.map((name, key) =>
+                                    <ListItem
+                                        value={name}
+                                        key={name}
+                                        onChange={(e:any) => console.log(e)}
+                                    >
+                                    {name}
+                                    </ListItem>)
+                                }
                         </List>
                     </Paper>
                 </div>

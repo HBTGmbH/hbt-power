@@ -29,6 +29,8 @@ import {NavigationActionCreator} from '../../reducers/navigation/NavigationActio
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 import Divider from '@material-ui/core/Divider/Divider';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button/Button';
 
 
 
@@ -119,10 +121,10 @@ class AdminClientModule extends React.Component<
                     <Paper elevation={3}>
                         <AppBar>
                             <Toolbar>
-                                <div className="vertical-align" style={{height: '100%'}}>
+                                <div className="vertical-align" style={{flexGrow:1}} >
                                     <img className="img-responsive logo-small" src={getImagePath()+'/HBT002_Logo_neg.png'}/>
                                 </div>
-                                <IconButton color={'secondary'} onClick={this.props.logOutAdmin} style={{float:'left'}}>
+                                <IconButton color={'secondary'} onClick={this.props.logOutAdmin} >
                                     <Icon   className={"material-icons"}> input</Icon>
                                 </IconButton>
                             </Toolbar>
@@ -134,13 +136,6 @@ class AdminClientModule extends React.Component<
                     <div className="col-md-2">
                         <Paper  style={{marginTop:'70px'}}>
                             <List>
-                                {/*NOTE ListSubheader
-                                <ListItem key = "Postkorb" >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">inbox</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={"Postkorb"}/>
-                                </ListItem>*/}
                                 <ListSubheader>Postkorb</ListSubheader>
                                     <ListItem
                                         button
@@ -177,13 +172,6 @@ class AdminClientModule extends React.Component<
                                 </ListItem>
                             <Divider/>
                                 <ListSubheader>Informationen</ListSubheader>
-                                {/*<ListItem key = {PowerLocalize.get('AdminClient.Menu.Info')}>
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">info_outline</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info')}/>
-                                </ListItem>*/}
-
                                     <List>
                                         <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={ "Link01"}>
                                             <ListItem
@@ -210,18 +198,6 @@ class AdminClientModule extends React.Component<
                                         </Link>
                                     </List>
                                 <Divider/>
-
-
-
-                                {/*<ListItem
-                                    key = {PowerLocalize.get('AdminClient.Menu.Statistics')}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">insert_chart</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics')}/>
-                                </ListItem>*/}
-
                                 <ListSubheader>Statistiken</ListSubheader>
                                         <ListItem
                                             button

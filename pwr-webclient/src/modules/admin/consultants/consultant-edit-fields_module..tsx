@@ -50,12 +50,13 @@ export class ConsultantEditFields extends React.Component<ConsultantEditFieldsPr
             />
             <br/>
 
-            <FormControl>
+            <FormControl style={{float:'right'}}>
                 <FormControlLabel
                     control={
                         <Checkbox
                             checked={this.props.active}
                             onChange={(e:any, v:boolean) => this.props.onActiveChange(v)}
+                            color={'primary'}
                         />
                      }
                     label={PowerLocalize.get("ConsultantEdit.Active")}

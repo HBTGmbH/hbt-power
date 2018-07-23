@@ -93,7 +93,7 @@ class PowerLoginModule extends React.Component<
         this.props.logInUser(this.props.initials);
     };
 
-    private handleFieldValueChange = (irrelevantFormEvent: any, value: string) => {
+    private handleFieldValueChange = (value: string) => {
         this.props.setUserInitials(value);
     };
 
@@ -103,7 +103,7 @@ class PowerLoginModule extends React.Component<
         return (<TextField
             label={this.props.loginStatus == LoginStatus.REJECTED ? PowerLocalize.get("UserLogin.LoginFailed") : PowerLocalize.get("Initials.Singular")}
             value={this.props.initials}
-            onChange={() => this.handleFieldValueChange}
+            onChange={(e) => this.handleFieldValueChange(e.target.value)}
             onKeyPress={this.handleInputFieldKeyPress}
         />)
     };

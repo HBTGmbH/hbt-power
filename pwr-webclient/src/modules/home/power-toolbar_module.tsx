@@ -20,6 +20,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
+import Paper from '@material-ui/core/Paper/Paper';
+import Typography from '@material-ui/core/Typography/Typography';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -46,6 +48,8 @@ interface ToolbarLocalProps {
 interface ToolbarLocalState {
     menuOpen: boolean;
     statisticsOpen : boolean;
+    profilesOpen : boolean;
+    menuAnchorEl : any;
 }
 
 interface ToolbarDispatch {
@@ -62,7 +66,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         super(props);
         this.state = {
             menuOpen: false,
-            statisticsOpen: true,
+            statisticsOpen: false,
+            profilesOpen:false,
+            menuAnchorEl:null,
         };
     }
 
@@ -88,10 +94,13 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         };
     }
 
-    private handleMenuClick = () => {
-        this.setState({menuOpen: true});
+    private handleMenuOpen = (event:any) => {
+        this.setState({menuOpen: true, menuAnchorEl: event.currentTarget});
     };
 
+    private handleMenuClose = () => {
+        this.setState({menuOpen: false, menuAnchorEl: null});
+    };
     private getInitials = () => {
         return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials();
     };
@@ -99,7 +108,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     private renderPower = () => {
         return (
-            <div className="vertical-align" style={{height: "100%"}}>
+            <div className="vertical-align" style={{height: "100%",flexGrow:1}}>
                 <img className="img-responsive logo-small" src={getImagePath()+"/HBT002_Logo_neg.png"}
                 />
             </div>
@@ -130,7 +139,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     private renderViewProfile = (viewProfile: ViewProfile) => {
         let text = viewProfile.viewProfileInfo.name;
-        if(text === null && text.trim() === "") {
+        if(text === null || text.trim() === "") {
             text = viewProfile.id;
         }
         return <MenuItem
@@ -146,17 +155,15 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     //TODO Menu -> IconButton
     private renderMenu = () => {
         return (<div>
-            <IconButton onClick={()=>this.setState({menuOpen : !this.state.menuOpen})}>
-                <Icon className="material-icons">menu</Icon>
-            </IconButton>
+
             <Menu
+                id={"menu"}
                 open={this.state.menuOpen}
-                // iconStyle={{color:Color.HBT_2017_TEXT_WHITE.toCSSRGBString()}}
-                // iconButtonElement={}
-                // anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                // targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                anchorEl={this.state.menuAnchorEl}
+                onClose={() => this.handleMenuClose()}
             >
                 <MenuItem
+                    key={"1"}
                     onClick={() => this.props.navigateTo(Paths.USER_HOME)}
                 >
                     <Icon className="material-icons">home</Icon>
@@ -165,6 +172,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     </ListItemText>
                 </MenuItem>
                 <MenuItem
+                    key={"2"}
                     onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
                 >
                     <Icon className="material-icons">person</Icon>
@@ -172,25 +180,28 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         {PowerLocalize.get('Menu.BaseData')}
                     </ListItemText>
                 </MenuItem>
+
                 {this.props.viewProfiles.length > 0 ?
-                    <MenuItem>
+                    <div>
+                    <MenuItem key={"3"} button onClick={() => this.setState({profilesOpen: !this.state.profilesOpen})}>
                         <Icon className="material-icons">remove_red_eye</Icon>
                         <ListItemText>
                             {PowerLocalize.get('Menu.ViewProfile')}
                         </ListItemText>
                         <Icon className="material-icons">keyboard_arrow_right</Icon>
-
-                        {this.props.viewProfiles.map(this.renderViewProfile)}
                     </MenuItem>
-
+                        <Collapse in={this.state.profilesOpen}>
+                        {this.props.viewProfiles.map(this.renderViewProfile)}
+                        </Collapse>
+                    </div>
                     : null
 
                 }
 
-            {
+                {
                 this.props.statisticsAvailable ? (
                     <div>
-                    <MenuItem button onClick={()=> this.setState({statisticsOpen: !this.state.statisticsOpen})}>
+                    <MenuItem key={"5"} button onClick={()=> this.setState({statisticsOpen: !this.state.statisticsOpen})}>
                         <ListItemIcon>
                             <Icon className="material-icons">insert_chart</Icon>
                         </ListItemIcon>
@@ -200,7 +211,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </ListItemIcon>
                     </MenuItem>
                     <Collapse in={this.state.statisticsOpen}>
-
                             <MenuItem
                                 key="Menu.Statistics.Network"
                                 onClick={this.loadNetworkGraph}
@@ -239,8 +249,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 )
                 :
                 null
-            }
+                }
            <MenuItem
+               key={"6"}
                onClick={() => this.props.navigateTo(Paths.USER_SEARCH)}
            >
                <ListItemIcon>
@@ -255,47 +266,55 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             </div>
     );
     };
-
+    // TODO menu so aufbauen wie in gridTile (menu anchor etc)
     /**
      * @returns {any}
      */
     render() {
         return(
-            <AppBar>
-                <Toolbar>
+            <div>
+                <AppBar>
+                    <Toolbar>
+                            <IconButton
+                                onClick={(e:any)=>{this.handleMenuOpen(e)}}
+                                style={{color:"white",marginLeft:-12,marginRight:20}}
+                            >
+                                <Icon className="material-icons">menu</Icon>
+                            </IconButton>
 
-                    {this.renderMenu()}
-                    {this.renderPower()}
+                            {this.renderPower()}
 
-                    <div style={{"color": "white"}}>
-                        <span>
-                              {PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}
-                        </span>
-                        {
-                            this.props.loggedInAsAdmin ?
-                                <Tooltip title={PowerLocalize.get('Tooolbar.ToAdminOverview')}>
-                                <IconButton
-                                    style={{"color": "white"}}
-                                    className="material-icons"
-                                    onClick={() => this.props.navigateTo(Paths.ADMIN_CONSULTANTS)}
-                                >
-                                    home
-                                </IconButton>
-                                </Tooltip>
-                                : null
-                        }
+                            <Typography style={{color:'white'}}>
+                                  {PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}
+                            </Typography>
+                            {
+                                this.props.loggedInAsAdmin ?
+                                    <Tooltip title={PowerLocalize.get('Tooolbar.ToAdminOverview')}>
+                                    <IconButton
+                                        style={{"color": "white"}}
+                                        className="material-icons"
+                                        onClick={() => this.props.navigateTo(Paths.ADMIN_CONSULTANTS)}
+                                    >
+                                        home
+                                    </IconButton>
+                                    </Tooltip>
+                                    : null
+                            }
 
-                        <IconButton
-                            style={{"color": "white"}}
-                            //tooltip={PowerLocalize.get('Tooolbar.LogOut')}
-                            className="material-icons"
-                            onClick={this.logOutUser}
-                        >
-                            input
-                        </IconButton>
-                    </div>
-                </Toolbar>
-            </AppBar>
+                            <IconButton
+                                style={{"color": "white"}}
+                                //tooltip={PowerLocalize.get('Tooolbar.LogOut')}
+                                className="material-icons"
+                                onClick={this.logOutUser}
+                            >
+                                input
+                            </IconButton>
+                    </Toolbar>
+                </AppBar>
+                    <Paper style={{marginTop:70}}>
+                        {this.renderMenu()}
+                    </Paper>
+            </div>
         );
     }
 }

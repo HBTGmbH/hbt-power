@@ -1,14 +1,12 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Dialog, List, ListItem, TextField} from '@material-ui/core';//AutoComplete,makeSelectable,
+import {Dialog, List, ListItem, TextField} from '@material-ui/core';
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
 import {SkillStore} from '../../../model/skill/SkillStore';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
-// TODO autocomplete
-// TODO makeSelectable
 
 //let SelectableList = wrapSelectableList(makeSelectable(List));
 
@@ -47,6 +45,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
 
     private mapListItem = (category: SkillCategory) => {
         return  <ListItem
+            button
             value={category.id()}
             key={category.id()}
         >
@@ -75,7 +74,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     private renderCategories = () => {
         let categories = this.props.categories;
         if(this.state.filterText !== "") {
-            //categories = categories.filter(categorie => AutoComplete.fuzzyFilter(this.state.filterText, categorie.qualifier()));
+            //categories = categories.filter(category => AutoComplete.fuzzyFilter(this.state.filterText, category.qualifier()));
         }
         categories.sort(Comparators.compareCategories);
         return categories.map(this.mapListItem);
@@ -91,10 +90,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
                 value={this.state.filterText}
                 onChange={() => this.handleFilterTextChange}
             />
-            <List //selectedIndex={this.state.selected}
-                            //onSelect={this.handleSelect}
-                            style={{maxHeight: "400px", overflow: "auto"}}
-            >
+            <List style={{maxHeight: "400px", overflow: "auto"}}>
                 {this.renderCategories()}
             </List>
         </Dialog>);

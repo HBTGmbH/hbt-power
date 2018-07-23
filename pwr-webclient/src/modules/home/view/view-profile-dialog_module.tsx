@@ -5,6 +5,8 @@ import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 
 // TODO slider
 
@@ -119,42 +121,46 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             title={this.renderTitle()}
             open={this.props.open}
             onClose={this.closeAndReset}
+            fullWidth
         >
+            <DialogTitle>{this.renderTitle()}</DialogTitle>
+            <DialogContent>
+                <LimitedTextField onChange={this.changeName}
+                                  maxCharacters={250}
+                                  value={this.state.name}
+                                  fullWidth={true}
+                                  label={PowerLocalize.get("ViewProfileDialog.Name")}
+                />
+                <LimitedTextField onChange={this.changeDescription}
+                                  maxCharacters={500}
+                                  value={this.state.description}
+                                  fullWidth={true}
+                                  multiLine={true}
+                                  label={PowerLocalize.get("ViewProfileDialog.Description")}
+                />
+                <TextField onChange={()=>this.changeLocale}
+                           value={this.state.locale}
+                           label={PowerLocalize.get("ViewProfileDialog.Locale")}
+                           disabled={this.props.type === "edit"}
+                />
+                <div style={{width: "100%"}}>
+                    <TextField
+                        value={this.state.charsPerLine}
+                        label={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
+                        disabled={true}
+                    />
+                    {/*<Slider
+                        value={this.state.charsPerLine}
+                        min={10}
+                        step={1}
+                        max={99}
+                        onChange={this.changeCharsPerLine}
+                    />*/}
+                </div>
+            </DialogContent>
             <DialogActions>
                 {this.renderActions()}
             </DialogActions>
-            <LimitedTextField onChange={this.changeName}
-                              maxCharacters={250}
-                              value={this.state.name}
-                              fullWidth={true}
-                              label={PowerLocalize.get("ViewProfileDialog.Name")}
-            />
-            <LimitedTextField onChange={this.changeDescription}
-                              maxCharacters={500}
-                              value={this.state.description}
-                              fullWidth={true}
-                              multiLine={true}
-                              label={PowerLocalize.get("ViewProfileDialog.Description")}
-            />
-            <TextField onChange={()=>this.changeLocale}
-                       value={this.state.locale}
-                       label={PowerLocalize.get("ViewProfileDialog.Locale")}
-                       disabled={this.props.type === "edit"}
-            />
-            <div style={{width: "100%"}}>
-                <TextField
-                    value={this.state.charsPerLine}
-                    label={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
-                    disabled={true}
-                />
-                {/*<Slider
-                    value={this.state.charsPerLine}
-                    min={10}
-                    step={1}
-                    max={99}
-                    onChange={this.changeCharsPerLine}
-                />*/}
-            </div>
         </Dialog>);
     }
 }

@@ -14,7 +14,6 @@ import formatString = StringUtils.formatString;
 import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
 
-// TODO Tabelle prüfen
 
 interface SkillNotificationTableProps {
 
@@ -27,7 +26,6 @@ interface SkillNotificationTableLocalProps {
 }
 
 interface SkillNotificationTableLocalState {
-
 }
 
 interface SkillNotificationTableDispatch {
@@ -50,7 +48,32 @@ class SkillNotificationTableModule extends React.Component<
             onDialogOpen: id => dispatch(AdminActionCreator.AsyncOpenSkillNotificationDialog(id)),
         }
     }
-// TODO check function of RowSelect -mp
+    // TODO check function of RowSelect -mp
+
+    private handleSelectAll = (e:any, checked:boolean) => {
+        let selection:Array<number>;
+        selection = [];
+        if (checked) {
+            this.props.skillNotifications.map((value, key) => {selection.push(key)});
+        }else{
+
+        }
+        this.props.onRowSelection(selection);
+    };
+
+    private handleSingleRow = (e:any, checked:boolean, key:number) => {
+        let selection = this.props.selectedRows;
+        let isSelected:boolean = this.props.selectedRows.indexOf(key) !== -1;
+        if(isSelected){
+            // entfernen
+            selection.splice(this.props.selectedRows.indexOf(key),1);
+        }else{
+            // hinzufügen
+            selection.push(key);
+        }
+        this.props.onRowSelection(selection);
+    };
+
     private handleRowSelection = (rows: string | Array<number>) => {
         let selectedIndexes: Array<number> = [];
         if(rows === "all") {
@@ -64,17 +87,21 @@ class SkillNotificationTableModule extends React.Component<
     };
 
     private mapRow = (notification: SkillNotification, key: number) => {
+        let isSelected : boolean;
+        isSelected = this.props.selectedRows.indexOf(key) !== -1;
         return (
             <TableRow
                 hover
                 key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
-                selected={this.props.selectedRows.indexOf(key) !== -1}
+                selected={isSelected}
                 onClick={event => this.handleRowSelection}
                 style={{backgroundColor:'white'}}
             >
                 <TableCell padding={"checkbox"}>
                     <FormGroup>
-                        <Checkbox checked={this.props.selectedRows.indexOf(key) !== -1}/>
+                        <Checkbox checked={isSelected}
+                                  onChange={(event:any,checked:boolean) => {this.handleSingleRow(event,checked,key)}}
+                                  color="primary"/>
                     </FormGroup>
                 </TableCell>
                 <TableCell>{notification.adminNotification().initials()}</TableCell>
@@ -108,7 +135,13 @@ class SkillNotificationTableModule extends React.Component<
                     <TableRow style={{backgroundColor:'white'}}>
                         <TableCell padding={'checkbox'}>
                             <FormGroup>
-                                <Checkbox />
+                                <Checkbox
+                                    indeterminate={this.props.selectedRows.length > 0 && this.props.selectedRows.length < this.props.skillNotifications.toArray().length}
+                                    checked = {this.props.selectedRows.length === this.props.skillNotifications.toArray().length}
+                                    onChange={this.handleSelectAll}
+                                    color="primary"
+
+                                />
                             </FormGroup>
                         </TableCell>
                         <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>

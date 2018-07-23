@@ -145,7 +145,7 @@ class NameEntityOverviewModule extends React.Component<
             return null;
         }
     };
-
+    // rendert das drop down menu
     private renderSelect() {
         return (
             <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
@@ -159,7 +159,7 @@ class NameEntityOverviewModule extends React.Component<
                                 NameEntityUtil
                                     .getProfileElementTypes()
                                     .filter((value, index, array) => !(value === ProfileElementType.Project || value === ProfileElementType.SkillEntry))
-                                    .map((value, index, array) => <MenuItem key={value} value={value} ><ListItemText primary={PowerLocalize.get(ProfileElementType[value])}/></MenuItem>)
+                                    .map((value, index, array) => <MenuItem key={value} value={value} button ><ListItemText primary={PowerLocalize.get(ProfileElementType[value])}/></MenuItem>)
                             }
                         </Select>
                     </FormControl>
@@ -169,7 +169,9 @@ class NameEntityOverviewModule extends React.Component<
     }
 
 
-    //TODO selectableList https://github.com/mui-org/material-ui/issues/7619
+    // Problem: ListItem tut logisch was es soll, nur es zeigt keine Interaktion an wenn die maus über dem List item ist
+    // wenn man jetzt button = true hinzufügt funktionert die logik nicht mehr aber das "Userinterface"
+    // TODO CSS classe erstellen für hoverOver
     render() {
         let nameEntites = this.getNameEntitiesByField(this.state.selectedField);
         return (

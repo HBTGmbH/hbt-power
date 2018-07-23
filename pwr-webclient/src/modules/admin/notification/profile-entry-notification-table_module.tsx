@@ -36,6 +36,8 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
     }
 
     private mapRow = (notification: ProfileEntryNotification, key: number) => {
+        let isSelected:boolean = this.props.selectedRows.indexOf(key) != -1;
+
         return (
             <TableRow
                 key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
@@ -46,7 +48,10 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
             >
                 <TableCell padding={'checkbox'}>
                     <FormGroup>
-                        <Checkbox checked={this.props.selectedRows.indexOf(key) !== -1}/>
+                        <Checkbox checked={isSelected}
+                                  onChange={(event:any,checked:boolean) => {this.handleSingleRow(event,checked,key)}}
+                                  color="primary"
+                        />
                     </FormGroup>
                 </TableCell>
                 <TableCell>{notification.adminNotification().initials()}</TableCell>
@@ -84,6 +89,30 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
         })
     };
 
+    private handleSelectAll = (e:any, checked:boolean) => {
+        let selection:Array<number>;
+        selection = [];
+        if (checked) {
+            this.props.profileEntryNotifications.map((value, key) => {selection.push(key)});
+        }else{
+
+        }
+        this.props.onRowSelection(selection);
+    };
+
+    private handleSingleRow = (e:any, checked:boolean, key:number) => {
+        let selection = this.props.selectedRows;
+        let isSelected:boolean = this.props.selectedRows.indexOf(key) !== -1;
+        if(isSelected){
+            // entfernen
+            selection.splice(this.props.selectedRows.indexOf(key),1);
+        }else{
+            // hinzufügen
+            selection.push(key);
+        }
+        this.props.onRowSelection(selection);
+    };
+
     private handleRowSelection = (rows: string | Array<number>) => {
         let selectedIndexes: Array<number> = [];
         if(rows === "all") {
@@ -109,7 +138,13 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
                     <TableRow style={{backgroundColor:'white'}}>
                         <TableCell padding={"checkbox"}>
                             <FormGroup>
-                                <Checkbox/>
+                                <Checkbox
+                                    indeterminate={this.props.selectedRows.length > 0 && this.props.selectedRows.length < this.props.profileEntryNotifications.toArray().length}
+                                    checked = {this.props.selectedRows.length === this.props.profileEntryNotifications.toArray().length}
+                                    onChange={this.handleSelectAll}
+                                    color="primary"
+
+                                />
                             </FormGroup>
                         </TableCell>
                         <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>

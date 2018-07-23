@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {Icon, GridListTile, IconButton, Menu, MenuItem} from '@material-ui/core';
-import {getProfileImageLocation} from '../../../API_CONFIG';
+import {getImagePath, getProfileImageLocation} from '../../../API_CONFIG';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditDialog} from './consultant-edit-dialog_module';
@@ -107,7 +107,6 @@ class ConsultantTileModule extends React.Component<
      * Renders the menu for this tile
      * @returns JSX Element that represents the menu.
      */
-    // TODO check Menu (IconButton) struktur
     private renderMenu = () => {
         return (<Menu
             id="menu"
@@ -145,6 +144,7 @@ class ConsultantTileModule extends React.Component<
     render() {
         return (
             <div>
+                {this.renderMenu()}
                 <ConsultantEditDialog
                     initials={this.props.initials}
                     show={this.state.dialogOpen}
@@ -159,10 +159,13 @@ class ConsultantTileModule extends React.Component<
                     titleBackground="linear-gradient(to bottom, rgba(70,230,230,0.7) 0%,rgba(70,230,230,0.3) 70%,rgba(70,230,230,0) 100%)"*/
                     cols={1}
                     rows={1}
-                    style={{width: "300px", height: "300px"}}
+                    style={{width: "300px", height: "300px", padding:8}}
                 >
 
-                    <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"} src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
+                    <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"}
+                         //src={getProfileImageLocation(this.props.consultantInfo.initials())}
+                         src={getImagePath()+'/HBT002_Logo_neg.png'}
+                    />
                     <GridListTileBar
                         title={this.props.consultantInfo.getFullName()}
                         //actionIcon={this.renderMenu()

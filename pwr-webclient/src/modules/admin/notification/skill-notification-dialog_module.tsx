@@ -378,10 +378,10 @@ class SkillNotificationModuleModule extends React.Component<
             {this.renderController()}
             <DialogActions>
                 <Button
-                variant={'flat'}
-                key="SkillNotDlg.CloseAndReset"
-                color={'primary'}
-                onClick={this.props.closeAndReset}
+                    variant={'flat'}
+                    key="SkillNotDlg.CloseAndReset"
+                    color={'primary'}
+                    onClick={this.props.closeAndReset}
                 >
                     Cancle
                 </Button>

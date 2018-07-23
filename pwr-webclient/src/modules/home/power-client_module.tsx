@@ -17,7 +17,7 @@ export class PowerClient extends React.Component<{}, {}> {
     render() {
         return <div>
             <PowerToolbar/>
-            <div style={{marginTop: "30px"}}>
+            <div style={{marginTop: "70px"}}>
                 <Route path={Paths.USER_HOME} component={PowerOverview}/>
                 <Route path={Paths.USER_PROFILE} component={ConsultantProfile}/>
                 <Route path={Paths.USER_STATISTICS_NETWORK} component={ProfileNetworkGraph}/>

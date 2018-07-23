@@ -137,7 +137,7 @@ class AdminLoginModule extends React.Component<
                                 <TextField
                                     className="fullWidth"
                                     label={PowerLocalize.get("Username.Singular")}
-                                    value={this.props.username}
+                                    value={""+this.props.username}
                                     onChange={(evt) => this.props.changeUsername(evt.target.value)}
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
@@ -146,7 +146,7 @@ class AdminLoginModule extends React.Component<
                                 <TextField
                                     className="fullWidth"
                                     label={PowerLocalize.get("Password.Singular")}
-                                    value={(this.getErrorText() === null) ? this.getErrorText() : this.props.password}
+                                    value={(this.getErrorText() === null) ? ""+this.getErrorText() : ""+this.props.password}
                                     onChange={(evt) => this.props.changePassword(evt.target.value)}
                                     type="password"
                                     onKeyPress={this.handleInputFieldKeyPress}
@@ -170,7 +170,7 @@ class AdminLoginModule extends React.Component<
                                     this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span> Test label Test label Test label Test  </span>
                                 }
                             </div>
-                            <div className={'vertical-align'}>
+                            <div className="vertical-align">
                                 <Button variant={'raised'} style={{float: "left", marginRight: "5px"}} onClick={this.handleAttemptLogIn} color={'primary'} >{PowerLocalize.get("Action.Login")}</Button>
                                 <Button variant={'flat'} style={{float: "right", marginRight: "5px"}}  //component={ rootLink }
                                 >{"Zurück"}</Button>
