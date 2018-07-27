@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Dialog, Button} from '@material-ui/core';
+import {Button, Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 

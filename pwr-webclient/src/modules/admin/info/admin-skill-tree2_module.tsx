@@ -5,7 +5,7 @@ import * as Immutable from 'immutable';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
 import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {SkillTree} from '../../general/skill/skill-tree_module';
-import {Checkbox, Icon, Paper, Button, ListSubheader, TextField,FormControlLabel} from '@material-ui/core';
+import {Button, Checkbox, FormControlLabel, Icon, ListSubheader, Paper, TextField} from '@material-ui/core';
 import {InfoPaper} from '../../general/info-paper_module.';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LocalizationTable} from '../../general/skill/localization-table_module';
