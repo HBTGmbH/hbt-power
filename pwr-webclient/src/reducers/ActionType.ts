@@ -94,6 +94,7 @@ export enum ActionType {
     RemoveSkillServiceSkill,
     UpdateSkillServiceSkill,
     BatchAddSkills,
+    LoadTree,
 
     SetCurrentSkillName,
     SetCurrentSkillRating,

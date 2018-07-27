@@ -100,7 +100,7 @@ class AdminSkillTree2Module extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminSkillTree2Dispatch {
         return {
-            loadTree: () => dispatch(SkillActionCreator.AsyncLoadRootChildrenIntoTree()),
+            loadTree: () => dispatch(SkillActionCreator.AsyncLoadTree()),
             whitelistCategory: categoryId => dispatch(SkillActionCreator.AsyncWhitelistCategory(categoryId)),
             blacklistCategory: categoryId => dispatch(SkillActionCreator.AsyncBlacklistCategory(categoryId)),
             addLocalization: (categoryId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddLocale(categoryId, language, qualifier)),

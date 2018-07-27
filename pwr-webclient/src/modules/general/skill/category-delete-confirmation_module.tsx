@@ -19,14 +19,6 @@ export class CategoryDeleteConfirmation extends React.Component<CategoryDeleteCo
         onDeclineDelete: () => {}
     };
 
-    private countChildCategories = (category: SkillCategory) => {
-        let count = 1;
-        category.categories().forEach(child => {
-            count += this.countChildCategories(child);
-        });
-        return count;
-    };
-
     render() {
         return (
         <Dialog
@@ -34,7 +26,7 @@ export class CategoryDeleteConfirmation extends React.Component<CategoryDeleteCo
             //modal={true}
         >
             Do you really want to delete <strong>{this.props.category.qualifier()}</strong> including its
-            {this.countChildCategories(this.props.category)} child categories?
+            child categories?
 
             <DialogActions>
                 <Button
