@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Icon, List, ListItem, ListSubheader, withTheme} from '@material-ui/core';
+import {List, ListItem, ListSubheader} from '@material-ui/core';
 import {NameEntity} from '../../../../model/NameEntity';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
-import {ThemeProps} from '../../../../utils/ReactUtils';
+import {PwrIconHeader} from '../../../general/pwr-icon-header';
 
 interface NameEntityInfoBoxProps {
     nameEntity: NameEntity;
@@ -13,7 +13,7 @@ interface NameEntityInfoBoxState {
 
 }
 
-class NameEntityInfoBoxModule extends React.Component<NameEntityInfoBoxProps & ThemeProps, NameEntityInfoBoxState> {
+class NameEntityInfoBoxModule extends React.Component<NameEntityInfoBoxProps, NameEntityInfoBoxState> {
 
     private renderUsedBy = () => {
         return <List style={{paddingTop:'5px'}}>
@@ -24,20 +24,13 @@ class NameEntityInfoBoxModule extends React.Component<NameEntityInfoBoxProps & T
     render() {
         // TODO lokalisieren
         return (<div >
-            <div className="vertical-align" style={{ height: '56px',  backgroundColor: this.props.theme.palette.primary.main}}>
-                <div style={{fontSize: 18, color: this.props.theme.palette.secondary.main}}>
-                    <Icon style={{verticalAlign: 'middle'}}>
-                        info_outline
-                    </Icon>
-                    <span style={{marginLeft: '5px'}}> Info </span>
-                </div>
-            </div>
+            <PwrIconHeader title={"Info"} muiIconName={"info_outline"}/>
             <ListSubheader>Bezeichnung</ListSubheader>
-            <span style={{paddingLeft:'30px'}}>{this.props.nameEntity.name()}</span>
+            <span className="padding-left-32px">{this.props.nameEntity.name()}</span>
             <ListSubheader>Benutzt von</ListSubheader>
             {this.renderUsedBy()}
         </div>);
     }
 }
 
-export const NameEntityInfoBox = withTheme()(NameEntityInfoBoxModule);
+export const NameEntityInfoBox = NameEntityInfoBoxModule;

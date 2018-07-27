@@ -11,13 +11,10 @@ import * as Immutable from 'immutable';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 import {StatisticsActionCreator} from '../../../../reducers/statistics/StatisticsActionCreator';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
-import {ReactUtils, ThemeProps} from '../../../../utils/ReactUtils';
+import {ThemeProps} from '../../../../utils/ReactUtils';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import {NameEntityInfoBox} from './name-entity-info-box';
-
-//let SelectableList = wrapSelectableList(makeSelectable(List));
-
 
 interface NameEntityOverviewProps {
     sectors: Immutable.Map<string, NameEntity>;
@@ -168,6 +165,21 @@ class NameEntityOverviewModule extends React.Component<
             );
     }
 
+    private isSelected = (index: number) => {
+        return this.state.selectedIndex === index;
+    };
+
+    private renderListItem = (nameEntity: NameEntity, index: number) => {
+        return <ListItem button
+                         onClick={(e:any) => this.handleIndexSelect(e, index)}
+                         value={index}
+                         key={index}
+                         className={this.isSelected(index) ? "pwr-selected-list-item" : ""}
+        >
+            {nameEntity.name()}
+            </ListItem>;
+    };
+
 
     // Problem: ListItem tut logisch was es soll, nur es zeigt keine Interaktion an wenn die maus über dem List item ist
     // wenn man jetzt button = true hinzufügt funktionert die logik nicht mehr aber das "Userinterface"
@@ -182,7 +194,7 @@ class NameEntityOverviewModule extends React.Component<
                         <Paper>
                             <List>
                                 {
-                                    nameEntites.map((ne, key) =>  <ListItem  onClick={(e:any) => this.handleIndexSelect(e,e.target.value)} value={key} key={key}>{ne.name()}</ListItem>)
+                                    nameEntites.map(this.renderListItem)
                                 }
                             </List>
                         </Paper>

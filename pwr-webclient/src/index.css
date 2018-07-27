@@ -67,6 +67,14 @@ body {
   padding-left: 16px;
 }
 
+.padding-left-32px {
+  padding-left: 32px;
+}
+
+.pwr-selected-list-item {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
 .aspect-1-1 {
   padding-top: 100%;
   width: 100%;

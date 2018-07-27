@@ -2,36 +2,27 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {
-    //AutoComplete,
-    Icon,
-    List,
-    ListItem,
-    //makeSelectable,
-    Paper,
-    Button,
-    ListSubheader,
-    TextField
-} from '@material-ui/core';
+import {List, ListItem, Paper, TextField} from '@material-ui/core';
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {Comparators} from '../../../utils/Comparators';
-import {POWER_MUI_THEME} from '../../../index';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {isNullOrUndefined} from 'util';
 import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {EditSkillDialog} from './skill/edit-skill-dialog_module';
-import wrapSelectableList = ReactUtils.wrapSelectableList;
+import {StringUtils} from '../../../utils/StringUtil';
+import {UsedSkillInfoBox} from './skill/used-skill-info-box';
+import {toArray} from '../../../utils/ImmutableUtils';
+import filterFuzzy = StringUtils.filterFuzzy;
 // TODO Autocomplete
 // TODO makeSelectable
 
 //let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface UsedSkillOverviewProps {
-    usedSkillNames: Immutable.Set<string>;
+    usedSkillNames: Array<string>;
     skillUsageInfo: Immutable.Map<string, Immutable.List<ConsultantInfo>>;
     skillHierarchies: Immutable.Map<string, string>;
 }
@@ -68,7 +59,7 @@ class UsedSkillOverviewModule extends React.Component<
 
     static mapStateToProps(state: ApplicationState, localProps: UsedSkillOverviewLocalProps): UsedSkillOverviewProps {
         return {
-            usedSkillNames: state.databaseReducer.currentlyUsedSkillNames(),
+            usedSkillNames: state.databaseReducer.currentlyUsedSkillNames().toArray(),
             skillUsageInfo: state.statisticsReducer.skillUsageInfo(),
             skillHierarchies: state.skillReducer.categorieHierarchiesBySkillName()
         };
@@ -105,15 +96,50 @@ class UsedSkillOverviewModule extends React.Component<
             editOpen: true
         })
     };
-// TODO Color Palette
+
+    private isSelected = (name: string) => {
+        return name === this.state.selectedSkillName;
+    };
+
+    private selectedClass = (name: string) => {
+        if (this.isSelected(name)) {
+            return "pwr-selected-list-item";
+        } else {
+            return "";
+        }
+    };
+
+    private renderSkillItem = (name: string) => {
+        return <ListItem button
+                         className={this.selectedClass(name)}
+                         value={name}
+                         key={name}
+                         onChange={(e:any) => console.log(e)}
+                         onClick={() => this.handleSkillSelect(null, name)}
+        >
+            {name}
+        </ListItem>;
+    };
+
+    private renderSkills = (skills: Array<string> | null) => {
+        if (skills) {
+            return skills.map(this.renderSkillItem);
+        }
+        return <></>;
+    };
+
+    private skillHierarchy = () => {
+        return this.props.skillHierarchies.get(this.state.selectedSkillName);
+    };
+
     render() {
         let res = null;
         if(this.state.filterString !== "") {
-            //res = this.props.usedSkillNames.filter((value) => AutoComplete.defaultFilter(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
+            res = this.props.usedSkillNames.filter((value) => filterFuzzy(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
-        let values: Immutable.List<ConsultantInfo> = this.props.skillUsageInfo.get(this.state.selectedSkillName);
+        let skillUsageInfo: Array<ConsultantInfo> = toArray(this.props.skillUsageInfo.get(this.state.selectedSkillName))
         return (
             <div className="row">
                 <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
@@ -129,75 +155,19 @@ class UsedSkillOverviewModule extends React.Component<
                             label={PowerLocalize.get("Action.Search")}
                             style={{paddingLeft: "8px"}}
                         />
-                        <List
-                            //selectedIndex={this.state.selectedSkillName}
-                            //onSelect={this.handleSkillSelect}
-                            >
-                            {/*TODO null error check*/}
-                            {res === null ? <ListItem>ERROR</ListItem> :
-                                res.map((name, key) =>
-                                    <ListItem
-                                        value={name}
-                                        key={name}
-                                        onChange={(e:any) => console.log(e)}
-                                    >
-                                    {name}
-                                    </ListItem>)
-                                }
+                        <List>
+                            {this.renderSkills(res)};
                         </List>
                     </Paper>
                 </div>
-                {this.state.selectedSkillName !== "" ?
-                    <div className="col-md-4"  >
-                        <Paper id="admin-info-panel">
-                            <div className="vertical-align" style={{ height: '56px'}}>
-                                <div
-                                    style={{fontSize: 18}}
-                                >
-                                    <Icon
-                                        style={{verticalAlign: 'middle'}}
-                                        className="material-icons"
-                                        color={'default'}
-                                    >
-                                        info_outline
-                                    </Icon>
-                                    <span style={{marginLeft: '5px'}}>
-                                Info
-                                </span>
-                                </div>
-                            </div>
-                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillQualifier")}</ListSubheader>
-                            <span className="padding-left-16px">{this.state.selectedSkillName}</span>
-                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillHiearchy")}</ListSubheader>
-                            <div className="padding-left-16px">
-                                {
-                                    isNullOrUndefined(this.props.skillHierarchies.get(this.state.selectedSkillName))
-                                        ? "Keine Kategorisierung vorhanden"
-                                        : this.props.skillHierarchies.get(this.state.selectedSkillName)
-
-                                }
-                            </div>
-                            <Button
-                                    color={'primary'}
-                                    variant={'raised'}
-                                    onClick={this.openEditDialog}
-                                    className="mui-margin"
-                            >
-                                {PowerLocalize.get("Action.Edit")}
-                                <Icon className="material-icons">edit</Icon>
-                            </Button>
-
-                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.UsedBy")}</ListSubheader>
-                            <List>
-                            {
-                                !isNullOrUndefined(values) ? values.map((value, key, iter) => <ListItem disabled key={key}>{value.getFullName()}</ListItem>) : null
-                            }
-                            </List>
-                        </Paper>
+                <div className="col-md-4">
+                    <div style={{marginTop: "8px"}}>
+                        <UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
+                                          usedBy={skillUsageInfo}
+                                          skillName={this.state.selectedSkillName}
+                                          onOpenEdit={this.openEditDialog}/>
                     </div>
-                        :
-                    null
-                }
+                </div>
             </div>
         );
     }

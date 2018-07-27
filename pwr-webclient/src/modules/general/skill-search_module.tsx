@@ -86,6 +86,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     };
 
     private handleRequest = (request: string) => {
+        this.props.onValueChange(request);
         this.setState({
             searchText: this.props.resetOnRequest ? "" : request
         });
@@ -96,10 +97,10 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         return (
             <FormControl>
                 <TextField
-                    id={"autocomplete"}
-                    label={"skill-research"}
-                    onChange={()=>this.handleRequest}
-
+                    id={this.props.id}
+                    label={this.props.label}
+                    onChange={event => this.handleRequest(event.target.value)}
+                    value={this.state.searchText}
                 />
             </FormControl>
             )

@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
-import {Dialog, Button, Step, StepLabel, Stepper} from '@material-ui/core';
+import {Button, Dialog, DialogContent, DialogTitle, Step, StepLabel, Stepper} from '@material-ui/core';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {SkillSearcher} from '../../../general/skill-search_module';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
@@ -163,10 +163,11 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
         if(!this.props.skillInfo || !this.props.skillToEdit) {
             return <div/>
         }
-        return (<Dialog title={PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.Title", this.props.skillToEdit)}
-                        scroll={'body'}
-            open={this.props.open}
-            onClose={this.props.onClose}>
+        return (<Dialog scroll={'body'}
+                        open={this.props.open}
+                        onClose={this.props.onClose}>
+            <DialogTitle>{PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.Title", this.props.skillToEdit)}</DialogTitle>
+            <DialogContent>
                 <Stepper activeStep={this.state.stepIndex}>
                     <Step>
                         <StepLabel>{PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Step1")}</StepLabel>
@@ -201,6 +202,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
                         </div>
                     </div>
                 </div>
+            </DialogContent>
         </Dialog>);
     }
 }

@@ -33,7 +33,9 @@ class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewPro
             <div>
                 <div className="admin-app-bar-spacer"/>
                 <div style={{paddingTop: '8px'}}>
-                    <Tabs value={this.state.index}
+                    <Tabs fullWidth
+                          centered
+                          value={this.state.index}
                           style={{backgroundColor: this.props.theme.palette.primary.main}}
                           indicatorColor={'secondary'}
                           textColor={'secondary'}
