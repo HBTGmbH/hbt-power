@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
-import {Card, CardHeader, CardContent, Slide, ListSubheader} from '@material-ui/core';
+import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';
@@ -150,15 +150,15 @@ class SkillStatisticsModule extends React.Component<
                 </CardContent>
                 <CardContent>
                     <ListSubheader>{PowerLocalize.get("SkillStatistics.OccurrenceRating.Title")}</ListSubheader>
-                    <Slide
-                            direction={'down'}
-                            style={{width: 700}}
-                            //step={1}
-                            //min={3}
-                            //max={100}
-                            //value={this.state.skillOccLevelLength}
-                            //onChange={(event, value) => this.setState({skillOccLevelLength: value})}
-                    />
+                    {/*<Slide*/}
+                            {/*direction={'down'}*/}
+                            {/*style={{width: 700}}*/}
+                            {/*//step={1}*/}
+                            {/*//min={3}*/}
+                            {/*//max={100}*/}
+                            {/*//value={this.state.skillOccLevelLength}*/}
+                            {/*//onChange={(event, value) => this.setState({skillOccLevelLength: value})}*/}
+                    {/*/>*/}
                     <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
                         <Recharts.XAxis dataKey="name"/>

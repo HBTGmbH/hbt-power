@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dialog, Button, TextField} from '@material-ui/core';
+import {Button, Dialog, DialogContent, DialogTitle, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
@@ -38,12 +38,16 @@ export class SetValueDialog extends React.Component<SetValueDialogProps, SetValu
         return (<Dialog
             open={this.props.open}
             onClose={this.props.onClose}
+            aria-labelledby="form-dialog-title"
         >
-            <TextField
-                label={this.props.label}
-                onChange={(e) => this.setState({value: e.target.value})}
-                value={this.state.value}
-            />
+            <DialogTitle id="form-dialog-title">{this.props.label}</DialogTitle>
+            <DialogContent>
+                <TextField
+                    label={this.props.label}
+                    onChange={(e) => this.setState({value: e.target.value})}
+                    value={this.state.value}
+                />
+            </DialogContent>
             <DialogActions>
                 <Button
                     variant={'flat'}

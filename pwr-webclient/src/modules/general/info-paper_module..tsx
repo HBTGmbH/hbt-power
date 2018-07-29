@@ -1,9 +1,7 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
-import {Icon, Paper} from '@material-ui/core';
-import {POWER_MUI_THEME} from '../../index';
-
-// TODO icon Color
+import {Paper} from '@material-ui/core';
+import {PwrIconHeader} from './pwr-icon-header';
 
 interface InfoPaperProps {
     minHeight?: string;
@@ -35,23 +33,10 @@ export class InfoPaper extends React.Component<InfoPaperProps, InfoPaperState> {
         let style = Object.assign({}, this.props.style, {width: this.props.width, minHeight: this.props.minHeight, position: position, top: top});
         return (
             <Paper style={style}>
-                <div className="vertical-align" //style={{backgroundColor: POWER_MUI_THEME.palette.primary, height: '56px'}}
-                    >
-                    <div
-                        //style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}
-                    >
-                        <Icon
-                            style={{verticalAlign: 'middle'}}
-                            className="material-icons"
-                            color={'default'}
-                        >
-                            {this.props.materialIconName}
-                        </Icon>
-                        <span style={{marginLeft: '5px'}}>
-                            {this.props.title}
-                        </span>
-                    </div>
-                </div>
+                <PwrIconHeader
+                    muiIconName={this.props.materialIconName}
+                    title={this.props.title}
+                />
                 <div>
                 {this.props.children}
                 </div>

@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Paper from '@material-ui/core/Paper';
@@ -23,15 +22,12 @@ import {NotificationTrashbox} from './notification/notification-trashbox_module'
 import {ConsultantGrid} from './consultants/consultant-grid_module';
 import {SkillStatistics} from '../home/statistics/skill-statistics_module';
 import {ProfileNetwork} from './statistics/profile-network_module';
-import {AdminSkillTree2} from './info/admin-skill-tree2_module';
+import {AdminSkillTree2} from './info/tree/admin-skill-tree2_module';
 import {AdminProfileOverview} from './info/admin-profile-overview_module.';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 import Divider from '@material-ui/core/Divider/Divider';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button/Button';
-
 
 
 /**

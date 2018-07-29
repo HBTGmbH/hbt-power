@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Tab, Tabs, Theme, withTheme} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NameEntityOverview} from './name-entity/name-entity-overview_module';
-import {UsedSkillOverview} from './used-skill-overview_module';
+import {UsedSkillOverview} from './skill/used-skill-overview_module';
 
 interface AdminProfileOverviewProps {
     theme: Theme;

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Dialog, List, ListItem, TextField} from '@material-ui/core';
-import {ReactUtils} from '../../../utils/ReactUtils';
+import {Dialog, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
 import {SkillStore} from '../../../model/skill/SkillStore';
-import wrapSelectableList = ReactUtils.wrapSelectableList;
+import {StringUtils} from '../../../utils/StringUtil';
+import filterFuzzy = StringUtils.filterFuzzy;
 
 
-//let SelectableList = wrapSelectableList(makeSelectable(List));
+// TODO AutoComplete auf dem Kategorie-Feld
 
 interface CategorySearcherProps {
     categories: Array<SkillCategory>;
@@ -19,7 +19,7 @@ interface CategorySearcherProps {
 }
 
 interface CategorySearcherLocalState {
-    selected: number;
+    selectedCategoryId: number;
     filterText: string;
 }
 
@@ -29,7 +29,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     constructor(props: CategorySearcherProps) {
         super(props);
         this.state = {
-            selected: -1,
+            selectedCategoryId: -1,
             filterText: ''
         };
     }
@@ -37,7 +37,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     componentDidUpdate(oldProps: CategorySearcherProps) {
         if(oldProps.open === false && this.props.open === true) {
             this.setState({
-                selected: -1,
+                selectedCategoryId: -1,
                 filterText: ''
             })
         }
@@ -48,6 +48,8 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
             button
             value={category.id()}
             key={category.id()}
+            onSelect={() => this.handleSelect(category.id())}
+            className={this.state.selectedCategoryId === category.id() ? "pwr-selected-list-item " : ""}
         >
             <div>
                 <span style={{fontWeight: "bold"}}>{category.qualifier()}</span><br/>
@@ -56,17 +58,16 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
         </ListItem>;
     };
 
-    private handleSelect = (event: any, index: number) => {
+    private handleSelect = (categoryID: number) => {
         this.setState({
-            selected: index
+            selectedCategoryId: categoryID
         });
-        console.log("selected", index);
-        this.props.onSelectCategory(index);
+        this.props.onSelectCategory(categoryID);
     };
 
     private handleFilterTextChange = (event: any, value: string) => {
         this.setState({
-                filterText: value
+            filterText: value
         });
     };
 
@@ -74,7 +75,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     private renderCategories = () => {
         let categories = this.props.categories;
         if(this.state.filterText !== "") {
-            //categories = categories.filter(category => AutoComplete.fuzzyFilter(this.state.filterText, category.qualifier()));
+            categories = categories.filter(category => filterFuzzy(this.state.filterText, category.qualifier()));
         }
         categories.sort(Comparators.compareCategories);
         return categories.map(this.mapListItem);
@@ -84,7 +85,9 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
         return (<Dialog
             open={this.props.open}
             onClose={this.props.onClose}
+            aria-labelledby="category-search-dlg-title"
         >
+            <DialogTitle id="category-search-dlg-title">Kategorie Suchen</DialogTitle>
             <TextField
                 label={PowerLocalize.get("Action.Search")}
                 value={this.state.filterText}

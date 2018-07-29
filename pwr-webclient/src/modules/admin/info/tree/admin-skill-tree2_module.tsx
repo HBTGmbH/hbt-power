@@ -2,21 +2,22 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
-import {SkillTree} from '../../general/skill/skill-tree_module';
+import {SkillCategory} from '../../../../model/skill/SkillCategory';
+import {SkillActionCreator} from '../../../../reducers/skill/SkillActionCreator';
+import {SkillTree} from '../../../general/skill/skill-tree_module';
 import {Button, Checkbox, FormControlLabel, Icon, ListSubheader, Paper, TextField} from '@material-ui/core';
-import {InfoPaper} from '../../general/info-paper_module.';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {LocalizationTable} from '../../general/skill/localization-table_module';
-import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';
-import {CategoryDeleteConfirmation} from '../../general/skill/category-delete-confirmation_module';
-import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
-import {CategorySearcher} from './category-searcher_module';
-import {SetValueDialog} from '../../general/set-value-dialog_module';
-import {ApplicationState} from '../../../reducers/reducerIndex';
-import {SkillStore} from '../../../model/skill/SkillStore';
-import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
+import {InfoPaper} from '../../../general/info-paper_module.';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {LocalizationTable} from '../../../general/skill/localization-table_module';
+import {SkillServiceSkill} from '../../../../model/skill/SkillServiceSkill';
+import {CategoryDeleteConfirmation} from '../../../general/skill/category-delete-confirmation_module';
+import {SkillTreeNode} from '../../../../model/skill/SkillTreeNode';
+import {CategorySearcher} from '../category-searcher_module';
+import {SetValueDialog} from '../../../general/set-value-dialog_module';
+import {ApplicationState} from '../../../../reducers/reducerIndex';
+import {SkillStore} from '../../../../model/skill/SkillStore';
+import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
+import {Add, Delete} from '@material-ui/icons';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
@@ -66,6 +67,8 @@ interface AdminSkillTree2Dispatch {
 
     changeFilterNonCustomSkills(doFiltering: boolean): void;
 }
+
+// TODO buttons in den info panels vernünftig machen
 
 class AdminSkillTree2Module extends React.Component<
     AdminSkillTree2Props
@@ -330,34 +333,35 @@ class AdminSkillTree2Module extends React.Component<
                 onLocaleDelete={this.handleDeleteCategoryLocale}
             />
             <Button
-                variant={'raised'}
+                variant={'contained'}
                 className="mui-margin"
+                size={"small"}
                 color={'primary'}
-
                 onClick={this.openNameDialog}
             >
                 {PowerLocalize.get("Action.AddCategory")}
-                <Icon className="material-icons">add</Icon>
+                <Add/>
             </Button>
 
             <Button
-                variant={'raised'}
+                variant={'contained'}
+                size={"small"}
                 className="mui-margin"
-                color={'secondary'}
+                color={'primary'}
                 onClick={this.openSkillNameDialog}
             >
                 {PowerLocalize.get("Action.AddSkillToCategory")}
-                <Icon className="material-icons">add</Icon>
-
+                <Add/>
             </Button>{
                 selectedCategory.isCustom() ?
                     <Button
-                        variant={'raised'}
+                        variant={'contained'}
                         className="mui-margin"
-                        color={'secondary'}
+                        color={'primary'}
+                        size={"small"}
                         onClick={this.openDeleteConfirmation}
                     >
-                        <Icon className="material-icons">delete</Icon>
+                        <Delete/>
                         {PowerLocalize.get("Action.DeleteCategory")}
                     </Button>
                     : null
@@ -368,7 +372,7 @@ class AdminSkillTree2Module extends React.Component<
 
     private Info = () => {
         if(this.state.selectedCategoryId === this.NO_ID && this.state.selectedSkillId === this.NO_ID) {
-            return <span/>;
+            return <></>;
         } else if(this.state.selectedCategoryId === this.NO_ID) {
             return <this.SkillInfo/>;
         } else {
@@ -380,7 +384,9 @@ class AdminSkillTree2Module extends React.Component<
 
     render() {
         return (
-        <div style={{marginTop: '56px'}}>
+        <div>
+            <div className="admin-app-bar-spacer"/>
+            <div style={{paddingTop: "8px"}}/>
             <SetValueDialog
                 open={this.state.categoryNameOpen}
                 label={PowerLocalize.get("AdminClient.Info.SkillTree.NewCategory.Name")}
@@ -413,9 +419,10 @@ class AdminSkillTree2Module extends React.Component<
                         onCategorySelect={this.handleCategorySelect}
                         onNestedListToggle={this.props.toggleOpen}
                         onSkillSelect={this.handleSkillSelect}
-                        expandOnClick={false}
                         categoriesById={this.props.categoriesById}
                         skillsById={this.props.skillsById}
+                        selectedSkillId={this.state.selectedSkillId}
+                        selectedCategoryId={this.state.selectedCategoryId}
                     />
                 </Paper>
                 <div className="col-md-4">

@@ -2,23 +2,25 @@ import * as React from 'react';
 import * as Immutable from 'immutable';
 import {LocalizedQualifier} from '../../../model/skill/LocalizedQualifier';
 import {
-    Dialog,
     Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
     Icon,
     IconButton,
     Table,
     TableBody,
-    TableHead,
     TableCell,
+    TableHead,
     TableRow,
     TextField
 } from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LanguageUtils} from '../../../utils/LanguageUtils';
 import {LocalizationSearcher} from './localization-searcher_module';
-import ISOData = LanguageUtils.ISO639_2DataSet;
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import ISOData = LanguageUtils.ISO639_2DataSet;
 
 interface LocalizationTableProps {
     localizations: Immutable.List<LocalizedQualifier>;
@@ -127,47 +129,51 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                 <Dialog
                     open={this.state.addOpen}
                     onClose={this.closeDialog}
-                    title={PowerLocalize.getFormatted('LocalizationTable.Title.Template', this.props.termToLocalize)}
                 >
-                    <LocalizationSearcher
-                        open={this.state.searcherOpen}
-                        onClose={this.closeSearcher}
-                        onSelectIsoData={this.handleSearcherSelect}
-                    />
-                    {PowerLocalize.get('LocalizationTable.Content.Description')}<br/>
-                    <Button
-                        variant={'flat'}
-                        color={'primary'}
-                        onClick={() => window.open("https://www.loc.gov/standards/iso639-2/php/code_list.php")}
-                    >
-                        {PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
-                        <Icon className="material-icons">open_in_new</Icon>
-                    </Button><br/>
-                    {PowerLocalize.get('LocalizationTable.Content.LocalizationRemarks')}
-                    <div>
+                    <DialogTitle>
+                        {PowerLocalize.getFormatted('LocalizationTable.Title.Template', this.props.termToLocalize)}
+                    </DialogTitle>
+                    <DialogContent>
+                        <LocalizationSearcher
+                            open={this.state.searcherOpen}
+                            onClose={this.closeSearcher}
+                            onSelectIsoData={this.handleSearcherSelect}
+                        />
+                        {PowerLocalize.get('LocalizationTable.Content.Description')}<br/>
+                        <Button
+                            variant={'flat'}
+                            color={'primary'}
+                            onClick={() => window.open("https://www.loc.gov/standards/iso639-2/php/code_list.php")}
+                        >
+                            {PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
+                            <Icon className="material-icons">open_in_new</Icon>
+                        </Button><br/>
+                        {PowerLocalize.get('LocalizationTable.Content.LocalizationRemarks')}
                         <div>
-                            <TextField
-                                label={PowerLocalize.get('LocalizationTable.Input.Language')}
-                                value={this.state.locale}
-                                onChange={(e) => this.setLocale(e.target.value)}
-                            />
-                            <Tooltip title={PowerLocalize.get('Action.Search')}>
-                            <IconButton
-                                className="material-icons"
-                                onClick={this.openSearcher}
-                            >
-                                search
-                            </IconButton>
-                            </Tooltip>
+                            <div>
+                                <TextField
+                                    label={PowerLocalize.get('LocalizationTable.Input.Language')}
+                                    value={this.state.locale}
+                                    onChange={(e) => this.setLocale(e.target.value)}
+                                />
+                                <Tooltip title={PowerLocalize.get('Action.Search')}>
+                                <IconButton
+                                    className="material-icons"
+                                    onClick={this.openSearcher}
+                                >
+                                    search
+                                </IconButton>
+                                </Tooltip>
+                            </div>
+                            <div>
+                                <TextField
+                                    label={PowerLocalize.get('LocalizationTable.Input.Qualifier')}
+                                    value={this.state.qualifier}
+                                    onChange={(e) => this.setQualifier(e.target.value)}
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <TextField
-                                label={PowerLocalize.get('LocalizationTable.Input.Qualifier')}
-                                value={this.state.qualifier}
-                                onChange={(e) => this.setQualifier(e.target.value)}
-                            />
-                        </div>
-                    </div>
+                    </DialogContent>
                     <DialogActions>
                         <Button
                             variant={'flat'}

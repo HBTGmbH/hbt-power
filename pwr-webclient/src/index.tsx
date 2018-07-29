@@ -67,13 +67,7 @@ const newPowerTheme = {
             light: Color.HBT_2017_LIGHT_BLUE.toCSSRGBString(),
             main : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
             dark : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
-            contrastText: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
-        },
-        secondary :{
-            light: Color.HBT_2017_LIGHT_BLUE.toCSSRGBString(),
-            main : Color.HBT_2017_WHITE.toCSSRGBString(),
-            dark : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
-            contrastText: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
+            contrastText: Color.HBT_2017_WHITE.toCSSRGBString(),
         },
         error:{
             main: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),

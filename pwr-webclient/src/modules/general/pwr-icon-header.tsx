@@ -16,7 +16,7 @@ class PwrIconHeaderModule extends React.PureComponent<IconHeaderProps & ThemePro
 
     render() {
         return ( <div className="vertical-align" style={{ height: '56px',  backgroundColor: this.props.theme.palette.primary.main}}>
-            <div style={{fontSize: 18, color: this.props.theme.palette.secondary.main}}>
+            <div style={{fontSize: 18, color: this.props.theme.palette.primary.contrastText}}>
                 <Icon style={{verticalAlign: 'middle'}}>
                     info_outline
                 </Icon>
