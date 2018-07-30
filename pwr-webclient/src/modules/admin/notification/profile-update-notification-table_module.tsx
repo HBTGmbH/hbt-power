@@ -81,7 +81,6 @@ const handleRowSelection = (rows: string | Array<number>, props: ProfileUpdateNo
     }
     props.onRowSelection(selectedIndexes);
 };
-// TODO Tabelle selectable machen
 
 export const ProfileUpdateNotificationTable = (props: ProfileUpdateNotificationTableProps) =>  (
     <div>

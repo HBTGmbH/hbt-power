@@ -140,7 +140,6 @@ class SkillNotificationTableModule extends React.Component<
                                     checked = {this.props.selectedRows.length === this.props.skillNotifications.toArray().length}
                                     onChange={this.handleSelectAll}
                                     color="primary"
-
                                 />
                             </FormGroup>
                         </TableCell>

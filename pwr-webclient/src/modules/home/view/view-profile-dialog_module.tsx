@@ -90,20 +90,24 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             label = PowerLocalize.get("Action.Create");
             icon = "add";
         }
-        actions.push(<Button
-            variant={'flat'}
-            color={'primary'}
-            onClick={this.closeAndSave}
-        >
-            {label}
-            <Icon className="material-icons">{icon}</Icon>
-        </Button>);
-        actions.push(<Button
-            variant={'flat'}
-            onClick={this.props.onClose}
-        >
-            <Icon className="material-icons">close</Icon>
-            {PowerLocalize.get("Action.Close")}
+        actions.push(
+            <Button
+                variant={'flat'}
+                color={'primary'}
+                onClick={this.closeAndSave}
+                key={"CloseAndSafe"}
+            >
+                {label}
+                <Icon className="material-icons">{icon}</Icon>
+            </Button>);
+        actions.push(
+            <Button
+                variant={'flat'}
+                onClick={this.props.onClose}
+                key={"Close"}
+            >
+                <Icon className="material-icons">close</Icon>
+                {PowerLocalize.get("Action.Close")}
             </Button>);
         return actions;
     };
@@ -147,7 +151,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                     <TextField
                         value={this.state.charsPerLine}
                         label={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
-                        disabled={true}
+                        disabled={false}
                     />
                     {/*<Slider
                         value={this.state.charsPerLine}

@@ -12,6 +12,9 @@ import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import TextField from '@material-ui/core/TextField/TextField';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 
 interface TrainingEntryDialogProps {
     /**
@@ -133,6 +136,10 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                 title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 scroll={'paper'}
             >
+                <DialogTitle>
+                    <Typography >{PowerLocalize.get('TrainingEntry.Dialog.Title')}</Typography>
+                </DialogTitle>
+                <DialogContent>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                                 {/* TODO DatePicker*/}
@@ -179,6 +186,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                 />
                             </div>
                         </div>
+                </DialogContent>
                 <DialogActions>
                     <Tooltip title={PowerLocalize.get('Action.Save')}>
                         <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>

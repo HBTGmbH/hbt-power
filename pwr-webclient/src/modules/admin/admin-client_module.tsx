@@ -218,7 +218,7 @@ class AdminClientModule extends React.Component<
                             </List>
                         </Paper>
                     </div>
-                    <div className="col-md-9 fittingContainer">
+                    <div className="col-md-9 fittingContainer admin-app-bar-spacer">
                         <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
                         <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid} />
                         <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />

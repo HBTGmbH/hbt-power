@@ -12,6 +12,10 @@ import {ViewSkill} from '../../../model/view/ViewSkill';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EntryRenderers} from './entries/EntryRenderers';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography/Typography';
 
 
 interface ViewProfileProjectsOverviewProps {
@@ -87,14 +91,14 @@ class ViewProfileProjectsOverviewModule extends React.Component<
         let res: Array<JSX.Element> = [];
         res.push(
             <td key={'ViewProject_' + entry.name + entry.broker + entry.client}>
-                <Card>
-                    <CardHeader
+                <ExpansionPanel>
+                    <ExpansionPanelSummary
                         title={entry.name}
-                        //actAsExpander={true}
-                        subheader={'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}
-                    />
-                    <CardMedia
-                        //expandable={true}
+                    >
+                        <Typography style={{flexBasis:'33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography  variant={'caption'}>{'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails
                     >
                         <ListSubheader>Skills</ListSubheader>
                         <ViewProfileEntries
@@ -131,8 +135,8 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                             onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', entryIndex, type, sourceIndex, targetIndex)}
                             onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', entryIndex, type, index, isEnabled)}
                         />
-                    </CardMedia>
-                </Card>
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
             </td>);
         return res;
     };

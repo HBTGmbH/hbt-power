@@ -7,13 +7,16 @@ interface RequestSnackbarProps {
 }
 
 interface RequestSnackbarState {
-    open:boolean;
+
 }
 
-// TODO Snackbox muss wieder verschwinden -mp
+//  (Provisorisch verbessert )Snackbox muss wieder verschwinden -mp
+
 export class RequestSnackbar extends React.Component<RequestSnackbarProps, RequestSnackbarState> {
 
-    private static renderSingleSnackbar(requestStatus: RequestStatus) {
+
+
+    private static renderSingleSnackbar(requestStatus: RequestStatus, open : boolean) {
         let msgSuccess: JSX.Element = (
             <div className="row">
                 <Icon className="material-icons" style={{color: 'green', fontSize: 45}}>done</Icon>
@@ -45,13 +48,13 @@ export class RequestSnackbar extends React.Component<RequestSnackbarProps, Reque
             msg =(<div/>);
         }
 
-
-        return (<Snackbar open={true} autoHideDuration={3000} message={msg}/>);
+        return (<Snackbar open={open} autoHideDuration={300} message={msg}/>);
     }
+
 
     render() {
         return(<div>
-            {RequestSnackbar.renderSingleSnackbar(this.props.APIRequestStatus)}
+            {RequestSnackbar.renderSingleSnackbar(this.props.APIRequestStatus, this.props.APIRequestStatus !== RequestStatus.Successful)}
         </div>)
     }
 }

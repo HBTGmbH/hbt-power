@@ -15,6 +15,9 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import TextField from '@material-ui/core/TextField/TextField';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 
 /**
  * Properties that are managed by react-redux.
@@ -111,10 +114,15 @@ class KeySkillDialogModule extends React.Component<
 
     render() {
         return (<Dialog
-            open={this.props.open}
-            onClose={this.closeDialog}
-            title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
+                open={this.props.open}
+                onClose={this.closeDialog}
+                title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
+                fullWidth
             >
+            <DialogTitle>
+                <Typography >{PowerLocalize.get('KeySkillEntry.Dialog.Title')}</Typography>
+            </DialogTitle>
+            <DialogContent>
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                     {/*TODO <AutoComplete
@@ -131,9 +139,11 @@ class KeySkillDialogModule extends React.Component<
                         label={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
                         id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
                         value={this.state.autoCompleteValue}
+                        onChange={(e:any) => {this.handleAutoCompleteInput(e.target.value)}}
                     />
                 </div>
             </div>
+            </DialogContent>
             <DialogActions>
                 <Tooltip title={PowerLocalize.get('Action.Save')}><IconButton className="material-icons icon-size-20" onClick={this.saveAndExit} >save</IconButton></Tooltip>
                 <Tooltip title={PowerLocalize.get('Action.Exit')}><IconButton className="material-icons icon-size-20" onClick={this.resetAndExit} >close</IconButton></Tooltip>

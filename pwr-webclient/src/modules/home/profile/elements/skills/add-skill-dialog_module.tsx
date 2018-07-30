@@ -25,6 +25,8 @@ import {isNullOrUndefined} from 'util';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 
 
 interface AddSkillDialogProps {
@@ -304,7 +306,11 @@ class AddSkillDialogModule extends React.Component<
                 style={{width: "100%"}}
                 title={PowerLocalize.get("AddSkillDialog.Title")}
 
-            >
+
+            ><DialogTitle>
+                <Typography >{PowerLocalize.get("AddSkillDialog.Title")}</Typography>
+            </DialogTitle>
+
                 <DialogContent>
                 <Stepper activeStep={this.mapStepIndex()} orientation="vertical">
                     <Step>

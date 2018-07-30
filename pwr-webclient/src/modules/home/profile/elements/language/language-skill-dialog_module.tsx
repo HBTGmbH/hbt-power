@@ -13,6 +13,10 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import TextField from '@material-ui/core/TextField/TextField';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import Popover from '@material-ui/core/Popover/Popover';
 
 
 
@@ -28,7 +32,7 @@ interface EducationEntryDialogLocalProps {
 
     /**
      * Invoked when the save button is pressed.
-     * @param entry
+     * @param skill
      * @param nameEntity
      */
     onSave(skill: LanguageSkill, nameEntity: NameEntity): void;
@@ -124,8 +128,13 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                 scroll={'paper'}
                 title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
             >
+                <DialogTitle>
+                    <Typography >{PowerLocalize.get('LanguageSkill.EditSkill.Title')}</Typography>
+                </DialogTitle>
+                <DialogContent>
                 <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                    <div //className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0"
+                    >
                         <FormControl>
                             <InputLabel>{PowerLocalize.get('LanguageLevel.Singular')}</InputLabel>
                                 <Select
@@ -148,14 +157,29 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                             onNewRequest={this.handleLanguageFieldRequest}
                             filter={AutoComplete.fuzzyFilter}
                         />*/}
-                        <TextField
-                            id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
-                            label={PowerLocalize.get('Language.Singular')}
-                            value={this.state.languageAutoCompleteValue}
-                        />
+                        <div style={{marginTop:'30px'}}>
+                            <TextField
+                                id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
+                                label={PowerLocalize.get('Language.Singular')}
+                                value={this.state.languageAutoCompleteValue}
+                            />
+                            <Popover
+                                open={this.state.languageAutoCompleteValue !== ""}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'center',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'center',
+                                }}
 
+                            >
+                                {/* TODO latest autocomplete weiter machen */}
+                            </Popover>
+                        </div>
                 </div>
-
+                </DialogContent>
                 <DialogActions>
                     <Tooltip title={PowerLocalize.get('Action.Save')}>
                         <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>

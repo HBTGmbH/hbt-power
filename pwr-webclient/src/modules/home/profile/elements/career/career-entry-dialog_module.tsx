@@ -15,6 +15,9 @@ import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActio
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
 
 
 /**
@@ -153,8 +156,8 @@ class CareerEntryDialogModule extends React.Component<
                 style={{width: '80%', float: 'left'}}
                 label={PowerLocalize.get('End')}
                 id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
-                role={"date"}
-                value={this.state.careerEntry.endDate().toDateString()}
+                type={"date"}
+                value={this.state.careerEntry.endDate().toISOString().split('T')[0]}
             />;
             {/*<DatePicker
                 style={{width: '80%', float: 'left'}}
@@ -171,13 +174,17 @@ class CareerEntryDialogModule extends React.Component<
     };
 
     render() {
-        return (<Dialog
+        return <Dialog
             open={this.props.open}
-            title={PowerLocalize.get('CareerEntry.Dialog.Title')}
+            //title={PowerLocalize.get('CareerEntry.Dialog.Title')}
             onClose={this.closeDialog}
             scroll={'paper'}
-
+            fullWidth
         >
+            <DialogTitle>
+                <Typography>{PowerLocalize.get('CareerEntry.Dialog.Title')}</Typography>
+            </DialogTitle>
+            <DialogContent>
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                     {/*<DatePicker
@@ -191,13 +198,13 @@ class CareerEntryDialogModule extends React.Component<
                     <TextField
                         label={PowerLocalize.get('Begin')}
                         id={'CareerEntry.Dialog.StartDate' + this.props.careerEntry.id()}
-                        role={"date"}
-                        value={this.state.careerEntry.startDate().toDateString()}
+                        type={'date'}
+                        value={this.state.careerEntry.startDate().toISOString().split('T')[0]}
                     />
                 </div>
                 <div className="col-md-5 col-sm-6">
                     <IconButton
-                        style={{width: '20%', float:'left', marginTop: '20px'}}
+                        style={{width: '20%', float: 'left', marginTop: '20px'}}
                         className="material-icons"
                         onClick={this.handleEndDateButtonClick}
                     >
@@ -228,15 +235,16 @@ class CareerEntryDialogModule extends React.Component<
                     />
                 </div>
             </div>
+            </DialogContent>
             <DialogActions>
                 <Tooltip title={PowerLocalize.get('Action.Save')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit} >save</IconButton>
+                    <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit}>save</IconButton>
                 </Tooltip>
                 <Tooltip title={PowerLocalize.get('Action.Exit')}>
                     <IconButton className="material-icons icon-size-20" onClick={this.resetAndExit}>close</IconButton>
                 </Tooltip>
             </DialogActions>
-        </Dialog>);
+        </Dialog>;
     }
 }
 

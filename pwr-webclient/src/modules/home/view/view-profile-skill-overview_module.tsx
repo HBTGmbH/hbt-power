@@ -17,6 +17,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
 import Icon from '@material-ui/core/Icon/Icon';
+import Typography from '@material-ui/core/Typography/Typography';
 
 interface ViewProfileSkillOverviewProps {
     viewProfile: ViewProfile;
@@ -125,8 +126,8 @@ class ViewProfileSkillOverviewModule extends React.Component<
             <td key={'ViewCategory_' + entry.name}>
                 <ExpansionPanel>
                     <ExpansionPanelSummary expandIcon={<Icon className={'material-ui'}>arrow_down</Icon>}>
-                        {entry.name}{/* TODO header ExpansionPanels*/}
-                        {entry.displaySkills.length + ' Skills'} {/* TODO subheader ExpansionPanel*/}
+                        <Typography style={{flexBasis:'33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography variant={'caption'}>{entry.displaySkills.length + ' Skills'}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
 

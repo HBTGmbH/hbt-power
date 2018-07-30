@@ -67,14 +67,6 @@ body {
   padding-left: 16px;
 }
 
-.padding-left-32px {
-  padding-left: 32px;
-}
-
-.pwr-selected-list-item {
-  background-color: rgba(0, 0, 0, 0.3) !important;
-}
-
 .aspect-1-1 {
   padding-top: 100%;
   width: 100%;
@@ -223,9 +215,5 @@ body {
 }
 
 .admin-app-bar-spacer {
-  margin-top: 64px;
-}
-
-.tree-leaf {
-  margin-left: 32px;
+  margin-top: 70px;
 }

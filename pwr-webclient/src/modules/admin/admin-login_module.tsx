@@ -132,7 +132,7 @@ class AdminLoginModule extends React.Component<
                         <div className="vertical-align">
                             <h4>Weiter zu HBT Power</h4>
                         </div>
-                        <div>
+                        <div style={{marginTop:'40px'}}>
                             <div className="vertical-align">
                                 <TextField
                                     className="fullWidth"
@@ -152,22 +152,22 @@ class AdminLoginModule extends React.Component<
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
                             </div>
-                            <div className="vertical-align" style={{float: "left", marginTop: "10px", marginBottom: "10px"}}>
+                            <div className="vertical-align" style={{marginTop: "10px", marginBottom: "10px"}}>
                                 <FormGroup>
                                     <FormControlLabel control={
                                         <Checkbox
-                                            style={{ marginRight: "5px"}}
                                             checked={this.state.rememberLogin}
                                             onChange={this.handleRememberCheckboxCheck}
+                                            color={'primary'}
                                         />
                                     }
                                     label={PowerLocalize.get("AdminClient.Login.Remember")}
                                     />
                                 </FormGroup>
                             </div>
-                            <div className="vertical-align"  style={{marginTop: "15px", marginBottom: "15px", height: "30px"}}>
+                            <div className="vertical-align"  style={{marginTop: "5px", marginBottom: "15px", height: "30px"}}>
                                 {
-                                    this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span> Test label Test label Test label Test  </span>
+                                    this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span> </span>
                                 }
                             </div>
                             <div className="vertical-align">

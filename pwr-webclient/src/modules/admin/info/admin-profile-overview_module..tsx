@@ -31,7 +31,6 @@ class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewPro
     render() {
         return (
             <div>
-                <div className="admin-app-bar-spacer"/>
                 <div style={{paddingTop: '8px'}}>
                     <Tabs fullWidth
                           centered
