@@ -79,14 +79,15 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
                     <Tooltip title={PowerLocalize.get('Action.Delete')}>
                         <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} >delete</IconButton>
                     </Tooltip>
-
-                    <SectorEntryDialog
-                        open={this.state.dialogOpen}
-                        sectorEntry={this.props.sectorEntry}
-                        sectors={this.props.sectors}
-                        onSave={this.handleSaveRequest}
-                        onClose={this.handleCloseRequest}
-                    />
+                    <div style={{width:'80%'}}>
+                        <SectorEntryDialog
+                            open={this.state.dialogOpen}
+                            sectorEntry={this.props.sectorEntry}
+                            sectors={this.props.sectors}
+                            onSave={this.handleSaveRequest}
+                            onClose={this.handleCloseRequest}
+                        />
+                    </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.openDialog}>

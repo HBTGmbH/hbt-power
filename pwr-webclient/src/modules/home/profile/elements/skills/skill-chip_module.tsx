@@ -5,6 +5,8 @@ import {Chip, Icon, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {StarRating} from '../../../../star-rating_module.';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import Avatar from '@material-ui/core/Avatar/Avatar';
+import {yellow} from '@material-ui/core/colors';
 
 
 /**
@@ -46,8 +48,17 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
     private showInfo = () => { };
 
     render() {
+
         return (
-            <Chip
+        <Chip
+            avatar={<Avatar color={'yellow'}>{this.props.skill.rating()}</Avatar>}
+            label={this.props.skill.name()}
+            style={this.props.style}
+            className={this.props.className}
+            onDelete={this.handleDelete}
+        />
+        );
+          /*  <Chip
                 style={this.props.style}
                 className={this.props.className}
             >
@@ -64,6 +75,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                     </Tooltip>
                     {this.props.skill.isNew() ? <Icon className="material-icons">fiber_new</Icon>: false}
                 </div>
-            </Chip>);
+            </Chip>
+        );*/
     }
 }

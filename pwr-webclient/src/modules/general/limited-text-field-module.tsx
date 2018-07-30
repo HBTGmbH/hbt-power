@@ -110,7 +110,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             value={this.props.value}
                             disabled={this.props.disabled}
                             onChange={() => this.interceptOnChange}
-                            //multiLine={this.props.multiLine}
+                            multiline={this.props.multiLine}
                             fullWidth={this.props.fullWidth}
                             //errorText={isNullOrUndefined(this.state.errorText) ? this.props.overrideErrorText : this.state.errorText}
                             label={this.props.label}
@@ -135,7 +135,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                     <div style={{width:'85%', float:'left', marginTop:'7px'}}>
                         <LinearProgress
                             variant={'determinate'}
-                            value={this.props.value.length / this.props.maxCharacters}
+                            value={(this.props.value.length / this.props.maxCharacters)*100}
                         />
                     </div>
                     <div style={{width: '10%', float:'left'}}>

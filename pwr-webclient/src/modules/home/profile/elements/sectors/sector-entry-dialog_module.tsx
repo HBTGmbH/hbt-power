@@ -11,6 +11,9 @@ import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import TextField from '@material-ui/core/TextField/TextField';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 
 interface SectorEntryDialogProps {
     /**
@@ -106,8 +109,12 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                 onClose={this.closeDialog}
                 title={PowerLocalize.get('SectorEntry.Dialog.Title')}
             >
+                <DialogTitle>
+                    <Typography >{PowerLocalize.get('SectorEntry.Dialog.Title')}</Typography>
+                </DialogTitle>
+                <DialogContent>
                 <div className="row">
-                    <div className="col-md-offset-3">
+                    <div>
                         {/*} TODO <AutoComplete
                             label={PowerLocalize.get('Sector.Singular')}
                             id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
@@ -125,6 +132,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                         />
                     </div>
                 </div>
+                </DialogContent>
                 <DialogActions>
                     <Tooltip title={PowerLocalize.get('Action.Save')}>
                         <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>

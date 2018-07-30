@@ -27,6 +27,7 @@ interface ViewProfileOverviewLocalState {
     currentDescription: string;
     descriptionDisabled: boolean;
     generatorOpen: boolean;
+    tabValue:number;
 }
 
 interface ViewProfileOverviewDispatch {
@@ -59,6 +60,7 @@ class ViewProfileOverviewModule extends React.Component<
             currentDescription: !isNullOrUndefined(props.viewProfile) ? props.viewProfile.description : "",
             descriptionDisabled: true,
             generatorOpen: false,
+            tabValue:0,
         }
     }
 
@@ -85,7 +87,6 @@ class ViewProfileOverviewModule extends React.Component<
             generatorOpen: open
         })
     }
-// TODO Dialog modal??
     render() {
         if (isNullOrUndefined(this.props.viewProfile)) {
             return <div>Does not exist</div>;
@@ -129,26 +130,37 @@ class ViewProfileOverviewModule extends React.Component<
                             <Icon className="material-icons">open_in_new</Icon>
                             {PowerLocalize.get("Action.Generate.Word")}</Button>
                     </div>
-
                 </Paper>
 
-                <Tabs value={false}>
-                    <Tab label={PowerLocalize.get("ViewProfileOveview.Entries")}>
+                <Tabs
+                    value={this.state.tabValue}
+                    onChange={(e:any,v:number) => this.setState({tabValue:v})}
+                    centered
+                    style={{backgroundColor: '#191e55'}}
+                    textColor={'secondary'}
+                    // TODO background
+                >
+                    <Tab value={0} label={PowerLocalize.get("ViewProfileOveview.Entries")} />
+                    <Tab value={1} label={PowerLocalize.get("ViewProfileOveview.Projects")} />
+                    <Tab value={2} label={PowerLocalize.get("ViewProfileOveview.Skills")} />
+                </Tabs>
+                <div>
+                    {this.state.tabValue === 0 &&
                         <ViewProfileEntriesOverview
                             viewProfileId={viewProfileId}
                         />
-                    </Tab>
-                    <Tab label={PowerLocalize.get("ViewProfileOveview.Projects")}>
+                    }
+                    {this.state.tabValue === 1 &&
                         <ViewProfileProjectsOverview
                             viewProfileId={viewProfileId}
                         />
-                    </Tab>
-                    <Tab label={PowerLocalize.get("ViewProfileOveview.Skills")}>
+                    }
+                    {this.state.tabValue === 2 &&
                         <ViewProfileSkillOverview
                             viewProfileId={viewProfileId}
                         />
-                    </Tab>
-                </Tabs>
+                    }
+                </div>
             </div>);
         }
     }

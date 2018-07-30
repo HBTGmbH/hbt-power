@@ -15,6 +15,8 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {Template} from '../../../model/view/Template';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 
 
 interface ViewProfileGeneratorProps{
@@ -90,7 +92,7 @@ class ViewProfileGenerator extends React.Component<
     };
 
 
-
+/*
     private renderActions = () => {
         let actions = [];
         let label = "";
@@ -124,10 +126,10 @@ class ViewProfileGenerator extends React.Component<
             </Button>);
         return actions;
     };
-
+*/
     private renderListItems = () => {
-        let items = [];
-        let label = "";
+        let items :any = [];
+        let label :string = "";
 
         // TODO localize
         if (this.props.allTemplates.length === 0){
@@ -136,16 +138,16 @@ class ViewProfileGenerator extends React.Component<
             )
         }
         // TODO bessere schleife
-        for (let i = 0; i < this.props.allTemplates.length; i++){
-            let temp = this.props.allTemplates[i];
+        this.props.allTemplates.map((value, index) => {
             items.push(
-                <ListItem title={temp.name} className={"Template"} key={"TempalteItem_" + i} onClick={() => this.setTemplateId(temp.id,i)}>
-                    {temp.name}
+                <ListItem title={value.name} className={"Template"} key={"TempalteItem_" + value.id} onClick={() => this.setTemplateId(value.id,index)}>
+                    {value.name}
                 </ListItem>
             );
-        }
+        });
+
         return items;
-    }
+    };
 
 
     // TODO neues Template erstellen anzeigen / Dialog o.ä.
@@ -156,6 +158,8 @@ class ViewProfileGenerator extends React.Component<
                 open={this.props.open}
                 onClose={this.closeAndReset}
             >
+                <DialogTitle>{PowerLocalize.get("Generator.Title")}</DialogTitle>
+                <DialogContent>
                 <div className="col-md-4">
                     <h4 className="row">{PowerLocalize.get("Generator.TemplateList")}</h4>
                     <div className="row" style={{ maxHeight: 300, overflow: 'auto' }}>
@@ -175,8 +179,36 @@ class ViewProfileGenerator extends React.Component<
                         {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].createdDate : " "}
                     </div>
                 </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant={'flat'}
+                        className="mui-margin"
+                        color={'primary'}
+                        //onClick={}
+                    >
+                        <Icon className="material-icons"> add </Icon>
+                        {PowerLocalize.get("Action.Generate.NewTemplate")}
+                    </Button>
 
-                <DialogActions>{this.renderActions()}</DialogActions>
+                    <Button
+                        variant={'raised'}
+                        className="mui-margin"
+                        color={'primary'}
+                        disabled={this.state.activeTemplateId === ""}
+                        onClick={() => this.props.generate(this.props.viewProfileId, this.state.activeTemplateId)}
+                    >
+                        <Icon className="material-icons">open_in_new</Icon>
+                        {PowerLocalize.get("Action.Generate.Word")}
+                    </Button>
+
+                    <Button
+                        onClick={this.props.onClose}
+                    >
+                        <Icon className="material-icons">close</Icon>
+                        {PowerLocalize.get("Action.Close")}
+                    </Button>
+                </DialogActions>
             </Dialog>
         )
     }

@@ -105,11 +105,13 @@ class UsedSkillOverviewModule extends React.Component<
             editOpen: true
         })
     };
+
 // TODO Color Palette
     render() {
         let res = null;
         if(this.state.filterString !== "") {
-            //res = this.props.usedSkillNames.filter((value) => AutoComplete.defaultFilter(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
+            // TODO bei admin skill tree2 abgucken (filter dispatchen und map state to probs result abholen)
+            //res = this.props.usedSkillNames.filter(this.state.filterString);// =>  value.sort(Comparators.getStringComparator(true));// Autocomplete
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }

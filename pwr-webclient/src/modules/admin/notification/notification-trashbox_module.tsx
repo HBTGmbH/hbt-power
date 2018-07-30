@@ -91,7 +91,7 @@ class NotificationTrashboxModule extends React.Component<
 
     render() {
         return (
-            <div style={{marginTop:'70px'}}>
+            <div>
                 <div className="row">
                     <div className="col-md-9">
                         <Button

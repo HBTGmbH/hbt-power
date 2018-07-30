@@ -12,6 +12,9 @@ import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import TextField from '@material-ui/core/TextField/TextField';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 
 
 interface QualificationEntryDialogProps {
@@ -114,10 +117,14 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
             <Dialog
                 open={this.props.open}
                 title={PowerLocalize.get('Qualification.Dialog.Title')}
-                //modal={false}
                 onClose={this.closeDialog}
                 scroll={'paper'}
+                fullWidth
             >
+                <DialogTitle>
+                    <Typography >{PowerLocalize.get('Qualification.Dialog.Title')}</Typography>
+                </DialogTitle>
+                <DialogContent>
                 <div className="entry-dlg-content">
                     <div>
                         {/* <DatePicker
@@ -131,11 +138,11 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                         <TextField
                             label={PowerLocalize.get('Begin')}
                             id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
-                            value={this.state.qualificationEntry.date().toDateString()}
-                            role={"date"}
+                            value={this.state.qualificationEntry.date().toISOString().split('T')[0]}
+                            type={"date"}
                         />
                     </div>
-                    <div>
+                    <div style={{marginTop:'10px'}}>
                         {/*TODO <AutoComplete
                             fullWidth={true}
                             label={PowerLocalize.get('Qualification.Singular')}
@@ -155,6 +162,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                         />
                     </div>
                 </div>
+                </DialogContent>
                 <DialogActions>
                     <Tooltip title = {PowerLocalize.get('Action.Save')} >
                         <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>

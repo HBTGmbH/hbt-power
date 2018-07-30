@@ -16,6 +16,11 @@ import TextField from '@material-ui/core/TextField/TextField';
 import Popover from '@material-ui/core/Popover/Popover';
 import List from '@material-ui/core/List/List';
 import ListItem from '@material-ui/core/ListItem/ListItem';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import InputLabel from '@material-ui/core/InputLabel/InputLabel';
+import FormControl from '@material-ui/core/FormControl/FormControl';
 
 
 interface EducationEntryDialogLocalProps {
@@ -151,63 +156,58 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         return (
             <Dialog
                 open={this.props.open}
-                //modal={false}
                 onClose={this.closeDialog}
                 title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
-                scroll={'paper'}
+                fullWidth
+                //scroll={'paper'}
             >
+                <DialogTitle>
+                    <Typography>{PowerLocalize.get('EducationEntry.EditEntry.Title')}</Typography>
+                </DialogTitle>
+                <DialogContent>
                 <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        {/*<DatePicker
-                            label={PowerLocalize.get('Begin')}
-                            id={'EducationEntry.StartDate' + this.props.educationEntry.id}
-                            container="inline"
-                            value={this.state.entry.startDate()}
-                            onChange={this.handleChangeStartDate}
-                            formatDate={formatToShortDisplay}
-                        />*/}
-                        <TextField
-                            label={PowerLocalize.get('Begin')}
-                            id={'EducationEntry.StartDate' + this.props.educationEntry.id}
-                            role={"date"}
-                            value={this.state.entry.startDate().toDateString()}
-                        />
+                    <div className="col-md-5 col-sm-6 ">
+                        <form>
+                            <TextField
+                                label={PowerLocalize.get('Begin')}
+                                id={'EducationEntry.StartDate' + this.props.educationEntry.id}
+                                type={"date"}
+                                value={this.state.entry.startDate().toISOString().split('T')[0]}
+                               // defaultValue={this.state.entry.startDate().toDateString()}
+                            />
+                        </form>
                     </div>
-                    <div className="col-md-5 col-sm-6">
-                        {/*<DatePicker
-                            label={PowerLocalize.get('End')}
-                            id={'EducationEntry.EndDate' + this.props.educationEntry.id}
-                            container="inline"
-                            value={this.state.entry.endDate()}
-                            onChange={this.handleChangeEndDate}
-                            formatDate={formatToShortDisplay}
-                        />*/}
-
-                        <TextField
-                            label={PowerLocalize.get('End')}
-                            id={'EducationEntry.EndDate' + this.props.educationEntry.id}
-                            role={"date"}
-                            value={this.state.entry.endDate().toDateString()}
-                        />
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        <form noValidate>
+                            <TextField
+                                label={PowerLocalize.get('End')}
+                                id={'EducationEntry.EndDate' + this.props.educationEntry.id}
+                                type={"date"}
+                                value={this.state.entry.endDate().toISOString().split('T')[0]}
+                                //defaultValue={this.state.entry.endDate().toDateString()}
+                            />
+                        </form>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        <Select
-                            open = {true}
-                            value={this.state.entry.degree()}
-                            onChange={()=>this.handleDegreeSelect}
-                            //hintText={PowerLocalize.get('AcademicDegree.Singular')}
-                            //label={PowerLocalize.get('AcademicDegree.Singular')}
-                        >
-                            {
-                                this.props.degrees.map((degree,key) => <MenuItem button key={key} value={degree}>{degree}</MenuItem>)
-                            }
-                            <MenuItem value={" "}>{PowerLocalize.get('None')}</MenuItem>
-                        </Select>
-                    </div>
+                <div className="row" style={{marginTop:'10px'}}>
                     <div className="col-md-5 col-sm-6">
+                        <FormControl>
+                            <InputLabel>DEGREE</InputLabel>
+                            <Select
+                                value={this.state.entry.degree()}
+                                onChange={()=>this.handleDegreeSelect}
+                                //hintText={PowerLocalize.get('AcademicDegree.Singular')}
+                                //label={PowerLocalize.get('AcademicDegree.Singular')}
+                            >
+                                {
+                                    this.props.degrees.map((degree,key) => <MenuItem button key={key} value={degree}>{degree}</MenuItem>)
+                                }
+                                <MenuItem value={" "}>{PowerLocalize.get('None')}</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                         {/*} TODO <AutoComplete
                             label={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                             id={'Education.Education.' + this.props.educationEntry.id()}
@@ -242,6 +242,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                         </Popover>
                     </div>
                 </div>
+                </DialogContent>
                 <DialogActions>
                     <Tooltip title={PowerLocalize.get('Action.Save')}>
                         <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress}>save</IconButton>

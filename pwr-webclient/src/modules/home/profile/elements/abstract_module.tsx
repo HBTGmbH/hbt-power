@@ -100,7 +100,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
                     value={this.props.abstractText}
                 />
                         <LinearProgress
-                            value={this.props.abstractText.length/this.state.maxCharacters}
+                            value={(this.props.abstractText.length/this.state.maxCharacters)*100}
                             variant={'determinate'}
                             color={'primary'}
                         />

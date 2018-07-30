@@ -17,6 +17,9 @@ import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreat
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
 
 // TODO AutoComplete
 
@@ -222,9 +225,9 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                 //modal={true}
                 onClose={this.props.onClose}
                 scroll={'paper'}
-                title={PowerLocalize.get('ProjectDialog.Title')}
-
                 >
+                <DialogTitle><Typography >{PowerLocalize.get('ProjectDialog.Title')}</Typography></DialogTitle>
+                <DialogContent>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <TextField
@@ -355,6 +358,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 </div>
                             </div>
                         </div>
+                </DialogContent>
                 <DialogActions>
                     <Tooltip title={PowerLocalize.get('Action.Save')}>
                         <IconButton

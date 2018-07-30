@@ -2,6 +2,13 @@ import * as React from 'react';
 import {Card, CardHeader, CardMedia, Divider, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import CardContent from '@material-ui/core/CardContent/CardContent';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions/ExpansionPanelActions';
+import Typography from '@material-ui/core/Typography/Typography';
+import Icon from '@material-ui/core/Icon/Icon';
 
 interface ProfileElementLocalProps {
     /**
@@ -45,16 +52,19 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
         return(
             <div  style={{width:"100%"}}>
                 <br/>
-                <Card>
-                    <CardHeader
+                <ExpansionPanel defaultExpanded={false} >
+                    <ExpansionPanelSummary
                         //actAsExpander={true}
                         title={this.props.title}
-                        subheader={this.props.subtitle}
+                        expandIcon={<Icon className={"material-icon"}>keyboard_arrow_down</Icon>}
                     >
-                    </CardHeader>
+                        <div>
+                            <Typography variant={'headline'}>{this.props.title}</Typography>
+                            <Typography variant={'caption'}>{this.props.subtitle}</Typography>
+                        </div>
+                    </ExpansionPanelSummary>
                     <Divider/>
-                    <CardMedia //expandable={true}
-                    >
+                    <ExpansionPanelDetails>
                         <div className="table-responsive">
                             <table className="table table-striped table-condensed">
                                 {this.props.header}
@@ -63,15 +73,17 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                                 </tbody>
                             </table>
                         </div>
+                    </ExpansionPanelDetails>
+                    <ExpansionPanelActions>
                         <div style={{textAlign: "center"}}>
                             <Tooltip title={PowerLocalize.get('Action.New')}>
-                                <IconButton style={{display:"inline-block"}} className="material-icons" onClick={this.props.onAddElement} >
+                                <IconButton style={{display:"inline-block", flexGrow:1}} className="material-icons" onClick={this.props.onAddElement} >
                                     add
                                 </IconButton>
                             </Tooltip>
                         </div>
-                    </CardMedia>
-                </Card>
+                    </ExpansionPanelActions>
+                </ExpansionPanel>
             </div>
         );
     }

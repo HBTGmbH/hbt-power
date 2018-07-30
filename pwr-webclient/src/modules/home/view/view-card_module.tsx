@@ -104,6 +104,7 @@ class ViewCardModule extends React.Component<
             <CardActions>
                 <div>
                     <Button
+                        style={{marginLeft:'8px'}}
                         variant={'raised'}
                         className="mui-margin"
                         onClick={() => this.setDialogOpen(true)}
@@ -112,6 +113,7 @@ class ViewCardModule extends React.Component<
                         {PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
                     </Button>
                     <Button
+                        style={{marginLeft:'8px', marginTop:'5px'}}
                         variant={'raised'}
                         className="mui-margin"
                         onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", this.props.viewProfileId))}
@@ -120,6 +122,7 @@ class ViewCardModule extends React.Component<
                         {PowerLocalize.get("ViewProfileCard.Action.Edit")}
                     </Button>
                     <Button
+                        style={{marginLeft:'8px', marginTop:'5px'}}
                         variant={'raised'}
                         className="mui-margin"
                         color={'secondary'}
@@ -129,6 +132,7 @@ class ViewCardModule extends React.Component<
                         {PowerLocalize.get("Action.Delete")}
                     </Button>
                     <Button
+                        style={{marginLeft:'8px', marginTop:'5px'}}
                         variant={'raised'}
                         className="mui-margin"
                         color={'primary'}
@@ -149,3 +153,4 @@ class ViewCardModule extends React.Component<
  * @since 11.09.2017
  */
 export const ViewCard: React.ComponentClass<ViewCardLocalProps> = connect(ViewCardModule.mapStateToProps, ViewCardModule.mapDispatchToProps)(ViewCardModule);
+

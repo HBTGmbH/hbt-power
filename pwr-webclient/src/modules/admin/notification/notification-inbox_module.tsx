@@ -139,7 +139,7 @@ class NotificationInboxModule extends React.Component<
     };
     render() {
         return (
-            <div className="admin-app-bar-spacer">
+            <div>
                 <div>
                     <div className="row">
                         <div className="col-md-9">

@@ -150,6 +150,7 @@ class SkillStatisticsModule extends React.Component<
                 </CardContent>
                 <CardContent>
                     <ListSubheader>{PowerLocalize.get("SkillStatistics.OccurrenceRating.Title")}</ListSubheader>
+                    {/* TODO Slider
                     <Slide
                             direction={'down'}
                             style={{width: 700}}
@@ -159,6 +160,7 @@ class SkillStatisticsModule extends React.Component<
                             //value={this.state.skillOccLevelLength}
                             //onChange={(event, value) => this.setState({skillOccLevelLength: value})}
                     />
+                    */}
                     <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
                         <Recharts.XAxis dataKey="name"/>

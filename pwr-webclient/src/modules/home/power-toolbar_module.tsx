@@ -99,7 +99,17 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     };
 
     private handleMenuClose = () => {
-        this.setState({menuOpen: false, menuAnchorEl: null});
+        this.setState({
+            menuOpen: false,
+            menuAnchorEl: null,
+            statisticsOpen:false,
+            profilesOpen:false
+        });
+    };
+
+    private handleMenuNavigate = (target: string) => {
+        this.handleMenuClose();
+        this.props.navigateTo(target);
     };
     private getInitials = () => {
         return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials();
@@ -117,18 +127,21 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     private loadNetworkGraph = () => {
         // FIXME move this into the async action.
+        this.handleMenuClose();
         this.props.loadNetworkGraph();
         this.props.navigateTo(Paths.USER_STATISTICS_NETWORK);
     };
 
     private loadConsultantClusterInfo = () => {
         // FIXME move this into the async action.
+        this.handleMenuClose();
         this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials());
         this.props.navigateTo(Paths.USER_STATISTICS_CLUSTERINFO);
     };
 
     private loadSkillStatistics = () => {
         // FIXME move this into the async action.
+        this.handleMenuClose();
         this.props.loadSkillStatistics();
         this.props.navigateTo(Paths.USER_STATISTICS_SKILLS);
     };
@@ -144,7 +157,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         }
         return <MenuItem
             key={viewProfile.id}
-            onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", viewProfile.id))}
+            onClick={() => this.handleMenuNavigate(Paths.USER_VIEW_PROFILE.replace(":id", viewProfile.id))}
         >
             <ListItemText>
                 {text}
@@ -152,7 +165,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         </MenuItem>;
     };
 
-    //TODO Menu -> IconButton
+    //TODO Menu close on Select
     private renderMenu = () => {
         return (<div>
 
@@ -164,7 +177,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             >
                 <MenuItem
                     key={"1"}
-                    onClick={() => this.props.navigateTo(Paths.USER_HOME)}
+                    onClick={() => this.handleMenuNavigate(Paths.USER_HOME)}
                 >
                     <Icon className="material-icons">home</Icon>
                     <ListItemText>
@@ -173,7 +186,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 </MenuItem>
                 <MenuItem
                     key={"2"}
-                    onClick={() => this.props.navigateTo(Paths.USER_PROFILE)}
+                    onClick={() => this.handleMenuNavigate(Paths.USER_PROFILE)}
                 >
                     <Icon className="material-icons">person</Icon>
                     <ListItemText>
@@ -185,9 +198,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     <div>
                     <MenuItem key={"3"} button onClick={() => this.setState({profilesOpen: !this.state.profilesOpen})}>
                         <Icon className="material-icons">remove_red_eye</Icon>
-                        <ListItemText>
-                            {PowerLocalize.get('Menu.ViewProfile')}
-                        </ListItemText>
+                        <ListItemText>{PowerLocalize.get('Menu.ViewProfile')}</ListItemText>
                         <Icon className="material-icons">keyboard_arrow_right</Icon>
                     </MenuItem>
                         <Collapse in={this.state.profilesOpen}>
@@ -195,20 +206,15 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </Collapse>
                     </div>
                     : null
-
                 }
 
                 {
                 this.props.statisticsAvailable ? (
-                    <div>
+                 <div>
                     <MenuItem key={"5"} button onClick={()=> this.setState({statisticsOpen: !this.state.statisticsOpen})}>
-                        <ListItemIcon>
-                            <Icon className="material-icons">insert_chart</Icon>
-                        </ListItemIcon>
-                        <ListItemText primary={PowerLocalize.get('Menu.Statistics')}/>
-                        <ListItemIcon>
-                            <Icon className="material-icons">keyboard_arrow_right</Icon>
-                        </ListItemIcon>
+                        <Icon className="material-icons">insert_chart</Icon>
+                        <ListItemText >{PowerLocalize.get('Menu.Statistics')}</ListItemText>
+                        <Icon className="material-icons">keyboard_arrow_right</Icon>
                     </MenuItem>
                     <Collapse in={this.state.statisticsOpen}>
                             <MenuItem
@@ -245,14 +251,13 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 </ListItemText>
                             </MenuItem>
                     </Collapse>
-                    </div>
-                )
+                 </div>)
                 :
                 null
                 }
            <MenuItem
                key={"6"}
-               onClick={() => this.props.navigateTo(Paths.USER_SEARCH)}
+               onClick={() => this.handleMenuNavigate(Paths.USER_SEARCH)}
            >
                <ListItemIcon>
                    <Icon className="material-icons">search</Icon>
@@ -293,7 +298,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                     <IconButton
                                         style={{"color": "white"}}
                                         className="material-icons"
-                                        onClick={() => this.props.navigateTo(Paths.ADMIN_CONSULTANTS)}
+                                        onClick={() => this.handleMenuNavigate(Paths.ADMIN_CONSULTANTS)}
                                     >
                                         home
                                     </IconButton>

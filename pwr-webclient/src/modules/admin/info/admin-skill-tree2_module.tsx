@@ -380,7 +380,7 @@ class AdminSkillTree2Module extends React.Component<
 
     render() {
         return (
-        <div style={{marginTop: '56px'}}>
+        <div>
             <SetValueDialog
                 open={this.state.categoryNameOpen}
                 label={PowerLocalize.get("AdminClient.Info.SkillTree.NewCategory.Name")}
@@ -404,6 +404,7 @@ class AdminSkillTree2Module extends React.Component<
                         <Checkbox
                             onChange={this.handleCheckFilterNonCustom}
                             checked={this.props.filterNonCustomSkills}
+                            color={'primary'}
                         />
                         }
                         label={PowerLocalize.get("AdminClient.Info.SkillTree.Filter.OnlyCustom")}
