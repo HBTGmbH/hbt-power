@@ -28,6 +28,7 @@ interface SkillTreeLocalProps {
 
 interface SkillTreeLocalState {
     searchText: string;
+    selectedSkill:Skill;
 }
 
 interface SkillTreeDispatch {
@@ -45,6 +46,7 @@ class SkillTreeModule extends React.Component<
         super(props);
         this.state = {
             searchText: "",
+            selectedSkill:null,
         }
     }
 
@@ -120,6 +122,7 @@ class SkillTreeModule extends React.Component<
         return (
             <div>
                 <AddSkillDialog/>
+
                 <div>
                     <ListSubheader>Rot = Unbekannter Skill</ListSubheader>
                     <div className="row">

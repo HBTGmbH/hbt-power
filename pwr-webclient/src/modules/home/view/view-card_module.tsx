@@ -11,6 +11,7 @@ import {ProfileGenerator} from './view-profile-generator_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
+import {orange} from '@material-ui/core/colors';
 
 interface ViewCardProps {
     viewProfile: ViewProfile;
@@ -104,7 +105,7 @@ class ViewCardModule extends React.Component<
             <CardActions>
                 <div>
                     <Button
-                        style={{marginLeft:'8px'}}
+                        style={{marginLeft:'8px',marginTop:'5px'}}
                         variant={'raised'}
                         className="mui-margin"
                         onClick={() => this.setDialogOpen(true)}
@@ -126,6 +127,7 @@ class ViewCardModule extends React.Component<
                         variant={'raised'}
                         className="mui-margin"
                         color={'secondary'}
+
                         onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
                     >
                         <Icon className="material-icons">delete</Icon>

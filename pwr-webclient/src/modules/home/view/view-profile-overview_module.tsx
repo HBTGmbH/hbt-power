@@ -12,6 +12,9 @@ import {ViewProfileSkillOverview} from './view-profile-skill-overview_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {LimitedTextField} from '../../general/limited-text-field-module';
+import withTheme from '@material-ui/core/styles/withTheme';
+
+
 
 interface ViewProfileOverviewProps {
     viewProfile: ViewProfile;

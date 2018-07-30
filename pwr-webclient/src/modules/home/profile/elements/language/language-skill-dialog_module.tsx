@@ -123,7 +123,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
         return (
             <Dialog
                 open={this.props.open}
-                //modal={false}
+                fullWidth
                 onClose={this.closeDialog}
                 scroll={'paper'}
                 title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
@@ -163,7 +163,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                 label={PowerLocalize.get('Language.Singular')}
                                 value={this.state.languageAutoCompleteValue}
                             />
-                            <Popover
+                            {/* <Popover
                                 open={this.state.languageAutoCompleteValue !== ""}
                                 anchorOrigin={{
                                     vertical: 'bottom',
@@ -175,8 +175,8 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                 }}
 
                             >
-                                {/* TODO latest autocomplete weiter machen */}
-                            </Popover>
+
+                            </Popover>*/}
                         </div>
                 </div>
                 </DialogContent>

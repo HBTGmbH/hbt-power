@@ -147,8 +147,8 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     label={PowerLocalize.get('Begin')}
                                     id={'TrainingEntry.StartDate' + this.props.trainingEntry.id}
                                     //container="inline"
-                                    //value={this.state.trainingEntry.startDate()}
-                                    //onChange={this.handleChangeStartDate}
+                                    value={this.state.trainingEntry.startDate().toISOString().split('T')[0]}
+                                    onChange={() => this.handleChangeStartDate}
                                     //formatDate={formatToShortDisplay}
                                     type="date"
                                 />
@@ -159,8 +159,8 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                                     label={PowerLocalize.get('End')}
                                     id={'TrainingEntry.EndDate' + this.props.trainingEntry.id}
                                     // container="inline"
-                                    // value={this.state.trainingEntry.endDate()}
-                                    // onChange={this.handleChangeEndDate}
+                                    value={this.state.trainingEntry.endDate().toISOString().split('T')[0]}
+                                    onChange={() => this.handleChangeEndDate}
                                     // formatDate={formatToShortDisplay}
                                     type="date"
                                 />

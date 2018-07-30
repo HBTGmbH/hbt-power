@@ -45,7 +45,9 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         this.props.onDelete(this.props.skill.id())
     };
 
-    private showInfo = () => { };
+    private showInfo = () => {
+
+    };
 
     render() {
 
@@ -56,6 +58,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
             style={this.props.style}
             className={this.props.className}
             onDelete={this.handleDelete}
+            onClick={this.showInfo}
         />
         );
           /*  <Chip

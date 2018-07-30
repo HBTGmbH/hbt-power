@@ -69,7 +69,7 @@ const newPowerTheme = {
             dark : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
             contrastText: Color.HBT_2017_WHITE.toCSSRGBString(),
         },
-        error:{
+        error: {
             main: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
         },
         text: {

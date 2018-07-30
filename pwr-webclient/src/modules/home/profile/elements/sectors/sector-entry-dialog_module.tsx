@@ -108,6 +108,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                 open={this.props.open}
                 onClose={this.closeDialog}
                 title={PowerLocalize.get('SectorEntry.Dialog.Title')}
+                fullWidth
             >
                 <DialogTitle>
                     <Typography >{PowerLocalize.get('SectorEntry.Dialog.Title')}</Typography>
