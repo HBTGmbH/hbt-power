@@ -81,14 +81,16 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         rows: 1
     };
 
-    private interceptOnChange = (e: FormEvent<{}>, newValue: string) => {
-        if(newValue.length > this.props.maxCharacters) {
+    private interceptOnChange = (e: any) => {
+        if(e.target.value.length > this.props.maxCharacters) {
             this.setState({
                 errorText: this.props.errorText
             });
         } else {
-            this.props.onChange(e, newValue);
+            this.props.onChange(e, e.target.value);
         }
+
+
     };
 
 
@@ -107,11 +109,12 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                         <TextField
                             rows={this.props.rows}
                             id={this.props.id}
-                            value={this.props.value}
+                            value={(this.state.errorText !== null) ? this.state.errorText : this.props.value}
                             disabled={this.props.disabled}
-                            onChange={() => this.interceptOnChange}
+                            onChange={this.interceptOnChange}
                             multiline={this.props.multiLine}
                             fullWidth={this.props.fullWidth}
+                            error={this.state.errorText !== null}
                             //errorText={isNullOrUndefined(this.state.errorText) ? this.props.overrideErrorText : this.state.errorText}
                             label={this.props.label}
                         />
@@ -120,7 +123,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                     {
                         this.props.useToggleEditButton ?
                             <div style={{width:this.props.fullWidth ? '15%' : 72, paddingTop: "30px", float:'left'}}>
-                                <IconButton //tooltip="Font Icon"
+                                <IconButton
                                             onClick={this.handleEditButtonPress}>
                                     <Icon className="material-icons icon-size-70">
                                         {this.props.disabled ? "edit" : "save"}

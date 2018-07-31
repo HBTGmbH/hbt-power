@@ -106,16 +106,16 @@ class ConsultantGridModule extends React.Component<
                         <Icon className="material-icons">add</Icon>
                         {PowerLocalize.get('Action.CreateNewConsultant')}
                     </Button>
-                    <FormControl>
-                        <FormControlLabel control={
+                    <FormControl style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}} >
+                        <FormControlLabel
+                            control={
                             <Checkbox
                                 checked={this.state.showInactive}
                                 onChange={(e: object, v: boolean) => this.setState({showInactive: v})}
-
                             />
                         }
-                                          label={"Show inactive"}
-                                          />
+                            label={"Show inactive"}
+                         />
 
                     </FormControl>
                 </div>

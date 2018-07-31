@@ -65,9 +65,12 @@ const newPowerTheme = {
     palette: {
         primary: {
             light: Color.HBT_2017_LIGHT_BLUE.toCSSRGBString(),
-            main : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
-            dark : Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
+            main: Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
+            dark: Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
             contrastText: Color.HBT_2017_WHITE.toCSSRGBString(),
+        },
+        secondary: {
+            main: '#FFFFFF',
         },
         error: {
             main: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),

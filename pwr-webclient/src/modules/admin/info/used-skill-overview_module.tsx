@@ -25,10 +25,7 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {EditSkillDialog} from './skill/edit-skill-dialog_module';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
-// TODO Autocomplete
-// TODO makeSelectable
 
-//let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface UsedSkillOverviewProps {
     usedSkillNames: Immutable.Set<string>;
@@ -106,16 +103,16 @@ class UsedSkillOverviewModule extends React.Component<
         })
     };
 
-// TODO Color Palette
     render() {
         let res = null;
         if(this.state.filterString !== "") {
-            // TODO bei admin skill tree2 abgucken (filter dispatchen und map state to probs result abholen)
+            res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
             //res = this.props.usedSkillNames.filter(this.state.filterString);// =>  value.sort(Comparators.getStringComparator(true));// Autocomplete
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
         let values: Immutable.List<ConsultantInfo> = this.props.skillUsageInfo.get(this.state.selectedSkillName);
+
         return (
             <div className="row">
                 <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
@@ -131,11 +128,7 @@ class UsedSkillOverviewModule extends React.Component<
                             label={PowerLocalize.get("Action.Search")}
                             style={{paddingLeft: "8px"}}
                         />
-                        <List
-                            //selectedIndex={this.state.selectedSkillName}
-                            //onSelect={this.handleSkillSelect}
-                            >
-                            {/*TODO null error check*/}
+                        <List>
                             {res === null ? <ListItem>ERROR</ListItem> :
                                 res.map((name, key) =>
                                     <ListItem
@@ -143,9 +136,20 @@ class UsedSkillOverviewModule extends React.Component<
                                         key={name}
                                         onChange={(e:any) => console.log(e)}
                                     >
-                                    {name}
-                                    </ListItem>)
-                                }
+                                        {name}
+                                    </ListItem>
+                                )
+                            }
+
+                                    {/*TODO semicolon entfernen
+                                    in skill übersicht ist am ende der list ein semicolon welches keinen ursprung hat*/}
+                            <ListItem
+                                value={"test"}
+                                key={"test-key"}
+                                onChange={(e:any) => console.log(e)}
+                            >
+                                test-placeholder
+                            </ListItem>
                         </List>
                     </Paper>
                 </div>
@@ -192,7 +196,7 @@ class UsedSkillOverviewModule extends React.Component<
                             <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.UsedBy")}</ListSubheader>
                             <List>
                             {
-                                !isNullOrUndefined(values) ? values.map((value, key, iter) => <ListItem disabled key={key}>{value.getFullName()}</ListItem>) : null
+                                !isNullOrUndefined(values) ? values.map((value, key, iter) => <ListItem disabled key={key}>{value.getFullName()}</ListItem>) : <></>
                             }
                             </List>
                         </Paper>

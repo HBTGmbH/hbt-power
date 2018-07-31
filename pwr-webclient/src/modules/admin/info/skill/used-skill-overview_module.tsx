@@ -15,10 +15,7 @@ import {StringUtils} from '../../../../utils/StringUtil';
 import {UsedSkillInfoBox} from './used-skill-info-box';
 import {toArray} from '../../../../utils/ImmutableUtils';
 import filterFuzzy = StringUtils.filterFuzzy;
-// TODO Autocomplete
-// TODO makeSelectable
 
-//let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface UsedSkillOverviewProps {
     usedSkillNames: Array<string>;
@@ -117,7 +114,7 @@ class UsedSkillOverviewModule extends React.Component<
                          onClick={() => this.handleSkillSelect(null, name)}
         >
             {name}
-        </ListItem>;
+        </ListItem>
     };
 
     private renderSkills = (skills: Array<string> | null) => {
@@ -155,7 +152,7 @@ class UsedSkillOverviewModule extends React.Component<
                             style={{paddingLeft: "8px"}}
                         />
                         <List>
-                            {this.renderSkills(res)};
+                            {this.renderSkills(res)}
                         </List>
                     </Paper>
                 </div>

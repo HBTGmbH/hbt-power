@@ -123,11 +123,9 @@ class ViewCardModule extends React.Component<
                         {PowerLocalize.get("ViewProfileCard.Action.Edit")}
                     </Button>
                     <Button
-                        style={{marginLeft:'8px', marginTop:'5px'}}
+                        style={{marginLeft:'8px', marginTop:'5px', backgroundColor:'#ff8e01'}}
                         variant={'raised'}
-                        className="mui-margin"
-                        color={'secondary'}
-
+                        className="mui-margin pwr-btn-error"
                         onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
                     >
                         <Icon className="material-icons">delete</Icon>

@@ -8,7 +8,7 @@ import {StringUtils} from '../../../utils/StringUtil';
 import filterFuzzy = StringUtils.filterFuzzy;
 
 
-// TODO AutoComplete auf dem Kategorie-Feld
+// TODO (fixed?) AutoComplete auf dem Kategorie-Feld
 
 interface CategorySearcherProps {
     categories: Array<SkillCategory>;
@@ -65,9 +65,9 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
         this.props.onSelectCategory(categoryID);
     };
 
-    private handleFilterTextChange = (event: any, value: string) => {
+    private handleFilterTextChange = (event: any) => {
         this.setState({
-            filterText: value
+            filterText: event.target.value
         });
     };
 
@@ -91,7 +91,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
             <TextField
                 label={PowerLocalize.get("Action.Search")}
                 value={this.state.filterText}
-                onChange={() => this.handleFilterTextChange}
+                onChange={this.handleFilterTextChange}
             />
             <List style={{maxHeight: "400px", overflow: "auto"}}>
                 {this.renderCategories()}

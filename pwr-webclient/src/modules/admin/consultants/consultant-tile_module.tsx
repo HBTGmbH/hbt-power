@@ -163,8 +163,8 @@ class ConsultantTileModule extends React.Component<
                 >
 
                     <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"}
-                         //src={getProfileImageLocation(this.props.consultantInfo.initials())}
-                         src={getImagePath()+'/HBT002_Logo_neg.png'}
+                         src={getProfileImageLocation(this.props.consultantInfo.initials())}
+                         //src={getImagePath()+'/HBT002_Logo_neg.png'}
                     />
                     <GridListTileBar
                         title={this.props.consultantInfo.getFullName()}

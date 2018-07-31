@@ -67,6 +67,10 @@ body {
   padding-left: 16px;
 }
 
+.padding-left-32px {
+  padding-left: 32px;
+}
+
 .aspect-1-1 {
   padding-top: 100%;
   width: 100%;
@@ -220,4 +224,9 @@ body {
 
 .tree-leaf{
   margin-left: 32px;
+}
+
+.pwr-btn-error{
+  background-color: #ff8e01;
+  color:white;
 }

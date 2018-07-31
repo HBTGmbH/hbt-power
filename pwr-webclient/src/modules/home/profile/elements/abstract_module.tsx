@@ -86,7 +86,6 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
             currentBarColor: DescriptionModule.calcColor(newString.length, this.state.maxCharacters).toCSSRGBString()
         });
     };
-    // TODO LinearProgress Color
     render() {
         return(
             <div>

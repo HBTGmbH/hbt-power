@@ -18,7 +18,7 @@ interface ConsultantClusterInfoProps {
 
 interface ConsultantClusterInfoState {
     skillInfoPopoverOpen: boolean;
-    skillInfoPopoverAnchor:  React.ReactInstance;
+    skillInfoPopoverAnchor:  any;
     tags: Array<any>;
     selectedSkillName: string;
 }
@@ -134,10 +134,10 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
             <div className="row">
                 <Popover
                     open={this.state.skillInfoPopoverOpen}
-                    //anchorEl={this.state.skillInfoPopoverAnchor}
+                    anchorEl={this.state.skillInfoPopoverAnchor}
                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                    //targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                    onClose={() => this.setState({skillInfoPopoverOpen: false})}
+                    transformOrigin={{horizontal: 'left', vertical: 'top'}}
+                    onClose={() => this.setState({skillInfoPopoverOpen: false, skillInfoPopoverAnchor:null})}
                 >
                     {this.getSkillInfo()}
                 </Popover>
