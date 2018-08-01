@@ -65,7 +65,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                     </ExpansionPanelSummary>
                     <Divider/>
                     <ExpansionPanelDetails>
-                        <div className="table-responsive">
+                        <div className="table-responsive" style={{width:'100%'}}>
                             <table className="table table-striped table-condensed">
                                 {this.props.header}
                                 <tbody>

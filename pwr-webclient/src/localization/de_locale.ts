@@ -238,7 +238,7 @@ export const de_locale : any = {
     "HBT.CompanyPosition": "HBT Stellung",
     "Profile.Description": "Werbetext",
     "Tooolbar.LogOut": "Ausloggen",
-    "Tooolbar.ToAdminOverview": "Admin-Bereich",
+    "Tooolbar.ToAdminOverview": "Zum Admin-Bereich",
     "Menu.BaseData": "Stammdaten",
     "Menu.ViewProfile": "View-Profile",
     "Menu.Reports": "Exportdokumente",

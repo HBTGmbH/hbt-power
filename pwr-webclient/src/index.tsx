@@ -13,8 +13,6 @@ import {AdminClient} from './modules/admin/admin-client_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
-//import {darkBlack, fullBlack, fullWhite, white,} from '@material-ui/core/colors';
-//import {fade} from '@material-ui/utils/colorManipulator';
 import {Paths} from './Paths';
 import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
 import {Color} from './utils/ColorUtil';
@@ -70,7 +68,7 @@ const newPowerTheme = {
             contrastText: Color.HBT_2017_WHITE.toCSSRGBString(),
         },
         secondary: {
-            main: '#FFFFFF',
+            main: Color.HBT_2017_WHITE.toCSSRGBString(),
         },
         error: {
             main: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),

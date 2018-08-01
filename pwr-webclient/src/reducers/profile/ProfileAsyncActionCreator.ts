@@ -198,7 +198,6 @@ export class ProfileAsyncActionCreator {
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                 dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
-                console.log("TEST TEST TEST --- load all Templates");
                 dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                 Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
                 if(!isNullOrUndefined(navTarget)) {

@@ -8,6 +8,9 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import Button from '@material-ui/core/Button/Button';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 // TODO Slider
 const Recharts = require('recharts');
@@ -161,6 +164,27 @@ class SkillStatisticsModule extends React.Component<
                             //onChange={(event, value) => this.setState({skillOccLevelLength: value})}
                     />
                     */}
+                    <div style={{marginLeft:'30px'}}>
+                        <Button
+                            style={{width:'40px',height:'40px',padding:'0',marginRight:'15px'}}
+                            variant={'fab'}
+                            color={'primary'}
+                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength>0)?(this.state.skillOccLevelLength - 1):0})}
+                        >
+                            <RemoveIcon/>
+                        </Button>
+
+                        {this.state.skillOccLevelLength}
+
+                        <Button
+                            style={{width:'40px',height:'40px',padding:'0',marginLeft:'15px'}}
+                            variant={'fab'} color={'primary'}
+                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength<100)?(this.state.skillOccLevelLength + 1):100})}
+                        >
+                            <AddIcon/>
+                        </Button>
+                    </div>
+
                     <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
                         <Recharts.XAxis dataKey="name"/>

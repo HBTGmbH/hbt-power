@@ -45,7 +45,6 @@ export namespace TemplateActionCreator {
      * @constructor
      */
     export function ClearTemplates(): AbstractAction{
-        //console.log("TEST TEST TEST --- CLEAR TEMPLATES");
         return {
             type: ActionType.ClearTemplates,
         }
@@ -69,7 +68,7 @@ export namespace TemplateActionCreator {
     function AsyncLoadTemplate(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             axios.get(TemplateService.getTemplateById(id)).then((response: AxiosResponse) => {
-                console.log(response.data);
+                //console.log(response.data);
                 TemplateReceived(response, dispatch);
             }).catch((error: AxiosError) => {
                 dispatch(ProfileActionCreator.APIRequestFailed());
@@ -83,7 +82,6 @@ export namespace TemplateActionCreator {
             dispatch(ProfileActionCreator.APIRequestPending());
             dispatch(ClearTemplates());
             axios.get(TemplateService.getTemplates()).then((response: AxiosResponse) => {
-                console.log("templates response:   " + response);
                 let ids: Array<string> = response.data;
                 ids.forEach(id => dispatch(AsyncLoadTemplate(id)))
             }).catch(function (error: any) {

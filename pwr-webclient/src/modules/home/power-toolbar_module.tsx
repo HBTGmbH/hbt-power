@@ -22,6 +22,7 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import Paper from '@material-ui/core/Paper/Paper';
 import Typography from '@material-ui/core/Typography/Typography';
+import Avatar from '@material-ui/core/Avatar/Avatar';
 
 interface ToolbarProps {
     loggedInUser: ConsultantInfo;
@@ -271,7 +272,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             </div>
     );
     };
-    // TODO menu so aufbauen wie in gridTile (menu anchor etc)
     /**
      * @returns {any}
      */
@@ -288,32 +288,38 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             </IconButton>
 
                             {this.renderPower()}
-
-                            <Typography style={{color:'white'}}>
-                                  {PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}
-                            </Typography>
+                            <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}>
+                                <Avatar>
+                                    {this.getInitials()}
+                                </Avatar>
+                            </Tooltip>
+                            {/*
+                                <Typography style={{color:'white', paddingRight:'5px'}}>
+                                          {PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}
+                                </Typography>
+                            */}
                             {
                                 this.props.loggedInAsAdmin ?
                                     <Tooltip title={PowerLocalize.get('Tooolbar.ToAdminOverview')}>
-                                    <IconButton
-                                        style={{"color": "white"}}
-                                        className="material-icons"
-                                        onClick={() => this.handleMenuNavigate(Paths.ADMIN_CONSULTANTS)}
-                                    >
-                                        home
-                                    </IconButton>
+                                        <IconButton
+                                            style={{"color": "white"}}
+                                            className="material-icons"
+                                            onClick={() => this.handleMenuNavigate(Paths.ADMIN_CONSULTANTS)}
+                                        >
+                                            home
+                                        </IconButton>
                                     </Tooltip>
                                     : null
                             }
-
-                            <IconButton
-                                style={{"color": "white"}}
-                                //tooltip={PowerLocalize.get('Tooolbar.LogOut')}
-                                className="material-icons"
-                                onClick={this.logOutUser}
-                            >
-                                input
-                            </IconButton>
+                            <Tooltip title={PowerLocalize.get('Tooolbar.LogOut')}>
+                                <IconButton
+                                    style={{"color": "white"}}
+                                    className="material-icons"
+                                    onClick={this.logOutUser}
+                                >
+                                    input
+                                </IconButton>
+                            </Tooltip>
                     </Toolbar>
                 </AppBar>
                     <Paper style={{marginTop:70}}>

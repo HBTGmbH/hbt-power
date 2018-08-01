@@ -137,31 +137,36 @@ class UsedSkillOverviewModule extends React.Component<
         }
         let skillUsageInfo: Array<ConsultantInfo> = toArray(this.props.skillUsageInfo.get(this.state.selectedSkillName))
         return (
-            <div className="row">
+            <div>
                 <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
                                  skillToEdit={this.state.selectedSkillName}
                                  open={this.state.editOpen}
                                  onClose={this.closeEditDialog}
                 />
-                <div className="col-md-8">
-                    <Paper>
+
+                    <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
                         <TextField
                             value={this.state.filterString}
                             onChange={(e) => this.setState({filterString: e.target.value})}
                             label={PowerLocalize.get("Action.Search")}
-                            style={{paddingLeft: "8px"}}
+                            style={{paddingLeft: "8px", paddingBottom:"3px"}}
                         />
-                        <List>
-                            {this.renderSkills(res)}
-                        </List>
                     </Paper>
-                </div>
-                <div className="col-md-4">
-                    <div style={{marginTop: "8px"}}>
-                        <UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
-                                          usedBy={skillUsageInfo}
-                                          skillName={this.state.selectedSkillName}
-                                          onOpenEdit={this.openEditDialog}/>
+
+                <div className={"row"}>
+                    <div className={"col-md-8"}>
+                        <Paper>
+                            <List>
+                                {this.renderSkills(res)}</List>
+                        </Paper>
+                    </div>
+                    <div className="col-md-4">
+                        <div style={{marginTop: "8px"}}>
+                            <UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
+                                              usedBy={skillUsageInfo}
+                                              skillName={this.state.selectedSkillName}
+                                              onOpenEdit={this.openEditDialog}/>
+                        </div>
                     </div>
                 </div>
             </div>

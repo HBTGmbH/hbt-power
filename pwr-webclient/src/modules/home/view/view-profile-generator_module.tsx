@@ -17,6 +17,8 @@ import {Template} from '../../../model/view/Template';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
+import DraftsIcon from '@material-ui/icons/Drafts';
 
 
 interface ViewProfileGeneratorProps{
@@ -91,42 +93,6 @@ class ViewProfileGenerator extends React.Component<
         this.props.onClose();
     };
 
-
-/*
-    private renderActions = () => {
-        let actions = [];
-        let label = "";
-        let icon = "";
-
-        // New Template
-        actions.push(<Button
-            variant={'flat'}
-            className="mui-margin"
-            color={'primary'}
-            //onClick={}
-        >
-            <Icon className="material-icons">add</Icon>
-            {PowerLocalize.get("Action.Generate.NewTemplate")}</Button>);
-        // Generate
-        actions.push(<Button
-            variant={'raised'}
-            className="mui-margin"
-            color={'primary'}
-            disabled={this.state.activeTemplateId === ""}
-            onClick={() => this.props.generate(this.props.viewProfileId, this.state.activeTemplateId)}
-        >
-            <Icon className="material-icons">open_in_new</Icon>
-            {PowerLocalize.get("Action.Generate.Word")}</Button>);
-        // Close
-        actions.push(<Button
-            onClick={this.props.onClose}
-        >
-            <Icon className="material-icons">close</Icon>
-            {PowerLocalize.get("Action.Close")}
-            </Button>);
-        return actions;
-    };
-*/
     private renderListItems = () => {
         let items :any = [];
         let label :string = "";
@@ -137,10 +103,10 @@ class ViewProfileGenerator extends React.Component<
                 <p key={"noTemp"}> Keine Templates vorhanden.</p>
             )
         }
-        // TODO bessere schleife
         this.props.allTemplates.map((value, index) => {
             items.push(
-                <ListItem title={value.name} className={"Template"} key={"TempalteItem_" + value.id} onClick={() => this.setTemplateId(value.id,index)}>
+                <ListItem  button title={value.name} className={"pwr-selected-list-item"} key={"TempalteItem_" + value.id} onClick={() => this.setTemplateId(value.id,index)}>
+                    <ListItemIcon><DraftsIcon/></ListItemIcon>
                     {value.name}
                 </ListItem>
             );
@@ -157,6 +123,7 @@ class ViewProfileGenerator extends React.Component<
                 title={PowerLocalize.get("Generator.Title")}
                 open={this.props.open}
                 onClose={this.closeAndReset}
+                fullWidth
             >
                 <DialogTitle>{PowerLocalize.get("Generator.Title")}</DialogTitle>
                 <DialogContent>

@@ -7,6 +7,9 @@ import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove'
+import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 
 // TODO slider
 
@@ -60,7 +63,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         this.setField("description", description)
     };
 
-    private changeCharsPerLine = (e: any, charsPerLine: number) => {
+    private changeCharsPerLine = (charsPerLine: number) => {
         this.setField("charsPerLine", charsPerLine);
     };
 
@@ -121,7 +124,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     };
 
     render() {
-        return (<Dialog
+        return <Dialog
             title={this.renderTitle()}
             open={this.props.open}
             onClose={this.closeAndReset}
@@ -133,27 +136,48 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   maxCharacters={250}
                                   value={this.state.name}
                                   fullWidth={true}
-                                  label={PowerLocalize.get("ViewProfileDialog.Name")}
+                                  label={PowerLocalize.get('ViewProfileDialog.Name')}
                 />
                 <LimitedTextField onChange={this.changeDescription}
                                   maxCharacters={500}
                                   value={this.state.description}
                                   fullWidth={true}
                                   multiLine={true}
-                                  label={PowerLocalize.get("ViewProfileDialog.Description")}
+                                  label={PowerLocalize.get('ViewProfileDialog.Description')}
                 />
-                <TextField onChange={()=>this.changeLocale}
+                <TextField onChange={() => this.changeLocale}
                            value={this.state.locale}
-                           label={PowerLocalize.get("ViewProfileDialog.Locale")}
-                           disabled={this.props.type === "edit"}
+                           label={PowerLocalize.get('ViewProfileDialog.Locale')}
+                           disabled={this.props.type === 'edit'}
                 />
-                <div style={{width: "100%"}}>
-                    <TextField
+                <div>
+                    <ListSubheader>Chars per Line</ListSubheader>
+                    <Button
+                        style={{width:'40px',height:'40px',padding:'0',marginRight:'15px'}}
+                        variant={'fab'}
+                        color={'primary'}
+                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0 )?(this.state.charsPerLine - 1):0)}
+                    >
+                        <RemoveIcon/>
+                    </Button>
+
+                    {this.state.charsPerLine}
+
+                    <Button
+                        style={{width:'40px',height:'40px',padding:'0',marginLeft:'15px'}}
+                        variant={'fab'} color={'primary'}
+                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100)?(this.state.charsPerLine + 1):100)}
+                    >
+                        <AddIcon/>
+                    </Button>
+
+
+                    {/* <TextField
                         value={this.state.charsPerLine}
-                        label={PowerLocalize.get("ViewProfileDialog.CharsPerLine")}
+                        label={PowerLocalize.get('ViewProfileDialog.CharsPerLine')}
                         disabled={false}
                     />
-                    {/*<Slider
+                    <Slider
                         value={this.state.charsPerLine}
                         min={10}
                         step={1}
@@ -165,6 +189,6 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             <DialogActions>
                 {this.renderActions()}
             </DialogActions>
-        </Dialog>);
+        </Dialog>;
     }
 }
