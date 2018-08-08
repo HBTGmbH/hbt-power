@@ -19,6 +19,8 @@ import {Color} from './utils/ColorUtil';
 import {Route} from 'react-router-dom';
 import {ConnectedRouter} from 'react-router-redux';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
 
 const AlertContainer = require('react-alert').default;
 
@@ -97,20 +99,22 @@ const alertOptions = {
 
 
 let App = (
-    <MuiThemeProvider theme={POWER_MUI_THEME}>
-        <Provider store={store}>
-            <ConnectedRouter history={PWR_HISTORY}>
-                <div>
-                    <Route exact path={Paths.APP_ROOT} component={PowerLogin}/>
-                    <Route exact path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
-                    <Route path={Paths.USER_BASE} component={PowerClient}/>
-                    <Route path={Paths.ADMIN_BASE} component={AdminClient}/>
-                    <ConfirmNavDialog/>
-                    <AlertContainer  ref={(a:any) => NavigationActionCreator.setAlertContainer(a)}{...alertOptions}/>
-                </div>
-            </ConnectedRouter>
-        </Provider>
-    </MuiThemeProvider>
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <MuiThemeProvider theme={POWER_MUI_THEME}>
+            <Provider store={store}>
+                <ConnectedRouter history={PWR_HISTORY}>
+                    <div>
+                        <Route exact path={Paths.APP_ROOT} component={PowerLogin}/>
+                        <Route exact path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
+                        <Route path={Paths.USER_BASE} component={PowerClient}/>
+                        <Route path={Paths.ADMIN_BASE} component={AdminClient}/>
+                        <ConfirmNavDialog/>
+                        <AlertContainer  ref={(a:any) => NavigationActionCreator.setAlertContainer(a)}{...alertOptions}/>
+                    </div>
+                </ConnectedRouter>
+            </Provider>
+        </MuiThemeProvider>
+    </MuiPickersUtilsProvider>
 );
 
 

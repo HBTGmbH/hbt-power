@@ -20,6 +20,8 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
+import {DatePicker} from 'material-ui-pickers';
+import AutoSuggest from '../../../../general/auto-suggest_module';
 
 // TODO AutoComplete
 
@@ -111,11 +113,11 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         });
     };
 
-    private changeStartDate = (n: undefined, date: Date) => {
+    private changeStartDate = (date: Date) => {
         this.updateProject(this.state.project.startDate(date));
     };
 
-    private changeEndDate = (n: undefined, date: Date) => {
+    private changeEndDate = (date: Date) => {
         this.updateProject(this.state.project.endDate(date));
     };
 
@@ -123,7 +125,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         this.updateProject(this.state.project.name(newValue));
     };
 
-    private changeDescription = (event: Object, newValue: string) => {
+    private changeDescription = (newValue: string) => {
         this.updateProject(this.state.project.description(newValue));
     };
 
@@ -168,6 +170,19 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         });
     };
 
+    private handleBrokerSelect = (data:string) => {
+        if (data != null){
+            //this.updateProject(this.state.project.brokerId());
+            this.setState({
+                brokerACValue: data
+            });
+        }
+    };
+    private handleBrokerChange = (data:string) => {
+        this.setState({
+            brokerACValue: data
+        });
+    };
     private handleBrokerInput = (text: string) => {
         this.setState({
             brokerACValue: text
@@ -181,27 +196,6 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
     };*/
 
-    private renderEndDateChoice = () => {
-        if(isNullOrUndefined(this.state.project.endDate())) {
-            return <TextField
-                style={{width: "80%", float: "left"}}
-                label={PowerLocalize.get('End')}
-                disabled={true}
-                value={PowerLocalize.get("Today")}
-            />
-        } else {
-            // TODO Datepicker prüfen
-            return <TextField label={PowerLocalize.get('Project.EndDate')}
-                               style={{width: "80%", float: "left"}}
-                               defaultValue={this.state.project.endDate().toDateString()}
-                               onChange={() => this.changeEndDate}
-                               fullWidth={true}
-                               //formatDate={formatToShortDisplay}
-                               type="date"
-            />
-        }
-    };
-
     private getEndDateButtonIconName = () => {
         if(isNullOrUndefined(this.state.project.endDate())) {
             return "date_range";
@@ -211,20 +205,21 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
     private handleEndDateButtonClick = () => {
         if(isNullOrUndefined(this.state.project.endDate())) {
-            this.changeEndDate(null, new Date());
+            this.changeEndDate( new Date());
         } else {
-            this.changeEndDate(null, null);
+            this.changeEndDate( null);
         }
     };
 
 
     public render () {
+        {console.log("endRender_project(brokerAC): ",this.state.brokerACValue);}
         return (
             <Dialog
                 open={this.props.open}
-                //modal={true}
                 onClose={this.props.onClose}
                 scroll={'paper'}
+                fullWidth
                 >
                 <DialogTitle><Typography >{PowerLocalize.get('ProjectDialog.Title')}</Typography></DialogTitle>
                 <DialogContent>
@@ -242,30 +237,27 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                         </div>
                         <div className="row">
                             <div className="col-md-5 col-sm-5 col-md-offset-1">
-                                <TextField  label={PowerLocalize.get('Project.StartDate')}
-                                            //value={this.state.project.startDate()}
-                                            onChange={() => this.changeStartDate}
-                                            fullWidth={true}
-                                            //formatDate={formatToShortDisplay}
-                                            type={"date"}
+                                <DatePicker
+                                    label={PowerLocalize.get('Project.StartDate')}
+                                    value={this.state.project.startDate()}
+                                    onChange={this.changeStartDate}
                                 />
                             </div>
                             <div className="col-md-5 col-sm-5 ">
-                                <IconButton
-                                    style={{width: "20%", float:"left", marginTop: "20px"}}
-                                    className="material-icons"
-                                    onClick={this.handleEndDateButtonClick}
-                                >
-                                    {this.getEndDateButtonIconName()}
-                                </IconButton>
-                                {this.renderEndDateChoice()}
+                                <DatePicker
+                                    label={PowerLocalize.get('Project.EndDate')}
+                                    value={this.state.project.endDate()}
+                                    onChange={this.changeEndDate}
+                                    showTodayButton
+                                    todayLabel={PowerLocalize.get("Today")}
+                                />
                             </div>
-
                         </div>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <div className="col-md-5 col-sm-6">
-                                    {/* <AutoComplete
+                                    {/*
+                                     <AutoComplete
                                         id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                         label={PowerLocalize.get('Broker.Singular')}
                                         value={this.state.brokerACValue}
@@ -274,12 +266,20 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                         onUpdateInput={(txt:any) => {this.setState({brokerACValue: txt})}}
                                         onNewRequest={this.handleBrokerRequest}
                                         filter={AutoComplete.fuzzyFilter}
-                                    />*/}
+                                    />
                                     <TextField
                                         id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                         label={PowerLocalize.get('Broker.Singular')}
                                         onChange={(e:any) => this.setState({brokerACValue: e.target.value})}
                                         value={""}
+                                    />
+                                    */}
+
+                                    <AutoSuggest
+                                        data={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
+                                        searchTerm={this.state.brokerACValue}
+                                        onSearchChange={this.handleBrokerChange}
+                                        onSelect={this.handleBrokerSelect}
                                     />
                                 </div>
                             </div>
