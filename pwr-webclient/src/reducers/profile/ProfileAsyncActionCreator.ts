@@ -50,7 +50,7 @@ export class ProfileAsyncActionCreator {
 
     public static requestAllNameEntities() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
-            console.log("Requesting all.",{});
+            //console.log("Requesting all.",{});
             dispatch(ProfileAsyncActionCreator.requestQualifications());
             dispatch(ProfileAsyncActionCreator.requestLanguages());
             dispatch(ProfileAsyncActionCreator.requestEducations());

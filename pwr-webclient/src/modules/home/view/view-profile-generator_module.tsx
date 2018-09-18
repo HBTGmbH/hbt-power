@@ -108,6 +108,7 @@ class ViewProfileGenerator extends React.Component<
                 <ListItem  button title={value.name} className={"pwr-selected-list-item"} key={"TempalteItem_" + value.id} onClick={() => this.setTemplateId(value.id,index)}>
                     <ListItemIcon><DraftsIcon/></ListItemIcon>
                     {value.name}
+
                 </ListItem>
             );
         });
@@ -127,9 +128,9 @@ class ViewProfileGenerator extends React.Component<
             >
                 <DialogTitle>{PowerLocalize.get("Generator.Title")}</DialogTitle>
                 <DialogContent>
-                <div className="col-md-4">
+                <div className="col-md-5">
                     <h4 className="row">{PowerLocalize.get("Generator.TemplateList")}</h4>
-                    <div className="row" style={{ maxHeight: 300, overflow: 'auto' }}>
+                    <div className="row" style={{ maxHeight: 350, overflowY: 'auto', overflowX:'hidden' , minWidth:'200px'}}>
                         <List>
                             {this.renderListItems()}
                         </List>
@@ -152,7 +153,7 @@ class ViewProfileGenerator extends React.Component<
                         variant={'flat'}
                         className="mui-margin"
                         color={'primary'}
-                        //onClick={}
+                        //onClick={}  TODO BESSER TEMPLATE VERWALTEN BUTTON ?! FÜR ADMIN MIT LÖSCHEN UND NEU
                     >
                         <Icon className="material-icons"> add </Icon>
                         {PowerLocalize.get("Action.Generate.NewTemplate")}

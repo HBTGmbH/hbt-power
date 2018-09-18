@@ -11,7 +11,6 @@ import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
 import withTheme from '@material-ui/core/styles/withTheme';
 
-// TODO Tabelle prüfen
 
 interface ProfileEntryNotificationTableLocalProps {
     profileEntryNotifications: Immutable.List<ProfileEntryNotification>;

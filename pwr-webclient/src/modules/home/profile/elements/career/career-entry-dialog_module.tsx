@@ -151,7 +151,7 @@ class CareerEntryDialogModule extends React.Component<
 
     private handleOnSelect = (value:string) => {
       // den wert speicher und popper schließen
-        console.log("AutoValue: ", this.state.searchResult);
+        //console.log("AutoValue: ", this.state.searchResult);
 
         this.setState({
             searchResult: value,
@@ -171,7 +171,7 @@ class CareerEntryDialogModule extends React.Component<
     };
 
     render() {
-        console.log("render_Career: ",this.state.autoCompleteValue);
+        //console.log("render_Career: ",this.state.autoCompleteValue);
         return <Dialog
             open={this.props.open}
             //title={PowerLocalize.get('CareerEntry.Dialog.Title')}

@@ -48,7 +48,6 @@ class SkillNotificationTableModule extends React.Component<
             onDialogOpen: id => dispatch(AdminActionCreator.AsyncOpenSkillNotificationDialog(id)),
         }
     }
-    // TODO check function of RowSelect -mp
 
     private handleSelectAll = (e:any, checked:boolean) => {
         let selection:Array<number>;

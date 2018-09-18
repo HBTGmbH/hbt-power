@@ -10,6 +10,7 @@ import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
 import Paper from '@material-ui/core/Paper/Paper';
+import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -72,16 +73,37 @@ class NotificationTrashboxModule extends React.Component<
         }
     }
 
+    private getNotificationContentString = (notification: AdminNotification) : string =>{
+        let toReturn:string = "";
+        switch (notification.type()){
+            case "SkillNotification":
+                // toReturn = formatString(PowerLocalize.get("NotificationInbox.SkillNotification.SubjectTextTemplate"),
+                //    notification.type());
+                toReturn = "Skill hinzugefügt";
+                break;
+            case "ProfileUpdatedNotification":
+               // toReturn = PowerLocalize.get("NotificationInbox.ProfileUpdateNotification.SubjectText");
+                toReturn = "Profil aktualisiert";
+                break;
+            case "ProfileEntryNotification":
+                 //toReturn = formatString(
+                 //   PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
+                 //   notification.reason().toString(),
+                 //   notification.type().toString())
+                toReturn = "Neuer Bezeichner hinzugefügt";
+                break;
+        }
+
+        return toReturn;
+
+    };
+
     private renderNotificationAsTableRow = (notification: AdminNotification) => {
         return (
             <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()} style={{backgroundColor:'white'}}>
                 <TableCell>{notification.initials()}</TableCell>
                 <TableCell>
-                    {formatString(
-                        PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
-                        "TODO",
-                        "TODO")
-                    }
+                    {this.getNotificationContentString(notification)}
                 </TableCell>
                 <TableCell>{formatToMailDisplay(notification.occurrence())}</TableCell>
             </TableRow>

@@ -176,67 +176,67 @@ export class ProfileStore {
      */
     public parseProfile(profileFromAPI: APIProfile): ProfileStore {
 
-        console.info('Parsing received profile: ', profileFromAPI);
-        console.info('Adding Profile information into suggestion database.');
+        //console.info('Parsing received profile: ', profileFromAPI);
+        //console.info('Adding Profile information into suggestion database.');
 
         // references to the readonly property to modify it.
         // This will not affect the original languages, as the original is still immutable.
-        console.info('Parsing languages...');
+        //console.info('Parsing languages...');
         let languages = this.languages();
         profileFromAPI.languages.forEach(langSkill => {
             let l: NameEntity = NameEntity.fromAPI(langSkill.nameEntity);
             languages = languages.set(l.id(), l);
         });
-        console.info('...done.');
-        console.info('Parsing qualifications...');
+        //console.info('...done.');
+        //console.info('Parsing qualifications...');
         let qualifications = this.qualifications();
         profileFromAPI.qualification.forEach(qualificationEntry => {
            let q: NameEntity = NameEntity.fromAPI(qualificationEntry.nameEntity);
            qualifications = qualifications.set(q.id(), q);
         });
-        console.info('...done.');
+        //console.info('...done.');
 
-        console.info('Parsing trainings...');
+        //console.info('Parsing trainings...');
         let trainings = this.trainings();
         profileFromAPI.trainingEntries.forEach(trainingEntry => {
             let training: NameEntity = NameEntity.fromAPI(trainingEntry.nameEntity);
             trainings = trainings.set(training.id(), training);
         });
-        console.info('...done.');
+        //console.info('...done.');
 
-        console.info('Parsing educations...');
+        //console.info('Parsing educations...');
         let educations = this.educations();
         profileFromAPI.education.forEach(educationEntry => {
             let education: NameEntity = NameEntity.fromAPI(educationEntry.nameEntity);
             educations = educations.set(education.id(), education);
         });
-        console.info('...done.');
+        //console.info('...done.');
 
-        console.info('Parsing sectorEntries...');
+        //console.info('Parsing sectorEntries...');
         let sectors = this.sectors();
         profileFromAPI.sectors.forEach(sectorEntry => {
             let sector: NameEntity = NameEntity.fromAPI(sectorEntry.nameEntity);
             sectors = sectors.set(sector.id(), sector);
         });
-        console.info('...done.');
+        //console.info('...done.');
 
-        console.info('Parsing careerEntries...');
+        //console.info('Parsing careerEntries...');
         let careers = this.careers();
         profileFromAPI.careerEntries.forEach(careerEntry => {
             let career: NameEntity = NameEntity.fromAPI(careerEntry.nameEntity);
             careers = careers.set(career.id(), career);
         });
-        console.info('...done.');
+        //console.info('...done.');
 
-        console.info('Parsing keySkills...');
+        //console.info('Parsing keySkills...');
         let keySkills = this.keySkills();
         profileFromAPI.keySkillEntries.forEach(keySkill => {
             let skill: NameEntity = NameEntity.fromAPI(keySkill.nameEntity);
             keySkills = keySkills.set(skill.id(), skill);
         });
-        console.info('...done.');
+        //console.info('...done.');
 
-        console.info('Parsing companies...');
+        //console.info('Parsing companies...');
         let companies = this.companies();
         profileFromAPI.projects.forEach(project => {
             if(!isNullOrUndefined(project.broker)) {
@@ -250,8 +250,8 @@ export class ProfileStore {
             }
 
         });
-        console.info('...done');
-        console.info('Parsing project roles...');
+        //console.info('...done');
+        //console.info('Parsing project roles...');
         let projectRoles = this.projectRoles();
         profileFromAPI.projects.forEach(project => {
             project.projectRoles.forEach(apiRole => {
@@ -259,10 +259,10 @@ export class ProfileStore {
                 projectRoles = projectRoles.set(role.id(), role);
             });
         });
-        console.info('..done');
-        console.info('Parsing profile...');
+        //console.info('..done');
+        //console.info('Parsing profile...');
         let profile: Profile = Profile.createFromAPI(profileFromAPI);
-        console.info('...done');
+        //console.info('...done');
 
         return this.profile(profile)
             .trainings(trainings)

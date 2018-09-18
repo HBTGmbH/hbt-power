@@ -146,7 +146,7 @@ export class StatisticsActionCreator {
     public static AsyncGetProfileStatistics(initials: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getProfileStatistics(initials)).then(function (response: AxiosResponse) {
-                console.log("statistics data", response.data);
+                //console.log("statistics data", response.data);
                 dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(response.data)));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
             }).catch(function(error:any) {

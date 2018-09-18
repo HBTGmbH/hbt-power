@@ -141,7 +141,7 @@ class AdminClientModule extends React.Component<
                                         <ListItemIcon>
                                             <Icon className="material-icons">inbox</Icon>
                                         </ListItemIcon>
-                                        <ListItemText primary={"Inbox"}/>
+                                        <ListItemText primary={PowerLocalize.get("AdminClient.Menu.Inbox")}/>
                                     </ListItem>
                                     <ListItem
                                         button
@@ -151,7 +151,7 @@ class AdminClientModule extends React.Component<
                                         <ListItemIcon>
                                             <Icon className="material-icons">delete</Icon>
                                         </ListItemIcon>
-                                        <ListItemText primary={"Trashbin"}/>
+                                        <ListItemText primary={PowerLocalize.get("AdminClient.Menu.Trashbin")}/>
                                     </ListItem>
 
                             <Divider/>
@@ -169,7 +169,7 @@ class AdminClientModule extends React.Component<
                             <Divider/>
                                 <ListSubheader>Informationen</ListSubheader>
                                     <List>
-                                        <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={ "Link01"}>
+                                        <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={ "Link01"} style={{textDecoration:"none"}}>
                                             <ListItem
                                                 button
                                                 key="AdminClient.Menu.Info.ProfileElements"
@@ -180,11 +180,10 @@ class AdminClientModule extends React.Component<
                                                 <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
                                             </ListItem>
                                         </Link>
-                                        <Link to={Paths.ADMIN_INFO_SKILLTREE}>
+                                        <Link to={Paths.ADMIN_INFO_SKILLTREE} style={{textDecoration:"none"}}>
                                             <ListItem
                                                 button
                                                 key="AdminClient.Menu.Info.SkillTree"
-                                                // TODO link wieder sichtbar machen ohne style änderung durch unterstreichen, semantisch so nicht richtig-mp
                                             >
                                                 <ListItemIcon>
                                                     <Icon className="material-icons">device_hub</Icon>

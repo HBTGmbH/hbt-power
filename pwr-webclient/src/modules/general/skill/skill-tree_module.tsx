@@ -198,7 +198,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
     };
 
     render() {
-        console.debug("Invoking re-render of tree", this.props.root);
+        //console.debug("Invoking re-render of tree", this.props.root);
         return <PwrTree
             contentRenderFunction={(payload: TreePayload) => this.renderElement(payload)}
             nodes={this.mapNodes()}

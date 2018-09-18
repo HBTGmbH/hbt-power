@@ -17,7 +17,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabe
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
 
 
-const rootLink = (props:any) => <Link to={Paths.APP_ROOT}/>;
 /**
  * Properties that are managed by react-redux.
  *
@@ -119,6 +118,7 @@ class AdminLoginModule extends React.Component<
     // TODO localize
     // TODO TextField errorText checken
     render() {
+        console.log("Admin_Login_error: ",this.getErrorText());
         return (
             <div className="fittingContainer vertical-align">
                 <Paper style={{padding: "30px"}}>
@@ -135,18 +135,21 @@ class AdminLoginModule extends React.Component<
                         <div style={{marginTop:'40px'}}>
                             <div className="vertical-align">
                                 <TextField
+                                    error={(this.getErrorText() !== null)}
                                     className="fullWidth"
                                     label={PowerLocalize.get("Username.Singular")}
-                                    value={""+this.props.username}
+                                    value={"" + this.props.username}
                                     onChange={(evt) => this.props.changeUsername(evt.target.value)}
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
                             </div>
                             <div className="vertical-align">
                                 <TextField
+                                    error={(this.getErrorText() !== null)}
                                     className="fullWidth"
                                     label={PowerLocalize.get("Password.Singular")}
-                                    value={(this.getErrorText() === null) ? ""+this.getErrorText() : ""+this.props.password}
+                                    helperText={this.getErrorText()}
+                                    value={"" + this.props.password}
                                     onChange={(evt) => this.props.changePassword(evt.target.value)}
                                     type="password"
                                     onKeyPress={this.handleInputFieldKeyPress}
@@ -168,6 +171,11 @@ class AdminLoginModule extends React.Component<
                             <div className="vertical-align"  style={{marginTop: "5px", marginBottom: "15px", height: "30px"}}>
                                 {
                                     this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span> </span>
+                                }
+                            </div>
+                            <div className={"vertical-align"} style={{marginTop: "5px", marginBottom: "15px", height: "30px"}}>
+                                {
+                                    this.getErrorText() !== null ? <span style={{paddingTop:"10px"}} className={"warning-note"}>{this.getErrorText()}</span>: <span> </span>
                                 }
                             </div>
                             <div className="vertical-align">

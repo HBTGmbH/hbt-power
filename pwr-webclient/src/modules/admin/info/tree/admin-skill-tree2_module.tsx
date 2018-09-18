@@ -68,7 +68,6 @@ interface AdminSkillTree2Dispatch {
     changeFilterNonCustomSkills(doFiltering: boolean): void;
 }
 
-// TODO buttons in den info panels vernünftig machen
 
 class AdminSkillTree2Module extends React.Component<
     AdminSkillTree2Props
@@ -99,7 +98,7 @@ class AdminSkillTree2Module extends React.Component<
             skillsById: state.skillReducer.skillsById(),
             filterNonCustomSkills: state.skillReducer.filterNonCustomSkills()
         };
-    }
+    };
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminSkillTree2Dispatch {
         return {
@@ -120,11 +119,11 @@ class AdminSkillTree2Module extends React.Component<
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
             changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering)))
         };
-    }
+    };
 
     public componentDidMount() {
         this.props.loadTree();
-    }
+    };
 
     private handleCategorySelect = (categoryId: number) => {
         this.setState({
@@ -264,6 +263,7 @@ class AdminSkillTree2Module extends React.Component<
                 onLocaleAdd={this.handleAddSkillLocale}
             />
             <Button
+                style={{margin:'4px'}}
                 variant={'raised'}
                 className="mui-margin"
                 color={'primary'}
@@ -283,6 +283,7 @@ class AdminSkillTree2Module extends React.Component<
             {
                 selectedSkill.isCustom() ?
                     <Button
+                        style={{margin:'4px'}}
                         variant={'raised'}
                         className="mui-margin"
                         color={'secondary'}
@@ -312,6 +313,7 @@ class AdminSkillTree2Module extends React.Component<
                         style={{marginLeft: '16px'}}
                         checked={selectedCategory.blacklisted()}
                         onChange={this.handleCategoryBlacklistCheck}
+                        color={'primary'}
                     />}
                 label={PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsBlacklisted')}
             />
@@ -322,6 +324,7 @@ class AdminSkillTree2Module extends React.Component<
                         style={{marginLeft: '16px'}}
                         checked={selectedCategory.isDisplay()}
                         onChange={this.handleCategoryIsDisplayCheck}
+                        color={'primary'}
                     />}
                 label={PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsDisplay')}
             />
@@ -333,6 +336,7 @@ class AdminSkillTree2Module extends React.Component<
                 onLocaleDelete={this.handleDeleteCategoryLocale}
             />
             <Button
+                style={{margin:'4px'}}
                 variant={'contained'}
                 className="mui-margin"
                 size={"small"}
@@ -344,6 +348,7 @@ class AdminSkillTree2Module extends React.Component<
             </Button>
 
             <Button
+                style={{margin:'4px'}}
                 variant={'contained'}
                 size={"small"}
                 className="mui-margin"
@@ -355,6 +360,7 @@ class AdminSkillTree2Module extends React.Component<
             </Button>{
             selectedCategory.isCustom() ?
                 <Button
+                    style={{margin:'4px'}}
                     variant={'contained'}
                     className="mui-margin"
                     color={'primary'}
@@ -366,7 +372,6 @@ class AdminSkillTree2Module extends React.Component<
                 </Button>
                 : null
         }
-
         </div>;
     };
 
@@ -380,15 +385,9 @@ class AdminSkillTree2Module extends React.Component<
         }
     };
 
-
-//<div className="admin-app-bar-spacer"/>
-// <div style={{paddingTop: "8px"}}/>
-
     render() {
         return (
             <div>
-
-
                 <SetValueDialog
                     open={this.state.categoryNameOpen}
                     label={PowerLocalize.get("AdminClient.Info.SkillTree.NewCategory.Name")}
@@ -401,21 +400,25 @@ class AdminSkillTree2Module extends React.Component<
                     onClose={this.closeSkillNameDialog}
                     onOk={this.handleCreateSkill}
                 />
-                <div className="row">
+                <div className="row vertical-align">
                     <Paper className="col-md-8">
                         <TextField
                             label={PowerLocalize.get("Action.Search")}
                             onChange={(e: any) => {this.props.filter(e.target.value)}}
                         />
                         <FormControlLabel
+                            style={{marginLeft:'5px'}}
                             control={
                                 <Checkbox
                                     onChange={this.handleCheckFilterNonCustom}
                                     checked={this.props.filterNonCustomSkills}
+                                    color={'primary'}
                                 />
                             }
                             label={PowerLocalize.get("AdminClient.Info.SkillTree.Filter.OnlyCustom")}
                         />
+
+
                         <SkillTree
                             root={this.props.root}
                             onCategorySelect={this.handleCategorySelect}

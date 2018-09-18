@@ -84,6 +84,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
 
     render () {
         return <ExpansionPanel
+            defaultExpanded
             style={{
                 backgroundColor: this.props.backgroundColor,
                 width: '100%',
