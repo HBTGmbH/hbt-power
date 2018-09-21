@@ -230,3 +230,8 @@ body {
   background-color: #ff8e01;
   color:white;
 }
+
+.report-text-field{
+  margin: 2%;
+  background-color: #ececec;
+}

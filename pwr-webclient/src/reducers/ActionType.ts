@@ -130,4 +130,6 @@ export enum ActionType {
     RemoveTemplate,
     ResetTemplate,
     ClearTemplates,
+    CreateTemplate,
+    ChangeTemplate,
 }

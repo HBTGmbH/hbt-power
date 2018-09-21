@@ -26,6 +26,7 @@ export class Paths {
     public static readonly ADMIN_INBOX = CONFIG.APP_PATH + '/admin/home/inbox';
     public static readonly ADMIN_TRASHBOX = CONFIG.APP_PATH + '/admin/home/trashbox';
     public static readonly ADMIN_CONSULTANTS = CONFIG.APP_PATH + '/admin/home/consultants';
+    public static readonly ADMIN_TEMPLATES = CONFIG.APP_PATH + '/admin/home/templates';
     public static readonly ADMIN_STATISTICS_SKILL = CONFIG.APP_PATH + '/admin/home/statistics/skills';
     public static readonly ADMIN_STATISTICS_NETWORK = CONFIG.APP_PATH + '/admin/home/statistics/network';
     public static readonly ADMIN_INFO_SKILLTREE = CONFIG.APP_PATH + '/admin/home/info/skilltree';

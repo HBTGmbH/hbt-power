@@ -348,4 +348,8 @@ export namespace TemplateService{
     export function getTemplateById(id: string){
         return base() + "/view/template" + "/" + id;
     }
+
+    export function CreateTemplate(name:string){
+        return base() + "/view/template" + "/" + name;
+    }
 }

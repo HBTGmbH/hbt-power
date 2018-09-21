@@ -400,7 +400,7 @@ class AdminSkillTree2Module extends React.Component<
                     onClose={this.closeSkillNameDialog}
                     onOk={this.handleCreateSkill}
                 />
-                <div className="row vertical-align">
+                <div className="row ">
                     <Paper className="col-md-8">
                         <TextField
                             label={PowerLocalize.get("Action.Search")}

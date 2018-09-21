@@ -25,14 +25,12 @@ interface ViewProfileGeneratorProps{
     viewProfile?: ViewProfile;
     template?: Template;
     allTemplates?: Array<Template>;
-
 }
 
 interface ViewProfileGeneratorLocalProps{
     open: boolean;
     viewProfileId : string;
     onClose() : void;
-
 }
 interface ViewProfileGeneratorState {
     activeTemplateId : string;
@@ -146,6 +144,7 @@ class ViewProfileGenerator extends React.Component<
                         {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].createUser + "  |  " : " "}
                         {this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].createdDate : " "}
                     </div>
+                    <div>{this.state.activeTemplateId !== "" ? this.props.allTemplates[this.state.activeTemplateNumber].id : " "}</div>
                 </div>
                 </DialogContent>
                 <DialogActions>
@@ -153,7 +152,7 @@ class ViewProfileGenerator extends React.Component<
                         variant={'flat'}
                         className="mui-margin"
                         color={'primary'}
-                        //onClick={}  TODO BESSER TEMPLATE VERWALTEN BUTTON ?! FÜR ADMIN MIT LÖSCHEN UND NEU
+                        //onClick={}  TODO Für Admin den Button aktivieren für ReportManager
                     >
                         <Icon className="material-icons"> add </Icon>
                         {PowerLocalize.get("Action.Generate.NewTemplate")}

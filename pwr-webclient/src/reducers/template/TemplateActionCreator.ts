@@ -12,6 +12,8 @@ import axios from 'axios';
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
     import RemoveTemplateAction = TemplateActions.RemoveTemplateAction;
+    import CreateTemplateAction = TemplateActions.CreateTemplateAction;
+    import ChangeTemplateAction = TemplateActions.ChangeTemplateAction;
 
     /**
      * speichert ein template - local
@@ -50,6 +52,22 @@ export namespace TemplateActionCreator {
         }
     }
 
+    export function CreateTemplate(name:string,description:string):CreateTemplateAction{
+        return {
+            type: ActionType.CreateTemplate,
+            name: name,
+            description: description,
+        }
+    }
+
+    export function ChangeTemplate(name:string, description:string):ChangeTemplateAction{
+        return{
+            type:ActionType.ChangeTemplate,
+            name: name,
+            description: description,
+        }
+    }
+
     /*  TEMPLATES  by mp*/
 
     /**
@@ -63,6 +81,21 @@ export namespace TemplateActionCreator {
         let template: Template = new Template(response.data);
         dispatch(SetTemplate(template));
         dispatch(ProfileActionCreator.SucceedAPIRequest());
+    }
+
+    function CreateTemplate2(name:string,description:string){
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
+            axios.post(TemplateService.CreateTemplate(name),{
+                "description":""+description,
+                "path":"",
+                "createUser":""
+            })
+                .then((response:AxiosResponse) => {TemplateReceived(response,dispatch)})
+                .catch((error: AxiosError) => {
+                    dispatch(ProfileActionCreator.APIRequestFailed());
+                    console.error(error);
+                });
+        }
     }
 
     function AsyncLoadTemplate(id: string) {

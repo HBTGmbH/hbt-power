@@ -28,6 +28,8 @@ import {NavigationActionCreator} from '../../reducers/navigation/NavigationActio
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 import Divider from '@material-ui/core/Divider/Divider';
+import {ReportManager} from './reportmanager/report-manager_module';
+import {TemplateActionCreator} from '../../reducers/template/TemplateActionCreator';
 
 
 /**
@@ -72,6 +74,7 @@ interface AdminClientDispatch {
     navigateToTrashbox(user: string, pass: string): void;
     navigateToInbox(user: string, pass: string): void;
     navigateToConsultants(): void;
+    navigateToReportManager():void;
     navigateToSkillStatistics(): void;
     navigateToNetwork(): void;
     logOutAdmin(): void;
@@ -95,7 +98,8 @@ class AdminClientModule extends React.Component<
             getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
             navigateToInbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass));},
             navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass));},
-            navigateToConsultants: () => {dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));},
+            navigateToConsultants: () => {dispatch(TemplateActionCreator.AsyncLoadAllTemplates());dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));},
+            navigateToReportManager: () => {dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TEMPLATES));},
             navigateToSkillStatistics: () => {dispatch(AdminActionCreator.AsyncNavigateToStatistics());},
             logOutAdmin: () => {dispatch(AdminActionCreator.AsyncLogOutAdmin());},
             navigateToNetwork: () => {dispatch(AdminActionCreator.AsyncNavigateToNetwork());}
@@ -166,6 +170,16 @@ class AdminClientModule extends React.Component<
                                     </ListItemIcon>
                                     <ListItemText primary={"Berater"}/>
                                 </ListItem>
+                                <ListItem
+                                    button
+                                    key = "Templates"
+                                    onClick={this.props.navigateToReportManager}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">description</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={"Report Manager"}/>
+                                </ListItem>
                             <Divider/>
                                 <ListSubheader>Informationen</ListSubheader>
                                     <List>
@@ -220,6 +234,7 @@ class AdminClientModule extends React.Component<
                     <div className="col-md-9 fittingContainer admin-app-bar-spacer">
                         <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
                         <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid} />
+                        <Route path={Paths.ADMIN_TEMPLATES} component={ReportManager} />
                         <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
                         <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics} />
                         <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork} />
