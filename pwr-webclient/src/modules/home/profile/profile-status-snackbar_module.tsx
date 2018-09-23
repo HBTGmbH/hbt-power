@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {RefreshIndicator} from 'material-ui';
+import {CircularProgress} from '@material-ui/core';
 
 interface ProfileSnackbarProps {
     requestPending: boolean;
@@ -27,12 +27,7 @@ class ProfileSnackbarModule extends React.Component<ProfileSnackbarProps , {}> {
     render() {
         if (this.props.requestPending) {
             return(<div className="refresh-indicator">
-                <RefreshIndicator
-                    size={90}
-                    left={10}
-                    top={0}
-                    status="loading"
-                />
+                <CircularProgress size={90}/>
             </div>)
         }
         return <div/>

@@ -80,7 +80,6 @@ class ConsultantGridModule extends React.Component<
         return true;
     };
 
-// TODO Checkbox on Change
     render() {
         return (
             <div>
@@ -108,12 +107,9 @@ class ConsultantGridModule extends React.Component<
                     </Button>
                     <FormControl style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}} >
                         <FormControlLabel
-                            control={
-                            <Checkbox
+                            control={<Checkbox
                                 checked={this.state.showInactive}
-                                onChange={(e: object, v: boolean) => this.setState({showInactive: v})}
-                            />
-                        }
+                                onChange={(e: object, v: boolean) => this.setState({showInactive: v})}/>}
                             label={"Show inactive"}
                          />
 

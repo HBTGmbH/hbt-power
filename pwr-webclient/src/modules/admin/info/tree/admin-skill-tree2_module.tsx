@@ -432,14 +432,13 @@ class AdminSkillTree2Module extends React.Component<
                     </Paper>
                     <div className="col-md-4">
                         <div id="skill-tree-info-panel">
-                            <InfoPaper minHeight="200px" sticky={false}>
+                            <InfoPaper minHeight="200px">
                                 <this.Info/>
                             </InfoPaper>
                             <div className="margin-5px"/>
                             <InfoPaper
                                 minHeight="100px"
                                 title={PowerLocalize.get('AdminClient.Info.SkillTree.Legend')}
-                                sticky={false}
                                 style={{paddingBottom: '16px'}}
                             >
                                 <div style={{marginLeft: '8px'}}>

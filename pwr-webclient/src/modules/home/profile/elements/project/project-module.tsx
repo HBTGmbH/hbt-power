@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Card, CardActions, CardHeader, CardContent, IconButton} from '@material-ui/core';
+import {CardActions, IconButton} from '@material-ui/core';
 import {Project} from '../../../../../model/Project';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialog, ProjectDialogState} from './project-dialog_module';
@@ -9,7 +9,6 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {Profile} from '../../../../../model/Profile';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import Icon from '@material-ui/core/Icon/Icon';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';

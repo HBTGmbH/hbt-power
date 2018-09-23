@@ -83,10 +83,17 @@ const newPowerTheme = {
         MuiPaper: {
             square: true
         }
+    },
+    overrides: {
+        MuiDialog: {
+            paper: {
+                overflowY: "unset",
+            }
+        }
     }
 };
 
-export const POWER_MUI_THEME = createMuiTheme(newPowerTheme);
+export const POWER_MUI_THEME = createMuiTheme(newPowerTheme as any);
 
 const alertOptions = {
     offset: 14,

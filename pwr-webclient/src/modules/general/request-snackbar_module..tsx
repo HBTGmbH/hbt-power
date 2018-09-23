@@ -45,8 +45,6 @@ export class RequestSnackbar extends React.Component<RequestSnackbarProps, Reque
         } else {
             msg =(<div/>);
         }
-        let open = requestStatus === RequestStatus.Failiure || requestStatus === RequestStatus.Pending;
-
         return (<Snackbar open={open} autoHideDuration={300} message={msg}/>);
     }
 

@@ -6,7 +6,6 @@ import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
-import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
@@ -16,8 +15,6 @@ import TextField from '@material-ui/core/TextField/TextField';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
-import Popover from '@material-ui/core/Popover/Popover';
-
 
 
 interface EducationEntryDialogLocalProps {

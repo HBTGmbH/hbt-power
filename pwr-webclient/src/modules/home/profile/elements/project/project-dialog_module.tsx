@@ -7,7 +7,6 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {Profile} from '../../../../../model/Profile';
 import {isNullOrUndefined} from 'util';
 import {AddSkillDialog} from '../skills/add-skill-dialog_module';

@@ -4,7 +4,7 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
-import {Card, CardMedia, CardHeader, Button, ListSubheader} from '@material-ui/core';
+import {Button, ListSubheader} from '@material-ui/core';
 import {ViewProfileEntries} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewProject} from '../../../model/view/ViewProject';

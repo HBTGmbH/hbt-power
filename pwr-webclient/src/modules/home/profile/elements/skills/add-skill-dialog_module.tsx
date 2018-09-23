@@ -3,12 +3,12 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {AddSkillStep} from '../../../../../model/skill/AddSkillStep';
 import {
+    Button,
+    CircularProgress,
     Dialog,
     IconButton,
     Radio,
     RadioGroup,
-    Button,
-    CircularProgress,
     Step,
     StepContent,
     StepLabel,

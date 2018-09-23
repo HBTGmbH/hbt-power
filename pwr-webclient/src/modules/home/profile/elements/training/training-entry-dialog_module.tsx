@@ -3,7 +3,6 @@ import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
 import {Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {TrainingEntry} from '../../../../../model/TrainingEntry';

@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Dialog, Button, Radio, RadioGroup, Step, StepLabel, TextField,Stepper} from '@material-ui/core';
+import {Button, Dialog, Radio, RadioGroup, Step, StepLabel, Stepper, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
@@ -9,8 +9,8 @@ import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import formatString = StringUtils.formatString;
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
+import formatString = StringUtils.formatString;
 
 // TODO radio button ohne form
 /**

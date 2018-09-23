@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Avatar, Icon, Paper, Button} from '@material-ui/core';
+import {Avatar, Button, Icon, Paper} from '@material-ui/core';
 import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';

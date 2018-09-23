@@ -1,4 +1,4 @@
-import {ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, TextField} from "@material-ui/core";
+import {ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, TextField} from '@material-ui/core';
 import * as React from 'react';
 import {ReactElement} from 'react';
 
@@ -9,12 +9,16 @@ export type MatcherFunction = (value: string, searchTerm: string) => boolean;
 export const PWR_STARTS_WITH_MATCHER: MatcherFunction = (value, searchTerm) => value.toLowerCase().startsWith(searchTerm.toLocaleLowerCase());
 
 interface AutoSuggestProps {
+    id?: any;
+    label?: any;
     data: Array<string>;
     searchTerm: string;
 
     matcher?: MatcherFunction;
     fullWidth?: boolean;
     maxItems?: number;
+
+    closeOnSelect?: boolean;
 
     onSearchChange(searchTerm: string): void;
     // Fired when either an element is selected or enter is hit
@@ -59,6 +63,12 @@ class AutoSuggest extends React.Component<AutoSuggestProps, AutoSuggestState> {
     private selectData = (data: string) => {
         console.log("OnSelect_auto: ",data);
         this.props.onSelect(data);
+        if (this.props.closeOnSelect) {
+            this.setState({
+                anchorElement: null,
+                filteredData: []
+            })
+        }
     };
 
     private handleSearchChange = (event: any) => {
@@ -98,7 +108,7 @@ class AutoSuggest extends React.Component<AutoSuggestProps, AutoSuggestState> {
             transition
             disablePortal
             placement={"bottom-start"}
-            style={{width: width}}
+            style={{width: width, zIndex: 99}}
             modifiers={{
                 flip: {
                     enabled: false,
@@ -129,10 +139,10 @@ class AutoSuggest extends React.Component<AutoSuggestProps, AutoSuggestState> {
         const width = this.props.fullWidth ? "100%" : 256;
         console.log("render_auto(searchTerm): ",this.props.searchTerm);
         return (
-            <div id="name" style={{width: width}}>
+            <div id={this.props.id} style={{width: width}}>
                 <TextField
                     style={{width: width}}
-                    label="Name"
+                    label={this.props.label}
                     margin="normal"
                     aria-haspopup={true}
                     value={this.props.searchTerm}

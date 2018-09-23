@@ -4,7 +4,7 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {isNullOrUndefined} from 'util';
-import {Dialog, Icon, Paper, Button, Tab, Tabs} from '@material-ui/core';
+import {Button, Dialog, Icon, Paper, Tab, Tabs} from '@material-ui/core';
 import {ViewProfileEntriesOverview} from './view-profile-entries-overview_module';
 import {ViewProfileProjectsOverview} from './view-profile-projects-overview_module';
 import {ProfileGenerator} from './view-profile-generator_module';
@@ -12,8 +12,6 @@ import {ViewProfileSkillOverview} from './view-profile-skill-overview_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {LimitedTextField} from '../../general/limited-text-field-module';
-import withTheme from '@material-ui/core/styles/withTheme';
-
 
 
 interface ViewProfileOverviewProps {

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
-import {Card, CardHeader, CardContent, Slide, ListSubheader} from '@material-ui/core';
+import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';

@@ -22,7 +22,6 @@ class NameEntityInfoBoxModule extends React.Component<NameEntityInfoBoxProps, Na
     };
 
     render() {
-        // TODO lokalisieren
         return (<div >
             <PwrIconHeader title={"Info"} muiIconName={"info_outline"}/>
             <ListSubheader>Bezeichnung</ListSubheader>

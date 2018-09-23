@@ -3,7 +3,7 @@ import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {doop} from 'doop';
-import {DateUtils} from "../utils/DateUtil";
+import {DateUtils} from '../utils/DateUtil';
 
 @doop
 export class QualificationEntry {
@@ -31,10 +31,6 @@ export class QualificationEntry {
         );
     }
 
-    /**
-     * FIXME !Important doc
-     * @returns {QualificationEntry}
-     */
     public static createNew(): QualificationEntry {
         return new QualificationEntry(NEW_ENTITY_PREFIX + String(QualificationEntry.CURRENT_LOCAL_ID++), UNDEFINED_ID, new Date(), true);
     }

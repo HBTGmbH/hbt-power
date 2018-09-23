@@ -1,6 +1,5 @@
-import * as React from 'react'
+import * as React from 'react';
 import Button from '@material-ui/core/Button/Button';
-import withStyles from '@material-ui/core/styles/withStyles';
 import {ThemeProps} from '../../utils/ReactUtils';
 import {withTheme} from '@material-ui/core';
 

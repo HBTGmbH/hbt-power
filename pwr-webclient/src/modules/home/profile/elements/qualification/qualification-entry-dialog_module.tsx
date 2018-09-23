@@ -1,12 +1,11 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import { Dialog, IconButton} from '@material-ui/core';
+import {Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {QualificationEntry} from '../../../../../model/QualificationEntry';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';

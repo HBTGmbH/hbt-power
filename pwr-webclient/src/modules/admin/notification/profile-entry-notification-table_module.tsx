@@ -1,15 +1,14 @@
 import * as React from 'react';
-import {Table, TableBody, TableHead, TableCell, TableRow} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableHead, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
 import {NotificationDialog} from './notification-dialog_module';
 import {StringUtils} from '../../../utils/StringUtil';
-import formatString = StringUtils.formatString;
 import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
-import withTheme from '@material-ui/core/styles/withTheme';
+import formatString = StringUtils.formatString;
 
 
 interface ProfileEntryNotificationTableLocalProps {

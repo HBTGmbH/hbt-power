@@ -45,7 +45,7 @@ const ApplicationStore = combineReducers({
     metaDataReducer: MetaDataReducer.reduce,
     navigationSlice: NavigationReducer.reduce,
     viewProfileSlice: ViewProfileReducer.reduce,
-    crossCutting: CrossCuttingReducer.reduce
+    crossCutting: CrossCuttingReducer.reduce,
     templateSlice: TemplateReducer.reduce,
 });
 

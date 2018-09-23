@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantClusterInfo';
-import {Card, CardHeader, CardContent, List, ListItem, Popover} from '@material-ui/core';
+import {Card, CardContent, CardHeader, List, ListItem, Popover} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AveragedSkill} from '../../../model/statistics/AveragedSkill';
 import {StringUtils} from '../../../utils/StringUtil';

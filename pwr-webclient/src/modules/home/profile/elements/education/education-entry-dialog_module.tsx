@@ -1,9 +1,8 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {  Dialog, IconButton, MenuItem, Select} from '@material-ui/core';
+import {Dialog, IconButton, MenuItem, Select} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {EducationEntry} from '../../../../../model/EducationEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
@@ -11,11 +10,6 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import Menu from '@material-ui/core/Menu/Menu';
-import TextField from '@material-ui/core/TextField/TextField';
-import Popover from '@material-ui/core/Popover/Popover';
-import List from '@material-ui/core/List/List';
-import ListItem from '@material-ui/core/ListItem/ListItem';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
@@ -23,6 +17,7 @@ import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import {DatePicker} from 'material-ui-pickers';
 import AutoSuggest from '../../../../general/auto-suggest_module';
+import {StringUtils} from '../../../../../utils/StringUtil';
 
 
 interface EducationEntryDialogLocalProps {
@@ -118,9 +113,8 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
     /**
      * Handles update of the auto complete components input field.
      * @param searchText the text that had been typed into the autocomplete
-     * @param dataSource useless
      */
-    private handleEducationFieldInput = (searchText: string, dataSource: Array<string>) => {
+    private handleEducationFieldInput = (searchText: string) => {
         this.setState({educationAutoComplete: searchText});
     };
 
@@ -160,10 +154,9 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
             onClose={this.closeDialog}
             title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
             fullWidth
-            //scroll={'paper'}
         >
             <DialogTitle>
-                <Typography> {PowerLocalize.get('EducationEntry.EditEntry.Title')} </Typography>
+                {PowerLocalize.get('EducationEntry.EditEntry.Title')}
             </DialogTitle>
             <DialogContent>
                 <div className="row">
@@ -196,15 +189,14 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
 
                 <div className="row" style={{marginTop: '10px'}}>
                     <div className="col-md-5 col-sm-6">
-                        <FormControl>
+                        <FormControl fullWidth={true}>
                             <InputLabel>
                                 <Typography>{PowerLocalize.get('AcademicDegree.Singular')}</Typography>
                             </InputLabel>
                             <Select
                                 value={this.state.entry.degree()}
                                 onChange={() => this.handleDegreeSelect}
-                                //hintText={PowerLocalize.get('AcademicDegree.Singular')}
-                                //label={PowerLocalize.get('AcademicDegree.Singular')}
+                                fullWidth={true}
                             >
                                 {
                                     this.props.degrees.map((degree, key) => <MenuItem button key={key}
@@ -215,23 +207,17 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                         </FormControl>
                     </div>
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        {/*} TODO <AutoComplete
-                            label={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
-                            id={'Education.Education.' + this.props.educationEntry.id()}
-                            value={this.state.educationAutoComplete}
-                            searchText={this.state.educationAutoComplete}
-                            dataSource={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
-                            onUpdateInput={this.handleEducationFieldInput}
-                            onNewRequest={this.handleEducationFieldRequest}
-                            filter={AutoComplete.fuzzyFilter}
-                        />*/}
-                        <AutoSuggest
-                            data={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
-                            searchTerm={this.state.educationAutoComplete}
-                            onSearchChange={(value) => this.setState({
-                                educationAutoComplete:value
-                            })}
-                        />
+                        <FormControl>
+                            <AutoSuggest
+                                label={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
+                                id={'Education.Education.' + this.props.educationEntry.id()}
+                                data={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
+                                searchTerm={this.state.educationAutoComplete}
+                                onSelect={this.handleEducationFieldInput}
+                                closeOnSelect={true}
+                                onSearchChange={this.handleEducationFieldInput}
+                            />
+                        </FormControl>
                     </div>
                 </div>
             </DialogContent>

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Card, CardActions, CardHeader, Icon, Button} from '@material-ui/core';
+import {Button, Card, CardActions, CardHeader, Icon} from '@material-ui/core';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileDialog} from './view-profile-dialog_module';
@@ -11,7 +11,6 @@ import {ProfileGenerator} from './view-profile-generator_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
-import {orange} from '@material-ui/core/colors';
 
 interface ViewCardProps {
     viewProfile: ViewProfile;
