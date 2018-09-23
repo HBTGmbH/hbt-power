@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, DatePicker, Dialog, IconButton, MenuItem, SelectField} from 'material-ui';
+import {  Dialog, IconButton, MenuItem, Select} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {EducationEntry} from '../../../../../model/EducationEntry';
@@ -9,6 +9,20 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import Menu from '@material-ui/core/Menu/Menu';
+import TextField from '@material-ui/core/TextField/TextField';
+import Popover from '@material-ui/core/Popover/Popover';
+import List from '@material-ui/core/List/List';
+import ListItem from '@material-ui/core/ListItem/ListItem';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import InputLabel from '@material-ui/core/InputLabel/InputLabel';
+import FormControl from '@material-ui/core/FormControl/FormControl';
+import {DatePicker} from 'material-ui-pickers';
+import AutoSuggest from '../../../../general/auto-suggest_module';
 
 
 interface EducationEntryDialogLocalProps {
@@ -141,56 +155,68 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
 
 
     render() {
-        return (
-            <Dialog
-                open={this.props.open}
-                modal={false}
-                onRequestClose={this.closeDialog}
-                title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
-                autoScrollBodyContent={true}
-                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
-            >
+        return <Dialog
+            open={this.props.open}
+            onClose={this.closeDialog}
+            title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
+            fullWidth
+            //scroll={'paper'}
+        >
+            <DialogTitle>
+                <Typography> {PowerLocalize.get('EducationEntry.EditEntry.Title')} </Typography>
+            </DialogTitle>
+            <DialogContent>
                 <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        <DatePicker
-                            floatingLabelText={PowerLocalize.get('Begin')}
-                            id={'EducationEntry.StartDate' + this.props.educationEntry.id}
-                            container="inline"
-                            value={this.state.entry.startDate()}
-                            onChange={this.handleChangeStartDate}
-                            formatDate={formatToShortDisplay}
-                        />
+                    <div className="col-md-5 col-sm-6 ">
+                        <form>
+                            <DatePicker
+                                autoOk
+                                label={PowerLocalize.get('Begin')}
+                                id={'EducationEntry.StartDate' + this.props.educationEntry.id}
+                                value={this.state.entry.endDate()}
+                                onChange={(date:Date) => {this.state.entry.startDate(date)}}
+                                format="DD.MM.YYYY"
+                            />
+
+                        </form>
                     </div>
-                    <div className="col-md-5 col-sm-6">
-                        <DatePicker
-                            floatingLabelText={PowerLocalize.get('End')}
-                            id={'EducationEntry.EndDate' + this.props.educationEntry.id}
-                            container="inline"
-                            value={this.state.entry.endDate()}
-                            onChange={this.handleChangeEndDate}
-                            formatDate={formatToShortDisplay}
-                        />
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        <form noValidate>
+                            <DatePicker
+                                autoOk
+                                label={PowerLocalize.get('End')}
+                                id={'EducationEntry.EndDate' + this.props.educationEntry.id}
+                                value={this.state.entry.startDate()}
+                                onChange={(date:Date) => {this.state.entry.endDate(date)}}
+                                format="DD.MM.YYYY"
+                            />
+                        </form>
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        <SelectField
-                            value={this.state.entry.degree()}
-                            onChange={this.handleDegreeSelect}
-                            hintText={PowerLocalize.get('AcademicDegree.Singular')}
-                            floatingLabelText={PowerLocalize.get('AcademicDegree.Singular')}
-                        >
-                            {
-                                this.props.degrees.map((degree,key) => <MenuItem key={key} value={degree} primaryText={degree}/>)
-                            }
-                            <MenuItem value={" "} primaryText={PowerLocalize.get('None')}/>
-                        </SelectField>
-                    </div>
+                <div className="row" style={{marginTop: '10px'}}>
                     <div className="col-md-5 col-sm-6">
-                        <AutoComplete
-                            floatingLabelText={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
+                        <FormControl>
+                            <InputLabel>
+                                <Typography>{PowerLocalize.get('AcademicDegree.Singular')}</Typography>
+                            </InputLabel>
+                            <Select
+                                value={this.state.entry.degree()}
+                                onChange={() => this.handleDegreeSelect}
+                                //hintText={PowerLocalize.get('AcademicDegree.Singular')}
+                                //label={PowerLocalize.get('AcademicDegree.Singular')}
+                            >
+                                {
+                                    this.props.degrees.map((degree, key) => <MenuItem button key={key}
+                                                                                      value={degree}>{degree}</MenuItem>)
+                                }
+                                <MenuItem value={' '}>{PowerLocalize.get('None')}</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        {/*} TODO <AutoComplete
+                            label={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                             id={'Education.Education.' + this.props.educationEntry.id()}
                             value={this.state.educationAutoComplete}
                             searchText={this.state.educationAutoComplete}
@@ -198,11 +224,28 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                             onUpdateInput={this.handleEducationFieldInput}
                             onNewRequest={this.handleEducationFieldRequest}
                             filter={AutoComplete.fuzzyFilter}
+                        />*/}
+                        <AutoSuggest
+                            data={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
+                            searchTerm={this.state.educationAutoComplete}
+                            onSearchChange={(value) => this.setState({
+                                educationAutoComplete:value
+                            })}
                         />
                     </div>
                 </div>
-            </Dialog>
-        );
+            </DialogContent>
+            <DialogActions>
+                <Tooltip title={PowerLocalize.get('Action.Save')}>
+                    <IconButton className="material-icons icon-size-20"
+                                onClick={this.handleSaveButtonPress}>save</IconButton>
+                </Tooltip>
+                <Tooltip title={PowerLocalize.get('Action.Exit')}>
+                    <IconButton className="material-icons icon-size-20"
+                                onClick={this.handleCloseButtonPress}>close</IconButton>
+                </Tooltip>
+            </DialogActions>
+        </Dialog>;
     }
 }
 

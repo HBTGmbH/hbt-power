@@ -2,12 +2,16 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {FontIcon, GridTile, IconButton, IconMenu, MenuItem} from 'material-ui';
-import {getProfileImageLocation} from '../../../API_CONFIG';
+import {Icon, GridListTile, IconButton, Menu, MenuItem} from '@material-ui/core';
+import {getImagePath, getProfileImageLocation} from '../../../API_CONFIG';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditDialog} from './consultant-edit-dialog_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import Button from '@material-ui/core/Button/Button';
+import GridListTileBar from '@material-ui/core/GridListTileBar/GridListTileBar';
+import ListItemText from '@material-ui/core/ListItemText/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 
 /**
  * Properties that are managed by react-redux.
@@ -38,6 +42,7 @@ interface ConsultantTileLocalProps {
  */
 interface ConsultantTileLocalState {
     dialogOpen: boolean;
+    menuAnchorEl : any;
 }
 
 /**
@@ -55,7 +60,8 @@ class ConsultantTileModule extends React.Component<
     constructor(props: ConsultantTileProps & ConsultantTileLocalProps & ConsultantTileDispatch) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: false,
+            menuAnchorEl: null,
         }
     }
 
@@ -84,32 +90,53 @@ class ConsultantTileModule extends React.Component<
         });
     };
 
+    private handleMenuClick = (event:any) => {
+    this.setState({
+        menuAnchorEl: event.currentTarget
+    })
+    };
+
+
+    private handleMenuClose = (event:any) => {
+        this.setState({
+            menuAnchorEl: null
+        })
+    };
 
     /**
      * Renders the menu for this tile
      * @returns JSX Element that represents the menu.
      */
     private renderMenu = () => {
-        return (<IconMenu
-            iconButtonElement={<IconButton
-                iconClassName="material-icons"
-                iconStyle={{color: "white"}}
-            >menu</IconButton>}
-            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-            targetOrigin={{horizontal: 'right', vertical: 'top'}}
+        return (<Menu
+            id="menu"
+            anchorEl={this.state.menuAnchorEl}
+            open = {Boolean(this.state.menuAnchorEl)}
+            onClose = {this.handleMenuClose}
+            /*anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+            targetOrigin={{horizontal: 'right', vertical: 'top'}}*/
         >
             <MenuItem
-                primaryText={PowerLocalize.get("ConsultantTile.EditProfile")}
-                rightIcon={<FontIcon className="material-icons">edit</FontIcon>}
                 onClick={() => this.props.redirectToUser(this.props.initials)}
                 disabled={!this.props.consultantInfo.active()}
-            />
+            >
+                <ListItemIcon>
+                    <Icon className="material-icons">edit</Icon>
+                </ListItemIcon>
+                <ListItemText primary={PowerLocalize.get("ConsultantTile.EditProfile")}/>
+            </MenuItem>
+
+
+
             <MenuItem
-                primaryText={PowerLocalize.get("ConsultantTile.EditConsultant")}
-                rightIcon={<FontIcon className="material-icons">person</FontIcon>}
                 onClick={this.showEditDialog}
-            />
-        </IconMenu>)
+            >
+                <ListItemIcon>
+                    <Icon className="material-icons">person</Icon>
+                </ListItemIcon>
+                <ListItemText primary={PowerLocalize.get("ConsultantTile.EditConsultant")}/>
+            </MenuItem>
+        </Menu>)
     };
 
 
@@ -117,24 +144,38 @@ class ConsultantTileModule extends React.Component<
     render() {
         return (
             <div>
+                {this.renderMenu()}
                 <ConsultantEditDialog
                     initials={this.props.initials}
                     show={this.state.dialogOpen}
-                    onRequestClose={this.closeEditDialog}
+                    onClose={this.closeEditDialog}
                 />
-                <GridTile
+                <GridListTile
                     key={"ConsultantTile." + this.props.initials}
                     title={this.props.consultantInfo.getFullName()}
-                    actionIcon={this.renderMenu()}
-                    actionPosition="right"
+
+                    /*actionPosition="right"
                     titlePosition="top"
-                    titleBackground="linear-gradient(to bottom, rgba(70,230,230,0.7) 0%,rgba(70,230,230,0.3) 70%,rgba(70,230,230,0) 100%)"
+                    titleBackground="linear-gradient(to bottom, rgba(70,230,230,0.7) 0%,rgba(70,230,230,0.3) 70%,rgba(70,230,230,0) 100%)"*/
                     cols={1}
                     rows={1}
-                    style={{width: "300px", height: "300px"}}
+                    style={{width: "300px", height: "300px", padding:8}}
                 >
-                        <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"} src={getProfileImageLocation(this.props.consultantInfo.initials())}/>
-                </GridTile>
+
+                    <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"}
+                         src={getProfileImageLocation(this.props.consultantInfo.initials())}
+                         //src={getImagePath()+'/HBT002_Logo_neg.png'}
+                    />
+                    <GridListTileBar
+                        title={this.props.consultantInfo.getFullName()}
+                        //actionIcon={this.renderMenu()
+                        actionIcon={
+                            <Button onClick={this.handleMenuClick}>
+                                <Icon className="material-icons" style={{color:"white"}}>menu</Icon>
+                            </Button>
+                        }
+                    />
+                </GridListTile>
             </div>);
     }
 }

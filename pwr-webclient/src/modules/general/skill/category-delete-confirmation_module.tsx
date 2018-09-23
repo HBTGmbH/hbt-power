@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Dialog, FlatButton} from 'material-ui';
+import {Button, Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
 interface CategoryDeleteConfirmationProps {
     category: SkillCategory;
@@ -22,22 +23,23 @@ export class CategoryDeleteConfirmation extends React.Component<CategoryDeleteCo
         return (
         <Dialog
             open={this.props.open}
-            modal={true}
-            actions={[
-                <FlatButton
-                    primary={true}
-                    label={PowerLocalize.get("Action.No")}
-                    onClick={this.props.onDeclineDelete}
-                />,
-                <FlatButton
-                    secondary={true}
-                    label={PowerLocalize.get("Action.Yes")}
-                    onClick={this.props.onAcceptDelete}
-                />
-            ]}
+            //modal={true}
         >
             Do you really want to delete <strong>{this.props.category.qualifier()}</strong> including its
             child categories?
+
+            <DialogActions>
+                <Button
+                    variant={'flat'}
+                    color={'primary'}
+                    onClick={this.props.onDeclineDelete}
+                >{PowerLocalize.get("Action.No")}</Button>,
+                <Button
+                    variant={'flat'}
+                    color={'secondary'}
+                    onClick={this.props.onAcceptDelete}
+                >{PowerLocalize.get("Action.Yes")}</Button>
+            </DialogActions>
         </Dialog>);
     }
 }

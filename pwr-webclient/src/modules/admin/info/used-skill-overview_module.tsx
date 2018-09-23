@@ -3,16 +3,16 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {
-    AutoComplete,
-    FontIcon,
+    //AutoComplete,
+    Icon,
     List,
     ListItem,
-    makeSelectable,
+    //makeSelectable,
     Paper,
-    RaisedButton,
-    Subheader,
+    Button,
+    ListSubheader,
     TextField
-} from 'material-ui';
+} from '@material-ui/core';
 import {ReactUtils} from '../../../utils/ReactUtils';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {Comparators} from '../../../utils/Comparators';
@@ -26,7 +26,6 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {EditSkillDialog} from './skill/edit-skill-dialog_module';
 import wrapSelectableList = ReactUtils.wrapSelectableList;
 
-let SelectableList = wrapSelectableList(makeSelectable(List));
 
 interface UsedSkillOverviewProps {
     usedSkillNames: Immutable.Set<string>;
@@ -107,60 +106,75 @@ class UsedSkillOverviewModule extends React.Component<
     render() {
         let res = null;
         if(this.state.filterString !== "") {
-            res = this.props.usedSkillNames.filter((value) => AutoComplete.defaultFilter(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
+            res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
+            //res = this.props.usedSkillNames.filter(this.state.filterString);// =>  value.sort(Comparators.getStringComparator(true));// Autocomplete
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
         let values: Immutable.List<ConsultantInfo> = this.props.skillUsageInfo.get(this.state.selectedSkillName);
+
         return (
             <div className="row">
                 <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
                                  skillToEdit={this.state.selectedSkillName}
                                  open={this.state.editOpen}
-                                 onRequestClose={this.closeEditDialog}
+                                 onClose={this.closeEditDialog}
                 />
                 <div className="col-md-8">
                     <Paper>
                         <TextField
                             value={this.state.filterString}
-                            onChange={(e, v) => this.setState({filterString: v})}
-                            floatingLabelText={PowerLocalize.get("Action.Search")}
+                            onChange={(e) => this.setState({filterString: e.target.value})}
+                            label={PowerLocalize.get("Action.Search")}
                             style={{paddingLeft: "8px"}}
                         />
-                        <SelectableList selectedIndex={this.state.selectedSkillName} onSelect={this.handleSkillSelect}>
-                            {res.map((name, key) =>
-                                <ListItem
-                                    value={name}
-                                    key={name}
-                                    onChange={(e) => console.log(e)}
-                                >
-                                {name}
-                                </ListItem>)}
-                        </SelectableList>
+                        <List>
+                            {res === null ? <ListItem>ERROR</ListItem> :
+                                res.map((name, key) =>
+                                    <ListItem
+                                        value={name}
+                                        key={name}
+                                        onChange={(e:any) => console.log(e)}
+                                    >
+                                        {name}
+                                    </ListItem>
+                                )
+                            }
+
+                                    {/*TODO semicolon entfernen
+                                    in skill übersicht ist am ende der list ein semicolon welches keinen ursprung hat*/}
+                            <ListItem
+                                value={"test"}
+                                key={"test-key"}
+                                onChange={(e:any) => console.log(e)}
+                            >
+                                test-placeholder
+                            </ListItem>
+                        </List>
                     </Paper>
                 </div>
                 {this.state.selectedSkillName !== "" ?
                     <div className="col-md-4"  >
                         <Paper id="admin-info-panel">
-                            <div className="vertical-align" style={{backgroundColor: POWER_MUI_THEME.baseTheme.palette.primary1Color, height: '56px'}}>
+                            <div className="vertical-align" style={{ height: '56px'}}>
                                 <div
-                                    style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}
+                                    style={{fontSize: 18}}
                                 >
-                                    <FontIcon
+                                    <Icon
                                         style={{verticalAlign: 'middle'}}
                                         className="material-icons"
-                                        color={POWER_MUI_THEME.baseTheme.palette.alternateTextColor}
+                                        color={'default'}
                                     >
                                         info_outline
-                                    </FontIcon>
+                                    </Icon>
                                     <span style={{marginLeft: '5px'}}>
                                 Info
                                 </span>
                                 </div>
                             </div>
-                            <Subheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillQualifier")}</Subheader>
+                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillQualifier")}</ListSubheader>
                             <span className="padding-left-16px">{this.state.selectedSkillName}</span>
-                            <Subheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillHiearchy")}</Subheader>
+                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillHiearchy")}</ListSubheader>
                             <div className="padding-left-16px">
                                 {
                                     isNullOrUndefined(this.props.skillHierarchies.get(this.state.selectedSkillName))
@@ -169,17 +183,20 @@ class UsedSkillOverviewModule extends React.Component<
 
                                 }
                             </div>
-                            <RaisedButton primary={true}
-                                          icon={<FontIcon className="material-icons">edit</FontIcon>}
-                                          onClick={this.openEditDialog}
-                                          label={PowerLocalize.get("Action.Edit")}
-                                          className="mui-margin"
-                            />
+                            <Button
+                                    color={'primary'}
+                                    variant={'raised'}
+                                    onClick={this.openEditDialog}
+                                    className="mui-margin"
+                            >
+                                {PowerLocalize.get("Action.Edit")}
+                                <Icon className="material-icons">edit</Icon>
+                            </Button>
 
-                            <Subheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.UsedBy")}</Subheader>
+                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.UsedBy")}</ListSubheader>
                             <List>
                             {
-                                !isNullOrUndefined(values) ? values.map((value, key, iter) => <ListItem disabled key={key}>{value.getFullName()}</ListItem>) : null
+                                !isNullOrUndefined(values) ? values.map((value, key, iter) => <ListItem disabled key={key}>{value.getFullName()}</ListItem>) : <></>
                             }
                             </List>
                         </Paper>

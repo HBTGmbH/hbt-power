@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as redux from 'redux';
 import * as React from 'react';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui';
+import {Table, TableBody, TableHead, TableCell, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {SkillNotification} from '../../../model/admin/SkillNotification';
 import * as Immutable from 'immutable';
@@ -11,6 +11,9 @@ import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
+import Checkbox from '@material-ui/core/Checkbox/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup/FormGroup';
+
 
 interface SkillNotificationTableProps {
 
@@ -23,7 +26,6 @@ interface SkillNotificationTableLocalProps {
 }
 
 interface SkillNotificationTableLocalState {
-
 }
 
 interface SkillNotificationTableDispatch {
@@ -47,6 +49,30 @@ class SkillNotificationTableModule extends React.Component<
         }
     }
 
+    private handleSelectAll = (e:any, checked:boolean) => {
+        let selection:Array<number>;
+        selection = [];
+        if (checked) {
+            this.props.skillNotifications.map((value, key) => {selection.push(key)});
+        }else{
+
+        }
+        this.props.onRowSelection(selection);
+    };
+
+    private handleSingleRow = (e:any, checked:boolean, key:number) => {
+        let selection = this.props.selectedRows;
+        let isSelected:boolean = this.props.selectedRows.indexOf(key) !== -1;
+        if(isSelected){
+            // entfernen
+            selection.splice(this.props.selectedRows.indexOf(key),1);
+        }else{
+            // hinzufügen
+            selection.push(key);
+        }
+        this.props.onRowSelection(selection);
+    };
+
     private handleRowSelection = (rows: string | Array<number>) => {
         let selectedIndexes: Array<number> = [];
         if(rows === "all") {
@@ -60,20 +86,32 @@ class SkillNotificationTableModule extends React.Component<
     };
 
     private mapRow = (notification: SkillNotification, key: number) => {
+        let isSelected : boolean;
+        isSelected = this.props.selectedRows.indexOf(key) !== -1;
         return (
             <TableRow
+                hover
                 key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
-                selected={this.props.selectedRows.indexOf(key) !== -1}
+                selected={isSelected}
+                onClick={event => this.handleRowSelection}
+                style={{backgroundColor:'white'}}
             >
-                <TableRowColumn>{notification.adminNotification().initials()}</TableRowColumn>
-                <TableRowColumn
+                <TableCell padding={"checkbox"}>
+                    <FormGroup>
+                        <Checkbox checked={isSelected}
+                                  onChange={(event:any,checked:boolean) => {this.handleSingleRow(event,checked,key)}}
+                                  color="primary"/>
+                    </FormGroup>
+                </TableCell>
+                <TableCell>{notification.adminNotification().initials()}</TableCell>
+                <TableCell
                     className="cursor-pointer"
                 >
                     {formatString(PowerLocalize.get("NotificationInbox.SkillNotification.SubjectTextTemplate"),
                         notification.skill().name())
                     }
-                </TableRowColumn>
-                <TableRowColumn>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableRowColumn>
+                </TableCell>
+                <TableCell>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableCell>
             </TableRow>
         )
     };
@@ -91,19 +129,25 @@ class SkillNotificationTableModule extends React.Component<
     render() {
         return ( <div>
             <SkillNotificationDialog/>
-            <Table multiSelectable={true}
-                   onRowSelection={this.handleRowSelection}
-                   onCellClick={this.handleCellClick}
-            >
-                <TableHeader>
-                    <TableRow>
-                        <TableHeaderColumn>{PowerLocalize.get('Initials.Singular')}</TableHeaderColumn>
-                        <TableHeaderColumn>{PowerLocalize.get('Subject.Singular')}</TableHeaderColumn>
-                        <TableHeaderColumn>{PowerLocalize.get('Date.Singular')}</TableHeaderColumn>
+            <Table>
+                <TableHead>
+                    <TableRow style={{backgroundColor:'white'}}>
+                        <TableCell padding={'checkbox'}>
+                            <FormGroup>
+                                <Checkbox
+                                    indeterminate={this.props.selectedRows.length > 0 && this.props.selectedRows.length < this.props.skillNotifications.toArray().length}
+                                    checked = {this.props.selectedRows.length === this.props.skillNotifications.toArray().length}
+                                    onChange={this.handleSelectAll}
+                                    color="primary"
+                                />
+                            </FormGroup>
+                        </TableCell>
+                        <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
+                        <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
+                        <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
                     </TableRow>
-                </TableHeader>
-                <TableBody deselectOnClickaway={false}
-                >
+                </TableHead>
+                <TableBody>
                     {
                         this.props.skillNotifications.map(this.mapRow).toArray()
                     }

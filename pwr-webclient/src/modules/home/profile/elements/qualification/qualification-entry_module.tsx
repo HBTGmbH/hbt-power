@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IconButton} from 'material-ui';
+import {IconButton} from '@material-ui/core';
 import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
@@ -7,6 +7,7 @@ import {formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {QualificationEntryDialog} from './qualification-entry-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 
 /**
@@ -95,8 +96,13 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
         return(
             <tr>
                 <td>
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleEditButtonClick} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
+                    <Tooltip title={PowerLocalize.get('Action.Edit')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonClick} >edit</IconButton>
+                    </Tooltip>
+                    <Tooltip title={PowerLocalize.get('Action.Delete')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} >delete</IconButton>
+                    </Tooltip>
+
                     <QualificationEntryDialog
                         qualificationEntry={this.props.qualificationEntry}
                         qualifications={this.props.qualifications}

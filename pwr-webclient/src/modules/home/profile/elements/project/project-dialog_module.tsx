@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as redux from 'redux';
-import {AutoComplete, Chip, DatePicker, Dialog, IconButton, Subheader, TextField} from 'material-ui';
+import {Chip, Dialog, IconButton, ListSubheader, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {Project} from '../../../../../model/Project';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -15,6 +15,15 @@ import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import {DatePicker} from 'material-ui-pickers';
+import AutoSuggest from '../../../../general/auto-suggest_module';
+
+// TODO AutoComplete
 
 const ChipInput = require("material-ui-chip-input").default;
 
@@ -97,18 +106,18 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                <Chip
                    key={'SkillChip_' + skillId}
                    style={{margin: 4}}
-                   onRequestDelete={() => {this.handleDeleteSkill(skillId)}}
+                   onDelete={() => {this.handleDeleteSkill(skillId)}}
                >
                {this.props.profile.getSkill(skillId).name()}
                </Chip>);
         });
     };
 
-    private changeStartDate = (n: undefined, date: Date) => {
+    private changeStartDate = (date: Date) => {
         this.updateProject(this.state.project.startDate(date));
     };
 
-    private changeEndDate = (n: undefined, date: Date) => {
+    private changeEndDate = (date: Date) => {
         this.updateProject(this.state.project.endDate(date));
     };
 
@@ -116,7 +125,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         this.updateProject(this.state.project.name(newValue));
     };
 
-    private changeDescription = (event: Object, newValue: string) => {
+    private changeDescription = (newValue: string) => {
         this.updateProject(this.state.project.description(newValue));
     };
 
@@ -161,6 +170,19 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         });
     };
 
+    private handleBrokerSelect = (data:string) => {
+        if (data != null){
+            //this.updateProject(this.state.project.brokerId());
+            this.setState({
+                brokerACValue: data
+            });
+        }
+    };
+    private handleBrokerChange = (data:string) => {
+        this.setState({
+            brokerACValue: data
+        });
+    };
     private handleBrokerInput = (text: string) => {
         this.setState({
             brokerACValue: text
@@ -174,25 +196,6 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
     };*/
 
-    private renderEndDateChoice = () => {
-        if(isNullOrUndefined(this.state.project.endDate())) {
-            return <TextField
-                style={{width: "80%", float: "left"}}
-                floatingLabelText={PowerLocalize.get('End')}
-                disabled={true}
-                value={PowerLocalize.get("Today")}
-            />
-        } else {
-            return <DatePicker floatingLabelText={PowerLocalize.get('Project.EndDate')}
-                               style={{width: "80%", float: "left"}}
-                               value={this.state.project.endDate()}
-                               onChange={this.changeEndDate}
-                               fullWidth={true}
-                               formatDate={formatToShortDisplay}
-            />
-        }
-    };
-
     private getEndDateButtonIconName = () => {
         if(isNullOrUndefined(this.state.project.endDate())) {
             return "date_range";
@@ -202,44 +205,31 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
     private handleEndDateButtonClick = () => {
         if(isNullOrUndefined(this.state.project.endDate())) {
-            this.changeEndDate(null, new Date());
+            this.changeEndDate( new Date());
         } else {
-            this.changeEndDate(null, null);
+            this.changeEndDate( null);
         }
     };
 
 
     public render () {
+        {console.log("endRender_project(brokerAC): ",this.state.brokerACValue);}
         return (
             <Dialog
                 open={this.props.open}
-                modal={true}
-                onRequestClose={this.props.onClose}
-                autoScrollBodyContent={true}
-                title={PowerLocalize.get('ProjectDialog.Title')}
-                actions={[
-                    (<IconButton
-                        iconClassName="material-icons icon-size-20"
-                        onClick={this.handleSaveButtonPress}
-                        tooltip={PowerLocalize.get('Action.Save')}
-                    >
-                        save
-                    </IconButton>),
-                    (<IconButton
-                        iconClassName="material-icons icon-size-20"
-                        onClick={this.handleCloseButtonPress}
-                        tooltip={PowerLocalize.get('Action.Exit')}
-                    >
-                        close
-                    </IconButton>)]}
+                onClose={this.props.onClose}
+                scroll={'paper'}
+                fullWidth
                 >
+                <DialogTitle><Typography >{PowerLocalize.get('ProjectDialog.Title')}</Typography></DialogTitle>
+                <DialogContent>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <TextField
-                                    floatingLabelText={PowerLocalize.get('ProjectName.Singular')}
+                                    label={PowerLocalize.get('ProjectName.Singular')}
                                     value={this.state.project.name()}
                                     id={'Project.Name.' + this.state.project.id}
-                                    onChange={this.changeName}
+                                    onChange={() => this.changeName}
                                     fullWidth={true}
                                 />
                             </div>
@@ -247,43 +237,55 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                         </div>
                         <div className="row">
                             <div className="col-md-5 col-sm-5 col-md-offset-1">
-                                <DatePicker floatingLabelText={PowerLocalize.get('Project.StartDate')}
-                                            value={this.state.project.startDate()}
-                                            onChange={this.changeStartDate}
-                                            fullWidth={true}
-                                            formatDate={formatToShortDisplay}
+                                <DatePicker
+                                    label={PowerLocalize.get('Project.StartDate')}
+                                    value={this.state.project.startDate()}
+                                    onChange={this.changeStartDate}
                                 />
                             </div>
                             <div className="col-md-5 col-sm-5 ">
-                                <IconButton
-                                    style={{width: "20%", float:"left", marginTop: "20px"}}
-                                    iconClassName="material-icons"
-                                    onClick={this.handleEndDateButtonClick}
-                                >
-                                    {this.getEndDateButtonIconName()}
-                                </IconButton>
-                                {this.renderEndDateChoice()}
+                                <DatePicker
+                                    label={PowerLocalize.get('Project.EndDate')}
+                                    value={this.state.project.endDate()}
+                                    onChange={this.changeEndDate}
+                                    showTodayButton
+                                    todayLabel={PowerLocalize.get("Today")}
+                                />
                             </div>
-
                         </div>
                         <div className="row">
                             <div className="col-md-5 col-sm-6 col-md-offset-1">
                                 <div className="col-md-5 col-sm-6">
-                                    <AutoComplete
+                                    {/*
+                                     <AutoComplete
                                         id={'ProjectDialog.EndCustomer.' + this.props.project.id}
-                                        floatingLabelText={PowerLocalize.get('Broker.Singular')}
+                                        label={PowerLocalize.get('Broker.Singular')}
                                         value={this.state.brokerACValue}
                                         searchText={this.state.brokerACValue}
                                         dataSource={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
-                                        onUpdateInput={(txt) => {this.setState({brokerACValue: txt})}}
+                                        onUpdateInput={(txt:any) => {this.setState({brokerACValue: txt})}}
                                         onNewRequest={this.handleBrokerRequest}
                                         filter={AutoComplete.fuzzyFilter}
+                                    />
+                                    <TextField
+                                        id={'ProjectDialog.EndCustomer.' + this.props.project.id}
+                                        label={PowerLocalize.get('Broker.Singular')}
+                                        onChange={(e:any) => this.setState({brokerACValue: e.target.value})}
+                                        value={""}
+                                    />
+                                    */}
+
+                                    <AutoSuggest
+                                        data={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
+                                        searchTerm={this.state.brokerACValue}
+                                        onSearchChange={this.handleBrokerChange}
+                                        onSelect={this.handleBrokerSelect}
                                     />
                                 </div>
                             </div>
                             <div className="col-md-5 col-sm-6">
-                                <AutoComplete
-                                    floatingLabelText={PowerLocalize.get('Customer.Singular')}
+                                {/*<AutoComplete
+                                    label={PowerLocalize.get('Customer.Singular')}
                                     id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                     value={this.state.clientACValue}
                                     searchText={this.state.clientACValue}
@@ -292,13 +294,20 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                     onUpdateInput={this.handleEndCustomerInput}
                                     onNewRequest={this.handleEndCustomerRequest}
                                     filter={AutoComplete.fuzzyFilter}
+                                />*/}
+
+                                <TextField
+                                    label={PowerLocalize.get('Customer.Singular')}
+                                    id={'ProjectDialog.EndCustomer.' + this.props.project.id}
+                                    onChange={() => this.handleEndCustomerInput}
+                                    value={""}
                                 />
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-md-offset-1 col-md-10">
-                                <ChipInput
-                                    floatingLabelText={PowerLocalize.get('Project.Dialog.Roles.Title')}
+                                {/*<ChipInput
+                                    label={PowerLocalize.get('Project.Dialog.Roles.Title')}
 
                                     value={this.state.roles.toArray()}
                                     dataSource={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
@@ -306,26 +315,35 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                     onRequestAdd={this.handleAddRole}
                                     onRequestDelete={this.handleRemoveRole}
                                     filter={AutoComplete.fuzzyFilter}
-                                />
+                                />*/}
+                                {this.state.roles.map(data => {
+
+                                    //TODO ChipInput
+                                    return( <Chip
+                                       key={data}
+                                       label={data}
+                                       //onDelete={this.handleDeleteChip(data)}
+                                    />)
+                                })}
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-md-offset-1 col-md-10">
                                 <TextField
-                                    floatingLabelText={PowerLocalize.get('ProjectDialog.Description.LabelText')}
+                                    label={PowerLocalize.get('ProjectDialog.Description.LabelText')}
                                     fullWidth = {true}
-                                    multiLine={true}
+                                    multiline={true}
                                     rows={4}
                                     value={this.state.project.description()}
                                     id={'Project.Description.' + this.state.project.id()}
-                                    onChange={this.changeDescription}
+                                    onChange={() => this.changeDescription}
                                 />
                             </div>
                         </div>
 
                         <div className="row mui-margin">
                             <div className="col-md-10  col-md-offset-1">
-                                <Subheader>Skills</Subheader>
+                                <ListSubheader>Skills</ListSubheader>
                                 <AddSkillDialog
                                     onOpen={() => this.props.onOpenAddSkill(this.props.project.id())}
                                 />
@@ -340,6 +358,25 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 </div>
                             </div>
                         </div>
+                </DialogContent>
+                <DialogActions>
+                    <Tooltip title={PowerLocalize.get('Action.Save')}>
+                        <IconButton
+                        className="material-icons icon-size-20"
+                        onClick={this.handleSaveButtonPress}
+                        >
+                            save
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title={PowerLocalize.get('Action.Exit')}>
+                        <IconButton
+                        className="material-icons icon-size-20"
+                        onClick={this.handleCloseButtonPress}
+                        >
+                            close
+                        </IconButton>
+                    </Tooltip>
+                </DialogActions>
             </Dialog>
         );
     }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import * as Immutable from 'immutable';
-import {List, ListItem, Paper} from 'material-ui';
+import {List, ListItem, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {getSearchSkill, postFindConsultantBySkills} from '../../../API_CONFIG';
 import {APISkill} from '../../../model/APIProfile';
@@ -110,7 +110,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
             <div className="row" style={{paddingLeft: "20px"}}>
                 <ChipInput
                     className="col-md-7 "
-                    floatingLabelText={PowerLocalize.get('Search.Consultant.BySkill.Label')}
+                    label={PowerLocalize.get('Search.Consultant.BySkill.Label')}
                     value={this.state.currentSearchSkills.toArray()}
                     dataSource={this.state.currentSuggestSkills}
                     style={{'width': '100%'}}

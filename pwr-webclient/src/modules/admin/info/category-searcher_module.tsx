@@ -1,25 +1,25 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {AutoComplete, Dialog, List, ListItem, makeSelectable, TextField} from 'material-ui';
-import {ReactUtils} from '../../../utils/ReactUtils';
+import {Dialog, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
 import {SkillStore} from '../../../model/skill/SkillStore';
-import wrapSelectableList = ReactUtils.wrapSelectableList;
+import {StringUtils} from '../../../utils/StringUtil';
+import filterFuzzy = StringUtils.filterFuzzy;
 
 
-let SelectableList = wrapSelectableList(makeSelectable(List));
+// TODO (fixed?) AutoComplete auf dem Kategorie-Feld
 
 interface CategorySearcherProps {
     categories: Array<SkillCategory>;
     open: boolean;
-    onRequestClose(): void;
+    onClose(): void;
     onSelectCategory(categoryId: number): void;
     skillStore: SkillStore;
 }
 
 interface CategorySearcherLocalState {
-    selected: number;
+    selectedCategoryId: number;
     filterText: string;
 }
 
@@ -29,7 +29,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     constructor(props: CategorySearcherProps) {
         super(props);
         this.state = {
-            selected: -1,
+            selectedCategoryId: -1,
             filterText: ''
         };
     }
@@ -37,7 +37,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     componentDidUpdate(oldProps: CategorySearcherProps) {
         if(oldProps.open === false && this.props.open === true) {
             this.setState({
-                selected: -1,
+                selectedCategoryId: -1,
                 filterText: ''
             })
         }
@@ -45,8 +45,11 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
 
     private mapListItem = (category: SkillCategory) => {
         return  <ListItem
+            button
             value={category.id()}
             key={category.id()}
+            onSelect={() => this.handleSelect(category.id())}
+            className={this.state.selectedCategoryId === category.id() ? "pwr-selected-list-item " : ""}
         >
             <div>
                 <span style={{fontWeight: "bold"}}>{category.qualifier()}</span><br/>
@@ -55,24 +58,24 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
         </ListItem>;
     };
 
-    private handleSelect = (event: any, index: number) => {
+    private handleSelect = (categoryID: number) => {
         this.setState({
-            selected: index
+            selectedCategoryId: categoryID
         });
-        console.log("selected", index);
-        this.props.onSelectCategory(index);
+        this.props.onSelectCategory(categoryID);
     };
 
-    private handleFilterTextChange = (event: any, value: string) => {
+    private handleFilterTextChange = (event: any) => {
         this.setState({
-                filterText: value
+            filterText: event.target.value
         });
     };
+
 
     private renderCategories = () => {
         let categories = this.props.categories;
         if(this.state.filterText !== "") {
-            categories = categories.filter(categorie => AutoComplete.fuzzyFilter(this.state.filterText, categorie.qualifier()));
+            categories = categories.filter(category => filterFuzzy(this.state.filterText, category.qualifier()));
         }
         categories.sort(Comparators.compareCategories);
         return categories.map(this.mapListItem);
@@ -81,19 +84,18 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     render() {
         return (<Dialog
             open={this.props.open}
-            onRequestClose={this.props.onRequestClose}
+            onClose={this.props.onClose}
+            aria-labelledby="category-search-dlg-title"
         >
+            <DialogTitle id="category-search-dlg-title">Kategorie Suchen</DialogTitle>
             <TextField
-                floatingLabelText={PowerLocalize.get("Action.Search")}
+                label={PowerLocalize.get("Action.Search")}
                 value={this.state.filterText}
                 onChange={this.handleFilterTextChange}
             />
-            <SelectableList selectedIndex={this.state.selected}
-                            onSelect={this.handleSelect}
-                            style={{maxHeight: "400px", overflow: "auto"}}
-            >
+            <List style={{maxHeight: "400px", overflow: "auto"}}>
                 {this.renderCategories()}
-            </SelectableList>
+            </List>
         </Dialog>);
     }
 }

@@ -3,9 +3,8 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ProfileElementType} from '../../../../../Store';
-import {AutoComplete, DatePicker, Dialog, IconButton, TextField} from 'material-ui';
+import {Dialog, IconButton, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {CareerEntry} from '../../../../../model/CareerEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
@@ -13,6 +12,15 @@ import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import AutoSuggest from '../../../../general/auto-suggest_module';
+import {DatePicker} from 'material-ui-pickers';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
 
 
 /**
@@ -48,6 +56,7 @@ interface CareerEntryDialogLocalProps {
 interface CareerEntryDialogLocalState {
     careerEntry: CareerEntry;
     autoCompleteValue: string;
+    searchResult: string;
 }
 
 /**
@@ -66,7 +75,8 @@ class CareerEntryDialogModule extends React.Component<
         super(props);
         this.state = {
             careerEntry: props.careerEntry,
-            autoCompleteValue: NameEntityUtil.getNullTolerantName(props.careerEntry.nameEntityId(), props.careers)
+            autoCompleteValue: NameEntityUtil.getNullTolerantName(props.careerEntry.nameEntityId(), props.careers),
+            searchResult: "",
         };
     }
 
@@ -86,14 +96,13 @@ class CareerEntryDialogModule extends React.Component<
         this.props.requestClose();
     };
 
-    private changeStartDate = (evt: any, date: Date) => {
+    private changeStartDate = (date: Date) => {
         this.setState({
             careerEntry: this.state.careerEntry.startDate(date)
         });
     };
 
-    private changeEndDate = (evt: any, date: Date) => {
-        console.log(date);
+    private changeEndDate = (date: Date) => {
         this.setState({
             careerEntry: this.state.careerEntry.endDate(date)
         });
@@ -107,6 +116,8 @@ class CareerEntryDialogModule extends React.Component<
     };
 
     private saveAndExit = () => {
+        console.log("exit: ", this.state.autoCompleteValue,this.state.careerEntry);
+
         let name: string = this.state.autoCompleteValue;
         let career: NameEntity = ProfileStore.findNameEntityByName(name, this.props.careers);
         let careerEntry: CareerEntry = this.state.careerEntry;
@@ -131,64 +142,61 @@ class CareerEntryDialogModule extends React.Component<
 
     private handleEndDateButtonClick = () => {
         if(isNullOrUndefined(this.state.careerEntry.endDate())) {
-            this.changeEndDate(null, new Date());
+            this.changeEndDate(new Date());
         } else {
-            this.changeEndDate(null, null);
+            this.changeEndDate( null);
         }
+    };
+
+
+    private handleOnSelect = (value:string) => {
+      // den wert speicher und popper schließen
+        //console.log("AutoValue: ", this.state.searchResult);
+
+        this.setState({
+            searchResult: value,
+        })
     };
 
     private renderEndDateChoice = () => {
-        if(isNullOrUndefined(this.state.careerEntry.endDate())) {
-            return <TextField
-                style={{width: '80%', float: 'left'}}
-                floatingLabelText={PowerLocalize.get('End')}
-                disabled={true}
-                value={PowerLocalize.get('Today')}
-            />;
-        } else {
             return <DatePicker
-                style={{width: '80%', float: 'left'}}
-                floatingLabelText={PowerLocalize.get('End')}
+                label={PowerLocalize.get('End')}
                 id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
-                container="inline"
                 value={this.state.careerEntry.endDate()}
                 onChange={this.changeEndDate}
-                formatDate={formatToShortDisplay}
+                showTodayButton
+                todayLabel={PowerLocalize.get('Today')}
+                format = "DD.MM.YYYY"
             />;
-        }
     };
 
     render() {
-        return (<Dialog
+        //console.log("render_Career: ",this.state.autoCompleteValue);
+        return <Dialog
             open={this.props.open}
-            modal={false}
-            title={PowerLocalize.get('CareerEntry.Dialog.Title')}
-            onRequestClose={this.closeDialog}
-            autoScrollBodyContent={true}
-            actions={[
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.saveAndExit} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.resetAndExit} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]
-            }
+            //title={PowerLocalize.get('CareerEntry.Dialog.Title')}
+            onClose={this.closeDialog}
+            scroll={'paper'}
+            fullWidth
         >
+            <DialogTitle>
+                <Typography>{PowerLocalize.get('CareerEntry.Dialog.Title')}</Typography>
+            </DialogTitle>
+            <DialogContent>
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                    <DatePicker
-                        floatingLabelText={PowerLocalize.get('Begin')}
-                        id={'CareerEntry.Dialog.StartDate' + this.props.careerEntry.id()}
-                        container="inline"
-                        value={this.state.careerEntry.startDate()}
-                        onChange={this.changeStartDate}
-                        formatDate={formatToShortDisplay}
-                    />
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <DatePicker
+                            autoOk
+                            label={"Start Date"}
+                            value={this.state.careerEntry.startDate()}
+                            onChange={this.changeStartDate}
+                            format = "DD.MM.YYYY"
+                        />
+                    </MuiPickersUtilsProvider>
+
                 </div>
                 <div className="col-md-5 col-sm-6">
-                    <IconButton
-                        style={{width: '20%', float:'left', marginTop: '20px'}}
-                        iconClassName="material-icons"
-                        onClick={this.handleEndDateButtonClick}
-                    >
-                        {this.getEndDateButtonIconName()}
-                    </IconButton>
                     {this.renderEndDateChoice()}
 
                 </div>
@@ -196,9 +204,15 @@ class CareerEntryDialogModule extends React.Component<
 
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                    <AutoSuggest
+                        data={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
+                        searchTerm={this.state.autoCompleteValue}
+                        onSearchChange={this.handleAutoCompleteInput}
+                        onSelect={this.handleOnSelect}
+                    />
 
-                    <AutoComplete
-                        floatingLabelText={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
+                    {/*}TODO <AutoComplete
+                        label={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
                         id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}
                         value={this.state.autoCompleteValue}
                         searchText={this.state.autoCompleteValue}
@@ -206,10 +220,20 @@ class CareerEntryDialogModule extends React.Component<
                         onUpdateInput={this.handleAutoCompleteInput}
                         onNewRequest={this.handleAutoCompleteInput}
                         filter={AutoComplete.fuzzyFilter}
-                    />
+                    />*/}
+
                 </div>
             </div>
-        </Dialog>);
+            </DialogContent>
+            <DialogActions>
+                <Tooltip title={PowerLocalize.get('Action.Save')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit}>save</IconButton>
+                </Tooltip>
+                <Tooltip title={PowerLocalize.get('Action.Exit')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.resetAndExit}>close</IconButton>
+                </Tooltip>
+            </DialogActions>
+        </Dialog>
     }
 }
 

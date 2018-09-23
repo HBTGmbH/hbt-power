@@ -6,13 +6,18 @@ import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {ViewSkill} from '../../../model/view/ViewSkill';
 import {ViewProfileEntries} from './entries/view-profile-entries_module';
-import {Card, CardText, CardTitle, Subheader} from 'material-ui';
+import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
 import {EntryRenderers} from './entries/EntryRenderers';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
 import {isNullOrUndefined} from 'util';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
+import Icon from '@material-ui/core/Icon/Icon';
+import Typography from '@material-ui/core/Typography/Typography';
 
 interface ViewProfileSkillOverviewProps {
     viewProfile: ViewProfile;
@@ -119,16 +124,13 @@ class ViewProfileSkillOverviewModule extends React.Component<
         let res: Array<JSX.Element> = [];
         res.push(
             <td key={'ViewCategory_' + entry.name}>
-                <Card>
-                    <CardTitle
-                        title={entry.name}
-                        actAsExpander={true}
-                        subtitle={entry.displaySkills.length + ' Skills'}
-                    />
-                    <CardText
-                        expandable={true}
-                    >
-                        <Subheader>Skills</Subheader>
+                <ExpansionPanel>
+                    <ExpansionPanelSummary expandIcon={<Icon className={'material-ui'}>arrow_down</Icon>}>
+                        <Typography style={{flexBasis:'33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography variant={'caption'}>{entry.displaySkills.length + ' Skills'}</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+
                         <ViewProfileEntries
                             movableEntryType="SKILL"
                             toggleableEntryType="SKILL"
@@ -148,13 +150,14 @@ class ViewProfileSkillOverviewModule extends React.Component<
                                     label="Rating"
                                     containerIndex={entryIndex}
                                 />
-                                ]}
+                            ]}
                             entries={entry.displaySkills}
                             onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('DISPLAY_CATEGORY', entryIndex, type, sourceIndex, targetIndex)}
                             onToggle={(type, index, isEnabled) => this.handleSkillToggle(entry.displaySkills, index, isEnabled)}
                         />
-                    </CardText>
-                </Card>
+
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
             </td>);
         return res;
     };
@@ -166,7 +169,7 @@ class ViewProfileSkillOverviewModule extends React.Component<
                     <EditViewSkillDialog
                         skill={this.state.editSkill}
                         open={this.state.editSkillOpen}
-                        onRequestClose={this.closeEditSkillDialog}
+                        onClose={this.closeEditSkillDialog}
                         viewProfile={this.props.viewProfile}
                         onSetDisplayCategory={this.handleChangeDisplayCategory}
                     />

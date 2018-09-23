@@ -1,12 +1,13 @@
 import * as React from 'react';
-import {Dialog, FlatButton, TextField} from 'material-ui';
+import {Button, Dialog, DialogContent, DialogTitle, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
 interface SetValueDialogProps {
     open: boolean;
-    onRequestClose(): void;
+    onClose(): void;
     onOk(value: string): void;
-    floatingLabelText?: string;
+    label?: string;
 }
 
 interface SetValueDialogState {
@@ -16,7 +17,7 @@ interface SetValueDialogState {
 export class SetValueDialog extends React.Component<SetValueDialogProps, SetValueDialogState> {
 
     public static defaultProps: Partial<SetValueDialogProps> = {
-        floatingLabelText: ""
+        label: ""
     };
 
     constructor(props: SetValueDialogProps) {
@@ -36,26 +37,32 @@ export class SetValueDialog extends React.Component<SetValueDialogProps, SetValu
     render() {
         return (<Dialog
             open={this.props.open}
-            onRequestClose={this.props.onRequestClose}
-            actions={[
-                <FlatButton
-                    primary={true}
-                    label={PowerLocalize.get('Action.OK')}
+            onClose={this.props.onClose}
+            aria-labelledby="form-dialog-title"
+        >
+            <DialogTitle id="form-dialog-title">{this.props.label}</DialogTitle>
+            <DialogContent>
+                <TextField
+                    label={this.props.label}
+                    onChange={(e) => this.setState({value: e.target.value})}
+                    value={this.state.value}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant={'flat'}
+                    color={'primary'}
                     onClick={this.invokeOk}
 
-                />,
-                <FlatButton
-                    secondary={true}
-                    label={PowerLocalize.get('Action.Close')}
-                    onClick={this.props.onRequestClose}
-                />
-            ]}
-        >
-            <TextField
-                floatingLabelText={this.props.floatingLabelText}
-                onChange={(e, v) => this.setState({value: v})}
-                value={this.state.value}
-            />
+                >
+                    {PowerLocalize.get('Action.OK')}
+                </Button>
+                <Button
+                    variant={'flat'}
+                    color={'secondary'}
+                    onClick={this.props.onClose}
+                >{PowerLocalize.get('Action.Close')}</Button>
+            </DialogActions>
         </Dialog>);
     }
 }

@@ -65,7 +65,9 @@ export namespace SkillReducer {
     }
 
     export function reduce(skillStore: SkillStore, action: AbstractAction): SkillStore {
-        if(isNullOrUndefined(skillStore)) return SkillStore.empty();
+        if(isNullOrUndefined(skillStore)) {
+            return SkillStore.empty();
+        }
         switch(action.type) {
             case ActionType.BatchAddSkills: {
                 let act = action as BatchAddSkillsAction;

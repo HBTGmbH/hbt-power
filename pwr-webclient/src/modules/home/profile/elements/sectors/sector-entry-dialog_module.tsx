@@ -1,14 +1,19 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {AutoComplete, Dialog, IconButton} from 'material-ui';
+import {Dialog, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {SectorEntry} from '../../../../../model/SectorEntry';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
-
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import TextField from '@material-ui/core/TextField/TextField';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
+import Typography from '@material-ui/core/Typography/Typography';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 
 interface SectorEntryDialogProps {
     /**
@@ -101,16 +106,18 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
         return (
             <Dialog
                 open={this.props.open}
-                modal={false}
-                onRequestClose={this.closeDialog}
+                onClose={this.closeDialog}
                 title={PowerLocalize.get('SectorEntry.Dialog.Title')}
-                actions={[<IconButton iconClassName="material-icons icon-size-20" onClick={this.handleSaveButtonPress} tooltip={PowerLocalize.get('Action.Save')}>save</IconButton>,
-                    <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleCloseButtonPress} tooltip={PowerLocalize.get('Action.Exit')}>close</IconButton>]}
+                fullWidth
             >
+                <DialogTitle>
+                    <Typography >{PowerLocalize.get('SectorEntry.Dialog.Title')}</Typography>
+                </DialogTitle>
+                <DialogContent>
                 <div className="row">
-                    <div className="col-md-offset-3">
-                        <AutoComplete
-                            floatingLabelText={PowerLocalize.get('Sector.Singular')}
+                    <div>
+                        {/*} TODO <AutoComplete
+                            label={PowerLocalize.get('Sector.Singular')}
                             id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
                             value={this.state.sectorEntryValue}
                             searchText={this.state.sectorEntryValue}
@@ -118,9 +125,23 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                             onUpdateInput={this.handleSectorFieldInput}
                             onNewRequest={this.handleSectorFieldRequest}
                             filter={AutoComplete.fuzzyFilter}
+                        />*/}
+                        <TextField
+                            label={PowerLocalize.get('Sector.Singular')}
+                            id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
+                            value={this.state.sectorEntryValue}
                         />
                     </div>
                 </div>
+                </DialogContent>
+                <DialogActions>
+                    <Tooltip title={PowerLocalize.get('Action.Save')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>
+                    </Tooltip>
+                    <Tooltip title={PowerLocalize.get('Action.Exit')}>
+                        <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} >close</IconButton>
+                    </Tooltip>
+                </DialogActions>
             </Dialog>
         );
     }

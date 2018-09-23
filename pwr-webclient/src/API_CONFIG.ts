@@ -318,8 +318,8 @@ export namespace ViewProfileService {
         return patchBase(initials, id) + container + "/" + containerIndex + "/" + SortableEntryType[entryType] + "/" + field + "/order";
     }
 
-    export function postReport(initials: string, viewProfileId: string) {
-        return base() +  "/view/" + initials + "/view/" + viewProfileId + "/report";
+    export function postReport(initials: string, viewProfileId: string, templateId : string) {
+        return base() +  "/view/" + initials + "/view/" + viewProfileId + "/" + templateId + "/report";
     }
 
     export function patchPartialUpdate(initials: string, viewProfileId: string) {
@@ -334,4 +334,18 @@ export namespace ViewProfileService {
         return base() + "/meta/info";
     }
 
+}
+
+export namespace TemplateService{
+    function base() {
+        return POWER_API_HOST_VIEW + ":" + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
+    }
+
+    export function getTemplates(){
+        return base()+ "/view/template"
+    }
+
+    export function getTemplateById(id: string){
+        return base() + "/view/template" + "/" + id;
+    }
 }

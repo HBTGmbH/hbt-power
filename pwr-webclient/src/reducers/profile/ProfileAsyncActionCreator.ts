@@ -30,6 +30,7 @@ import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model
 import * as Cookies from 'js-cookie';
 import {ProfileServiceError} from '../../model/ProfileServiceError';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
+import {TemplateActionCreator} from '../template/TemplateActionCreator';
 
 export class ProfileAsyncActionCreator {
 
@@ -50,7 +51,7 @@ export class ProfileAsyncActionCreator {
 
     public static requestAllNameEntities() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
-            console.log("Requesting all.",{});
+            //console.log("Requesting all.",{});
             dispatch(ProfileAsyncActionCreator.requestQualifications());
             dispatch(ProfileAsyncActionCreator.requestLanguages());
             dispatch(ProfileAsyncActionCreator.requestEducations());
@@ -198,6 +199,7 @@ export class ProfileAsyncActionCreator {
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                 dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
+                dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                 Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
                 if(!isNullOrUndefined(navTarget)) {
                     dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));

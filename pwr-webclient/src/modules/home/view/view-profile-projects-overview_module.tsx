@@ -4,7 +4,7 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
-import {Card, CardMedia, CardTitle, FlatButton, Subheader} from 'material-ui';
+import {Card, CardMedia, CardHeader, Button, ListSubheader} from '@material-ui/core';
 import {ViewProfileEntries} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewProject} from '../../../model/view/ViewProject';
@@ -12,6 +12,10 @@ import {ViewSkill} from '../../../model/view/ViewSkill';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EntryRenderers} from './entries/EntryRenderers';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography/Typography';
 
 
 interface ViewProfileProjectsOverviewProps {
@@ -87,16 +91,16 @@ class ViewProfileProjectsOverviewModule extends React.Component<
         let res: Array<JSX.Element> = [];
         res.push(
             <td key={'ViewProject_' + entry.name + entry.broker + entry.client}>
-                <Card>
-                    <CardTitle
+                <ExpansionPanel>
+                    <ExpansionPanelSummary
                         title={entry.name}
-                        actAsExpander={true}
-                        subtitle={'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}
-                    />
-                    <CardMedia
-                        expandable={true}
                     >
-                        <Subheader>Skills</Subheader>
+                        <Typography style={{flexBasis:'33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography  variant={'caption'}>{'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails
+                    >
+                        <ListSubheader>Skills</ListSubheader>
                         <ViewProfileEntries
                             movableEntryType="SKILL"
                             toggleableEntryType="SKILL"
@@ -120,7 +124,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                             onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', entryIndex, type, sourceIndex, targetIndex)}
                             onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', entryIndex, type, index, isEnabled)}
                         />
-                        <Subheader>Project Roles</Subheader>
+                        <ListSubheader>Project Roles</ListSubheader>
                         <ViewProfileEntries
                             movableEntryType="ROLE"
                             toggleableEntryType="ROLE"
@@ -131,8 +135,8 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                             onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', entryIndex, type, sourceIndex, targetIndex)}
                             onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', entryIndex, type, index, isEnabled)}
                         />
-                    </CardMedia>
-                </Card>
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
             </td>);
         return res;
     };
@@ -146,7 +150,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                     toggleableEntryType="PROJECT"
                     renderEntry={this.renderProjects}
                     headers={[<span>
-                                <FlatButton label="Name" disabled={true}/>
+                        <Button variant={'flat'} disabled={true}>Name</Button>
                                 {EntryRenderers.renderStartDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
                                 {EntryRenderers.renderEndDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
                             </span>]}

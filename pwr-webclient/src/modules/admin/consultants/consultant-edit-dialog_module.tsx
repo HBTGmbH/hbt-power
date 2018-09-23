@@ -2,11 +2,13 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {Dialog, FlatButton} from 'material-ui';
+import {Button, Dialog, DialogActions} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 
 /**
  * Properties that are managed by react-redux.
@@ -30,7 +32,7 @@ interface ConsultantEditDialogProps {
 interface ConsultantEditDialogLocalProps {
     initials: string;
     show: boolean;
-    onRequestClose(): void;
+    onClose(): void;
 }
 
 /**
@@ -64,7 +66,6 @@ class ConsultantEditDialogModule extends React.Component<
             editDisabled: false,
             consultantInfo: props.consultantInfo,
         };
-        console.log(this.state);
     }
 
 
@@ -112,20 +113,13 @@ class ConsultantEditDialogModule extends React.Component<
     };
 
     private setBirthDate = (val: Date) => {
-        console.log("date:", val);
-        console.log("toISOString:", val.toISOString());
-        console.log("toLocaleString:", val.toLocaleString());
-        console.log("toLocaleDateString:", val.toLocaleDateString());
-        console.log("toLocaleTimeString:", val.toLocaleTimeString());
-        console.log("toUTCString:", val.toUTCString());
-        console.log("toTimeString:", val.toTimeString());
         this.setState({
             consultantInfo: this.state.consultantInfo.birthDate(val)
         })
     };
 
     private closeDialog = () => {
-        this.props.onRequestClose();
+        this.props.onClose();
     };
 
     private resetAndClose = () => {
@@ -142,21 +136,35 @@ class ConsultantEditDialogModule extends React.Component<
 
     private readonly dialogActions = [
 
-        <FlatButton
-            label={PowerLocalize.get("Action.Save")}
-            primary={true}
+        <Button
+            key="save"
+            variant={'raised'}
+            color={'primary'}
             onClick={this.saveAndClose}
-        />,
-        <FlatButton
-            label={PowerLocalize.get("ConsultantTile.EditProfile")}
-            primary={true}
+            style={{width:'30%', height:'10%'}}
+        >
+            {PowerLocalize.get("Action.Save")}
+        </Button>,
+
+        <Button
+            key="edit"
+            variant={'raised'}
+            color={'primary'}
             onClick={() => {this.props.redirectToUser(this.props.initials)}}
-        />,
-        <FlatButton
-            label={PowerLocalize.get("Action.Exit")}
-            primary={true}
+            style={{width:'30%', height:'10%'}}
+        >
+            {PowerLocalize.get("ConsultantTile.EditProfile")}
+            </Button>,
+
+        <Button
+            variant={'raised'}
+            color={'primary'}
             onClick={this.resetAndClose}
-        />,
+            key="exit"
+            style={{width:'30%', height:'10%'}}
+        >
+            {PowerLocalize.get("Action.Exit")}
+        </Button>,
     ];
 
     render() {
@@ -164,21 +172,26 @@ class ConsultantEditDialogModule extends React.Component<
             <Dialog
                 title={PowerLocalize.get('ConsultantTile.EditConsultant')}
                 open={this.props.show}
-                actions={this.dialogActions}
-                onRequestClose={this.closeDialog}
+                onClose={this.closeDialog}
             >
-                <ConsultantEditFields
-                    firstName = {this.state.consultantInfo.firstName()}
-                    lastName = {this.state.consultantInfo.lastName()}
-                    title = {this.state.consultantInfo.title()}
-                    birthDate={this.state.consultantInfo.birthDate()}
-                    active={this.state.consultantInfo.active()}
-                    onFirstNameChange={this.setFirstName}
-                    onLastNameChange={this.setLastName}
-                    onTitleChange={this.setTitle}
-                    onBirthDateChange={this.setBirthDate}
-                    onActiveChange={this.setActive}
-                />
+                <DialogTitle>{PowerLocalize.get('ConsultantTile.EditConsultant')}</DialogTitle>
+                <DialogContent>
+                    <ConsultantEditFields
+                        firstName = {this.state.consultantInfo.firstName()}
+                        lastName = {this.state.consultantInfo.lastName()}
+                        title = {this.state.consultantInfo.title()}
+                        birthDate={this.state.consultantInfo.birthDate()}
+                        active={this.state.consultantInfo.active()}
+                        onFirstNameChange={this.setFirstName}
+                        onLastNameChange={this.setLastName}
+                        onTitleChange={this.setTitle}
+                        onBirthDateChange={this.setBirthDate}
+                        onActiveChange={this.setActive}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    {this.dialogActions}
+                </DialogActions>
             </Dialog>
         </div>);
     }

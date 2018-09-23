@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {RequestStatus} from '../../Store';
-import {CircularProgress, FontIcon, Snackbar} from 'material-ui';
+import {CircularProgress, Icon, Snackbar} from '@material-ui/core';
 
 interface RequestSnackbarProps {
     APIRequestStatus: RequestStatus;
@@ -10,24 +10,28 @@ interface RequestSnackbarState {
 
 }
 
+//  (Provisorisch verbessert )Snackbox muss wieder verschwinden -mp
+
 export class RequestSnackbar extends React.Component<RequestSnackbarProps, RequestSnackbarState> {
 
-    private static renderSingleSnackbar(requestStatus: RequestStatus) {
+
+
+    private static renderSingleSnackbar(requestStatus: RequestStatus, open : boolean) {
         let msgSuccess: JSX.Element = (
             <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'green', fontSize: 45}}>done</FontIcon>
+                <Icon className="material-icons" style={{color: 'green', fontSize: 45}}>done</Icon>
             </div>
         );
-
+// col-md-offset-5   col-md-2
         let msgFail: JSX.Element = (
             <div className="row">
-                <FontIcon className="material-icons col-md-2 col-md-offset-5" style={{color: 'red', fontSize: 45}}>error</FontIcon>
+                <Icon className="material-icons " style={{color: 'red', fontSize: 45}}>error</Icon>
             </div>
         );
 
         let msgPending: JSX.Element = (
             <div className="row">
-                <div className="col-md-2 col-md-offset-5">
+                <div className="">
                     <CircularProgress size={40}/>
                 </div>
             </div>
@@ -43,12 +47,13 @@ export class RequestSnackbar extends React.Component<RequestSnackbarProps, Reque
         }
         let open = requestStatus === RequestStatus.Failiure || requestStatus === RequestStatus.Pending;
 
-        return (<Snackbar open={open} message={msg}/>);
+        return (<Snackbar open={open} autoHideDuration={300} message={msg}/>);
     }
+
 
     render() {
         return(<div>
-            {RequestSnackbar.renderSingleSnackbar(this.props.APIRequestStatus)}
+            {RequestSnackbar.renderSingleSnackbar(this.props.APIRequestStatus, this.props.APIRequestStatus !== RequestStatus.Successful)}
         </div>)
     }
 }

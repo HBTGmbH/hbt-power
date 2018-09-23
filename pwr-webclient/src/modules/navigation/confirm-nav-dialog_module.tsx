@@ -1,10 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Dialog, FlatButton} from 'material-ui';
+import {Dialog, Button} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
 interface ConfirmNavDialogProps {
     dialogOpen: boolean;
@@ -45,20 +46,24 @@ class ConfirmNavDialogModule extends React.Component<
         return (<Dialog
             open={this.props.dialogOpen}
             title={PowerLocalize.get("ConfirmNavDialog.Title")}
-            actions={[
-                <FlatButton
-                    label={PowerLocalize.get("ConfirmNavDialog.Action.NavigateAnyway")}
-                    primary={true}
-                    onClick={this.props.continueNavigation}
-                />,
-                <FlatButton
-                    label={PowerLocalize.get("ConfirmNavDialog.Action.CancelNavigation")}
-                    primary={true}
-                    onClick={this.props.dropNavigationTarget}
-                />
-            ]}
         >
             {PowerLocalize.get("ConfirmNavDialog.Content")}
+            <DialogActions>
+                <Button
+                    variant={'flat'}
+                    color={'primary'}
+                    onClick={this.props.continueNavigation}
+                >
+                    {PowerLocalize.get("ConfirmNavDialog.Action.NavigateAnyway")}
+                </Button>
+                <Button
+                    variant={'flat'}
+                    color={'primary'}
+                    onClick={this.props.dropNavigationTarget}
+                >
+                    {PowerLocalize.get("ConfirmNavDialog.Action.CancelNavigation")}
+                </Button>
+            </DialogActions>
         </Dialog>);
     }
 }

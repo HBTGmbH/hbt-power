@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FlatButton, FontIcon} from 'material-ui';
+import {Button, Icon} from '@material-ui/core';
 
 interface AscDescButtonProps {
     initial?: 'ASC'|'DESC';
@@ -52,11 +52,13 @@ export class AscDescButton extends React.Component<AscDescButtonProps, AscDescBu
      */
     render() {
         return (
-            <FlatButton
+            <Button
+                variant={'flat'}
                 onClick={this.handleButtonPress}
-                label={this.props.label}
-                labelPosition="before"
-                icon={<FontIcon className="material-icons">{this.state.currentIconName}</FontIcon>}
-            />)
+
+            >
+                <Icon className="material-icons">{this.state.currentIconName}</Icon>
+                {this.props.label}
+                </Button>)
     }
 }

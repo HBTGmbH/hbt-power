@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Avatar, FontIcon, Paper, RaisedButton} from 'material-ui';
+import {Avatar, Icon, Paper, Button} from '@material-ui/core';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
@@ -64,7 +64,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                         </span>
                 </div>
                 <div className="col-md-12 vertical-align fullWidth">
-                    <Avatar  size={80} src={getProfileImageLocation(this.props.initials)} />
+                    <Avatar  sizes={'80'} src={getProfileImageLocation(this.props.initials)} />
                 </div>
                 <div className="col-md-12 vertical-align fullWidth" style={{marginTop: "8px"}}>
                     {PowerLocalize.get("Overview.Base.LastEdited")}
@@ -73,14 +73,15 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                     {formatToFullLocalizedDateTime(this.props.lastEdited)}
                 </div>
                 <div className="col-md-12 vertical-align fullWidth">
-                    <RaisedButton
+                    <Button
+                        variant={'raised'}
                         style={{marginTop: "8px"}}
-                        label={PowerLocalize.get('Action.Edit')}
-                        labelPosition="after"
-                        primary={true}
-                        icon={ <FontIcon className="material-icons">edit</FontIcon>}
+                        color={'primary'}
                         onClick={this.handleEditButtonClick}
-                    />
+                    >
+                        <Icon className="material-icons">edit</Icon>
+                        {PowerLocalize.get('Action.Edit')}
+                        </Button>
                 </div>
             </div>
         </Paper>);

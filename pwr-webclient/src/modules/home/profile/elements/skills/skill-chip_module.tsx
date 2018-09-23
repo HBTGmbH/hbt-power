@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import {Skill} from '../../../../../model/Skill';
-import {Chip, FontIcon, IconButton} from 'material-ui';
-import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {Chip} from '@material-ui/core';
 import {StarRating} from '../../../../star-rating_module.';
+import Avatar from '@material-ui/core/Avatar/Avatar';
+import Popover from '@material-ui/core/Popover/Popover';
 
 
 /**
@@ -29,12 +30,14 @@ interface SkillChipLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface SkillChipLocalState {
-
+    anchorEl:any,
+    popoverOpen:boolean,
 }
 
 export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLocalState> {
 
     private handleRatingChange = (pos: number) => {
+        this.showInfo(null);
         this.props.onRatingChange(pos, this.props.skill.id());
     };
 
@@ -42,27 +45,43 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         this.props.onDelete(this.props.skill.id())
     };
 
-    private showInfo = () => { };
+    private showInfo = (event:any) => {
+    this.setState({
+        anchorEl:(!this.state.anchorEl)? event.currentTarget : null,
+        popoverOpen: !this.state.popoverOpen,
+    })
+    };
+
+    constructor(props:SkillChipLocalProps){
+        super(props);
+        this.state = {
+            anchorEl:null,
+            popoverOpen : false,
+        }
+    };
+
 
     render() {
         return (
-            <Chip
-                style={this.props.style}
-                className={this.props.className}
-            >
-                <div className="vertical-align" style={{maxWidth: "100%"}}>
-                    <div><span style={{color: this.props.textColor}}>{this.props.skill.name()}</span></div>
+            <div>
+                <Chip
+                    avatar={<Avatar>{this.props.skill.rating()}</Avatar>}
+                    label={this.props.skill.name()}
+                    style={this.props.style}
+                    className={this.props.className}
+                    onDelete={this.handleDelete}
+                    onClick={this.showInfo}
+                />
+                <Popover
+                    open={this.state.popoverOpen}
+                    onClose={this.showInfo}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{horizontal:'center', vertical:'bottom'}}
+                    transformOrigin={{horizontal:'center', vertical:'top'}}
+                >
                     <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
-                    <IconButton  id={"Skill.Delete." + this.props.skill.id()}
-                                 onClick={this.handleDelete}
-                                 tooltip={PowerLocalize.get("Action.Delete")}
-                                 tooltipPosition="top-right"
-                                 iconClassName="material-icons"
-                    >
-                        delete
-                    </IconButton>
-                    {this.props.skill.isNew() ? <FontIcon className="material-icons">fiber_new</FontIcon>: false}
-                </div>
-            </Chip>);
+                </Popover>
+            </div>
+        );
     }
 }

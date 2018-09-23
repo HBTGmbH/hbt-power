@@ -4,7 +4,7 @@ import * as redux from 'redux';
 import {CareerEntry} from '../../../../../model/CareerEntry';
 import {ProfileElementType} from '../../../../../Store';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {IconButton} from 'material-ui';
+import {IconButton} from '@material-ui/core';
 import {formatToYear} from '../../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -12,6 +12,7 @@ import * as Immutable from 'immutable';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {CareerEntryDialog} from './career-entry-dialog_module';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 /**
  * Properties that are managed by react-redux.
@@ -100,9 +101,13 @@ class SingleCareerEntryModule extends React.Component<
     render() {
         return (<tr>
             <td>
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.openDialog} tooltip={PowerLocalize.get('Action.Edit')}>edit</IconButton>
-                <IconButton iconClassName="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} tooltip={PowerLocalize.get('Action.Delete')}>delete</IconButton>
-                {<CareerEntryDialog
+                <Tooltip title={PowerLocalize.get('Action.Edit')} >
+                    <IconButton className="material-icons icon-size-20" onClick={this.openDialog}>edit</IconButton>
+                </Tooltip>
+                <Tooltip title={PowerLocalize.get('Action.Delete')}>
+                    <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress} >delete</IconButton>
+                </Tooltip>
+                    {<CareerEntryDialog
                     open={this.state.dialogOpen}
                     requestClose={this.closeDialog}
                     careerEntry={this.props.careerEntry}

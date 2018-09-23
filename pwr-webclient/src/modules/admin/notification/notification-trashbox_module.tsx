@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {FontIcon, RaisedButton, Tab, Table, TableBody, TableRow, TableRowColumn, Tabs} from 'material-ui';
+import {Icon, Button, Tab, Table, TableBody, TableRow, TableCell, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
@@ -9,6 +9,8 @@ import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import formatString = StringUtils.formatString;
+import Paper from '@material-ui/core/Paper/Paper';
+import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -71,18 +73,39 @@ class NotificationTrashboxModule extends React.Component<
         }
     }
 
+    private getNotificationContentString = (notification: AdminNotification) : string =>{
+        let toReturn:string = "";
+        switch (notification.type()){
+            case "SkillNotification":
+                // toReturn = formatString(PowerLocalize.get("NotificationInbox.SkillNotification.SubjectTextTemplate"),
+                //    notification.type());
+                toReturn = "Skill hinzugefügt";
+                break;
+            case "ProfileUpdatedNotification":
+               // toReturn = PowerLocalize.get("NotificationInbox.ProfileUpdateNotification.SubjectText");
+                toReturn = "Profil aktualisiert";
+                break;
+            case "ProfileEntryNotification":
+                 //toReturn = formatString(
+                 //   PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
+                 //   notification.reason().toString(),
+                 //   notification.type().toString())
+                toReturn = "Neuer Bezeichner hinzugefügt";
+                break;
+        }
+
+        return toReturn;
+
+    };
+
     private renderNotificationAsTableRow = (notification: AdminNotification) => {
         return (
-            <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()}>
-                <TableRowColumn>{notification.initials()}</TableRowColumn>
-                <TableRowColumn>
-                    {formatString(
-                        PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
-                        "TODO",
-                        "TODO")
-                    }
-                </TableRowColumn>
-                <TableRowColumn>{formatToMailDisplay(notification.occurrence())}</TableRowColumn>
+            <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()} style={{backgroundColor:'white'}}>
+                <TableCell>{notification.initials()}</TableCell>
+                <TableCell>
+                    {this.getNotificationContentString(notification)}
+                </TableCell>
+                <TableCell>{formatToMailDisplay(notification.occurrence())}</TableCell>
             </TableRow>
         )
     };
@@ -93,36 +116,42 @@ class NotificationTrashboxModule extends React.Component<
             <div>
                 <div className="row">
                     <div className="col-md-9">
-                        <RaisedButton
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.Update')}
-                            icon={<FontIcon className="material-icons">refresh</FontIcon>}
+                        <Button
+                            variant={'raised'}
+                            style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
                             onClick={() => this.props.getTrashedNotifications(this.props.username, this.props.password)}
-                        />
-                        <RaisedButton
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.FinalDelete')}
-                            icon={<FontIcon className="material-icons">delete</FontIcon>}
+                        >
+                            {PowerLocalize.get('Action.Update')}
+                            <Icon className="material-icons">refresh</Icon>
+                        </Button>
+                        <Button
+                            variant={'raised'}
+                            style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
                             onClick={() => this.props.finalDeleteTrashed(this.props.username, this.props.password)}
-                        />
+                        >
+                            {PowerLocalize.get('Action.FinalDelete')}
+                            <Icon className="material-icons">delete</Icon>
+                        </Button>
                     </div>
                 </div>
-                <Tabs>
+                <div style={{backgroundColor:'#191e55'}}>{/* TODO die richtigen Farben einfügen*/}
+                <Tabs value={0} centered fullWidth textColor={'secondary'}>
                     <Tab
-                        icon={<FontIcon className="material-icons">delete</FontIcon>}
+                        icon={<Icon className="material-icons">delete</Icon>}
                         label={PowerLocalize.get("NotificationInbox.TrashedMessages")}
                     >
-                        <Table>
-                            <TableBody
-                                displayRowCheckbox={false}
-                            >
-                                {
-                                    this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
-                                }
-                            </TableBody>
-                        </Table>
                     </Tab>
                 </Tabs>
+
+
+                <Table>
+                    <TableBody>
+                        {
+                            this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
+                        }
+                    </TableBody>
+                </Table>
+                </div>
             </div>
 
         )

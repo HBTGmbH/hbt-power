@@ -2,21 +2,24 @@ import * as React from 'react';
 import * as Immutable from 'immutable';
 import {LocalizedQualifier} from '../../../model/skill/LocalizedQualifier';
 import {
+    Button,
     Dialog,
-    FlatButton,
-    FontIcon,
+    DialogContent,
+    DialogTitle,
+    Icon,
     IconButton,
     Table,
     TableBody,
-    TableHeader,
-    TableHeaderColumn,
+    TableCell,
+    TableHead,
     TableRow,
-    TableRowColumn,
     TextField
-} from 'material-ui';
+} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {LanguageUtils} from '../../../utils/LanguageUtils';
 import {LocalizationSearcher} from './localization-searcher_module';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import ISOData = LanguageUtils.ISO639_2DataSet;
 
 interface LocalizationTableProps {
@@ -54,18 +57,18 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         return <TableRow
             key={localizedQualifier.id()}
         >
-            <TableRowColumn>{localizedQualifier.locale()}</TableRowColumn>
-            <TableRowColumn>{localizedQualifier.qualifier()}</TableRowColumn>
-            <TableRowColumn>
+            <TableCell>{localizedQualifier.locale()}</TableCell>
+            <TableCell>{localizedQualifier.qualifier()}</TableCell>
+            <TableCell>
                 <div>
                     <IconButton
-                        iconClassName="material-icons"
+                        className="material-icons"
                         onClick={() => this.props.onLocaleDelete(localizedQualifier.locale())}
                     >
                         delete
                     </IconButton>
                 </div>
-            </TableRowColumn>
+            </TableCell>
         </TableRow>;
     };
 
@@ -119,89 +122,97 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         });
         this.closeSearcher();
     };
-
+        // TODO tabelle, head anpassen
     render() {
         return (
             <div>
                 <Dialog
                     open={this.state.addOpen}
-                    onRequestClose={this.closeDialog}
-                    title={PowerLocalize.getFormatted('LocalizationTable.Title.Template', this.props.termToLocalize)}
-                    actions={[
-                        <FlatButton
-                            primary={true}
-                            label={PowerLocalize.get('Action.OK')}
+                    onClose={this.closeDialog}
+                >
+                    <DialogTitle>
+                        {PowerLocalize.getFormatted('LocalizationTable.Title.Template', this.props.termToLocalize)}
+                    </DialogTitle>
+                    <DialogContent>
+                        <LocalizationSearcher
+                            open={this.state.searcherOpen}
+                            onClose={this.closeSearcher}
+                            onSelectIsoData={this.handleSearcherSelect}
+                        />
+                        {PowerLocalize.get('LocalizationTable.Content.Description')}<br/>
+                        <Button
+                            variant={'flat'}
+                            color={'primary'}
+                            onClick={() => window.open("https://www.loc.gov/standards/iso639-2/php/code_list.php")}
+                        >
+                            {PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
+                            <Icon className="material-icons">open_in_new</Icon>
+                        </Button><br/>
+                        {PowerLocalize.get('LocalizationTable.Content.LocalizationRemarks')}
+                        <div>
+                            <div>
+                                <TextField
+                                    label={PowerLocalize.get('LocalizationTable.Input.Language')}
+                                    value={this.state.locale}
+                                    onChange={(e) => this.setLocale(e.target.value)}
+                                />
+                                <Tooltip title={PowerLocalize.get('Action.Search')}>
+                                <IconButton
+                                    className="material-icons"
+                                    onClick={this.openSearcher}
+                                >
+                                    search
+                                </IconButton>
+                                </Tooltip>
+                            </div>
+                            <div>
+                                <TextField
+                                    label={PowerLocalize.get('LocalizationTable.Input.Qualifier')}
+                                    value={this.state.qualifier}
+                                    onChange={(e) => this.setQualifier(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            variant={'flat'}
+                            color={'primary'}
                             onClick={this.invokeAdd}
 
-                        />,
-                        <FlatButton
-                            secondary={true}
-                            label={PowerLocalize.get('Action.Close')}
+                        >{PowerLocalize.get('Action.OK')}</Button>,
+                        <Button
+                            variant={'flat'}
+                            color={'secondary'}
                             onClick={this.closeDialog}
-                        />
-                    ]}
-                >
-                    <LocalizationSearcher
-                        open={this.state.searcherOpen}
-                        onRequestClose={this.closeSearcher}
-                        onSelectIsoData={this.handleSearcherSelect}
-                    />
-                    {PowerLocalize.get('LocalizationTable.Content.Description')}<br/>
-                    <FlatButton
-                        label={PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
-                        labelPosition="before"
-                        primary={true}
-                        onClick={() => window.open("https://www.loc.gov/standards/iso639-2/php/code_list.php")}
-                        icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
-                    /><br/>
-                    {PowerLocalize.get('LocalizationTable.Content.LocalizationRemarks')}
-                    <div>
-                        <div>
-                            <TextField
-                                floatingLabelText={PowerLocalize.get('LocalizationTable.Input.Language')}
-                                value={this.state.locale}
-                                onChange={(e, v) => this.setLocale(v)}
-                            />
-                            <IconButton
-                                iconClassName="material-icons"
-                                tooltip={PowerLocalize.get('Action.Search')}
-                                onClick={this.openSearcher}
-                            >
-                                search
-                            </IconButton>
-                        </div>
-                        <div>
-                            <TextField
-                                floatingLabelText={PowerLocalize.get('LocalizationTable.Input.Qualifier')}
-                                value={this.state.qualifier}
-                                onChange={(e, v) => this.setQualifier(v)}
-                            />
-                        </div>
-                    </div>
+                        >{PowerLocalize.get('Action.Close')}</Button>
+                    </DialogActions>
                 </Dialog>
                 <Table>
-                    <TableHeader
-                        displaySelectAll={false}
-                        adjustForCheckbox={false}
+                    <TableHead
+                        //displaySelectAll={false}
+                        //adjustForCheckbox={false}
                     >
                         <TableRow>
-                            <TableHeaderColumn>ISO-3 Language Code</TableHeaderColumn>
-                            <TableHeaderColumn>Qualifier</TableHeaderColumn>
-                            <TableHeaderColumn/>
+                            <TableCell>ISO-3 Language Code</TableCell>
+                            <TableCell>Qualifier</TableCell>
+                            <TableCell/>
                         </TableRow>
-                    </TableHeader>
-                    <TableBody displayRowCheckbox={false}>
+                    </TableHead>
+                    <TableBody //displayRowCheckbox={false}
+                         >
                         {this.props.localizations.map(this.mapLocalizedRow)}
                     </TableBody>
                 </Table>
                 <div className="vertical-align fullWidth">
+                    <Tooltip title={PowerLocalize.get('Action.Add')}>
                     <IconButton
-                        iconClassName="material-icons"
+                        className="material-icons"
                         onClick={this.openDialog}
-                        tooltip={PowerLocalize.get('Action.Add')}
                     >
                         add
                     </IconButton>
+                    </Tooltip>
                 </div>
             </div>
         );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
-import {FontIcon, Paper} from 'material-ui';
-import {POWER_MUI_THEME} from '../../index';
+import {Paper} from '@material-ui/core';
+import {PwrIconHeader} from './pwr-icon-header';
 
 interface InfoPaperProps {
     minHeight?: string;
@@ -30,25 +30,13 @@ export class InfoPaper extends React.Component<InfoPaperProps, InfoPaperState> {
     render() {
         let position = this.props.sticky ? "sticky" : "relative";
         let top = this.props.sticky ? 0 : undefined;
-        let style = Object.assign(this.props.style, {width: this.props.width, minHeight: this.props.minHeight, position: position, top: top});
+        let style = Object.assign({}, this.props.style, {width: this.props.width, minHeight: this.props.minHeight, position: position, top: top});
         return (
             <Paper style={style}>
-                <div className="vertical-align" style={{backgroundColor: POWER_MUI_THEME.baseTheme.palette.primary1Color, height: '56px'}}>
-                    <div
-                        style={{fontSize: 18, color: POWER_MUI_THEME.baseTheme.palette.alternateTextColor}}
-                    >
-                        <FontIcon
-                            style={{verticalAlign: 'middle'}}
-                            className="material-icons"
-                            color={POWER_MUI_THEME.baseTheme.palette.alternateTextColor}
-                        >
-                            {this.props.materialIconName}
-                        </FontIcon>
-                        <span style={{marginLeft: '5px'}}>
-                            {this.props.title}
-                        </span>
-                    </div>
-                </div>
+                <PwrIconHeader
+                    muiIconName={this.props.materialIconName}
+                    title={this.props.title}
+                />
                 <div>
                 {this.props.children}
                 </div>

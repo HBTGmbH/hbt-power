@@ -1,11 +1,13 @@
 import * as React from 'react';
-import {AutoComplete} from 'material-ui';
 import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
+import FormControl from '@material-ui/core/FormControl/FormControl';
+import TextField from '@material-ui/core/TextField/TextField';
+
 
 interface SkillSearcherProps {
-    floatingLabelText?: string;
+    label?: string;
     maxResults?: number;
     maxHeight?: number | string;
     id: string;
@@ -49,7 +51,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     }
 
     public static defaultProps: Partial<SkillSearcherProps> = {
-        floatingLabelText: "",
+        label: "",
         maxResults: 10,
         maxHeight: null,
         onNewRequest: request => {},
@@ -84,17 +86,32 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
     };
 
     private handleRequest = (request: string) => {
+        this.props.onValueChange(request);
         this.setState({
             searchText: this.props.resetOnRequest ? "" : request
         });
         this.props.onNewRequest(request);
     };
     render() {
+        // TODO Autocomplete Textfield
         return (
-            <AutoComplete
+            <FormControl>
+                <TextField
+                    id={this.props.id}
+                    label={this.props.label}
+                    onChange={event => this.handleRequest(event.target.value)}
+                    value={this.state.searchText}
+                />
+            </FormControl>
+            )
+    }
+}
+
+
+/* <AutoComplete
                 id={this.props.id}
                 anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                floatingLabelText={this.props.floatingLabelText}
+                label={this.props.label}
                 dataSource={this.state.skills}
                 value={this.state.searchText}
                 searchText={this.state.searchText}
@@ -103,6 +120,4 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 listStyle={{overflow: 'auto', maxHeight: this.props.maxHeight}}
                 menuProps={{maxHeight: this.props.maxHeight, overflow: 'auto'}}
                 filter={AutoComplete.noFilter}
-            />)
-    }
-}
+            />*/

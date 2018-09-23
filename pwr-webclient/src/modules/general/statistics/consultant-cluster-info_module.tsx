@@ -1,10 +1,12 @@
 import * as React from 'react';
 import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantClusterInfo';
-import {Card, CardHeader, CardText, List, ListItem, Popover} from 'material-ui';
+import {Card, CardHeader, CardContent, List, ListItem, Popover} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AveragedSkill} from '../../../model/statistics/AveragedSkill';
 import {StringUtils} from '../../../utils/StringUtil';
 import formatString = StringUtils.formatString;
+
+// TODO popover AnchoreEl
 
 const randomColor = require('randomcolor');
 const TagCloud = require('react-tagcloud');
@@ -16,7 +18,7 @@ interface ConsultantClusterInfoProps {
 
 interface ConsultantClusterInfoState {
     skillInfoPopoverOpen: boolean;
-    skillInfoPopoverAnchor:  React.ReactInstance;
+    skillInfoPopoverAnchor:  any;
     tags: Array<any>;
     selectedSkillName: string;
 }
@@ -116,11 +118,11 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                 <CardHeader
                     title={skill.name()}
                 />
-                <CardText>
+                <CardContent>
                     {formatString("Der Skill {0} tritt {1} mal im Cluster auf.", skill.name(), String(skill.numberOfOccurrences()))}<br/>
                     {formatString("Damit haben {0}% der Berater in diesem Cluster diesen Skill.", (skill.relativeOccurrences() * 100).toFixed(2))}<br/>
                     {formatString("Das Durchschnittliche Skill-Level beträgt {0}/5.0.", skill.averageSkillLevel().toFixed(2))}<br/>
-                </CardText>
+                </CardContent>
             </Card>)
         }
         return null;
@@ -134,8 +136,8 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     open={this.state.skillInfoPopoverOpen}
                     anchorEl={this.state.skillInfoPopoverAnchor}
                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                    onRequestClose={() => this.setState({skillInfoPopoverOpen: false})}
+                    transformOrigin={{horizontal: 'left', vertical: 'top'}}
+                    onClose={() => this.setState({skillInfoPopoverOpen: false, skillInfoPopoverAnchor:null})}
                 >
                     {this.getSkillInfo()}
                 </Popover>
@@ -143,35 +145,35 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.ClusterInitials.Title')}
-                            subtitle={PowerLocalize.get('ClusterInfo.ClusterInitials.Subtitle')}
+                            subheader={PowerLocalize.get('ClusterInfo.ClusterInitials.Subtitle')}
                         />
-                        <CardText>
+                        <CardContent>
                             <List>
                                 {this.renderInitials()}
                             </List>
-                        </CardText>
+                        </CardContent>
                     </Card>
                 </div>
                 <div className="col-md-3" style={{padding: '10px'}}>
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.Recommendations.Title')}
-                            subtitle={PowerLocalize.get('ClusterInfo.Recommendations.Subtitle')}
+                            subheader={PowerLocalize.get('ClusterInfo.Recommendations.Subtitle')}
                         />
-                        <CardText>
+                        <CardContent>
                             <List>
                                 {this.renderRecommendations()}
                             </List>
-                        </CardText>
+                        </CardContent>
                     </Card>
                 </div>
                 <div className="col-md-6" style={{padding: '10px'}}>
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.Skills.Title')}
-                            subtitle={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills().size))}
+                            subheader={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills().size))}
                         />
-                        <CardText>
+                        <CardContent>
                             <TCloud
                                 style={{width: '100% !important'}}
                                 minSize={12}
@@ -179,18 +181,18 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                                 tags={this.state.tags}
                                 renderer={this.customTagRenderer}
                             />
-                        </CardText>
+                        </CardContent>
                     </Card>
                 </div>
                 <div className="col-md-6" style={{padding: '10px'}}>
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.CommonSkills.Title')}
-                            subtitle={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills().size))}
+                            subheader={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills().size))}
                         />
-                        <CardText className="row">
+                        <CardContent className="row">
                             {this.renderCommonSkills()}
-                        </CardText>
+                        </CardContent>
                     </Card>
                 </div>
 

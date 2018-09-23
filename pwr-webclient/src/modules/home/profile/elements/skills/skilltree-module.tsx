@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {CSSProperties} from 'react';
 import * as redux from 'redux';
-import {Subheader} from 'material-ui';
+import {ListSubheader} from '@material-ui/core';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {SkillChip} from './skill-chip_module';
 import {Skill} from '../../../../../model/Skill';
@@ -28,6 +28,7 @@ interface SkillTreeLocalProps {
 
 interface SkillTreeLocalState {
     searchText: string;
+    selectedSkill:Skill;
 }
 
 interface SkillTreeDispatch {
@@ -45,6 +46,7 @@ class SkillTreeModule extends React.Component<
         super(props);
         this.state = {
             searchText: "",
+            selectedSkill:null,
         }
     }
 
@@ -92,6 +94,7 @@ class SkillTreeModule extends React.Component<
 
     private mapSkill = (skill: Skill) => {
         // Retreive it from the map; If it doesn't exist, it's custom
+        // FIXME es wird am Anfang immer Rot ausgewählt bis man die erste Änderung an einem Skill vornimmt, dann refreshen alle und es funktioniert wieder -mp
         let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
         let style = {
             margin: "4px",
@@ -120,8 +123,9 @@ class SkillTreeModule extends React.Component<
         return (
             <div>
                 <AddSkillDialog/>
+
                 <div>
-                    <Subheader>Rot = Unbekannter Skill</Subheader>
+                    <ListSubheader>Rot = Unbekannter Skill</ListSubheader>
                     <div className="row">
                         {this.renderSkills()}
                     </div>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FontIcon} from 'material-ui';
+import {Icon} from '@material-ui/core';
 
 interface NoStatisticsAvailableProps {
 
@@ -12,6 +12,6 @@ interface NoStatisticsAvailableState {
 export class NoStatisticsAvailable extends React.Component<NoStatisticsAvailableProps, NoStatisticsAvailableState> {
 
     render() {
-        return (<div><FontIcon className="material-icons">not_interest</FontIcon> No statistics available.</div>);
+        return (<div><Icon className="material-icons">not_interest</Icon> No statistics available.</div>);
     }
 }

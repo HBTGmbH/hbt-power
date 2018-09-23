@@ -7,7 +7,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Profile} from '../../model/Profile';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {Paper} from 'material-ui';
+import {Paper} from '@material-ui/core';
 import {Color} from '../../utils/ColorUtil';
 
 const Recharts = require('recharts');

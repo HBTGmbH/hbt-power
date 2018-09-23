@@ -2,7 +2,8 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
-import {FlatButton, RaisedButton, TextField} from 'material-ui';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {LoginStatus} from '../model/LoginStatus';
 import {Link} from 'react-router-dom';
@@ -92,7 +93,7 @@ class PowerLoginModule extends React.Component<
         this.props.logInUser(this.props.initials);
     };
 
-    private handleFieldValueChange = (irrelevantFormEvent: any, value: string) => {
+    private handleFieldValueChange = (value: string) => {
         this.props.setUserInitials(value);
     };
 
@@ -100,11 +101,10 @@ class PowerLoginModule extends React.Component<
 
     private renderInputField = () => {
         return (<TextField
-            floatingLabelText={PowerLocalize.get("Initials.Singular")}
+            label={this.props.loginStatus == LoginStatus.REJECTED ? PowerLocalize.get("UserLogin.LoginFailed") : PowerLocalize.get("Initials.Singular")}
             value={this.props.initials}
-            onChange={this.handleFieldValueChange}
+            onChange={(e) => this.handleFieldValueChange(e.target.value)}
             onKeyPress={this.handleInputFieldKeyPress}
-            errorText={this.props.loginStatus == LoginStatus.REJECTED ? PowerLocalize.get("UserLogin.LoginFailed") : null}
         />)
     };
 
@@ -124,10 +124,10 @@ class PowerLoginModule extends React.Component<
                                 {this.renderInputField()}
                             </div>
                             <br/>
-                            <RaisedButton onClick={this.handleProgressButtonClick} label="Weiter" primary={true}/>
+                            <Button variant= "raised" onClick={this.handleProgressButtonClick} color={'primary'}>Weiter</Button>
                             <br/>
                             <br/>
-                            <Link to={Paths.ADMIN_LOGIN}><FlatButton label="Admin"/></Link>
+                            <Link to={Paths.ADMIN_LOGIN}><Button variant = "flat">Admin</Button></Link>
                         </div>
 
                     </div>

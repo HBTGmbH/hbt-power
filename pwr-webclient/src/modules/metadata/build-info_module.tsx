@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {BuildInfo} from '../../model/metadata/BuildInfo';
-import {Subheader} from 'material-ui';
+import {ListSubheader} from '@material-ui/core';
 import {SingleBuildInfo} from './single-build-info_module';
 import {MetaDataActionCreator} from '../../reducers/metadata/MetaDataActions';
 import {Comparators} from '../../utils/Comparators';
@@ -69,14 +69,14 @@ class BuildInfoModule extends React.Component<
 
     render() {
         return (<div>
-            <Subheader>Service-Summary</Subheader>
+            <ListSubheader>Service-Summary</ListSubheader>
             <div style={{paddingLeft: "16px"}}>
             {this.props.buildInfo
                 .sort(Comparators.getBuildInfoComparator(true))
                 .map(buildInfo => <div key={buildInfo.name()}><SingleBuildInfo buildInfo={buildInfo}/><br/></div>)
                 .toArray()}
             </div>
-            <Subheader>Client-Info</Subheader>
+            <ListSubheader>Client-Info</ListSubheader>
             <div style={{paddingLeft: "16px"}}>
                 {this.renderClientInfo(this.props.clientInfo)}
             </div>

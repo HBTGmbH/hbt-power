@@ -19,6 +19,8 @@ import {routerMiddleware, RouterState} from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
 import {CrossCuttingReducer} from './crosscutting/CrossCuttingReducer';
 import {CrossCuttingStore} from '../model/crosscutting/CrossCuttingStore';
+import {TemplateStore} from '../model/view/TemplateStore';
+import {TemplateReducer} from './template/TemplateReducer';
 
 
 export interface ApplicationState {
@@ -29,6 +31,7 @@ export interface ApplicationState {
     metaDataReducer: MetaDataStore;
     navigationSlice: NavigationStore;
     viewProfileSlice: ViewProfileStore;
+    templateSlice: TemplateStore;
     crossCutting: CrossCuttingStore;
     router: Reducer<RouterState>;
 }
@@ -43,6 +46,7 @@ const ApplicationStore = combineReducers({
     navigationSlice: NavigationReducer.reduce,
     viewProfileSlice: ViewProfileReducer.reduce,
     crossCutting: CrossCuttingReducer.reduce
+    templateSlice: TemplateReducer.reduce,
 });
 
 export const PWR_HISTORY = createHistory();

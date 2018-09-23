@@ -123,5 +123,11 @@ export enum ActionType {
     ClearViewProfiles,
 
     // == Cross Cutting
-    SetRequestPending
+    SetRequestPending,
+
+    // == Templates
+    SetTemplate,
+    RemoveTemplate,
+    ResetTemplate,
+    ClearTemplates
 }

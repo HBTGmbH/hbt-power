@@ -3,11 +3,16 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
-import {Card, CardHeader, CardText, Slider, Subheader} from 'material-ui';
+import {Card, CardHeader, CardContent, Slide, ListSubheader} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import Button from '@material-ui/core/Button/Button';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
+
+// TODO Slider
 const Recharts = require('recharts');
 
 const TagCloud = require('react-tagcloud');
@@ -103,8 +108,8 @@ class SkillStatisticsModule extends React.Component<
                 <CardHeader
                     title={PowerLocalize.get('Statistics.MostUsedSkills.Title')}
                 />
-                <CardText>
-                    <Subheader>{PowerLocalize.get("SkillStatistics.SkillCount.Absolute.Title")}</Subheader>
+                <CardContent>
+                    <ListSubheader>{PowerLocalize.get("SkillStatistics.SkillCount.Absolute.Title")}</ListSubheader>
                     {PowerLocalize.get("SkillStatistics.SkillCount.Absolute.Description")}
                     <Recharts.BarChart width={730} height={250} layout="horizontal" data={this.renderData()}>
                         <Recharts.XAxis dataKey="name" />
@@ -118,9 +123,9 @@ class SkillStatisticsModule extends React.Component<
                             layout="vertical"
                             name={PowerLocalize.get("SkillStatistics.SkillCount")}/>
                     </Recharts.BarChart>
-                </CardText>
-                <CardText>
-                    <Subheader>{PowerLocalize.get("SkillStatistics.SkillCount.Relative.Title")}</Subheader>
+                </CardContent>
+                <CardContent>
+                    <ListSubheader>{PowerLocalize.get("SkillStatistics.SkillCount.Relative.Title")}</ListSubheader>
                     {PowerLocalize.get("SkillStatistics.SkillCount.Relative.Description")}<br/>
                     <Recharts.BarChart width={730} height={250} layout="horizontal" data={this.renderRelativeData()}>
                         <Recharts.XAxis dataKey="name" />
@@ -136,24 +141,50 @@ class SkillStatisticsModule extends React.Component<
                             name={PowerLocalize.get("SkillStatistics.SkillCount.Relative")}
                             />
                     </Recharts.BarChart>
-                </CardText>
-                <CardText>
-                    <Subheader>{PowerLocalize.get("SkillStatistics.WordCloud.Title")}</Subheader>
+                </CardContent>
+                <CardContent>
+                    <ListSubheader>{PowerLocalize.get("SkillStatistics.WordCloud.Title")}</ListSubheader>
                         <TCloud
                             style={{width: "800px"}}
                             minSize={12}
                             maxSize={35}
                             tags={this.renderTags()}
                         />
-                </CardText>
-                <CardText>
-                    <Subheader>{PowerLocalize.get("SkillStatistics.OccurrenceRating.Title")}</Subheader>
-                    <Slider style={{width: 700}}
-                            step={1}
-                            min={3}
-                            max={100}
-                            value={this.state.skillOccLevelLength}
-                            onChange={(event, value) => this.setState({skillOccLevelLength: value})}/>
+                </CardContent>
+                <CardContent>
+                    <ListSubheader>{PowerLocalize.get("SkillStatistics.OccurrenceRating.Title")}</ListSubheader>
+                    {/* TODO Slider
+                    <Slide
+                            direction={'down'}
+                            style={{width: 700}}
+                            //step={1}
+                            //min={3}
+                            //max={100}
+                            //value={this.state.skillOccLevelLength}
+                            //onChange={(event, value) => this.setState({skillOccLevelLength: value})}
+                    />
+                    */}
+                    <div style={{marginLeft:'30px'}}>
+                        <Button
+                            style={{width:'40px',height:'40px',padding:'0',marginRight:'15px'}}
+                            variant={'fab'}
+                            color={'primary'}
+                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength>0)?(this.state.skillOccLevelLength - 1):0})}
+                        >
+                            <RemoveIcon/>
+                        </Button>
+
+                        {this.state.skillOccLevelLength}
+
+                        <Button
+                            style={{width:'40px',height:'40px',padding:'0',marginLeft:'15px'}}
+                            variant={'fab'} color={'primary'}
+                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength<100)?(this.state.skillOccLevelLength + 1):100})}
+                        >
+                            <AddIcon/>
+                        </Button>
+                    </div>
+
                     <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
                         <Recharts.XAxis dataKey="name"/>
@@ -164,7 +195,7 @@ class SkillStatisticsModule extends React.Component<
                         <Recharts.Bar dataKey='occ' barSize={20} fill='#413ea0'/>
                         <Recharts.Line type='monotone' dataKey='rating' stroke='#ff7300'/>
                     </Recharts.ComposedChart>
-                </CardText>
+                </CardContent>
 
             </Card>
 

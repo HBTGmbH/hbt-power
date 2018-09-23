@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
-import {FontIcon, RaisedButton, Tab, Tabs} from 'material-ui';
+import {Button, Icon, Tab, Tabs, Theme, withTheme} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
@@ -35,7 +35,7 @@ interface NotificationInboxProps {
  * managed by redux.
  */
 interface NotificationInboxLocalProps {
-
+    theme: Theme;
 }
 
 /**
@@ -47,6 +47,7 @@ interface NotificationInboxLocalState {
     selectedProfileEntryRows: Array<number>;
     selectedProfileUpdateRows: Array<number>;
     selectedSkillRows: Array<number>;
+    tabValue: number;
 }
 
 /**
@@ -68,7 +69,8 @@ class NotificationInboxModule extends React.Component<
             selectedProfileEntryRows: [],
             selectedProfileUpdateRows: [],
             selectedSkillRows: [],
-        }
+            tabValue:0,
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: NotificationInboxLocalProps): NotificationInboxProps {
@@ -78,20 +80,24 @@ class NotificationInboxModule extends React.Component<
             skillNotifications: state.adminReducer.skillNotifications(),
             username: state.adminReducer.adminName(),
             password: state.adminReducer.adminPass()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationInboxDispatch {
         return {
-            getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass))},
-            trashNotifications: (ids, user, pass) => {dispatch(AdminActionCreator.AsyncTrashNotifications(ids, user, pass))}
+            getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
+            trashNotifications: (ids, user, pass) => {dispatch(AdminActionCreator.AsyncTrashNotifications(ids, user, pass));}
         };
+    }
+
+    public componentDidMount() {
+        this.props.getNotifications(this.props.username, this.props.password);
     }
 
     private handleTrashSelectedProfileEntryNotification = (rows: Array<number>, entries: Immutable.List<ProfileEntryNotification>) => {
         let ids: Array<number> = [];
         rows.forEach(rowNum => {
-            ids.push(entries.get(rowNum).adminNotification().id())
+            ids.push(entries.get(rowNum).adminNotification().id());
         });
         this.props.trashNotifications(ids, this.props.username, this.props.password);
     };
@@ -99,16 +105,16 @@ class NotificationInboxModule extends React.Component<
     private handleTrashSelectedProfileUpdateNotification = (rows: Array<number>, entries: Immutable.List<AdminNotification>) => {
         let ids: Array<number> = [];
         rows.forEach(rowNum => {
-            ids.push(entries.get(rowNum).id())
+            ids.push(entries.get(rowNum).id());
         });
-        console.log("IDs", ids);
+        console.log('IDs', ids);
         this.props.trashNotifications(ids, this.props.username, this.props.password);
     };
 
     private handleTrashSelectedSkillNotification = (rows: Array<number>, entries: Immutable.List<SkillNotification>) => {
         let ids: Array<number> = [];
         rows.forEach(rowNum => {
-            ids.push(entries.get(rowNum).adminNotification().id())
+            ids.push(entries.get(rowNum).adminNotification().id());
         });
         this.props.trashNotifications(ids, this.props.username, this.props.password);
     };
@@ -121,61 +127,83 @@ class NotificationInboxModule extends React.Component<
             selectedProfileEntryRows: [],
             selectedProfileUpdateRows: [],
             selectedSkillRows: []
-        })
+        });
     };
 
+
+
+    private handleTabChange = (event:any, value:number) => {
+      this.setState({
+          tabValue: value
+      });
+    };
     render() {
         return (
             <div>
-                <div className="row">
-                    <div className="col-md-9">
-                        <RaisedButton
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.Update')}
-                            icon={<FontIcon className="material-icons">refresh</FontIcon>}
-                            onClick={() => this.props.getNotifications(this.props.username, this.props.password)}
-                        />
-                        <RaisedButton
-                            style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                            label={PowerLocalize.get('Action.Delete')}
-                            icon={<FontIcon className="material-icons">delete</FontIcon>}
-                            onClick={this.handleTrashNotifications}
-                        />
+                <div>
+                    <div className="row">
+                        <div className="col-md-9">
+                            <Button
+                                variant={'raised'}
+                                style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
+                                onClick={() => this.props.getNotifications(this.props.username, this.props.password)}
+                            >
+                                {PowerLocalize.get('Action.Update')}
+                                <Icon className="material-icons">refresh</Icon>
+                            </Button>
+
+                            <Button
+                                variant={'raised'}
+                                style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
+                                onClick={this.handleTrashNotifications}
+                            >
+                                {PowerLocalize.get('Action.Delete')}
+                                <Icon className="material-icons">delete</Icon>
+                            </Button>
+                        </div>
                     </div>
                 </div>
-                <Tabs>
-                    <Tab
-                        icon={<FontIcon className="material-icons">add_box</FontIcon>}
-                        label={PowerLocalize.get("NotificationInbox.NewNameEntity")}
-                    >
-                        <ProfileEntryNotificationTable
-                            profileEntryNotifications={this.props.profileEntryNotifications}
-                            onRowSelection={rows => this.setState({selectedProfileEntryRows: rows})}
-                            selectedRows={this.state.selectedProfileEntryRows}
-                        />
-                    </Tab>
-                    <Tab
-                        icon={<FontIcon className="material-icons">color_lens</FontIcon>}
-                        label={PowerLocalize.get("NotificationInbox.Skills")}
-                    >
-                        <SkillNotificationTable
-                            skillNotifications={this.props.skillNotifications}
-                            selectedRows={this.state.selectedSkillRows}
-                            onRowSelection={rows => this.setState({selectedSkillRows: rows})}
-                        />
-                    </Tab>
-                    <Tab
-                        icon={<FontIcon className="material-icons">autorenew</FontIcon>}
-                        label={PowerLocalize.get("NotificationInbox.ProfileUpdates")}
-                    >
-                        <ProfileUpdateNotificationTable
-                            profileUpdateNotifications={this.props.profileUpdateNotifications}
-                            selectedRows={this.state.selectedProfileUpdateRows}
-                            onRowSelection={rows => this.setState({selectedProfileUpdateRows: rows})}
-                        />
-                    </Tab>
-
+                <Tabs
+                    value={this.state.tabValue}
+                    style={{backgroundColor: this.props.theme.palette.primary.main}}
+                    centered
+                    fullWidth
+                    indicatorColor={'secondary'}
+                    textColor={'secondary'}
+                    onChange={this.handleTabChange}
+                >
+                    <Tab icon={<Icon className="material-icons">add_box</Icon>}
+                        label={PowerLocalize.get('NotificationInbox.NewNameEntity')}
+                        value={0}
+                    />
+                    <Tab icon={<Icon className="material-icons">color_lens</Icon>}
+                         label={PowerLocalize.get('NotificationInbox.Skills')}
+                         value={1}
+                    />
+                    <Tab icon={<Icon className="material-icons">autorenew</Icon>}
+                         label={PowerLocalize.get('NotificationInbox.ProfileUpdates')}
+                         value={2}
+                    />
                 </Tabs>
+                {this.state.tabValue === 0 ?
+                    <ProfileEntryNotificationTable
+                    profileEntryNotifications={this.props.profileEntryNotifications}
+                    onRowSelection={rows => this.setState({selectedProfileEntryRows: rows})}
+                    selectedRows={this.state.selectedProfileEntryRows}
+                />:<span/>}
+
+                {this.state.tabValue === 1 ?
+                <SkillNotificationTable
+                    skillNotifications={this.props.skillNotifications}
+                    selectedRows={this.state.selectedSkillRows}
+                    onRowSelection={rows => this.setState({selectedSkillRows: rows})}
+                />:<span/>}
+                {this.state.tabValue === 2 ?
+                <ProfileUpdateNotificationTable
+                    profileUpdateNotifications={this.props.profileUpdateNotifications}
+                    selectedRows={this.state.selectedProfileUpdateRows}
+                    onRowSelection={rows => this.setState({selectedProfileUpdateRows: rows})}
+                />:<span/>}
             </div>);
     }
 }
@@ -185,4 +213,6 @@ class NotificationInboxModule extends React.Component<
  * @author nt
  * @since 30.05.2017
  */
-export const NotificationInbox: React.ComponentClass<NotificationInboxLocalProps> = connect(NotificationInboxModule.mapStateToProps, NotificationInboxModule.mapDispatchToProps)(NotificationInboxModule);
+export const NotificationInbox: React.ComponentClass<NotificationInboxLocalProps> = withTheme()
+    (connect(NotificationInboxModule.mapStateToProps, NotificationInboxModule.mapDispatchToProps)
+        (NotificationInboxModule));

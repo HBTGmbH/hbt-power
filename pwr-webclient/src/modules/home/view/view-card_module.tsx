@@ -3,13 +3,15 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Card, CardActions, CardHeader, FontIcon, RaisedButton} from 'material-ui';
+import {Card, CardActions, CardHeader, Icon, Button} from '@material-ui/core';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileDialog} from './view-profile-dialog_module';
+import {ProfileGenerator} from './view-profile-generator_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
+import {orange} from '@material-ui/core/colors';
 
 interface ViewCardProps {
     viewProfile: ViewProfile;
@@ -21,12 +23,13 @@ interface ViewCardLocalProps {
 
 interface ViewCardLocalState {
     dialogOpen: boolean;
+    generatorOpen: boolean;
 }
 
 interface ViewCardDispatch {
     deleteViewProfile(id: string): void;
     navigateTo(target: string): void;
-    generate(viewProfileId: string): void;
+    //generate(viewProfileId: string, templateId: string): void;
     updateViewProfile(viewProfileId: string, name: string, description: string, charsPerLine: number): void;
 }
 
@@ -38,7 +41,9 @@ class ViewCardModule extends React.Component<
     constructor(props: ViewCardLocalProps & ViewCardProps & ViewCardDispatch) {
         super(props);
         this.state = {
-            dialogOpen: false
+            dialogOpen: false,
+            generatorOpen : false,
+
         }
     }
 
@@ -52,7 +57,7 @@ class ViewCardModule extends React.Component<
         return {
             deleteViewProfile: (id) => dispatch(ViewProfileActionCreator.AsyncDeleteViewProfile(id)),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId)),
+            //generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
             updateViewProfile: (viewProfileId, name, description, charsPerLine) => {
                 dispatch(ViewProfileActionCreator.AsyncUpdateViewProfile(viewProfileId, description, name, charsPerLine))
             }
@@ -64,54 +69,78 @@ class ViewCardModule extends React.Component<
             dialogOpen: open
         })
     }
+    private setGeneratorOpen(open : boolean){
+        this.setState({
+            generatorOpen: open
+        })
+    }
 
     private handleUpdate = (name: string, description: string, charsPerLine: number) => {
         this.props.updateViewProfile(this.props.viewProfileId, name, description, charsPerLine);
         this.setDialogOpen(false);
+        this.setGeneratorOpen(false);
     };
+
 
     render() {
         return (
         <Card className="fullWidth">
             <ViewProfileDialog
                 viewProfile={this.props.viewProfile}
-                onRequestClose={() => this.setDialogOpen(false)}
+                onClose={() => this.setDialogOpen(false)}
                 onSave={this.handleUpdate}
                 open={this.state.dialogOpen}
             />
+
+            <ProfileGenerator
+                open={this.state.generatorOpen}
+                onClose={() => this.setGeneratorOpen(false)}
+                viewProfileId={this.props.viewProfile.id}
+            />
             <CardHeader
                 title={this.props.viewProfile.viewProfileInfo.name}
-                subtitle={PowerLocalize.get("ViewProfileCard.Subtitle") + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
+                subheader={PowerLocalize.get("ViewProfileCard.Subtitle") + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
             />
             <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
             <CardActions>
                 <div>
-                    <RaisedButton
+                    <Button
+                        style={{marginLeft:'8px',marginTop:'5px'}}
+                        variant={'raised'}
                         className="mui-margin"
                         onClick={() => this.setDialogOpen(true)}
-                        label={PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
-                        icon={<FontIcon className="material-icons">info</FontIcon>}
-                    />
-                    <RaisedButton
+                    >
+                        <Icon className="material-icons">info</Icon>
+                        {PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
+                    </Button>
+                    <Button
+                        style={{marginLeft:'8px', marginTop:'5px'}}
+                        variant={'raised'}
                         className="mui-margin"
-                        label={PowerLocalize.get("ViewProfileCard.Action.Edit")}
                         onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", this.props.viewProfileId))}
-                        icon={<FontIcon className="material-icons">edit</FontIcon>}
-                    />
-                    <RaisedButton
-                        className="mui-margin"
-                        label={PowerLocalize.get("Action.Delete")}
-                        secondary={true}
-                        icon={<FontIcon className="material-icons">delete</FontIcon>}
+                    >
+                        <Icon className="material-icons">edit</Icon>
+                        {PowerLocalize.get("ViewProfileCard.Action.Edit")}
+                    </Button>
+                    <Button
+                        style={{marginLeft:'8px', marginTop:'5px', backgroundColor:'#ff8e01'}}
+                        variant={'raised'}
+                        className="mui-margin pwr-btn-error"
                         onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
-                    />
-                    <RaisedButton
+                    >
+                        <Icon className="material-icons">delete</Icon>
+                        {PowerLocalize.get("Action.Delete")}
+                    </Button>
+                    <Button
+                        style={{marginLeft:'8px', marginTop:'5px'}}
+                        variant={'raised'}
                         className="mui-margin"
-                        primary={true}
-                        label={PowerLocalize.get("Action.Generate.Word")}
-                        onClick={() => this.props.generate(this.props.viewProfileId)}
-                        icon={<FontIcon className="material-icons">open_in_new</FontIcon>}
-                    />
+                        color={'primary'}
+                        onClick={() => this.setGeneratorOpen(true)}
+                    >
+                        <Icon className="material-icons">open_in_new</Icon>
+                        {PowerLocalize.get("Action.Generate.Word")}
+                    </Button>
                 </div>
             </CardActions>
         </Card>);
@@ -124,3 +153,4 @@ class ViewCardModule extends React.Component<
  * @since 11.09.2017
  */
 export const ViewCard: React.ComponentClass<ViewCardLocalProps> = connect(ViewCardModule.mapStateToProps, ViewCardModule.mapDispatchToProps)(ViewCardModule);
+

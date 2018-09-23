@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Avatar, FontIcon, Paper, RaisedButton} from 'material-ui';
+import {Avatar, Icon, Paper, Button} from '@material-ui/core';
 import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
@@ -70,20 +70,21 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar  size={80} src={getImagePath()+"/statistics_icon.svg"}/>
+                        <Avatar  sizes={'80'} src={getImagePath()+"/statistics_icon.svg"}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                     Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}
                 </span>
                     <div className="col-md-3 col-sm-12">
-                        <RaisedButton
+                        <Button
+                            variant={'raised'}
                             style={{marginTop: "8px"}}
-                            label={PowerLocalize.get('Action.ShowMore')}
-                            labelPosition="before"
-                            primary={true}
-                            icon={ <FontIcon className="material-icons">open_in_new</FontIcon>}
+                            color={'primary'}
                             onClick={() => this.loadSkillStatistics()}
-                        />
+                        >
+                            {PowerLocalize.get('Action.ShowMore')}
+                            <Icon className="material-icons">open_in_new</Icon>
+                        </Button>
                     </div>
                 </div>
             </Paper>);

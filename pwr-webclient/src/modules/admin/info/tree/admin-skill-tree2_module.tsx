@@ -2,21 +2,22 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
-import {SkillTree} from '../../general/skill/skill-tree_module';
-import {Checkbox, FontIcon, Paper, RaisedButton, Subheader, TextField} from 'material-ui';
-import {InfoPaper} from '../../general/info-paper_module.';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {LocalizationTable} from '../../general/skill/localization-table_module';
-import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';
-import {CategoryDeleteConfirmation} from '../../general/skill/category-delete-confirmation_module';
-import {SkillTreeNode} from '../../../model/skill/SkillTreeNode';
-import {CategorySearcher} from './category-searcher_module';
-import {SetValueDialog} from '../../general/set-value-dialog_module';
-import {ApplicationState} from '../../../reducers/reducerIndex';
-import {SkillStore} from '../../../model/skill/SkillStore';
-import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
+import {SkillCategory} from '../../../../model/skill/SkillCategory';
+import {SkillActionCreator} from '../../../../reducers/skill/SkillActionCreator';
+import {SkillTree} from '../../../general/skill/skill-tree_module';
+import {Button, Checkbox, FormControlLabel, Icon, ListSubheader, Paper, TextField} from '@material-ui/core';
+import {InfoPaper} from '../../../general/info-paper_module.';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {LocalizationTable} from '../../../general/skill/localization-table_module';
+import {SkillServiceSkill} from '../../../../model/skill/SkillServiceSkill';
+import {CategoryDeleteConfirmation} from '../../../general/skill/category-delete-confirmation_module';
+import {SkillTreeNode} from '../../../../model/skill/SkillTreeNode';
+import {CategorySearcher} from '../category-searcher_module';
+import {SetValueDialog} from '../../../general/set-value-dialog_module';
+import {ApplicationState} from '../../../../reducers/reducerIndex';
+import {SkillStore} from '../../../../model/skill/SkillStore';
+import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
+import {Add, Delete} from '@material-ui/icons';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
@@ -67,6 +68,7 @@ interface AdminSkillTree2Dispatch {
     changeFilterNonCustomSkills(doFiltering: boolean): void;
 }
 
+
 class AdminSkillTree2Module extends React.Component<
     AdminSkillTree2Props
     & AdminSkillTree2LocalProps
@@ -96,7 +98,7 @@ class AdminSkillTree2Module extends React.Component<
             skillsById: state.skillReducer.skillsById(),
             filterNonCustomSkills: state.skillReducer.filterNonCustomSkills()
         };
-    }
+    };
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminSkillTree2Dispatch {
         return {
@@ -117,11 +119,11 @@ class AdminSkillTree2Module extends React.Component<
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
             changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering)))
         };
-    }
+    };
 
     public componentDidMount() {
         this.props.loadTree();
-    }
+    };
 
     private handleCategorySelect = (categoryId: number) => {
         this.setState({
@@ -253,36 +255,43 @@ class AdminSkillTree2Module extends React.Component<
     private SkillInfo = () => {
         let selectedSkill = this.getSelectedSkill();
         return <div>
-            <Subheader>{selectedSkill.qualifier()}</Subheader>
+            <ListSubheader>{selectedSkill.qualifier()}</ListSubheader>
             <LocalizationTable
                 localizations={selectedSkill.qualifiers()}
                 termToLocalize={selectedSkill.qualifier()}
                 onLocaleDelete={this.handleDeleteSkillLocale}
                 onLocaleAdd={this.handleAddSkillLocale}
             />
-            <RaisedButton
+            <Button
+                style={{margin:'4px'}}
+                variant={'raised'}
                 className="mui-margin"
-                label={PowerLocalize.get("Action.ChangeCategory")}
-                primary={true}
-                icon={<FontIcon className="material-icons">change_history</FontIcon>}
+                color={'primary'}
                 onClick={this.openCategorySearcher}
-            />
+            >
+                <Icon className="material-icons">change_history</Icon>
+                {PowerLocalize.get("Action.ChangeCategory")}
+            </Button>
+
             <CategorySearcher
                 skillStore={this.props.skillStore}
                 open={this.state.categorySearcherOpen}
                 categories={this.props.categoriesById.toArray()}
-                onRequestClose={this.closeCategorySearcher}
+                onClose={this.closeCategorySearcher}
                 onSelectCategory={this.invokeMoveSelectedSkill}
             />
             {
                 selectedSkill.isCustom() ?
-                    <RaisedButton
-                        label={PowerLocalize.get("Action.DeleteSkill")}
+                    <Button
+                        style={{margin:'4px'}}
+                        variant={'raised'}
                         className="mui-margin"
-                        secondary={true}
-                        icon={<FontIcon className="material-icons">delete</FontIcon>}
+                        color={'secondary'}
                         onClick={() => this.props.deleteSkill(selectedSkill.id())}
-                    />
+                    >
+                        {PowerLocalize.get("Action.DeleteSkill")}
+                        <Icon className="material-icons">delete</Icon>
+                    </Button>
                     : false
             }
         </div>;
@@ -297,58 +306,78 @@ class AdminSkillTree2Module extends React.Component<
                 onDeclineDelete={this.closeDeleteConfirmation}
                 onAcceptDelete={this.handleDeleteSelectedCategory}
             />
-            <Subheader>{selectedCategory.qualifier()}</Subheader>
-            <Checkbox
-                style={{marginLeft: '16px'}}
+            <ListSubheader>{selectedCategory.qualifier()}</ListSubheader>
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        style={{marginLeft: '16px'}}
+                        checked={selectedCategory.blacklisted()}
+                        onChange={this.handleCategoryBlacklistCheck}
+                        color={'primary'}
+                    />}
                 label={PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsBlacklisted')}
-                checked={selectedCategory.blacklisted()}
-                onCheck={this.handleCategoryBlacklistCheck}
             />
-            <Checkbox
-                style={{marginLeft: '16px'}}
+
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        style={{marginLeft: '16px'}}
+                        checked={selectedCategory.isDisplay()}
+                        onChange={this.handleCategoryIsDisplayCheck}
+                        color={'primary'}
+                    />}
                 label={PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsDisplay')}
-                checked={selectedCategory.isDisplay()}
-                onCheck={this.handleCategoryIsDisplayCheck}
             />
-            <Subheader>{PowerLocalize.get('AdminClient.Info.SkillTree.Category.Localizations')}</Subheader>
+            <ListSubheader>{PowerLocalize.get('AdminClient.Info.SkillTree.Category.Localizations')}</ListSubheader>
             <LocalizationTable
                 localizations={selectedCategory.qualifiers()}
                 termToLocalize={selectedCategory.qualifier()}
                 onLocaleAdd={this.handleAddCategoryLocale}
                 onLocaleDelete={this.handleDeleteCategoryLocale}
             />
-            <RaisedButton
+            <Button
+                style={{margin:'4px'}}
+                variant={'contained'}
                 className="mui-margin"
-                primary={true}
-                label={PowerLocalize.get("Action.AddCategory")}
-                icon={<FontIcon className="material-icons">add</FontIcon>}
+                size={"small"}
+                color={'primary'}
                 onClick={this.openNameDialog}
-            />
-            <RaisedButton
-                label={PowerLocalize.get("Action.AddSkillToCategory")}
-                className="mui-margin"
-                secondary={true}
-                icon={<FontIcon className="material-icons">add</FontIcon>}
-                onClick={this.openSkillNameDialog}
-            />
-            {
-                selectedCategory.isCustom() ?
-                    <RaisedButton
-                        label={PowerLocalize.get("Action.DeleteCategory")}
-                        className="mui-margin"
-                        secondary={true}
-                        icon={<FontIcon className="material-icons">delete</FontIcon>}
-                        onClick={this.openDeleteConfirmation}
-                    />
-                    : null
-            }
+            >
+                {PowerLocalize.get("Action.AddCategory")}
+                <Add/>
+            </Button>
 
+            <Button
+                style={{margin:'4px'}}
+                variant={'contained'}
+                size={"small"}
+                className="mui-margin"
+                color={'primary'}
+                onClick={this.openSkillNameDialog}
+            >
+                {PowerLocalize.get("Action.AddSkillToCategory")}
+                <Add/>
+            </Button>{
+            selectedCategory.isCustom() ?
+                <Button
+                    style={{margin:'4px'}}
+                    variant={'contained'}
+                    className="mui-margin"
+                    color={'primary'}
+                    size={"small"}
+                    onClick={this.openDeleteConfirmation}
+                >
+                    <Delete/>
+                    {PowerLocalize.get("Action.DeleteCategory")}
+                </Button>
+                : null
+        }
         </div>;
     };
 
     private Info = () => {
         if(this.state.selectedCategoryId === this.NO_ID && this.state.selectedSkillId === this.NO_ID) {
-            return <span/>;
+            return <></>;
         } else if(this.state.selectedCategoryId === this.NO_ID) {
             return <this.SkillInfo/>;
         } else {
@@ -356,107 +385,114 @@ class AdminSkillTree2Module extends React.Component<
         }
     };
 
-
-
     render() {
         return (
-        <div style={{marginTop: '56px'}}>
-            <SetValueDialog
-                open={this.state.categoryNameOpen}
-                floatingLabelText={PowerLocalize.get("AdminClient.Info.SkillTree.NewCategory.Name")}
-                onRequestClose={this.closeNameDialog}
-                onOk={this.handleCreateCategory}
-            />
-            <SetValueDialog
-                open={this.state.skillNameOpen}
-                floatingLabelText={PowerLocalize.get("AdminClient.Info.SkillTree.NewSkill.Name")}
-                onRequestClose={this.closeSkillNameDialog}
-                onOk={this.handleCreateSkill}
-            />
-            <div className="row">
-                <Paper className="col-md-8">
-                    <TextField
-                        floatingLabelText={PowerLocalize.get("Action.Search")}
-                        onChange={(e: any, v: string) => {this.props.filter(v)}}
-                    />
-                    <Checkbox
-                        onCheck={this.handleCheckFilterNonCustom}
-                        checked={this.props.filterNonCustomSkills}
-                        label={PowerLocalize.get("AdminClient.Info.SkillTree.Filter.OnlyCustom")}
-                    />
-                    <SkillTree
-                        root={this.props.root}
-                        onCategorySelect={this.handleCategorySelect}
-                        onNestedListToggle={this.props.toggleOpen}
-                        onSkillSelect={this.handleSkillSelect}
-                        expandOnClick={false}
-                        categoriesById={this.props.categoriesById}
-                        skillsById={this.props.skillsById}
-                    />
-                </Paper>
-                <div className="col-md-4">
-                    <div id="skill-tree-info-panel">
-                        <InfoPaper minHeight="200px" sticky={false}>
-                            <this.Info/>
-                        </InfoPaper>
-                        <div className="margin-5px"/>
-                        <InfoPaper
-                            minHeight="100px"
-                            title={PowerLocalize.get('AdminClient.Info.SkillTree.Legend')}
-                            sticky={false}
-                            style={{paddingBottom: '16px'}}
-                        >
-                            <div style={{marginLeft: '8px'}}>
-                                <FontIcon
-                                    className="material-icons blacklisted-icon"
-                                    style={{top: '6px', marginRight: '24px'}}
-                                >
-                                    warning
-                                </FontIcon>
-                                {PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsBlacklisted')}
-                            </div>
-                            <div style={{marginLeft: '8px'}}>
-                                <FontIcon
-                                    className="material-icons"
-                                    style={{top: '6px', marginRight: '24px'}}
-                                >
-                                    label
-                                </FontIcon>
-                                {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.Category')}
-                            </div>
-                            <div style={{marginLeft: '8px'}}>
-                                <FontIcon
-                                    className="material-icons"
-                                    style={{top: '6px', marginRight: '24px'}}
-                                >
-                                    label_outline
-                                </FontIcon>
-                                {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.Skill')}
-                            </div>
-                            <div style={{marginLeft: '8px'}}>
-                                <FontIcon
-                                    className="material-icons"
-                                    style={{top: '6px', marginRight: '24px'}}
-                                >
-                                    extension
-                                </FontIcon>
-                                {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.OwnItem')}
-                            </div>
-                            <div style={{marginLeft: '8px'}}>
-                                <FontIcon
-                                    className="material-icons"
-                                    style={{top: '6px', marginRight: '24px'}}
-                                >
-                                    airplay
-                                </FontIcon>
-                                {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.IsDisplay')}
-                            </div>
-                        </InfoPaper>
+            <div>
+                <SetValueDialog
+                    open={this.state.categoryNameOpen}
+                    label={PowerLocalize.get("AdminClient.Info.SkillTree.NewCategory.Name")}
+                    onClose={this.closeNameDialog}
+                    onOk={this.handleCreateCategory}
+                />
+                <SetValueDialog
+                    open={this.state.skillNameOpen}
+                    label={PowerLocalize.get("AdminClient.Info.SkillTree.NewSkill.Name")}
+                    onClose={this.closeSkillNameDialog}
+                    onOk={this.handleCreateSkill}
+                />
+                <div className="row vertical-align">
+                    <Paper className="col-md-8">
+                        <TextField
+                            label={PowerLocalize.get("Action.Search")}
+                            onChange={(e: any) => {this.props.filter(e.target.value)}}
+                        />
+                        <FormControlLabel
+                            style={{marginLeft:'5px'}}
+                            control={
+                                <Checkbox
+                                    onChange={this.handleCheckFilterNonCustom}
+                                    checked={this.props.filterNonCustomSkills}
+                                    color={'primary'}
+                                />
+                            }
+                            label={PowerLocalize.get("AdminClient.Info.SkillTree.Filter.OnlyCustom")}
+                        />
+
+
+                        <SkillTree
+                            root={this.props.root}
+                            onCategorySelect={this.handleCategorySelect}
+                            onNestedListToggle={this.props.toggleOpen}
+                            onSkillSelect={this.handleSkillSelect}
+                            categoriesById={this.props.categoriesById}
+                            skillsById={this.props.skillsById}
+                            selectedSkillId={this.state.selectedSkillId}
+                            selectedCategoryId={this.state.selectedCategoryId}
+                        />
+                    </Paper>
+                    <div className="col-md-4">
+                        <div id="skill-tree-info-panel">
+                            <InfoPaper minHeight="200px" sticky={false}>
+                                <this.Info/>
+                            </InfoPaper>
+                            <div className="margin-5px"/>
+                            <InfoPaper
+                                minHeight="100px"
+                                title={PowerLocalize.get('AdminClient.Info.SkillTree.Legend')}
+                                sticky={false}
+                                style={{paddingBottom: '16px'}}
+                            >
+                                <div style={{marginLeft: '8px'}}>
+                                    <Icon
+                                        className="material-icons blacklisted-icon"
+                                        style={{top: '6px', marginRight: '24px'}}
+                                    >
+                                        warning
+                                    </Icon>
+                                    {PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsBlacklisted')}
+                                </div>
+                                <div style={{marginLeft: '8px'}}>
+                                    <Icon
+                                        className="material-icons"
+                                        style={{top: '6px', marginRight: '24px'}}
+                                    >
+                                        label
+                                    </Icon>
+                                    {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.Category')}
+                                </div>
+                                <div style={{marginLeft: '8px'}}>
+                                    <Icon
+                                        className="material-icons"
+                                        style={{top: '6px', marginRight: '24px'}}
+                                    >
+                                        label_outline
+                                    </Icon>
+                                    {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.Skill')}
+                                </div>
+                                <div style={{marginLeft: '8px'}}>
+                                    <Icon
+                                        className="material-icons"
+                                        style={{top: '6px', marginRight: '24px'}}
+                                    >
+                                        extension
+                                    </Icon>
+                                    {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.OwnItem')}
+                                </div>
+                                <div style={{marginLeft: '8px'}}>
+                                    <Icon
+                                        className="material-icons"
+                                        style={{top: '6px', marginRight: '24px'}}
+                                    >
+                                        airplay
+                                    </Icon>
+                                    {PowerLocalize.get('AdminClient.Info.SkillTree.Legend.IsDisplay')}
+                                </div>
+                            </InfoPaper>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>);
+            </div>);
     }
 }
 
