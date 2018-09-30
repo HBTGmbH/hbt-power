@@ -1,12 +1,11 @@
 import {SectorEntry} from '../../../../../model/SectorEntry';
 import * as Immutable from 'immutable';
 import * as React from 'react';
-import {IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {SectorEntryDialog} from './sector-entry-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 interface SingleSectorLocalProps {
     sectors: Immutable.Map<string, NameEntity>;
@@ -73,12 +72,8 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
         return(
             <tr>
                 <td>
-                    <Tooltip title={PowerLocalize.get('Action.Edit')}>
-                        <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonClick} >edit</IconButton>
-                    </Tooltip>
-                    <Tooltip title={PowerLocalize.get('Action.Delete')}>
-                        <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonClick} >delete</IconButton>
-                    </Tooltip>
+                    <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.handleEditButtonClick}/>
+                    <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonClick}/>
                     <div style={{width:'80%'}}>
                         <SectorEntryDialog
                             open={this.state.dialogOpen}

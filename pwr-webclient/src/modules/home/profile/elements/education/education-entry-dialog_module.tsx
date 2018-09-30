@@ -1,7 +1,7 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {Dialog, IconButton, MenuItem, Select} from '@material-ui/core';
+import {Dialog, MenuItem, Select} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {EducationEntry} from '../../../../../model/EducationEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -9,7 +9,6 @@ import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
@@ -17,7 +16,7 @@ import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import {DatePicker} from 'material-ui-pickers';
 import AutoSuggest from '../../../../general/auto-suggest_module';
-import {StringUtils} from '../../../../../utils/StringUtil';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 
 interface EducationEntryDialogLocalProps {
@@ -122,7 +121,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         this.setState({educationAutoComplete: chosenRequest});
     };
 
-    private handleCloseButtonPress = (event: any) => {
+    private handleCloseButtonPress = () => {
         this.closeDialog();
     };
 
@@ -134,7 +133,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         });
     };
 
-    private handleSaveButtonPress = (event: any) => {
+    private handleSaveButtonPress = () => {
         let name: string = this.state.educationAutoComplete;
         let education: NameEntity = ProfileStore.findNameEntityByName(name, this.props.educations);
         let educationEntry: EducationEntry = this.state.entry;
@@ -222,14 +221,8 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 </div>
             </DialogContent>
             <DialogActions>
-                <Tooltip title={PowerLocalize.get('Action.Save')}>
-                    <IconButton className="material-icons icon-size-20"
-                                onClick={this.handleSaveButtonPress}>save</IconButton>
-                </Tooltip>
-                <Tooltip title={PowerLocalize.get('Action.Exit')}>
-                    <IconButton className="material-icons icon-size-20"
-                                onClick={this.handleCloseButtonPress}>close</IconButton>
-                </Tooltip>
+                <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>
+                <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.handleCloseButtonPress}/>
             </DialogActions>
         </Dialog>;
     }

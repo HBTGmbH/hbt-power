@@ -206,8 +206,7 @@ class NameEntityOverviewModule extends React.Component<
     }
 }
 
-const themed = withTheme()(NameEntityOverviewModule);
-const connected = connect(NameEntityOverviewModule.mapStateToProps, NameEntityOverviewModule.mapDispatchToProps)(themed);
+const connected = withTheme()(connect(NameEntityOverviewModule.mapStateToProps, NameEntityOverviewModule.mapDispatchToProps)(NameEntityOverviewModule));
 
 
 /**

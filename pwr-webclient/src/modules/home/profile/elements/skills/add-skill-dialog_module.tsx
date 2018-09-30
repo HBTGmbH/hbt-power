@@ -6,7 +6,6 @@ import {
     Button,
     CircularProgress,
     Dialog,
-    IconButton,
     Radio,
     RadioGroup,
     Step,
@@ -27,6 +26,7 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 
 interface AddSkillDialogProps {
@@ -250,24 +250,9 @@ class AddSkillDialogModule extends React.Component<
     private renderDone = (): JSX.Element  => {
         let btn;
         if(this.props.doneState === "SKILL_EXISTS") {
-            btn = <div>
-                    <IconButton
-                        className="material-icons icon-size-20"
-                        style={{color: "green"}}
-                        onClick={this.props.progress}
-                    >
-                        info
-                    </IconButton><br/>
-                    Skill Already Exists
-                </div>
+            btn = <div><PwrIconButton style={{color: "green"}} iconName="info" onClick={this.props.progress} tooltip="Skill Already Exists"/>Skill Already Exists</div>
         } else {
-           btn = <IconButton
-                className="material-icons icon-size-20"
-                style={{color: "green"}}
-                onClick={this.props.progress}
-            >
-                check_circle
-            </IconButton>
+           btn = <PwrIconButton style={{color: "green"}} iconName="check_circle" onClick={this.props.progress} tooltip="OK"/>
         }
 
         return <div style={{textAlign: "center"}}>
@@ -334,9 +319,7 @@ class AddSkillDialogModule extends React.Component<
                 </Stepper>
             </DialogContent>
                 <DialogActions>
-                    <IconButton className="material-icons" onClick={this.props.closeDialog}>
-                        close
-                    </IconButton>
+                    <PwrIconButton onClick={this.props.closeDialog} tooltip={PowerLocalize.get("Action.Close")} iconName={"close"}/>
                 </DialogActions>
             </Dialog>
         </div>);

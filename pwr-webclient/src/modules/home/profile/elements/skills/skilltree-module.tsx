@@ -55,6 +55,9 @@ class SkillTreeModule extends React.Component<
         flexWrap: 'wrap',
     };
 
+    public componentDidMount() {
+        this.props.getSkillServiceSkills(this.props.skills.toArray().map(skill => skill.name()));
+    }
 
     public componentDidUpdate(oldProps: SkillTreeProps) {
         if(this.props.skills !== oldProps.skills) {
@@ -94,7 +97,6 @@ class SkillTreeModule extends React.Component<
 
     private mapSkill = (skill: Skill) => {
         // Retreive it from the map; If it doesn't exist, it's custom
-        // FIXME es wird am Anfang immer Rot ausgewählt bis man die erste Änderung an einem Skill vornimmt, dann refreshen alle und es funktioniert wieder -mp
         let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
         let style = {
             margin: "4px",

@@ -85,6 +85,11 @@ const newPowerTheme = {
         }
     },
     overrides: {
+        MuiDialogContent: {
+            root: {
+                overflowY: "unset",
+            }
+        },
         MuiDialog: {
             paper: {
                 overflowY: "unset",

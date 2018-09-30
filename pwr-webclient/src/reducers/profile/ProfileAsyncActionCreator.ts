@@ -66,7 +66,6 @@ export class ProfileAsyncActionCreator {
     /**
      *
      * @param initials
-     * @returns {(dispatch:redux.Dispatch<AllConsultantsState>)=>undefined}
      */
     public static requestSingleProfile(initials: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>) {

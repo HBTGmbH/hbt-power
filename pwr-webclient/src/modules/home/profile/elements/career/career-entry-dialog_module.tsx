@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ProfileElementType} from '../../../../../Store';
-import {Dialog, IconButton} from '@material-ui/core';
+import {Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {CareerEntry} from '../../../../../model/CareerEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -13,14 +13,11 @@ import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import AutoSuggest from '../../../../general/auto-suggest_module';
 import {DatePicker} from 'material-ui-pickers';
-import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
-import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
-import {StringUtils} from '../../../../../utils/StringUtil';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 
 /**
@@ -182,15 +179,13 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
             <DialogContent>
                 <div className="row">
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <DatePicker
-                                autoOk
-                                label={'Start Date'}
-                                value={this.state.careerEntry.startDate()}
-                                onChange={this.changeStartDate}
-                                format="DD.MM.YYYY"
-                            />
-                        </MuiPickersUtilsProvider>
+                        <DatePicker
+                            autoOk
+                            label={'Start Date'}
+                            value={this.state.careerEntry.startDate()}
+                            onChange={this.changeStartDate}
+                            format="DD.MM.YYYY"
+                        />
                     </div>
                     <div className="col-md-5 col-sm-6">
                         {this.renderEndDateChoice()}
@@ -210,12 +205,8 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
                 </div>
             </DialogContent>
             <DialogActions>
-                <Tooltip title={PowerLocalize.get('Action.Save')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit}>save</IconButton>
-                </Tooltip>
-                <Tooltip title={PowerLocalize.get('Action.Exit')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.resetAndExit}>close</IconButton>
-                </Tooltip>
+                <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
+                <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.resetAndExit}/>
             </DialogActions>
         </Dialog>;
     }

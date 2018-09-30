@@ -6,7 +6,6 @@ export enum ActionType {
 
     AddSkill,
     RemoveSkillFromProject,
-    SwapIndex, // TODO still used?
     UserLoginFailed,
     ReplaceExportDocuments,
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {CardActions, IconButton} from '@material-ui/core';
+import {CardActions} from '@material-ui/core';
 import {Project} from '../../../../../model/Project';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialog, ProjectDialogState} from './project-dialog_module';
@@ -8,11 +8,11 @@ import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {Profile} from '../../../../../model/Profile';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography/Typography';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 interface ProjectModuleProps {
     project: Project;
@@ -88,7 +88,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                 backgroundColor: this.props.backgroundColor,
                 width: '100%',
                 height: '100%'
-            }} //initiallyExpanded={true}
+            }}
         >
             <ExpansionPanelSummary
                 title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
@@ -108,18 +108,11 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                            profile={this.props.profile}
             />
             <ExpansionPanelDetails>
-                <label>Kurzbeschreibung</label><br/>
                 {this.props.project.description()}
             </ExpansionPanelDetails>
             <CardActions >
-                <Tooltip title={PowerLocalize.get('Action.Edit')} // FIXME BUG https://github.com/gregnb/mui-datatables/issues/100
-                    >
-                    <IconButton className="material-icons icon-size-20" onClick={this.openDialog}>edit</IconButton>
-                </Tooltip>
-
-                <Tooltip title={PowerLocalize.get('Action.Delete')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.deleteButtonPress}>delete</IconButton>
-                </Tooltip>
+                <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
+                <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.deleteButtonPress}/>
             </CardActions>
         </ExpansionPanel>;
     }

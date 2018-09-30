@@ -9,15 +9,15 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileStore} from '../../../../../model/ProfileStore';
 import {isNullOrUndefined} from 'util';
-import {Dialog, IconButton} from '@material-ui/core';
+import {Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import TextField from '@material-ui/core/TextField/TextField';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import AutoSuggest from '../../../../general/auto-suggest_module';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 /**
  * Properties that are managed by react-redux.
@@ -125,28 +125,21 @@ class KeySkillDialogModule extends React.Component<
             <DialogContent>
             <div className="row">
                 <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                    {/*TODO <AutoComplete
+                    <AutoSuggest
                         label={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
                         id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
-                        value={this.state.autoCompleteValue}
-                        searchText={this.state.autoCompleteValue}
-                        dataSource={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}
-                        onUpdateInput={this.handleAutoCompleteInput}
-                        onNewRequest={this.handleAutoCompleteInput}
-                        filter={AutoComplete.fuzzyFilter}
-                    />*/}
-                    <TextField
-                        label={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
-                        id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
-                        value={this.state.autoCompleteValue}
-                        onChange={(e:any) => {this.handleAutoCompleteInput(e.target.value)}}
+                        data={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}
+                        searchTerm={this.state.autoCompleteValue}
+                        onSelect={this.handleAutoCompleteInput}
+                        closeOnSelect={true}
+                        onSearchChange={this.handleAutoCompleteInput}
                     />
                 </div>
             </div>
             </DialogContent>
             <DialogActions>
-                <Tooltip title={PowerLocalize.get('Action.Save')}><IconButton className="material-icons icon-size-20" onClick={this.saveAndExit} >save</IconButton></Tooltip>
-                <Tooltip title={PowerLocalize.get('Action.Exit')}><IconButton className="material-icons icon-size-20" onClick={this.resetAndExit} >close</IconButton></Tooltip>
+                <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
+                <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.resetAndExit}/>
             </DialogActions>
         </Dialog>);
     }

@@ -137,6 +137,7 @@ class AutoSuggest extends React.Component<AutoSuggestProps, AutoSuggestState> {
 
     public render() {
         const width = this.props.fullWidth ? "100%" : 256;
+        const searchTerm = !!this.props.searchTerm ? this.props.searchTerm : "";
         console.log("render_auto(searchTerm): ",this.props.searchTerm);
         return (
             <div id={this.props.id} style={{width: width}}>
@@ -145,7 +146,7 @@ class AutoSuggest extends React.Component<AutoSuggestProps, AutoSuggestState> {
                     label={this.props.label}
                     margin="normal"
                     aria-haspopup={true}
-                    value={this.props.searchTerm}
+                    value={searchTerm}
                     onChange={this.handleSearchChange}
                     onKeyPress={this.handleSearchKeyPress}
                 />

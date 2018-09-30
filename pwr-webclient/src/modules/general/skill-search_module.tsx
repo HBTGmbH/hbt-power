@@ -2,8 +2,7 @@ import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
-import FormControl from '@material-ui/core/FormControl/FormControl';
-import TextField from '@material-ui/core/TextField/TextField';
+import AutoSuggest from './auto-suggest_module';
 
 
 interface SkillSearcherProps {
@@ -46,7 +45,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     public componentWillReceiveProps(props: SkillSearcherProps) {
         if(!isNullOrUndefined(props.value) && this.props.value !== props.value) {
-            this.requestSkills(props.value, []);
+            this.requestSkills(props.value);
         }
     }
 
@@ -59,7 +58,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         resetOnRequest: true
     };
 
-    private requestSkills = (searchText: string, dataSource: any) => {
+    private requestSkills = (searchText: string) => {
         this.props.onValueChange(searchText);
         this.setState({
             searchText: searchText
@@ -93,31 +92,14 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         this.props.onNewRequest(request);
     };
     render() {
-        // TODO Autocomplete Textfield
-        return (
-            <FormControl>
-                <TextField
-                    id={this.props.id}
-                    label={this.props.label}
-                    onChange={event => this.handleRequest(event.target.value)}
-                    value={this.state.searchText}
-                />
-            </FormControl>
-            )
+        return <AutoSuggest
+            label={this.props.label}
+            id={this.props.id}
+            data={this.state.skills}
+            searchTerm={this.state.searchText}
+            onSelect={this.handleRequest}
+            closeOnSelect={true}
+            onSearchChange={this.requestSkills}
+        />;
     }
 }
-
-
-/* <AutoComplete
-                id={this.props.id}
-                anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                label={this.props.label}
-                dataSource={this.state.skills}
-                value={this.state.searchText}
-                searchText={this.state.searchText}
-                onNewRequest={this.handleRequest}
-                onUpdateInput={this.requestSkills}
-                listStyle={{overflow: 'auto', maxHeight: this.props.maxHeight}}
-                menuProps={{maxHeight: this.props.maxHeight, overflow: 'auto'}}
-                filter={AutoComplete.noFilter}
-            />*/

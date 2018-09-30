@@ -64,9 +64,6 @@ export interface SaveEntryAction extends AbstractAction {
     nameEntity: NameEntity;
 }
 
-/**
- * FIXME doc
- */
 export interface SaveProjectAction extends AbstractAction {
     state: ProjectDialogState
 }
