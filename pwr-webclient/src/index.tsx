@@ -35,13 +35,11 @@ store.dispatch(ProfileAsyncActionCreator.requestTrainings());
 store.dispatch(ProfileAsyncActionCreator.requestSectors());
 store.dispatch(ProfileAsyncActionCreator.requestCompanies());
 store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
-// TODO hier templates laden ??!
 store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
 
 
 // Prevents navigation
-// TODO nt hat ne middleware dafür gemacht.
 const pageLeavePreventer = (ev: any) => {
     let state: ApplicationState = store.getState() as ApplicationState;
     let changes = state.databaseReducer.profile().changesMade();

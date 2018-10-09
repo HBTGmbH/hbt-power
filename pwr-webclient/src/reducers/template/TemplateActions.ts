@@ -15,10 +15,14 @@ export namespace TemplateActions {
     export interface CreateTemplateAction extends AbstractAction{
         name: string,
         description: string,
+        initials:string,
+        path:string,
     }
 
     export interface ChangeTemplateAction extends AbstractAction{
+        id:string,
         name: string,
         description: string,
+        path:string,
     }
 }

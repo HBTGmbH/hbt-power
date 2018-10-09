@@ -115,7 +115,7 @@ class ViewProfileGenerator extends React.Component<
     };
 
 
-    // TODO neues Template erstellen anzeigen / Dialog o.ä.
+
     render() {
         return (
             <Dialog

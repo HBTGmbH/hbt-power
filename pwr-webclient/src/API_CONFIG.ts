@@ -352,4 +352,13 @@ export namespace TemplateService{
     export function CreateTemplate(name:string){
         return base() + "/view/template" + "/" + name;
     }
+
+    export function ChangeTemplate(id:string){
+        return base() + "/view/template" + "/" + id;
+    }
+
+    export function getPreview(id:string){
+        return base() + "/view/template"+ "/preview" + "/" + id;
+    }
+
 }

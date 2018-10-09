@@ -5,6 +5,7 @@ export class Template{
     path: string;
     createUser: string;
     createdDate: string;
+    previewUrl:string;
 
 
     constructor(template: Template){
@@ -14,7 +15,21 @@ export class Template{
         this.path = template.path;
         this.createUser = template.createUser;
         this.createdDate = template.createdDate;
+        this.previewUrl = template.previewUrl;
     }
+}
 
 
+export class TemplateSlice{
+    id:string;
+    name:string;
+    description:string;
+    path:string;
+
+    constructor(id:string, name:string, description:string, path:string){
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.path = path;
+    }
 }

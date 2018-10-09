@@ -10,7 +10,7 @@ interface RequestSnackbarState {
 
 }
 
-//  (Provisorisch verbessert )Snackbox muss wieder verschwinden -mp
+// TODO (Provisorisch verbessert )Snackbox muss wieder verschwinden -mp
 
 export class RequestSnackbar extends React.Component<RequestSnackbarProps, RequestSnackbarState> {
 
@@ -54,7 +54,7 @@ export class RequestSnackbar extends React.Component<RequestSnackbarProps, Reque
 
     render() {
         return(<div>
-            {RequestSnackbar.renderSingleSnackbar(this.props.APIRequestStatus, this.props.APIRequestStatus !== RequestStatus.Successful)}
+            {RequestSnackbar.renderSingleSnackbar(this.props.APIRequestStatus, this.props.APIRequestStatus == RequestStatus.Pending)}
         </div>)
     }
 }

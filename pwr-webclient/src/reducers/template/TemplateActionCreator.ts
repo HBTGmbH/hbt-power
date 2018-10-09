@@ -1,12 +1,12 @@
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
-import {Template} from '../../model/view/Template';
+import {Template, TemplateSlice} from '../../model/view/Template';
 import {AbstractAction} from '../profile/database-actions';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {AxiosError, AxiosResponse} from 'axios';
 import {ProfileActionCreator} from '../profile/ProfileActionCreator';
-import {TemplateService} from '../../API_CONFIG';
+import {patchConsultantActionString, TemplateService} from '../../API_CONFIG';
 import axios from 'axios';
 
 export namespace TemplateActionCreator {
@@ -52,19 +52,23 @@ export namespace TemplateActionCreator {
         }
     }
 
-    export function CreateTemplate(name:string,description:string):CreateTemplateAction{
+    export function CreateTemplate(name:string,description:string, initials:string, path:string):CreateTemplateAction{
         return {
             type: ActionType.CreateTemplate,
             name: name,
             description: description,
+            initials:initials,
+            path:path,
         }
     }
 
-    export function ChangeTemplate(name:string, description:string):ChangeTemplateAction{
+    export function ChangeTemplate(template:TemplateSlice):ChangeTemplateAction{
         return{
             type:ActionType.ChangeTemplate,
-            name: name,
-            description: description,
+            id:             template.id,
+            name:           template.name,
+            description:    template.description,
+            path:           template.path,
         }
     }
 
@@ -83,12 +87,28 @@ export namespace TemplateActionCreator {
         dispatch(ProfileActionCreator.SucceedAPIRequest());
     }
 
-    function CreateTemplate2(name:string,description:string){
+    function AsyncChangeTemplate(templateSlice:TemplateSlice){
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
+            axios.patch(TemplateService.ChangeTemplate(templateSlice.id),{
+                name:templateSlice.name,
+                description:templateSlice.description,
+                path:templateSlice.path,
+            })
+                .then((response:AxiosResponse) => {TemplateReceived(response,dispatch)})
+                .catch((error: AxiosError) => {
+                    dispatch(ProfileActionCreator.APIRequestFailed());
+                    console.error(error);
+                });
+        }
+    }
+
+
+    function AsyncCreateTemplate(name:string, description:string, initials:string, path:string){
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
             axios.post(TemplateService.CreateTemplate(name),{
-                "description":""+description,
-                "path":"",
-                "createUser":""
+                description:description,
+                path:path,
+                createUser:initials,
             })
                 .then((response:AxiosResponse) => {TemplateReceived(response,dispatch)})
                 .catch((error: AxiosError) => {
@@ -121,6 +141,19 @@ export namespace TemplateActionCreator {
                 console.error(error);
                 dispatch(ProfileActionCreator.APIRequestFailed());
             });
+        }
+    }
+
+
+    export function AsyncLoadPreview(id:string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            axios.get(TemplateService.getPreview(id))// url adresse
+                .then((response:AxiosResponse) => {
+                   // PreviewReceived(id,response.data, dispatch);      // in den state laden
+                })
+                .catch(function (error:any) {
+                    console.error(error);
+                });
         }
     }
 }
