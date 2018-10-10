@@ -219,6 +219,9 @@ body {
   height: 80px;
 }
 
+.entry-dlg-content {
+    margin-right: 24px;
+}
 .refresh-indicator {
   position: fixed;
   top: 50%;
