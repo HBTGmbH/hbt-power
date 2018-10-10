@@ -6,7 +6,6 @@ import {AveragedSkill} from '../../../model/statistics/AveragedSkill';
 import {StringUtils} from '../../../utils/StringUtil';
 import formatString = StringUtils.formatString;
 
-// TODO popover AnchoreEl
 
 const randomColor = require('randomcolor');
 const TagCloud = require('react-tagcloud');

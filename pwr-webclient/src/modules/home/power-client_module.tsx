@@ -13,7 +13,6 @@ import {Paths} from '../../Paths';
 
 
 export class PowerClient extends React.Component<{}, {}> {
-    // TODO LoginCheck ?!
     render() {
         return <div>
             <PowerToolbar/>

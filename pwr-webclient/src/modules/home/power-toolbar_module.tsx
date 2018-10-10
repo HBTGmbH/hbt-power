@@ -164,7 +164,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         </MenuItem>;
     };
 
-    //TODO Menu close on Select
     private renderMenu = () => {
         return (<div>
 
