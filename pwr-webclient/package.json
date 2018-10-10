@@ -4,6 +4,8 @@
   "private": true,
   "homepage": "",
   "dependencies": {
+    "@material-ui/core": "3.1.1",
+    "@material-ui/icons": "^3.0.1",
     "autosuggest-highlight": "^3.1.1",
     "axios": "0.16.2",
     "date-fns": "^2.0.0-alpha.7",
@@ -34,8 +36,6 @@
     "vis": "^4.21.0"
   },
   "devDependencies": {
-    "@material-ui/core": "3.1.1",
-    "@material-ui/icons": "^3.0.1",
     "@types/isomorphic-fetch": "0.0.34",
     "@types/js-cookie": "2.0.28",
     "@types/numeral": "0.0.22",
