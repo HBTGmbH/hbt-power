@@ -14,10 +14,9 @@ import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 
 /**
  * Properties that are managed by react-redux.
@@ -118,20 +117,21 @@ class KeySkillDialogModule extends React.Component<
                 onClose={this.closeDialog}
                 title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
                 fullWidth
+                id="KeySkillEntry.Dialog"
+                aria-labelledby="KeySkillEntry.Dialog.Title"
             >
-            <DialogTitle>
-                <Typography >{PowerLocalize.get('KeySkillEntry.Dialog.Title')}</Typography>
+            <DialogTitle id="KeySkillEntry.Dialog.Title">
+                {PowerLocalize.get('KeySkillEntry.Dialog.Title')}
             </DialogTitle>
             <DialogContent>
             <div className="row">
-                <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                    <AutoSuggest
+                <div className="col-md-11">
+                    <PwrAutoComplete
+                        fullWidth={true}
                         label={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
                         id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
                         data={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}
                         searchTerm={this.state.autoCompleteValue}
-                        onSelect={this.handleAutoCompleteInput}
-                        closeOnSelect={true}
                         onSearchChange={this.handleAutoCompleteInput}
                     />
                 </div>

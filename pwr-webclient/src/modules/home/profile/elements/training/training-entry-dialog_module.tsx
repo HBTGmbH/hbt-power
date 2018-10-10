@@ -10,11 +10,11 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {DatePicker} from 'material-ui-pickers';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
+import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 
 interface TrainingEntryDialogProps {
     /**
@@ -120,48 +120,47 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                 onClose={this.closeDialog}
                 title={PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 scroll={'paper'}
+                id="TrainingEntry.Dialog"
             >
-                <DialogTitle>
-                    <Typography >{PowerLocalize.get('TrainingEntry.Dialog.Title')}</Typography>
+                <DialogTitle id="TrainingEntry.Dialog.Title">
+                    {PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 </DialogTitle>
                 <DialogContent>
-                        <div className="row">
-                            <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                                <DatePicker
-                                    label={PowerLocalize.get('Begin')}
-                                    id={'TrainingEntry.StartDate' + this.props.trainingEntry.id}
-                                    value={this.state.trainingEntry.startDate()}
-                                    onChange={this.handleChangeStartDate}
-                                    showTodayButton
-                                    todayLabel={PowerLocalize.get('Today')}
-                                />
-                            </div>
-                            <div className="col-md-5 col-sm-6">
-                                <DatePicker
-                                    label={PowerLocalize.get('End')}
-                                    id={'TrainingEntry.EndDate' + this.props.trainingEntry.id}
-                                    value={this.state.trainingEntry.endDate()}
-                                    onChange={this.handleChangeEndDate}
-                                    showTodayButton
-                                    todayLabel={PowerLocalize.get('Today')}
-                                />
-                            </div>
+                    <div className="row">
+                        <div className="col-md-5">
+                            <DatePicker
+                                label={PowerLocalize.get('Begin')}
+                                id={'TrainingEntry.Dialog.StartDate' + this.props.trainingEntry.id}
+                                value={this.state.trainingEntry.startDate()}
+                                onChange={this.handleChangeStartDate}
+                                showTodayButton
+                                todayLabel={PowerLocalize.get('Today')}
+                            />
                         </div>
-
-                        <div className="row">
-                            <div className="col-md-5 col-sm-6 col-md-offset-1">
-                                <AutoSuggest
-                                    fullWidth={true}
-                                    label={PowerLocalize.get('Training.Singular')}
-                                    id={'TrainingEntry.Dialog.AC.' + this.props.trainingEntry.id}
-                                    data={this.props.trainings.map(NameEntityUtil.mapToName).toArray()}
-                                    searchTerm={this.state.trainingEntryValue}
-                                    onSelect={this.handleEducationFieldInput}
-                                    closeOnSelect={true}
-                                    onSearchChange={this.handleEducationFieldInput}
-                                />
-                            </div>
+                        <div className="col-md-5">
+                            <DatePicker
+                                label={PowerLocalize.get('End')}
+                                id={'TrainingEntry.Dialog.EndDate' + this.props.trainingEntry.id}
+                                value={this.state.trainingEntry.endDate()}
+                                onChange={this.handleChangeEndDate}
+                                showTodayButton
+                                todayLabel={PowerLocalize.get('Today')}
+                            />
                         </div>
+                    </div>
+                    <PwrSpacer/>
+                    <div className="row">
+                        <div className="col-md-5">
+                            <PwrAutoComplete
+                                fullWidth={true}
+                                label={PowerLocalize.get('Training.Singular')}
+                                id={'TrainingEntry.Dialog.Value.' + this.props.trainingEntry.id}
+                                data={this.props.trainings.map(NameEntityUtil.mapToName).toArray()}
+                                searchTerm={this.state.trainingEntryValue}
+                                onSearchChange={this.handleEducationFieldInput}
+                            />
+                        </div>
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>

@@ -15,8 +15,9 @@ import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import {DatePicker} from 'material-ui-pickers';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
+import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 
 
 interface EducationEntryDialogLocalProps {
@@ -125,7 +126,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         this.closeDialog();
     };
 
-    private handleDegreeSelect = (event: any, index: number, value: string) => {
+    private handleDegreeSelect = (value: string) => {
         let entry = this.state.entry;
         entry = entry.degree(value);
         this.setState({
@@ -153,8 +154,10 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
             onClose={this.closeDialog}
             title={PowerLocalize.get('EducationEntry.EditEntry.Title')}
             fullWidth
+            id="EducationEntry.Dialog"
+            aria-labelledby="EducationEntry.Dialog.Title"
         >
-            <DialogTitle>
+            <DialogTitle id="EducationEntry.Dialog.Title">
                 {PowerLocalize.get('EducationEntry.EditEntry.Title')}
             </DialogTitle>
             <DialogContent>
@@ -185,16 +188,16 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                         </form>
                     </div>
                 </div>
-
-                <div className="row" style={{marginTop: '10px'}}>
-                    <div className="col-md-5 col-sm-6">
+                <PwrSpacer/>
+                <div className="row">
+                    <div className="col-md-6">
                         <FormControl fullWidth={true}>
                             <InputLabel>
                                 <Typography>{PowerLocalize.get('AcademicDegree.Singular')}</Typography>
                             </InputLabel>
                             <Select
                                 value={this.state.entry.degree()}
-                                onChange={() => this.handleDegreeSelect}
+                                onChange={(event) => this.handleDegreeSelect(event.target.value)}
                                 fullWidth={true}
                             >
                                 {
@@ -205,15 +208,13 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                             </Select>
                         </FormControl>
                     </div>
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                    <div className="col-md-6">
                         <FormControl>
-                            <AutoSuggest
+                            <PwrAutoComplete
                                 label={PowerLocalize.get('EducationEntry.Dialog.EducationName')}
                                 id={'Education.Education.' + this.props.educationEntry.id()}
                                 data={this.props.educations.map(NameEntityUtil.mapToName).toArray()}
                                 searchTerm={this.state.educationAutoComplete}
-                                onSelect={this.handleEducationFieldInput}
-                                closeOnSelect={true}
                                 onSearchChange={this.handleEducationFieldInput}
                             />
                         </FormControl>

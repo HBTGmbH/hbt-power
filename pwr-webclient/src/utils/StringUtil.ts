@@ -15,7 +15,7 @@ export namespace StringUtils {
     /**
      * 'Stolen' from material-ui/autocomplete
      */
-    export function filterFuzzy(searchText: string, key: string) {
+    export function filterFuzzy(searchText: string, key: string): boolean {
         const compareString = key.toLowerCase();
         searchText = searchText.toLowerCase();
 

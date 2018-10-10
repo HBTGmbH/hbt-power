@@ -13,6 +13,7 @@ import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../reducers/reducerIndex';
 import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 import {getImagePath} from '../API_CONFIG';
+import {FormControl, FormHelperText} from '@material-ui/core';
 
 /**
  * Properties that are managed by react-redux.
@@ -47,44 +48,46 @@ interface PowerLoginLocalState {
 }
 
 
-
 /**
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface PowerLoginDispatch {
     logInUser(initials: string): void;
+
     setUserInitials(value: string): void;
 }
 
-class PowerLoginModule extends React.Component<
-    PowerLoginProps
+class PowerLoginModule extends React.Component<PowerLoginProps
     & PowerLoginProps
     & PowerLoginDispatch, PowerLoginLocalState> {
 
-    constructor(props:PowerLoginProps& PowerLoginProps& PowerLoginDispatch) {
+    constructor(props: PowerLoginProps & PowerLoginProps & PowerLoginDispatch) {
         super(props);
         this.state = {
             isAdmin: false
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: PowerLoginProps): PowerLoginProps {
         return {
             loginStatus: state.databaseReducer.loginStatus(),
             initials: state.databaseReducer.loggedInUser().initials()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerLoginDispatch {
         return {
             logInUser: (initials) => dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_HOME)),
             setUserInitials: (value) => dispatch(ProfileActionCreator.SetUserInitials(value))
-        }
+        };
     }
 
+    componentDidMount() {
+        this.props.setUserInitials("");
+    }
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
-        if(event.key == 'Enter') {
+        if (event.key == 'Enter' && !this.hasError()) {
             this.props.logInUser(this.props.initials);
         }
     };
@@ -97,24 +100,31 @@ class PowerLoginModule extends React.Component<
         this.props.setUserInitials(value);
     };
 
+    private hasError = (): boolean => {
+        return this.props.loginStatus == LoginStatus.REJECTED || this.props.loginStatus == LoginStatus.INVALID_NAME;
+    }
 
 
     private renderInputField = () => {
-        return (<TextField
-            label={this.props.loginStatus == LoginStatus.REJECTED ? PowerLocalize.get("UserLogin.LoginFailed") : PowerLocalize.get("Initials.Singular")}
-            value={this.props.initials}
-            onChange={(e) => this.handleFieldValueChange(e.target.value)}
-            onKeyPress={this.handleInputFieldKeyPress}
-        />)
+        return <FormControl error={this.hasError()}>
+            <TextField
+                label={PowerLocalize.get('Initials.Singular')}
+                value={this.props.initials}
+                onChange={(e) => this.handleFieldValueChange(e.target.value)}
+                onKeyPress={this.handleInputFieldKeyPress}
+            />
+            {this.props.loginStatus === LoginStatus.REJECTED ?   <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.LoginFailed')}</FormHelperText> : <React.Fragment/>}
+            {this.props.loginStatus === LoginStatus.INVALID_NAME ?   <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.InvalidName')}</FormHelperText> : <React.Fragment/>}
+        </FormControl>;
     };
 
     render() {
         return (
             <div>
                 <div className="vertical-align">
-                    <div style={{padding: "64px", backgroundColor: "white"}}>
+                    <div style={{padding: '64px', backgroundColor: 'white'}}>
                         <div className="vertical-align">
-                            <img className="img-responsive logo-medium" src={getImagePath()+"/HBT002_Logo_pos.png"}/>
+                            <img className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
                         </div>
                         <div className="vertical-align">
                             <h1>Profilauswahl HBT Power</h1>
@@ -124,15 +134,18 @@ class PowerLoginModule extends React.Component<
                                 {this.renderInputField()}
                             </div>
                             <br/>
-                            <Button variant= "raised" onClick={this.handleProgressButtonClick} color={'primary'}>Weiter</Button>
+                            <Button variant="raised"
+                                    onClick={this.handleProgressButtonClick}
+                                    disabled={this.hasError()}
+                                    color={'primary'}>Weiter</Button>
                             <br/>
                             <br/>
-                            <Link to={Paths.ADMIN_LOGIN}><Button variant = "flat">Admin</Button></Link>
+                            <Link to={Paths.ADMIN_LOGIN}><Button variant="flat">Admin</Button></Link>
                         </div>
 
                     </div>
                 </div>
-                <div className="vertical-align" style={{marginTop: "50px"}}>
+                <div className="vertical-align" style={{marginTop: '50px'}}>
                     <BottomBuildInfo/>
                 </div>
             </div>);

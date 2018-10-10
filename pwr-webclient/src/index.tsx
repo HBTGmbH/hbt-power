@@ -7,7 +7,6 @@ import {ApplicationState, PWR_HISTORY, store} from './reducers/reducerIndex';
 import {Provider} from 'react-redux';
 import {PowerClient} from './modules/home/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
 import {PowerLogin} from './modules/power-login_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
@@ -28,13 +27,6 @@ const paths = new Paths();
 paths.restorePath();
 
 PowerLocalize.setLocale(navigator.language);
-store.dispatch(ProfileAsyncActionCreator.requestQualifications());
-store.dispatch(ProfileAsyncActionCreator.requestLanguages());
-store.dispatch(ProfileAsyncActionCreator.requestEducations());
-store.dispatch(ProfileAsyncActionCreator.requestTrainings());
-store.dispatch(ProfileAsyncActionCreator.requestSectors());
-store.dispatch(ProfileAsyncActionCreator.requestCompanies());
-store.dispatch(ProfileAsyncActionCreator.requestProjectRoles());
 store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
 

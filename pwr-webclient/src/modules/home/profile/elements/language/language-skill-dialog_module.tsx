@@ -11,11 +11,10 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 
 
 interface EducationEntryDialogLocalProps {
@@ -125,13 +124,13 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                 onClose={this.closeDialog}
                 scroll={'paper'}
                 title={PowerLocalize.get('LanguageSkill.EditSkill.Title')}
+                id="LanguageSkill.Dialog"
+                aria-labelledby="LanguageSkill.Dialog.Title"
             >
-                <DialogTitle>
-                    <Typography>{PowerLocalize.get('LanguageSkill.EditSkill.Title')}</Typography>
-                </DialogTitle>
+                <DialogTitle id="LanguageSkill.Dialog.Title">{PowerLocalize.get('LanguageSkill.EditSkill.Title')}</DialogTitle>
                 <DialogContent>
                     <div className="row">
-                        <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                        <div className="col-md-5">
                             <FormControl>
                                 <InputLabel>{PowerLocalize.get('LanguageLevel.Singular')}</InputLabel>
                                 <Select
@@ -145,14 +144,12 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                 </Select>
                             </FormControl>
                         </div>
-                        <div style={{marginTop: '30px'}}>
-                            <AutoSuggest
+                        <div className="col-md-5">
+                            <PwrAutoComplete
                                 label={PowerLocalize.get('Language.Singular')}
                                 id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
                                 data={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
                                 searchTerm={this.state.languageAutoCompleteValue}
-                                onSelect={this.handleLanguageFieldRequest}
-                                closeOnSelect={true}
                                 onSearchChange={this.handleLanguageFieldInput}
                             />
                         </div>

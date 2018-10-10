@@ -15,9 +15,10 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {DatePicker} from 'material-ui-pickers';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
+import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 
 
 /**
@@ -172,13 +173,14 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
             open={this.props.open}
             onClose={this.closeDialog}
             fullWidth
+            aria-labelledby="CarrerEntry.Dialog.Title"
         >
-            <DialogTitle>
+            <DialogTitle id="CarrerEntry.Dialog.Title">
                {PowerLocalize.get('CareerEntry.Dialog.Title')}
             </DialogTitle>
             <DialogContent>
                 <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
+                    <div className="col-md-5 col-sm-6 col-sm-offset-0">
                         <DatePicker
                             autoOk
                             label={'Start Date'}
@@ -191,15 +193,14 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
                         {this.renderEndDateChoice()}
                     </div>
                 </div>
+                <PwrSpacer double={true}/>
                 <div className="row">
-                    <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                        <AutoSuggest id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}
-                                     label={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
-                                     data={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
-                                     searchTerm={this.state.autoCompleteValue}
-                                     onSearchChange={this.handleAutoCompleteInput}
-                                     onSelect={this.handleAutoCompleteInput}
-                                     closeOnSelect={true}
+                    <div className="col-md-10">
+                        <PwrAutoComplete data={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
+                                         label={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
+                                         fullWidth={true}
+                                         searchTerm={this.state.autoCompleteValue}
+                                         onSearchChange={this.handleAutoCompleteInput}
                         />
                     </div>
                 </div>

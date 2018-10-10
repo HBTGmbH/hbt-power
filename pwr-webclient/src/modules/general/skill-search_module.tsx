@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
-import AutoSuggest from './auto-suggest_module';
+import {PwrAutoComplete} from './pwr-auto-complete';
 
 
 interface SkillSearcherProps {
@@ -13,6 +13,7 @@ interface SkillSearcherProps {
     value?: string;
     initialValue?: string;
     resetOnRequest?: boolean;
+    fullWidth?: boolean;
     onNewRequest?(request: string): void;
     /**
      * Fired everytime the value changes(User input) and returns the value the user typed in.
@@ -68,6 +69,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 maxResults: this.props.maxResults,
                 searchterm: searchText
             };
+            console.log("Searching for text", searchText);
             axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
                 if(response.status === 200) {
                     this.setState({
@@ -92,13 +94,12 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         this.props.onNewRequest(request);
     };
     render() {
-        return <AutoSuggest
+        return <PwrAutoComplete
+            fullWidth={this.props.fullWidth}
             label={this.props.label}
             id={this.props.id}
             data={this.state.skills}
             searchTerm={this.state.searchText}
-            onSelect={this.handleRequest}
-            closeOnSelect={true}
             onSearchChange={this.requestSkills}
         />;
     }

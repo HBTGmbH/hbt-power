@@ -25,6 +25,7 @@ const styles = theme => ({
 });
 
 class PwrLoadingButtonModule extends React.Component<PwrLoadingButtonProps & WithStyles<'wrapper'> & WithStyles<'fabProgress'>> {
+
     render() {
         return <div className={this.props.classes.wrapper}>
             <Button

@@ -190,7 +190,8 @@ export class DatabaseReducer {
 
     public static SetUserInitials(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
         let loggedInUser = state.loggedInUser().initials(action.value);
-        return state.loggedInUser(loggedInUser);
+        let status = action.value.length > 0 ? LoginStatus.INITIALS : LoginStatus.INVALID_NAME;
+        return state.loggedInUser(loggedInUser).loginStatus(status);
     }
 
     public static Reduce(state : ProfileStore, action: AbstractAction) : ProfileStore {

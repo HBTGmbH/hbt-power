@@ -9,14 +9,12 @@ import {QualificationEntry} from '../../../../../model/QualificationEntry';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import TextField from '@material-ui/core/TextField/TextField';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {DatePicker} from 'material-ui-pickers';
 import {MaterialUiPickersDate} from 'material-ui-pickers/typings/date';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 
 
 interface QualificationEntryDialogProps {
@@ -118,37 +116,29 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                 fullWidth
             >
                 <DialogTitle>
-                    <Typography >{PowerLocalize.get('Qualification.Dialog.Title')}</Typography>
+                    {PowerLocalize.get('Qualification.Dialog.Title')}
                 </DialogTitle>
                 <DialogContent>
-                <div className="entry-dlg-content">
-                    <div>
-                        <DatePicker
-                            id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
-                            label={PowerLocalize.get('Begin')}
-                            value={this.state.qualificationEntry.date()}
-                            onChange={this.handleChangeDate}
-                        />
+                    <div className="row">
+                        <div className="col-md-5">
+                            <DatePicker
+                                id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
+                                label={PowerLocalize.get('Begin')}
+                                value={this.state.qualificationEntry.date()}
+                                onChange={this.handleChangeDate}
+                            />
+                        </div>
+                        <div className={"col-md-5"}>
+                            <PwrAutoComplete
+                                fullWidth={true}
+                                label={PowerLocalize.get('Qualification.Singular')}
+                                id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
+                                data={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
+                                searchTerm={this.state.qualificationAutoCompleteValue}
+                                onSearchChange={this.handleQualificationFieldInput}
+                            />
+                        </div>
                     </div>
-                    <div style={{marginTop:'10px'}}>
-                        <AutoSuggest
-                            fullWidth={true}
-                            label={PowerLocalize.get('Qualification.Singular')}
-                            id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
-                            data={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
-                            searchTerm={this.state.qualificationAutoCompleteValue}
-                            onSelect={this.handleQualificationFieldInput}
-                            closeOnSelect={true}
-                            onSearchChange={this.handleQualificationFieldInput}
-                        />
-                        <TextField
-                            fullWidth={true}
-                            label={PowerLocalize.get('Qualification.Singular')}
-                            id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
-                            value={this.state.qualificationAutoCompleteValue}
-                        />
-                    </div>
-                </div>
                 </DialogContent>
                 <DialogActions>
                     <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>

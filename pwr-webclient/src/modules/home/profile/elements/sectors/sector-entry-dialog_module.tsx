@@ -10,10 +10,9 @@ import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
-import AutoSuggest from '../../../../general/auto-suggest_module';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 
 interface SectorEntryDialogProps {
     /**
@@ -104,21 +103,21 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                 onClose={this.closeDialog}
                 title={PowerLocalize.get('SectorEntry.Dialog.Title')}
                 fullWidth
+                id="SectorEntry.Dialog"
+                aria-labelledby="SectoryEntry.Dialog.Title"
             >
-                <DialogTitle>
-                    <Typography >{PowerLocalize.get('SectorEntry.Dialog.Title')}</Typography>
+                <DialogTitle id="SectoryEntry.Dialog.Title">
+                    {PowerLocalize.get('SectorEntry.Dialog.Title')}
                 </DialogTitle>
                 <DialogContent>
                 <div className="row">
-                    <div>
-                        <AutoSuggest
+                    <div className="col-md-11">
+                        <PwrAutoComplete
                             fullWidth={true}
                             label={PowerLocalize.get('Sector.Singular')}
                             id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
                             data={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
                             searchTerm={this.state.sectorEntryValue}
-                            onSelect={this.handleSectorFieldInput}
-                            closeOnSelect={true}
                             onSearchChange={this.handleSectorFieldInput}
                         />
                     </div>

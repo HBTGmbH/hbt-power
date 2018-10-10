@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as redux from 'redux';
-import {Chip, Dialog, ListSubheader, TextField} from '@material-ui/core';
+import {AppBar, Chip, Dialog, TextField, Toolbar, Typography} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {Project} from '../../../../../model/Project';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -15,12 +15,12 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import {DatePicker} from 'material-ui-pickers';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {ComparatorBuilder} from 'ts-comparator';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
+import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -108,13 +108,13 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         return this.props.project.skillIDs()
             .sort(ComparatorBuilder.comparing((s: string) => s).build())
             .map(skillId => <Chip
-                    key={'SkillChip_' + skillId}
-                    style={{margin: 4}}
-                    onDelete={() => {
-                        this.handleDeleteSkill(skillId);
-                    }}
-                    label={this.props.profile.getSkill(skillId).name()}
-                />);
+                key={'SkillChip_' + skillId}
+                style={{margin: 4}}
+                onDelete={() => {
+                    this.handleDeleteSkill(skillId);
+                }}
+                label={this.props.profile.getSkill(skillId).name()}
+            />);
     };
 
     private changeStartDate = (date: Date) => {
@@ -143,7 +143,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
 
     private handleAddRole = (value: string) => {
-        if(this.state.roles.length < 3){
+        if (this.state.roles.length < 3) {
             this.setState({
                 roles: [...this.state.roles, value]
             });
@@ -191,12 +191,26 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         return (
             <Dialog open={this.props.open}
                     onClose={this.props.onClose}
-                    fullWidth
+                    fullScreen={true}
             >
-                <DialogTitle>{PowerLocalize.get('ProjectDialog.Title')}</DialogTitle>
+                <AppBar>
+                    <Toolbar>
+                        <Typography style={{color: 'white', flex: 1}}
+                                    variant={'title'}>{PowerLocalize.get('ProjectDialog.Title')}</Typography>
+                        <PwrIconButton style={{color: 'white'}} tooltip={PowerLocalize.get('Action.Save')}
+                                       iconName="save"
+                                       onClick={this.handleSaveButtonPress}/>
+                        <PwrIconButton style={{color: 'white'}} tooltip={PowerLocalize.get('Action.Exit')}
+                                       iconName="close"
+                                       onClick={this.handleCloseButtonPress}/>
+                    </Toolbar>
+                </AppBar>
+                <PwrSpacer double={true}/>
+                <PwrSpacer double={true}/>
+                <PwrSpacer double={true}/>
                 <DialogContent>
                     <div className="row">
-                        <div className="col-md-5 col-sm-6 col-md-offset-1">
+                        <div className="col-md-10">
                             <TextField
                                 label={PowerLocalize.get('ProjectName.Singular')}
                                 value={this.state.project.name()}
@@ -206,57 +220,60 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                             />
                         </div>
                     </div>
+                    <PwrSpacer double={true}/>
                     <div className="row">
-                        <div className="col-md-5 col-sm-5 col-md-offset-1">
+                        <div className="col-md-5">
                             <DatePicker
                                 autoOk
+                                fullWidth={true}
                                 label={PowerLocalize.get('Project.StartDate')}
                                 id={'ProjectDialog.StartDate' + this.props.project.id()}
                                 value={this.state.project.startDate()}
                                 onChange={this.changeStartDate}
                                 format="DD.MM.YYYY"
+                                todayLabel={PowerLocalize.get('Today')}
                             />
                         </div>
-                        <div className="col-md-5 col-sm-5 ">
+                        <div className="col-md-5">
                             <DatePicker
                                 label={PowerLocalize.get('Project.EndDate')}
                                 value={this.state.project.endDate()}
                                 id={'ProjectDialog.EndDate' + this.props.project.id()}
                                 onChange={this.changeEndDate}
                                 showTodayButton
+                                format="DD.MM.YYYY"
                                 todayLabel={PowerLocalize.get('Today')}
                             />
                         </div>
                     </div>
+                    <PwrSpacer double={true}/>
                     <div className="row">
-                        <div className="col-md-5 col-sm-5 col-md-offset-1">
-                            <AutoSuggest
+                        <div className="col-md-5">
+                            <PwrAutoComplete
                                 fullWidth={true}
                                 label={PowerLocalize.get('Broker.Singular')}
                                 id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                 data={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                 searchTerm={this.state.brokerACValue}
-                                onSelect={this.handleBrokerChange}
-                                closeOnSelect={true}
                                 onSearchChange={this.handleBrokerChange}
                             />
                         </div>
-                        <div className="col-md-5 col-sm-5 ">
-                            <AutoSuggest
+                        <div className="col-md-5">
+                            <PwrAutoComplete
                                 fullWidth={true}
                                 label={PowerLocalize.get('Customer.Singular')}
                                 id={'ProjectDialog.EndCustomer.' + this.props.project.id}
                                 data={this.props.companies.map(NameEntityUtil.mapToName).toArray()}
                                 searchTerm={this.state.clientACValue}
-                                onSelect={this.handleEndCustomerInput}
-                                closeOnSelect={true}
                                 onSearchChange={this.handleEndCustomerInput}
                             />
                         </div>
                     </div>
+                    <PwrSpacer double={true}/>
                     <div className="row">
-                        <div className="col-md-offset-1 col-md-10">
+                        <div className="col-md-10">
                             <ChipInput
+                                fullWidth={true}
                                 label={PowerLocalize.get('Project.Dialog.Roles.Title')}
                                 dataSource={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
                                 value={this.state.roles}
@@ -265,8 +282,9 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                             />
                         </div>
                     </div>
+                    <PwrSpacer double={true}/>
                     <div className="row">
-                        <div className="col-md-offset-1 col-md-10">
+                        <div className="col-md-10">
                             <TextField
                                 label={PowerLocalize.get('ProjectDialog.Description.LabelText')}
                                 fullWidth={true}
@@ -278,17 +296,18 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                             />
                         </div>
                     </div>
-
-                    <div className="row mui-margin">
-                        <div className="col-md-10  col-md-offset-1">
-                            <ListSubheader>Skills</ListSubheader>
+                    <PwrSpacer double={true}/>
+                    <div className="row">
+                        <div className="col-md-10">
+                            <Typography variant="subheading">Skills</Typography>
                             <AddSkillDialog
                                 onOpen={() => this.props.onOpenAddSkill(this.props.project.id())}
                             />
                         </div>
                     </div>
+                    <PwrSpacer double={true}/>
                     <div className="row">
-                        <div className="col-md-offset-1 col-md-10">
+                        <div className="col-md-10">
                             <div style={{display: 'flex', flexWrap: 'wrap'}}>
                                 {
                                     this.renderSkills()
@@ -298,12 +317,15 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton tooltip={PowerLocalize.get('Action.Save')} iconName="save" onClick={this.handleSaveButtonPress}/>
-                    <PwrIconButton tooltip={PowerLocalize.get('Action.Exit')} iconName="close" onClick={this.handleCloseButtonPress}/>
+                    <PwrIconButton tooltip={PowerLocalize.get('Action.Save')} iconName="save"
+                                   onClick={this.handleSaveButtonPress}/>
+                    <PwrIconButton tooltip={PowerLocalize.get('Action.Exit')} iconName="close"
+                                   onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
             </Dialog>
         );
     }
 }
 
-export const ProjectDialog: React.ComponentClass<ProjectDialogLocalProps> = connect(ProjectDialogModule.mapStateToProps, ProjectDialogModule.mapDispatchToProps)(ProjectDialogModule);
+export const ProjectDialog: React.ComponentClass<ProjectDialogLocalProps> = connect(ProjectDialogModule.mapStateToProps,
+    ProjectDialogModule.mapDispatchToProps)(ProjectDialogModule);
