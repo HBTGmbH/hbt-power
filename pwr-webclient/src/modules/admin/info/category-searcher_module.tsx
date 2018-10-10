@@ -59,7 +59,6 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
         this.setState({
             selected: index
         });
-        console.log("selected", index);
         this.props.onSelectCategory(index);
     };
 
@@ -72,7 +71,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     private renderCategories = () => {
         let categories = this.props.categories;
         if(this.state.filterText !== "") {
-            categories = categories.filter(categorie => AutoComplete.fuzzyFilter(this.state.filterText, categorie.qualifier()));
+            categories = categories.filter(category => AutoComplete.fuzzyFilter(this.state.filterText, category.qualifier()));
         }
         categories.sort(Comparators.compareCategories);
         return categories.map(this.mapListItem);

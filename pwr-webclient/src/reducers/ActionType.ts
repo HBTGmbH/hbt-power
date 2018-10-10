@@ -84,6 +84,7 @@ export enum ActionType {
     ReadSkillHierarchy,
     SetTreeChildrenOpen,
     FilterTree,
+    MoveCategory,
 
     UpdateSkillCategory,
     RemoveSkillCategory,
