@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {Button, Icon} from '@material-ui/core';
 
-const MorphIcon = require('react-svg-buttons').MorphIcon;
-
 interface EntrySortButtonProps {
     label: string;
     order: 'asc' | 'desc';
