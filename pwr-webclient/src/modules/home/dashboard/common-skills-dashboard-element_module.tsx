@@ -58,7 +58,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
         this.props.profileSkillMetrics.commonSkills().forEach(com => {
             commonSkills += prefix;
             commonSkills += com;
-            prefix = ' ,';
+            prefix = ', ';
         });
         return commonSkills;
     };
