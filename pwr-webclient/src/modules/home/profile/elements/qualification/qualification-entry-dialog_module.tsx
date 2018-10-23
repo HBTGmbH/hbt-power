@@ -1,20 +1,20 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import { Dialog, IconButton} from '@material-ui/core';
+import {Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {QualificationEntry} from '../../../../../model/QualificationEntry';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import TextField from '@material-ui/core/TextField/TextField';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import Typography from '@material-ui/core/Typography/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {DatePicker} from 'material-ui-pickers';
+import {MaterialUiPickersDate} from 'material-ui-pickers/typings/date';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 
 
 interface QualificationEntryDialogProps {
@@ -73,14 +73,9 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
     /**
      * Handles update of the auto complete components input field.
      * @param searchText the text that had been typed into the autocomplete
-     * @param dataSource useless
      */
-    private handleQualificationFieldInput = (searchText: string, dataSource: Array<string>) => {
+    private handleQualificationFieldInput = (searchText: string) => {
         this.setState({qualificationAutoCompleteValue: searchText});
-    };
-
-    private handleLanguageFieldRequest = (chosenRequest: string, index: number) => {
-        this.setState({qualificationAutoCompleteValue: chosenRequest});
     };
 
     private handleCloseButtonPress = () => {
@@ -102,10 +97,9 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
 
     /**
     * Callback invokes when the DatePicker's value changes.
-    * @param event is always null according to material-ui docs
     * @param date is the new date.
     */
-    private handleChangeDate = (event: any, date: Date) => {
+    private handleChangeDate = (date: MaterialUiPickersDate) => {
         this.setState({
             qualificationEntry: this.state.qualificationEntry.date(date)
         });
@@ -122,54 +116,33 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                 fullWidth
             >
                 <DialogTitle>
-                    <Typography >{PowerLocalize.get('Qualification.Dialog.Title')}</Typography>
+                    {PowerLocalize.get('Qualification.Dialog.Title')}
                 </DialogTitle>
                 <DialogContent>
-                <div className="entry-dlg-content">
-                    <div>
-                        {/* <DatePicker
-                            label={PowerLocalize.get('Begin')}
-                            id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
-                            container="inline"
-                            value={this.state.qualificationEntry.date()}
-                            onChange={this.handleChangeDate}
-                            formatDate={formatToShortDisplay}
-                        />*/}
-                        <TextField
-                            label={PowerLocalize.get('Begin')}
-                            id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
-                            value={this.state.qualificationEntry.date().toISOString().split('T')[0]}
-                            type={"date"}
-                        />
+                    <div className="row">
+                        <div className="col-md-5">
+                            <DatePicker
+                                id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
+                                label={PowerLocalize.get('Begin')}
+                                value={this.state.qualificationEntry.date()}
+                                onChange={this.handleChangeDate}
+                            />
+                        </div>
+                        <div className={"col-md-5"}>
+                            <PwrAutoComplete
+                                fullWidth={true}
+                                label={PowerLocalize.get('Qualification.Singular')}
+                                id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
+                                data={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
+                                searchTerm={this.state.qualificationAutoCompleteValue}
+                                onSearchChange={this.handleQualificationFieldInput}
+                            />
+                        </div>
                     </div>
-                    <div style={{marginTop:'10px'}}>
-                        {/*TODO <AutoComplete
-                            fullWidth={true}
-                            label={PowerLocalize.get('Qualification.Singular')}
-                            id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
-                            value={this.state.qualificationAutoCompleteValue}
-                            searchText={this.state.qualificationAutoCompleteValue}
-                            dataSource={this.props.qualifications.map(NameEntityUtil.mapToName).toArray()}
-                            onUpdateInput={this.handleQualificationFieldInput}
-                            onNewRequest={this.handleLanguageFieldRequest}
-                            filter={AutoComplete.fuzzyFilter}
-                        />*/}
-                        <TextField
-                            fullWidth={true}
-                            label={PowerLocalize.get('Qualification.Singular')}
-                            id={'QualificationEntry.Qualification.' + this.props.qualificationEntry.id}
-                            value={this.state.qualificationAutoCompleteValue}
-                        />
-                    </div>
-                </div>
                 </DialogContent>
                 <DialogActions>
-                    <Tooltip title = {PowerLocalize.get('Action.Save')} >
-                        <IconButton className="material-icons icon-size-20" onClick={this.handleSaveButtonPress} >save</IconButton>
-                    </Tooltip>
-                    <Tooltip title={PowerLocalize.get('Action.Exit')}>
-                        <IconButton className="material-icons icon-size-20" onClick={this.handleCloseButtonPress} >close</IconButton>
-                    </Tooltip>
+                    <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>
+                    <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
 
             </Dialog>

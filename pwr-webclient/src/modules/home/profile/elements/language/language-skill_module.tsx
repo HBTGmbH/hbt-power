@@ -2,14 +2,13 @@
  *
  */
 import * as React from 'react';
-import {IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
 import * as Immutable from 'immutable';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 interface SingleLanguageState {
     dialogOpen: boolean;
@@ -73,13 +72,8 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
         return(
         <tr>
             <td>
-                <Tooltip title={PowerLocalize.get('Action.Edit')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.handleEditButtonPress}>edit</IconButton>
-                </Tooltip>
-                <Tooltip title={PowerLocalize.get('Action.Delete')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.handleDeleteButtonPress}>delete</IconButton>
-                </Tooltip>
-
+                <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.handleEditButtonPress}/>
+                <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonPress}/>
                 <LanguageSkillDialog
                     languageSkill={this.props.languageSkill}
                     languages={this.props.languages}

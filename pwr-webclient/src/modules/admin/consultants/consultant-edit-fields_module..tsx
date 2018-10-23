@@ -2,8 +2,7 @@ import * as React from 'react';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
-import {Checkbox,FormControl,FormControlLabel} from '@material-ui/core';
-import {formatFullLocalizedDate} from '../../../utils/DateUtil';
+import {Checkbox, FormControl, FormControlLabel} from '@material-ui/core';
 
 interface ConsultantEditFieldsProps {
     firstName: string;

@@ -6,7 +6,6 @@ import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {ViewSkill} from '../../../model/view/ViewSkill';
 import {ViewProfileEntries} from './entries/view-profile-entries_module';
-import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
 import {EntryRenderers} from './entries/EntryRenderers';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';

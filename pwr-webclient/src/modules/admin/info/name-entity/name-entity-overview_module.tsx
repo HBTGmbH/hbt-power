@@ -181,9 +181,6 @@ class NameEntityOverviewModule extends React.Component<
     };
 
 
-    // Problem: ListItem tut logisch was es soll, nur es zeigt keine Interaktion an wenn die maus über dem List item ist
-    // wenn man jetzt button = true hinzufügt funktionert die logik nicht mehr aber das "Userinterface"
-    // TODO CSS classe erstellen für hoverOver
     render() {
         let nameEntites = this.getNameEntitiesByField(this.state.selectedField);
         return (
@@ -209,8 +206,7 @@ class NameEntityOverviewModule extends React.Component<
     }
 }
 
-const themed = withTheme()(NameEntityOverviewModule);
-const connected = connect(NameEntityOverviewModule.mapStateToProps, NameEntityOverviewModule.mapDispatchToProps)(themed);
+const connected = withTheme()(connect(NameEntityOverviewModule.mapStateToProps, NameEntityOverviewModule.mapDispatchToProps)(NameEntityOverviewModule));
 
 
 /**

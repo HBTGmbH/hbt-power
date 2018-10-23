@@ -1,5 +1,5 @@
 import {doop} from 'doop';
-import * as Immutable from "immutable";
+import * as Immutable from 'immutable';
 import {Template} from './Template';
 import {ReportPreviewFile} from './ReportPreviewFile';
 

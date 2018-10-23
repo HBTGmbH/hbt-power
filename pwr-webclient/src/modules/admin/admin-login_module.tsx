@@ -9,7 +9,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {Link} from 'react-router-dom';
 import {Paths} from '../../Paths';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {getImagePath} from '../../API_CONFIG';
@@ -115,8 +114,6 @@ class AdminLoginModule extends React.Component<
         })
     };
 
-    // TODO localize
-    // TODO TextField errorText checken
     render() {
         console.log("Admin_Login_error: ",this.getErrorText());
         return (

@@ -1,13 +1,12 @@
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
-import {Template, TemplateSlice} from '../../model/view/Template';
+import {Template} from '../../model/view/Template';
 import {AbstractAction} from '../profile/database-actions';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
-import {AxiosError, AxiosResponse} from 'axios';
-import {ProfileActionCreator} from '../profile/ProfileActionCreator';
-import {patchConsultantActionString, TemplateService} from '../../API_CONFIG';
-import axios from 'axios';
+import axios, {AxiosError, AxiosResponse} from 'axios';
+import {TemplateService} from '../../API_CONFIG';
+import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -84,7 +83,6 @@ export namespace TemplateActionCreator {
     function TemplateReceived(response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
         let template: Template = new Template(response.data);
         dispatch(SetTemplate(template));
-        dispatch(ProfileActionCreator.SucceedAPIRequest());
     }
 
     function AsyncChangeTemplate(templateSlice:TemplateSlice){
@@ -120,11 +118,13 @@ export namespace TemplateActionCreator {
 
     function AsyncLoadTemplate(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(TemplateService.getTemplateById(id)).then((response: AxiosResponse) => {
                 //console.log(response.data);
                 TemplateReceived(response, dispatch);
+                dispatch(CrossCuttingActionCreator.endRequest());
             }).catch((error: AxiosError) => {
-                dispatch(ProfileActionCreator.APIRequestFailed());
+                dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
         }
@@ -132,14 +132,15 @@ export namespace TemplateActionCreator {
 
     export function AsyncLoadAllTemplates() {
         return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
-            dispatch(ProfileActionCreator.APIRequestPending());
+            dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(ClearTemplates());
             axios.get(TemplateService.getTemplates()).then((response: AxiosResponse) => {
                 let ids: Array<string> = response.data;
                 ids.forEach(id => dispatch(AsyncLoadTemplate(id)))
+                dispatch(CrossCuttingActionCreator.endRequest());
             }).catch(function (error: any) {
                 console.error(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
+                dispatch(CrossCuttingActionCreator.endRequest());
             });
         }
     }

@@ -26,4 +26,4 @@ class PwrIconHeaderModule extends React.PureComponent<IconHeaderProps & ThemePro
     }
 }
 
-export const PwrIconHeader: React.ComponentClass<IconHeaderProps> = withTheme()(PwrIconHeaderModule);
+export const PwrIconHeader = withTheme()(PwrIconHeaderModule);

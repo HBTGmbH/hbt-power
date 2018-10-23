@@ -122,7 +122,6 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         });
         this.closeSearcher();
     };
-        // TODO tabelle, head anpassen
     render() {
         return (
             <div>
@@ -189,18 +188,14 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                     </DialogActions>
                 </Dialog>
                 <Table>
-                    <TableHead
-                        //displaySelectAll={false}
-                        //adjustForCheckbox={false}
-                    >
+                    <TableHead>
                         <TableRow>
                             <TableCell>ISO-3 Language Code</TableCell>
                             <TableCell>Qualifier</TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
-                    <TableBody //displayRowCheckbox={false}
-                         >
+                    <TableBody>
                         {this.props.localizations.map(this.mapLocalizedRow)}
                     </TableBody>
                 </Table>

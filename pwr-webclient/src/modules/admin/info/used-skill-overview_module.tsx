@@ -2,21 +2,9 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
-import {
-    //AutoComplete,
-    Icon,
-    List,
-    ListItem,
-    //makeSelectable,
-    Paper,
-    Button,
-    ListSubheader,
-    TextField
-} from '@material-ui/core';
-import {ReactUtils} from '../../../utils/ReactUtils';
+import {Button, Icon, List, ListItem, ListSubheader, Paper, TextField} from '@material-ui/core';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {Comparators} from '../../../utils/Comparators';
-import {POWER_MUI_THEME} from '../../../index';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
@@ -24,7 +12,6 @@ import {SkillActionCreator} from '../../../reducers/skill/SkillActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {EditSkillDialog} from './skill/edit-skill-dialog_module';
-import wrapSelectableList = ReactUtils.wrapSelectableList;
 
 
 interface UsedSkillOverviewProps {
@@ -140,9 +127,6 @@ class UsedSkillOverviewModule extends React.Component<
                                     </ListItem>
                                 )
                             }
-
-                                    {/*TODO semicolon entfernen
-                                    in skill übersicht ist am ende der list ein semicolon welches keinen ursprung hat*/}
                             <ListItem
                                 value={"test"}
                                 key={"test-key"}

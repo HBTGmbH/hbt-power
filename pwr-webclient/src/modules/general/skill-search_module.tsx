@@ -2,8 +2,7 @@ import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
-import FormControl from '@material-ui/core/FormControl/FormControl';
-import TextField from '@material-ui/core/TextField/TextField';
+import {PwrAutoComplete} from './pwr-auto-complete';
 
 
 interface SkillSearcherProps {
@@ -14,6 +13,7 @@ interface SkillSearcherProps {
     value?: string;
     initialValue?: string;
     resetOnRequest?: boolean;
+    fullWidth?: boolean;
     onNewRequest?(request: string): void;
     /**
      * Fired everytime the value changes(User input) and returns the value the user typed in.
@@ -46,7 +46,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     public componentWillReceiveProps(props: SkillSearcherProps) {
         if(!isNullOrUndefined(props.value) && this.props.value !== props.value) {
-            this.requestSkills(props.value, []);
+            this.requestSkills(props.value);
         }
     }
 
@@ -59,7 +59,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         resetOnRequest: true
     };
 
-    private requestSkills = (searchText: string, dataSource: any) => {
+    private requestSkills = (searchText: string) => {
         this.props.onValueChange(searchText);
         this.setState({
             searchText: searchText
@@ -69,6 +69,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 maxResults: this.props.maxResults,
                 searchterm: searchText
             };
+            console.log("Searching for text", searchText);
             axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
                 if(response.status === 200) {
                     this.setState({
@@ -93,31 +94,13 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         this.props.onNewRequest(request);
     };
     render() {
-        // TODO Autocomplete Textfield
-        return (
-            <FormControl>
-                <TextField
-                    id={this.props.id}
-                    label={this.props.label}
-                    onChange={event => this.handleRequest(event.target.value)}
-                    value={this.state.searchText}
-                />
-            </FormControl>
-            )
+        return <PwrAutoComplete
+            fullWidth={this.props.fullWidth}
+            label={this.props.label}
+            id={this.props.id}
+            data={this.state.skills}
+            searchTerm={this.state.searchText}
+            onSearchChange={this.requestSkills}
+        />;
     }
 }
-
-
-/* <AutoComplete
-                id={this.props.id}
-                anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                label={this.props.label}
-                dataSource={this.state.skills}
-                value={this.state.searchText}
-                searchText={this.state.searchText}
-                onNewRequest={this.handleRequest}
-                onUpdateInput={this.requestSkills}
-                listStyle={{overflow: 'auto', maxHeight: this.props.maxHeight}}
-                menuProps={{maxHeight: this.props.maxHeight, overflow: 'auto'}}
-                filter={AutoComplete.noFilter}
-            />*/

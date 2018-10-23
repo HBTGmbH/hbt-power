@@ -2,17 +2,17 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {
-    Dialog,
     Button,
+    CircularProgress,
+    Dialog,
     FormControl,
     FormControlLabel,
     IconButton,
     Radio,
     RadioGroup,
-    CircularProgress,
     Step,
-    Stepper,
-    StepLabel
+    StepLabel,
+    Stepper
 } from '@material-ui/core';
 
 import {SkillNotificationEditStatus} from '../../../model/admin/SkillNotificationEditStatus';

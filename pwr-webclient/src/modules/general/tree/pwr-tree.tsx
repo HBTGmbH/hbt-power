@@ -48,7 +48,10 @@ export class PwrTree<T> extends React.Component<PwrTreeProps<T>, PwrTreeState> {
 
     nodeWithoutChildren = (node: PwrTreeNode<T>) => {
         return <React.Fragment key={node.id}>
-            <ListItem key={node.id} button onClick={(e:any) => this.handleSelect(node)}>
+            <ListItem button
+                      className={node.selected ? "pwr-selected-list-item " : ""}
+                      key={node.id}
+                      onClick={(e:any) => this.handleSelect(node)}>
                 {this.props.contentRenderFunction(node.payload)}
             </ListItem>
         </React.Fragment>

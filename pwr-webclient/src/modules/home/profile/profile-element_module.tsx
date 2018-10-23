@@ -1,8 +1,7 @@
 import * as React from 'react';
-import {Card, CardHeader, CardMedia, Divider, IconButton} from '@material-ui/core';
+import {Divider, IconButton} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import CardContent from '@material-ui/core/CardContent/CardContent';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';

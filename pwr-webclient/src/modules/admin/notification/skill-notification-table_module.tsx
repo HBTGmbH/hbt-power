@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as redux from 'redux';
 import * as React from 'react';
-import {Table, TableBody, TableHead, TableCell, TableRow} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableHead, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {SkillNotification} from '../../../model/admin/SkillNotification';
 import * as Immutable from 'immutable';
@@ -10,9 +10,9 @@ import {SkillNotificationDialog} from './skill-notification-dialog_module';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import formatString = StringUtils.formatString;
 import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
+import formatString = StringUtils.formatString;
 
 
 interface SkillNotificationTableProps {

@@ -8,7 +8,6 @@ interface InfoPaperProps {
     width?: string;
     title?: string;
     materialIconName?: string;
-    sticky?: boolean;
     style?: CSSProperties;
 }
 
@@ -23,14 +22,11 @@ export class InfoPaper extends React.Component<InfoPaperProps, InfoPaperState> {
         width: "100%",
         title: "Info",
         materialIconName: "info_outline",
-        sticky: true,
         style: {}
     };
 
     render() {
-        let position = this.props.sticky ? "sticky" : "relative";
-        let top = this.props.sticky ? 0 : undefined;
-        let style = Object.assign({}, this.props.style, {width: this.props.width, minHeight: this.props.minHeight, position: position, top: top});
+        let style = Object.assign({}, this.props.style, {width: this.props.width, minHeight: this.props.minHeight});
         return (
             <Paper style={style}>
                 <PwrIconHeader

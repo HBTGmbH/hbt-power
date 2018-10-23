@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Icon, Paper, Button} from '@material-ui/core';
+import {Button, Icon, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
 import {Profile} from '../../model/Profile';

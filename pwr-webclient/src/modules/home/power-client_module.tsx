@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {PowerToolbar} from './power-toolbar_module';
-import {ProfileSnackbar} from './profile/profile-status-snackbar_module';
+import {ProfileLoadingSpinner} from './profile/profile-loading-spinner_module';
 import {Route} from 'react-router-dom';
 import {ViewProfileOverview} from './view/view-profile-overview_module';
 import {ConsultantSkillSearch} from '../general/search/consultant-skill-search_module.';
@@ -13,7 +13,6 @@ import {Paths} from '../../Paths';
 
 
 export class PowerClient extends React.Component<{}, {}> {
-    // TODO LoginCheck ?!
     render() {
         return <div>
             <PowerToolbar/>
@@ -26,7 +25,7 @@ export class PowerClient extends React.Component<{}, {}> {
                 <Route path={Paths.USER_SEARCH}  component={ConsultantSkillSearch}/>
                 <Route path={Paths.USER_VIEW_PROFILE}  component={ViewProfileOverview}/>
             </div>
-            <ProfileSnackbar/>
+            <ProfileLoadingSpinner/>
         </div>
     }
 }

@@ -6,7 +6,6 @@ export enum ActionType {
 
     AddSkill,
     RemoveSkillFromProject,
-    SwapIndex, // TODO still used?
     UserLoginFailed,
     ReplaceExportDocuments,
 
@@ -23,9 +22,6 @@ export enum ActionType {
     CreateEntry,
     DeleteEntry,
     APIRequestSuccess,
-    APIRequestSuccess_NoContent,
-    APIRequestFail,
-    APIRequestPending,
     ChangeLanguageSkillLevel,
 
     ChangeFirstName,
@@ -124,6 +120,9 @@ export enum ActionType {
     SetSortInProgress,
     ResetViewState,
     ClearViewProfiles,
+
+    // == Cross Cutting
+    SetRequestPending,
 
     // == Templates
     SetTemplate,

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ProfileElementType} from '../../../../../Store';
-import {Dialog, IconButton, TextField} from '@material-ui/core';
+import {Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {CareerEntry} from '../../../../../model/CareerEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
@@ -13,14 +13,12 @@ import {isNullOrUndefined} from 'util';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import Typography from '@material-ui/core/Typography/Typography';
-import AutoSuggest from '../../../../general/auto-suggest_module';
 import {DatePicker} from 'material-ui-pickers';
-import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
-import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
+import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 
 
 /**
@@ -44,6 +42,7 @@ interface CareerEntryDialogProps {
 interface CareerEntryDialogLocalProps {
     open: boolean;
     careerEntry: CareerEntry;
+
     requestClose(): void;
 
 }
@@ -66,8 +65,7 @@ interface CareerEntryDialogDispatch {
     saveEntry(entry: CareerEntry, nameEntity: NameEntity): void;
 }
 
-class CareerEntryDialogModule extends React.Component<
-    CareerEntryDialogProps
+class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
     & CareerEntryDialogLocalProps
     & CareerEntryDialogDispatch, CareerEntryDialogLocalState> {
 
@@ -76,7 +74,7 @@ class CareerEntryDialogModule extends React.Component<
         this.state = {
             careerEntry: props.careerEntry,
             autoCompleteValue: NameEntityUtil.getNullTolerantName(props.careerEntry.nameEntityId(), props.careers),
-            searchResult: "",
+            searchResult: '',
         };
     }
 
@@ -116,12 +114,12 @@ class CareerEntryDialogModule extends React.Component<
     };
 
     private saveAndExit = () => {
-        console.log("exit: ", this.state.autoCompleteValue,this.state.careerEntry);
+        console.log('exit: ', this.state.autoCompleteValue, this.state.careerEntry);
 
         let name: string = this.state.autoCompleteValue;
         let career: NameEntity = ProfileStore.findNameEntityByName(name, this.props.careers);
         let careerEntry: CareerEntry = this.state.careerEntry;
-        if(isNullOrUndefined(career)) {
+        if (isNullOrUndefined(career)) {
             career = NameEntity.createNew(name);
         }
         careerEntry = careerEntry.nameEntityId(career.id());
@@ -134,106 +132,84 @@ class CareerEntryDialogModule extends React.Component<
     };
 
     private getEndDateButtonIconName = () => {
-        if(isNullOrUndefined(this.state.careerEntry.endDate())) {
+        if (isNullOrUndefined(this.state.careerEntry.endDate())) {
             return 'date_range';
         }
         return 'today';
     };
 
     private handleEndDateButtonClick = () => {
-        if(isNullOrUndefined(this.state.careerEntry.endDate())) {
+        if (isNullOrUndefined(this.state.careerEntry.endDate())) {
             this.changeEndDate(new Date());
         } else {
-            this.changeEndDate( null);
+            this.changeEndDate(null);
         }
     };
 
 
-    private handleOnSelect = (value:string) => {
-      // den wert speicher und popper schließen
+    private handleOnSelect = (value: string) => {
+        // den wert speicher und popper schließen
         //console.log("AutoValue: ", this.state.searchResult);
 
         this.setState({
             searchResult: value,
-        })
+        });
     };
 
     private renderEndDateChoice = () => {
-            return <DatePicker
-                label={PowerLocalize.get('End')}
-                id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
-                value={this.state.careerEntry.endDate()}
-                onChange={this.changeEndDate}
-                showTodayButton
-                todayLabel={PowerLocalize.get('Today')}
-                format = "DD.MM.YYYY"
-            />;
+        return <DatePicker
+            label={PowerLocalize.get('End')}
+            id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
+            value={this.state.careerEntry.endDate()}
+            onChange={this.changeEndDate}
+            showTodayButton
+            todayLabel={PowerLocalize.get('Today')}
+            format="DD.MM.YYYY"
+        />;
     };
 
     render() {
-        //console.log("render_Career: ",this.state.autoCompleteValue);
         return <Dialog
             open={this.props.open}
-            //title={PowerLocalize.get('CareerEntry.Dialog.Title')}
             onClose={this.closeDialog}
-            scroll={'paper'}
             fullWidth
+            aria-labelledby="CarrerEntry.Dialog.Title"
         >
-            <DialogTitle>
-                <Typography>{PowerLocalize.get('CareerEntry.Dialog.Title')}</Typography>
+            <DialogTitle id="CarrerEntry.Dialog.Title">
+               {PowerLocalize.get('CareerEntry.Dialog.Title')}
             </DialogTitle>
             <DialogContent>
-            <div className="row">
-                <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <div className="row">
+                    <div className="col-md-5 col-sm-6 col-sm-offset-0">
                         <DatePicker
                             autoOk
-                            label={"Start Date"}
+                            label={'Start Date'}
                             value={this.state.careerEntry.startDate()}
                             onChange={this.changeStartDate}
-                            format = "DD.MM.YYYY"
+                            format="DD.MM.YYYY"
                         />
-                    </MuiPickersUtilsProvider>
-
+                    </div>
+                    <div className="col-md-5 col-sm-6">
+                        {this.renderEndDateChoice()}
+                    </div>
                 </div>
-                <div className="col-md-5 col-sm-6">
-                    {this.renderEndDateChoice()}
-
+                <PwrSpacer double={true}/>
+                <div className="row">
+                    <div className="col-md-10">
+                        <PwrAutoComplete data={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
+                                         label={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
+                                         fullWidth={true}
+                                         searchTerm={this.state.autoCompleteValue}
+                                         onSearchChange={this.handleAutoCompleteInput}
+                        />
+                    </div>
                 </div>
-            </div>
-
-            <div className="row">
-                <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
-                    <AutoSuggest
-                        data={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
-                        searchTerm={this.state.autoCompleteValue}
-                        onSearchChange={this.handleAutoCompleteInput}
-                        onSelect={this.handleOnSelect}
-                    />
-
-                    {/*}TODO <AutoComplete
-                        label={PowerLocalize.get('CareerEntry.Dialog.CareerName')}
-                        id={'CarrerEntry.Dialog.Name' + this.props.careerEntry.id()}
-                        value={this.state.autoCompleteValue}
-                        searchText={this.state.autoCompleteValue}
-                        dataSource={this.props.careers.map(NameEntityUtil.mapToName).toArray()}
-                        onUpdateInput={this.handleAutoCompleteInput}
-                        onNewRequest={this.handleAutoCompleteInput}
-                        filter={AutoComplete.fuzzyFilter}
-                    />*/}
-
-                </div>
-            </div>
             </DialogContent>
             <DialogActions>
-                <Tooltip title={PowerLocalize.get('Action.Save')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.saveAndExit}>save</IconButton>
-                </Tooltip>
-                <Tooltip title={PowerLocalize.get('Action.Exit')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.resetAndExit}>close</IconButton>
-                </Tooltip>
+                <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
+                <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.resetAndExit}/>
             </DialogActions>
-        </Dialog>
+        </Dialog>;
     }
 }
 

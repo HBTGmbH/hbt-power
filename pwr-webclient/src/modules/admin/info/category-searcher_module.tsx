@@ -1,14 +1,12 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Dialog, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
+import {Dialog, DialogContent, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
 import {SkillStore} from '../../../model/skill/SkillStore';
 import {StringUtils} from '../../../utils/StringUtil';
 import filterFuzzy = StringUtils.filterFuzzy;
 
-
-// TODO (fixed?) AutoComplete auf dem Kategorie-Feld
 
 interface CategorySearcherProps {
     categories: Array<SkillCategory>;
@@ -48,7 +46,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
             button
             value={category.id()}
             key={category.id()}
-            onSelect={() => this.handleSelect(category.id())}
+            onClick={() => this.handleSelect(category.id())}
             className={this.state.selectedCategoryId === category.id() ? "pwr-selected-list-item " : ""}
         >
             <div>
@@ -83,19 +81,22 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
 
     render() {
         return (<Dialog
+            fullWidth={true}
             open={this.props.open}
             onClose={this.props.onClose}
             aria-labelledby="category-search-dlg-title"
         >
             <DialogTitle id="category-search-dlg-title">Kategorie Suchen</DialogTitle>
-            <TextField
-                label={PowerLocalize.get("Action.Search")}
-                value={this.state.filterText}
-                onChange={this.handleFilterTextChange}
-            />
-            <List style={{maxHeight: "400px", overflow: "auto"}}>
-                {this.renderCategories()}
-            </List>
+            <DialogContent>
+                <TextField
+                    label={PowerLocalize.get("Action.Search")}
+                    value={this.state.filterText}
+                    onChange={this.handleFilterTextChange}
+                />
+                <List style={{maxHeight: "400px", overflow: "auto"}}>
+                    {this.renderCategories()}
+                </List>
+            </DialogContent>
         </Dialog>);
     }
 }

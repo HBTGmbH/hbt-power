@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ProfileElementType} from '../../../../../Store';
-import {IconButton} from '@material-ui/core';
 import {KeySkillDialog} from './keySkill-entry-dialog_module';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {KeySkillEntry} from '../../../../../model/KeySkillEntry';
@@ -11,7 +10,7 @@ import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActio
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 /**
  * Properties that are managed by react-redux.
@@ -101,13 +100,8 @@ class SingleKeySkillModule extends React.Component<
         return (
             <tr>
             <td>
-                <Tooltip title={PowerLocalize.get('Action.Edit')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.openDialog}>edit</IconButton>
-                </Tooltip>
-                <Tooltip title={PowerLocalize.get('Action.Delete')}>
-                    <IconButton className="material-icons icon-size-20" onClick={this.deleteEntry}>delete</IconButton>
-                </Tooltip>
-
+                <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
+                <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.deleteEntry}/>
                 <KeySkillDialog
                     open={this.state.dialogOpen}
                     keySkillEntry={this.props.keySkillEntry}

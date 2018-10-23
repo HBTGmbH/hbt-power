@@ -90,7 +90,6 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         return(
             <div>
                 <TextField
-                    helperText = {this.props.hintText}
                     label = {this.props.hintText}
                     fullWidth = {true}
                     multiline={true}

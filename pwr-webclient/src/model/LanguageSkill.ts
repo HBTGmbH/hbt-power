@@ -41,10 +41,6 @@ export class LanguageSkill {
         return this.id(id).languageId(languageId).level(level).isNew(isNew);
     }
 
-    /**
-     * FIXME doc
-     * @param apiLanguageSkill
-     */
     public static fromAPI(apiLanguageSkill: APILanguageSkill) {
         return new LanguageSkill(
             String(apiLanguageSkill.id),
@@ -53,10 +49,6 @@ export class LanguageSkill {
             false);
     }
 
-    /**
-     * Fixme !important document
-     * @returns {LanguageSkill}
-     */
     public static createNew(): LanguageSkill {
         return new LanguageSkill(
             NEW_ENTITY_PREFIX + String(LanguageSkill.CURRENT_ID++),

@@ -29,14 +29,15 @@ import {isNullOrUndefined} from 'util';
 import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {ProfileServiceError} from '../../model/ProfileServiceError';
+import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
 
 export class ProfileAsyncActionCreator {
 
-    private static handleProfileServiceError(error: any) {
+    private static handleProfileServiceError(error: any, errorCause: string) {
         if (error.response) {
             let serviceError = error.response.data as ProfileServiceError;
-            NavigationActionCreator.showError("Error " + error.response.status + ":" + serviceError.message);
+            NavigationActionCreator.showError(errorCause + ": " + serviceError.message);
             console.error(error.response.data);
             console.error(error.response.status);
             console.error(error.response.headers);
@@ -65,20 +66,17 @@ export class ProfileAsyncActionCreator {
     /**
      *
      * @param initials
-     * @returns {(dispatch:redux.Dispatch<AllConsultantsState>)=>undefined}
      */
     public static requestSingleProfile(initials: string) {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
-            // Dispatch the action that sets the status to "Request Pendign" or similar
-            dispatch(ProfileActionCreator.APIRequestPending());
-            // Perform the actual request
+            dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(getProfileAPIString(initials)).then(function(response: AxiosResponse) {
                 let profile: APIProfile = Object.assign({}, response.data);
-                // Parse the dates.
+                dispatch(CrossCuttingActionCreator.endRequest());
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile));
             }).catch(function(error:any) {
-                ProfileAsyncActionCreator.handleProfileServiceError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
+                ProfileAsyncActionCreator.handleProfileServiceError(error, "Could not read profile");
+                dispatch(CrossCuttingActionCreator.endRequest());
             });
 
         };
@@ -86,24 +84,26 @@ export class ProfileAsyncActionCreator {
 
     public static saveFullProfile(initials: string, profile: APIProfile) {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(ProfileActionCreator.APIRequestPending());
+            dispatch(CrossCuttingActionCreator.startRequest());
             axios.put(getProfileAPIString(initials), profile).then(function(response: AxiosResponse) {
-                console.info('Notifications: ', response.data.notifications);
+                NavigationActionCreator.showSuccess("Profile saved!");
+                dispatch(CrossCuttingActionCreator.endRequest());
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveProfile));
             }).catch(function(error:any) {
-                ProfileAsyncActionCreator.handleProfileServiceError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
+                ProfileAsyncActionCreator.handleProfileServiceError(error, "Could not save profile");
+                dispatch(CrossCuttingActionCreator.endRequest());
             });
         };
     }
 
     private static abstractAPISuggestionRequest(dispatch: redux.Dispatch<ApplicationState>, apiString: string, type:APIRequestType) {
-        dispatch(ProfileActionCreator.APIRequestPending());
+        dispatch(CrossCuttingActionCreator.startRequest());
         axios.get(apiString).then(function(response: AxiosResponse) {
+            dispatch(CrossCuttingActionCreator.endRequest());
             dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, type));
         }).catch(function(error:any) {
-            ProfileAsyncActionCreator.handleProfileServiceError(error);
-            dispatch(ProfileActionCreator.APIRequestFailed());
+            ProfileAsyncActionCreator.handleProfileServiceError(error, "Unable to read suggestions");
+            dispatch(CrossCuttingActionCreator.endRequest());
         });
     }
 
@@ -204,7 +204,6 @@ export class ProfileAsyncActionCreator {
                     dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
                 }
             }).catch(function(error:any) {
-                ProfileAsyncActionCreator.handleProfileServiceError(error);
                 dispatch(ProfileActionCreator.FailLogin());
                 dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT));
             });
@@ -213,12 +212,14 @@ export class ProfileAsyncActionCreator {
 
     public static getAllCurrentlyUsedSkills() {
         return function(dispatch: redux.Dispatch<ApplicationState>) {
+            dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(getAllCurrentlyUsedSkillNames()).then((response: AxiosResponse) => {
                 let apiData: Array<String> = response.data;
+                dispatch(CrossCuttingActionCreator.endRequest());
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(apiData, APIRequestType.RequestSkillNames))
             }).catch(function (error: any) {
-                ProfileAsyncActionCreator.handleProfileServiceError(error);
-                dispatch(ProfileActionCreator.APIRequestFailed());
+                ProfileAsyncActionCreator.handleProfileServiceError(error, "Could not read used skills");
+                dispatch(CrossCuttingActionCreator.endRequest());
             });
         }
     }

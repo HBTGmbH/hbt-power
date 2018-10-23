@@ -3,14 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {
-    Dialog,
-    Button,
-    Icon,
-    List,
-    ListItem,
-} from '@material-ui/core';
-import {formatFullLocalizedDate} from '../../../utils/DateUtil';
+import {Button, Dialog, Icon, List, ListItem,} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {Template} from '../../../model/view/Template';

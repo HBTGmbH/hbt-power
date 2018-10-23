@@ -2,9 +2,9 @@ import * as React from 'react';
 import axios, {AxiosResponse} from 'axios';
 import * as Immutable from 'immutable';
 import {List, ListItem, Paper} from '@material-ui/core';
-import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {getSearchSkill, postFindConsultantBySkills} from '../../../API_CONFIG';
 import {APISkill} from '../../../model/APIProfile';
+import {PwrAutoComplete} from '../pwr-auto-complete';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 const ChipInput = require("material-ui-chip-input").default;
 
@@ -22,6 +22,7 @@ interface ConsultantSkillSearchState {
     foundConsultants: Immutable.List<ConsultantSkillInfo>;
     currentSearchSkills: Immutable.List<string>;
     currentSuggestSkills: Array<string>;
+    searchTerm: string;
 }
 
 /**
@@ -34,12 +35,17 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
         this.state = {
             foundConsultants: Immutable.List<ConsultantSkillInfo>(),
             currentSearchSkills: Immutable.List<string>(),
-            currentSuggestSkills: []
+            currentSuggestSkills: [],
+            searchTerm: ''
         };
     }
 
     private readonly MAX_RESULTS: number = 10;
 
+
+    componentDidMount() {
+        this.executeSearch();
+    }
 
     private executeSearch = () => {
         axios.post(postFindConsultantBySkills(), this.state.currentSearchSkills.toArray()).then((response: AxiosResponse) => {
@@ -58,12 +64,14 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     };
 
     private handleAddSkill = (skill: string) => {
+        console.log("Add skill", skill);
         this.setState({
             currentSearchSkills: this.state.currentSearchSkills.push(skill)
         });
     };
 
     private handleRemoveSkill = (skill: string) => {
+        console.log("Remove skill", skill);
         this.setState({
             currentSearchSkills: Immutable.List<string>(this.state.currentSearchSkills.filter(s => s != skill))
         });
@@ -77,6 +85,9 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
                 maxResults: this.MAX_RESULTS,
                 searchterm: value
             };
+            this.setState({
+                searchTerm: value
+            });
             axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
                 if(response.status === 200) {
                     this.setState({
@@ -106,17 +117,17 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
 
 
     render() {
-        return (<Paper>
+        return (<Paper style={{padding: "16px"}}>
             <div className="row" style={{paddingLeft: "20px"}}>
-                <ChipInput
-                    className="col-md-7 "
-                    label={PowerLocalize.get('Search.Consultant.BySkill.Label')}
-                    value={this.state.currentSearchSkills.toArray()}
-                    dataSource={this.state.currentSuggestSkills}
-                    style={{'width': '100%'}}
-                    onRequestAdd={this.handleAddSkill}
-                    onRequestDelete={this.handleRemoveSkill}
-                    onUpdateInput={this.handleUpdateInput}
+                <PwrAutoComplete fullWidth={true}
+                                 data={this.state.currentSuggestSkills}
+                                 searchTerm={this.state.searchTerm}
+                                 chips={this.state.currentSearchSkills.toArray()}
+                                 label={"Skills"}
+                                 multi={true}
+                                 onAdd={this.handleAddSkill}
+                                 onRemove={this.handleRemoveSkill}
+                                 onSearchChange={this.handleUpdateInput}
                 />
             </div>
             <div className="row" style={{paddingLeft: "20px"}}>

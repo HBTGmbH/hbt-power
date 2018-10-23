@@ -3,7 +3,7 @@ import {CSSProperties} from 'react';
 import IconButton from '@material-ui/core/Button';
 
 import {Color} from '../utils/ColorUtil';
-import StarIcon from '@material-ui/icons/Star'
+import StarIcon from '@material-ui/icons/Star';
 
 interface StarRatingProps {
     rating: number;

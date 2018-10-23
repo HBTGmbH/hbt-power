@@ -208,11 +208,10 @@ class NotificationInboxModule extends React.Component<
     }
 }
 
+
 /**
  * @see NotificationInboxModule
  * @author nt
  * @since 30.05.2017
  */
-export const NotificationInbox: React.ComponentClass<NotificationInboxLocalProps> = withTheme()
-    (connect(NotificationInboxModule.mapStateToProps, NotificationInboxModule.mapDispatchToProps)
-        (NotificationInboxModule));
+export const NotificationInbox = withTheme()(connect(NotificationInboxModule.mapStateToProps, NotificationInboxModule.mapDispatchToProps)(NotificationInboxModule));

@@ -1,12 +1,11 @@
 import * as React from 'react';
-import {Button} from '@material-ui/core';
-
-const MorphIcon = require('react-svg-buttons').MorphIcon;
+import {Button, Icon} from '@material-ui/core';
 
 interface EntrySortButtonProps {
     label: string;
-    order: "asc" | "desc";
-    onChangeOrder(order: "asc" | "desc"): void;
+    order: 'asc' | 'desc';
+
+    onChangeOrder(order: 'asc' | 'desc'): void;
 }
 
 interface EntrySortButtonState {
@@ -19,19 +18,19 @@ export class EntrySortButton extends React.Component<EntrySortButtonProps, Entry
     }
 
     private getType = () => {
-        if(this.props.order === "asc") {
-            return "arrowUp";
+        if (this.props.order === 'asc') {
+            return 'arrow_upward';
         } else {
-            return "arrowDown";
+            return 'arrow_downward';
         }
     };
 
     private changeOrder = () => {
-        let order: "desc" | "asc";
-        if(this.props.order === "asc") {
-            order = "desc";
+        let order: 'desc' | 'asc';
+        if (this.props.order === 'asc') {
+            order = 'desc';
         } else {
-            order = "asc";
+            order = 'asc';
         }
         this.props.onChangeOrder(order);
     };
@@ -39,18 +38,10 @@ export class EntrySortButton extends React.Component<EntrySortButtonProps, Entry
     render() {
         return (
             <span>
-                <Button
-                    variant={'flat'}
-                    onClick={this.changeOrder}
-                >
+                <Button color="primary" onClick={this.changeOrder}>
                     {this.props.label}
+                    <Icon>{this.getType()}</Icon>
                 </Button>
-                <MorphIcon
-                    type={this.getType()}
-                    size={24}
-                    thickness={2}
-                    color="#dd6e78"
-                />
             </span>);
     }
 }

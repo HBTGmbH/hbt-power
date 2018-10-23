@@ -154,7 +154,6 @@ export class Profile {
      * @param educationEntries
      */
     private static parseEducationEntries(educationEntries: Array<APIEducationStep>): Immutable.Map<string, EducationEntry> {
-        // TODO in case of performance issues, change the initialization method.
         let res: Immutable.Map<string, EducationEntry> = Immutable.Map<string, EducationEntry>();
         educationEntries.forEach(apiEducationEntry => {
             // The API might return something invalid. Ignore that.
@@ -357,7 +356,7 @@ export class Profile {
             Immutable.Map<string, KeySkillEntry>(),
             Immutable.Map<string, Project>(),
             Immutable.Map<string, Skill>(),
-            new Date(), //FIXME
+            new Date(),
             "",
             0
         );

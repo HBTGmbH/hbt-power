@@ -1,16 +1,12 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Icon, Button, Tab, Table, TableBody, TableRow, TableCell, Tabs} from '@material-ui/core';
+import {Button, Icon, Tab, Table, TableBody, TableCell, TableRow, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
-import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import formatString = StringUtils.formatString;
-import Paper from '@material-ui/core/Paper/Paper';
-import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -134,7 +130,7 @@ class NotificationTrashboxModule extends React.Component<
                         </Button>
                     </div>
                 </div>
-                <div style={{backgroundColor:'#191e55'}}>{/* TODO die richtigen Farben einfügen*/}
+                <div style={{backgroundColor:'#191e55'}}>
                 <Tabs value={0} centered fullWidth textColor={'secondary'}>
                     <Tab
                         icon={<Icon className="material-icons">delete</Icon>}

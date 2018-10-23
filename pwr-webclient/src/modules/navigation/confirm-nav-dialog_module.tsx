@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {Dialog, Button} from '@material-ui/core';
+import {Button, Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';

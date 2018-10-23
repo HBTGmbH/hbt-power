@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {AppBar, Icon, IconButton, Menu, MenuItem, WithStyles} from '@material-ui/core';
+import {AppBar, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -12,7 +12,6 @@ import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActio
 import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {Color} from '../../utils/ColorUtil';
 import {ViewProfile} from '../../model/view/ViewProfile';
 import {getImagePath} from '../../API_CONFIG';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
@@ -21,7 +20,6 @@ import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import Paper from '@material-ui/core/Paper/Paper';
-import Typography from '@material-ui/core/Typography/Typography';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 
 interface ToolbarProps {

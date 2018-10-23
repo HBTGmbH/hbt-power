@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
-import {Card, CardHeader, CardContent, Slide, ListSubheader} from '@material-ui/core';
+import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';
@@ -12,7 +12,6 @@ import Button from '@material-ui/core/Button/Button';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 
-// TODO Slider
 const Recharts = require('recharts');
 
 const TagCloud = require('react-tagcloud');
@@ -153,17 +152,6 @@ class SkillStatisticsModule extends React.Component<
                 </CardContent>
                 <CardContent>
                     <ListSubheader>{PowerLocalize.get("SkillStatistics.OccurrenceRating.Title")}</ListSubheader>
-                    {/* TODO Slider
-                    <Slide
-                            direction={'down'}
-                            style={{width: 700}}
-                            //step={1}
-                            //min={3}
-                            //max={100}
-                            //value={this.state.skillOccLevelLength}
-                            //onChange={(event, value) => this.setState({skillOccLevelLength: value})}
-                    />
-                    */}
                     <div style={{marginLeft:'30px'}}>
                         <Button
                             style={{width:'40px',height:'40px',padding:'0',marginRight:'15px'}}

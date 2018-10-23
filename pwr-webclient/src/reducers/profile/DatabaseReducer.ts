@@ -1,4 +1,4 @@
-import {APIRequestType, ProfileElementType, RequestStatus} from '../../Store';
+import {APIRequestType, ProfileElementType} from '../../Store';
 import {error, isNullOrUndefined} from 'util';
 import {
     AbstractAction,
@@ -143,46 +143,34 @@ export class DatabaseReducer {
     }
 
     private static ApiRequestSuccessful(state: ProfileStore, action: ReceiveAPIResponseAction): ProfileStore {
-        let newState: ProfileStore;
+        let newState: ProfileStore = state;
         switch(action.requestType) {
             case APIRequestType.RequestLanguages:
-                newState = state.languages(DatabaseReducer.AddAPINameEntities(action.payload, state.languages()));
-                break;
+                return state.languages(DatabaseReducer.AddAPINameEntities(action.payload, state.languages()));
             case APIRequestType.RequestProfile:
-                newState = state.parseProfile(action.payload);
-                break;
+                return state.parseProfile(action.payload);
             case APIRequestType.SaveProfile:
-                newState = state.parseProfile(action.payload.profile);
-                break;
+                return state.parseProfile(action.payload.profile);
             case APIRequestType.RequestEducations:
-                newState = state.educations(DatabaseReducer.AddAPINameEntities(action.payload, state.educations()));
-                break;
+                return state.educations(DatabaseReducer.AddAPINameEntities(action.payload, state.educations()));
             case APIRequestType.RequestQualifications:
-                newState = state.qualifications(DatabaseReducer.AddAPINameEntities(action.payload, state.qualifications()));
-                break;
+                return state.qualifications(DatabaseReducer.AddAPINameEntities(action.payload, state.qualifications()));
             case APIRequestType.RequestTrainings:
-                newState = state.trainings(DatabaseReducer.AddAPINameEntities(action.payload, state.trainings()));
-                break;
+                return state.trainings(DatabaseReducer.AddAPINameEntities(action.payload, state.trainings()));
             case APIRequestType.RequestSectors:
-                newState = state.sectors(DatabaseReducer.AddAPINameEntities(action.payload, state.sectors()));
-                break;
+                return state.sectors(DatabaseReducer.AddAPINameEntities(action.payload, state.sectors()));
             case APIRequestType.RequestKeySkills:
-                newState = state.keySkills(DatabaseReducer.AddAPINameEntities(action.payload, state.keySkills()));
-                break;
+                return state.keySkills(DatabaseReducer.AddAPINameEntities(action.payload, state.keySkills()));
             case APIRequestType.RequestCareers:
-                newState = state.careers(DatabaseReducer.AddAPINameEntities(action.payload, state.careers()));
-                break;
+                return state.careers(DatabaseReducer.AddAPINameEntities(action.payload, state.careers()));
             case APIRequestType.RequestProjectRoles:
-                newState = state.projectRoles(DatabaseReducer.AddAPINameEntities(action.payload, state.projectRoles()));
-                break;
+                return state.projectRoles(DatabaseReducer.AddAPINameEntities(action.payload, state.projectRoles()));
             case APIRequestType.RequestCompanies:
-                newState = state.companies(DatabaseReducer.AddAPINameEntities(action.payload, state.companies()));
-                break;
+                return state.companies(DatabaseReducer.AddAPINameEntities(action.payload, state.companies()));
             case APIRequestType.RequestSkillNames:
-                newState = state.currentlyUsedSkillNames(Immutable.Set<string>(action.payload));
-                break;
+                return state.currentlyUsedSkillNames(Immutable.Set<string>(action.payload));
         }
-        return newState.APIRequestStatus(RequestStatus.Successful);
+        return newState;
     }
 
     private static LogInUser(database: ProfileStore, action: LoginAction): ProfileStore {
@@ -202,7 +190,8 @@ export class DatabaseReducer {
 
     public static SetUserInitials(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
         let loggedInUser = state.loggedInUser().initials(action.value);
-        return state.loggedInUser(loggedInUser);
+        let status = action.value.length > 0 ? LoginStatus.INITIALS : LoginStatus.INVALID_NAME;
+        return state.loggedInUser(loggedInUser).loginStatus(status);
     }
 
     public static Reduce(state : ProfileStore, action: AbstractAction) : ProfileStore {
@@ -219,12 +208,9 @@ export class DatabaseReducer {
             case ActionType.CreateProject: return DatabaseReducer.CreateProject(state);
             case ActionType.UpdateSkillRating: return DatabaseReducer.UpdateSkillRating(state, action as UpdateSkillRatingAction);
             case ActionType.DeleteSkill: return DatabaseReducer.DeleteSkill(state, action as DeleteSkillAction);
-            case ActionType.APIRequestPending: return state.APIRequestStatus(RequestStatus.Pending);
-            case ActionType.APIRequestFail: return state.APIRequestStatus(RequestStatus.Failiure);
             case ActionType.APIRequestSuccess: return DatabaseReducer.ApiRequestSuccessful(state, action as ReceiveAPIResponseAction);
             case ActionType.LogInUser: return DatabaseReducer.LogInUser(state, action as LoginAction);
             case ActionType.LogOutUser: return DatabaseReducer.LogOutUser(state);
-            case ActionType.APIRequestSuccess_NoContent: return state.APIRequestStatus(RequestStatus.Successful);
             case ActionType.UserLoginFailed: return state.loginStatus(LoginStatus.REJECTED);
             case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
             case ActionType.SetUserInitials: return DatabaseReducer.SetUserInitials(state, action as ChangeStringValueAction);

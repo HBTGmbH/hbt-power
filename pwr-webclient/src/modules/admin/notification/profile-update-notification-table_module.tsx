@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Table, TableBody, TableHead, TableCell, TableRow} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableHead, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';

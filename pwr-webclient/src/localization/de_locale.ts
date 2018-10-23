@@ -107,6 +107,7 @@ export const de_locale : any = {
     "ConsultantTile.EditProfile": "Profil bearbeiten",
     "ConsultantTile.EditConsultant": "Berater bearbeiten",
     "UserLogin.LoginFailed": "Login fehlgeschlagen",
+    "UserLogin.InvalidName": "Ungültiges Kürzel",
     "SkillTree.SearchAndAddSkill": "Skill suchen/hinzufügen",
     "AdminClient.Login.Remember": "Login merken",
     "AdminClient.Login.Rejected": "Ungültiger Nutzername oder Passwort",

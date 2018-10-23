@@ -26,10 +26,6 @@ export class AdminNotification {
     @doop public get initials() {return doop<string, this>()};
     @doop public get reason()  {return doop<AdminNotificationReason, this>()};
 
-    /**
-     * The date on which the notification occured.
-     * @returns {Doop<Date, this>}
-     */
     @doop public get occurrence() {return doop<Date, this>()};
     @doop public get type() {return doop<string, this>()};
 

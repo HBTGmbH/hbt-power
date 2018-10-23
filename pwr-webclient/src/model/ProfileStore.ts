@@ -1,5 +1,5 @@
 import {NameEntity} from './NameEntity';
-import {ProfileElementType, RequestStatus} from '../Store';
+import {ProfileElementType} from '../Store';
 import * as Immutable from 'immutable';
 import {APIProfile} from './APIProfile';
 import {Profile} from './Profile';
@@ -19,9 +19,6 @@ import {isNullOrUndefined} from 'util';
  */
 @doop
 export class ProfileStore {
-
-    @doop
-    public get APIRequestStatus() {return doop<RequestStatus, this>();}
 
     @doop
     public get languageLevels() {return doop<Array<string>, this>();};
@@ -73,7 +70,6 @@ export class ProfileStore {
 
 
     constructor(
-        apiRequestStatus: RequestStatus,
         languageLevels: Array<string>,
         profile:        Profile,
         trainings:      Immutable.Map<string, NameEntity>,
@@ -89,8 +85,7 @@ export class ProfileStore {
         degrees:        Immutable.List<string>,
         currentlyUsedSkillNames: Immutable.Set<string>
 ) {
-        return this.APIRequestStatus(apiRequestStatus)
-            .languageLevels(languageLevels)
+        return this.languageLevels(languageLevels)
             .profile(profile)
             .trainings(trainings)
             .educations(educations)
@@ -109,7 +104,6 @@ export class ProfileStore {
     public static createWithDefaults(): ProfileStore {
         let langs = Immutable.Map<string, NameEntity>();
         return new ProfileStore(
-            RequestStatus.Successful,
             ['BASIC', 'ADVANCED', 'BUSINESS_FLUENT', 'NATIVE'],
             Profile.createDefault(),
             Immutable.Map<string, NameEntity>(),

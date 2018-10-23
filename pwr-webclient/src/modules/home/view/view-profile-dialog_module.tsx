@@ -8,7 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove'
+import RemoveIcon from '@material-ui/icons/Remove';
 import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 
 // TODO slider
