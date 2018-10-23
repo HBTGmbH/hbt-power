@@ -131,4 +131,5 @@ export enum ActionType {
     ClearTemplates,
     CreateTemplate,
     ChangeTemplate,
+    TemplateRequestFailed,
 }

@@ -31,6 +31,10 @@ export namespace TemplateReducer {
             case ActionType.ClearTemplates:{
                 return store.templates(store.templates().clear());
             }
+            case ActionType.TemplateRequestFailed:{
+                console.error("TemplateRequestFailed");
+                return store.templates();
+            }
         }
         return store;
     }

@@ -1,12 +1,13 @@
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
-import {Template} from '../../model/view/Template';
+import {Template, TemplateSlice} from '../../model/view/Template';
 import {AbstractAction} from '../profile/database-actions';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {TemplateService} from '../../API_CONFIG';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
+import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -71,6 +72,12 @@ export namespace TemplateActionCreator {
         }
     }
 
+    export function TemplateRequestFailed():AbstractAction{
+        return{
+            type: ActionType.TemplateRequestFailed,
+        }
+    }
+
     /*  TEMPLATES  by mp*/
 
     /**
@@ -94,7 +101,7 @@ export namespace TemplateActionCreator {
             })
                 .then((response:AxiosResponse) => {TemplateReceived(response,dispatch)})
                 .catch((error: AxiosError) => {
-                    dispatch(ProfileActionCreator.APIRequestFailed());
+                    dispatch(TemplateActionCreator.TemplateRequestFailed());
                     console.error(error);
                 });
         }
@@ -110,7 +117,7 @@ export namespace TemplateActionCreator {
             })
                 .then((response:AxiosResponse) => {TemplateReceived(response,dispatch)})
                 .catch((error: AxiosError) => {
-                    dispatch(ProfileActionCreator.APIRequestFailed());
+                    dispatch(TemplateActionCreator.TemplateRequestFailed());
                     console.error(error);
                 });
         }

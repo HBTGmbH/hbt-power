@@ -19,6 +19,7 @@ import Typography from '@material-ui/core/Typography/Typography';
 import {ReportPreviewFile} from '../../../model/view/ReportPreviewFile';
 import Iframe from 'react-iframe';
 import {CreateTemplateDialog} from './report-create-template-dialog';
+import {ReportPreview} from './report-preview_module';
 
 
 interface ReportManagerProps{
@@ -166,10 +167,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps  & ReportMa
         }
 
         return <div style={{height:'calc(100vh - 88px)'}}>
-            <Iframe
-                url={result}
-                position={"relative"}
-            />
+            <ReportPreview url={result}/>
         </div>
     };
 
