@@ -125,12 +125,12 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         this.updateProject(this.state.project.endDate(date));
     };
 
-    private changeName = (event: Object, newValue: string) => {
-        this.updateProject(this.state.project.name(newValue));
+    private changeName = (event: any) => {
+        this.updateProject(this.state.project.name(event.target.value));
     };
 
-    private changeDescription = (newValue: string) => {
-        this.updateProject(this.state.project.description(newValue));
+    private changeDescription = (event: any) => {
+        this.updateProject(this.state.project.description(event.target.value));
     };
 
     private handleSaveButtonPress = () => {
@@ -187,6 +187,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
     public render() {
         {
             console.log('endRender_project(brokerAC): ', this.state.brokerACValue);
+            //console.log("Rollen: "+this.props.projectRoles.toArray().map(NameEntityUtil.mapToName))
         }
         return (
             <Dialog open={this.props.open}
@@ -215,7 +216,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 label={PowerLocalize.get('ProjectName.Singular')}
                                 value={this.state.project.name()}
                                 id={'Project.Name.' + this.state.project.id}
-                                onChange={() => this.changeName}
+                                onChange={(e:any) => this.changeName(e)}
                                 fullWidth={true}
                             />
                         </div>
@@ -272,6 +273,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <PwrSpacer double={true}/>
                     <div className="row">
                         <div className="col-md-10">
+
                             <ChipInput
                                 fullWidth={true}
                                 label={PowerLocalize.get('Project.Dialog.Roles.Title')}
@@ -292,7 +294,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 rows={4}
                                 value={this.state.project.description()}
                                 id={'Project.Description.' + this.state.project.id()}
-                                onChange={() => this.changeDescription}
+                                onChange={(e:any) => this.changeDescription(e)}
                             />
                         </div>
                     </div>
