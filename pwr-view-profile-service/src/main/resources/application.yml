@@ -10,14 +10,12 @@ eureka:
   client:
     enabled: true
 management:
-  server:
-    servlet:
-      context-path: /meta
   endpoints:
     web:
       cors:
         allowed-methods: '*'
         allowed-origins: '*'
+      base-path: /meta/actuator
 feign:
   hystrix:
     enabled: true
