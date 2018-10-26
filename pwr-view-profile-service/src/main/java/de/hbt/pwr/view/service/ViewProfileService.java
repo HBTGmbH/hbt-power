@@ -31,17 +31,11 @@ public class ViewProfileService {
 
     @NotNull
     public List<String> getViewProfileIdsForInitials(@NotNull String initials) {
-        Stream<ViewProfile> streamFromIterator = null;
-        try {
-            streamFromIterator = StreamUtils.createStreamFromIterator(viewProfileRepository.findAll().iterator());
+        try (Stream<ViewProfile> streamFromIterator = StreamUtils.createStreamFromIterator(viewProfileRepository.findAll().iterator())) {
             return streamFromIterator
                     .filter(viewProfile -> viewProfile.getViewProfileInfo().getOwnerInitials().equals(initials))
                     .map(ViewProfile::getId)
                     .collect(Collectors.toList());
-        } finally {
-            if(streamFromIterator != null) {
-                streamFromIterator.close();
-            }
         }
     }
 
@@ -56,10 +50,7 @@ public class ViewProfileService {
      */
     @NotNull
     public ViewProfile getByIdAndCheckOwner(@NotNull String id, @NotNull String owner) {
-        ViewProfile viewProfile = viewProfileRepository.findOne(id);
-        if(viewProfile == null) {
-            throw new ViewProfileNotFoundException(id);
-        }
+        ViewProfile viewProfile = findViewProfile(id);
         if(!viewProfile.getViewProfileInfo().getOwnerInitials().equals(owner)) {
             throw new InvalidOwnerException(id, owner);
         }
@@ -74,14 +65,11 @@ public class ViewProfileService {
      * @throws InvalidOwnerException if <code>owner</code> does not match {@link ViewProfileInfo#ownerInitials}
      */
     public void deleteWithOwnerCheck(@NotNull String id, @NotNull String owner) {
-        ViewProfile viewProfile = viewProfileRepository.findOne(id);
-        if(viewProfile == null) {
-            throw new ViewProfileNotFoundException(id);
-        }
+        ViewProfile viewProfile = findViewProfile(id);
         if(!viewProfile.getViewProfileInfo().getOwnerInitials().equals(owner)) {
             throw new InvalidOwnerException(id, owner);
         }
-        viewProfileRepository.delete(id);
+        viewProfileRepository.deleteById(id);
     }
 
     private <T extends ToggleableEntry> void setEnabled(List<T> list, int index, boolean isEnabled) {
@@ -294,6 +282,9 @@ public class ViewProfileService {
         if(viewProfileInfo.getCharsPerLine() != null) {
             viewProfile.getViewProfileInfo().setCharsPerLine(viewProfileInfo.getCharsPerLine());
         }
+    }
 
+    private ViewProfile findViewProfile(String id) {
+        return viewProfileRepository.findById(id).orElseThrow(() -> new ViewProfileNotFoundException(id));
     }
 }

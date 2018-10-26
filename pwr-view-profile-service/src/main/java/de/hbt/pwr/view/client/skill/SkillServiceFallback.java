@@ -2,13 +2,14 @@ package de.hbt.pwr.view.client.skill;
 
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component(value = "skillServiceFallback")
 public class SkillServiceFallback implements SkillServiceClient{
 
-    private static final Logger LOG = Logger.getLogger(SkillServiceFallback.class);
+    private static final Logger LOG  = LogManager.getLogger(SkillServiceFallback .class);
 
     @Override
     public SkillServiceSkill getSkillByName(String qualifier) {

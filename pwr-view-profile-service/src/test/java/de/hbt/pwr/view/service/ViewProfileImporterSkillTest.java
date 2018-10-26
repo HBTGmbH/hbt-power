@@ -74,7 +74,7 @@ public class ViewProfileImporterSkillTest {
     private Profile profile;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         profile = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
         viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, skillServiceFallback, viewProfileRepository, viewProfileSortService);
@@ -320,6 +320,7 @@ public class ViewProfileImporterSkillTest {
         assertThat(viewProfile.getViewProfileInfo().getCreationDate()).isNotNull();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void shouldImportWithLocaleIfAvailable() {
         SkillServiceCategory highest = new SkillServiceCategory("Highest", null);

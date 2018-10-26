@@ -3,7 +3,8 @@ package de.hbt.pwr.view.aspects;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Component
 public class ViewProfileRestoreAspect {
 
-    private static final Logger LOG = Logger.getLogger(ViewProfileRestoreAspect.class);
+    private static final Logger LOG  = LogManager.getLogger(ViewProfileRestoreAspect.class);
 
     private void gatherSkills(Category category, Map<String, Skill> skills) {
         category.getSkills().forEach(skill -> skills.put(skill.getName(), skill));

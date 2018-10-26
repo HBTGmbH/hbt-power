@@ -9,11 +9,16 @@ import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * <strong>For documentation, launch the service and go to <a href="http://localhost:9008/swagger-ui.html"> the
@@ -108,7 +113,6 @@ public class ViewProfileController {
     @ApiOperation(
             value = "Deletes the specified view profile",
             notes = "Deletes the specified view profile of the specified consultant.",
-            response = Void.class,
             httpMethod = "DELETE"
     )
     @ApiResponses(value ={
@@ -131,7 +135,11 @@ public class ViewProfileController {
                 .name(viewProfile.getViewProfileInfo().getConsultantName())
                 .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate()).build();
         ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC", viewProfile.getViewProfileInfo().getCharsPerLine());
-        return ResponseEntity.created(response.getHeaders().getLocation()).body(response.getHeaders().getLocation().toString());
+        URI location = ofNullable(response)
+                .map(HttpEntity::getHeaders)
+                .map(HttpHeaders::getLocation)
+                .orElse(URI.create(""));
+        return ResponseEntity.created(location).body(location.toString());
     }
 
     @PatchMapping(path = "/{initials}/view/{viewProfileId}/info")

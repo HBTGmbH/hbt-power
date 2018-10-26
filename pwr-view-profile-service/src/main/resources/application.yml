@@ -10,15 +10,18 @@ eureka:
   client:
     enabled: true
 management:
-  context-path: /meta
-endpoints:
-  cors:
-    allowed-origins: '*'
-    allowed-methods: '*'
+  server:
+    servlet:
+      context-path: /meta
+  endpoints:
+    web:
+      cors:
+        allowed-methods: '*'
+        allowed-origins: '*'
 feign:
   hystrix:
     enabled: true
-# Increase the timeout for communiction with the reprot serive so it doesn't die during report generation
+# Increase the timeout for communication with the report service so it doesn't die during report generation
 pwr-report-service:
   ribbon:
     ReadTimeout: 20000

@@ -10,7 +10,7 @@ import de.hbt.pwr.view.model.entries.sort.StartEndDateComparable;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
-import de.hbt.pwr.view.util.ListUtil;
+import de.hbt.pwr.view.util.PwrListUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -102,17 +102,17 @@ public class ViewProfileSortService {
 
     public void moveSkillInDisplayCategory(ViewProfile viewProfile, int categoryIndex, int sourceIndex, int targetIndex) {
         Category displayCategory = viewProfile.getDisplayCategories().get(categoryIndex);
-        ListUtil.move(displayCategory.getDisplaySkills(), sourceIndex, targetIndex);
+        PwrListUtil.move(displayCategory.getDisplaySkills(), sourceIndex, targetIndex);
     }
 
     public void move(ViewProfile viewProfile, ProfileEntryType profileEntryType, int sourceIndex, int targetIndex) {
-        ListUtil.move(profileEntryType.extractMovableEntry(viewProfile), sourceIndex, targetIndex);
+        PwrListUtil.move(profileEntryType.extractMovableEntry(viewProfile), sourceIndex, targetIndex);
     }
 
 
     public void moveSkillInProject(ViewProfile viewProfile, int projectIndex, int sourceIndex, int targetIndex) {
         Project project = viewProfile.getProjects().get(projectIndex);
-        ListUtil.move(project.getSkills(), sourceIndex, targetIndex);
+        PwrListUtil.move(project.getSkills(), sourceIndex, targetIndex);
     }
 
 
