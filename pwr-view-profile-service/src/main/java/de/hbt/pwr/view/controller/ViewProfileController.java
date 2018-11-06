@@ -3,17 +3,32 @@ package de.hbt.pwr.view.controller;
 import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.client.report.model.ReportInfo;
 import de.hbt.pwr.view.exception.ServiceError;
+import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.ViewProfileInfo;
+import de.hbt.pwr.view.service.ReportTemplateService;
+import de.hbt.pwr.view.service.StorageService;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.xml.transform.Templates;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <strong>For documentation, launch the service and go to <a href="http://localhost:9008/swagger-ui.html"> the
@@ -48,13 +63,26 @@ public class ViewProfileController {
 
     private final ViewProfileService viewProfileService;
 
+    private final ReportTemplateService reportTemplateService;
+
     private final ReportServiceClient reportServiceClient;
 
+    private final StorageService storageService;
+
+    private static final Logger LOG = Logger.getLogger(ViewProfileController.class);
+
     @Autowired
-    public ViewProfileController(ViewProfileImporter viewProfileImporter, ViewProfileService viewProfileService, ReportServiceClient reportServiceClient) {
+    public ViewProfileController(ViewProfileImporter viewProfileImporter
+                                , ViewProfileService viewProfileService
+                                , ReportServiceClient reportServiceClient
+                                ,ReportTemplateService reportTemplateService
+                                ,StorageService storageService
+                                 ) {
         this.viewProfileImporter = viewProfileImporter;
         this.viewProfileService = viewProfileService;
         this.reportServiceClient = reportServiceClient;
+        this.reportTemplateService = reportTemplateService;
+        this.storageService = storageService;
     }
 
     @ApiOperation(value = "Creates a view profile for the given consultant",
@@ -85,6 +113,7 @@ public class ViewProfileController {
         List<String> ids = viewProfileService.getViewProfileIdsForInitials(initials);
         return ResponseEntity.ok(ids);
     }
+
 
 
     @ApiOperation(
@@ -122,14 +151,123 @@ public class ViewProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(path = "/{initials}/view/{viewProfileId}/report")
-    public ResponseEntity<String> generateReport(@PathVariable("initials") String initials, @PathVariable("viewProfileId") String viewProfileId) {
+    //---------------
+    // Templates
+    //---------------
+    @GetMapping(path = "/template")
+    public ResponseEntity<List<String>> getAllTemplates(){
+        List<String> ids = reportTemplateService.getTemplateIds();
+
+        return ResponseEntity.ok(ids);
+    }
+
+    @GetMapping(path = "/template/{id}")
+    public ResponseEntity<ReportTemplate> getTemplate(@PathVariable String id){
+        return ResponseEntity.ok(reportTemplateService.getTemplate(id));
+
+    }
+
+
+    @PostMapping(path = "/template/{name}")
+    public ResponseEntity<ReportTemplate> createTemplate(
+            @PathVariable("name") String name,
+            @RequestBody ReportTemplate.ReportTemplateShort data) {
+
+        //LOG.error("createTemplate_ Start");
+        //LOG.error("createTemplate_ path: "+data.path);
+        ReportTemplate reportTemplate = new ReportTemplate();
+        reportTemplate.setName(name);
+        reportTemplate.setDescription(data.description);
+        reportTemplate.setPath(data.path);
+        reportTemplate.setCreateUser(data.createUser);
+        reportTemplate.setCreatedDate(LocalDate.now());
+        //LOG.error("createTemplate_ pre");
+        // TODO anhand des pfades eine html datei rendern und auf dem Server speichern und dann den link dazu speichern
+        ResponseEntity<String> resp = reportServiceClient.generateHtml(data.path);
+        String path = resp.toString();
+        reportTemplate.setPreviewUrl( path );
+        //LOG.error("createTemplate_ after");
+        ReportTemplate template = reportTemplateService.saveTemplate(reportTemplate);
+
+        return ResponseEntity.ok(template);
+    }
+
+
+    @DeleteMapping(path = "/template/{id}")
+    public ResponseEntity deleteTemplate(@PathVariable String id){
+        reportTemplateService.deleteTemplate(id);
+        return ResponseEntity.ok("Success");
+    }
+
+
+    @PatchMapping(path = "/template/{id}")
+    public ResponseEntity updateTemplate(
+            @PathVariable("id") String id,
+            @RequestBody ReportTemplate.ReportTemplateSlice templateSlice) {
+
+        ReportTemplate newTemplate = new ReportTemplate();
+        newTemplate.setId(id);
+        newTemplate.setName(templateSlice.name);
+        newTemplate.setDescription(templateSlice.description);
+        newTemplate.setPath(templateSlice.path);
+        newTemplate.setCreateUser(reportTemplateService.getTemplate(id).createUser);
+        newTemplate.setCreatedDate(reportTemplateService.getTemplate(id).createdDate);
+        newTemplate.setPreviewUrl((templateSlice.path.equals(reportTemplateService.getTemplate(id).getPath()))? reportTemplateService.getTemplate(id).getPreviewUrl(): "TODO render html");
+
+        ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
+        return ResponseEntity.ok(template);
+    }
+
+
+    @GetMapping(path = "/template/preview/{id}")
+    public ResponseEntity<String> getPreview(@PathVariable String id){
+        return ResponseEntity.ok(reportTemplateService.getPreviewURL(id));
+    }
+
+
+    @GetMapping(path ="/template/preview/all")
+    public ResponseEntity<List<String>> getAllPreviews(){
+        return ResponseEntity.ok(reportTemplateService.getAllPreviewURL());
+    }
+
+
+    @GetMapping("/")
+    public String listUploadedFiles(Model model) throws IOException {
+        model.addAttribute("files", storageService.loadAll().map(
+                path -> MvcUriComponentsBuilder.fromMethodName(ViewProfileController.class,
+                        "serveFile", path.getFileName().toString()).build().toString()).collect(Collectors.toList()));
+        return "uploadForm";
+    }
+
+    @GetMapping("/files/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename){
+        Resource file = storageService.loadAsResource(filename);
+
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @PostMapping(path = "/template/upload/")
+    public String uploadTemplate(@RequestParam("file")MultipartFile file, RedirectAttributes redirectAttributes){
+        storageService.store(file);
+        redirectAttributes.addFlashAttribute("message", "You sucessfully uploaded " +file.getOriginalFilename());
+        return "redirect:/";
+    }
+    //---------------
+    // Report
+    //---------------
+    @PostMapping(path = "/{initials}/view/{viewProfileId}/{templateId}/report")
+    public ResponseEntity<String> generateReport(@PathVariable("initials") String initials,
+                                                 @PathVariable("viewProfileId") String viewProfileId,
+                                                 @PathVariable("templateId") String templateId) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        ReportTemplate template = (templateId.equals("-1") ? null : reportTemplateService.getTemplate(templateId));
         ReportInfo reportInfo = ReportInfo.builder()
                 .viewProfile(viewProfile)
                 .initials(initials)
                 .name(viewProfile.getViewProfileInfo().getConsultantName())
-                .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate()).build();
+                .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate())
+                .reportTemplate(template).build();
         ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC", viewProfile.getViewProfileInfo().getCharsPerLine());
         return ResponseEntity.created(response.getHeaders().getLocation()).body(response.getHeaders().getLocation().toString());
     }
@@ -142,4 +280,7 @@ public class ViewProfileController {
         viewProfileService.updateInfo(viewProfile, viewProfileInfo);
         return ResponseEntity.ok(viewProfile);
     }
+
+
+
 }

@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.client.report.model;
 
+import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.ViewProfile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +18,5 @@ public class ReportInfo {
     private String name;
     private LocalDate birthDate;
     private ViewProfile viewProfile;
+    private ReportTemplate reportTemplate;
 }

@@ -1,6 +1,7 @@
 package de.hbt.pwr.view.client.report;
 
 import de.hbt.pwr.view.client.report.model.ReportInfo;
+import de.hbt.pwr.view.model.ReportTemplate;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,4 +14,9 @@ public interface ReportServiceClient {
     ResponseEntity<String> generateReport(@RequestBody ReportInfo reportInfo,
                                           @RequestParam("type") String type,
                                           @RequestParam(value = "charsperline", required = false) Integer charsPerLine);
+
+    @PostMapping(value="/report/preview", produces = "text/plain", consumes = "text/plain")
+    ResponseEntity<String> generateHtml(@RequestParam("path") String templatePath);
+
+
 }

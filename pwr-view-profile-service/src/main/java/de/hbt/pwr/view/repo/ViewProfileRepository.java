@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ViewProfileRepository extends CrudRepository<ViewProfile, String> {
+
 }

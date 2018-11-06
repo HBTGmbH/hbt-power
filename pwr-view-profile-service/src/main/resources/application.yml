@@ -35,15 +35,15 @@ hystrix:
            timeoutInMilliseconds: "20000"
 ---
 spring:
-  profiles: local
+  profiles: localDev
   redis:
-    host: localhost
+    host: power02.corp.hbt.de
     port: 6379
     database: 4
 logging:
   level:
     de.hbt.pwr.view.aspects: DEBUG
-
+debug: false
 eureka:
   client:
     enabled: true

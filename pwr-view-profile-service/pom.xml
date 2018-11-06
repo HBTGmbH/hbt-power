@@ -106,7 +106,20 @@
             <scope>test</scope>
             <version>0.6</version>
         </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax.persistence/persistence-api -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>
@@ -119,7 +132,16 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
