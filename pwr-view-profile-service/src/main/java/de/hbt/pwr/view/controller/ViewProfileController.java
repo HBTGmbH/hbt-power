@@ -13,7 +13,6 @@ import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.net.URI;
-import javax.xml.transform.Templates;
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -135,7 +132,8 @@ public class ViewProfileController {
     })
     @GetMapping(path = "/{initials}/{id}")
     public ResponseEntity<ViewProfile> getViewProfile(@PathVariable("initials") String initials, @PathVariable String id) {
-        return ResponseEntity.ok(viewProfileService.getByIdAndCheckOwner(id, initials));
+        ViewProfile profile = viewProfileService.getByIdAndCheckOwner(id, initials);
+        return ResponseEntity.ok(profile);
     }
 
     @ApiOperation(
@@ -186,9 +184,9 @@ public class ViewProfileController {
         reportTemplate.setCreatedDate(LocalDate.now());
         //LOG.error("createTemplate_ pre");
         // TODO anhand des pfades eine html datei rendern und auf dem Server speichern und dann den link dazu speichern
-        ResponseEntity<String> resp = reportServiceClient.generateHtml(data.path);
-        String path = resp.toString();
-        reportTemplate.setPreviewUrl( path );
+        //ResponseEntity<String> resp = reportServiceClient.generateHtml(data.path); // TODO wieder hinzufügen
+        //String path = resp.toString();
+        reportTemplate.setPreviewUrl("");//path );
         //LOG.error("createTemplate_ after");
         ReportTemplate template = reportTemplateService.saveTemplate(reportTemplate);
 
