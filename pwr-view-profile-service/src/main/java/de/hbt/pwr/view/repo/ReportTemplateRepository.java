@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReportTemplateRepository extends CrudRepository<ReportTemplate, String> {
-
+    public void deleteById(String id);
+    public ReportTemplate findReportTemplateById(String id);
 }

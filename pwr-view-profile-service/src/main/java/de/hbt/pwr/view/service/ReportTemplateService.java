@@ -47,7 +47,7 @@ public class ReportTemplateService {
 
     @NotNull
     public ReportTemplate getTemplate(@NotNull String id){
-        ReportTemplate template = reportTemplateRepository.findOne(id);
+        ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
         if (template == null){
             throw new TemplateNotFoundException("template");
         }
@@ -65,16 +65,16 @@ public class ReportTemplateService {
 
     @NotNull
     public void deleteTemplate(@NotNull String id){
-        ReportTemplate template = reportTemplateRepository.findOne(id);
+        ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
         if (template == null){
             throw new TemplateNotFoundException("template");
         }
-        reportTemplateRepository.delete(id);
+        reportTemplateRepository.deleteById(id);
     }
 
     @NotNull
     public ReportTemplate updateTemplate(@NotNull String id,@NotNull ReportTemplate newTemplate){
-        ReportTemplate template = reportTemplateRepository.findOne(id);
+        ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
         if (template == null){
             throw new TemplateNotFoundException("template");
         }
@@ -92,7 +92,7 @@ public class ReportTemplateService {
 
     @NotNull
     public String getPreviewURL(@NotNull String id){
-        ReportTemplate result = reportTemplateRepository.findOne(id);
+        ReportTemplate result = reportTemplateRepository.findReportTemplateById(id);
         return result.getPreviewUrl();
     }
 
