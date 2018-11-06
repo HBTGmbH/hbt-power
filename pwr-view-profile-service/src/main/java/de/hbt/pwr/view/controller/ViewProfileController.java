@@ -11,7 +11,6 @@ import de.hbt.pwr.view.service.StorageService;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -74,7 +73,7 @@ public class ViewProfileController {
 
     private final StorageService storageService;
 
-    private static final Logger LOG = Logger.getLogger(ViewProfileController.class);
+    //private static final Logger LOG = Logger.getLogger(ViewProfileController.class);
 
     @Autowired
     public ViewProfileController(ViewProfileImporter viewProfileImporter
