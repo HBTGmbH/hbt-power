@@ -54,7 +54,7 @@ public class ViewProfileIntegrationTests {
     private ViewProfile viewProfile;
 
     @BeforeClass
-    public static void setUpRedis() throws IOException {
+    public static void setUpRedis() {
         redisServer = RedisServer.builder()
                 .port(TEST_REDIS_PORT_INT)
                 //.redisExecProvider(customRedisExec) //com.github.kstyrc (not com.orange.redis-embedded)

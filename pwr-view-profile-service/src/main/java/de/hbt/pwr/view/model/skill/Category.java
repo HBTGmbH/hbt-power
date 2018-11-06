@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.model.entries.sort.NameComparable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotNull;
@@ -24,7 +27,7 @@ public class Category implements ToggleableEntry, NameComparable {
      * servies as display category to all child skills, provided it is the only one.
      * First come,first serve principle (bottom-up, first category from the bottom with this flag wins)
      */
-    @Builder.Default private Boolean isDisplay = false;
+    private Boolean isDisplay = false;
 
     @JsonBackReference
     @Transient
@@ -33,13 +36,13 @@ public class Category implements ToggleableEntry, NameComparable {
     private Boolean enabled;
 
     @JsonManagedReference(value = "refSkills")
-    @Builder.Default private List<Skill> skills = new ArrayList<>();
+    private List<Skill> skills = new ArrayList<>();
 
     @JsonManagedReference(value = "refDisplaySkills")
-    @Builder.Default private List<Skill> displaySkills = new ArrayList<>();
+    private List<Skill> displaySkills = new ArrayList<>();
 
     @JsonManagedReference
-    @Builder.Default private List<Category> children = new ArrayList<>();
+    private List<Category> children = new ArrayList<>();
 
 
 

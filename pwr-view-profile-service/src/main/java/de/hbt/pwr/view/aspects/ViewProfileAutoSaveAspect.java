@@ -2,7 +2,8 @@ package de.hbt.pwr.view.aspects;
 
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ViewProfileAutoSaveAspect {
 
-    private static final Logger LOG = Logger.getLogger(ViewProfileAutoSave.class);
+    private static final Logger LOG  = LogManager.getLogger(ViewProfileAutoSave.class);
 
     private final ViewProfileRepository viewProfileRepository;
 

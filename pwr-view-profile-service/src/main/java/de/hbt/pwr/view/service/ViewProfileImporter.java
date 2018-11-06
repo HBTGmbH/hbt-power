@@ -15,7 +15,8 @@ import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.ModelConvertUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class ViewProfileImporter {
 
     private final ViewProfileSortService viewProfileSortService;
 
-    private static final Logger LOG = Logger.getLogger(ViewProfileImporter.class);
+    private static final Logger LOG = LogManager.getLogger(ViewProfileImporter.class);
 
 
     @Autowired
@@ -112,13 +113,13 @@ public class ViewProfileImporter {
     }
 
     private List<ProjectRole> collectProjectRoles(Collection<ProfileProject> projects) {
-        Set<ProjectRole> res = projects.stream()
+        return projects.stream()
                 .map(ProfileProject::getProjectRoles)
                 // This has the effect of flat mapping every project role into a new stream
                 // as a result, a long stream with all project roles is created
                 .flatMap(nameEntities -> nameEntities.stream().map(ModelConvertUtil::mapProjectRole))
-                .collect(Collectors.toSet());
-        return new ArrayList<>(res);
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private void merge(Category root, Category toMerge) {

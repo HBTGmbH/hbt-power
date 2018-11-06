@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,12 +25,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URI;
 import javax.xml.transform.Templates;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * <strong>For documentation, launch the service and go to <a href="http://localhost:9008/swagger-ui.html"> the
@@ -137,7 +142,6 @@ public class ViewProfileController {
     @ApiOperation(
             value = "Deletes the specified view profile",
             notes = "Deletes the specified view profile of the specified consultant.",
-            response = Void.class,
             httpMethod = "DELETE"
     )
     @ApiResponses(value ={
@@ -269,7 +273,11 @@ public class ViewProfileController {
                 .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate())
                 .reportTemplate(template).build();
         ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC", viewProfile.getViewProfileInfo().getCharsPerLine());
-        return ResponseEntity.created(response.getHeaders().getLocation()).body(response.getHeaders().getLocation().toString());
+        URI location = ofNullable(response)
+                .map(HttpEntity::getHeaders)
+                .map(HttpHeaders::getLocation)
+                .orElse(URI.create(""));
+        return ResponseEntity.created(location).body(location.toString());
     }
 
     @PatchMapping(path = "/{initials}/view/{viewProfileId}/info")

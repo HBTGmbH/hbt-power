@@ -25,7 +25,6 @@ public class ViewProfile {
 
     private Locale locale;
 
-
     private String description = "";
 
     private ViewProfileInfo viewProfileInfo = new ViewProfileInfo();

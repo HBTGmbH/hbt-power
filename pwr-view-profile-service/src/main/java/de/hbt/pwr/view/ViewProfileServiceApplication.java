@@ -10,11 +10,11 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -39,11 +39,11 @@ import static springfox.documentation.builders.PathSelectors.any;
 @EnableRedisRepositories
 public class ViewProfileServiceApplication {
 
-    private final JedisConnectionFactory jedisConnectionFactory;
+    private final RedisConnectionFactory redisConnectionFactory;
 
     @Autowired
-    public ViewProfileServiceApplication(JedisConnectionFactory jedisConnectionFactory) {
-        this.jedisConnectionFactory = jedisConnectionFactory;
+    public ViewProfileServiceApplication(RedisConnectionFactory redisConnectionFactory) {
+        this.redisConnectionFactory = redisConnectionFactory;
     }
 
 
@@ -52,13 +52,13 @@ public class ViewProfileServiceApplication {
      */
     @Bean
     public ServletRegistrationBean servletRegistrationBean(){
-        return new ServletRegistrationBean(new HystrixMetricsStreamServlet(),"/hystrix.stream");
+        return new ServletRegistrationBean<>(new HystrixMetricsStreamServlet(),"/hystrix.stream");
     }
 
     @Bean
     public RedisTemplate<?, ?> redisTemplate() {
         RedisTemplate<byte[],byte[]> res = new RedisTemplate<>();
-        res.setConnectionFactory(jedisConnectionFactory);
+        res.setConnectionFactory(redisConnectionFactory);
         res.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         res.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
         return res;
@@ -78,7 +78,7 @@ public class ViewProfileServiceApplication {
         return new ApiInfoBuilder()
                 .title("HBT Power View Profile Service")
                 .description("Service that generates momentary snapshots of a consultant profile to provide various methods to structure the unstructured data.")
-                .contact(new Contact("Niklas Thilmongt", "hbt.de", "nt@hbt.de"))
+                .contact(new Contact("Niklas Thilmont", "hbt.de", "nt@hbt.de"))
                 .version("1.0")
                 .build();
     }

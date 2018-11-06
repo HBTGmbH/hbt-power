@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,7 +29,7 @@ public class ViewProfileExceptionHandlerTest {
     @SuppressWarnings("unused")
     @MockBean
     // DO NOT REMOVE. Stops the container for crashing. Don't ask why ~nt
-    private JedisConnectionFactory jedisConnectionFactory;
+    private RedisConnectionFactory redisConnectionFactory;
 
     // DO NOT REMOVE. Needs to exist so the app context loads properly.
     @SuppressWarnings("unused")

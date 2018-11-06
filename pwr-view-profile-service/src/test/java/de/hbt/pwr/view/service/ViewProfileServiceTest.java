@@ -9,7 +9,7 @@ import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
-import org.apache.commons.collections.ListUtils;
+import de.hbt.pwr.view.util.PwrListUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 
@@ -53,10 +54,9 @@ public class ViewProfileServiceTest {
 
     @Before
     public void setUp() {
-        //noinspection unchecked
-        given(viewProfileRepository.findAll()).willReturn(ListUtils.union(testViewProfileListOfTestUser, testViewProfilesOfOtherUser));
-        testViewProfileListOfTestUser.forEach(viewProfile -> given(viewProfileRepository.findOne(viewProfile.getId())).willReturn(viewProfile));
-        testViewProfilesOfOtherUser.forEach(viewProfile -> given(viewProfileRepository.findOne(viewProfile.getId())).willReturn(viewProfile));
+        given(viewProfileRepository.findAll()).willReturn(PwrListUtil.union(testViewProfileListOfTestUser, testViewProfilesOfOtherUser));
+        testViewProfileListOfTestUser.forEach(viewProfile -> given(viewProfileRepository.findById(viewProfile.getId())).willReturn(of(viewProfile)));
+        testViewProfilesOfOtherUser.forEach(viewProfile -> given(viewProfileRepository.findById(viewProfile.getId())).willReturn(of(viewProfile)));
         viewProfileService = new ViewProfileService(viewProfileRepository);
     }
 
@@ -85,19 +85,19 @@ public class ViewProfileServiceTest {
     @Test
     public void shouldDeleteViewProfile() {
         viewProfileService.deleteWithOwnerCheck("VP1", testUserInitials);
-        verify(viewProfileRepository, times(1)).delete("VP1");
+        verify(viewProfileRepository, times(1)).deleteById("VP1");
     }
 
     @Test(expected = InvalidOwnerException.class)
     public void shouldNotDeleteAndThrowInvalidOwner() {
         viewProfileService.deleteWithOwnerCheck("VP4", otherUserInitials);
-        verify(viewProfileRepository, times(0)).delete("VP4");
+        verify(viewProfileRepository, times(0)).deleteById("VP4");
     }
 
     @Test(expected = ViewProfileNotFoundException.class)
     public void shouldNotDeleteAndThrowNotFound() {
         viewProfileService.deleteWithOwnerCheck("FooBar", otherUserInitials);
-        verify(viewProfileRepository, times(0)).delete("FooBar");
+        verify(viewProfileRepository, times(0)).deleteById("FooBar");
     }
 
     @Test

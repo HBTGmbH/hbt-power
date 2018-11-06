@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "power.view.default-locale",
+      "type": "java.lang.String",
+      "description": "Default locale for view profiles.",
+      "sourceType": "de.hbt.pwr.view.service.ViewProfileImporter$defaultLanguage"
+
+    }
+  ] }

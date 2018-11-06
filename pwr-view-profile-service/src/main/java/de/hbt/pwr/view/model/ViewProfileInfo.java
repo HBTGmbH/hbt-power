@@ -14,16 +14,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewProfileInfo {
-    @Builder.Default private String viewDescription = "";
+    private String viewDescription = "";
 
     @JsonProperty("owner")
-    @Builder.Default private String ownerInitials = "";
+    private String ownerInitials = "";
 
-    @Builder.Default private String consultantName = "";
+    private String consultantName = "";
 
-     private LocalDate consultantBirthDate;
+    private LocalDate consultantBirthDate;
 
-    @Builder.Default private String name = "";
+    private String name = "";
 
     private LocalDate creationDate;
 

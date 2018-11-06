@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 
 /**
@@ -70,7 +70,7 @@ public class ViewProfileImporterEntryTest {
     private final List<String> entryNames = Arrays.asList(entryName1, entryName2);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         viewProfile = new ViewProfile();
         profileToReturn = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profileToReturn);

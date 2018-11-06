@@ -54,7 +54,7 @@ public class ViewProfileOperationsController {
             httpMethod = "PATCH",
             produces = "application/json")
     @ApiResponses(value ={
-            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response"),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })

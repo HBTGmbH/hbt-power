@@ -119,12 +119,6 @@ public class ModelConvertUtil {
         return category.getParent() != null && isTier0Category(category.getParent()) && !category.getParent().getIsDisplay();
     }
 
-    /**
-     * TODO comment this is important
-     * @param skill
-     * @param currentLookup
-     * @param displayCategoriesByName
-     */
     private static void setDisplayCategory(Skill skill, Category currentLookup, Map<String, Category> displayCategoriesByName) {
         // Default is second level categories are display
         if (currentLookup.getIsDisplay() || isTier1Category(currentLookup) || isTier0Category(currentLookup)) {
