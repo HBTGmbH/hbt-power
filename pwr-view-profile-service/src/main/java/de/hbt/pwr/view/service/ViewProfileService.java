@@ -122,6 +122,7 @@ public class ViewProfileService {
 
     public void setIsEnabledForSkill(ViewProfile viewProfile, String skillName, boolean isEnabled) {
         setIsEnabledForSkill(viewProfile.getRootCategory(), skillName, isEnabled);
+        viewProfile.getDisplayCategories().forEach(category -> setIsEnabledForSkill(category, skillName, isEnabled));
     }
 
     /**

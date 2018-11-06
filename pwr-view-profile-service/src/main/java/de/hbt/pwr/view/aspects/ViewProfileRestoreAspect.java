@@ -11,11 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -86,19 +82,23 @@ public class ViewProfileRestoreAspect {
     }
 
     @SuppressWarnings("unused")
-    @Pointcut("this(org.springframework.data.repository.CrudRepository)")
+    @Pointcut("this(de.hbt.pwr.view.repo.ViewProfileRepository)")
     private void isCrudRepo() {} //NOSONAR
 
-
-    @AfterReturning(value = "isCrudRepo() && args(serializable)", returning = "viewProfile", argNames = "joinPoint,viewProfile,serializable")
-    private void anyViewProfileRestorable(JoinPoint joinPoint, ViewProfile viewProfile, Serializable serializable) { //NOSONAR
+    @AfterReturning(value = "isCrudRepo()", returning = "viewProfile", argNames = "joinPoint,viewProfile")
+    private void anyViewProfileRestorable(JoinPoint joinPoint, Optional<?> viewProfile) { //NOSONAR
         LOG.debug(ViewProfileRestoreAspect.class + " invoked after returning from "
                 + joinPoint.getSignature().toString() + ". Performing bi reference restoring...");
-        if(viewProfile != null) {
-            restore(viewProfile);
-            LOG.debug("... done");
+        if(viewProfile.isPresent()) {
+            Object mayBeViewProfile = viewProfile.get();
+            if (mayBeViewProfile instanceof ViewProfile) {
+                LOG.debug("... done");
+                restore((ViewProfile) mayBeViewProfile);
+            } else {
+                LOG.debug("... failed because of wrong class");
+            }
         } else {
-            LOG.debug("... failed because param was null");
+            LOG.debug("... failed because not present");
         }
     }
 }

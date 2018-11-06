@@ -300,12 +300,25 @@ public class ViewProfileVisibilityTests {
     @Test
     public void SkillInProfileIsDisabledAfterDisabling() {
         Category category = new Category("root");
+        Category category2 = new Category("root");
         Skill skill = Skill.builder().name("skill").category(category).build();
+        Skill skill2 = Skill.builder().name("skill").category(category2).build();
         ViewProfile viewProfile = new ViewProfile();
+        // This strange construct may happen due to deserialization from redis
         viewProfile.setRootCategory(category);
+        viewProfile.setDisplayCategories(Collections.singletonList(category2));
 
         viewProfileService.setIsEnabledForSkill(viewProfile, skill.getName(), false);
         assertThat(viewProfile.findSkillByName(skill.getName()).get().getEnabled()).isFalse();
+        // make sure this also works for skills in display categories
+        Skill skillFromDisplay = viewProfile.getDisplayCategories().stream()
+                .map(Category::getSkills)
+                .flatMap(skills -> skills.stream())
+                .filter(s -> s.getName().equals(skill.getName()))
+                .findFirst()
+                .orElse(null);
+        assertThat(skillFromDisplay).isNotNull();
+        assertThat(skillFromDisplay.getEnabled()).isFalse();
     }
 
     @Test
