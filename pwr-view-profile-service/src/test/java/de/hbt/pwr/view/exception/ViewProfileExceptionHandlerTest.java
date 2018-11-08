@@ -2,6 +2,8 @@ package de.hbt.pwr.view.exception;
 
 import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.controller.ViewProfileController;
+import de.hbt.pwr.view.service.ReportTemplateService;
+import de.hbt.pwr.view.service.StorageService;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import org.junit.Test;
@@ -45,6 +47,12 @@ public class ViewProfileExceptionHandlerTest {
     @SuppressWarnings("unused")
     @MockBean
     private ViewProfileImporter viewProfileImporter;
+
+    @MockBean
+    private ReportTemplateService reportTemplateService;
+
+    @MockBean
+    private StorageService storageService;
 
     @Test
     public void shouldReturnForbidden403() throws Exception {
@@ -90,5 +98,13 @@ public class ViewProfileExceptionHandlerTest {
         given(viewProfileService.getViewProfileIdsForInitials("fooBar")).willThrow(new NoProfileAvailableException("fooBar"));
         String url = "/view/fooBar";
         mockMvc.perform(get(url)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnNotFoundViewProfileMissing() throws Exception {
+        String id = "24152safr125rq";
+        given(reportTemplateService.getTemplate(id)).willThrow(new TemplateNotFoundException(id));
+        String url = "/view/template/" + id;
+        mockMvc.perform(get(url)).andExpect(status().isNotFound());
     }
 }

@@ -158,7 +158,6 @@ public class ViewProfileController {
     @GetMapping(path = "/template")
     public ResponseEntity<List<String>> getAllTemplates(){
         List<String> ids = reportTemplateService.getTemplateIds();
-
         return ResponseEntity.ok(ids);
     }
 
@@ -174,20 +173,16 @@ public class ViewProfileController {
             @PathVariable("name") String name,
             @RequestBody ReportTemplate.ReportTemplateShort data) {
 
-        //LOG.error("createTemplate_ Start");
-        //LOG.error("createTemplate_ path: "+data.path);
         ReportTemplate reportTemplate = new ReportTemplate();
         reportTemplate.setName(name);
         reportTemplate.setDescription(data.description);
         reportTemplate.setPath(data.path);
         reportTemplate.setCreateUser(data.createUser);
         reportTemplate.setCreatedDate(LocalDate.now());
-        //LOG.error("createTemplate_ pre");
         // TODO anhand des pfades eine html datei rendern und auf dem Server speichern und dann den link dazu speichern
         //ResponseEntity<String> resp = reportServiceClient.generateHtml(data.path); // TODO wieder hinzufügen
         //String path = resp.toString();
-        reportTemplate.setPreviewUrl("");//path );
-        //LOG.error("createTemplate_ after");
+        reportTemplate.setPreviewUrl("/usr/share/power2/report/previews/export_2018_11_06_13_47_49.html");//path );
         ReportTemplate template = reportTemplateService.saveTemplate(reportTemplate);
 
         return ResponseEntity.ok(template);
@@ -211,14 +206,17 @@ public class ViewProfileController {
         newTemplate.setName(templateSlice.name);
         newTemplate.setDescription(templateSlice.description);
         newTemplate.setPath(templateSlice.path);
-        newTemplate.setCreateUser(reportTemplateService.getTemplate(id).createUser);
-        newTemplate.setCreatedDate(reportTemplateService.getTemplate(id).createdDate);
+        newTemplate.setCreateUser(reportTemplateService.getTemplate(id).getCreateUser());
+        newTemplate.setCreatedDate(reportTemplateService.getTemplate(id).getCreatedDate());
         newTemplate.setPreviewUrl((templateSlice.path.equals(reportTemplateService.getTemplate(id).getPath()))? reportTemplateService.getTemplate(id).getPreviewUrl(): "TODO render html");
 
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
         return ResponseEntity.ok(template);
     }
 
+    //---------------
+    // Preview
+    //---------------
 
     @GetMapping(path = "/template/preview/{id}")
     public ResponseEntity<String> getPreview(@PathVariable String id){
@@ -232,6 +230,9 @@ public class ViewProfileController {
     }
 
 
+    //---------------
+    // File Upload
+    //---------------
     @GetMapping("/")
     public String listUploadedFiles(Model model) throws IOException {
         model.addAttribute("files", storageService.loadAll().map(

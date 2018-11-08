@@ -1,19 +1,17 @@
 package de.hbt.pwr.view.service;
 
-import com.netflix.discovery.converters.Auto;
 import de.hbt.pwr.view.exception.TemplateNotFoundException;
-import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.repo.ReportTemplateRepository;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.StreamUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
+
+import static de.hbt.pwr.view.util.PwrFunctionalUtils.peek;
+import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
 @Service
 public class ReportTemplateService {
@@ -27,55 +25,40 @@ public class ReportTemplateService {
 
 
     @NotNull
-    public List<String> getTemplateIds(){
-        Stream<ReportTemplate> streamFromIterator = null;
-        try {
-            streamFromIterator = StreamUtils.createStreamFromIterator(reportTemplateRepository.findAll().iterator());
+    public List<String> getTemplateIds() {
+        return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
+                .map(ReportTemplate::getId)
+                .collect(Collectors.toList());
 
-            List<String>  toReturn = new ArrayList<>();
-            streamFromIterator
-                    .forEach(reportTemplate -> toReturn.add(reportTemplate.getId()));
-
-            return toReturn;
-
-        } finally {
-            if(streamFromIterator != null) {
-                streamFromIterator.close();
-            }
-        }
     }
 
     @NotNull
-    public ReportTemplate getTemplate(@NotNull String id){
+    public ReportTemplate getTemplate(@NotNull String id) {
         ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
-        if (template == null){
+        if (template == null) {
             throw new TemplateNotFoundException("template");
         }
-
         return template;
     }
 
 
-
     @NotNull
-    public ReportTemplate saveTemplate(@NotNull ReportTemplate reportTemplate){
+    public ReportTemplate saveTemplate(@NotNull ReportTemplate reportTemplate) {
         return reportTemplateRepository.save(reportTemplate);
     }
 
 
     @NotNull
-    public void deleteTemplate(@NotNull String id){
-        ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
-        if (template == null){
-            throw new TemplateNotFoundException("template");
-        }
-        reportTemplateRepository.deleteById(id);
+    public void deleteTemplate(@NotNull String id) {
+        reportTemplateRepository.findById(id)
+                .map(peek(reportTemplateRepository::delete))
+                .orElseThrow(() -> new TemplateNotFoundException("template"));
     }
 
     @NotNull
-    public ReportTemplate updateTemplate(@NotNull String id,@NotNull ReportTemplate newTemplate){
+    public ReportTemplate updateTemplate(@NotNull String id, @NotNull ReportTemplate newTemplate) {
         ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
-        if (template == null){
+        if (template == null) {
             throw new TemplateNotFoundException("template");
         }
 
@@ -91,21 +74,16 @@ public class ReportTemplateService {
 
 
     @NotNull
-    public String getPreviewURL(@NotNull String id){
+    public String getPreviewURL(@NotNull String id) {
         ReportTemplate result = reportTemplateRepository.findReportTemplateById(id);
         return result.getPreviewUrl();
     }
 
-
-    public List<String> getAllPreviewURL(){
-        Iterable<ReportTemplate> templates = reportTemplateRepository.findAll();
-        List<String> allUrls = new ArrayList<>();
-        for (ReportTemplate t :
-                templates) {
-            allUrls.add(t.getPreviewUrl());
-        }
-
-        return allUrls;
+    @NotNull
+    public List<String> getAllPreviewURL() {
+        return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
+                .map(ReportTemplate::getPreviewUrl)
+                .collect(Collectors.toList());
     }
 
 

@@ -18,7 +18,7 @@ public class TemplateNotFoundException extends RuntimeException {
     private final String templateId;
 
     public TemplateNotFoundException(String templateId) {
-        super("The given id (" + templateId + ") did not match a view profile.");
+        super("The given id (" + templateId + ") did not match a template.");
         this.templateId = templateId;
     }
 
@@ -26,7 +26,7 @@ public class TemplateNotFoundException extends RuntimeException {
     @AllArgsConstructor
     @NoArgsConstructor
     static class InnerError {
-        private static final String CODE = "ViewNotFound";
+        private static final String CODE = "TemplateNotFound";
         private String templateId;
 
         @JsonProperty("code")

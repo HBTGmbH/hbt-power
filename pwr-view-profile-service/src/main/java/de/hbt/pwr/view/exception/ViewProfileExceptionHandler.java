@@ -1,6 +1,7 @@
 package de.hbt.pwr.view.exception;
 
 import de.hbt.pwr.view.client.profile.model.Profile;
+import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.skill.Category;
 import org.springframework.http.HttpStatus;
@@ -92,6 +93,15 @@ public class ViewProfileExceptionHandler extends ResponseEntityExceptionHandler 
         final HttpStatus status = HttpStatus.BAD_REQUEST;
         NoProfileAvailableException.InnerError innerError = new NoProfileAvailableException.InnerError(exception.getInitials());
         ServiceOuterError outerError = new ServiceOuterError(status.toString(), exception.getMessage(), Profile.class.toString(), innerError);
+        ServiceError serviceError = new ServiceError(outerError);
+        return ResponseEntity.status(status).body(serviceError);
+    }
+
+    @ExceptionHandler(value = TemplateNotFoundException.class)
+    public ResponseEntity<ServiceError> handleTemplateIdNotFound(TemplateNotFoundException exception) {
+        final HttpStatus status = HttpStatus.NOT_FOUND;
+        TemplateNotFoundException.InnerError innerError = new TemplateNotFoundException.InnerError(exception.getTemplateId());
+        ServiceOuterError outerError = new ServiceOuterError(status.toString(), exception.getMessage(), ReportTemplate.class.toString(), innerError);
         ServiceError serviceError = new ServiceError(outerError);
         return ResponseEntity.status(status).body(serviceError);
     }
