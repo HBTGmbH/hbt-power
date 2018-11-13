@@ -18,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import redis.embedded.RedisServer;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,13 +98,15 @@ public class ReportTemplateServiceIntegrationTest {
 
     @Test
     public void shouldAddTwoAndGetIds() throws Exception {
-        reportTemplateRepository.save(ReportTemplate.builder().id("111").name("No.1").description("template 1").build());
-        reportTemplateRepository.save(ReportTemplate.builder().id("222").name("No.2").description("template 2").build());
+        String id1 = "111";
+        String id2 = "222";
+        reportTemplateRepository.save(ReportTemplate.builder().id(id1).name("No.1").description("template 1").build());
+        reportTemplateRepository.save(ReportTemplate.builder().id(id2).name("No.2").description("template 2").build());
 
 
-        List<String> expected = Arrays.asList("111", "222");
         List<String> result = reportTemplateService.getTemplateIds();
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).contains(id1);
+        assertThat(result).contains(id2);
 
     }
 

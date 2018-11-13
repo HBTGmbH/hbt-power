@@ -17,7 +17,7 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ReportTemplateServiceTest {
@@ -67,8 +67,9 @@ public class ReportTemplateServiceTest {
     public void shouldAddTemplateAndGetItBack() {
         ReportTemplate expected = ReportTemplate.builder().id("444").name("temp4").description("testDescr4").path("d/d/d").build();
         when(reportTemplateRepository.findById(eq("444"))).thenReturn(of(expected));
-        reportTemplateService.getTemplate("444");
-        verify(reportTemplateRepository, times(1)).findById(eq("444"));
+        ReportTemplate temp = reportTemplateService.getTemplate("444");
+        //verify(reportTemplateRepository, times(1)).findById(eq("444"));
+        assertThat(temp).isEqualTo(expected);
     }
 
     @Test
