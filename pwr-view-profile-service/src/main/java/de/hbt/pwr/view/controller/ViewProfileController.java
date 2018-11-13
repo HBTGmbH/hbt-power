@@ -155,6 +155,7 @@ public class ViewProfileController {
     //---------------
     // Templates
     //---------------
+
     @GetMapping(path = "/template")
     public ResponseEntity<List<String>> getAllTemplates(){
         List<String> ids = reportTemplateService.getTemplateIds();
@@ -164,9 +165,7 @@ public class ViewProfileController {
     @GetMapping(path = "/template/{id}")
     public ResponseEntity<ReportTemplate> getTemplate(@PathVariable String id){
         return ResponseEntity.ok(reportTemplateService.getTemplate(id));
-
     }
-
 
     @PostMapping(path = "/template/{name}")
     public ResponseEntity<ReportTemplate> createTemplate(

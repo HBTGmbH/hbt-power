@@ -31,7 +31,7 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("test")
-@TestPropertySource(properties = {"spring.redis.port = " + ViewProfileIntegrationTests.TEST_REDIS_PORT_STRING, })
+@TestPropertySource(properties = {"spring.redis.port = " + ViewProfileIntegrationTests.TEST_REDIS_PORT_STRING,})
 public class ViewProfileIntegrationTests {
 
 

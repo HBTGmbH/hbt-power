@@ -1,13 +1,19 @@
 package de.hbt.pwr.view.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDate;
 
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @RedisHash("reportTemplate")
 public class ReportTemplate {
 
@@ -26,8 +32,8 @@ public class ReportTemplate {
             return id;
         }
         return String.format(
-                "ReportTemplate -- id:%d, name:%s, description=%s, path=%s, createUser=%s, createDate=%s",
-                id, name, description, path, createUser, createdDate
+                "ReportTemplate --  name:%s, description=%s, path=%s, createUser=%s, createDate=%s",
+                name, description, path, createUser, createdDate
         );
     }
 

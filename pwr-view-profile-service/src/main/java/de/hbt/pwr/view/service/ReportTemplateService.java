@@ -3,7 +3,7 @@ package de.hbt.pwr.view.service;
 import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.repo.ReportTemplateRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -16,9 +16,10 @@ import static org.springframework.data.util.StreamUtils.createStreamFromIterator
 @Service
 public class ReportTemplateService {
 
+    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(ReportTemplateService.class);
+
     private final ReportTemplateRepository reportTemplateRepository;
 
-    @Autowired
     public ReportTemplateService(ReportTemplateRepository reportTemplateRepository) {
         this.reportTemplateRepository = reportTemplateRepository;
     }
@@ -34,11 +35,11 @@ public class ReportTemplateService {
 
     @NotNull
     public ReportTemplate getTemplate(@NotNull String id) {
-        ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
-        if (template == null) {
-            throw new TemplateNotFoundException("template");
-        }
-        return template;
+        LOG.debug("getTemplate ", id);
+        reportTemplateRepository.findAll().forEach(reportTemplate -> LOG.debug(reportTemplate.getId()));
+        ReportTemplate temp = reportTemplateRepository.findById(id).isPresent() ? reportTemplateRepository.findById(id).get() : null;
+        LOG.debug("getTemplate", temp);
+        return reportTemplateRepository.findById(id).orElseThrow(() -> new TemplateNotFoundException(id));
     }
 
 
@@ -52,14 +53,14 @@ public class ReportTemplateService {
     public void deleteTemplate(@NotNull String id) {
         reportTemplateRepository.findById(id)
                 .map(peek(reportTemplateRepository::delete))
-                .orElseThrow(() -> new TemplateNotFoundException("template"));
+                .orElseThrow(() -> new TemplateNotFoundException(id));
     }
 
     @NotNull
     public ReportTemplate updateTemplate(@NotNull String id, @NotNull ReportTemplate newTemplate) {
         ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
         if (template == null) {
-            throw new TemplateNotFoundException("template");
+            throw new TemplateNotFoundException(id);
         }
 
         template.setCreatedDate(newTemplate.getCreatedDate());
