@@ -36,9 +36,9 @@ public class ReportTemplateService {
     @NotNull
     public ReportTemplate getTemplate(@NotNull String id) {
         LOG.debug("getTemplate ", id);
-        reportTemplateRepository.findAll().forEach(reportTemplate -> LOG.debug(reportTemplate.getId()));
-        ReportTemplate temp = reportTemplateRepository.findById(id).isPresent() ? reportTemplateRepository.findById(id).get() : null;
-        LOG.debug("getTemplate", temp);
+       // reportTemplateRepository.findAll().forEach(reportTemplate -> LOG.debug(reportTemplate.getId()));
+        //ReportTemplate temp = reportTemplateRepository.findById(id).isPresent() ? reportTemplateRepository.findById(id).get() : null;
+        //LOG.debug("getTemplate", temp);
         return reportTemplateRepository.findById(id).orElseThrow(() -> new TemplateNotFoundException(id));
     }
 
