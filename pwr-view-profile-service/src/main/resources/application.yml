@@ -4,6 +4,10 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: false
+  servlet:
+    multipart:
+      max-file-size: 128MB
+      max-request-size: 128MB
 server:
   port: 9008
 eureka:

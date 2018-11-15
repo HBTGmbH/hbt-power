@@ -49,6 +49,15 @@ public class ReportTemplate {
         public String description;
         public String path;
 
+        public static ReportTemplateSlice fromJSON(String str) {
+            ReportTemplateSlice toReturn = new ReportTemplateSlice();
+            String[] content = str.split("\"");
+            toReturn.name = content[1];
+            toReturn.description = content[3];
+            toReturn.path = content[5];
+
+            return toReturn;
+        }
     }
 }
 

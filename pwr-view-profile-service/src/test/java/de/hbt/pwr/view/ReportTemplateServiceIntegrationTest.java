@@ -1,5 +1,6 @@
 package de.hbt.pwr.view;
 
+import de.hbt.pwr.view.controller.ReportTemplateController;
 import de.hbt.pwr.view.controller.ViewProfileController;
 import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
@@ -39,6 +40,9 @@ public class ReportTemplateServiceIntegrationTest {
 
     @Autowired
     private ViewProfileController viewProfileController;
+
+    @Autowired
+    private ReportTemplateController reportTemplateController;
 
     @Autowired
     private ReportTemplateService reportTemplateService;
@@ -124,7 +128,7 @@ public class ReportTemplateServiceIntegrationTest {
         info.description = description;
         info.path = path;
 
-        ResponseEntity<ReportTemplate> response = viewProfileController.createTemplate(name, info);
+        ResponseEntity<ReportTemplate> response = reportTemplateController.createTemplate(name, info);
         String r_name = response.getBody().getName();
         String r_description = response.getBody().getDescription();
         String r_path = response.getBody().getPath();
@@ -151,7 +155,7 @@ public class ReportTemplateServiceIntegrationTest {
         info.description = description;
         info.path = path;
 
-        ResponseEntity<ReportTemplate> response1 = viewProfileController.createTemplate(name, info);
+        ResponseEntity<ReportTemplate> response1 = reportTemplateController.createTemplate(name, info);
 
         name = "No.2";
         description = "template2";
@@ -162,7 +166,7 @@ public class ReportTemplateServiceIntegrationTest {
         info.description = description;
         info.path = path;
 
-        ResponseEntity<ReportTemplate> response2 = viewProfileController.createTemplate(name, info);
+        ResponseEntity<ReportTemplate> response2 = reportTemplateController.createTemplate(name, info);
 
         List<String> result = reportTemplateService.getTemplateIds();
 

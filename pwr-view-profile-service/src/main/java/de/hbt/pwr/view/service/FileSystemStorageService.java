@@ -1,10 +1,8 @@
 package de.hbt.pwr.view.service;
 
 
-
 import de.hbt.pwr.view.exception.StorageException;
 import de.hbt.pwr.view.exception.StorageFileNotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -15,14 +13,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
 public class FileSystemStorageService implements StorageService {
 
     //@Value("${export.designFileDirectory}")
-    private Path saveLocation = Paths.get("D:\\mp\\Projekte\\HBT-Power2\\pwr-report-service\\src\\main\\resources\\templates\\");
+    private Path saveLocation = Paths.get("D:\\mp\\Projekte\\HBT-Power2\\pwr-view-profile-service\\src\\main\\resources\\uploads\\");
 
 
     @Override
@@ -36,7 +37,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public void store(MultipartFile file) {
+    public String store(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
@@ -53,6 +54,8 @@ public class FileSystemStorageService implements StorageService {
         }catch (IOException e){
             throw new StorageException("Failed to store file "+ filename, e);
         }
+
+        return this.saveLocation + filename;
     }
 
     @Override

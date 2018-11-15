@@ -104,7 +104,7 @@ public class ViewProfileExceptionHandlerTest {
     public void shouldReturnNotFoundViewProfileMissing() throws Exception {
         String id = "24152safr125rq";
         given(reportTemplateService.getTemplate(id)).willThrow(new TemplateNotFoundException(id));
-        String url = "/view/template/" + id;
+        String url = "/template/" + id;
         mockMvc.perform(get(url)).andExpect(status().isNotFound());
     }
 }
