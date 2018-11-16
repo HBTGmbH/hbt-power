@@ -32,13 +32,15 @@ interface ViewProfileProjectsOverviewLocalState {
 
 interface ViewProfileProjectsOverviewDispatch {
     moveEntry(id: string, type: string, sourceIndex: number, targetIndex: number): void;
+
     toggleEntry(id: string, type: string, index: number, isEnabled: boolean): void;
-    toggleNestedEntry(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number, type: string, index: number, isEnabled: boolean): void;
-    moveNestedEntry(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number, type: string, sourceIndex: number, targetIndex: number): void;
+
+    toggleNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, index: number, isEnabled: boolean): void;
+
+    moveNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, sourceIndex: number, targetIndex: number): void;
 }
 
-class ViewProfileProjectsOverviewModule extends React.Component<
-    ViewProfileProjectsOverviewProps
+class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProjectsOverviewProps
     & ViewProfileProjectsOverviewLocalProps
     & ViewProfileProjectsOverviewDispatch, ViewProfileProjectsOverviewLocalState> {
 
@@ -51,16 +53,17 @@ class ViewProfileProjectsOverviewModule extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileProjectsOverviewDispatch {
         return {
             moveEntry: (id, type, sourceIndex, targetIndex) => dispatch(ViewProfileActionCreator.AsyncMoveEntry(id, type, sourceIndex, targetIndex)),
-            toggleEntry: (id, type, index, isEnabled) => {dispatch(ViewProfileActionCreator.AsyncToggleEntry(id, type, index, isEnabled))},
+            toggleEntry: (id, type, index, isEnabled) => {
+                dispatch(ViewProfileActionCreator.AsyncToggleEntry(id, type, index, isEnabled));
+            },
             moveNestedEntry: (id, container, containerIndex, type, sourceIndex, targetIndex) => {
-                dispatch(ViewProfileActionCreator.AsyncMoveNestedEntry(id, container, containerIndex, type, sourceIndex, targetIndex))
+                dispatch(ViewProfileActionCreator.AsyncMoveNestedEntry(id, container, containerIndex, type, sourceIndex, targetIndex));
             },
             toggleNestedEntry: (id, container, containerIndex, type, index, isEnabled) => {
-                dispatch(ViewProfileActionCreator.AsyncToggleNestedEntry(id, container, containerIndex, type, index, isEnabled))
+                dispatch(ViewProfileActionCreator.AsyncToggleNestedEntry(id, container, containerIndex, type, index, isEnabled));
             }
         };
     }
-
 
 
     private renderSkill = (entry: ViewSkill) => {
@@ -70,11 +73,11 @@ class ViewProfileProjectsOverviewModule extends React.Component<
         return res;
     };
 
-    private handleNestedMove = (container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number, type: string, sourceIndex: number, targetIndex: number) => {
+    private handleNestedMove = (container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, sourceIndex: number, targetIndex: number) => {
         this.props.moveNestedEntry(this.props.viewProfileId, container, containerIndex, type, sourceIndex, targetIndex);
     };
 
-    private handleNestedToggle = (container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number, type: string, index: number, isEnabled: boolean) => {
+    private handleNestedToggle = (container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, index: number, isEnabled: boolean) => {
         this.props.toggleNestedEntry(this.props.viewProfileId, container, containerIndex, type, index, isEnabled);
     };
 
@@ -95,8 +98,9 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                     <ExpansionPanelSummary
                         title={entry.name}
                     >
-                        <Typography style={{flexBasis:'33.33%'}} variant={'headline'}>{entry.name}</Typography>
-                        <Typography  variant={'caption'}>{'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}</Typography>
+                        <Typography style={{flexBasis: '33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography
+                            variant={'caption'}>{'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails
                     >
@@ -151,8 +155,8 @@ class ViewProfileProjectsOverviewModule extends React.Component<
                     renderEntry={this.renderProjects}
                     headers={[<span>
                         <Button variant={'flat'} disabled={true}>Name</Button>
-                                {EntryRenderers.renderStartDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
-                                {EntryRenderers.renderEndDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
+                        {EntryRenderers.renderStartDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
+                        {EntryRenderers.renderEndDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
                             </span>]}
                     entries={this.props.viewProfile.projects}
                     onMove={this.handleMove}

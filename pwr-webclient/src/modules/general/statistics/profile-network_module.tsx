@@ -31,8 +31,7 @@ interface ConnectedNode {
 }
 
 
-class ProfileNetworkGraphModule extends React.Component<
-    ProfileNetworkGraphProps
+class ProfileNetworkGraphModule extends React.Component<ProfileNetworkGraphProps
     & ProfileNetworkGraphLocalProps
     & ProfileNetworkGraphDispatch, ProfileNetworkGraphLocalState> {
 
@@ -42,7 +41,7 @@ class ProfileNetworkGraphModule extends React.Component<
         super(props);
         this.state = {
             selectedNodeProperties: null,
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileNetworkGraphLocalProps): ProfileNetworkGraphProps {
@@ -52,7 +51,7 @@ class ProfileNetworkGraphModule extends React.Component<
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileNetworkGraphDispatch {
-        return {}
+        return {};
     }
 
     public shouldComponentUpdate(nextProps:
@@ -63,7 +62,7 @@ class ProfileNetworkGraphModule extends React.Component<
             this.network = null;
             this.setState({
                 selectedNodeProperties: null
-            })
+            });
         }
         return nextProps.network !== this.props.network || this.state !== nextState;
     }
@@ -125,7 +124,7 @@ class ProfileNetworkGraphModule extends React.Component<
                 console.log(params);
                 this.setState({
                     selectedNodeProperties: params.nodes.length > 0 ? params : null
-                })
+                });
             });
         }
     };
@@ -139,7 +138,7 @@ class ProfileNetworkGraphModule extends React.Component<
         return this.props.network.edges().filter(edge => edge.target() == node || edge.source() == node).map(edge => {
             let targetNode = edge.source();
             if (targetNode == node) targetNode = edge.target();
-            return {nodeId: targetNode, strength: edge.strength()}
+            return {nodeId: targetNode, strength: edge.strength()};
         }).toArray().sort((a, b) => a.strength > b.strength ? -1 : a.strength == b.strength ? 0 : 1);
     };
 
@@ -152,7 +151,7 @@ class ProfileNetworkGraphModule extends React.Component<
             <div className="col-md-offset-2">
                 <div className="row">
                     <div className="col-md-9"
-                         style={{color: "white"}}>{PowerLocalize.get("ProfileNetwork.Description")}</div>
+                         style={{color: 'white'}}>{PowerLocalize.get('ProfileNetwork.Description')}</div>
                 </div>
                 <div className="row">
                     <div className="vis-profile-network col-md-9"
@@ -160,7 +159,7 @@ class ProfileNetworkGraphModule extends React.Component<
                          style={{border: '2px solid lightgray', backgroundColor: 'white'}}
                     />
                     <div className="col-md-3">
-                        { !isNullOrUndefined(this.state.selectedNodeProperties) ?
+                        {!isNullOrUndefined(this.state.selectedNodeProperties) ?
                             <NetworkNodeDetails
                                 network={this.props.network}
                                 selectedNodeProperties={this.state.selectedNodeProperties}

@@ -50,7 +50,6 @@ interface SectorEntryDialogState {
 }
 
 
-
 export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, SectorEntryDialogState> {
 
     constructor(props: SectorEntryDialogProps) {
@@ -87,7 +86,7 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
         let sector: NameEntity = ProfileStore.findNameEntityByName(this.state.sectorEntryValue, this.props.sectors);
         let sectorEntry: SectorEntry = this.props.sectorEntry;
         // check if a sector with the name exists. If thats not the case, just create a new run. Server will handle the rest.
-        if(isNullOrUndefined(sector)) {
+        if (isNullOrUndefined(sector)) {
             sector = NameEntity.createNew(this.state.sectorEntryValue);
         }
         sectorEntry = sectorEntry.sectorId(sector.id());
@@ -110,22 +109,24 @@ export class SectorEntryDialog extends React.Component<SectorEntryDialogProps, S
                     {PowerLocalize.get('SectorEntry.Dialog.Title')}
                 </DialogTitle>
                 <DialogContent>
-                <div className="row">
-                    <div className="col-md-11">
-                        <PwrAutoComplete
-                            fullWidth={true}
-                            label={PowerLocalize.get('Sector.Singular')}
-                            id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
-                            data={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
-                            searchTerm={this.state.sectorEntryValue}
-                            onSearchChange={this.handleSectorFieldInput}
-                        />
+                    <div className="row">
+                        <div className="col-md-11">
+                            <PwrAutoComplete
+                                fullWidth={true}
+                                label={PowerLocalize.get('Sector.Singular')}
+                                id={'SectorEntry.Dialog.AC.' + this.props.sectorEntry.id}
+                                data={this.props.sectors.map(NameEntityUtil.mapToName).toArray()}
+                                searchTerm={this.state.sectorEntryValue}
+                                onSearchChange={this.handleSectorFieldInput}
+                            />
+                        </div>
                     </div>
-                </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>
-                    <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.handleCloseButtonPress}/>
+                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                                   onClick={this.handleSaveButtonPress}/>
+                    <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                                   onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
             </Dialog>
         );

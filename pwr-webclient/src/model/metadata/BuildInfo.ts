@@ -12,17 +12,35 @@ export interface APIBuildInfo {
 
 @doop
 export class BuildInfo {
-    @doop public get version() {return doop<string, this>()}
+    @doop
+    public get version() {
+        return doop<string, this>();
+    }
 
-    @doop public get artifact() {return doop<string, this>()};
+    @doop
+    public get artifact() {
+        return doop<string, this>();
+    };
 
-    @doop public get name() {return doop<string, this>()};
+    @doop
+    public get name() {
+        return doop<string, this>();
+    };
 
-    @doop public get group() {return doop<string, this>()};
+    @doop
+    public get group() {
+        return doop<string, this>();
+    };
 
-    @doop public get time() {return doop<Date, this>()};
+    @doop
+    public get time() {
+        return doop<Date, this>();
+    };
 
-    @doop public get available() {return doop<boolean, this>()};
+    @doop
+    public get available() {
+        return doop<boolean, this>();
+    };
 
 
     constructor(version: string, artifact: string, name: string, group: string, time: Date, available: boolean) {
@@ -37,10 +55,10 @@ export class BuildInfo {
             apiBuildInfo.build.group,
             new Date(apiBuildInfo.build.time),
             true
-        )
+        );
     }
 
     public static offline(service: string): BuildInfo {
-        return new BuildInfo("", "", service, "", new Date(), false);
+        return new BuildInfo('', '', service, '', new Date(), false);
     }
 }

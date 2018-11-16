@@ -19,10 +19,11 @@ import {error, isNullOrUndefined} from 'util';
 import {Project} from '../../model/Project';
 import {CareerEntry} from '../../model/CareerEntry';
 import {KeySkillEntry} from '../../model/KeySkillEntry';
+
 export class ProfileReducer {
 
     private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
-        switch(entryType) {
+        switch (entryType) {
             case ProfileElementType.TrainingEntry: {
                 let tEntry: TrainingEntry = entry as TrainingEntry;
                 profile = profile.trainingEntries(profile.trainingEntries().set(tEntry.id(), tEntry));
@@ -59,7 +60,7 @@ export class ProfileReducer {
                 break;
             }
             default:
-                throw new TypeError("Unknown switch value " + ProfileElementType[entryType]);
+                throw new TypeError('Unknown switch value ' + ProfileElementType[entryType]);
         }
         return profile.changesMade(profile.changesMade() + 1);
     }
@@ -70,7 +71,7 @@ export class ProfileReducer {
     }
 
     public static reducerHandleRemoveEntry(profile: Profile, action: DeleteEntryAction): Profile {
-        switch(action.elementType) {
+        switch (action.elementType) {
             case ProfileElementType.TrainingEntry:
                 profile = profile.trainingEntries(profile.trainingEntries().remove(action.elementId));
                 break;
@@ -93,14 +94,14 @@ export class ProfileReducer {
                 profile = profile.keySkillEntries(profile.keySkillEntries().remove(action.elementId));
                 break;
             default:
-                throw TypeError("Unknown switch value " + ProfileElementType[action.elementType]);
+                throw TypeError('Unknown switch value ' + ProfileElementType[action.elementType]);
         }
         return profile.changesMade(profile.changesMade() + 1);
     }
 
     public static reducerHandleCreateEntry(profile: Profile, action: CreateEntryAction): Profile {
         let entry: any;
-        switch(action.entryType) {
+        switch (action.entryType) {
             case ProfileElementType.SectorEntry:
                 entry = SectorEntry.createNew();
                 break;
@@ -123,7 +124,7 @@ export class ProfileReducer {
                 entry = KeySkillEntry.createNew();
                 break;
             default:
-                throw error("Unknown switch value " + ProfileElementType[action.entryType]);
+                throw error('Unknown switch value ' + ProfileElementType[action.entryType]);
         }
         return ProfileReducer.updateEntry(profile, entry, action.entryType);
     }
@@ -152,7 +153,7 @@ export class ProfileReducer {
     private static deleteOrphanSkills(profile: Profile, deletedId: string): Profile {
         // Orphans in projects
         let projects = profile.projects().map((project, id) => {
-            if(project.skillIDs().has(deletedId)) {
+            if (project.skillIDs().has(deletedId)) {
                 return project.skillIDs(project.skillIDs().remove(deletedId));
             }
             return project;
@@ -169,7 +170,7 @@ export class ProfileReducer {
 
     public static reducerHandleRemoveSkillFromProject(profile: Profile, action: RemoveSkillFromProjectAction): Profile {
         let project = profile.getProject(action.projectId);
-        if(!isNullOrUndefined(project)) {
+        if (!isNullOrUndefined(project)) {
             project = project.skillIDs(project.skillIDs().remove(action.skillId));
             let projects = (profile.projects());
             projects = projects.set(project.id(), project);
@@ -189,13 +190,13 @@ export class ProfileReducer {
 
     public static reducerHandleAddSkill(profile: Profile, action: AddSkillAction): Profile {
         let skill = profile.getSkillByName(action.skillName);
-        if(isNullOrUndefined(skill)) {
+        if (isNullOrUndefined(skill)) {
             let skills = profile.skills();
             skill = Skill.of(action.skillName, action.rating, action.comment);
             skills = skills.set(skill.id(), skill);
             profile = profile.skills(skills).changesMade(profile.changesMade() + 1);
         }
-        if(!isNullOrUndefined(action.projectId)) {
+        if (!isNullOrUndefined(action.projectId)) {
             let project = profile.projects().get(action.projectId);
             project = project.skillIDs(project.skillIDs().add(skill.id()));
             let projects = profile.projects();

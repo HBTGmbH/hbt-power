@@ -31,33 +31,33 @@ export namespace MetaDataActionCreator {
             type: ActionType.AddOrReplaceBuildInfo,
             service: service,
             buildInfo: buildInfo
-        }
+        };
     }
 
     export function AddOrReplaceClientInfo(info: ClientBuildInfo): AddOrReplaceClientInfoAction {
         return {
             type: ActionType.AddOrReplaceClientInfo,
             info: info
-        }
+        };
     }
 
 
-    export function FetchBuildInfo(service:string, serviceUrl: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+    export function FetchBuildInfo(service: string, serviceUrl: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(serviceUrl).then(response => {
                 let apiBuildInfo = response.data as APIBuildInfo;
                 dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(apiBuildInfo)));
             }).catch(error => {
                 console.error(error);
                 dispatch(AddOrReplaceBuildInfo(service, BuildInfo.offline(service)));
-            })
-        }
+            });
+        };
     }
 
     function FetchClientBuildInfo() {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getApiPrefix()+"/build_info.json").then(response => {
-                if(response.data != null) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            axios.get(getApiPrefix() + '/build_info.json').then(response => {
+                if (response.data != null) {
                     dispatch(AddOrReplaceClientInfo(response.data));
                 } else {
                     dispatch(AddOrReplaceClientInfo(null));
@@ -65,18 +65,18 @@ export namespace MetaDataActionCreator {
             }).catch(error => {
                 console.error(error);
                 dispatch(AddOrReplaceClientInfo(null));
-            })
-        }
+            });
+        };
     }
 
     export function FetchAllBuildInfo() {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             dispatch(FetchBuildInfo(MetaDataStore.KEY_PROFILE, getProfileBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_STATISTICS, getStatisticsBuildsInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_SKILL, getSkillBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_REPORT, getReportBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_VIEW_PROFIE, ViewProfileService.getBuildInfo()));
             dispatch(FetchClientBuildInfo());
-        }
+        };
     }
 }

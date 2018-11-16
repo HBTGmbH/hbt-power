@@ -29,7 +29,7 @@ export class ProfileActionCreator {
      * @param payload
      * @param reqType
      */
-    public static APIRequestSuccessfull(payload: any, reqType: APIRequestType) : ReceiveAPIResponseAction {
+    public static APIRequestSuccessfull(payload: any, reqType: APIRequestType): ReceiveAPIResponseAction {
         return {
             type: ActionType.APIRequestSuccess,
             payload: payload,
@@ -93,13 +93,13 @@ export class ProfileActionCreator {
         return {
             type: ActionType.DeleteSkill,
             id: id
-        }
+        };
     }
 
     public static logOutUser(): AbstractAction {
         return {
             type: ActionType.LogOutUser
-        }
+        };
     }
 
     public static AddSkill(skillName: string, rating: number, comment: string, projectId?: string): AddSkillAction {
@@ -109,7 +109,7 @@ export class ProfileActionCreator {
             rating: rating,
             comment: comment,
             projectId: projectId
-        }
+        };
     }
 
     public static RemoveSkillFromProject(skillId: string, projectId: string) {
@@ -117,20 +117,20 @@ export class ProfileActionCreator {
             type: ActionType.RemoveSkillFromProject,
             skillId: skillId,
             projectId: projectId
-        }
+        };
     }
 
     public static FailLogin(): AbstractAction {
         return {
             type: ActionType.UserLoginFailed
-        }
+        };
     }
 
     public static SetUserInitials(initials: string): ChangeStringValueAction {
         return {
             type: ActionType.SetUserInitials,
             value: initials
-        }
+        };
     }
 }
 

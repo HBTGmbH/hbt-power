@@ -20,26 +20,26 @@ interface ViewProfileEntriesOverviewLocalProps {
 }
 
 interface ViewProfileEntriesOverviewLocalState {
-    expansionValue:number;
+    expansionValue: number;
 }
 
 interface ViewProfileEntriesOverviewDispatch {
     moveEntry(id: string, type: string, sourceIndex: number, targetIndex: number): void;
+
     toggleEntry(id: string, type: string, index: number, isEnabled: boolean): void;
 }
 
-class ViewProfileEntriesOverviewModule extends React.Component<
-    ViewProfileEntriesOverviewProps
+class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntriesOverviewProps
     & ViewProfileEntriesOverviewLocalProps
     & ViewProfileEntriesOverviewDispatch, ViewProfileEntriesOverviewLocalState> {
 
-    constructor(props:ViewProfileEntriesOverviewProps
+    constructor(props: ViewProfileEntriesOverviewProps
         & ViewProfileEntriesOverviewLocalProps
-        & ViewProfileEntriesOverviewDispatch){
+        & ViewProfileEntriesOverviewDispatch) {
         super(props);
         this.state = {
-            expansionValue :-1,
-        }
+            expansionValue: -1,
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileEntriesOverviewLocalProps): ViewProfileEntriesOverviewProps {
@@ -51,9 +51,12 @@ class ViewProfileEntriesOverviewModule extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileEntriesOverviewDispatch {
         return {
             moveEntry: (id, type, sourceIndex, targetIndex) => dispatch(ViewProfileActionCreator.AsyncMoveEntry(id, type, sourceIndex, targetIndex)),
-            toggleEntry: (id, type, index, isEnabled) => {dispatch(ViewProfileActionCreator.AsyncToggleEntry(id, type, index, isEnabled))},
-        }
+            toggleEntry: (id, type, index, isEnabled) => {
+                dispatch(ViewProfileActionCreator.AsyncToggleEntry(id, type, index, isEnabled));
+            },
+        };
     }
+
     private handleMove = (type: string, sourceIndex: number, targetIndex: number) => {
         this.props.moveEntry(this.props.viewProfileId, type, sourceIndex, targetIndex);
     };
@@ -62,16 +65,16 @@ class ViewProfileEntriesOverviewModule extends React.Component<
         this.props.toggleEntry(this.props.viewProfileId, type, index, isEnabled);
     };
 
-    private handleExpansionChange = (value:number) => {
+    private handleExpansionChange = (value: number) => {
 
-        if(this.state.expansionValue === value){
+        if (this.state.expansionValue === value) {
             this.setState({
                 expansionValue: -1,
-            })
-        }else {
+            });
+        } else {
             this.setState({
                 expansionValue: value,
-            })
+            });
         }
     };
 
@@ -181,7 +184,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
                 </div>
                 <div className="col-md-6 fullWidth">
                     <ViewProfileEntries
-                        title={PowerLocalize.get("ProjectRole.Plural")}
+                        title={PowerLocalize.get('ProjectRole.Plural')}
                         movableEntryType="PROJECT_ROLE"
                         toggleableEntryType="PROJECT_ROLE"
                         renderEntry={EntryRenderers.renderProjectRole}
@@ -195,6 +198,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<
         </div>;
     }
 }
+
 /**
  * @see ViewProfileEntriesOverviewModule
  * @author nt

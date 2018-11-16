@@ -40,7 +40,7 @@ export class StatisticsReducer {
         return store.consultantClusterInfo(action.consultantClusterInfo);
     }
 
-    public static ReceiveScatterSkills(store: StatisticsStore, action: ReceiveScatterSkillsAction) : StatisticsStore {
+    public static ReceiveScatterSkills(store: StatisticsStore, action: ReceiveScatterSkillsAction): StatisticsStore {
         return store.scatteredSkills(action.scatterSkills);
     }
 
@@ -56,11 +56,11 @@ export class StatisticsReducer {
         return store.skillUsageInfo(map);
     }
 
-    public static reduce(store: StatisticsStore, action: AbstractAction) : StatisticsStore {
-        if(isNullOrUndefined(store)) {
+    public static reduce(store: StatisticsStore, action: AbstractAction): StatisticsStore {
+        if (isNullOrUndefined(store)) {
             return StatisticsStore.createEmpty();
         }
-        switch(action.type) {
+        switch (action.type) {
             case ActionType.ReceiveRelativeSkillUsageMetrics:
                 return StatisticsReducer.ReceiveRelativeSkillUsageMetrics(store, action as ReceiveSkillUsageMetricsAction);
             case ActionType.ReceiveSkillUsageMetrics:
@@ -74,7 +74,7 @@ export class StatisticsReducer {
             case ActionType.StatisticsNotAvailable:
                 return store.available(false);
             case ActionType.ReceiveConsultantClusterInfo:
-                return StatisticsReducer.ReceiveConsultantClusterInfo(store,action as ReceiveConsultantClusterInfoAction);
+                return StatisticsReducer.ReceiveConsultantClusterInfo(store, action as ReceiveConsultantClusterInfoAction);
             case ActionType.ReceiveScatterSkills:
                 return StatisticsReducer.ReceiveScatterSkills(store, action as ReceiveScatterSkillsAction);
             case ActionType.AddNameEntityUsageInfo:

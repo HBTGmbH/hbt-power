@@ -18,10 +18,10 @@ interface InfoPaperState {
 export class InfoPaper extends React.Component<InfoPaperProps, InfoPaperState> {
 
     public static defaultProps: Partial<InfoPaperProps> = {
-        minHeight: "400px",
-        width: "100%",
-        title: "Info",
-        materialIconName: "info_outline",
+        minHeight: '400px',
+        width: '100%',
+        title: 'Info',
+        materialIconName: 'info_outline',
         style: {}
     };
 
@@ -34,7 +34,7 @@ export class InfoPaper extends React.Component<InfoPaperProps, InfoPaperState> {
                     title={this.props.title}
                 />
                 <div>
-                {this.props.children}
+                    {this.props.children}
                 </div>
             </Paper>);
     }

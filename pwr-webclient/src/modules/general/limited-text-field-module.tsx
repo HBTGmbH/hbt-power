@@ -6,6 +6,7 @@ import {isNullOrUndefined} from 'util';
 interface LimitedTextFieldProps {
     maxCharacters: number;
     value: string;
+
     onChange(e: FormEvent<{}>, newValue: string): void;
 
     /**
@@ -63,7 +64,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     }
 
     public componentWillReceiveProps(newProps: LimitedTextFieldProps) {
-        if(isNullOrUndefined(newProps.overrideErrorText) && (newProps.value.length <= newProps.maxCharacters)) {
+        if (isNullOrUndefined(newProps.overrideErrorText) && (newProps.value.length <= newProps.maxCharacters)) {
             this.setState({
                 errorText: null
             });
@@ -76,13 +77,14 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         errorText: '',
         label: null,
         useToggleEditButton: false,
-        onToggleEdit: () => {},
-        disabled:false,
+        onToggleEdit: () => {
+        },
+        disabled: false,
         rows: 1
     };
 
     private interceptOnChange = (e: any) => {
-        if(e.target.value.length > this.props.maxCharacters) {
+        if (e.target.value.length > this.props.maxCharacters) {
             this.setState({
                 errorText: this.props.errorText
             });
@@ -95,7 +97,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
 
 
     private handleEditButtonPress = (evt: any) => {
-        if(this.props.disabled)
+        if (this.props.disabled)
             this.props.onToggleEdit(false);
         else
             this.props.onToggleEdit(true);
@@ -105,7 +107,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         return (
             <div>
                 <div style={{width: this.props.fullWidth ? '100%' : 350}}>
-                    <div style={{width:this.props.fullWidth ? '85%' : 256, float:'left'}}>
+                    <div style={{width: this.props.fullWidth ? '85%' : 256, float: 'left'}}>
                         <TextField
                             rows={this.props.rows}
                             id={this.props.id}
@@ -122,11 +124,11 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
 
                     {
                         this.props.useToggleEditButton ?
-                            <div style={{width:this.props.fullWidth ? '15%' : 72, paddingTop: "30px", float:'left'}}>
+                            <div style={{width: this.props.fullWidth ? '15%' : 72, paddingTop: '30px', float: 'left'}}>
                                 <IconButton
-                                            onClick={this.handleEditButtonPress}>
+                                    onClick={this.handleEditButtonPress}>
                                     <Icon className="material-icons icon-size-70">
-                                        {this.props.disabled ? "edit" : "save"}
+                                        {this.props.disabled ? 'edit' : 'save'}
                                     </Icon>
                                 </IconButton>
                             </div>
@@ -134,14 +136,14 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             null
                     }
                 </div>
-                <div style={{width: this.props.fullWidth ? "100%" : 256}}>
-                    <div style={{width:'85%', float:'left', marginTop:'7px'}}>
+                <div style={{width: this.props.fullWidth ? '100%' : 256}}>
+                    <div style={{width: '85%', float: 'left', marginTop: '7px'}}>
                         <LinearProgress
                             variant={'determinate'}
-                            value={(this.props.value.length / this.props.maxCharacters)*100}
+                            value={(this.props.value.length / this.props.maxCharacters) * 100}
                         />
                     </div>
-                    <div style={{width: '10%', float:'left'}}>
+                    <div style={{width: '10%', float: 'left'}}>
                         {this.props.value.length + '/' + this.props.maxCharacters}
                     </div>
                 </div>

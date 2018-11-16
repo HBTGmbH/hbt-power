@@ -2,6 +2,7 @@ import {NameEntity} from '../model/NameEntity';
 import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {ProfileElementType} from '../Store';
+
 export class NameEntityUtil {
 
     /**
@@ -11,10 +12,10 @@ export class NameEntityUtil {
      * @returns {string}
      */
     public static getNullTolerantName(id: string, lookup: Immutable.Map<string, NameEntity>) {
-        let res: string = "";
-        if(!isNullOrUndefined(id)) {
+        let res: string = '';
+        if (!isNullOrUndefined(id)) {
             let name: NameEntity = lookup.get(id);
-            if(!isNullOrUndefined(name) && !isNullOrUndefined(name.name())) {
+            if (!isNullOrUndefined(name) && !isNullOrUndefined(name.name())) {
                 res = name.name();
             }
         }
@@ -31,17 +32,17 @@ export class NameEntityUtil {
         return nameEntity.name();
     }
 
-    public static typeToLocalizedType(nameEntity: NameEntity ): string {
-        return PowerLocalize.get("NameEntityType." + nameEntity.type());
+    public static typeToLocalizedType(nameEntity: NameEntity): string {
+        return PowerLocalize.get('NameEntityType.' + nameEntity.type());
     }
 
     public static getProfileElementTypeValues() {
         let members = [];
-        for(let i:number = 0; true; i++) {
-            if(ProfileElementType[i] === undefined) break
-            members.push(ProfileElementType[i])
+        for (let i: number = 0; true; i++) {
+            if (ProfileElementType[i] === undefined) break;
+            members.push(ProfileElementType[i]);
         }
-        return members
+        return members;
     }
 
     public static getProfileElementTypes() {
@@ -50,29 +51,29 @@ export class NameEntityUtil {
     }
 
     public static typeToViewAPIString(profileElementType: ProfileElementType) {
-        switch(profileElementType) {
+        switch (profileElementType) {
             case ProfileElementType.LanguageEntry:
-                return "LANGUAGE";
+                return 'LANGUAGE';
             case ProfileElementType.TrainingEntry:
-                return "TRAINING";
+                return 'TRAINING';
             case ProfileElementType.QualificationEntry:
-                return "QUALIFICATION";
+                return 'QUALIFICATION';
             case ProfileElementType.SectorEntry:
-                return "SECTOR";
+                return 'SECTOR';
             case ProfileElementType.EducationEntry:
-                return "EDUCATION";
+                return 'EDUCATION';
             case ProfileElementType.Project:
-                return "PROJECT";
+                return 'PROJECT';
             case ProfileElementType.CareerEntry:
-                return "CAREER";
+                return 'CAREER';
             case ProfileElementType.KeySkill:
-                return "KEY_SKILL";
+                return 'KEY_SKILL';
             case ProfileElementType.SkillEntry:
-                return "SKILL";
+                return 'SKILL';
             case ProfileElementType.Company:
-                return "COMPANY";
+                return 'COMPANY';
             case ProfileElementType.ProjectRole:
-                return "PROJECT_ROLE";
+                return 'PROJECT_ROLE';
         }
     }
 }

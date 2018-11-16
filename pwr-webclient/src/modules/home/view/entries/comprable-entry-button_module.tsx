@@ -18,40 +18,39 @@ interface ComparableEntryButtonLocalProps {
 }
 
 interface ComparableEntryButtonLocalState {
-    order: "asc" | "desc";
+    order: 'asc' | 'desc';
 }
 
 interface ComparableEntryButtonDispatch {
     sortEntries(id: string, type: SortableEntryType, field: SortableEntryField, doAscending: boolean): void;
 }
 
-class ComparableEntryButtonModule extends React.Component<
-    ComparableEntryButtonProps
+class ComparableEntryButtonModule extends React.Component<ComparableEntryButtonProps
     & ComparableEntryButtonLocalProps
     & ComparableEntryButtonDispatch, ComparableEntryButtonLocalState> {
 
     constructor(props: any) {
         super(props);
         this.state = {
-            order: "desc"
-        }
+            order: 'desc'
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ComparableEntryButtonLocalProps): ComparableEntryButtonProps {
-        return {}
+        return {};
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ComparableEntryButtonDispatch {
         return {
             sortEntries: (id, type, field, doAscending) => dispatch(ViewProfileActionCreator.AsyncAutoSortEntry(id, type, field, doAscending))
-        }
+        };
     }
 
-    private setOrder = (order: "asc" | "desc") => {
+    private setOrder = (order: 'asc' | 'desc') => {
         this.setState({
             order: order
         });
-        let doAsc = order === "asc";
+        let doAsc = order === 'asc';
         this.props.sortEntries(this.props.viewProfileId, this.props.sortableEntryType, this.props.sortableEntryField, doAsc);
     };
 

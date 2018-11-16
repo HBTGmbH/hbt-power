@@ -4,9 +4,15 @@ import {ViewProfile} from './ViewProfile';
 
 @doop
 export class ViewProfileStore {
-    @doop public get viewProfiles() { return doop<Immutable.Map<string, ViewProfile>, this>()};
+    @doop
+    public get viewProfiles() {
+        return doop<Immutable.Map<string, ViewProfile>, this>();
+    };
 
-    @doop public get sortInProgress() {return doop<boolean, this>()};
+    @doop
+    public get sortInProgress() {
+        return doop<boolean, this>();
+    };
 
     private constructor() {
         return this;

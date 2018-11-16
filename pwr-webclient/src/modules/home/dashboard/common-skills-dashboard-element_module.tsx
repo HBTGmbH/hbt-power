@@ -25,6 +25,7 @@ interface CommonSkillsDashboardElementLocalState {
 
 interface CommonSkillsDashboardElementDispatch {
     navigateTo(target: string): void;
+
     loadSkillStatistics(): void;
 }
 
@@ -33,14 +34,14 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
     static mapStateToProps(state: ApplicationState, localProps: CommonSkillsDashboardElementLocalProps): CommonSkillsDashboardElementProps {
         return {
             profileSkillMetrics: state.statisticsReducer.activeProfileMetric(),
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): CommonSkillsDashboardElementDispatch {
         return {
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
-        }
+        };
     }
 
     private loadSkillStatistics = () => {
@@ -50,7 +51,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
     };
 
     private renderCommonSkills = () => {
-        if(this.props.profileSkillMetrics.commonSkills().size == 0) {
+        if (this.props.profileSkillMetrics.commonSkills().size == 0) {
             return PowerLocalize.get('None');
         }
         let commonSkills: String = '';
@@ -64,13 +65,13 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
     };
 
     render() {
-        if(isNullOrUndefined(this.props.profileSkillMetrics)){
+        if (isNullOrUndefined(this.props.profileSkillMetrics)) {
             return <div/>;
         } else {
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar  sizes={'80'} src={getImagePath()+"/statistics_icon.svg"}/>
+                        <Avatar sizes={'80'} src={getImagePath() + '/statistics_icon.svg'}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                     Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}
@@ -78,7 +79,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                     <div className="col-md-3 col-sm-12">
                         <Button
                             variant={'raised'}
-                            style={{marginTop: "8px"}}
+                            style={{marginTop: '8px'}}
                             color={'primary'}
                             onClick={() => this.loadSkillStatistics()}
                         >

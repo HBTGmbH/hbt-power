@@ -83,7 +83,7 @@ class PowerLoginModule extends React.Component<PowerLoginProps
     }
 
     componentDidMount() {
-        this.props.setUserInitials("");
+        this.props.setUserInitials('');
     }
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
@@ -102,7 +102,7 @@ class PowerLoginModule extends React.Component<PowerLoginProps
 
     private hasError = (): boolean => {
         return this.props.loginStatus == LoginStatus.REJECTED || this.props.loginStatus == LoginStatus.INVALID_NAME;
-    }
+    };
 
 
     private renderInputField = () => {
@@ -113,8 +113,12 @@ class PowerLoginModule extends React.Component<PowerLoginProps
                 onChange={(e) => this.handleFieldValueChange(e.target.value)}
                 onKeyPress={this.handleInputFieldKeyPress}
             />
-            {this.props.loginStatus === LoginStatus.REJECTED ?   <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.LoginFailed')}</FormHelperText> : <React.Fragment/>}
-            {this.props.loginStatus === LoginStatus.INVALID_NAME ?   <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.InvalidName')}</FormHelperText> : <React.Fragment/>}
+            {this.props.loginStatus === LoginStatus.REJECTED ?
+                <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.LoginFailed')}</FormHelperText> :
+                <React.Fragment/>}
+            {this.props.loginStatus === LoginStatus.INVALID_NAME ?
+                <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.InvalidName')}</FormHelperText> :
+                <React.Fragment/>}
         </FormControl>;
     };
 

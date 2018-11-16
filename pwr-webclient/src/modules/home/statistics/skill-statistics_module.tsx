@@ -36,8 +36,7 @@ interface SkillStatisticsDispatch {
 }
 
 
-class SkillStatisticsModule extends React.Component<
-    SkillStatisticsProps
+class SkillStatisticsModule extends React.Component<SkillStatisticsProps
     & SkillStatisticsLocalProps
     & SkillStatisticsDispatch, SkillStatisticsLocalState> {
 
@@ -45,7 +44,7 @@ class SkillStatisticsModule extends React.Component<
         super(props);
         this.state = {
             skillOccLevelLength: 20
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: SkillStatisticsLocalProps): SkillStatisticsProps {
@@ -75,7 +74,7 @@ class SkillStatisticsModule extends React.Component<
             return {
                 name: usageMetric.skillName(),
                 value: usageMetric.skillUsage(),
-            }
+            };
         }).toArray().slice(0, 10);
     };
 
@@ -85,7 +84,7 @@ class SkillStatisticsModule extends React.Component<
             return {
                 name: usageMetric.skillName(),
                 value: usageMetric.skillUsage() * 100.0,
-            }
+            };
         }).toArray().slice(0, 10);
     };
 
@@ -95,10 +94,9 @@ class SkillStatisticsModule extends React.Component<
                 occ: scatterSkill.occurrences(),
                 rating: scatterSkill.meanRating(),
                 name: scatterSkill.name()
-            }
+            };
         }).toArray().sort((s1, s2) => compareNumbers(s1.occ, s2.occ)).slice(0, this.state.skillOccLevelLength);
     };
-
 
 
     render() {
@@ -108,56 +106,56 @@ class SkillStatisticsModule extends React.Component<
                     title={PowerLocalize.get('Statistics.MostUsedSkills.Title')}
                 />
                 <CardContent>
-                    <ListSubheader>{PowerLocalize.get("SkillStatistics.SkillCount.Absolute.Title")}</ListSubheader>
-                    {PowerLocalize.get("SkillStatistics.SkillCount.Absolute.Description")}
+                    <ListSubheader>{PowerLocalize.get('SkillStatistics.SkillCount.Absolute.Title')}</ListSubheader>
+                    {PowerLocalize.get('SkillStatistics.SkillCount.Absolute.Description')}
                     <Recharts.BarChart width={730} height={250} layout="horizontal" data={this.renderData()}>
-                        <Recharts.XAxis dataKey="name" />
-                        <Recharts.YAxis />
-                        <Recharts.CartesianGrid strokeDasharray="3 3" />
-                        <Recharts.Tooltip />
-                        <Recharts.Legend />
+                        <Recharts.XAxis dataKey="name"/>
+                        <Recharts.YAxis/>
+                        <Recharts.CartesianGrid strokeDasharray="3 3"/>
+                        <Recharts.Tooltip/>
+                        <Recharts.Legend/>
                         <Recharts.Bar
                             dataKey="value"
                             fill="#8884d8"
                             layout="vertical"
-                            name={PowerLocalize.get("SkillStatistics.SkillCount")}/>
+                            name={PowerLocalize.get('SkillStatistics.SkillCount')}/>
                     </Recharts.BarChart>
                 </CardContent>
                 <CardContent>
-                    <ListSubheader>{PowerLocalize.get("SkillStatistics.SkillCount.Relative.Title")}</ListSubheader>
-                    {PowerLocalize.get("SkillStatistics.SkillCount.Relative.Description")}<br/>
+                    <ListSubheader>{PowerLocalize.get('SkillStatistics.SkillCount.Relative.Title')}</ListSubheader>
+                    {PowerLocalize.get('SkillStatistics.SkillCount.Relative.Description')}<br/>
                     <Recharts.BarChart width={730} height={250} layout="horizontal" data={this.renderRelativeData()}>
-                        <Recharts.XAxis dataKey="name" />
-                        <Recharts.YAxis />
-                        <Recharts.CartesianGrid strokeDasharray="3 3" />
-                        <Recharts.Tooltip />
-                        <Recharts.Legend />
+                        <Recharts.XAxis dataKey="name"/>
+                        <Recharts.YAxis/>
+                        <Recharts.CartesianGrid strokeDasharray="3 3"/>
+                        <Recharts.Tooltip/>
+                        <Recharts.Legend/>
                         <Recharts.Bar
                             unit="%"
                             dataKey="value"
                             fill="#8884d8"
                             layout="vertical"
-                            name={PowerLocalize.get("SkillStatistics.SkillCount.Relative")}
-                            />
+                            name={PowerLocalize.get('SkillStatistics.SkillCount.Relative')}
+                        />
                     </Recharts.BarChart>
                 </CardContent>
                 <CardContent>
-                    <ListSubheader>{PowerLocalize.get("SkillStatistics.WordCloud.Title")}</ListSubheader>
-                        <TCloud
-                            style={{width: "800px"}}
-                            minSize={12}
-                            maxSize={35}
-                            tags={this.renderTags()}
-                        />
+                    <ListSubheader>{PowerLocalize.get('SkillStatistics.WordCloud.Title')}</ListSubheader>
+                    <TCloud
+                        style={{width: '800px'}}
+                        minSize={12}
+                        maxSize={35}
+                        tags={this.renderTags()}
+                    />
                 </CardContent>
                 <CardContent>
-                    <ListSubheader>{PowerLocalize.get("SkillStatistics.OccurrenceRating.Title")}</ListSubheader>
-                    <div style={{marginLeft:'30px'}}>
+                    <ListSubheader>{PowerLocalize.get('SkillStatistics.OccurrenceRating.Title')}</ListSubheader>
+                    <div style={{marginLeft: '30px'}}>
                         <Button
-                            style={{width:'40px',height:'40px',padding:'0',marginRight:'15px'}}
+                            style={{width: '40px', height: '40px', padding: '0', marginRight: '15px'}}
                             variant={'fab'}
                             color={'primary'}
-                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength>0)?(this.state.skillOccLevelLength - 1):0})}
+                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength > 0) ? (this.state.skillOccLevelLength - 1) : 0})}
                         >
                             <RemoveIcon/>
                         </Button>
@@ -165,18 +163,18 @@ class SkillStatisticsModule extends React.Component<
                         {this.state.skillOccLevelLength}
 
                         <Button
-                            style={{width:'40px',height:'40px',padding:'0',marginLeft:'15px'}}
+                            style={{width: '40px', height: '40px', padding: '0', marginLeft: '15px'}}
                             variant={'fab'} color={'primary'}
-                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength<100)?(this.state.skillOccLevelLength + 1):100})}
+                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength < 100) ? (this.state.skillOccLevelLength + 1) : 100})}
                         >
                             <AddIcon/>
                         </Button>
                     </div>
 
                     <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
-                                   margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+                                            margin={{top: 20, right: 20, bottom: 20, left: 20}}>
                         <Recharts.XAxis dataKey="name"/>
-                        <Recharts.YAxis />
+                        <Recharts.YAxis/>
                         <Recharts.Tooltip/>
                         <Recharts.Legend/>
                         <Recharts.CartesianGrid stroke='#f5f5f5'/>

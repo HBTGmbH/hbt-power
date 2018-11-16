@@ -32,6 +32,7 @@ interface ConsultantEditDialogProps {
 interface ConsultantEditDialogLocalProps {
     initials: string;
     show: boolean;
+
     onClose(): void;
 }
 
@@ -51,11 +52,11 @@ interface ConsultantEditDialogLocalState {
  */
 interface ConsultantEditDialogDispatch {
     redirectToUser(initials: string): void;
+
     updateConsultant(info: ConsultantInfo): void;
 }
 
-class ConsultantEditDialogModule extends React.Component<
-    ConsultantEditDialogProps
+class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogProps
     & ConsultantEditDialogLocalProps
     & ConsultantEditDialogDispatch, ConsultantEditDialogLocalState> {
 
@@ -78,7 +79,7 @@ class ConsultantEditDialogModule extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantEditDialogDispatch {
         return {
             redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials)),
-            updateConsultant:(info) => dispatch(AdminActionCreator.AsyncUpdateConsultant(info))
+            updateConsultant: (info) => dispatch(AdminActionCreator.AsyncUpdateConsultant(info))
         };
     }
 
@@ -94,7 +95,7 @@ class ConsultantEditDialogModule extends React.Component<
         });
     };
 
-   private setLastName = (val: string) => {
+    private setLastName = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.lastName(val)
         });
@@ -109,13 +110,13 @@ class ConsultantEditDialogModule extends React.Component<
     private setTitle = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.title(val)
-        })
+        });
     };
 
     private setBirthDate = (val: Date) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.birthDate(val)
-        })
+        });
     };
 
     private closeDialog = () => {
@@ -141,29 +142,31 @@ class ConsultantEditDialogModule extends React.Component<
             variant={'raised'}
             color={'primary'}
             onClick={this.saveAndClose}
-            style={{width:'30%', height:'10%'}}
+            style={{width: '30%', height: '10%'}}
         >
-            {PowerLocalize.get("Action.Save")}
+            {PowerLocalize.get('Action.Save')}
         </Button>,
 
         <Button
             key="edit"
             variant={'raised'}
             color={'primary'}
-            onClick={() => {this.props.redirectToUser(this.props.initials)}}
-            style={{width:'30%', height:'10%'}}
+            onClick={() => {
+                this.props.redirectToUser(this.props.initials);
+            }}
+            style={{width: '30%', height: '10%'}}
         >
-            {PowerLocalize.get("ConsultantTile.EditProfile")}
-            </Button>,
+            {PowerLocalize.get('ConsultantTile.EditProfile')}
+        </Button>,
 
         <Button
             variant={'raised'}
             color={'primary'}
             onClick={this.resetAndClose}
             key="exit"
-            style={{width:'30%', height:'10%'}}
+            style={{width: '30%', height: '10%'}}
         >
-            {PowerLocalize.get("Action.Exit")}
+            {PowerLocalize.get('Action.Exit')}
         </Button>,
     ];
 
@@ -177,9 +180,9 @@ class ConsultantEditDialogModule extends React.Component<
                 <DialogTitle>{PowerLocalize.get('ConsultantTile.EditConsultant')}</DialogTitle>
                 <DialogContent>
                     <ConsultantEditFields
-                        firstName = {this.state.consultantInfo.firstName()}
-                        lastName = {this.state.consultantInfo.lastName()}
-                        title = {this.state.consultantInfo.title()}
+                        firstName={this.state.consultantInfo.firstName()}
+                        lastName={this.state.consultantInfo.lastName()}
+                        title={this.state.consultantInfo.title()}
                         birthDate={this.state.consultantInfo.birthDate()}
                         active={this.state.consultantInfo.active()}
                         onFirstNameChange={this.setFirstName}

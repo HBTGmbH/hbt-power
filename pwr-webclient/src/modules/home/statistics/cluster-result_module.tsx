@@ -22,23 +22,22 @@ interface ClusterResultDispatch {
 
 }
 
-class ClusterResultModule extends React.Component<
-    ClusterResultProps
+class ClusterResultModule extends React.Component<ClusterResultProps
     & ClusterResultLocalProps
     & ClusterResultDispatch, ClusterResultLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: ClusterResultLocalProps): ClusterResultProps {
         return {
             consultantClusterInfo: state.statisticsReducer.consultantClusterInfo()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ClusterResultDispatch {
-        return {}
+        return {};
     }
 
     render() {
-        if(isNullOrUndefined(this.props.consultantClusterInfo)) return null;
+        if (isNullOrUndefined(this.props.consultantClusterInfo)) return null;
         return (<div>
             <ConsultantClusterOverview info={this.props.consultantClusterInfo}/>
         </div>);

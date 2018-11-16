@@ -2,14 +2,23 @@ import {doop} from 'doop';
 import {APIKeySkill} from './APIProfile';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
+
 @doop
 export class KeySkillEntry {
     @doop
-    public get id(){ return doop<string,this>()}
+    public get id() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get nameEntityId(){ return doop<string,this>()}
+    public get nameEntityId() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get isNew(){ return doop<boolean,this>()}
+    public get isNew() {
+        return doop<boolean, this>();
+    }
 
 
     private static CURRENT_ID: number = 0;
@@ -29,7 +38,7 @@ export class KeySkillEntry {
         return new KeySkillEntry(
             String(apiKeySkill.id),
             String(apiKeySkill.nameEntity.id),
-            false)
+            false);
     }
 
     static createNew(): KeySkillEntry {

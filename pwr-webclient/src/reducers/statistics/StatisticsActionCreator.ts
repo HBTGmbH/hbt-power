@@ -40,55 +40,55 @@ export class StatisticsActionCreator {
         return {
             type: ActionType.ReceiveSkillUsageMetrics,
             metrics: metrics
-        }
+        };
     }
 
     public static ReceiveRelativeSkillUsageMetrics(metrics: Array<SkillUsageMetric>): ReceiveSkillUsageMetricsAction {
         return {
             type: ActionType.ReceiveRelativeSkillUsageMetrics,
             metrics: metrics
-        }
+        };
     }
 
     public static ReceiveProfileMetrics(metrics: ProfileSkillMetrics): ReceiveProfileSkillMetrics {
         return {
             type: ActionType.ReceiveProfileSkillMetrics,
             metrics: metrics
-        }
+        };
     }
 
     public static ReceiveNetwork(network: Network): ReceiveNetworkAction {
         return {
             type: ActionType.ReceiveNetwork,
             network: network
-        }
+        };
     }
 
-    public static StatisticsAvailable() : AbstractAction {
+    public static StatisticsAvailable(): AbstractAction {
         return {
             type: ActionType.StatisticsAvailable
-        }
+        };
     }
 
 
-    public static StatisticsNotAvailable() : AbstractAction {
+    public static StatisticsNotAvailable(): AbstractAction {
         return {
             type: ActionType.StatisticsNotAvailable
-        }
+        };
     }
 
     public static ReceiveConsultantClusterInfo(consultantClusterInfo: ConsultantClusterInfo): ReceiveConsultantClusterInfoAction {
         return {
             type: ActionType.ReceiveConsultantClusterInfo,
             consultantClusterInfo: consultantClusterInfo
-        }
+        };
     }
 
     public static ReceiveScatterSkills(scatterSkills: Immutable.List<ScatterSkill>): ReceiveScatterSkillsAction {
         return {
             type: ActionType.ReceiveScatterSkills,
             scatterSkills: scatterSkills
-        }
+        };
     }
 
     public static AddSkillUsageInfo(skillName: string, consultants: Array<ConsultantInfo>): AddSkillUsageInfoAction {
@@ -96,32 +96,32 @@ export class StatisticsActionCreator {
             type: ActionType.AddSkillUsageInfo,
             consultantInfos: consultants,
             skillName: skillName
-        }
+        };
     }
 
     public static AsyncCheckAvailability() {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.head(headStatisticsServiceAvailable()).then((response: AxiosResponse) => {
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
             }).catch(error => {
                 dispatch(StatisticsActionCreator.StatisticsNotAvailable());
-            })
-        }
+            });
+        };
     }
 
     public static AsyncRequestSkillUsages() {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             let config: AxiosRequestConfig = {
                 params: {
                     max: 500
                 }
             };
-            axios.get(getSkillUsagesAbsolute(), config).then(function(response: AxiosResponse) {
+            axios.get(getSkillUsagesAbsolute(), config).then(function (response: AxiosResponse) {
                 let data: Array<APISkillUsageMetric> = response.data;
                 let res: Array<SkillUsageMetric> = data.map(value => SkillUsageMetric.fromAPI(value));
                 dispatch(StatisticsActionCreator.ReceiveSkillUsageMetrics(res));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function(error:any) {
+            }).catch(function (error: any) {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
@@ -129,12 +129,12 @@ export class StatisticsActionCreator {
             config.params = {
                 max: 500
             };
-            axios.get(getSkillUsageRelative(), config).then(function(response: AxiosResponse) {
+            axios.get(getSkillUsageRelative(), config).then(function (response: AxiosResponse) {
                 let data: Array<APISkillUsageMetric> = response.data;
                 let res: Array<SkillUsageMetric> = data.map(value => SkillUsageMetric.fromAPI(value));
                 dispatch(StatisticsActionCreator.ReceiveRelativeSkillUsageMetrics(res));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function(error:any) {
+            }).catch(function (error: any) {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
@@ -144,56 +144,56 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncGetProfileStatistics(initials: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getProfileStatistics(initials)).then(function (response: AxiosResponse) {
                 //console.log("statistics data", response.data);
                 dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(response.data)));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function(error:any) {
+            }).catch(function (error: any) {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
-        }
+        };
     }
 
     public static AsyncRequestNetwork() {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getKMedProfileNetwork()).then((response: AxiosResponse) => {
                 let network: Network = Network.fromAPI(response.data as APINetwork);
                 dispatch(StatisticsActionCreator.ReceiveNetwork(network));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function(error:any) {
+            }).catch(function (error: any) {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
-        }
+        };
     }
 
     public static AsyncRequestConsultantClusterInfo(initials: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getConsultantClusterInfo(initials)).then((response: AxiosResponse) => {
                 let info: ConsultantClusterInfo = ConsultantClusterInfo.fromAPI(response.data);
                 dispatch(StatisticsActionCreator.ReceiveConsultantClusterInfo(info));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function(error:any) {
+            }).catch(function (error: any) {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
-        }
+        };
     }
 
     public static AsyncRequestScatterSkills() {
-        return function(dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getScatterSkills()).then((response: AxiosResponse) => {
                 let data: Array<APIScatterSkill> = response.data;
                 let list = Immutable.List<ScatterSkill>(data.map(value => ScatterSkill.fromAPI(value)));
                 dispatch(StatisticsActionCreator.ReceiveScatterSkills(list));
                 dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function(error:any) {
+            }).catch(function (error: any) {
                 console.error(error);
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
             });
-        }
+        };
     }
 
     /**
@@ -204,43 +204,43 @@ export class StatisticsActionCreator {
      * @constructor
      */
     public static AsyncRequestNameEntityUsageInfo(nameEntity: NameEntity, type: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state = getState();
-            if(!state.statisticsReducer.nameEntityUsageInfo().has(nameEntity)) {
+            if (!state.statisticsReducer.nameEntityUsageInfo().has(nameEntity)) {
                 let config: AxiosRequestConfig = {
                     params: {
-                        "name-entity": nameEntity.name(),
-                        "type": type
+                        'name-entity': nameEntity.name(),
+                        'type': type
                     }
                 };
                 axios.get(getNameEntityUsageInfo(), config).then((response: AxiosResponse) => {
                     let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
                     let list = data.map(value => ConsultantInfo.fromAPI(value));
                     dispatch(Object.assign({}, new AddNameEntityUsageInfoAction(ActionType.AddNameEntityUsageInfo, nameEntity, list)));
-                }).catch(function(error:any) {
+                }).catch(function (error: any) {
                     console.error(error);
                     dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                 });
             }
-        }
+        };
     }
 
     public static AsyncRequestSkillUsageInfo(skillName: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state = getState();
-            if(!state.statisticsReducer.skillUsageInfo().has(skillName)) {
+            if (!state.statisticsReducer.skillUsageInfo().has(skillName)) {
                 let config: AxiosRequestConfig = {
-                    params: { "skill": skillName }
+                    params: {'skill': skillName}
                 };
                 axios.get(getSkillUsageInfo(), config).then((response: AxiosResponse) => {
                     let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
                     let list = data.map(value => ConsultantInfo.fromAPI(value));
                     dispatch(StatisticsActionCreator.AddSkillUsageInfo(skillName, list));
-                }).catch(function(error:any) {
+                }).catch(function (error: any) {
                     console.error(error);
                     dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                 });
             }
-        }
+        };
     }
 }

@@ -176,7 +176,7 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
             aria-labelledby="CarrerEntry.Dialog.Title"
         >
             <DialogTitle id="CarrerEntry.Dialog.Title">
-               {PowerLocalize.get('CareerEntry.Dialog.Title')}
+                {PowerLocalize.get('CareerEntry.Dialog.Title')}
             </DialogTitle>
             <DialogContent>
                 <div className="row">
@@ -206,8 +206,9 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
                 </div>
             </DialogContent>
             <DialogActions>
-                <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
-                <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.resetAndExit}/>
+                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
+                <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                               onClick={this.resetAndExit}/>
             </DialogActions>
         </Dialog>;
     }

@@ -51,8 +51,7 @@ interface SingleKeySkillDispatch {
     deleteEntry(id: string): void;
 }
 
-class SingleKeySkillModule extends React.Component<
-    SingleKeySkillProps
+class SingleKeySkillModule extends React.Component<SingleKeySkillProps
     & SingleKeySkillLocalProps
     & SingleKeySkillDispatch, SingleKeySkillLocalState> {
 
@@ -60,7 +59,7 @@ class SingleKeySkillModule extends React.Component<
         super(props);
         this.state = {
             dialogOpen: props.keySkillEntry.isNew()
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: SingleKeySkillLocalProps): SingleKeySkillProps {
@@ -73,7 +72,7 @@ class SingleKeySkillModule extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SingleKeySkillDispatch {
         return {
             deleteEntry: (id: string) => dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.KeySkill))
-        }
+        };
     }
 
     private openDialog = () => {
@@ -99,21 +98,23 @@ class SingleKeySkillModule extends React.Component<
     render() {
         return (
             <tr>
-            <td>
-                <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
-                <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.deleteEntry}/>
-                <KeySkillDialog
-                    open={this.state.dialogOpen}
-                    keySkillEntry={this.props.keySkillEntry}
-                    requestClose={this.closeDialog}
-                />
-            </td>
-            <td>
-                <div className="fittingContainer" onClick={this.openDialog}>
-                    {this.getKeySkillName()}
-                </div>
-            </td>
-        </tr>);
+                <td>
+                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
+                                   onClick={this.openDialog}/>
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                                   onClick={this.deleteEntry}/>
+                    <KeySkillDialog
+                        open={this.state.dialogOpen}
+                        keySkillEntry={this.props.keySkillEntry}
+                        requestClose={this.closeDialog}
+                    />
+                </td>
+                <td>
+                    <div className="fittingContainer" onClick={this.openDialog}>
+                        {this.getKeySkillName()}
+                    </div>
+                </td>
+            </tr>);
     }
 }
 

@@ -37,36 +37,38 @@ interface TrainingEntriesState {
 
 interface TrainingEntryDispatch {
     saveTrainingEntry(trainingEntry: TrainingEntry, training: NameEntity): void;
+
     removeCareerElement(id: string): void;
+
     addCareerElement(): void;
 
 }
 
 class TrainingEntriesModule extends React.Component<TrainingEntriesProps & TrainingEntriesLocalProps & TrainingEntryDispatch, TrainingEntriesState> {
 
-    private static renderHeader() : JSX.Element {
+    private static renderHeader(): JSX.Element {
         return (
             <td>TODO</td>
         );
     }
 
 
-    static mapStateToProps(state: ApplicationState, localProps: TrainingEntriesProps) : TrainingEntriesProps {
+    static mapStateToProps(state: ApplicationState, localProps: TrainingEntriesProps): TrainingEntriesProps {
         return {
             trainingEntries: state.databaseReducer.profile().trainingEntries(),
             trainings: state.databaseReducer.trainings(),
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : TrainingEntryDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): TrainingEntryDispatch {
         return {
-            saveTrainingEntry: function(trainingEntry: TrainingEntry, training: NameEntity) {
+            saveTrainingEntry: function (trainingEntry: TrainingEntry, training: NameEntity) {
                 dispatch(ProfileActionCreator.saveEntry(trainingEntry, training, ProfileElementType.TrainingEntry));
             },
-            removeCareerElement: function(id: string) {
+            removeCareerElement: function (id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.TrainingEntry));
             },
-            addCareerElement: function() {
+            addCareerElement: function () {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.TrainingEntry));
             }
         };
@@ -78,7 +80,7 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
     };
 
     render() {
-        return(
+        return (
             <ProfileElement
                 title={PowerLocalize.get('TrainingEntries.Qualifier')}
                 subtitle={PowerLocalize.get('TrainingEntry.Description')}
@@ -88,13 +90,13 @@ class TrainingEntriesModule extends React.Component<TrainingEntriesProps & Train
                     this.props.trainingEntries.map((value, key, index) => {
                         return (
                             <SingleTrainingEntry
-                                key={"TrainingEntry." + key}
+                                key={'TrainingEntry.' + key}
                                 trainingEntry={value}
                                 trainings={this.props.trainings}
                                 onDelete={this.props.removeCareerElement}
                                 onSave={this.props.saveTrainingEntry}
                             />
-                        )
+                        );
                     }).toArray()
                 }
             </ProfileElement>

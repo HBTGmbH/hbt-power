@@ -43,19 +43,19 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
     };
 
     private readonly cardHeaderStyle = {
-       'backgroundColor' : 'rgb(255, 204, 102)'
+        'backgroundColor': 'rgb(255, 204, 102)'
     };
 
 
     render() {
-        return(
-            <div  style={{width:"100%"}}>
+        return (
+            <div style={{width: '100%'}}>
                 <br/>
-                <ExpansionPanel defaultExpanded={false} >
+                <ExpansionPanel defaultExpanded={false}>
                     <ExpansionPanelSummary
                         //actAsExpander={true}
                         title={this.props.title}
-                        expandIcon={<Icon className={"material-icon"}>keyboard_arrow_down</Icon>}
+                        expandIcon={<Icon className={'material-icon'}>keyboard_arrow_down</Icon>}
                     >
                         <div>
                             <Typography variant={'headline'}>{this.props.title}</Typography>
@@ -64,7 +64,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                     </ExpansionPanelSummary>
                     <Divider/>
                     <ExpansionPanelDetails>
-                        <div className="table-responsive" style={{width:'100%'}}>
+                        <div className="table-responsive" style={{width: '100%'}}>
                             <table className="table table-striped table-condensed">
                                 {this.props.header}
                                 <tbody>
@@ -74,9 +74,10 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                         </div>
                     </ExpansionPanelDetails>
                     <ExpansionPanelActions>
-                        <div style={{textAlign: "center"}}>
+                        <div style={{textAlign: 'center'}}>
                             <Tooltip title={PowerLocalize.get('Action.New')}>
-                                <IconButton style={{display:"inline-block", flexGrow:1}} className="material-icons" onClick={this.props.onAddElement} >
+                                <IconButton style={{display: 'inline-block', flexGrow: 1}} className="material-icons"
+                                            onClick={this.props.onAddElement}>
                                     add
                                 </IconButton>
                             </Tooltip>

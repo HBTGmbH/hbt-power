@@ -46,11 +46,11 @@ interface NotificationTrashboxLocalState {
  */
 interface NotificationTrashboxDispatch {
     getTrashedNotifications(user: string, pass: string): void;
+
     finalDeleteTrashed(user: string, pass: string): void;
 }
 
-class NotificationTrashboxModule extends React.Component<
-    NotificationTrashboxProps
+class NotificationTrashboxModule extends React.Component<NotificationTrashboxProps
     & NotificationTrashboxLocalProps
     & NotificationTrashboxDispatch, NotificationTrashboxLocalState> {
 
@@ -59,34 +59,34 @@ class NotificationTrashboxModule extends React.Component<
             notifications: state.adminReducer.trashedNotifications(),
             username: state.adminReducer.adminName(),
             password: state.adminReducer.adminPass()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationTrashboxDispatch {
         return {
             getTrashedNotifications: (user, pass) => dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(user, pass)),
             finalDeleteTrashed: (user, pass) => dispatch(AdminActionCreator.AsyncDeleteTrashed(user, pass))
-        }
+        };
     }
 
-    private getNotificationContentString = (notification: AdminNotification) : string =>{
-        let toReturn:string = "";
-        switch (notification.type()){
-            case "SkillNotification":
+    private getNotificationContentString = (notification: AdminNotification): string => {
+        let toReturn: string = '';
+        switch (notification.type()) {
+            case 'SkillNotification':
                 // toReturn = formatString(PowerLocalize.get("NotificationInbox.SkillNotification.SubjectTextTemplate"),
                 //    notification.type());
-                toReturn = "Skill hinzugefügt";
+                toReturn = 'Skill hinzugefügt';
                 break;
-            case "ProfileUpdatedNotification":
-               // toReturn = PowerLocalize.get("NotificationInbox.ProfileUpdateNotification.SubjectText");
-                toReturn = "Profil aktualisiert";
+            case 'ProfileUpdatedNotification':
+                // toReturn = PowerLocalize.get("NotificationInbox.ProfileUpdateNotification.SubjectText");
+                toReturn = 'Profil aktualisiert';
                 break;
-            case "ProfileEntryNotification":
-                 //toReturn = formatString(
-                 //   PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
-                 //   notification.reason().toString(),
-                 //   notification.type().toString())
-                toReturn = "Neuer Bezeichner hinzugefügt";
+            case 'ProfileEntryNotification':
+                //toReturn = formatString(
+                //   PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
+                //   notification.reason().toString(),
+                //   notification.type().toString())
+                toReturn = 'Neuer Bezeichner hinzugefügt';
                 break;
         }
 
@@ -96,14 +96,14 @@ class NotificationTrashboxModule extends React.Component<
 
     private renderNotificationAsTableRow = (notification: AdminNotification) => {
         return (
-            <TableRow key={"NotificationInbox.TableRow.Not." + notification.id()} style={{backgroundColor:'white'}}>
+            <TableRow key={'NotificationInbox.TableRow.Not.' + notification.id()} style={{backgroundColor: 'white'}}>
                 <TableCell>{notification.initials()}</TableCell>
                 <TableCell>
                     {this.getNotificationContentString(notification)}
                 </TableCell>
                 <TableCell>{formatToMailDisplay(notification.occurrence())}</TableCell>
             </TableRow>
-        )
+        );
     };
 
 
@@ -130,27 +130,27 @@ class NotificationTrashboxModule extends React.Component<
                         </Button>
                     </div>
                 </div>
-                <div style={{backgroundColor:'#191e55'}}>
-                <Tabs value={0} centered fullWidth textColor={'secondary'}>
-                    <Tab
-                        icon={<Icon className="material-icons">delete</Icon>}
-                        label={PowerLocalize.get("NotificationInbox.TrashedMessages")}
-                    >
-                    </Tab>
-                </Tabs>
+                <div style={{backgroundColor: '#191e55'}}>
+                    <Tabs value={0} centered fullWidth textColor={'secondary'}>
+                        <Tab
+                            icon={<Icon className="material-icons">delete</Icon>}
+                            label={PowerLocalize.get('NotificationInbox.TrashedMessages')}
+                        >
+                        </Tab>
+                    </Tabs>
 
 
-                <Table>
-                    <TableBody>
-                        {
-                            this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
-                        }
-                    </TableBody>
-                </Table>
+                    <Table>
+                        <TableBody>
+                            {
+                                this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
+                            }
+                        </TableBody>
+                    </Table>
                 </div>
             </div>
 
-        )
+        );
     }
 }
 

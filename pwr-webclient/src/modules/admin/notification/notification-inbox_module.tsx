@@ -54,12 +54,12 @@ interface NotificationInboxLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface NotificationInboxDispatch {
-    getNotifications(user: string, pass:string): void;
-    trashNotifications(ids: Array<number>, user: string, pass:string): void;
+    getNotifications(user: string, pass: string): void;
+
+    trashNotifications(ids: Array<number>, user: string, pass: string): void;
 }
 
-class NotificationInboxModule extends React.Component<
-    NotificationInboxProps
+class NotificationInboxModule extends React.Component<NotificationInboxProps
     & NotificationInboxLocalProps
     & NotificationInboxDispatch, NotificationInboxLocalState> {
 
@@ -69,7 +69,7 @@ class NotificationInboxModule extends React.Component<
             selectedProfileEntryRows: [],
             selectedProfileUpdateRows: [],
             selectedSkillRows: [],
-            tabValue:0,
+            tabValue: 0,
         };
     }
 
@@ -85,8 +85,12 @@ class NotificationInboxModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationInboxDispatch {
         return {
-            getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
-            trashNotifications: (ids, user, pass) => {dispatch(AdminActionCreator.AsyncTrashNotifications(ids, user, pass));}
+            getNotifications: (user, pass) => {
+                dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));
+            },
+            trashNotifications: (ids, user, pass) => {
+                dispatch(AdminActionCreator.AsyncTrashNotifications(ids, user, pass));
+            }
         };
     }
 
@@ -131,12 +135,12 @@ class NotificationInboxModule extends React.Component<
     };
 
 
-
-    private handleTabChange = (event:any, value:number) => {
-      this.setState({
-          tabValue: value
-      });
+    private handleTabChange = (event: any, value: number) => {
+        this.setState({
+            tabValue: value
+        });
     };
+
     render() {
         return (
             <div>
@@ -173,8 +177,8 @@ class NotificationInboxModule extends React.Component<
                     onChange={this.handleTabChange}
                 >
                     <Tab icon={<Icon className="material-icons">add_box</Icon>}
-                        label={PowerLocalize.get('NotificationInbox.NewNameEntity')}
-                        value={0}
+                         label={PowerLocalize.get('NotificationInbox.NewNameEntity')}
+                         value={0}
                     />
                     <Tab icon={<Icon className="material-icons">color_lens</Icon>}
                          label={PowerLocalize.get('NotificationInbox.Skills')}
@@ -187,23 +191,23 @@ class NotificationInboxModule extends React.Component<
                 </Tabs>
                 {this.state.tabValue === 0 ?
                     <ProfileEntryNotificationTable
-                    profileEntryNotifications={this.props.profileEntryNotifications}
-                    onRowSelection={rows => this.setState({selectedProfileEntryRows: rows})}
-                    selectedRows={this.state.selectedProfileEntryRows}
-                />:<span/>}
+                        profileEntryNotifications={this.props.profileEntryNotifications}
+                        onRowSelection={rows => this.setState({selectedProfileEntryRows: rows})}
+                        selectedRows={this.state.selectedProfileEntryRows}
+                    /> : <span/>}
 
                 {this.state.tabValue === 1 ?
-                <SkillNotificationTable
-                    skillNotifications={this.props.skillNotifications}
-                    selectedRows={this.state.selectedSkillRows}
-                    onRowSelection={rows => this.setState({selectedSkillRows: rows})}
-                />:<span/>}
+                    <SkillNotificationTable
+                        skillNotifications={this.props.skillNotifications}
+                        selectedRows={this.state.selectedSkillRows}
+                        onRowSelection={rows => this.setState({selectedSkillRows: rows})}
+                    /> : <span/>}
                 {this.state.tabValue === 2 ?
-                <ProfileUpdateNotificationTable
-                    profileUpdateNotifications={this.props.profileUpdateNotifications}
-                    selectedRows={this.state.selectedProfileUpdateRows}
-                    onRowSelection={rows => this.setState({selectedProfileUpdateRows: rows})}
-                />:<span/>}
+                    <ProfileUpdateNotificationTable
+                        profileUpdateNotifications={this.props.profileUpdateNotifications}
+                        selectedRows={this.state.selectedProfileUpdateRows}
+                        onRowSelection={rows => this.setState({selectedProfileUpdateRows: rows})}
+                    /> : <span/>}
             </div>);
     }
 }

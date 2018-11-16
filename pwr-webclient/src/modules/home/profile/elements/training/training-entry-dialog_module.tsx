@@ -53,7 +53,6 @@ interface TrainingEntryDialogState {
 }
 
 
-
 export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProps, TrainingEntryDialogState> {
 
     constructor(props: TrainingEntryDialogProps) {
@@ -103,7 +102,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         let training: NameEntity = ProfileStore.findNameEntityByName(name, this.props.trainings);
         let sectorEntry: TrainingEntry = this.state.trainingEntry;
         // check if a sector with the name exists. If thats not the case, just create a new run. Server will handle the rest.
-        if(isNullOrUndefined(training)) {
+        if (isNullOrUndefined(training)) {
             training = NameEntity.createNew(name);
         }
         sectorEntry = sectorEntry.trainingId(training.id());
@@ -163,8 +162,10 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>
-                    <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.handleCloseButtonPress}/>
+                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                                   onClick={this.handleSaveButtonPress}/>
+                    <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                                   onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
             </Dialog>
         );

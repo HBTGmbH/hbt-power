@@ -35,7 +35,7 @@ interface DescriptionLocalState {
  *
  */
 interface DescriptionDispatch {
-    changeAbstract(newAbstract: string) : void;
+    changeAbstract(newAbstract: string): void;
 }
 
 /**
@@ -51,12 +51,12 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         this.state = {
             maxCharacters: props.initialMaxCharacters,
             currentBarColor: DescriptionModule.calcColor(props.abstractText.length, props.initialMaxCharacters).toCSSRGBString()
-        }
+        };
     }
 
     private static calcColor(charCount: number, maxChars: number): Color {
         let color: Color;
-        if(charCount >= maxChars) {
+        if (charCount >= maxChars) {
             color = Color.Red;
         } else {
             color = Color.LERP(Color.Green, Color.Red, charCount / maxChars);
@@ -64,15 +64,15 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         return color;
     }
 
-    public static mapStateToProps(state: ApplicationState, localProps: DescriptionLocalProps) : DescriptionProps {
+    public static mapStateToProps(state: ApplicationState, localProps: DescriptionLocalProps): DescriptionProps {
         return {
             abstractText: state.databaseReducer.profile().description()
         };
     }
 
-    public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : DescriptionDispatch {
+    public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): DescriptionDispatch {
         return {
-            changeAbstract : function(newAbstract: string) {
+            changeAbstract: function (newAbstract: string) {
                 dispatch(ProfileActionCreator.changeAbstract(newAbstract));
             }
         };
@@ -86,23 +86,24 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
             currentBarColor: DescriptionModule.calcColor(newString.length, this.state.maxCharacters).toCSSRGBString()
         });
     };
+
     render() {
-        return(
+        return (
             <div>
                 <TextField
-                    label = {this.props.hintText}
-                    fullWidth = {true}
+                    label={this.props.hintText}
+                    fullWidth={true}
                     multiline={true}
                     rows={10}
                     onChange={() => this.handleTextChange}
                     value={this.props.abstractText}
                 />
-                        <LinearProgress
-                            value={(this.props.abstractText.length/this.state.maxCharacters)*100}
-                            variant={'determinate'}
-                            color={'primary'}
-                        />
-                    <div>Zeichen: {this.props.abstractText.length}/{this.state.maxCharacters}</div>
+                <LinearProgress
+                    value={(this.props.abstractText.length / this.state.maxCharacters) * 100}
+                    variant={'determinate'}
+                    color={'primary'}
+                />
+                <div>Zeichen: {this.props.abstractText.length}/{this.state.maxCharacters}</div>
             </div>
         );
     }

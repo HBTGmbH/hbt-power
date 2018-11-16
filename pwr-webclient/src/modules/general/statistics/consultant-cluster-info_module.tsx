@@ -17,7 +17,7 @@ interface ConsultantClusterInfoProps {
 
 interface ConsultantClusterInfoState {
     skillInfoPopoverOpen: boolean;
-    skillInfoPopoverAnchor:  any;
+    skillInfoPopoverAnchor: any;
     tags: Array<any>;
     selectedSkillName: string;
 }
@@ -25,10 +25,9 @@ interface ConsultantClusterInfoState {
 export class ConsultantClusterOverview extends React.Component<ConsultantClusterInfoProps, ConsultantClusterInfoState> {
 
 
-
     private infoPaperStyle = {
-        margin: "1px",
-        padding: "5px"
+        margin: '1px',
+        padding: '5px'
     };
 
 
@@ -45,38 +44,45 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
             skillInfoPopoverAnchor: null,
             tags: this.renderTags(props),
             selectedSkillName: null
-        }
+        };
     }
 
     public componentWillReceiveProps(nextProps: ConsultantClusterInfoProps) {
         console.log(nextProps.info !== this.props.info);
-        if(nextProps.info !== this.props.info) {
+        if (nextProps.info !== this.props.info) {
             this.setState({
                 tags: this.renderTags(nextProps)
-            })
+            });
         }
     }
 
 
     private renderInitials = () => {
-        return this.props.info.clusterInitials().map(initials => <ListItem disabled={true} key={initials}>{initials}</ListItem>).toArray();
+        return this.props.info.clusterInitials().map(initials => <ListItem disabled={true}
+                                                                           key={initials}>{initials}</ListItem>).toArray();
     };
 
     private renderCommonSkills = () => {
-        return this.props.info.commonSkills().map(skillName =>
-        {
+        return this.props.info.commonSkills().map(skillName => {
             const color = randomColor();
-            return(<div
+            return (<div
                 key={skillName}
-                style={{color: color, borderRadius: "20px", margin: "5px", padding: "5px", border: "1px solid " + color}}
+                style={{
+                    color: color,
+                    borderRadius: '20px',
+                    margin: '5px',
+                    padding: '5px',
+                    border: '1px solid ' + color
+                }}
             >
                 {skillName}
-            </div>)
+            </div>);
         }).toArray();
     };
 
     private renderRecommendations = () => {
-        return this.props.info.recommendations().map(skillName => <ListItem disabled={true} key={skillName}>{skillName}</ListItem>).toArray();
+        return this.props.info.recommendations().map(skillName => <ListItem disabled={true}
+                                                                            key={skillName}>{skillName}</ListItem>).toArray();
     };
 
     private renderTags = (props: ConsultantClusterInfoProps) => {
@@ -95,14 +101,15 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
             skillInfoPopoverAnchor: evt.currentTarget,
             skillInfoPopoverOpen: true,
             selectedSkillName: tagName
-        })
+        });
     };
 
     private customTagRenderer = (tag: any, size: number, color: any) => {
         const fontSize = size + 'px';
         const key = tag.key || tag.value;
         const style = Object.assign({}, this.customTagStyles, {color, fontSize});
-        return <span className='tag-cloud-tag cursor-pointer' style={style} key={key} onClick={(evt) => this.handleTagClick(evt, tag.value)}>{tag.value}</span>;
+        return <span className='tag-cloud-tag cursor-pointer' style={style} key={key}
+                     onClick={(evt) => this.handleTagClick(evt, tag.value)}>{tag.value}</span>;
     };
 
     private getSkill = (skillName: string) => {
@@ -111,18 +118,18 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
 
     private getSkillInfo() {
 
-        if(this.state.selectedSkillName != null) {
+        if (this.state.selectedSkillName != null) {
             let skill: AveragedSkill = this.getSkill(this.state.selectedSkillName);
             return (<Card>
                 <CardHeader
                     title={skill.name()}
                 />
                 <CardContent>
-                    {formatString("Der Skill {0} tritt {1} mal im Cluster auf.", skill.name(), String(skill.numberOfOccurrences()))}<br/>
-                    {formatString("Damit haben {0}% der Berater in diesem Cluster diesen Skill.", (skill.relativeOccurrences() * 100).toFixed(2))}<br/>
-                    {formatString("Das Durchschnittliche Skill-Level beträgt {0}/5.0.", skill.averageSkillLevel().toFixed(2))}<br/>
+                    {formatString('Der Skill {0} tritt {1} mal im Cluster auf.', skill.name(), String(skill.numberOfOccurrences()))}<br/>
+                    {formatString('Damit haben {0}% der Berater in diesem Cluster diesen Skill.', (skill.relativeOccurrences() * 100).toFixed(2))}<br/>
+                    {formatString('Das Durchschnittliche Skill-Level beträgt {0}/5.0.', skill.averageSkillLevel().toFixed(2))}<br/>
                 </CardContent>
-            </Card>)
+            </Card>);
         }
         return null;
     }
@@ -136,7 +143,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     anchorEl={this.state.skillInfoPopoverAnchor}
                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                     transformOrigin={{horizontal: 'left', vertical: 'top'}}
-                    onClose={() => this.setState({skillInfoPopoverOpen: false, skillInfoPopoverAnchor:null})}
+                    onClose={() => this.setState({skillInfoPopoverOpen: false, skillInfoPopoverAnchor: null})}
                 >
                     {this.getSkillInfo()}
                 </Popover>

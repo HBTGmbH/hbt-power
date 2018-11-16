@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import * as redux from 'redux';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
-import * as Immutable from "immutable";
+import * as Immutable from 'immutable';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {Template, TemplateSlice} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
@@ -17,51 +17,53 @@ import {PwrIconHeader} from '../../general/pwr-icon-header';
 import {connect} from 'react-redux';
 import Typography from '@material-ui/core/Typography/Typography';
 import {ReportPreviewFile} from '../../../model/view/ReportPreviewFile';
-import Iframe from 'react-iframe';
 import {CreateTemplateDialog} from './report-create-template-dialog';
 import {ReportPreview} from './report-preview_module';
 
 
-interface ReportManagerProps{
+interface ReportManagerProps {
     consultantsByInitials: Immutable.Map<string, ConsultantInfo>;
     templates: Immutable.Map<string, Template>;
-    allTemplates:Array<Template>;
-    previewFiles:Immutable.Map<string,ReportPreviewFile>;
+    allTemplates: Array<Template>;
+    previewFiles: Immutable.Map<string, ReportPreviewFile>;
 }
 
-interface ReportManagerLocalProps{
+interface ReportManagerLocalProps {
 
 }
 
-interface ReportManagerDispatch{
-    refreshConsultants():void;
+interface ReportManagerDispatch {
+    refreshConsultants(): void;
 
-    refreshTemplates():void;
-    deleteTemplate(id:string):void;
-    changeTemplate(templateSlice:TemplateSlice):void;
-    loadPreview(id:string):void;
+    refreshTemplates(): void;
+
+    deleteTemplate(id: string): void;
+
+    changeTemplate(templateSlice: TemplateSlice): void;
+
+    loadPreview(id: string): void;
 }
 
 interface ReportManagerState {
-    selectedTemplate:Template;
+    selectedTemplate: Template;
 
-    templateName:string;
-    templateDescription:string;
+    templateName: string;
+    templateDescription: string;
 
-    createDialogOpen:boolean;
+    createDialogOpen: boolean;
 }
 
-class ReportManagerModule extends React.Component<ReportManagerProps  & ReportManagerLocalProps & ReportManagerDispatch, ReportManagerState> {
+class ReportManagerModule extends React.Component<ReportManagerProps & ReportManagerLocalProps & ReportManagerDispatch, ReportManagerState> {
 
-    constructor(props: ReportManagerProps & ReportManagerLocalProps & ReportManagerDispatch){
+    constructor(props: ReportManagerProps & ReportManagerLocalProps & ReportManagerDispatch) {
         super(props);
         this.props.refreshTemplates();
-        this.state={
-            selectedTemplate : null,
-            templateName:"",
-            templateDescription:"",
-            createDialogOpen:false,
-        }
+        this.state = {
+            selectedTemplate: null,
+            templateName: '',
+            templateDescription: '',
+            createDialogOpen: false,
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ReportManagerLocalProps): ReportManagerProps {
@@ -70,7 +72,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps  & ReportMa
             templates: state.templateSlice.templates(),
             allTemplates: state.templateSlice.templates().toArray(),
             previewFiles: state.templateSlice.previews(),
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportManagerDispatch {
@@ -78,111 +80,113 @@ class ReportManagerModule extends React.Component<ReportManagerProps  & ReportMa
             refreshConsultants: () => dispatch(AdminActionCreator.AsyncGetAllConsultants()),
 
             refreshTemplates: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()),
-            deleteTemplate: (id:string) => dispatch(TemplateActionCreator.RemoveTemplate(id)),
-            changeTemplate: (templateSlice:TemplateSlice) => dispatch(TemplateActionCreator.ChangeTemplate(templateSlice)),
-            loadPreview: (id:string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
-        }
+            deleteTemplate: (id: string) => dispatch(TemplateActionCreator.RemoveTemplate(id)),
+            changeTemplate: (templateSlice: TemplateSlice) => dispatch(TemplateActionCreator.ChangeTemplate(templateSlice)),
+            loadPreview: (id: string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
+        };
     }
 
-    public componentDidMount(){
-        if(this.props.templates == null){
-            console.log("Templates == null");
+    public componentDidMount() {
+        if (this.props.templates == null) {
+            console.log('Templates == null');
             this.props.refreshTemplates();
         }
 
-        if(this.props.allTemplates == null){
-            console.log("TemplatesArray == null");
+        if (this.props.allTemplates == null) {
+            console.log('TemplatesArray == null');
             this.props.refreshTemplates();
         }
     }
 
-    private selectTemplate = (newTemplate:Template) => {
+    private selectTemplate = (newTemplate: Template) => {
         //this.props.loadPreview(newTemplate.id);
 
         this.setState({
-            selectedTemplate:newTemplate,
-            templateName:newTemplate.name,
-            templateDescription:newTemplate.description,
+            selectedTemplate: newTemplate,
+            templateName: newTemplate.name,
+            templateDescription: newTemplate.description,
         });
         this.renderPreview();
     };
 
-    private changeTemplate(){
+    private changeTemplate() {
 
     }
 
     private openCreateTemplateDialog = () => {
         this.setState({
-            createDialogOpen : true
-        })
+            createDialogOpen: true
+        });
     };
 
-    private onCloseCreateTemplateDialog(){
+    private onCloseCreateTemplateDialog() {
         this.setState({
-            createDialogOpen : false
-        })
+            createDialogOpen: false
+        });
     };
 
-    private onNameChange = (event:any) => {
+    private onNameChange = (event: any) => {
         this.setState({
-            templateName:event.target.value,
-        })
+            templateName: event.target.value,
+        });
     };
 
-    private onDescriptionChange = (event:any) => {
+    private onDescriptionChange = (event: any) => {
         this.setState({
-            templateDescription:event.target.value,
-        })
+            templateDescription: event.target.value,
+        });
     };
 
     private renderListItems = () => {
-        let items:any = [];
+        let items: any = [];
 
 
-        if(this.props.allTemplates.length == 0)
-        {
-            items.push(<ListItem key = "unique">Keine Templates vorhanden</ListItem>);
+        if (this.props.allTemplates.length == 0) {
+            items.push(<ListItem key="unique">Keine Templates vorhanden</ListItem>);
         }
 
-        this.props.allTemplates.map((template,key)=> {
-           items.push(
-               <ListItem key={key} button onClick={() => this.selectTemplate(template)}>
-                   <ListItemText primary={template.name} secondary={template.createdDate+"  |  "+template.createUser}/>
-               </ListItem>
-           );
+        this.props.allTemplates.map((template, key) => {
+            items.push(
+                <ListItem key={key} button onClick={() => this.selectTemplate(template)}>
+                    <ListItemText primary={template.name}
+                                  secondary={template.createdDate + '  |  ' + template.createUser}/>
+                </ListItem>
+            );
         });
-            return items;
+        return items;
     };
 
     private renderPreview = () => {
-        let result: string = "";//http://www.hbt.de";  TODO preview html fertig machen
+        let result: string = '';//http://www.hbt.de";  TODO preview html fertig machen
 
         if (this.state.selectedTemplate != null
-            && this.state.selectedTemplate.previewUrl != ""
+            && this.state.selectedTemplate.previewUrl != ''
             && this.state.selectedTemplate.previewUrl != null) {
 
-            result = ".."+this.state.selectedTemplate.previewUrl;
+            result = '..' + this.state.selectedTemplate.previewUrl;
         }
 
-        return <div style={{height:'calc(100vh - 88px)'}}>
+        return <div style={{height: 'calc(100vh - 88px)'}}>
             <ReportPreview url={result}/>
-        </div>
+        </div>;
     };
 
     // TODO localize
-    render(){
-        return <div style={{height:"100%"}}>
+    render() {
+        return <div style={{height: '100%'}}>
             <CreateTemplateDialog
-                open={ this.state.createDialogOpen}
+                open={this.state.createDialogOpen}
                 onClose={() => this.onCloseCreateTemplateDialog()}
             />
 
-            <div className={"col-md-2"} style={{height:"100%"}}>
+            <div className={'col-md-2'} style={{height: '100%'}}>
                 <Paper>
                     <List>
-                        <ListItem button onClick={()=>{this.openCreateTemplateDialog()}}>
-                            <Icon className={"material-icons"}>add</Icon>
-                            <ListItemText primary={"Neues Template"}/>
+                        <ListItem button onClick={() => {
+                            this.openCreateTemplateDialog();
+                        }}>
+                            <Icon className={'material-icons'}>add</Icon>
+                            <ListItemText primary={'Neues Template'}/>
                         </ListItem>
                         <Divider/>
                         {
@@ -191,53 +195,60 @@ class ReportManagerModule extends React.Component<ReportManagerProps  & ReportMa
                     </List>
                 </Paper>
             </div>
-            <div className={"col-md-7"} style={{height:"100%"}}>
-                <Paper style={{height:"100%"}}>
+            <div className={'col-md-7'} style={{height: '100%'}}>
+                <Paper style={{height: '100%'}}>
                     {this.renderPreview()}
                 </Paper>
             </div>
-            <div className={"col-md-3"}>
+            <div className={'col-md-3'}>
                 <Paper>
-                    <PwrIconHeader muiIconName={"info_outline"} title={"Info"}/>
+                    <PwrIconHeader muiIconName={'info_outline'} title={'Info'}/>
                     {
                         (this.state.selectedTemplate == null) ? <></> :
                             <div>
-                                <div className={"report-text-field"}>
+                                <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Name</Typography>
                                     <Typography variant={'subheading'}>{this.state.selectedTemplate.name}</Typography>
                                 </div>
-                                <div className={"report-text-field"}>
+                                <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Beschreibung</Typography>
-                                    <Typography variant={'subheading'}>{this.state.selectedTemplate.description}</Typography>
+                                    <Typography
+                                        variant={'subheading'}>{this.state.selectedTemplate.description}</Typography>
                                 </div>
-                                <div className={"report-text-field"}>
+                                <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Ersteller</Typography>
-                                    <Typography variant={'subheading'}>{this.state.selectedTemplate.createUser}</Typography>
+                                    <Typography
+                                        variant={'subheading'}>{this.state.selectedTemplate.createUser}</Typography>
                                 </div>
-                                <div className={"report-text-field"}>
+                                <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Datum</Typography>
-                                    <Typography variant={'subheading'}>{this.state.selectedTemplate.createdDate}</Typography>
+                                    <Typography
+                                        variant={'subheading'}>{this.state.selectedTemplate.createdDate}</Typography>
                                 </div>
-                                <div className={"report-text-field"}>
+                                <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Preview - Path</Typography>
-                                    <Typography variant={'subheading'}>{this.state.selectedTemplate.previewUrl}</Typography>
+                                    <Typography
+                                        variant={'subheading'}>{this.state.selectedTemplate.previewUrl}</Typography>
                                 </div>
-                                <div className={"report-text-field"}>
+                                <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Id</Typography>
                                     <Typography variant={'subheading'}>{this.state.selectedTemplate.id}</Typography>
                                 </div>
 
                                 <Divider/>
-                                <div className={"vertical-align row"} style={{paddingTop:"5px",paddingBottom:"5px"}}>
-                                    <Button className={"vertical-align"} variant={'raised'} onClick={() => {this.openCreateTemplateDialog()}} >Bearbeiten</Button>
-                                    <Button className={"vertical-align"} variant={'raised'} onClick={() => {}} color={'primary'} >Generate</Button>
+                                <div className={'vertical-align row'} style={{paddingTop: '5px', paddingBottom: '5px'}}>
+                                    <Button className={'vertical-align'} variant={'raised'} onClick={() => {
+                                        this.openCreateTemplateDialog();
+                                    }}>Bearbeiten</Button>
+                                    <Button className={'vertical-align'} variant={'raised'} onClick={() => {
+                                    }} color={'primary'}>Generate</Button>
                                 </div>
                             </div>
                     }
                 </Paper>
             </div>
         </div>
-        ;
+            ;
     }
 }
 

@@ -11,14 +11,14 @@ export class ClientBuildInfo {
     }
 
     public static of(clientBuildInfo: ClientBuildInfo) {
-        if(clientBuildInfo == null) {
+        if (clientBuildInfo == null) {
             return null;
         } else {
             return new ClientBuildInfo(
                 clientBuildInfo.version,
                 new Date(clientBuildInfo.date),
                 clientBuildInfo.builder
-            )
+            );
         }
     }
 

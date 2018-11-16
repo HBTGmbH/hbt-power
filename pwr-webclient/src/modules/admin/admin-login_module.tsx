@@ -54,13 +54,15 @@ interface AdminLoginLocalState {
  */
 interface AdminLoginDispatch {
     changeUsername(val: string): void;
+
     changePassword(val: string): void;
+
     attemptLogIn(username: string, pass: string, rememberLogin: boolean): void;
+
     changeLoginStatus(status: LoginStatus): void;
 }
 
-class AdminLoginModule extends React.Component<
-    AdminLoginProps
+class AdminLoginModule extends React.Component<AdminLoginProps
     & AdminLoginLocalProps
     & AdminLoginDispatch, AdminLoginLocalState> {
 
@@ -68,7 +70,7 @@ class AdminLoginModule extends React.Component<
         super(props);
         this.state = {
             rememberLogin: false
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: AdminLoginLocalProps): AdminLoginProps {
@@ -76,16 +78,20 @@ class AdminLoginModule extends React.Component<
             loginState: state.adminReducer.loginStatus(),
             username: state.adminReducer.adminName(),
             password: state.adminReducer.adminPass()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminLoginDispatch {
         return {
             changePassword: (val) => dispatch(AdminActionCreator.ChangePassword(val)),
             changeUsername: (val) => dispatch(AdminActionCreator.ChangeUsername(val)),
-            attemptLogIn: (username, pass, rememberLogin) => {dispatch(AdminActionCreator.AsyncValidateAuthentication(username, pass, rememberLogin))},
-            changeLoginStatus: status2 => {dispatch(AdminActionCreator.ChangeLoginStatus(status2))}
-        }
+            attemptLogIn: (username, pass, rememberLogin) => {
+                dispatch(AdminActionCreator.AsyncValidateAuthentication(username, pass, rememberLogin));
+            },
+            changeLoginStatus: status2 => {
+                dispatch(AdminActionCreator.ChangeLoginStatus(status2));
+            }
+        };
     }
 
     private handleAttemptLogIn = () => {
@@ -93,16 +99,16 @@ class AdminLoginModule extends React.Component<
     };
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
-        if(event.key == 'Enter') {
+        if (event.key == 'Enter') {
             this.handleAttemptLogIn();
         }
     };
 
     private getErrorText = () => {
-        if(this.props.loginState === LoginStatus.REJECTED) {
-            return PowerLocalize.get("AdminClient.Login.Rejected");
-        } else if(this.props.loginState === LoginStatus.UNAVAILABLE) {
-            return PowerLocalize.get("AdminClient.Login.Unavailable");
+        if (this.props.loginState === LoginStatus.REJECTED) {
+            return PowerLocalize.get('AdminClient.Login.Rejected');
+        } else if (this.props.loginState === LoginStatus.UNAVAILABLE) {
+            return PowerLocalize.get('AdminClient.Login.Unavailable');
         } else {
             return null;
         }
@@ -111,17 +117,17 @@ class AdminLoginModule extends React.Component<
     private handleRememberCheckboxCheck = (event: object, isInputChecked: boolean) => {
         this.setState({
             rememberLogin: isInputChecked
-        })
+        });
     };
 
     render() {
         //console.log("Admin_Login_error: ",this.getErrorText());
         return (
             <div className="fittingContainer vertical-align">
-                <Paper style={{padding: "30px"}}>
-                    <div  className="fittingContainer">
+                <Paper style={{padding: '30px'}}>
+                    <div className="fittingContainer">
                         <div className="vertical-align">
-                            <img className="logo-medium" src={getImagePath()+"/HBT002_Logo_pos.png"}/>
+                            <img className="logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
                         </div>
                         <div className="vertical-align">
                             <h1>Admin-Login</h1>
@@ -129,13 +135,13 @@ class AdminLoginModule extends React.Component<
                         <div className="vertical-align">
                             <h4>Weiter zu HBT Power</h4>
                         </div>
-                        <div style={{marginTop:'40px'}}>
+                        <div style={{marginTop: '40px'}}>
                             <div className="vertical-align">
                                 <TextField
                                     error={(this.getErrorText() !== null)}
                                     className="fullWidth"
-                                    label={PowerLocalize.get("Username.Singular")}
-                                    value={"" + this.props.username}
+                                    label={PowerLocalize.get('Username.Singular')}
+                                    value={'' + this.props.username}
                                     onChange={(evt) => this.props.changeUsername(evt.target.value)}
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
@@ -144,15 +150,15 @@ class AdminLoginModule extends React.Component<
                                 <TextField
                                     error={(this.getErrorText() !== null)}
                                     className="fullWidth"
-                                    label={PowerLocalize.get("Password.Singular")}
+                                    label={PowerLocalize.get('Password.Singular')}
                                     helperText={this.getErrorText()}
-                                    value={"" + this.props.password}
+                                    value={'' + this.props.password}
                                     onChange={(evt) => this.props.changePassword(evt.target.value)}
                                     type="password"
                                     onKeyPress={this.handleInputFieldKeyPress}
                                 />
                             </div>
-                            <div className="vertical-align" style={{marginTop: "10px", marginBottom: "10px"}}>
+                            <div className="vertical-align" style={{marginTop: '10px', marginBottom: '10px'}}>
                                 <FormGroup>
                                     <FormControlLabel control={
                                         <Checkbox
@@ -161,24 +167,33 @@ class AdminLoginModule extends React.Component<
                                             color={'primary'}
                                         />
                                     }
-                                    label={PowerLocalize.get("AdminClient.Login.Remember")}
+                                                      label={PowerLocalize.get('AdminClient.Login.Remember')}
                                     />
                                 </FormGroup>
                             </div>
-                            <div className="vertical-align"  style={{marginTop: "5px", marginBottom: "15px", height: "30px"}}>
+                            <div className="vertical-align"
+                                 style={{marginTop: '5px', marginBottom: '15px', height: '30px'}}>
                                 {
-                                    this.state.rememberLogin ? <span className="warning-note">Credentials will be stored in a cookie!</span> : <span> </span>
+                                    this.state.rememberLogin ?
+                                        <span className="warning-note">Credentials will be stored in a cookie!</span> :
+                                        <span> </span>
                                 }
                             </div>
-                            <div className={"vertical-align"} style={{marginTop: "5px", marginBottom: "15px", height: "30px"}}>
+                            <div className={'vertical-align'}
+                                 style={{marginTop: '5px', marginBottom: '15px', height: '30px'}}>
                                 {
-                                    this.getErrorText() !== null ? <span style={{paddingTop:"10px"}} className={"warning-note"}>{this.getErrorText()}</span>: <span> </span>
+                                    this.getErrorText() !== null ? <span style={{paddingTop: '10px'}}
+                                                                         className={'warning-note'}>{this.getErrorText()}</span> :
+                                        <span> </span>
                                 }
                             </div>
                             <div className="vertical-align">
-                                <Button variant={'raised'} style={{float: "left", marginRight: "5px"}} onClick={this.handleAttemptLogIn} color={'primary'} >{PowerLocalize.get("Action.Login")}</Button>
-                                <Button variant={'flat'} style={{float: "right", marginRight: "5px"}}  href={ Paths.APP_ROOT }
-                                >{"Zurück"}</Button>
+                                <Button variant={'raised'} style={{float: 'left', marginRight: '5px'}}
+                                        onClick={this.handleAttemptLogIn}
+                                        color={'primary'}>{PowerLocalize.get('Action.Login')}</Button>
+                                <Button variant={'flat'} style={{float: 'right', marginRight: '5px'}}
+                                        href={Paths.APP_ROOT}
+                                >{'Zurück'}</Button>
                             </div>
                         </div>
                     </div>

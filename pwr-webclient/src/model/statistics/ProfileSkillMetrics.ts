@@ -5,10 +5,14 @@ import {APIProfileSkillMetric} from './ApiMetrics';
 @doop
 export class ProfileSkillMetrics {
     @doop
-    public get commonSkills() {return doop<Immutable.List<string>, this>()};
+    public get commonSkills() {
+        return doop<Immutable.List<string>, this>();
+    };
 
     @doop
-    public get missingSkills() {return doop<Immutable.List<string>, this>()};
+    public get missingSkills() {
+        return doop<Immutable.List<string>, this>();
+    };
 
     private constructor(commonSkills: Immutable.List<string>, missingSkills: Immutable.List<string>) {
         this.commonSkills(commonSkills).missingSkills(missingSkills);

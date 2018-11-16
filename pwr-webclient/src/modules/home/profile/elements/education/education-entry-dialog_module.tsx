@@ -59,7 +59,6 @@ interface EducationEntryDialogLocalState {
 }
 
 
-
 export class EducationEntryDialogModule extends React.Component<EducationEntryDialogLocalProps, EducationEntryDialogLocalState> {
 
     constructor(props: EducationEntryDialogLocalProps) {
@@ -68,10 +67,10 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
             educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.nameEntityId()),
             entry: this.props.educationEntry,
         };
-        if(isNullOrUndefined(this.state.entry.degree())) {
+        if (isNullOrUndefined(this.state.entry.degree())) {
             this.setState({
-                entry: this.state.entry.degree(PowerLocalize.get("None"))
-            })
+                entry: this.state.entry.degree(PowerLocalize.get('None'))
+            });
         }
     }
 
@@ -138,8 +137,8 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         let name: string = this.state.educationAutoComplete;
         let education: NameEntity = ProfileStore.findNameEntityByName(name, this.props.educations);
         let educationEntry: EducationEntry = this.state.entry;
-        if(educationEntry.degree() == PowerLocalize.get("None")) educationEntry.degree(null);
-        if(isNullOrUndefined(education)) {
+        if (educationEntry.degree() == PowerLocalize.get('None')) educationEntry.degree(null);
+        if (isNullOrUndefined(education)) {
             education = NameEntity.createNew(name);
         }
         educationEntry = educationEntry.nameEntityId(education.id());
@@ -169,7 +168,9 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                 label={PowerLocalize.get('Begin')}
                                 id={'EducationEntry.StartDate' + this.props.educationEntry.id}
                                 value={this.state.entry.endDate()}
-                                onChange={(date:Date) => {this.state.entry.startDate(date)}}
+                                onChange={(date: Date) => {
+                                    this.state.entry.startDate(date);
+                                }}
                                 format="DD.MM.YYYY"
                             />
 
@@ -182,7 +183,9 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                 label={PowerLocalize.get('End')}
                                 id={'EducationEntry.EndDate' + this.props.educationEntry.id}
                                 value={this.state.entry.startDate()}
-                                onChange={(date:Date) => {this.state.entry.endDate(date)}}
+                                onChange={(date: Date) => {
+                                    this.state.entry.endDate(date);
+                                }}
                                 format="DD.MM.YYYY"
                             />
                         </form>
@@ -222,8 +225,10 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 </div>
             </DialogContent>
             <DialogActions>
-                <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>
-                <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.handleCloseButtonPress}/>
+                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                               onClick={this.handleSaveButtonPress}/>
+                <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                               onClick={this.handleCloseButtonPress}/>
             </DialogActions>
         </Dialog>;
     }

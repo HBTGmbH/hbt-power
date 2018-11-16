@@ -42,18 +42,18 @@ export class DatabaseReducer {
     }
 
 
-    private static DeleteEntry(state: ProfileStore, action: DeleteEntryAction):ProfileStore {
+    private static DeleteEntry(state: ProfileStore, action: DeleteEntryAction): ProfileStore {
         let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile(), action);
         return state.profile(newProfile);
     }
 
-    private static CreateEntry(state: ProfileStore, action: CreateEntryAction):ProfileStore {
+    private static CreateEntry(state: ProfileStore, action: CreateEntryAction): ProfileStore {
         let newProfile: Profile = ProfileReducer.reducerHandleCreateEntry(state.profile(), <CreateEntryAction> action);
         return state.profile(newProfile);
     }
 
     private static UpdateNameEntity(database: ProfileStore, entity: NameEntity, type: ProfileElementType): ProfileStore {
-        switch(type) {
+        switch (type) {
             case ProfileElementType.TrainingEntry:
                 return database.trainings(database.trainings().set(entity.id(), entity));
             case ProfileElementType.SectorEntry:
@@ -69,13 +69,13 @@ export class DatabaseReducer {
             case ProfileElementType.KeySkill:
                 return database.keySkills(database.keySkills().set(entity.id(), entity));
             default:
-                throw error("Unknown switch value " + ProfileElementType[type]);
+                throw error('Unknown switch value ' + ProfileElementType[type]);
         }
     }
 
 
     private static SaveEntry(database: ProfileStore, action: SaveEntryAction): ProfileStore {
-        if(!isNullOrUndefined(action.nameEntity) && action.nameEntity.isNew) {
+        if (!isNullOrUndefined(action.nameEntity) && action.nameEntity.isNew) {
             database = DatabaseReducer.UpdateNameEntity(database, action.nameEntity, action.entryType);
         }
         let profile: Profile = ProfileReducer.reducerUpdateEntry(database.profile(), action);
@@ -100,7 +100,7 @@ export class DatabaseReducer {
         project = project.roleIds(project.roleIds().clear());
         action.state.roles.forEach(role => {
             let projectRole: NameEntity = ProfileStore.findNameEntityByName(role, database.projectRoles());
-            if(isNullOrUndefined(projectRole)) {
+            if (isNullOrUndefined(projectRole)) {
                 projectRole = NameEntity.createNew(role);
                 database = database.projectRoles(database.projectRoles().set(projectRole.id(), projectRole));
             }
@@ -109,7 +109,7 @@ export class DatabaseReducer {
 
         // Fix end customer and broker
         let broker: NameEntity = ProfileStore.findNameEntityByName(action.state.brokerACValue, database.companies());
-        if(isNullOrUndefined(broker)) {
+        if (isNullOrUndefined(broker)) {
             broker = NameEntity.createNew(action.state.brokerACValue);
             database = database.companies(database.companies().set(broker.id(), broker));
         }
@@ -117,7 +117,7 @@ export class DatabaseReducer {
 
         // End customer
         let endCustomer: NameEntity = ProfileStore.findNameEntityByName(action.state.clientACValue, database.companies());
-        if(isNullOrUndefined(endCustomer)) {
+        if (isNullOrUndefined(endCustomer)) {
             endCustomer = NameEntity.createNew(action.state.clientACValue);
             database = database.companies(database.companies().set(endCustomer.id(), endCustomer));
         }
@@ -127,7 +127,7 @@ export class DatabaseReducer {
         return database.profile(profile);
     }
 
-    private static CreateProject(database: ProfileStore): ProfileStore{
+    private static CreateProject(database: ProfileStore): ProfileStore {
         let newProfile: Profile = database.profile();
         let proj: Project = Project.createNew();
         newProfile = newProfile.projects(newProfile.projects().set(proj.id(), proj));
@@ -144,7 +144,7 @@ export class DatabaseReducer {
 
     private static ApiRequestSuccessful(state: ProfileStore, action: ReceiveAPIResponseAction): ProfileStore {
         let newState: ProfileStore = state;
-        switch(action.requestType) {
+        switch (action.requestType) {
             case APIRequestType.RequestLanguages:
                 return state.languages(DatabaseReducer.AddAPINameEntities(action.payload, state.languages()));
             case APIRequestType.RequestProfile:
@@ -194,26 +194,41 @@ export class DatabaseReducer {
         return state.loggedInUser(loggedInUser).loginStatus(status);
     }
 
-    public static Reduce(state : ProfileStore, action: AbstractAction) : ProfileStore {
-        if(isNullOrUndefined(state)) {
+    public static Reduce(state: ProfileStore, action: AbstractAction): ProfileStore {
+        if (isNullOrUndefined(state)) {
             state = ProfileStore.createWithDefaults();
         }
-        switch(action.type) {
-            case ActionType.ChangeAbstract: return DatabaseReducer.HandleChangeAbstract(state, action as ChangeStringValueAction);
-            case ActionType.DeleteEntry: return DatabaseReducer.DeleteEntry(state, action as DeleteEntryAction);
-            case ActionType.CreateEntry: return DatabaseReducer.CreateEntry(state, action as CreateEntryAction);
-            case ActionType.SaveEntry: return DatabaseReducer.SaveEntry(state, action as SaveEntryAction);
-            case ActionType.SaveProject: return DatabaseReducer.SaveProject(state, action as SaveProjectAction);
-            case ActionType.DeleteProject: return DatabaseReducer.DeleteProject(state, action as DeleteProjectAction);
-            case ActionType.CreateProject: return DatabaseReducer.CreateProject(state);
-            case ActionType.UpdateSkillRating: return DatabaseReducer.UpdateSkillRating(state, action as UpdateSkillRatingAction);
-            case ActionType.DeleteSkill: return DatabaseReducer.DeleteSkill(state, action as DeleteSkillAction);
-            case ActionType.APIRequestSuccess: return DatabaseReducer.ApiRequestSuccessful(state, action as ReceiveAPIResponseAction);
-            case ActionType.LogInUser: return DatabaseReducer.LogInUser(state, action as LoginAction);
-            case ActionType.LogOutUser: return DatabaseReducer.LogOutUser(state);
-            case ActionType.UserLoginFailed: return state.loginStatus(LoginStatus.REJECTED);
-            case ActionType.AddSkill: return DatabaseReducer.AddSkill(state, action as AddSkillAction);
-            case ActionType.SetUserInitials: return DatabaseReducer.SetUserInitials(state, action as ChangeStringValueAction);
+        switch (action.type) {
+            case ActionType.ChangeAbstract:
+                return DatabaseReducer.HandleChangeAbstract(state, action as ChangeStringValueAction);
+            case ActionType.DeleteEntry:
+                return DatabaseReducer.DeleteEntry(state, action as DeleteEntryAction);
+            case ActionType.CreateEntry:
+                return DatabaseReducer.CreateEntry(state, action as CreateEntryAction);
+            case ActionType.SaveEntry:
+                return DatabaseReducer.SaveEntry(state, action as SaveEntryAction);
+            case ActionType.SaveProject:
+                return DatabaseReducer.SaveProject(state, action as SaveProjectAction);
+            case ActionType.DeleteProject:
+                return DatabaseReducer.DeleteProject(state, action as DeleteProjectAction);
+            case ActionType.CreateProject:
+                return DatabaseReducer.CreateProject(state);
+            case ActionType.UpdateSkillRating:
+                return DatabaseReducer.UpdateSkillRating(state, action as UpdateSkillRatingAction);
+            case ActionType.DeleteSkill:
+                return DatabaseReducer.DeleteSkill(state, action as DeleteSkillAction);
+            case ActionType.APIRequestSuccess:
+                return DatabaseReducer.ApiRequestSuccessful(state, action as ReceiveAPIResponseAction);
+            case ActionType.LogInUser:
+                return DatabaseReducer.LogInUser(state, action as LoginAction);
+            case ActionType.LogOutUser:
+                return DatabaseReducer.LogOutUser(state);
+            case ActionType.UserLoginFailed:
+                return state.loginStatus(LoginStatus.REJECTED);
+            case ActionType.AddSkill:
+                return DatabaseReducer.AddSkill(state, action as AddSkillAction);
+            case ActionType.SetUserInitials:
+                return DatabaseReducer.SetUserInitials(state, action as ChangeStringValueAction);
             case ActionType.RemoveSkillFromProject: {
                 let profile = ProfileReducer.reducerHandleRemoveSkillFromProject(state.profile(), action as RemoveSkillFromProjectAction);
                 return state.profile(profile);

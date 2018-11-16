@@ -1,6 +1,7 @@
 import {ViewProjectRole} from './ViewProjectRole';
 import {ViewSkill} from './ViewSkill';
 import {isNullOrUndefined} from 'util';
+
 export class ViewProject {
     id: number;
     name: string;

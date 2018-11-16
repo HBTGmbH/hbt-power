@@ -6,7 +6,7 @@ import {getSearchSkill, postFindConsultantBySkills} from '../../../API_CONFIG';
 import {APISkill} from '../../../model/APIProfile';
 import {PwrAutoComplete} from '../pwr-auto-complete';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
-const ChipInput = require("material-ui-chip-input").default;
+const ChipInput = require('material-ui-chip-input').default;
 
 
 interface ConsultantSkillInfo {
@@ -50,28 +50,28 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     private executeSearch = () => {
         axios.post(postFindConsultantBySkills(), this.state.currentSearchSkills.toArray()).then((response: AxiosResponse) => {
             this.setState({
-                foundConsultants:  Immutable.List<ConsultantSkillInfo>(response.data)
+                foundConsultants: Immutable.List<ConsultantSkillInfo>(response.data)
             });
         }).catch((error: any) => {
             this.setState({
-                foundConsultants:  Immutable.List<ConsultantSkillInfo>()
+                foundConsultants: Immutable.List<ConsultantSkillInfo>()
             });
         });
     };
 
     public componentDidUpdate(prevProps: ConsultantSkillSearchProps, prevState: ConsultantSkillSearchState) {
-        if(this.state.currentSearchSkills != prevState.currentSearchSkills) this.executeSearch();
+        if (this.state.currentSearchSkills != prevState.currentSearchSkills) this.executeSearch();
     };
 
     private handleAddSkill = (skill: string) => {
-        console.log("Add skill", skill);
+        console.log('Add skill', skill);
         this.setState({
             currentSearchSkills: this.state.currentSearchSkills.push(skill)
         });
     };
 
     private handleRemoveSkill = (skill: string) => {
-        console.log("Remove skill", skill);
+        console.log('Remove skill', skill);
         this.setState({
             currentSearchSkills: Immutable.List<string>(this.state.currentSearchSkills.filter(s => s != skill))
         });
@@ -79,7 +79,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
 
 
     private handleUpdateInput = (value: string) => {
-        if(value.trim().length > 0) {
+        if (value.trim().length > 0) {
             let prev = this.state.currentSuggestSkills;
             let reqParams = {
                 maxResults: this.MAX_RESULTS,
@@ -89,11 +89,11 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
                 searchTerm: value
             });
             axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
-                if(response.status === 200) {
+                if (response.status === 200) {
                     this.setState({
                         currentSuggestSkills: response.data
                     });
-                } else if(response.status === 204) {
+                } else if (response.status === 204) {
                     this.setState({
                         currentSuggestSkills: []
                     });
@@ -107,9 +107,9 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     private renderConsultantInfo = (consultant: ConsultantSkillInfo) => {
         let res: string = consultant.fullName;
         consultant.skills.forEach(skill => {
-            res += " / ";
+            res += ' / ';
             res += skill.name;
-            res += ": ";
+            res += ': ';
             res += skill.rating;
         });
         return res;
@@ -117,23 +117,24 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
 
 
     render() {
-        return (<Paper style={{padding: "16px"}}>
-            <div className="row" style={{paddingLeft: "20px"}}>
+        return (<Paper style={{padding: '16px'}}>
+            <div className="row" style={{paddingLeft: '20px'}}>
                 <PwrAutoComplete fullWidth={true}
                                  data={this.state.currentSuggestSkills}
                                  searchTerm={this.state.searchTerm}
                                  chips={this.state.currentSearchSkills.toArray()}
-                                 label={"Skills"}
+                                 label={'Skills'}
                                  multi={true}
                                  onAdd={this.handleAddSkill}
                                  onRemove={this.handleRemoveSkill}
                                  onSearchChange={this.handleUpdateInput}
                 />
             </div>
-            <div className="row" style={{paddingLeft: "20px"}}>
+            <div className="row" style={{paddingLeft: '20px'}}>
                 <div className="col-md-11">
                     <List>
-                        {this.state.foundConsultants.map(consultant => <ListItem key={"Consultant.Search." + consultant.fullName}>{this.renderConsultantInfo(consultant)}</ListItem>)}
+                        {this.state.foundConsultants.map(consultant => <ListItem
+                            key={'Consultant.Search.' + consultant.fullName}>{this.renderConsultantInfo(consultant)}</ListItem>)}
                     </List>
                 </div>
             </div>

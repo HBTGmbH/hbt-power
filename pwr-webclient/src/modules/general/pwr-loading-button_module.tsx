@@ -7,6 +7,7 @@ interface PwrLoadingButtonProps {
     loading: boolean;
     iconName: string;
     tooltip?: string;
+
     onClick?(): void;
 }
 
@@ -35,7 +36,7 @@ class PwrLoadingButtonModule extends React.Component<PwrLoadingButtonProps & Wit
             >
                 <Save/>
             </Button>
-            {this.props.loading && <CircularProgress size={68} className={this.props.classes.fabProgress} />}
+            {this.props.loading && <CircularProgress size={68} className={this.props.classes.fabProgress}/>}
         </div>;
     }
 }

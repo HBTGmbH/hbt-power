@@ -55,16 +55,16 @@ interface PowerOverviewLocalState {
  */
 interface PowerOverviewDispatch {
     requestSingleProfile(initials: string): void;
+
     navigateTo(target: string): void;
+
     createViewProfile(description: string, name: string): void;
 
 }
 
-class PowerOverviewModule extends React.Component<
-    PowerOverviewProps
+class PowerOverviewModule extends React.Component<PowerOverviewProps
     & PowerOverviewLocalProps
     & PowerOverviewDispatch, PowerOverviewLocalState> {
-
 
 
     constructor(props: PowerOverviewProps & PowerOverviewLocalProps & PowerOverviewDispatch) {
@@ -82,7 +82,7 @@ class PowerOverviewModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerOverviewDispatch {
         return {
-            requestSingleProfile: function(initials: string) {
+            requestSingleProfile: function (initials: string) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
@@ -101,7 +101,6 @@ class PowerOverviewModule extends React.Component<
             createViewDialogOpen: false
         };
     };
-
 
 
     private handleCreateViewProfile = (name: string, description: string) => {
@@ -134,7 +133,10 @@ class PowerOverviewModule extends React.Component<
                         <div className="col-md-12">
                             <Paper className="dashboard-element">
                                 <div className="mui-margin">
-                                    <span style={{fontSize: "16px", fontWeight: "bold"}}>{PowerLocalize.get('Overview.ViewProfiles.Title')}</span><br/>
+                                    <span style={{
+                                        fontSize: '16px',
+                                        fontWeight: 'bold'
+                                    }}>{PowerLocalize.get('Overview.ViewProfiles.Title')}</span><br/>
                                 </div>
                                 <div className="mui-margin">
                                     <span>{PowerLocalize.get('Overview.ViewProfiles.Description')}</span>
@@ -156,7 +158,8 @@ class PowerOverviewModule extends React.Component<
                                 </Button>
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {
-                                        return <div className="col-md-12 fullWidth" style={{marginTop: "8px"}} key={viewProfile.id}>
+                                        return <div className="col-md-12 fullWidth" style={{marginTop: '8px'}}
+                                                    key={viewProfile.id}>
                                             <ViewCard viewProfileId={viewProfile.id}/>
                                         </div>;
                                     })}
@@ -166,7 +169,7 @@ class PowerOverviewModule extends React.Component<
                     </div>
                 </div>
             </div>
-            );
+        );
     }
 }
 

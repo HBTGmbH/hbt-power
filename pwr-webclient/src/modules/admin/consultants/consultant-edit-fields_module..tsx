@@ -10,10 +10,15 @@ interface ConsultantEditFieldsProps {
     title: string;
     birthDate: Date;
     active: boolean;
+
     onFirstNameChange(val: string): void;
+
     onLastNameChange(val: string): void;
+
     onTitleChange(val: string): void;
+
     onBirthDateChange(val: Date): void;
+
     onActiveChange(active: boolean): void;
 }
 
@@ -22,7 +27,6 @@ interface ConsultantEditFieldsState {
 }
 
 export class ConsultantEditFields extends React.Component<ConsultantEditFieldsProps, ConsultantEditFieldsState> {
-
 
 
     render() {
@@ -43,28 +47,29 @@ export class ConsultantEditFields extends React.Component<ConsultantEditFieldsPr
             />
             <LimitedTextField
                 maxCharacters={100}
-                value={isNullOrUndefined(this.props.title) ? "" : this.props.title}
+                value={isNullOrUndefined(this.props.title) ? '' : this.props.title}
                 label={PowerLocalize.get('Title.Singular')}
                 onChange={(e, v) => this.props.onTitleChange(v)}
             />
             <br/>
 
-            <FormControl style={{float:'right'}}>
+            <FormControl style={{float: 'right'}}>
                 <FormControlLabel
                     control={
                         <Checkbox
                             checked={this.props.active}
-                            onChange={(e:any, v:boolean) => this.props.onActiveChange(v)}
+                            onChange={(e: any, v: boolean) => this.props.onActiveChange(v)}
                             color={'primary'}
                         />
-                     }
-                    label={PowerLocalize.get("ConsultantEdit.Active")}
+                    }
+                    label={PowerLocalize.get('ConsultantEdit.Active')}
                 />
 
             </FormControl>
         </div>);
     }
 }
+
 /*
 
 

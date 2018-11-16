@@ -28,16 +28,16 @@ interface ViewProfileOverviewLocalState {
     currentDescription: string;
     descriptionDisabled: boolean;
     generatorOpen: boolean;
-    tabValue:number;
+    tabValue: number;
 }
 
 interface ViewProfileOverviewDispatch {
     generate(viewProfileId: string, templateId: string): void;
+
     setDescription(description: string, viewProfileId: string): void;
 }
 
-class ViewProfileOverviewModule extends React.Component<
-    ViewProfileOverviewProps
+class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     & ViewProfileOverviewLocalProps
     & ViewProfileOverviewDispatch, ViewProfileOverviewLocalState> {
 
@@ -50,7 +50,7 @@ class ViewProfileOverviewModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileOverviewDispatch {
         return {
-            generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId,"2")),
+            generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, '2')),
             setDescription: (description, viewProfileId) => dispatch(ViewProfileActionCreator.AsyncSetDescription(description, viewProfileId))
         };
     }
@@ -58,18 +58,18 @@ class ViewProfileOverviewModule extends React.Component<
     constructor(props: ViewProfileOverviewProps & ViewProfileOverviewLocalProps & ViewProfileOverviewDispatch) {
         super(props);
         this.state = {
-            currentDescription: !isNullOrUndefined(props.viewProfile) ? props.viewProfile.description : "",
+            currentDescription: !isNullOrUndefined(props.viewProfile) ? props.viewProfile.description : '',
             descriptionDisabled: true,
             generatorOpen: false,
-            tabValue:0,
-        }
+            tabValue: 0,
+        };
     }
 
     public componentDidUpdate(prevProps: ViewProfileOverviewProps & ViewProfileOverviewLocalProps & ViewProfileOverviewDispatch) {
-        if(prevProps.viewProfile !== this.props.viewProfile) {
+        if (prevProps.viewProfile !== this.props.viewProfile) {
             this.setState({
-                currentDescription: !isNullOrUndefined(this.props.viewProfile) ? this.props.viewProfile.description : ""
-            })
+                currentDescription: !isNullOrUndefined(this.props.viewProfile) ? this.props.viewProfile.description : ''
+            });
         }
 
     }
@@ -78,16 +78,17 @@ class ViewProfileOverviewModule extends React.Component<
         this.setState({
             descriptionDisabled: enabled
         });
-        if(enabled) {
+        if (enabled) {
             this.props.setDescription(this.state.currentDescription, this.props.viewProfile.id);
         }
     };
 
-    private setGeneratorOpen(open : boolean){
+    private setGeneratorOpen(open: boolean) {
         this.setState({
             generatorOpen: open
-        })
+        });
     }
+
     render() {
         if (isNullOrUndefined(this.props.viewProfile)) {
             return <div>Does not exist</div>;
@@ -106,19 +107,21 @@ class ViewProfileOverviewModule extends React.Component<
                     viewProfileId={this.props.viewProfile.id}
                 />
 
-                <Paper className="row padding-8px" style={{margin: "1px"}}>
+                <Paper className="row padding-8px" style={{margin: '1px'}}>
                     <div className="col-md-6">
                         <LimitedTextField
                             disabled={this.state.descriptionDisabled}
                             onToggleEdit={this.handleToggleEdit}
                             useToggleEditButton={true}
                             maxCharacters={500}
-                            label={PowerLocalize.get("Profile.Description")}
+                            label={PowerLocalize.get('Profile.Description')}
                             value={this.state.currentDescription}
                             fullWidth={true}
                             rows={5}
                             multiLine={true}
-                            onChange={(e, v) => {this.setState({currentDescription: v})}}
+                            onChange={(e, v) => {
+                                this.setState({currentDescription: v});
+                            }}
                         />
                     </div>
                     <div className="col-md-6">
@@ -129,36 +132,36 @@ class ViewProfileOverviewModule extends React.Component<
                             onClick={() => this.setGeneratorOpen(true)}
                         >
                             <Icon className="material-icons">open_in_new</Icon>
-                            {PowerLocalize.get("Action.Generate.Word")}</Button>
+                            {PowerLocalize.get('Action.Generate.Word')}</Button>
                     </div>
                 </Paper>
 
                 <Tabs
                     value={this.state.tabValue}
-                    onChange={(e:any,v:number) => this.setState({tabValue:v})}
+                    onChange={(e: any, v: number) => this.setState({tabValue: v})}
                     centered
                     style={{backgroundColor: '#191e55'/* TODO use withStyles/withTheme */}}
                     textColor={'secondary'}
                 >
-                    <Tab value={0} label={PowerLocalize.get("ViewProfileOveview.Entries")} />
-                    <Tab value={1} label={PowerLocalize.get("ViewProfileOveview.Projects")} />
-                    <Tab value={2} label={PowerLocalize.get("ViewProfileOveview.Skills")} />
+                    <Tab value={0} label={PowerLocalize.get('ViewProfileOveview.Entries')}/>
+                    <Tab value={1} label={PowerLocalize.get('ViewProfileOveview.Projects')}/>
+                    <Tab value={2} label={PowerLocalize.get('ViewProfileOveview.Skills')}/>
                 </Tabs>
                 <div>
                     {this.state.tabValue === 0 &&
-                        <ViewProfileEntriesOverview
-                            viewProfileId={viewProfileId}
-                        />
+                    <ViewProfileEntriesOverview
+                        viewProfileId={viewProfileId}
+                    />
                     }
                     {this.state.tabValue === 1 &&
-                        <ViewProfileProjectsOverview
-                            viewProfileId={viewProfileId}
-                        />
+                    <ViewProfileProjectsOverview
+                        viewProfileId={viewProfileId}
+                    />
                     }
                     {this.state.tabValue === 2 &&
-                        <ViewProfileSkillOverview
-                            viewProfileId={viewProfileId}
-                        />
+                    <ViewProfileSkillOverview
+                        viewProfileId={viewProfileId}
+                    />
                     }
                 </div>
             </div>);

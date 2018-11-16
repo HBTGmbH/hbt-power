@@ -216,7 +216,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 label={PowerLocalize.get('ProjectName.Singular')}
                                 value={this.state.project.name()}
                                 id={'Project.Name.' + this.state.project.id}
-                                onChange={(e:any) => this.changeName(e)}
+                                onChange={(e: any) => this.changeName(e)}
                                 fullWidth={true}
                             />
                         </div>
@@ -294,7 +294,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 rows={4}
                                 value={this.state.project.description()}
                                 id={'Project.Description.' + this.state.project.id()}
-                                onChange={(e:any) => this.changeDescription(e)}
+                                onChange={(e: any) => this.changeDescription(e)}
                             />
                         </div>
                     </div>

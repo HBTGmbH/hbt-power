@@ -4,7 +4,7 @@ import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {doop} from 'doop';
 import {isNullOrUndefined} from 'util';
-import {DateUtils} from "../utils/DateUtil";
+import {DateUtils} from '../utils/DateUtil';
 
 
 @doop
@@ -14,31 +14,36 @@ export class EducationEntry {
      * Cant' use null here because it messes up material uis dropdown style.
      * @type {string}
      */
-    public static NO_DEGREE_VALUE = " ";
+    public static NO_DEGREE_VALUE = ' ';
 
     /**
      * DO NOT CHANGE THIS.NEVER.
      */
     @doop
-    public get id(){
+    public get id() {
         return doop<string, this>();
     }
+
     @doop
     public get startDate() {
         return doop<Date, this>();
     }
+
     @doop
     public get endDate() {
         return doop<Date, this>();
     }
+
     @doop
     public get nameEntityId() {
         return doop<string, this>();
     }
+
     @doop
     public get degree() {
         return doop<string, this>();
     }
+
     @doop
     public get isNew() {
         return doop<boolean, this>();
@@ -73,7 +78,7 @@ export class EducationEntry {
      * @returns {EducationEntry}
      */
     public static createNew() {
-        return new EducationEntry(NEW_ENTITY_PREFIX + String(EducationEntry.CURRENT_LOCAL_ID++), new Date(), new Date(), UNDEFINED_ID, "", true);
+        return new EducationEntry(NEW_ENTITY_PREFIX + String(EducationEntry.CURRENT_LOCAL_ID++), new Date(), new Date(), UNDEFINED_ID, '', true);
     }
 
 
@@ -89,6 +94,6 @@ export class EducationEntry {
             endDate: DateUtils.formatLocaleDateToIso(this.endDate()),
             nameEntity: this.nameEntityId() == null ? null : educations.get(this.nameEntityId()).toAPI(),
             degree: this.degree().trim().length > 0 ? this.degree() : null
-        }
+        };
     }
 }

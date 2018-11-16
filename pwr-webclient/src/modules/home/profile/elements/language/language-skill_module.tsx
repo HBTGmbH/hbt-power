@@ -33,7 +33,7 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
         super(props);
         this.state = {
             dialogOpen: props.languageSkill.isNew()
-        }
+        };
     }
 
     private getLanguageName = () => {
@@ -65,35 +65,37 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
     private openDialog = () => {
         this.setState({
             dialogOpen: true
-        })
+        });
     };
 
     render() {
-        return(
-        <tr>
-            <td>
-                <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.handleEditButtonPress}/>
-                <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonPress}/>
-                <LanguageSkillDialog
-                    languageSkill={this.props.languageSkill}
-                    languages={this.props.languages}
-                    languageLevels={this.props.languageLevels}
-                    onSave={this.handleSaveRequest}
-                    onClose={this.closeDialog}
-                    open={this.state.dialogOpen}
-                />
-            </td>
-            <td>
-                <div className="fittingContainer" onClick={this.openDialog}>
-                    {PowerLocalize.langLevelToLocalizedString(this.props.languageSkill.level())}
-                </div>
-            </td>
-            <td>
-                <div className="fittingContainer" onClick={this.openDialog}>
-                    {this.getLanguageName()}
-                </div>
-            </td>
-        </tr>
+        return (
+            <tr>
+                <td>
+                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
+                                   onClick={this.handleEditButtonPress}/>
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                                   onClick={this.handleDeleteButtonPress}/>
+                    <LanguageSkillDialog
+                        languageSkill={this.props.languageSkill}
+                        languages={this.props.languages}
+                        languageLevels={this.props.languageLevels}
+                        onSave={this.handleSaveRequest}
+                        onClose={this.closeDialog}
+                        open={this.state.dialogOpen}
+                    />
+                </td>
+                <td>
+                    <div className="fittingContainer" onClick={this.openDialog}>
+                        {PowerLocalize.langLevelToLocalizedString(this.props.languageSkill.level())}
+                    </div>
+                </td>
+                <td>
+                    <div className="fittingContainer" onClick={this.openDialog}>
+                        {this.getLanguageName()}
+                    </div>
+                </td>
+            </tr>
         );
     }
 }

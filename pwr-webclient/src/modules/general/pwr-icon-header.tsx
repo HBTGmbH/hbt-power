@@ -4,7 +4,7 @@ import {ThemeProps} from '../../utils/ReactUtils';
 
 interface IconHeaderProps {
     muiIconName: string;
-    title : string;
+    title: string;
 }
 
 interface IconHeaderState {
@@ -15,7 +15,8 @@ interface IconHeaderState {
 class PwrIconHeaderModule extends React.PureComponent<IconHeaderProps & ThemeProps> {
 
     render() {
-        return ( <div className="vertical-align" style={{ height: '56px',  backgroundColor: this.props.theme.palette.primary.main}}>
+        return (<div className="vertical-align"
+                     style={{height: '56px', backgroundColor: this.props.theme.palette.primary.main}}>
             <div style={{fontSize: 18, color: this.props.theme.palette.primary.contrastText}}>
                 <Icon style={{verticalAlign: 'middle'}}>
                     {this.props.muiIconName}

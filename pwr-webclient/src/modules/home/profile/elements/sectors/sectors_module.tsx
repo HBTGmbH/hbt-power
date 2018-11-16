@@ -37,7 +37,9 @@ interface SectorsLocalState {
 
 interface SectorsDispatch {
     deleteSectorEntry(sectorId: string): void;
+
     saveSectorEntry(sectorEntry: SectorEntry, sector: NameEntity): void;
+
     addSectorEntry(): void;
 }
 
@@ -50,23 +52,23 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         );
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps) : SectorsProps {
+    static mapStateToProps(state: ApplicationState, localProps: SectorsLocalProps): SectorsProps {
         return {
             sectors: state.databaseReducer.sectors(),
             sectorEntries: state.databaseReducer.profile().sectorEntries(),
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : SectorsDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SectorsDispatch {
         return {
-            deleteSectorEntry: function(sectorId: string){
+            deleteSectorEntry: function (sectorId: string) {
                 dispatch(ProfileActionCreator.deleteEntry(sectorId, ProfileElementType.SectorEntry));
             },
-            addSectorEntry: function(){
+            addSectorEntry: function () {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.SectorEntry));
             },
-            saveSectorEntry: function(sectorEntry: SectorEntry, sector: NameEntity) {
-                dispatch(ProfileActionCreator.saveEntry(sectorEntry, sector, ProfileElementType.SectorEntry))
+            saveSectorEntry: function (sectorEntry: SectorEntry, sector: NameEntity) {
+                dispatch(ProfileActionCreator.saveEntry(sectorEntry, sector, ProfileElementType.SectorEntry));
             }
         };
     }
@@ -75,7 +77,7 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
         this.props.addSectorEntry();
     };
 
-    private renderSingleListElement = (sectorEntry: SectorEntry, id:string) => {
+    private renderSingleListElement = (sectorEntry: SectorEntry, id: string) => {
         return (
             <SingleSectorModule
                 key={'Sectors.SingleSector.' + id}
@@ -84,11 +86,11 @@ class SectorsModule extends React.Component<SectorsProps & SectorsLocalProps & S
                 onSectorDelete={this.props.deleteSectorEntry}
                 onSave={this.props.saveSectorEntry}
             />
-            );
+        );
     };
 
     render() {
-        return(
+        return (
             <ProfileElement
                 title={PowerLocalize.get('Sector.Plural')}
                 subtitle={PowerLocalize.get('SectorEntry.Description')}

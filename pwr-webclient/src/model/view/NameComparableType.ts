@@ -12,4 +12,4 @@ export enum SortableEntryType {
     SKILL
 }
 
-export type SortableEntryField = "name" | "end-date" | "start-date" | "rating";
+export type SortableEntryField = 'name' | 'end-date' | 'start-date' | 'rating';

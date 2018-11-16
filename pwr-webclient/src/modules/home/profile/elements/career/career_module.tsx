@@ -53,26 +53,26 @@ class CareersModule extends React.Component<CareersProps & CareersLocalProps & C
     static mapStateToProps(state: ApplicationState, localProps: CareersLocalProps): CareersProps {
         return {
             careerEntries: state.databaseReducer.profile().careerEntries()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): CareersDispatch {
         return {
             addCareerEntry: () => dispatch(ProfileActionCreator.createEntry(ProfileElementType.CareerEntry))
-        }
+        };
     }
 
 
     render() {
         return (<ProfileElement
             title={PowerLocalize.get('Career.Singular')}
-            subtitle={PowerLocalize.get("CareerEntry.Description")}
+            subtitle={PowerLocalize.get('CareerEntry.Description')}
             onAddElement={this.props.addCareerEntry}
         >
             {this.props.careerEntries.map((education, key) => {
-                return(
+                return (
                     <SingleCareerEntry
-                        key={"SingleEducationElement." + key}
+                        key={'SingleEducationElement.' + key}
                         careerEntryId={education.id()}
                     />
                 );

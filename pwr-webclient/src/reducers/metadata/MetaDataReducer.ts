@@ -8,12 +8,12 @@ import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 export namespace MetaDataReducer {
 
     export function reduce(store: MetaDataStore, action: AbstractAction): MetaDataStore {
-        if(isNullOrUndefined(store)) {
+        if (isNullOrUndefined(store)) {
             let empty = MetaDataStore.empty();
-            console.info("Initializing MetaDataStore", empty);
+            console.info('Initializing MetaDataStore', empty);
             return empty;
         }
-        switch(action.type) {
+        switch (action.type) {
             case ActionType.AddOrReplaceBuildInfo: {
                 let act: AddOrReplaceBuildInfoAction = action as AddOrReplaceBuildInfoAction;
                 return store.buildInfoByService(store.buildInfoByService().set(act.service, act.buildInfo));

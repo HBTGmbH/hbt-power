@@ -21,70 +21,101 @@ import {isNullOrUndefined} from 'util';
 export class ProfileStore {
 
     @doop
-    public get languageLevels() {return doop<Array<string>, this>();};
+    public get languageLevels() {
+        return doop<Array<string>, this>();
+    };
 
     @doop
-    public get degrees() {return doop<Immutable.List<string>, this>();}
+    public get degrees() {
+        return doop<Immutable.List<string>, this>();
+    }
 
     @doop
-    public get loggedInUser() {return doop<ConsultantInfo, this>();};
+    public get loggedInUser() {
+        return doop<ConsultantInfo, this>();
+    };
 
     @doop
-    public get loginStatus() {return doop<LoginStatus, this>();};
+    public get loginStatus() {
+        return doop<LoginStatus, this>();
+    };
 
     @doop
-    public get profile() {return doop<Profile, this>();};
+    public get profile() {
+        return doop<Profile, this>();
+    };
 
     @doop
-    public get trainings() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get trainings() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get keySkills() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get keySkills() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get educations() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get educations() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get languages() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get languages() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get sectors() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get sectors() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get qualifications() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get qualifications() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get careers() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get careers() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get companies() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get companies() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     @doop
-    public get projectRoles() {return doop<Immutable.Map<string, NameEntity>, this>();}
+    public get projectRoles() {
+        return doop<Immutable.Map<string, NameEntity>, this>();
+    }
 
     /**
      * All skills that are, currently, part of any base profile. (View profiles are excluded)
      * @returns {Doop<Immutable.Set<string>, this>}
      */
-    @doop public get currentlyUsedSkillNames() {return doop<Immutable.Set<string>, this>()};
+    @doop
+    public get currentlyUsedSkillNames() {
+        return doop<Immutable.Set<string>, this>();
+    };
 
 
     constructor(
         languageLevels: Array<string>,
-        profile:        Profile,
-        trainings:      Immutable.Map<string, NameEntity>,
-        educations:     Immutable.Map<string, NameEntity>,
-        languages:      Immutable.Map<string, NameEntity>,
+        profile: Profile,
+        trainings: Immutable.Map<string, NameEntity>,
+        educations: Immutable.Map<string, NameEntity>,
+        languages: Immutable.Map<string, NameEntity>,
         qualifications: Immutable.Map<string, NameEntity>,
-        sectors:        Immutable.Map<string, NameEntity>,
-        careers:        Immutable.Map<string, NameEntity>,
-        keySkills:      Immutable.Map<string, NameEntity>,
-        companies:      Immutable.Map<string, NameEntity>,
-        projectRoles:   Immutable.Map<string, NameEntity>,
-        loggedInUser:   ConsultantInfo,
-        degrees:        Immutable.List<string>,
+        sectors: Immutable.Map<string, NameEntity>,
+        careers: Immutable.Map<string, NameEntity>,
+        keySkills: Immutable.Map<string, NameEntity>,
+        companies: Immutable.Map<string, NameEntity>,
+        projectRoles: Immutable.Map<string, NameEntity>,
+        loggedInUser: ConsultantInfo,
+        degrees: Immutable.List<string>,
         currentlyUsedSkillNames: Immutable.Set<string>
-) {
+    ) {
         return this.languageLevels(languageLevels)
             .profile(profile)
             .trainings(trainings)
@@ -123,7 +154,7 @@ export class ProfileStore {
 
     public findNameEntityByName(name: string, type: ProfileElementType): NameEntity {
         let lookup: Immutable.Map<string, NameEntity>;
-        switch(type) {
+        switch (type) {
             case ProfileElementType.SectorEntry:
                 lookup = this.sectors();
                 break;
@@ -162,8 +193,6 @@ export class ProfileStore {
     }
 
 
-
-
     /**
      * Attempts to interprete a full consultant profile and parses it into the databaseReducer.
      * @param profileFromAPI the profile the API provides.
@@ -185,8 +214,8 @@ export class ProfileStore {
         //console.info('Parsing qualifications...');
         let qualifications = this.qualifications();
         profileFromAPI.qualification.forEach(qualificationEntry => {
-           let q: NameEntity = NameEntity.fromAPI(qualificationEntry.nameEntity);
-           qualifications = qualifications.set(q.id(), q);
+            let q: NameEntity = NameEntity.fromAPI(qualificationEntry.nameEntity);
+            qualifications = qualifications.set(q.id(), q);
         });
         //console.info('...done.');
 
@@ -233,13 +262,13 @@ export class ProfileStore {
         //console.info('Parsing companies...');
         let companies = this.companies();
         profileFromAPI.projects.forEach(project => {
-            if(!isNullOrUndefined(project.broker)) {
+            if (!isNullOrUndefined(project.broker)) {
                 let broker = NameEntity.fromAPI(project.broker);
                 companies = companies.set(broker.id(), broker);
             }
 
-            if(!isNullOrUndefined(project.client)) {
-                let client =  NameEntity.fromAPI(project.client);
+            if (!isNullOrUndefined(project.client)) {
+                let client = NameEntity.fromAPI(project.client);
                 companies = companies.set(client.id(), client);
             }
 
@@ -271,7 +300,6 @@ export class ProfileStore {
     }
 
 
-
     /**
      * Deserializes this database into an API profile that may be sent back to the server for an
      * update command.
@@ -282,7 +310,6 @@ export class ProfileStore {
         // - Profile has access to database
         return this.profile().serializeToApiProfile(this);
     }
-
 
 
 }

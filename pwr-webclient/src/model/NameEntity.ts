@@ -75,7 +75,7 @@ export class NameEntity {
      */
     private static CURRENT_LOCAL_ID: number = 0;
 
-    protected constructor(id: string, name:string, isNew: boolean, type: string) {
+    protected constructor(id: string, name: string, isNew: boolean, type: string) {
         return this.id(id).name(name).isNew(isNew).type(type);
     }
 
@@ -98,10 +98,10 @@ export class NameEntity {
      */
     public toAPI(): APINameEntity {
         return {
-            id: this.isNew()? null : Number.parseInt(this.id()),
+            id: this.isNew() ? null : Number.parseInt(this.id()),
             name: this.name(),
             type: this.type()
-        }
+        };
     }
 
     /**

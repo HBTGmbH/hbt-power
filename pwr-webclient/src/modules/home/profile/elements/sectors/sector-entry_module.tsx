@@ -27,7 +27,6 @@ interface SingleSectorState {
 export class SingleSectorModule extends React.Component<SingleSectorLocalProps, SingleSectorState> {
 
 
-
     constructor(props: SingleSectorLocalProps) {
         super(props);
         this.state = {
@@ -69,12 +68,14 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
     };
 
     render() {
-        return(
+        return (
             <tr>
                 <td>
-                    <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.handleEditButtonClick}/>
-                    <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonClick}/>
-                    <div style={{width:'80%'}}>
+                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
+                                   onClick={this.handleEditButtonClick}/>
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                                   onClick={this.handleDeleteButtonClick}/>
+                    <div style={{width: '80%'}}>
                         <SectorEntryDialog
                             open={this.state.dialogOpen}
                             sectorEntry={this.props.sectorEntry}

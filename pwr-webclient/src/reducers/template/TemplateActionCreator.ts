@@ -7,8 +7,6 @@ import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {TemplateService} from '../../API_CONFIG';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
-import {ProfileActionCreator} from '../profile/ProfileActionCreator';
-import {formatFullLocalizedDate} from '../../utils/DateUtil';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -23,11 +21,11 @@ export namespace TemplateActionCreator {
      * @returns {TemplateActions.SetTemplateAction}
      * @constructor
      */
-    export function SetTemplate(template: Template) : SetTemplateAction{
+    export function SetTemplate(template: Template): SetTemplateAction {
         return {
             type: ActionType.SetTemplate,
             template: template,
-        }
+        };
     }
 
     /**
@@ -36,11 +34,11 @@ export namespace TemplateActionCreator {
      * @returns {TemplateActions.RemoveTemplateAction}
      * @constructor
      */
-    export function RemoveTemplate(id: string) : RemoveTemplateAction{
+    export function RemoveTemplate(id: string): RemoveTemplateAction {
         return {
             type: ActionType.SetTemplate,
             id: id
-        }
+        };
     }
 
     /**
@@ -48,44 +46,44 @@ export namespace TemplateActionCreator {
      * @returns {AbstractAction}
      * @constructor
      */
-    export function ClearTemplates(): AbstractAction{
+    export function ClearTemplates(): AbstractAction {
         return {
             type: ActionType.ClearTemplates,
-        }
+        };
     }
 
-    export function CreateTemplate(name:string,description:string, initials:string, path:string):CreateTemplateAction{
+    export function CreateTemplate(name: string, description: string, initials: string, path: string): CreateTemplateAction {
         return {
             type: ActionType.CreateTemplate,
             name: name,
             description: description,
-            initials:initials,
-            path:path,
-        }
+            initials: initials,
+            path: path,
+        };
     }
 
-    export function ChangeTemplate(template:TemplateSlice):ChangeTemplateAction{
-        return{
-            type:ActionType.ChangeTemplate,
-            id:             template.id,
-            name:           template.name,
-            description:    template.description,
-            path:           template.path,
-        }
+    export function ChangeTemplate(template: TemplateSlice): ChangeTemplateAction {
+        return {
+            type: ActionType.ChangeTemplate,
+            id: template.id,
+            name: template.name,
+            description: template.description,
+            path: template.path,
+        };
     }
 
-    export function TemplateRequestFailed():AbstractAction{
-        return{
+    export function TemplateRequestFailed(): AbstractAction {
+        return {
             type: ActionType.TemplateRequestFailed,
-        }
+        };
     }
 
 
-    export function SetPreview(url:string):SetPreviewAction {
+    export function SetPreview(url: string): SetPreviewAction {
         return {
             type: ActionType.SetPreview,
             url: url,
-        }
+        };
 
     }
 
@@ -103,62 +101,65 @@ export namespace TemplateActionCreator {
         dispatch(SetTemplate(template));
     }
 
-    function PreviewReceived(id:string,response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>){
-        let url:string = response.data;
+    function PreviewReceived(id: string, response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
+        let url: string = response.data;
         dispatch(SetPreview(url));
     }
 
-    function AsyncChangeTemplate(templateSlice:TemplateSlice){
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
-            axios.patch(TemplateService.ChangeTemplate(templateSlice.id),{
-                name:templateSlice.name,
-                description:templateSlice.description,
-                path:templateSlice.path,
+    function AsyncChangeTemplate(templateSlice: TemplateSlice) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            axios.patch(TemplateService.ChangeTemplate(templateSlice.id), {
+                name: templateSlice.name,
+                description: templateSlice.description,
+                path: templateSlice.path,
             })
-                .then((response:AxiosResponse) => {TemplateReceived(response,dispatch)})
+                .then((response: AxiosResponse) => {
+                    TemplateReceived(response, dispatch);
+                })
                 .catch((error: AxiosError) => {
                     dispatch(TemplateActionCreator.TemplateRequestFailed());
                     console.error(error);
                 });
-        }
+        };
     }
 
 
-    export function AsyncCreateTemplate(name:string, description:string, initials:string, path:string){
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
+    export function AsyncCreateTemplate(name: string, description: string, initials: string, path: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.post(TemplateService.CreateTemplate(name),{
-                description:description,
-                path:path,
-                createUser:initials,
+            axios.post(TemplateService.CreateTemplate(name), {
+                description: description,
+                path: path,
+                createUser: initials,
             })
-                .then((response:AxiosResponse) => {
-                    TemplateReceived(response,dispatch);
-                    dispatch(CrossCuttingActionCreator.endRequest());})
+                .then((response: AxiosResponse) => {
+                    TemplateReceived(response, dispatch);
+                    dispatch(CrossCuttingActionCreator.endRequest());
+                })
                 .catch((error: AxiosError) => {
                     dispatch(CrossCuttingActionCreator.endRequest());
                     dispatch(TemplateActionCreator.TemplateRequestFailed());
                     console.error(error);
                 });
-        }
+        };
     }
 
     function AsyncLoadTemplate(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(TemplateService.getTemplateById(id)).then((response: AxiosResponse) => {
-                console.log("AsyncLoadTemplate resonse:",response.data);
+                console.log('AsyncLoadTemplate resonse:', response.data);
                 TemplateReceived(response, dispatch);
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch((error: AxiosError) => {
                 dispatch(CrossCuttingActionCreator.endRequest());
-                console.error("AsyncLoadTemplate",error);
+                console.error('AsyncLoadTemplate', error);
             });
-        }
+        };
     }
 
     export function AsyncLoadAllTemplates() {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(ClearTemplates());
             axios.get(TemplateService.getTemplates()).then((response: AxiosResponse) => {
@@ -169,63 +170,63 @@ export namespace TemplateActionCreator {
                 console.error(error);
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
-        }
+        };
     }
 
 
-    export function AsyncLoadPreview(id:string) {
+    export function AsyncLoadPreview(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(TemplateService.getPreview(id))// url address
-                .then((response:AxiosResponse) => {
-                    PreviewReceived(id,response.data, dispatch);      // in den state laden
+                .then((response: AxiosResponse) => {
+                    PreviewReceived(id, response.data, dispatch);      // in den state laden
                     dispatch(CrossCuttingActionCreator.endRequest());
                 })
-                .catch(function (error:any) {
+                .catch(function (error: any) {
                     console.error(error);
                     dispatch(CrossCuttingActionCreator.endRequest());
                 });
-        }
+        };
     }
 
-    export function AsyncUploadFileAsTemplate(file:any, name:string, description:string, createUser:string){
+    export function AsyncUploadFileAsTemplate(file: any, name: string, description: string, createUser: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let formData = new FormData();
-            formData.append('file',file);
-            formData.append('templateSlice',"{name:\""+name+"\", description:\""+description+"\",createUser:\""+ createUser +"\"}");
+            formData.append('file', file);
+            formData.append('templateSlice', '{name:"' + name + '", description:"' + description + '",createUser:"' + createUser + '"}');
 
-            console.log("Async File: ",formData);
-            axios.post(TemplateService.uploadAsTemplate(),formData,{headers:{'content-type':'multipart/form-data'}})
-                .then((response:AxiosResponse) => {
+            console.log('Async File: ', formData);
+            axios.post(TemplateService.uploadAsTemplate(), formData, {headers: {'content-type': 'multipart/form-data'}})
+                .then((response: AxiosResponse) => {
                     // success message
                     console.log(response.data);
                     dispatch(CrossCuttingActionCreator.endRequest());
                 })
-                .catch( function (error:any) {
+                .catch(function (error: any) {
                     console.log(error);
                     // upload failed message
                     dispatch(CrossCuttingActionCreator.endRequest());
-                })
-        }
+                });
+        };
     }
 
-    export function AsyncRenderTemplatePreview(file:any){
+    export function AsyncRenderTemplatePreview(file: any) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let formData = new FormData();
-            formData.append('file',file);
+            formData.append('file', file);
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.post(TemplateService.renderPreview(),formData)
-                .then((response:AxiosResponse) => {
+            axios.post(TemplateService.renderPreview(), formData)
+                .then((response: AxiosResponse) => {
                     // success message
                     dispatch(CrossCuttingActionCreator.endRequest());
                 })
-                .catch( function (error:any) {
+                .catch(function (error: any) {
                     console.log(error);
                     // upload failed message
                     dispatch(CrossCuttingActionCreator.endRequest());
-                })
-        }
+                });
+        };
     }
 
 

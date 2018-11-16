@@ -48,33 +48,32 @@ interface KeySkillsDispatch {
     addElement(): void;
 }
 
-class KeySkillsModule extends React.Component<
-    KeySkillsProps
+class KeySkillsModule extends React.Component<KeySkillsProps
     & KeySkillsLocalProps
     & KeySkillsDispatch, KeySkillsLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: KeySkillsLocalProps): KeySkillsProps {
         return {
             keySkillEntries: state.databaseReducer.profile().keySkillEntries()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): KeySkillsDispatch {
         return {
             addElement: () => dispatch(ProfileActionCreator.createEntry(ProfileElementType.KeySkill))
-        }
+        };
     }
 
     render() {
         return (<ProfileElement
             title={PowerLocalize.get('KeySkill.Singular')}
-            subtitle={PowerLocalize.get("KeySkillEntry.Description")}
+            subtitle={PowerLocalize.get('KeySkillEntry.Description')}
             onAddElement={this.props.addElement}
         >
             {this.props.keySkillEntries.map((keySkill, key) => {
-                return(
+                return (
                     <SingleKeySkill
-                        key={"SingleKeySkill." + key}
+                        key={'SingleKeySkill.' + key}
                         keySkillEntryId={keySkill.id()}
                     />
                 );

@@ -10,6 +10,7 @@ import FormGroup from '@material-ui/core/FormGroup/FormGroup';
 interface ProfileUpdateNotificationTableProps {
     profileUpdateNotifications: Immutable.List<AdminNotification>;
     selectedRows: Array<number>;
+
     onRowSelection(rows: Array<number>): void;
 }
 
@@ -17,19 +18,21 @@ interface ProfileUpdateNotificationTableState {
 }
 
 const mapRow = (notification: AdminNotification, key: number, props: ProfileUpdateNotificationTableProps) => {
-    let isSelected : boolean = props.selectedRows.indexOf(key) !== -1;
+    let isSelected: boolean = props.selectedRows.indexOf(key) !== -1;
     return (
         <TableRow
-            key={"NotificationInbox.TableRow.Not." + notification.id()}
+            key={'NotificationInbox.TableRow.Not.' + notification.id()}
             selected={props.selectedRows.indexOf(key) !== -1}
-            style={{backgroundColor:"white"}}
+            style={{backgroundColor: 'white'}}
             //onClick={event => (void)}
             hover
         >
             <TableCell padding={'checkbox'}>
                 <FormGroup>
                     <Checkbox checked={isSelected}
-                              onChange={(event:any,checked:boolean) => {handleSingleRow(event,checked,key,props)}}
+                              onChange={(event: any, checked: boolean) => {
+                                  handleSingleRow(event, checked, key, props);
+                              }}
                               color="primary"
                     />
                 </FormGroup>
@@ -38,31 +41,33 @@ const mapRow = (notification: AdminNotification, key: number, props: ProfileUpda
             <TableCell
                 className="cursor-pointer"
             >
-                {PowerLocalize.get("NotificationInbox.ProfileUpdateNotification.SubjectText")}
+                {PowerLocalize.get('NotificationInbox.ProfileUpdateNotification.SubjectText')}
             </TableCell>
             <TableCell>{formatToMailDisplay(notification.occurrence())}</TableCell>
         </TableRow>
-    )
+    );
 };
 
-const handleSelectAll = (e:any, checked:boolean, props: ProfileUpdateNotificationTableProps) => {
-    let selection:Array<number>;
+const handleSelectAll = (e: any, checked: boolean, props: ProfileUpdateNotificationTableProps) => {
+    let selection: Array<number>;
     selection = [];
     if (checked) {
-        props.profileUpdateNotifications.map((value, key) => {selection.push(key)});
-    }else{
+        props.profileUpdateNotifications.map((value, key) => {
+            selection.push(key);
+        });
+    } else {
 
     }
     props.onRowSelection(selection);
 };
 
-const handleSingleRow = (e:any, checked:boolean, key:number, props: ProfileUpdateNotificationTableProps) => {
+const handleSingleRow = (e: any, checked: boolean, key: number, props: ProfileUpdateNotificationTableProps) => {
     let selection = props.selectedRows;
-    let isSelected:boolean = props.selectedRows.indexOf(key) !== -1;
-    if(isSelected){
+    let isSelected: boolean = props.selectedRows.indexOf(key) !== -1;
+    if (isSelected) {
         // entfernen
-        selection.splice(props.selectedRows.indexOf(key),1);
-    }else{
+        selection.splice(props.selectedRows.indexOf(key), 1);
+    } else {
         // hinzufügen
         selection.push(key);
     }
@@ -72,9 +77,9 @@ const handleSingleRow = (e:any, checked:boolean, key:number, props: ProfileUpdat
 
 const handleRowSelection = (rows: string | Array<number>, props: ProfileUpdateNotificationTableProps) => {
     let selectedIndexes: Array<number> = [];
-    if(rows === "all") {
+    if (rows === 'all') {
         props.profileUpdateNotifications.forEach((value, key) => selectedIndexes.push(key));
-    } else if(rows === "none") {
+    } else if (rows === 'none') {
         selectedIndexes = [];
     } else {
         selectedIndexes = rows as Array<number>;
@@ -82,19 +87,19 @@ const handleRowSelection = (rows: string | Array<number>, props: ProfileUpdateNo
     props.onRowSelection(selectedIndexes);
 };
 
-export const ProfileUpdateNotificationTable = (props: ProfileUpdateNotificationTableProps) =>  (
+export const ProfileUpdateNotificationTable = (props: ProfileUpdateNotificationTableProps) => (
     <div>
         <Table //multiSelectable={true}
-               //onRowSelection={(rows:any) => handleRowSelection(rows, props)}
+            //onRowSelection={(rows:any) => handleRowSelection(rows, props)}
         >
             <TableHead>
-                <TableRow style={{backgroundColor:'white'}}>
-                    <TableCell padding={"checkbox"}>
+                <TableRow style={{backgroundColor: 'white'}}>
+                    <TableCell padding={'checkbox'}>
                         <FormGroup>
                             <Checkbox
                                 indeterminate={props.selectedRows.length > 0 && props.selectedRows.length < props.profileUpdateNotifications.toArray().length}
-                                checked = {props.selectedRows.length === props.profileUpdateNotifications.toArray().length}
-                                onChange={(e:any,c:boolean) => handleSelectAll(e,c,props)}
+                                checked={props.selectedRows.length === props.profileUpdateNotifications.toArray().length}
+                                onChange={(e: any, c: boolean) => handleSelectAll(e, c, props)}
                                 color="primary"
                             />
                         </FormGroup>

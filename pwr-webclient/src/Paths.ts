@@ -39,8 +39,8 @@ export class Paths {
     public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/view/:id';
     public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/profile';
     public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/reports';
-    public static readonly USER_SEARCH =  CONFIG.APP_PATH + '/app/search';
-    public static readonly USER_STATISTICS_NETWORK =  CONFIG.APP_PATH + '/app/statistics/network';
+    public static readonly USER_SEARCH = CONFIG.APP_PATH + '/app/search';
+    public static readonly USER_STATISTICS_NETWORK = CONFIG.APP_PATH + '/app/statistics/network';
     public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/statistics/clusterinfo';
     public static readonly USER_STATISTICS_SKILLS = CONFIG.APP_PATH + '/app/statistics/skills';
 
@@ -57,14 +57,14 @@ export class Paths {
     };
 
     public restorePath() {
-        console.info('Current history location is ',location.pathname );
+        console.info('Current history location is ', location.pathname);
         if (this.adminAvailableInCookies()) {
             store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
-        } else if(this.userAvailableInCookies()) {
+        } else if (this.userAvailableInCookies()) {
             const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
             // renew the cookie to hold another fixed period of time.
             Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-            if(location.pathname !== Paths.APP_ROOT) {
+            if (location.pathname !== Paths.APP_ROOT) {
                 store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, location.pathname));
             } else {
                 store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, Paths.USER_HOME));

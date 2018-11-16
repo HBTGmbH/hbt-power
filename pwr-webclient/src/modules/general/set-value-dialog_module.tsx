@@ -5,8 +5,11 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
 interface SetValueDialogProps {
     open: boolean;
+
     onClose(): void;
+
     onOk(value: string): void;
+
     label?: string;
 }
 
@@ -17,22 +20,22 @@ interface SetValueDialogState {
 export class SetValueDialog extends React.Component<SetValueDialogProps, SetValueDialogState> {
 
     public static defaultProps: Partial<SetValueDialogProps> = {
-        label: ""
+        label: ''
     };
 
     constructor(props: SetValueDialogProps) {
         super(props);
         this.state = {
-            value: ""
-        }
+            value: ''
+        };
     }
 
     private invokeOk = () => {
         this.props.onOk(this.state.value);
         this.setState({
-            value: ""
+            value: ''
         });
-    }
+    };
 
     render() {
         return (<Dialog

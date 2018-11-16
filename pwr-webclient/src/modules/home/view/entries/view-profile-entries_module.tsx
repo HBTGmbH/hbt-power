@@ -14,8 +14,11 @@ interface ViewProfileEntriesProps {
     headers: Array<JSX.Element | string>;
     moveDisabled?: boolean;
     title?: string;
+
     renderEntry(entry: any, entryIndex: number): Array<JSX.Element>;
+
     onToggle(toggleableEntryType: string, index: number, isEnabled: boolean): void;
+
     onMove(movableEntryType: string, sourceIndex: number, targetIndex: number): void;
 }
 
@@ -33,30 +36,29 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
         this.props.onToggle(this.props.toggleableEntryType, entryIndex, checked);
     };
 
-    private onSortEnd = (data: {oldIndex: number, newIndex: number}) => {
-        if(data.oldIndex !== data.newIndex) {
+    private onSortEnd = (data: { oldIndex: number, newIndex: number }) => {
+        if (data.oldIndex !== data.newIndex) {
             this.props.onMove(this.props.movableEntryType, data.oldIndex, data.newIndex);
         }
     };
 
     private readonly dragStyle: CSSProperties = {
-        width: "46px"
+        width: '46px'
     };
 
     private readonly toggleStyle: CSSProperties = {
-        width: "58px"
+        width: '58px'
     };
 
 
     private DragHandle = SortableHandle(() => <Icon className="material-icons">drag_handle</Icon>); // This can be any component you want
 
 
-
-    private SortableItem = SortableElement((props: {entry: IViewEntry, entryIndex: number}) => {
-        return(
+    private SortableItem = SortableElement((props: { entry: IViewEntry, entryIndex: number }) => {
+        return (
             <tr>
                 <td>
-                    {this.props.moveDisabled ? "" : <this.DragHandle/>}
+                    {this.props.moveDisabled ? '' : <this.DragHandle/>}
                 </td>
                 <td>
                     <span style={{marginRight: '8px'}}>
@@ -71,35 +73,35 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
     });
 
 
-    private SortableList = SortableContainer((props: {entries: Array<IViewEntry>}) => {
-        return(
-        <div>
-            <table className="table table-striped">
-                <thead>
+    private SortableList = SortableContainer((props: { entries: Array<IViewEntry> }) => {
+        return (
+            <div>
+                <table className="table table-striped">
+                    <thead>
                     <tr>
                         <td style={this.dragStyle}/>
                         <td style={this.toggleStyle}/>
                         {this.props.headers.map((header, index) => <td key={index}>{header}</td>)}
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {
                         props.entries.map((entry, index) => {
                             let id = 0; //FIXME bad bad hack
-                            if(this.props.movableEntryType === "PROJECT") {
+                            if (this.props.movableEntryType === 'PROJECT') {
                                 id = (entry as any).id;
                             }
                             return <this.SortableItem
                                 disabled={this.props.moveDisabled}
-                                key={this.props.movableEntryType + "_" + entry.name + "_" + id}
+                                key={this.props.movableEntryType + '_' + entry.name + '_' + id}
                                 entryIndex={index}
                                 index={index}
-                                entry={entry}/>
+                                entry={entry}/>;
                         })
                     }
-                </tbody>
-            </table>
-        </div>);
+                    </tbody>
+                </table>
+            </div>);
     });
 
     render() {

@@ -78,6 +78,7 @@ export class ViewProfile {
     public getCategoryForCategory(categoryName: string): ViewCategory {
         return this.categoryParents.get(categoryName);
     }
+
     public getDisplayForSkill(skillName: string): ViewCategory {
         return this.skillDisplayCategories.get(skillName);
     }

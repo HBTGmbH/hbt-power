@@ -71,17 +71,23 @@ interface AdminClientLocalState {
  */
 interface AdminClientDispatch {
     getNotifications(user: string, pass: string): void;
+
     navigateToTrashbox(user: string, pass: string): void;
+
     navigateToInbox(user: string, pass: string): void;
+
     navigateToConsultants(): void;
-    navigateToReportManager():void;
+
+    navigateToReportManager(): void;
+
     navigateToSkillStatistics(): void;
+
     navigateToNetwork(): void;
+
     logOutAdmin(): void;
 }
 
-class AdminClientModule extends React.Component<
-    AdminClientProps
+class AdminClientModule extends React.Component<AdminClientProps
     & AdminClientLocalProps
     & AdminClientDispatch, AdminClientLocalState> {
 
@@ -95,14 +101,31 @@ class AdminClientModule extends React.Component<
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminClientDispatch {
         return {
-            getNotifications: (user, pass) => {dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));},
-            navigateToInbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass));},
-            navigateToTrashbox: (user, pass) => {dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass));},
-            navigateToConsultants: () => {dispatch(TemplateActionCreator.AsyncLoadAllTemplates());dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));},
-            navigateToReportManager: () => {dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TEMPLATES));},
-            navigateToSkillStatistics: () => {dispatch(AdminActionCreator.AsyncNavigateToStatistics());},
-            logOutAdmin: () => {dispatch(AdminActionCreator.AsyncLogOutAdmin());},
-            navigateToNetwork: () => {dispatch(AdminActionCreator.AsyncNavigateToNetwork());}
+            getNotifications: (user, pass) => {
+                dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));
+            },
+            navigateToInbox: (user, pass) => {
+                dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass));
+            },
+            navigateToTrashbox: (user, pass) => {
+                dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass));
+            },
+            navigateToConsultants: () => {
+                dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));
+            },
+            navigateToReportManager: () => {
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TEMPLATES));
+            },
+            navigateToSkillStatistics: () => {
+                dispatch(AdminActionCreator.AsyncNavigateToStatistics());
+            },
+            logOutAdmin: () => {
+                dispatch(AdminActionCreator.AsyncLogOutAdmin());
+            },
+            navigateToNetwork: () => {
+                dispatch(AdminActionCreator.AsyncNavigateToNetwork());
+            }
         };
     }
 
@@ -121,11 +144,12 @@ class AdminClientModule extends React.Component<
                     <Paper elevation={3}>
                         <AppBar>
                             <Toolbar>
-                                <div className="vertical-align" style={{flexGrow:1}} >
-                                    <img className="img-responsive logo-small" src={getImagePath()+'/HBT002_Logo_neg.png'}/>
+                                <div className="vertical-align" style={{flexGrow: 1}}>
+                                    <img className="img-responsive logo-small"
+                                         src={getImagePath() + '/HBT002_Logo_neg.png'}/>
                                 </div>
-                                <IconButton color={'secondary'} onClick={this.props.logOutAdmin} >
-                                    <Icon   className={"material-icons"}> input</Icon>
+                                <IconButton color={'secondary'} onClick={this.props.logOutAdmin}>
+                                    <Icon className={'material-icons'}> input</Icon>
                                 </IconButton>
                             </Toolbar>
                         </AppBar>
@@ -134,112 +158,115 @@ class AdminClientModule extends React.Component<
 
                 <div className="row">
                     <div className="col-md-2">
-                        <Paper  style={{marginTop:'70px'}}>
+                        <Paper style={{marginTop: '70px'}}>
                             <List>
                                 <ListSubheader>Postkorb</ListSubheader>
-                                    <ListItem
-                                        button
-                                        key="AdminClient.Overview.Mail.Inbox"
-                                        onClick={this.handleInboxButtonClick}
-                                    >
-                                        <ListItemIcon>
-                                            <Icon className="material-icons">inbox</Icon>
-                                        </ListItemIcon>
-                                        <ListItemText primary={PowerLocalize.get("AdminClient.Menu.Inbox")}/>
-                                    </ListItem>
-                                    <ListItem
-                                        button
-                                        key="AdminClient.Overview.Mail.Trashbin"
-                                        onClick={this.handleTrashboxButtonClick}
-                                    >
-                                        <ListItemIcon>
-                                            <Icon className="material-icons">delete</Icon>
-                                        </ListItemIcon>
-                                        <ListItemText primary={PowerLocalize.get("AdminClient.Menu.Trashbin")}/>
-                                    </ListItem>
+                                <ListItem
+                                    button
+                                    key="AdminClient.Overview.Mail.Inbox"
+                                    onClick={this.handleInboxButtonClick}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">inbox</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Inbox')}/>
+                                </ListItem>
+                                <ListItem
+                                    button
+                                    key="AdminClient.Overview.Mail.Trashbin"
+                                    onClick={this.handleTrashboxButtonClick}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">delete</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Trashbin')}/>
+                                </ListItem>
 
-                            <Divider/>
+                                <Divider/>
                                 <ListSubheader>Mitarbeiter</ListSubheader>
                                 <ListItem
                                     button
-                                    key = "Berater"
+                                    key="Berater"
                                     onClick={this.props.navigateToConsultants}
                                 >
                                     <ListItemIcon>
                                         <Icon className="material-icons">people</Icon>
                                     </ListItemIcon>
-                                    <ListItemText primary={"Berater"}/>
+                                    <ListItemText primary={'Berater'}/>
                                 </ListItem>
                                 <ListItem
                                     button
-                                    key = "Templates"
+                                    key="Templates"
                                     onClick={this.props.navigateToReportManager}
                                 >
                                     <ListItemIcon>
                                         <Icon className="material-icons">description</Icon>
                                     </ListItemIcon>
-                                    <ListItemText primary={"Report Manager"}/>
+                                    <ListItemText primary={'Report Manager'}/>
                                 </ListItem>
-                            <Divider/>
+                                <Divider/>
                                 <ListSubheader>Informationen</ListSubheader>
-                                    <List>
-                                        <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={ "Link01"} style={{textDecoration:"none"}}>
-                                            <ListItem
-                                                button
-                                                key="AdminClient.Menu.Info.ProfileElements"
-                                            >
-                                                <ListItemIcon>
-                                                    <Icon className="material-icons">dehaze</Icon>
-                                                </ListItemIcon>
-                                                <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
-                                            </ListItem>
-                                        </Link>
-                                        <Link to={Paths.ADMIN_INFO_SKILLTREE} style={{textDecoration:"none"}}>
-                                            <ListItem
-                                                button
-                                                key="AdminClient.Menu.Info.SkillTree"
-                                            >
-                                                <ListItemIcon>
-                                                    <Icon className="material-icons">device_hub</Icon>
-                                                </ListItemIcon>
-                                                <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.SkillTree')}/>
-                                            </ListItem>
-                                        </Link>
-                                    </List>
+                                <List>
+                                    <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={'Link01'}
+                                          style={{textDecoration: 'none'}}>
+                                        <ListItem
+                                            button
+                                            key="AdminClient.Menu.Info.ProfileElements"
+                                        >
+                                            <ListItemIcon>
+                                                <Icon className="material-icons">dehaze</Icon>
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
+                                        </ListItem>
+                                    </Link>
+                                    <Link to={Paths.ADMIN_INFO_SKILLTREE} style={{textDecoration: 'none'}}>
+                                        <ListItem
+                                            button
+                                            key="AdminClient.Menu.Info.SkillTree"
+                                        >
+                                            <ListItemIcon>
+                                                <Icon className="material-icons">device_hub</Icon>
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={PowerLocalize.get('AdminClient.Menu.Info.SkillTree')}/>
+                                        </ListItem>
+                                    </Link>
+                                </List>
                                 <Divider/>
                                 <ListSubheader>Statistiken</ListSubheader>
-                                        <ListItem
-                                            button
-                                            key="AdminClient.Menu.Statistics.Skills"
-                                            onClick={this.props.navigateToSkillStatistics}
-                                        >
-                                            <ListItemIcon>
-                                                <Icon className="material-icons">palette</Icon>
-                                            </ListItemIcon>
-                                            <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}/>
-                                        </ListItem>
-                                        <ListItem
-                                            button
-                                            key="AdminClient.Menu.Statistics.Network"
-                                            onClick={this.props.navigateToNetwork}
-                                        >
-                                            <ListItemIcon>
-                                                <Icon className="material-icons">collections</Icon>
-                                            </ListItemIcon>
-                                            <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Network')}/>
-                                        </ListItem>
+                                <ListItem
+                                    button
+                                    key="AdminClient.Menu.Statistics.Skills"
+                                    onClick={this.props.navigateToSkillStatistics}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">palette</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}/>
+                                </ListItem>
+                                <ListItem
+                                    button
+                                    key="AdminClient.Menu.Statistics.Network"
+                                    onClick={this.props.navigateToNetwork}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">collections</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Network')}/>
+                                </ListItem>
                             </List>
                         </Paper>
                     </div>
                     <div className="col-md-9 fittingContainer admin-app-bar-spacer">
-                        <Route path={Paths.ADMIN_INBOX} component={NotificationInbox} />
-                        <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid} />
-                        <Route path={Paths.ADMIN_TEMPLATES} component={ReportManager} />
-                        <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox} />
-                        <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics} />
-                        <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork} />
-                        <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2} />
-                        <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={AdminProfileOverview} />
+                        <Route path={Paths.ADMIN_INBOX} component={NotificationInbox}/>
+                        <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid}/>
+                        <Route path={Paths.ADMIN_TEMPLATES} component={ReportManager}/>
+                        <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox}/>
+                        <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics}/>
+                        <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork}/>
+                        <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2}/>
+                        <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={AdminProfileOverview}/>
                     </div>
                     <RequestSnackbar APIRequestStatus={this.props.requestStatus}/>
                 </div>

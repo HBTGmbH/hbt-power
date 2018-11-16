@@ -25,7 +25,9 @@ import ISOData = LanguageUtils.ISO639_2DataSet;
 interface LocalizationTableProps {
     localizations: Immutable.List<LocalizedQualifier>;
     termToLocalize: string;
+
     onLocaleAdd?(locale: string, qualifier: string): void;
+
     onLocaleDelete?(locale: string): void;
 }
 
@@ -39,8 +41,10 @@ interface LocalizationTableState {
 export class LocalizationTable extends React.Component<LocalizationTableProps, LocalizationTableState> {
 
     public static defaultProps: Partial<LocalizationTableProps> = {
-        onLocaleAdd: (locale, qualifier) => {},
-        onLocaleDelete: (locale) => {}
+        onLocaleAdd: (locale, qualifier) => {
+        },
+        onLocaleDelete: (locale) => {
+        }
     };
 
     constructor(props: LocalizationTableProps) {
@@ -122,6 +126,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         });
         this.closeSearcher();
     };
+
     render() {
         return (
             <div>
@@ -142,7 +147,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                         <Button
                             variant={'flat'}
                             color={'primary'}
-                            onClick={() => window.open("https://www.loc.gov/standards/iso639-2/php/code_list.php")}
+                            onClick={() => window.open('https://www.loc.gov/standards/iso639-2/php/code_list.php')}
                         >
                             {PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
                             <Icon className="material-icons">open_in_new</Icon>
@@ -156,12 +161,12 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                                     onChange={(e) => this.setLocale(e.target.value)}
                                 />
                                 <Tooltip title={PowerLocalize.get('Action.Search')}>
-                                <IconButton
-                                    className="material-icons"
-                                    onClick={this.openSearcher}
-                                >
-                                    search
-                                </IconButton>
+                                    <IconButton
+                                        className="material-icons"
+                                        onClick={this.openSearcher}
+                                    >
+                                        search
+                                    </IconButton>
                                 </Tooltip>
                             </div>
                             <div>
@@ -201,12 +206,12 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                 </Table>
                 <div className="vertical-align fullWidth">
                     <Tooltip title={PowerLocalize.get('Action.Add')}>
-                    <IconButton
-                        className="material-icons"
-                        onClick={this.openDialog}
-                    >
-                        add
-                    </IconButton>
+                        <IconButton
+                            className="material-icons"
+                            onClick={this.openDialog}
+                        >
+                            add
+                        </IconButton>
                     </Tooltip>
                 </div>
             </div>

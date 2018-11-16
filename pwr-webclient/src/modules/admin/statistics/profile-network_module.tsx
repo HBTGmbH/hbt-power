@@ -28,11 +28,9 @@ interface ConnectedNode {
     strength: number;
 }
 
-class ProfileNetworkModule extends React.Component<
-    ProfileNetworkProps
+class ProfileNetworkModule extends React.Component<ProfileNetworkProps
     & ProfileNetworkLocalProps
     & ProfileNetworkDispatch, ProfileNetworkLocalState> {
-
 
 
     constructor(props: ProfileNetworkProps & ProfileNetworkLocalProps & ProfileNetworkDispatch) {

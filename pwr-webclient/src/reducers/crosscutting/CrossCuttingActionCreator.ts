@@ -19,6 +19,6 @@ export namespace CrossCuttingActionCreator {
         return {
             type: ActionType.SetRequestPending,
             requestPending: requestPending
-        }
+        };
     }
 }

@@ -16,9 +16,10 @@ import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 interface ViewProfileDialogProps {
     open: boolean;
     viewProfile?: ViewProfile;
-    type?: "edit" | "new";
+    type?: 'edit' | 'new';
 
     onClose(): void;
+
     onSave?(name: string, description: string, charsPerLine: number): void;
 }
 
@@ -32,7 +33,7 @@ interface ViewProfileDialogState {
 export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, ViewProfileDialogState> {
 
     public static defaultProps: Partial<ViewProfileDialogProps> = {
-        type: "edit"
+        type: 'edit'
     };
 
     constructor(props: ViewProfileDialogProps) {
@@ -42,11 +43,11 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     private resetState = (props: ViewProfileDialogProps) => {
         this.state = {
-            name: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.name) ? "" : props.viewProfile.viewProfileInfo.name,
-            description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.viewDescription) ? "" : props.viewProfile.viewProfileInfo.viewDescription,
+            name: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.name) ? '' : props.viewProfile.viewProfileInfo.name,
+            description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.viewDescription) ? '' : props.viewProfile.viewProfileInfo.viewDescription,
             charsPerLine: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.charsPerLine) ? 45 : props.viewProfile.viewProfileInfo.charsPerLine,
-            locale: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.locale) ? "deu": props.viewProfile.locale
-        }
+            locale: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.locale) ? 'deu' : props.viewProfile.locale
+        };
     };
 
     private setField = (field: string, value: any) => {
@@ -56,19 +57,19 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     };
 
     private changeName = (e: any, name: string) => {
-        this.setField("name", name);
+        this.setField('name', name);
     };
 
     private changeDescription = (e: any, description: string) => {
-        this.setField("description", description)
+        this.setField('description', description);
     };
 
     private changeCharsPerLine = (charsPerLine: number) => {
-        this.setField("charsPerLine", charsPerLine);
+        this.setField('charsPerLine', charsPerLine);
     };
 
     private changeLocale = (e: any, locale: string) => {
-        this.setField("locale", locale);
+        this.setField('locale', locale);
     };
 
     private closeAndReset = () => {
@@ -77,28 +78,28 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     };
 
     private closeAndSave = () => {
-        if(!isNullOrUndefined(this.props.onSave)) {
+        if (!isNullOrUndefined(this.props.onSave)) {
             this.props.onSave(this.state.name, this.state.description, this.state.charsPerLine);
         }
     };
 
     private renderActions = () => {
         let actions = [];
-        let label = "";
-        let icon = "";
-        if(this.props.type === "edit") {
-            label = PowerLocalize.get("Action.Save");
-            icon = "save";
+        let label = '';
+        let icon = '';
+        if (this.props.type === 'edit') {
+            label = PowerLocalize.get('Action.Save');
+            icon = 'save';
         } else {
-            label = PowerLocalize.get("Action.Create");
-            icon = "add";
+            label = PowerLocalize.get('Action.Create');
+            icon = 'add';
         }
         actions.push(
             <Button
                 variant={'flat'}
                 color={'primary'}
                 onClick={this.closeAndSave}
-                key={"CloseAndSafe"}
+                key={'CloseAndSafe'}
             >
                 {label}
                 <Icon className="material-icons">{icon}</Icon>
@@ -107,19 +108,19 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             <Button
                 variant={'flat'}
                 onClick={this.props.onClose}
-                key={"Close"}
+                key={'Close'}
             >
                 <Icon className="material-icons">close</Icon>
-                {PowerLocalize.get("Action.Close")}
+                {PowerLocalize.get('Action.Close')}
             </Button>);
         return actions;
     };
 
     private renderTitle = () => {
-        if(this.props.type === "edit") {
-            return PowerLocalize.get("ViewProfileDialog.Title.Edit");
+        if (this.props.type === 'edit') {
+            return PowerLocalize.get('ViewProfileDialog.Title.Edit');
         } else {
-            return PowerLocalize.get("ViewProfileDialog.Title.Create");
+            return PowerLocalize.get('ViewProfileDialog.Title.Create');
         }
     };
 
@@ -153,10 +154,10 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                 <div>
                     <ListSubheader>Chars per Line</ListSubheader>
                     <Button
-                        style={{width:'40px',height:'40px',padding:'0',marginRight:'15px'}}
+                        style={{width: '40px', height: '40px', padding: '0', marginRight: '15px'}}
                         variant={'fab'}
                         color={'primary'}
-                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0 )?(this.state.charsPerLine - 1):0)}
+                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0) ? (this.state.charsPerLine - 1) : 0)}
                     >
                         <RemoveIcon/>
                     </Button>
@@ -164,9 +165,9 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                     {this.state.charsPerLine}
 
                     <Button
-                        style={{width:'40px',height:'40px',padding:'0',marginLeft:'15px'}}
+                        style={{width: '40px', height: '40px', padding: '0', marginLeft: '15px'}}
                         variant={'fab'} color={'primary'}
-                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100)?(this.state.charsPerLine + 1):100)}
+                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100) ? (this.state.charsPerLine + 1) : 100)}
                     >
                         <AddIcon/>
                     </Button>

@@ -13,31 +13,49 @@ import {AxiosRequestConfig} from 'axios';
 @doop
 export class AdminState {
     @doop
-    public get profileEntryNotifications() {return doop<Immutable.List<ProfileEntryNotification>, this>()};
+    public get profileEntryNotifications() {
+        return doop<Immutable.List<ProfileEntryNotification>, this>();
+    };
 
     @doop
-    public get profileUpdateNotifications() {return doop<Immutable.List<AdminNotification>, this>()};
+    public get profileUpdateNotifications() {
+        return doop<Immutable.List<AdminNotification>, this>();
+    };
 
     @doop
-    public get skillNotifications() {return doop<Immutable.List<SkillNotification>, this>()};
+    public get skillNotifications() {
+        return doop<Immutable.List<SkillNotification>, this>();
+    };
 
     @doop
-    public get trashedNotifications() {return doop<Immutable.List<AdminNotification>, this>()};
+    public get trashedNotifications() {
+        return doop<Immutable.List<AdminNotification>, this>();
+    };
 
     @doop
-    public get requestStatus() {return doop<RequestStatus, this>()};
+    public get requestStatus() {
+        return doop<RequestStatus, this>();
+    };
 
     @doop
-    public get loginStatus() {return doop<LoginStatus, this>()};
+    public get loginStatus() {
+        return doop<LoginStatus, this>();
+    };
 
     @doop
-    public get adminName() {return doop<string, this>()};
+    public get adminName() {
+        return doop<string, this>();
+    };
 
     @doop
-    public get adminPass() {return doop<string, this>()};
+    public get adminPass() {
+        return doop<string, this>();
+    };
 
     @doop
-    public get consultantsByInitials() {return doop<Immutable.Map<string, ConsultantInfo>, this>()};
+    public get consultantsByInitials() {
+        return doop<Immutable.Map<string, ConsultantInfo>, this>();
+    };
 
     // == Values below are used for the skill notification dialog == //
 
@@ -45,19 +63,34 @@ export class AdminState {
      * Skill notification that is selected for resolving.
      * @returns {Doop<SkillNotification, this>}
      */
-    @doop public get selectedSkillNotification() {return doop<SkillNotification, this>()};
+    @doop
+    public get selectedSkillNotification() {
+        return doop<SkillNotification, this>();
+    };
 
-    @doop public get skillNotificationEditStatus() {return doop<SkillNotificationEditStatus,this>()}
+    @doop
+    public get skillNotificationEditStatus() {
+        return doop<SkillNotificationEditStatus, this>();
+    }
 
     /**
      * Selected action for the selected skill notification.
      * @returns {Doop<SkillNotificationAction, this>}
      */
-    @doop public get skillNotificationSelectedAction() {return doop<SkillNotificationAction, this>()}
+    @doop
+    public get skillNotificationSelectedAction() {
+        return doop<SkillNotificationAction, this>();
+    }
 
-    @doop public get skillNotificationError() {return doop<string, this>()}
+    @doop
+    public get skillNotificationError() {
+        return doop<string, this>();
+    }
 
-    @doop public get isSkillNameEdited() {return doop<boolean, this>()};
+    @doop
+    public get isSkillNameEdited() {
+        return doop<boolean, this>();
+    };
 
     private constructor(profileEntryNotifications: Immutable.List<ProfileEntryNotification>,
                         profileUpdateNotifications: Immutable.List<AdminNotification>,
@@ -92,9 +125,9 @@ export class AdminState {
             Immutable.List<AdminNotification>(),
             Immutable.List<SkillNotification>(),
             Immutable.List<AdminNotification>(),
-            RequestStatus.Inactive, LoginStatus.INITIALS, "", "", Immutable.Map<string, ConsultantInfo>(),
-            "",
-            SkillNotificationEditStatus.CLOSED, null, "", SkillNotificationAction.ACTION_OK, false);
+            RequestStatus.Inactive, LoginStatus.INITIALS, '', '', Immutable.Map<string, ConsultantInfo>(),
+            '',
+            SkillNotificationEditStatus.CLOSED, null, '', SkillNotificationAction.ACTION_OK, false);
     }
 
     public adminAuthConfig(): AxiosRequestConfig {

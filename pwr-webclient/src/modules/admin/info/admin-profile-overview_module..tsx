@@ -43,9 +43,9 @@ class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewPro
                         <Tab label={PowerLocalize.get('AdminClient.Overview.Skills')} value={1}/>
                     </Tabs>
                     {this.state.index === 0 ? <NameEntityOverview/> : null}
-                    {this.state.index === 1 ? <UsedSkillOverview/>  : null}
+                    {this.state.index === 1 ? <UsedSkillOverview/> : null}
                 </div>
-            </div>)
+            </div>);
     }
 }
 

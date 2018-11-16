@@ -8,8 +8,11 @@ import filterFuzzy = StringUtils.filterFuzzy;
 
 interface LocalizationSearcherProps {
     open: boolean;
+
     onClose?(): void;
+
     onSelectIsoData?(data: ISOData): void;
+
     maxHeight?: string;
 }
 
@@ -24,19 +27,20 @@ const originalLanguageCodes = LanguageUtils.getAllISO639_2LanguageCodes();
 export class LocalizationSearcher extends React.Component<LocalizationSearcherProps, LocalizationSearcherState> {
 
 
-
     constructor(props: LocalizationSearcherProps) {
         super(props);
         this.state = {
             isoData: originalLanguageCodes,
             selected: null,
-            searchString: "",
+            searchString: '',
         };
     }
 
     public static defaultProps: Partial<LocalizationSearcherProps> = {
-        onClose: () => {},
-        onSelectIsoData: data => {},
+        onClose: () => {
+        },
+        onSelectIsoData: data => {
+        },
         maxHeight: '400px'
     };
 
@@ -45,21 +49,22 @@ export class LocalizationSearcher extends React.Component<LocalizationSearcherPr
             isoData: LanguageUtils.getAllISO639_2LanguageCodes()
         });
     }
+
     private static filterIsoData = (data: ISOData, searchString: string) => {
         return data.int.some((value, index, array) => filterFuzzy(searchString, value)) ||
-                data.native.some(((value, index, array) => filterFuzzy(searchString, value)));
+            data.native.some(((value, index, array) => filterFuzzy(searchString, value)));
     };
 
     public handleSearchStringChange = (e: any) => {
         const value = e.target.value;
         let filtered = originalLanguageCodes;
-        if(value.trim() !== "") {
+        if (value.trim() !== '') {
             filtered = originalLanguageCodes.filter(data => LocalizationSearcher.filterIsoData(data, value));
         }
         this.setState({
             searchString: value,
             isoData: filtered,
-        })
+        });
     };
 
     private handleSelectIsoData = (isoData: ISOData) => {
@@ -77,24 +82,24 @@ export class LocalizationSearcher extends React.Component<LocalizationSearcherPr
 
     render() {
         return (
-        <Dialog
-            open={this.props.open}
-            onClose={this.props.onClose}
-        >
-            <DialogTitle>{PowerLocalize.get("LocalizationSearcher.Title")}</DialogTitle>
-            <DialogContent>
-                {PowerLocalize.get("LocalizationSearcher.Explanation")}
-                <TextField
-                    value={this.state.searchString}
-                    onChange={this.handleSearchStringChange}
-                    label={PowerLocalize.get("LocalizationSearcher.SearchString")}
-                />
-                <div style={{maxHeight: this.props.maxHeight, overflow: 'auto'}}>
-                    <List>
-                        {this.state.isoData.map(this.mapToListItem)}
-                    </List>
-                </div>
-            </DialogContent>
-        </Dialog>);
+            <Dialog
+                open={this.props.open}
+                onClose={this.props.onClose}
+            >
+                <DialogTitle>{PowerLocalize.get('LocalizationSearcher.Title')}</DialogTitle>
+                <DialogContent>
+                    {PowerLocalize.get('LocalizationSearcher.Explanation')}
+                    <TextField
+                        value={this.state.searchString}
+                        onChange={this.handleSearchStringChange}
+                        label={PowerLocalize.get('LocalizationSearcher.SearchString')}
+                    />
+                    <div style={{maxHeight: this.props.maxHeight, overflow: 'auto'}}>
+                        <List>
+                            {this.state.isoData.map(this.mapToListItem)}
+                        </List>
+                    </div>
+                </DialogContent>
+            </Dialog>);
     }
 }

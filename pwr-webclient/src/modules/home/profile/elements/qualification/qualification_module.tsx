@@ -37,28 +37,30 @@ interface QualificationLocalState {
 
 interface QualificationDispatch {
     addQualificationEntry(): void;
+
     deleteQualificationEntry(id: string): void;
+
     saveQualification(qualificationEntry: QualificationEntry, qualification: NameEntity): void;
 }
 
 class QualificationModule extends React.Component<QualificationProps & QualificationProps & QualificationDispatch, QualificationLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps) : QualificationProps {
+    static mapStateToProps(state: ApplicationState, localProps: QualificationLocalProps): QualificationProps {
         return {
-            qualificationEntries : state.databaseReducer.profile().qualificationEntries(),
+            qualificationEntries: state.databaseReducer.profile().qualificationEntries(),
             qualifications: state.databaseReducer.qualifications()
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : QualificationDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): QualificationDispatch {
         return {
-            addQualificationEntry: function() {
+            addQualificationEntry: function () {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.QualificationEntry));
             },
-            deleteQualificationEntry: function(id: string) {
+            deleteQualificationEntry: function (id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.QualificationEntry));
             },
-            saveQualification: function(qualificationEntry: QualificationEntry, qualification: NameEntity){
+            saveQualification: function (qualificationEntry: QualificationEntry, qualification: NameEntity) {
                 dispatch(ProfileActionCreator.saveEntry(qualificationEntry, qualification, ProfileElementType.QualificationEntry));
             }
         };
@@ -69,10 +71,10 @@ class QualificationModule extends React.Component<QualificationProps & Qualifica
     };
 
     render() {
-        return(
+        return (
             <ProfileElement
                 title={PowerLocalize.get('Qualification.Plural')}
-                subtitle={PowerLocalize.get("QualificationEntry.Description")}
+                subtitle={PowerLocalize.get('QualificationEntry.Description')}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.qualificationEntries.map((q, key) => {

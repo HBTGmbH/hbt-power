@@ -16,16 +16,16 @@ export class PowerClient extends React.Component<{}, {}> {
     render() {
         return <div>
             <PowerToolbar/>
-            <div style={{marginTop: "70px"}}>
+            <div style={{marginTop: '70px'}}>
                 <Route path={Paths.USER_HOME} component={PowerOverview}/>
                 <Route path={Paths.USER_PROFILE} component={ConsultantProfile}/>
                 <Route path={Paths.USER_STATISTICS_NETWORK} component={ProfileNetworkGraph}/>
                 <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>
                 <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
-                <Route path={Paths.USER_SEARCH}  component={ConsultantSkillSearch}/>
-                <Route path={Paths.USER_VIEW_PROFILE}  component={ViewProfileOverview}/>
+                <Route path={Paths.USER_SEARCH} component={ConsultantSkillSearch}/>
+                <Route path={Paths.USER_VIEW_PROFILE} component={ViewProfileOverview}/>
             </div>
             <ProfileLoadingSpinner/>
-        </div>
+        </div>;
     }
 }

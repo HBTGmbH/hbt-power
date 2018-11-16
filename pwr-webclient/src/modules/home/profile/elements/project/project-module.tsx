@@ -19,8 +19,11 @@ interface ProjectModuleProps {
     projectRoles: Immutable.Map<string, NameEntity>;
     companies: Immutable.Map<string, NameEntity>;
     profile: Profile;
+
     onSave(state: ProjectDialogState): void;
+
     onDelete(id: string): void;
+
     backgroundColor?: string;
 }
 
@@ -68,7 +71,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     private getRoleNameList = () => {
         let res: string = '';
         let prefix = '';
-        this.props.project.roleIds().forEach( id => {
+        this.props.project.roleIds().forEach(id => {
             res += prefix;
             res += NameEntityUtil.getNullTolerantName(id, this.props.projectRoles);
             prefix = ', ';
@@ -77,11 +80,11 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     };
 
     private renderTitle = () => {
-        return "Tätig als " + this.getRoleNameList() + " von " + formatToShortDisplay(this.props.project.startDate())
-            + " bis " + formatToShortDisplay(this.props.project.endDate());
+        return 'Tätig als ' + this.getRoleNameList() + ' von ' + formatToShortDisplay(this.props.project.startDate())
+            + ' bis ' + formatToShortDisplay(this.props.project.endDate());
     };
 
-    render () {
+    render() {
         return <ExpansionPanel
             defaultExpanded
             style={{
@@ -94,7 +97,8 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                 title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
             >
                 <div>
-                    <Typography variant={'headline'}>{this.props.project.name() + ' für ' + this.getEndCustomerName()}</Typography>
+                    <Typography
+                        variant={'headline'}>{this.props.project.name() + ' für ' + this.getEndCustomerName()}</Typography>
                     <Typography variant={'caption'}>{this.renderTitle()}</Typography>
                 </div>
             </ExpansionPanelSummary>
@@ -110,9 +114,10 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
             <ExpansionPanelDetails>
                 {this.props.project.description()}
             </ExpansionPanelDetails>
-            <CardActions >
-                <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
-                <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.deleteButtonPress}/>
+            <CardActions>
+                <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
+                <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                               onClick={this.deleteButtonPress}/>
             </CardActions>
         </ExpansionPanel>;
     }

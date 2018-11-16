@@ -12,8 +12,8 @@ export class Color {
     public static readonly Green: Color = new Color(0, 255, 0, 255);
     public static readonly Red: Color = new Color(255, 0, 0, 255);
 
-    public static readonly HBTBlue : Color = new Color(0, 100, 152, 255);
-    public static readonly HBTAnthrazit : Color = new Color(85, 85, 91, 255);
+    public static readonly HBTBlue: Color = new Color(0, 100, 152, 255);
+    public static readonly HBTAnthrazit: Color = new Color(85, 85, 91, 255);
     public static readonly HBTSilver: Color = new Color(225, 223, 221, 255);
 
     public static readonly HBT_2017_TEXT_WHITE: Color = new Color(255, 255, 255);
@@ -35,7 +35,7 @@ export class Color {
         this.r = Math.round(r);
         this.g = Math.round(g);
         this.b = Math.round(b);
-        if(isNullOrUndefined(a)) {
+        if (isNullOrUndefined(a)) {
             a = 1.0;
         }
         this.a = Math.round(a);
@@ -49,7 +49,7 @@ export class Color {
      * @returns {Color}
      * @constructor
      */
-    public static LERP(a: Color, b: Color, t: number) : Color {
+    public static LERP(a: Color, b: Color, t: number): Color {
         return new Color
         (
             a.r + (b.r - a.r) * t,
@@ -60,11 +60,11 @@ export class Color {
     }
 
 
-    public toCSSRGBString() : string {
-       return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
+    public toCSSRGBString(): string {
+        return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + this.a + ')';
     }
 
     public toCSSRGBAString(alpha: number | string) {
-        return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + "," + alpha + ")";
+        return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + this.a + ',' + alpha + ')';
     }
 }

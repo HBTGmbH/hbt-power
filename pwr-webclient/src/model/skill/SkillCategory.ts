@@ -17,21 +17,42 @@ export interface APISkillCategory {
 
 @doop
 export class SkillCategory {
-    @doop public get id() {return doop<number, this>()}
+    @doop
+    public get id() {
+        return doop<number, this>();
+    }
 
-    @doop public get qualifier() {return doop<string, this>()};
+    @doop
+    public get qualifier() {
+        return doop<string, this>();
+    };
 
-    @doop public get qualifiers() {return doop<Immutable.List<LocalizedQualifier>, this>()};
+    @doop
+    public get qualifiers() {
+        return doop<Immutable.List<LocalizedQualifier>, this>();
+    };
 
     //@doop public get categories() {return doop<Immutable.List<SkillCategory>, this>()};
 
-    @doop public get skills() {return doop<Immutable.List<SkillServiceSkill>, this>()};
+    @doop
+    public get skills() {
+        return doop<Immutable.List<SkillServiceSkill>, this>();
+    };
 
-    @doop public get blacklisted() {return doop<boolean, this>()};
+    @doop
+    public get blacklisted() {
+        return doop<boolean, this>();
+    };
 
-    @doop public get isCustom() {return doop<boolean, this>()};
+    @doop
+    public get isCustom() {
+        return doop<boolean, this>();
+    };
 
-    @doop public get isDisplay() {return doop<boolean, this>()};
+    @doop
+    public get isDisplay() {
+        return doop<boolean, this>();
+    };
 
     private constructor(id: number, qualifier: string,
                         qualifiers: Immutable.List<LocalizedQualifier>,

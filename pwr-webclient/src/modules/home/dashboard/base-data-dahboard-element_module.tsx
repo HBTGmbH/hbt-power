@@ -27,6 +27,7 @@ interface BaseDataDashboardElementLocalState {
 
 interface BaseDataDashboardElementDispatch {
     requestSingleProfile(initials: string): void;
+
     navigateTo(target: string): void;
 }
 
@@ -37,16 +38,16 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
             initials: state.databaseReducer.loggedInUser().initials(),
             name: state.databaseReducer.loggedInUser().firstName(),
             lastEdited: state.databaseReducer.profile().lastEdited()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BaseDataDashboardElementDispatch {
         return {
-            requestSingleProfile: function(initials: string) {
+            requestSingleProfile: function (initials: string) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-        }
+        };
     }
 
     private handleEditButtonClick = () => {
@@ -56,35 +57,35 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
 
     render() {
         return (
-        <Paper className="dashboard-element">
-            <div className="row">
-                <div className="col-md-12 vertical-align fullWidth">
-                        <span style={{fontSize: "16px", fontWeight: "bold", marginTop: "8px"}}>
+            <Paper className="dashboard-element">
+                <div className="row">
+                    <div className="col-md-12 vertical-align fullWidth">
+                        <span style={{fontSize: '16px', fontWeight: 'bold', marginTop: '8px'}}>
                             {getRandomGreeting()} {this.props.name}!
                         </span>
-                </div>
-                <div className="col-md-12 vertical-align fullWidth">
-                    <Avatar  sizes={'80'} src={getProfileImageLocation(this.props.initials)} />
-                </div>
-                <div className="col-md-12 vertical-align fullWidth" style={{marginTop: "8px"}}>
-                    {PowerLocalize.get("Overview.Base.LastEdited")}
-                </div>
-                <div className="col-md-12 vertical-align fullWidth" style={{marginTop: "8px"}}>
-                    {formatToFullLocalizedDateTime(this.props.lastEdited)}
-                </div>
-                <div className="col-md-12 vertical-align fullWidth">
-                    <Button
-                        variant={'raised'}
-                        style={{marginTop: "8px"}}
-                        color={'primary'}
-                        onClick={this.handleEditButtonClick}
-                    >
-                        <Icon className="material-icons">edit</Icon>
-                        {PowerLocalize.get('Action.Edit')}
+                    </div>
+                    <div className="col-md-12 vertical-align fullWidth">
+                        <Avatar sizes={'80'} src={getProfileImageLocation(this.props.initials)}/>
+                    </div>
+                    <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
+                        {PowerLocalize.get('Overview.Base.LastEdited')}
+                    </div>
+                    <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
+                        {formatToFullLocalizedDateTime(this.props.lastEdited)}
+                    </div>
+                    <div className="col-md-12 vertical-align fullWidth">
+                        <Button
+                            variant={'raised'}
+                            style={{marginTop: '8px'}}
+                            color={'primary'}
+                            onClick={this.handleEditButtonClick}
+                        >
+                            <Icon className="material-icons">edit</Icon>
+                            {PowerLocalize.get('Action.Edit')}
                         </Button>
+                    </div>
                 </div>
-            </div>
-        </Paper>);
+            </Paper>);
     }
 }
 

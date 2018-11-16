@@ -5,7 +5,7 @@ export namespace LanguageUtils {
         int: string;
         native: string;
     }
-    
+
     export interface ISO639_2DataSet {
         code: string;
         int: Array<string>;

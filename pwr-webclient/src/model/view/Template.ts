@@ -1,14 +1,14 @@
-export class Template{
+export class Template {
     id: string;
-    name:string;
+    name: string;
     description: string;
     path: string;
     createUser: string;
     createdDate: string;
-    previewUrl:string;
+    previewUrl: string;
 
 
-    constructor(template: Template){
+    constructor(template: Template) {
         this.id = template.id;
         this.name = template.name;
         this.description = template.description;
@@ -20,13 +20,13 @@ export class Template{
 }
 
 
-export class TemplateSlice{
-    id:string;
-    name:string;
-    description:string;
-    path:string;
+export class TemplateSlice {
+    id: string;
+    name: string;
+    description: string;
+    path: string;
 
-    constructor(id:string, name:string, description:string, path:string){
+    constructor(id: string, name: string, description: string, path: string) {
         this.id = id;
         this.name = name;
         this.description = description;

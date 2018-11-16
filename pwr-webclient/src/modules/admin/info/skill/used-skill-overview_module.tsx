@@ -35,12 +35,13 @@ interface UsedSkillOverviewLocalState {
 
 interface UsedSkillOverviewDispatch {
     loadAllUsedSkills(): void;
+
     getSkillUsageInfo(skillName: string): void;
+
     getSkillHierarchy(skillName: string): void;
 }
 
-class UsedSkillOverviewModule extends React.Component<
-    UsedSkillOverviewProps
+class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     & UsedSkillOverviewLocalProps
     & UsedSkillOverviewDispatch, UsedSkillOverviewLocalState> {
 
@@ -84,13 +85,13 @@ class UsedSkillOverviewModule extends React.Component<
     private closeEditDialog = () => {
         this.setState({
             editOpen: false
-        })
+        });
     };
 
     private openEditDialog = () => {
         this.setState({
             editOpen: true
-        })
+        });
     };
 
     private isSelected = (name: string) => {
@@ -99,9 +100,9 @@ class UsedSkillOverviewModule extends React.Component<
 
     private selectedClass = (name: string) => {
         if (this.isSelected(name)) {
-            return "pwr-selected-list-item";
+            return 'pwr-selected-list-item';
         } else {
-            return "";
+            return '';
         }
     };
 
@@ -110,11 +111,11 @@ class UsedSkillOverviewModule extends React.Component<
                          className={this.selectedClass(name)}
                          value={name}
                          key={name}
-                         onChange={(e:any) => console.log(e)}
+                         onChange={(e: any) => console.log(e)}
                          onClick={() => this.handleSkillSelect(null, name)}
         >
             {name}
-        </ListItem>
+        </ListItem>;
     };
 
     private renderSkills = (skills: Array<string> | null) => {
@@ -130,12 +131,12 @@ class UsedSkillOverviewModule extends React.Component<
 
     render() {
         let res = null;
-        if(this.state.filterString !== "") {
+        if (this.state.filterString !== '') {
             res = this.props.usedSkillNames.filter((value) => filterFuzzy(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
-        let skillUsageInfo: Array<ConsultantInfo> = toArray(this.props.skillUsageInfo.get(this.state.selectedSkillName))
+        let skillUsageInfo: Array<ConsultantInfo> = toArray(this.props.skillUsageInfo.get(this.state.selectedSkillName));
         return (
             <div>
                 <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
@@ -144,24 +145,24 @@ class UsedSkillOverviewModule extends React.Component<
                                  onClose={this.closeEditDialog}
                 />
 
-                    <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
-                        <TextField
-                            value={this.state.filterString}
-                            onChange={(e) => this.setState({filterString: e.target.value})}
-                            label={PowerLocalize.get("Action.Search")}
-                            style={{paddingLeft: "8px", paddingBottom:"3px"}}
-                        />
-                    </Paper>
+                <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
+                    <TextField
+                        value={this.state.filterString}
+                        onChange={(e) => this.setState({filterString: e.target.value})}
+                        label={PowerLocalize.get('Action.Search')}
+                        style={{paddingLeft: '8px', paddingBottom: '3px'}}
+                    />
+                </Paper>
 
-                <div className={"row"}>
-                    <div className={"col-md-8"}>
+                <div className={'row'}>
+                    <div className={'col-md-8'}>
                         <Paper>
                             <List>
                                 {this.renderSkills(res)}</List>
                         </Paper>
                     </div>
                     <div className="col-md-4">
-                        <div style={{marginTop: "8px"}}>
+                        <div style={{marginTop: '8px'}}>
                             <UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
                                               usedBy={skillUsageInfo}
                                               skillName={this.state.selectedSkillName}

@@ -11,7 +11,7 @@ import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {Action} from 'redux';
 
-export interface AbstractAction extends Action{
+export interface AbstractAction extends Action {
     type: ActionType;
 }
 
@@ -39,7 +39,7 @@ export interface ReceiveAPIResponseAction extends AbstractAction {
     payload: any;
 }
 
-export interface CreateEntryAction extends  AbstractAction {
+export interface CreateEntryAction extends AbstractAction {
     entryType: ProfileElementType;
 }
 
@@ -56,7 +56,7 @@ export interface DeleteEntryAction extends AbstractAction {
  * Represents a save operation on an arbitrary {@link ProfileElementType}. To allow this, any is used (unfortunately...).
  * the {@link SaveEntryAction.entry} will contain the profile entry, while the {@link SaveEntryAction.nameEntity}
  * may contain a {@link NameEntity} that was created by this client. Thiis {@link NameEntity} has to be added into the
- * database as possible suggestion. 
+ * database as possible suggestion.
  */
 export interface SaveEntryAction extends AbstractAction {
     entryType: ProfileElementType;

@@ -28,8 +28,7 @@ interface BuildInfoDispatch {
     fetchBuildInfo(): void;
 }
 
-class BuildInfoModule extends React.Component<
-    BuildInfoProps
+class BuildInfoModule extends React.Component<BuildInfoProps
     & BuildInfoLocalProps
     & BuildInfoDispatch, BuildInfoLocalState> {
 
@@ -41,16 +40,16 @@ class BuildInfoModule extends React.Component<
         return {
             buildInfo: state.metaDataReducer.buildInfoByService(),
             clientInfo: state.metaDataReducer.clientBuildInfo(),
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BuildInfoDispatch {
         return {
             fetchBuildInfo: () => dispatch(MetaDataActionCreator.FetchAllBuildInfo())
-        }
+        };
     }
 
-   private renderClientInfo = (info: ClientBuildInfo) =>  (info != null ?
+    private renderClientInfo = (info: ClientBuildInfo) => (info != null ?
             <span>
         <span className="build-info-highlight">Webclient</span>
         <span className="build-info-normal"> version </span>
@@ -70,14 +69,14 @@ class BuildInfoModule extends React.Component<
     render() {
         return (<div>
             <ListSubheader>Service-Summary</ListSubheader>
-            <div style={{paddingLeft: "16px"}}>
-            {this.props.buildInfo
-                .sort(Comparators.getBuildInfoComparator(true))
-                .map(buildInfo => <div key={buildInfo.name()}><SingleBuildInfo buildInfo={buildInfo}/><br/></div>)
-                .toArray()}
+            <div style={{paddingLeft: '16px'}}>
+                {this.props.buildInfo
+                    .sort(Comparators.getBuildInfoComparator(true))
+                    .map(buildInfo => <div key={buildInfo.name()}><SingleBuildInfo buildInfo={buildInfo}/><br/></div>)
+                    .toArray()}
             </div>
             <ListSubheader>Client-Info</ListSubheader>
-            <div style={{paddingLeft: "16px"}}>
+            <div style={{paddingLeft: '16px'}}>
                 {this.renderClientInfo(this.props.clientInfo)}
             </div>
         </div>);

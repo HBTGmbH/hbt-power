@@ -14,6 +14,7 @@ import formatString = StringUtils.formatString;
 interface ProfileEntryNotificationTableLocalProps {
     profileEntryNotifications: Immutable.List<ProfileEntryNotification>;
     selectedRows: Array<number>;
+
     onRowSelection(rows: Array<number>): void;
 }
 
@@ -30,24 +31,26 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
         this.state = {
             notificationDialogOpen: false,
             selectedNotification: -1
-        }
+        };
     }
 
     private mapRow = (notification: ProfileEntryNotification, key: number) => {
-        let isSelected:boolean = this.props.selectedRows.indexOf(key) != -1;
+        let isSelected: boolean = this.props.selectedRows.indexOf(key) != -1;
 
         return (
             <TableRow
-                key={"NotificationInbox.TableRow.Not." + notification.adminNotification().id()}
+                key={'NotificationInbox.TableRow.Not.' + notification.adminNotification().id()}
                 selected={this.props.selectedRows.indexOf(key) != -1}
-                style={{backgroundColor:"white"}}
+                style={{backgroundColor: 'white'}}
                 onClick={event => this.handleRowSelection}
                 hover
             >
                 <TableCell padding={'checkbox'}>
                     <FormGroup>
                         <Checkbox checked={isSelected}
-                                  onChange={(event:any,checked:boolean) => {this.handleSingleRow(event,checked,key)}}
+                                  onChange={(event: any, checked: boolean) => {
+                                      this.handleSingleRow(event, checked, key);
+                                  }}
                                   color="primary"
                         />
                     </FormGroup>
@@ -57,26 +60,26 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
                     className="cursor-pointer"
                 >
                     {formatString(
-                        PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
+                        PowerLocalize.get('NotificationInbox.NameEntityNotification.SubjectTextTemplate'),
                         notification.nameEntity().name(),
                         NameEntityUtil.typeToLocalizedType(notification.nameEntity()))
                     }
                 </TableCell>
                 <TableCell>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableCell>
             </TableRow>
-        )
+        );
     };
 
     private showNotificationDialog = (index: number) => {
         this.setState({
             notificationDialogOpen: true,
             selectedNotification: index
-        })
+        });
     };
 
     private handleCellClick = (rowNum: number, colNum: number) => {
         // Ignore the checkboxes.
-        if(colNum >= 0) {
+        if (colNum >= 0) {
             this.showNotificationDialog(rowNum);
         }
     };
@@ -84,27 +87,29 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
     private hideNotificationDialog = () => {
         this.setState({
             notificationDialogOpen: false
-        })
+        });
     };
 
-    private handleSelectAll = (e:any, checked:boolean) => {
-        let selection:Array<number>;
+    private handleSelectAll = (e: any, checked: boolean) => {
+        let selection: Array<number>;
         selection = [];
         if (checked) {
-            this.props.profileEntryNotifications.map((value, key) => {selection.push(key)});
-        }else{
+            this.props.profileEntryNotifications.map((value, key) => {
+                selection.push(key);
+            });
+        } else {
 
         }
         this.props.onRowSelection(selection);
     };
 
-    private handleSingleRow = (e:any, checked:boolean, key:number) => {
+    private handleSingleRow = (e: any, checked: boolean, key: number) => {
         let selection = this.props.selectedRows;
-        let isSelected:boolean = this.props.selectedRows.indexOf(key) !== -1;
-        if(isSelected){
+        let isSelected: boolean = this.props.selectedRows.indexOf(key) !== -1;
+        if (isSelected) {
             // entfernen
-            selection.splice(this.props.selectedRows.indexOf(key),1);
-        }else{
+            selection.splice(this.props.selectedRows.indexOf(key), 1);
+        } else {
             // hinzufügen
             selection.push(key);
         }
@@ -113,9 +118,9 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
 
     private handleRowSelection = (rows: string | Array<number>) => {
         let selectedIndexes: Array<number> = [];
-        if(rows === "all") {
+        if (rows === 'all') {
             this.props.profileEntryNotifications.forEach((value, key) => selectedIndexes.push(key));
-        } else if(rows === "none") {
+        } else if (rows === 'none') {
             selectedIndexes = [];
         } else {
             selectedIndexes = rows as Array<number>;
@@ -125,37 +130,37 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
 
     render() {
         return (
-        <div>
-            <NotificationDialog
-                index={this.state.selectedNotification}
-                open={this.state.notificationDialogOpen}
-                onClose={this.hideNotificationDialog}
-            />
-            <Table>
-                <TableHead>
-                    <TableRow style={{backgroundColor:'white'}}>
-                        <TableCell padding={"checkbox"}>
-                            <FormGroup>
-                                <Checkbox
-                                    indeterminate={this.props.selectedRows.length > 0 && this.props.selectedRows.length < this.props.profileEntryNotifications.toArray().length}
-                                    checked = {this.props.selectedRows.length === this.props.profileEntryNotifications.toArray().length}
-                                    onChange={this.handleSelectAll}
-                                    color="primary"
+            <div>
+                <NotificationDialog
+                    index={this.state.selectedNotification}
+                    open={this.state.notificationDialogOpen}
+                    onClose={this.hideNotificationDialog}
+                />
+                <Table>
+                    <TableHead>
+                        <TableRow style={{backgroundColor: 'white'}}>
+                            <TableCell padding={'checkbox'}>
+                                <FormGroup>
+                                    <Checkbox
+                                        indeterminate={this.props.selectedRows.length > 0 && this.props.selectedRows.length < this.props.profileEntryNotifications.toArray().length}
+                                        checked={this.props.selectedRows.length === this.props.profileEntryNotifications.toArray().length}
+                                        onChange={this.handleSelectAll}
+                                        color="primary"
 
-                                />
-                            </FormGroup>
-                        </TableCell>
-                        <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
-                        <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
-                        <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        this.props.profileEntryNotifications.map(this.mapRow).toArray()
-                    }
-                </TableBody>
-            </Table>
-        </div>);
+                                    />
+                                </FormGroup>
+                            </TableCell>
+                            <TableCell>{PowerLocalize.get('Initials.Singular')}</TableCell>
+                            <TableCell>{PowerLocalize.get('Subject.Singular')}</TableCell>
+                            <TableCell>{PowerLocalize.get('Date.Singular')}</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            this.props.profileEntryNotifications.map(this.mapRow).toArray()
+                        }
+                    </TableBody>
+                </Table>
+            </div>);
     }
 }

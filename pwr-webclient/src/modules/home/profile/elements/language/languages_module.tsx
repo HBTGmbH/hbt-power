@@ -38,14 +38,16 @@ interface LanguageLocalState {
 
 interface LanguageDispatch {
     addLanguageSkill(): void;
+
     deleteLanguageSkill(id: string): void;
+
     saveLanguageSkill(langSkill: LanguageSkill, name: NameEntity): void;
 }
 
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
 
-    private renderSingleLanguage =(language: LanguageSkill, id: string) => {
-        return(
+    private renderSingleLanguage = (language: LanguageSkill, id: string) => {
+        return (
             <SingleLanguage
                 languages={this.props.languages}
                 languageSkill={this.props.languageSkills.get(id)}
@@ -57,7 +59,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         );
     };
 
-    static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps) : LanguageProps {
+    static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps): LanguageProps {
         return {
             languageSkills: state.databaseReducer.profile().languageSkills(),
             languages: state.databaseReducer.languages(),
@@ -65,16 +67,16 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : LanguageDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): LanguageDispatch {
         return {
-            addLanguageSkill: function() {
+            addLanguageSkill: function () {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.LanguageEntry));
             },
-            deleteLanguageSkill: function(id: string) {
+            deleteLanguageSkill: function (id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.LanguageEntry));
             },
-            saveLanguageSkill: function(langSkill: LanguageSkill, name: NameEntity){
-                dispatch(ProfileActionCreator.saveEntry(langSkill, name, ProfileElementType.LanguageEntry))
+            saveLanguageSkill: function (langSkill: LanguageSkill, name: NameEntity) {
+                dispatch(ProfileActionCreator.saveEntry(langSkill, name, ProfileElementType.LanguageEntry));
             }
         };
     }
@@ -84,10 +86,10 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
     };
 
     render() {
-        return(
+        return (
             <ProfileElement
                 title={PowerLocalize.get('Language.Singular')}
-                subtitle={PowerLocalize.get("LanguageSkill.Description")}
+                subtitle={PowerLocalize.get('LanguageSkill.Description')}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.languageSkills.map(this.renderSingleLanguage).toArray()}

@@ -16,24 +16,32 @@ export class LanguageSkill {
 
 
     @doop
-    public get id() {return doop<string, this>()}
+    public get id() {
+        return doop<string, this>();
+    }
 
 
     /**
      * The language itself.
      */
     @doop
-    public get languageId() { return doop<string, this>()}
+    public get languageId() {
+        return doop<string, this>();
+    }
 
     /**
      * The language level, represented as a string. On the server side, these levels are enumerated values, but due
      * to bad type-/javascript support of enums, it is kept as a string.
      */
     @doop
-    public get level() { return doop<string, this>()}
+    public get level() {
+        return doop<string, this>();
+    }
 
     @doop
-    public get isNew() { return doop<boolean, this>()}
+    public get isNew() {
+        return doop<boolean, this>();
+    }
 
     private static CURRENT_ID: number = 0;
 
@@ -55,10 +63,10 @@ export class LanguageSkill {
             UNDEFINED_ID,
             DEFAULT_LANG_LEVEL,
             true
-        )
+        );
     }
 
-    public toAPILanguageSkill(languagesById: Immutable.Map<string, NameEntity>) : APILanguageSkill {
+    public toAPILanguageSkill(languagesById: Immutable.Map<string, NameEntity>): APILanguageSkill {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             level: this.level(),

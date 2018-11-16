@@ -42,29 +42,31 @@ interface EducationLocalState {
 
 interface EducationDispatch {
     addEducationEntry(): void;
+
     deleteEducationEntry(educationEntryId: string): void;
+
     saveEducationEntry(educationEntry: EducationEntry, education: NameEntity): void;
 }
 
 class EducationModule extends React.Component<EducationProps & EducationLocalProps & EducationDispatch, EducationLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps) : EducationProps {
+    static mapStateToProps(state: ApplicationState, localProps: EducationLocalProps): EducationProps {
         return {
-            educationEntries : state.databaseReducer.profile().educationEntries(),
+            educationEntries: state.databaseReducer.profile().educationEntries(),
             educations: state.databaseReducer.educations(),
             degrees: state.databaseReducer.degrees()
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : EducationDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EducationDispatch {
         return {
-            addEducationEntry: function() {
-                dispatch(ProfileActionCreator.createEntry(ProfileElementType.EducationEntry))
+            addEducationEntry: function () {
+                dispatch(ProfileActionCreator.createEntry(ProfileElementType.EducationEntry));
             },
-            deleteEducationEntry: function(educationEntryId: string) {
+            deleteEducationEntry: function (educationEntryId: string) {
                 dispatch(ProfileActionCreator.deleteEntry(educationEntryId, ProfileElementType.EducationEntry));
             },
-            saveEducationEntry: function(educationEntry, education) {
+            saveEducationEntry: function (educationEntry, education) {
                 dispatch(ProfileActionCreator.saveEntry(educationEntry, education, ProfileElementType.EducationEntry));
             }
         };
@@ -79,16 +81,16 @@ class EducationModule extends React.Component<EducationProps & EducationLocalPro
      * @returns {any}
      */
     render() {
-        return(
+        return (
             <ProfileElement
                 title={PowerLocalize.get('Education.Singular')}
                 subtitle={PowerLocalize.get('EducationEntry.Description')}
                 onAddElement={this.handleAddElement}
             >
                 {this.props.educationEntries.map((education, key) => {
-                    return(
+                    return (
                         <SingleEducationElement
-                            key={"SingleEducationElement." + key}
+                            key={'SingleEducationElement.' + key}
                             degrees={this.props.degrees}
                             educationEntry={education}
                             educations={this.props.educations}

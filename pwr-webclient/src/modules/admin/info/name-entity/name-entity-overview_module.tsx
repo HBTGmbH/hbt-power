@@ -41,12 +41,13 @@ interface NameEntityOverviewLocalState {
 
 interface NameEntityOverviewDispatch {
     requestAllNameEntities(): void;
+
     requestCurrentlyUsedSkills(): void;
+
     requestNameEntityUsageInfo(nameEntity: NameEntity, type: string): void;
 }
 
-class NameEntityOverviewModule extends React.Component<
-    NameEntityOverviewProps
+class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     & NameEntityOverviewLocalProps
     & NameEntityOverviewDispatch
     & ThemeProps, NameEntityOverviewLocalState> {
@@ -87,7 +88,7 @@ class NameEntityOverviewModule extends React.Component<
         };
     }
 
-    private handleSelect = (e: React.ChangeEvent<{value: any}>) => {
+    private handleSelect = (e: React.ChangeEvent<{ value: any }>) => {
         this.setState({
             selectedField: e.target.value,
             selectedIndex: -1
@@ -95,7 +96,7 @@ class NameEntityOverviewModule extends React.Component<
     };
 
     private getNameEntitiesByField = (selectedField: ProfileElementType) => {
-        switch(selectedField) {
+        switch (selectedField) {
             case ProfileElementType.SectorEntry:
                 return this.props.sectors.toArray().sort(Comparators.getNameEntityComparator(true));
             case ProfileElementType.KeySkill:
@@ -134,7 +135,7 @@ class NameEntityOverviewModule extends React.Component<
     };
 
     private renderInfoBox = (nameEntities: Array<NameEntity>) => {
-        if(this.state.selectedIndex != -1 ) {
+        if (this.state.selectedIndex != -1) {
             const ne = nameEntities[this.state.selectedIndex];
             const usedBy: Immutable.List<ConsultantInfo> = this.props.nameEntityUsageInfo.get(ne);
             return <NameEntityInfoBox nameEntity={ne} usedBy={usedBy ? usedBy.toArray() : []}/>;
@@ -142,13 +143,15 @@ class NameEntityOverviewModule extends React.Component<
             return null;
         }
     };
+
     // rendert das drop down menu
     private renderSelect() {
         return (
             <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
                 <form style={{display: 'flex', flexWrap: 'wrap', padding: '8px'}} className="fullWidth">
                     <FormControl>
-                        <InputLabel htmlFor="ame-entity-overview-element-type">{PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}</InputLabel>
+                        <InputLabel
+                            htmlFor="ame-entity-overview-element-type">{PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}</InputLabel>
                         <Select value={this.state.selectedField}
                                 inputProps={{name: 'element-type', id: 'name-entity-overview-element-type'}}
                                 onChange={this.handleSelect}>
@@ -156,13 +159,15 @@ class NameEntityOverviewModule extends React.Component<
                                 NameEntityUtil
                                     .getProfileElementTypes()
                                     .filter((value, index, array) => !(value === ProfileElementType.Project || value === ProfileElementType.SkillEntry))
-                                    .map((value, index, array) => <MenuItem key={value} value={value} button ><ListItemText primary={PowerLocalize.get(ProfileElementType[value])}/></MenuItem>)
+                                    .map((value, index, array) => <MenuItem key={value} value={value}
+                                                                            button><ListItemText
+                                        primary={PowerLocalize.get(ProfileElementType[value])}/></MenuItem>)
                             }
                         </Select>
                     </FormControl>
                 </form>
             </Paper>
-            );
+        );
     }
 
     private isSelected = (index: number) => {
@@ -171,13 +176,13 @@ class NameEntityOverviewModule extends React.Component<
 
     private renderListItem = (nameEntity: NameEntity, index: number) => {
         return <ListItem button
-                         onClick={(e:any) => this.handleIndexSelect(e, index)}
+                         onClick={(e: any) => this.handleIndexSelect(e, index)}
                          value={index}
                          key={index}
-                         className={this.isSelected(index) ? "pwr-selected-list-item" : ""}
+                         className={this.isSelected(index) ? 'pwr-selected-list-item' : ''}
         >
             {nameEntity.name()}
-            </ListItem>;
+        </ListItem>;
     };
 
 

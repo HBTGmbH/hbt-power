@@ -3,43 +3,43 @@ import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 
 const optionsShortDisplay: DateTimeFormatOptions = {
-    year: "numeric",
-    month: "short"
+    year: 'numeric',
+    month: 'short'
 };
 
 const optionsTimeOnly: DateTimeFormatOptions = {
-    hour: "numeric",
-    minute: "numeric"
+    hour: 'numeric',
+    minute: 'numeric'
 };
 
-const optionsDayAndMonth : DateTimeFormatOptions = {
-    month: "short",
-    day: "2-digit"
+const optionsDayAndMonth: DateTimeFormatOptions = {
+    month: 'short',
+    day: '2-digit'
 };
 
 const optionsOnlyYear: DateTimeFormatOptions = {
-    year: "numeric"
+    year: 'numeric'
 };
 
 const optionsFullDate: DateTimeFormatOptions = {
-    year: "numeric",
-    day: "2-digit",
-    month: "long"
+    year: 'numeric',
+    day: '2-digit',
+    month: 'long'
 };
 
 const optionsFullDateTime: DateTimeFormatOptions = {
-    year: "numeric",
-    day: "2-digit",
-    month: "long",
-    hour: "numeric",
-    minute: "numeric"
+    year: 'numeric',
+    day: '2-digit',
+    month: 'long',
+    hour: 'numeric',
+    minute: 'numeric'
 };
 
 let language = navigator.language;
-if(isNullOrUndefined(language)) language = "de";
+if (isNullOrUndefined(language)) language = 'de';
 
 const format: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsShortDisplay);
-const formatTimeOnly:Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsTimeOnly);
+const formatTimeOnly: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsTimeOnly);
 const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsDayAndMonth);
 const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsOnlyYear);
 const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDate);
@@ -53,12 +53,12 @@ const formatFullDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language
  * @return formatted date or PowerLocalize.get("Today") if the date is null.
  */
 export function formatToShortDisplay(date: Date): string {
-    if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
+    if (isNullOrUndefined(date)) return PowerLocalize.get('Today');
     return format.format(date);
 }
 
 export function formatToFullLocalizedDateTime(date: Date): string {
-    if(isNullOrUndefined(date)) return "???";
+    if (isNullOrUndefined(date)) return '???';
     return formatFullDateTime.format(date);
 }
 
@@ -70,7 +70,7 @@ export function formatToFullLocalizedDateTime(date: Date): string {
  * @return formatted date or "???" if the date is null
  */
 export function formatFullLocalizedDate(date: Date): string {
-    if(isNullOrUndefined(date)) return "???";
+    if (isNullOrUndefined(date)) return '???';
     return formatFullDate.format(date);
 }
 
@@ -79,7 +79,7 @@ function isOnSameDay(a: Date, b: Date) {
 }
 
 export function formatToMailDisplay(date: Date) {
-    if(isOnSameDay(new Date(), date)) {
+    if (isOnSameDay(new Date(), date)) {
         return formatTimeOnly.format(date);
     } else {
         return formatDayAndMonth.format(date);
@@ -87,25 +87,25 @@ export function formatToMailDisplay(date: Date) {
 }
 
 export function formatToYear(date: Date) {
-    if(isNullOrUndefined(date)) return PowerLocalize.get("Today");
+    if (isNullOrUndefined(date)) return PowerLocalize.get('Today');
     return formatOnlyYear.format(date);
 }
 
 export namespace DateUtils {
-    export function formatLocaleDateToIso(date: Date) : string{
-        if(isNullOrUndefined(date)) {
+    export function formatLocaleDateToIso(date: Date): string {
+        if (isNullOrUndefined(date)) {
             return null;
         }
-        const dateString = date.toLocaleDateString("de-De");
-        let splitted: Array<string> = dateString.split(".").reverse();
+        const dateString = date.toLocaleDateString('de-De');
+        let splitted: Array<string> = dateString.split('.').reverse();
         splitted = splitted.map(splitString => {
-            if(splitString.length === 1) {
-                return "0" + splitString;
+            if (splitString.length === 1) {
+                return '0' + splitString;
             }
             return splitString;
         });
-        console.debug("splitted", splitted);
-        return splitted.join("-");
+        console.debug('splitted', splitted);
+        return splitted.join('-');
     }
 }
 

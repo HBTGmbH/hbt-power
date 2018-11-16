@@ -11,7 +11,7 @@ export namespace TemplateReducer {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
     import SetPreviewAction = TemplateActions.SetPreviewAction;
 
-    export function reduce(store: TemplateStore, action: AbstractAction){
+    export function reduce(store: TemplateStore, action: AbstractAction) {
         if (isNullOrUndefined(store)) {
             return TemplateStore.empty();
         }
@@ -29,12 +29,12 @@ export namespace TemplateReducer {
                 templates = templates.remove(act.id);
                 return store.templates(templates);
             }
-            case ActionType.ClearTemplates:{
+            case ActionType.ClearTemplates: {
                 return store.templates(store.templates().clear());
             }
-            case ActionType.TemplateRequestFailed:{
-                console.error("TemplateRequestFailed");
-                console.log("Template Store: ",store.templates());
+            case ActionType.TemplateRequestFailed: {
+                console.error('TemplateRequestFailed');
+                console.log('Template Store: ', store.templates());
                 return store.templates();
             }
             case ActionType.SetPreview : {

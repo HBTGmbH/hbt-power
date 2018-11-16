@@ -91,89 +91,89 @@ export namespace SkillActionCreator {
         return {
             type: ActionType.SetAddSkillStep,
             step: step
-        }
+        };
     }
 
     export function StepBackToSkillInfo(): AbstractAction {
         return {
             type: ActionType.StepBackToSkillInfo
-        }
+        };
     }
 
     export function ResetAddSkillDialog(): AbstractAction {
         return {
             type: ActionType.ResetAddSkillDialog
-        }
+        };
     }
 
     export function SetDoneMessage(msg: string): ChangeStringValueAction {
         return {
             type: ActionType.SetDoneMessage,
             value: msg
-        }
+        };
     }
 
     export function ChangeSkillComment(comment: string): ChangeStringValueAction {
         return {
             type: ActionType.ChangeSkillComment,
             value: comment
-        }
+        };
     }
 
     export function SetCurrentChoice(choice: UnCategorizedSkillChoice): SetCurrentChoiceAction {
         return {
             type: ActionType.SetCurrentChoice,
             currentChoice: choice
-        }
+        };
     }
 
     export function SetAddSkillError(text: string): ChangeStringValueAction {
         return {
             type: ActionType.SetAddSkillError,
             value: text
-        }
+        };
     }
 
     export function SetTreeChildrenOpen(categoryId: number): SetTreeChildrenOpenAction {
         return {
             type: ActionType.SetTreeChildrenOpen,
             categoryId: categoryId,
-        }
+        };
     }
 
     export function FilterTree(searchTerm: string): FilterTreeAction {
         return {
             type: ActionType.FilterTree,
             searchTerm: searchTerm
-        }
+        };
     }
 
     export function SetAddToProjectId(projectId: string): ChangeStringValueAction {
         return {
             type: ActionType.SetAddToProjectId,
             value: projectId
-        }
+        };
     }
 
     function SetNoCategoryReason(reason: string): ChangeStringValueAction {
         return {
             type: ActionType.SetNoCategoryReason,
             value: reason
-        }
+        };
     }
 
     function UpdateSkillCategory(skillCategory: SkillCategory): UpdateSkillCategoryAction {
         return {
             type: ActionType.UpdateSkillCategory,
             skillCategory: skillCategory
-        }
+        };
     }
 
     function RemoveSkillCategory(id: number): RemoveSkillCategoryAction {
         return {
             type: ActionType.RemoveSkillCategory,
             id: id
-        }
+        };
     }
 
     function MoveSkill(originCategoryId: number, targetCategoryId: number, skillId: number): MoveSkillAction {
@@ -182,35 +182,35 @@ export namespace SkillActionCreator {
             skillId: skillId,
             targetCategoryId: targetCategoryId,
             originCategoryId: originCategoryId
-        }
+        };
     }
 
     function RemoveSkill(skillId: number): RemoveSkillAction {
         return {
             type: ActionType.RemoveSkillServiceSkill,
             skillId: skillId
-        }
+        };
     }
 
     function UpdateSkillServiceSkill(skill: SkillServiceSkill): UpdateSkillServiceSkillAction {
         return {
             type: ActionType.UpdateSkillServiceSkill,
             skill: skill
-        }
+        };
     }
 
     function BatchAddSkills(skills: Array<SkillServiceSkill>): BatchAddSkillsAction {
         return {
             type: ActionType.BatchAddSkills,
             skills: skills
-        }
+        };
     }
 
     function InitializeTree(root: TCategoryNode): InitializeTreeAction {
         return {
             type: ActionType.LoadTree,
             root: root
-        }
+        };
     }
 
 
@@ -220,32 +220,32 @@ export namespace SkillActionCreator {
         console.error(error);
         if (error.response && error.response.data) {
             let response: SkillServiceError = error.response.data;
-            NavigationActionCreator.showError(response.errorType + ": " + response.message);
+            NavigationActionCreator.showError(response.errorType + ': ' + response.message);
         } else if (error.response) {
-            NavigationActionCreator.showError("Generic Error " + error.response.status);
+            NavigationActionCreator.showError('Generic Error ' + error.response.status);
         } else {
-            NavigationActionCreator.showError("An unknown error occurred");
+            NavigationActionCreator.showError('An unknown error occurred');
         }
     }
 
     function beginAPICall(dispatch: redux.Dispatch<ApplicationState>) {
-        if(currentAPICalls === 0) {
+        if (currentAPICalls === 0) {
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
         }
         currentAPICalls++;
-       // dispatch(ChangeSkillRequestCount(true));
+        // dispatch(ChangeSkillRequestCount(true));
     }
 
     function succeedAPICall(dispatch: redux.Dispatch<ApplicationState>) {
         currentAPICalls--;
-        if(currentAPICalls === 0) {
+        if (currentAPICalls === 0) {
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
         }
     }
 
     function failAPICall(dispatch: redux.Dispatch<ApplicationState>) {
-        currentAPICalls --;
-        if(currentAPICalls === 0) {
+        currentAPICalls--;
+        if (currentAPICalls === 0) {
             dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
         }
     }
@@ -281,7 +281,7 @@ export namespace SkillActionCreator {
                 let data: APISkillCategory = response.data;
                 let category = SkillCategory.fromAPI(data);
                 dispatch(UpdateSkillCategory(category));
-                if(doRecursive) {
+                if (doRecursive) {
                     InvokeChildUpdate(categoryId, dispatch);
                 }
             }).catch(handleSkillServiceError);
@@ -318,7 +318,7 @@ export namespace SkillActionCreator {
             axios.delete(deleteBlacklistCategory(categoryId)).then((response: AxiosResponse) => {
                 let apiCategory: APISkillCategory = response.data;
                 let parentId: number = null;
-                if(!isNullOrUndefined(apiCategory.category)) {
+                if (!isNullOrUndefined(apiCategory.category)) {
                     parentId = apiCategory.category.id;
                 }
                 succeedAPICall(dispatch);
@@ -327,7 +327,7 @@ export namespace SkillActionCreator {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
             });
-        }
+        };
     }
 
     export function AsyncBlacklistCategory(categoryId: number) {
@@ -336,7 +336,7 @@ export namespace SkillActionCreator {
             axios.post(deleteBlacklistCategory(categoryId)).then((response: AxiosResponse) => {
                 let apiCategory: APISkillCategory = response.data;
                 let parentId: number = null;
-                if(!isNullOrUndefined(apiCategory.category)) {
+                if (!isNullOrUndefined(apiCategory.category)) {
                     parentId = apiCategory.category.id;
                 }
                 succeedAPICall(dispatch);
@@ -345,7 +345,7 @@ export namespace SkillActionCreator {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
             });
-        }
+        };
     }
 
     export function AsyncSetIsDisplay(categoryId: number, isDisplay: boolean) {
@@ -359,7 +359,7 @@ export namespace SkillActionCreator {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
             });
-        }
+        };
     }
 
     const invokeCategoryUpdate = (apiSkillCategory: APISkillCategory, dispatch: redux.Dispatch<ApplicationState>) => {
@@ -370,7 +370,7 @@ export namespace SkillActionCreator {
     };
 
     export function AsyncAddLocale(categoryId: number, locale: string, qualifier: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let config: AxiosRequestConfig = {
                 params: {
                     lang: locale,
@@ -385,11 +385,11 @@ export namespace SkillActionCreator {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
             });
-        }
+        };
     }
 
     export function AsyncDeleteLocale(categoryId: number, language: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             beginAPICall(dispatch);
             axios.delete(deleteLocaleFromCategory(categoryId, language)).then((response: AxiosResponse) => {
                 invokeCategoryUpdate(response.data, dispatch);
@@ -398,11 +398,11 @@ export namespace SkillActionCreator {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
             });
-        }
+        };
     }
 
     export function AsyncCreateCategory(qualifier: string, parentId: number) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let category: SkillCategory = SkillCategory.of(null, qualifier);
             beginAPICall(dispatch);
             axios.post(postNewCategory(parentId), category).then((response: AxiosResponse) => {
@@ -413,13 +413,12 @@ export namespace SkillActionCreator {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
             });
-        }
+        };
     }
 
 
-
     export function AsyncDeleteCategory(categoryId: number) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             beginAPICall(dispatch);
             axios.delete(deleteCategory(categoryId)).then((respone: AxiosResponse) => {
                 dispatch(RemoveSkillCategory(categoryId));
@@ -427,8 +426,8 @@ export namespace SkillActionCreator {
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
-            })
-        }
+            });
+        };
     }
 
     export namespace Tree {
@@ -440,8 +439,8 @@ export namespace SkillActionCreator {
         function getSkillByQualifier(qualifier: string, onSuccess: (skill: SkillServiceSkill) => void, onError: (error: AxiosError) => void) {
             let config: AxiosRequestConfig = {params: {qualifier: qualifier}};
             axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
-                if(response.status === 200) {
-                    onSuccess( SkillServiceSkill.fromAPI(response.data))
+                if (response.status === 200) {
+                    onSuccess(SkillServiceSkill.fromAPI(response.data));
                 } else {
                     onSuccess(null);
                 }
@@ -449,26 +448,26 @@ export namespace SkillActionCreator {
         }
 
         const checkAndInvoke = (skills: Array<SkillServiceSkill>, skillsChanged: number, remainingRequests: number, dsp: redux.Dispatch<ApplicationState>) => {
-            if(remainingRequests <= 0) {
-                if(skillsChanged != 0) {
+            if (remainingRequests <= 0) {
+                if (skillsChanged != 0) {
                     dsp(BatchAddSkills(skills));
                 }
             }
         };
 
         export function AsyncGetSkillsByName(qualifiers: Array<string>) {
-            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 let skills: Array<SkillServiceSkill> = [];
                 let skillStore = getState().skillReducer;
                 let filteredQualifiers = qualifiers.filter(qualifier => {
-                    return !skillStore.skillWithQualifierExists(qualifier)
+                    return !skillStore.skillWithQualifierExists(qualifier);
                 });
                 let remaining = filteredQualifiers.length;
-                if(remaining > 0) {
-                    for(let i = 0; i < filteredQualifiers.length; i++) {
+                if (remaining > 0) {
+                    for (let i = 0; i < filteredQualifiers.length; i++) {
                         getSkillByQualifier(filteredQualifiers[i], skill => {
                             remaining--;
-                            if(skill != null) {
+                            if (skill != null) {
                                 skills.push(skill);
                             }
                             checkAndInvoke(skills, skills.length, remaining, dispatch);
@@ -478,7 +477,7 @@ export namespace SkillActionCreator {
                         });
                     }
                 }
-            }
+            };
         }
 
         /**
@@ -491,11 +490,11 @@ export namespace SkillActionCreator {
          * @constructor
          */
         export function AsyncGetSkillByName(qualifier: string, force?: boolean) {
-            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-                if(!isNullOrUndefined(force)) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                if (!isNullOrUndefined(force)) {
                     force = false;
                 }
-                if(!getState().skillReducer.skillWithQualifierExists(qualifier)) {
+                if (!getState().skillReducer.skillWithQualifierExists(qualifier)) {
                     beginAPICall(dispatch);
                     getSkillByQualifier(qualifier, (skill) => {
                         dispatch(AddSkillToTree(skill.categoryId(), skill));
@@ -506,11 +505,11 @@ export namespace SkillActionCreator {
                     });
                 }
 
-            }
+            };
         }
 
         export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
-            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 beginAPICall(dispatch);
                 axios.patch(patchMoveSkill(skillId, newCategoryId)).then((response: AxiosResponse) => {
                     dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId));
@@ -519,11 +518,11 @@ export namespace SkillActionCreator {
                     failAPICall(dispatch);
                     handleSkillServiceError(error);
                 });
-            }
+            };
         }
 
         export function AsyncCreateSkill(qualifier: string, categoryId: number) {
-            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 let skill: SkillServiceSkill = SkillServiceSkill.forQualifier(qualifier);
                 beginAPICall(dispatch);
                 axios.post(postNewSkill(categoryId), skill).then((response: AxiosResponse) => {
@@ -534,11 +533,11 @@ export namespace SkillActionCreator {
                     failAPICall(dispatch);
                     handleSkillServiceError(error);
                 });
-            }
+            };
         }
 
         export function AsyncDeleteSkill(skillId: number) {
-            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 beginAPICall(dispatch);
                 axios.delete(deleteCustomSkill(skillId)).then((response: AxiosResponse) => {
                     dispatch(RemoveSkill(skillId));
@@ -546,8 +545,8 @@ export namespace SkillActionCreator {
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
                     handleSkillServiceError(error);
-                })
-            }
+                });
+            };
         }
 
         /**
@@ -558,7 +557,7 @@ export namespace SkillActionCreator {
          * @constructor
          */
         export function AsyncAddSkillLocale(skillId: number, language: string, qualifier: string) {
-            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 beginAPICall(dispatch);
                 let config: AxiosRequestConfig = {params: {qualifier: qualifier}};
                 axios.post(skillLocale(skillId, language), null, config).then((response: AxiosResponse) => {
@@ -567,8 +566,8 @@ export namespace SkillActionCreator {
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
                     handleSkillServiceError(error);
-                })
-            }
+                });
+            };
         }
 
         /**
@@ -578,7 +577,7 @@ export namespace SkillActionCreator {
          * @param language defines which locale from the skill is deleted
          */
         export function AsyncDeleteSkillLocale(skillId: number, language: string) {
-            return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
                 beginAPICall(dispatch);
                 axios.delete(skillLocale(skillId, language)).then((response: AxiosResponse) => {
                     dispatch(UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(response.data)));
@@ -586,13 +585,13 @@ export namespace SkillActionCreator {
                 }).catch((error: AxiosError) => {
                     failAPICall(dispatch);
                     handleSkillServiceError(error);
-                })
-            }
+                });
+            };
         }
     }
 
     export function AsyncLoadTree() {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             beginAPICall(dispatch);
             axios.get(getFullTree()).then((response: AxiosResponse) => {
                 dispatch(InitializeTree(response.data));
@@ -600,8 +599,8 @@ export namespace SkillActionCreator {
             }).catch((error: AxiosError) => {
                 failAPICall(dispatch);
                 handleSkillServiceError(error);
-            })
-        }
+            });
+        };
     };
 
 
@@ -611,43 +610,43 @@ export namespace SkillActionCreator {
             let step = state.currentAddSkillStep();
             // Simple state machine that defines how to progress from one state into another.
             // State progression is rather simple, for more, see AddSkillStep enum
-            if(step === AddSkillStep.NONE) {
-                dispatch(SetAddSkillStep(AddSkillStep.SKILL_INFO))
+            if (step === AddSkillStep.NONE) {
+                dispatch(SetAddSkillStep(AddSkillStep.SKILL_INFO));
             } else if (step === AddSkillStep.SKILL_INFO) {
                 let skillName = state.currentSkillName();
                 let skill = getState().databaseReducer.profile().getSkillByName(skillName);
-                if(!isNullOrUndefined(skill)) {
+                if (!isNullOrUndefined(skill)) {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
-                    dispatch(SetDoneMessage("SKILL_EXISTS"));
+                    dispatch(SetDoneMessage('SKILL_EXISTS'));
                 } else {
                     let hierarchy = state.categorieHierarchiesBySkillName().get(state.currentSkillName());
-                    if(!isNullOrUndefined(hierarchy)) {
+                    if (!isNullOrUndefined(hierarchy)) {
                         dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
                     } else {
                         dispatch(SetAddSkillStep(AddSkillStep.CATEGORY_REQUEST_PENDING));
                         let config: AxiosRequestConfig = {params: {qualifier: skillName}};
                         axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
-                            if(response.status === 200) {
-                                if(response.data.category != null) {
+                            if (response.status === 200) {
+                                if (response.data.category != null) {
                                     dispatch(ReadSkillHierarchy(response.data));
-                                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY))
+                                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
                                 } else {
-                                    dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
+                                    dispatch(SetNoCategoryReason('NO_CATEGORY_AVAILABLE'));
                                     dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                                 }
-                            } else if(response.status === 204){
-                                dispatch(SetNoCategoryReason("NO_CATEGORY_AVAILABLE"));
+                            } else if (response.status === 204) {
+                                dispatch(SetNoCategoryReason('NO_CATEGORY_AVAILABLE'));
                                 dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                             } else {
-                                dispatch(SetNoCategoryReason("SERVER_ERROR"));
+                                dispatch(SetNoCategoryReason('SERVER_ERROR'));
                                 dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                             }
                         }).catch(function (error: AxiosError) {
                             console.error(error);
-                            if(!isNullOrUndefined(error.response) && (error.response.status === 400 || error.response.status === 404)) {
-                                dispatch(SetNoCategoryReason("SERVICE_NOT_AVAILABLE"));
+                            if (!isNullOrUndefined(error.response) && (error.response.status === 400 || error.response.status === 404)) {
+                                dispatch(SetNoCategoryReason('SERVICE_NOT_AVAILABLE'));
                             } else {
-                                dispatch(SetNoCategoryReason("UNKNOWN"));
+                                dispatch(SetNoCategoryReason('UNKNOWN'));
                             }
                             dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
                         });
@@ -655,23 +654,23 @@ export namespace SkillActionCreator {
                 }
             } else if (step === AddSkillStep.SHOW_CATEGORY) {
                 dispatch(SetAddSkillStep(AddSkillStep.DONE));
-            } else if(step === AddSkillStep.SHOW_EDITING_OPTIONS) {
-                if(state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT && state.skillComment().trim() !== "") {
+            } else if (step === AddSkillStep.SHOW_EDITING_OPTIONS) {
+                if (state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT && state.skillComment().trim() !== '') {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
-                } else if(state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT) {
-                    dispatch(SetAddSkillError(PowerLocalize.get("AddSkillDialog.Comment.ErrorEmpty")));
+                } else if (state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT) {
+                    dispatch(SetAddSkillError(PowerLocalize.get('AddSkillDialog.Comment.ErrorEmpty')));
                 } else {
                     dispatch(SetAddSkillStep(AddSkillStep.DONE));
                 }
             } else if (step === AddSkillStep.DONE) {
-                if(state.addToProjectId().length > 0) {
+                if (state.addToProjectId().length > 0) {
                     dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment(), state.addToProjectId()));
-                } else if (state.doneState() !== "SKILL_EXISTS") {
+                } else if (state.doneState() !== 'SKILL_EXISTS') {
                     dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment()));
                 }
                 dispatch(ResetAddSkillDialog());
             }
-        }
+        };
 
     }
 

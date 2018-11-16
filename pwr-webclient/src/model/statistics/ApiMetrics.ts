@@ -30,7 +30,7 @@ export interface APIEdge {
 }
 
 export interface APINetwork {
-    nodes:Array<APINode>;
+    nodes: Array<APINode>;
     edges: Array<APIEdge>;
 }
 

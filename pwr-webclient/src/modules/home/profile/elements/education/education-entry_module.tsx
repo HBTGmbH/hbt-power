@@ -54,14 +54,13 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
         super(props);
         this.state = {
             dialogOpen: props.educationEntry.isNew()
-        }
+        };
     }
 
 
     private getEducationEntryName = () => {
         return NameEntityUtil.getNullTolerantName(this.props.educationEntry.nameEntityId(), this.props.educations);
     };
-
 
 
     private handleFieldTouchClick = () => {
@@ -92,13 +91,14 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
     };
 
 
-
     render() {
-        return(
+        return (
             <tr>
                 <td>
-                    <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.handleEditButtonPress}/>
-                    <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonPress}/>
+                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
+                                   onClick={this.handleEditButtonPress}/>
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                                   onClick={this.handleDeleteButtonPress}/>
 
                     <EducationEntryDialogModule
                         open={this.state.dialogOpen}
@@ -116,17 +116,17 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {formatToYear(this.props.educationEntry.endDate())}
+                        {formatToYear(this.props.educationEntry.endDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {this.props.educationEntry.hasNoDegree() ? "---": this.props.educationEntry.degree()}
+                        {this.props.educationEntry.hasNoDegree() ? '---' : this.props.educationEntry.degree()}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {this.getEducationEntryName()}
+                        {this.getEducationEntryName()}
                     </div>
                 </td>
             </tr>

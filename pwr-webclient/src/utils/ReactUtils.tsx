@@ -7,7 +7,9 @@ export namespace ReactUtils {
 
     interface SelectableListProps {
         selectedIndex: number | string;
+
         onSelect(event: any, index: number | string): void;
+
         style?: CSSProperties;
     }
 

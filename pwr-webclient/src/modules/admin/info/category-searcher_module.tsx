@@ -11,8 +11,11 @@ import filterFuzzy = StringUtils.filterFuzzy;
 interface CategorySearcherProps {
     categories: Array<SkillCategory>;
     open: boolean;
+
     onClose(): void;
+
     onSelectCategory(categoryId: number): void;
+
     skillStore: SkillStore;
 }
 
@@ -33,25 +36,28 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     }
 
     componentDidUpdate(oldProps: CategorySearcherProps) {
-        if(oldProps.open === false && this.props.open === true) {
+        if (oldProps.open === false && this.props.open === true) {
             this.setState({
                 selectedCategoryId: -1,
                 filterText: ''
-            })
+            });
         }
     }
 
     private mapListItem = (category: SkillCategory) => {
-        return  <ListItem
+        return <ListItem
             button
             value={category.id()}
             key={category.id()}
             onClick={() => this.handleSelect(category.id())}
-            className={this.state.selectedCategoryId === category.id() ? "pwr-selected-list-item " : ""}
+            className={this.state.selectedCategoryId === category.id() ? 'pwr-selected-list-item ' : ''}
         >
             <div>
-                <span style={{fontWeight: "bold"}}>{category.qualifier()}</span><br/>
-                <span style={{fontSize: "10px", fontStyle: "italic"}}>{this.props.skillStore.getInverseCategoryHierarchy(category.id())}</span>
+                <span style={{fontWeight: 'bold'}}>{category.qualifier()}</span><br/>
+                <span style={{
+                    fontSize: '10px',
+                    fontStyle: 'italic'
+                }}>{this.props.skillStore.getInverseCategoryHierarchy(category.id())}</span>
             </div>
         </ListItem>;
     };
@@ -72,7 +78,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
 
     private renderCategories = () => {
         let categories = this.props.categories;
-        if(this.state.filterText !== "") {
+        if (this.state.filterText !== '') {
             categories = categories.filter(category => filterFuzzy(this.state.filterText, category.qualifier()));
         }
         categories.sort(Comparators.compareCategories);
@@ -89,11 +95,11 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
             <DialogTitle id="category-search-dlg-title">Kategorie Suchen</DialogTitle>
             <DialogContent>
                 <TextField
-                    label={PowerLocalize.get("Action.Search")}
+                    label={PowerLocalize.get('Action.Search')}
                     value={this.state.filterText}
                     onChange={this.handleFilterTextChange}
                 />
-                <List style={{maxHeight: "400px", overflow: "auto"}}>
+                <List style={{maxHeight: '400px', overflow: 'auto'}}>
                     {this.renderCategories()}
                 </List>
             </DialogContent>

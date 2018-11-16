@@ -4,32 +4,38 @@ import {EducationEntry} from './EducationEntry';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {isNullOrUndefined} from 'util';
-import {DateUtils} from "../utils/DateUtil";
+import {DateUtils} from '../utils/DateUtil';
+
 @doop
 export class CareerEntry {
     /**
      * DO NOT CHANGE THIS.NEVER.
      */
     @doop
-    public get id(){
+    public get id() {
         return doop<string, this>();
     }
+
     @doop
     public get startDate() {
         return doop<Date, this>();
     }
+
     @doop
     public get endDate() {
         return doop<Date, this>();
     }
+
     @doop
     public get nameEntityId() {
         return doop<string, this>();
     }
+
     @doop
     public get degree() {
         return doop<string, this>();
     }
+
     @doop
     public get isNew() {
         return doop<boolean, this>();
@@ -73,6 +79,6 @@ export class CareerEntry {
             startDate: DateUtils.formatLocaleDateToIso(this.startDate()),
             endDate: DateUtils.formatLocaleDateToIso(this.endDate()),
             nameEntity: this.nameEntityId() == null ? null : careers.get(this.nameEntityId()).toAPI()
-        }
+        };
     }
 }

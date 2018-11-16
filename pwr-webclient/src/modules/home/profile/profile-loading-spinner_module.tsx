@@ -9,26 +9,24 @@ interface ProfileSnackbarProps {
 }
 
 
-class LoadingSpinnerModule extends React.Component<ProfileSnackbarProps , {}> {
+class LoadingSpinnerModule extends React.Component<ProfileSnackbarProps, {}> {
 
-    static mapStateToProps(state: ApplicationState, localProps: {}) : ProfileSnackbarProps {
+    static mapStateToProps(state: ApplicationState, localProps: {}): ProfileSnackbarProps {
         return {
             requestPending: state.crossCutting.requestPending()
-        }
+        };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>) : {} {
-        return {
-
-        }
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): {} {
+        return {};
     }
 
 
     render() {
         if (this.props.requestPending) {
-            return <div className="refresh-indicator"><PwrLoadingButton loading={true} iconName={'save'}/></div>
+            return <div className="refresh-indicator"><PwrLoadingButton loading={true} iconName={'save'}/></div>;
         }
-        return <div/>
+        return <div/>;
     }
 }
 

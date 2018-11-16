@@ -52,8 +52,7 @@ interface SingleCareerEntryDispatch {
     deleteEntry(id: string): void;
 }
 
-class SingleCareerEntryModule extends React.Component<
-    SingleCareerEntryProps
+class SingleCareerEntryModule extends React.Component<SingleCareerEntryProps
     & SingleCareerEntryLocalProps
     & SingleCareerEntryDispatch, SingleCareerEntryLocalState> {
 
@@ -61,20 +60,20 @@ class SingleCareerEntryModule extends React.Component<
         super(props);
         this.state = {
             dialogOpen: props.careerEntry.isNew()
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: SingleCareerEntryLocalProps): SingleCareerEntryProps {
         return {
             careerEntry: state.databaseReducer.profile().careerEntries().get(localProps.careerEntryId),
             careers: state.databaseReducer.careers()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SingleCareerEntryDispatch {
         return {
             deleteEntry: (id) => dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.CareerEntry))
-        }
+        };
     }
 
     private closeDialog = () => {
@@ -86,7 +85,7 @@ class SingleCareerEntryModule extends React.Component<
     private openDialog = () => {
         this.setState({
             dialogOpen: true
-        })
+        });
     };
 
     private handleDeleteButtonPress = () => {
@@ -100,8 +99,9 @@ class SingleCareerEntryModule extends React.Component<
     render() {
         return (<tr>
             <td>
-                <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
-                <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonPress}/>
+                <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
+                <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                               onClick={this.handleDeleteButtonPress}/>
                 <CareerEntryDialog
                     open={this.state.dialogOpen}
                     requestClose={this.closeDialog}

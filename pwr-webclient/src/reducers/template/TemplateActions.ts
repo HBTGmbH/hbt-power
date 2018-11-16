@@ -4,29 +4,29 @@ import {Template} from '../../model/view/Template';
 
 export namespace TemplateActions {
 
-    export interface SetTemplateAction extends AbstractAction{
+    export interface SetTemplateAction extends AbstractAction {
         template: Template;
     }
 
-    export interface RemoveTemplateAction extends AbstractAction{
+    export interface RemoveTemplateAction extends AbstractAction {
         id: string;
     }
 
-    export interface CreateTemplateAction extends AbstractAction{
+    export interface CreateTemplateAction extends AbstractAction {
         name: string,
         description: string,
-        initials:string,
-        path:string,
+        initials: string,
+        path: string,
     }
 
-    export interface ChangeTemplateAction extends AbstractAction{
-        id:string,
+    export interface ChangeTemplateAction extends AbstractAction {
+        id: string,
         name: string,
         description: string,
-        path:string,
+        path: string,
     }
 
-    export interface SetPreviewAction extends  AbstractAction{
-        url:string,
+    export interface SetPreviewAction extends AbstractAction {
+        url: string,
     }
 }

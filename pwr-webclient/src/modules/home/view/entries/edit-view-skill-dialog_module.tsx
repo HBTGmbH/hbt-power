@@ -63,7 +63,7 @@ export class EditViewSkillDialog extends React.Component<EditViewSkillDialogProp
                            onClose={this.props.onClose}
                            fullWidth={true}
             >
-                <DialogTitle>{"Display Category for " + this.props.skill.name}</DialogTitle>
+                <DialogTitle>{'Display Category for ' + this.props.skill.name}</DialogTitle>
                 <DialogContent>
                     Current Category Tree (Selected is display)
                     <PwrSpacer double/>

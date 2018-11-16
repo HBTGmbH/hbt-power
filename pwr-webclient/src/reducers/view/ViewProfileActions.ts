@@ -2,7 +2,7 @@ import {ViewProfile} from '../../model/view/ViewProfile';
 import {AbstractAction} from '../profile/database-actions';
 
 export namespace ViewProfileActions {
-    export interface SetViewProfileAction extends AbstractAction{
+    export interface SetViewProfileAction extends AbstractAction {
         viewProfile: ViewProfile;
     }
 

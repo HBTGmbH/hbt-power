@@ -4,7 +4,8 @@ import {isNullOrUndefined} from 'util';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
 import {doop} from 'doop';
-import {DateUtils} from "../utils/DateUtil";
+import {DateUtils} from '../utils/DateUtil';
+
 /**
  * Immutable representation of a career element. A career element represents a persons single career steps during their
  * professional career.
@@ -27,15 +28,29 @@ export class TrainingEntry {
      * NEVER CHANGE THIS! NOT EVEN NON-MUTATING!
      */
     @doop
-    public get id(){ return doop<string, this>()}
+    public get id() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get startDate(){ return doop<Date, this>()}
+    public get startDate() {
+        return doop<Date, this>();
+    }
+
     @doop
-    public get endDate(){ return doop<Date, this>()}
+    public get endDate() {
+        return doop<Date, this>();
+    }
+
     @doop
-    public get trainingId(){ return doop<string, this>()}
+    public get trainingId() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get isNew(){ return doop<boolean, this>()}
+    public get isNew() {
+        return doop<boolean, this>();
+    }
 
 
     // Current ID for new entities.
@@ -87,6 +102,6 @@ export class TrainingEntry {
             startDate: DateUtils.formatLocaleDateToIso(this.startDate()),
             endDate: DateUtils.formatLocaleDateToIso(this.endDate()),
             nameEntity: this.trainingId() == null ? null : careerPositionsById.get(this.trainingId()).toAPI()
-        }
+        };
     }
 }

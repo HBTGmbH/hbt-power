@@ -8,6 +8,7 @@ interface UsedSkillInfoBoxProps {
     skillName?: string;
     skillHierarchy?: string;
     usedBy?: Array<ConsultantInfo>;
+
     onOpenEdit(skillName: string): void;
 }
 
@@ -21,7 +22,7 @@ export class UsedSkillInfoBox extends React.Component<UsedSkillInfoBoxProps, Use
         if (this.props.skillHierarchy) {
             return this.props.skillHierarchy;
         } else {
-            return "Keine Kategorisierung vorhanden";
+            return 'Keine Kategorisierung vorhanden';
         }
     };
 
@@ -29,7 +30,8 @@ export class UsedSkillInfoBox extends React.Component<UsedSkillInfoBoxProps, Use
         if (!this.props.usedBy) {
             return <></>;
         } else {
-            return this.props.usedBy.map(consultant => <ListItem key={consultant.initials()}>{consultant.getFullName()}</ListItem>);
+            return this.props.usedBy.map(consultant => <ListItem
+                key={consultant.initials()}>{consultant.getFullName()}</ListItem>);
         }
     };
 
@@ -38,10 +40,10 @@ export class UsedSkillInfoBox extends React.Component<UsedSkillInfoBoxProps, Use
             return <></>;
         }
         return (<Paper id="admin-info-panel">
-            <PwrIconHeader muiIconName={"info_outline"} title={"Info"}/>
-            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillQualifier")}</ListSubheader>
+            <PwrIconHeader muiIconName={'info_outline'} title={'Info'}/>
+            <ListSubheader>{PowerLocalize.get('AdminClient.Infos.UsedSkills.SkillQualifier')}</ListSubheader>
             <span className="padding-left-32px">{this.props.skillName}</span>
-            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillHiearchy")}</ListSubheader>
+            <ListSubheader>{PowerLocalize.get('AdminClient.Infos.UsedSkills.SkillHiearchy')}</ListSubheader>
             <div className="padding-left-32px">
                 {
                     this.renderHierarchy()
@@ -54,11 +56,11 @@ export class UsedSkillInfoBox extends React.Component<UsedSkillInfoBoxProps, Use
                     onClick={() => this.props.onOpenEdit(this.props.skillName)}
                     className="mui-margin"
                 >
-                    {PowerLocalize.get("Action.Edit")}
+                    {PowerLocalize.get('Action.Edit')}
                     <Icon className="material-icons">edit</Icon>
                 </Button>
             </div>
-            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.UsedBy")}</ListSubheader>
+            <ListSubheader>{PowerLocalize.get('AdminClient.Infos.UsedSkills.UsedBy')}</ListSubheader>
             <List>
                 {
                     this.renderUsedBy()

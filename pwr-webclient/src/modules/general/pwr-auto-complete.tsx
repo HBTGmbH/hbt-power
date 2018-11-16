@@ -7,13 +7,13 @@ import * as parse from 'autosuggest-highlight/parse';
 import filterFuzzy = StringUtils.filterFuzzy;
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
-const ChipInput = require("material-ui-chip-input").default;
+const ChipInput = require('material-ui-chip-input').default;
 
 
 function filter(suggestions: Array<string>, searchTerm: string, filter: (searchTerm: string, value: string) => boolean) {
-    console.log("Filter before", suggestions);
+    console.log('Filter before', suggestions);
     let res = suggestions.filter(value => filter(searchTerm, value));
-    console.log("Filter after", res);
+    console.log('Filter after', res);
     return res;
 }
 
@@ -46,19 +46,26 @@ export interface PwrAutoCompleteProps {
     data: Array<string>;
     chips?: Array<string>;
     label: string;
+
     onAdd?(item: string);
+
     onRemove?(item: string);
+
     onSearchChange(selectedItem: string): void;
 }
 
-type Styles = WithStyles<'container'> & WithStyles<'suggestionsContainerOpen'> & WithStyles<'suggestion'> & WithStyles<'suggestionsList'>;
+type Styles =
+    WithStyles<'container'>
+    & WithStyles<'suggestionsContainerOpen'>
+    & WithStyles<'suggestion'>
+    & WithStyles<'suggestionsList'>;
 
 class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Styles, {}> {
     state = {
         suggestions: [],
     };
 
-    handleSuggestionsFetchRequested = ({ value }) => {
+    handleSuggestionsFetchRequested = ({value}) => {
         this.setState({
             suggestions: filter(this.props.data, value, filterFuzzy),
         });
@@ -70,7 +77,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         });
     };
 
-    handleChange = name => (event, { newValue }) => {
+    handleChange = name => (event, {newValue}) => {
         this.setState({
             [name]: newValue,
         });
@@ -80,14 +87,17 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         if (this.props.onAdd) {
             this.props.onAdd(item);
         }
-    }
+    };
 
     renderInputComponent = (inputProps) => {
-        const { classes, inputRef = () => {}, ref, ...other } = inputProps;
+        const {
+            classes, inputRef = () => {
+            }, ref, ...other
+        } = inputProps;
 
         return (
             <TextField
-                id={this.props.id + "_inputField"}
+                id={this.props.id + '_inputField'}
                 label={this.props.label}
                 fullWidth={this.props.fullWidth}
                 InputProps={{
@@ -104,8 +114,8 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         );
     };
 
-    renderChipInput = (inputProps)  => {
-        const { classes, autoFocus, value, onChange, onAdd, onDelete, chips, ref, ...other } = inputProps
+    renderChipInput = (inputProps) => {
+        const {classes, autoFocus, value, onChange, onAdd, onDelete, chips, ref, ...other} = inputProps;
         return (
             <ChipInput
                 label={this.props.label}
@@ -118,10 +128,10 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                 inputRef={ref}
                 {...other}
             />
-        )
+        );
     };
 
-    renderSuggestion = (suggestion, { query, isHighlighted }) => {
+    renderSuggestion = (suggestion, {query, isHighlighted}) => {
         const matches = match(suggestion, query);
         const parts = parse(suggestion, matches);
         return (
@@ -129,11 +139,11 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                 <div>
                     {parts.map((part, index) => {
                         return part.highlight ? (
-                            <span key={String(index)} style={{ fontWeight: 500 }}>
+                            <span key={String(index)} style={{fontWeight: 500}}>
               {part.text}
             </span>
                         ) : (
-                            <strong key={String(index)} style={{ fontWeight: 300 }}>
+                            <strong key={String(index)} style={{fontWeight: 300}}>
                                 {part.text}
                             </strong>
                         );
@@ -145,10 +155,10 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
 
 
     render() {
-        const { classes } = this.props;
+        const {classes} = this.props;
 
         const autosuggestProps = {
-            renderInputComponent: this.props.multi ? this.renderChipInput: this.renderInputComponent,
+            renderInputComponent: this.props.multi ? this.renderChipInput : this.renderInputComponent,
             suggestions: this.state.suggestions,
             onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
             onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
@@ -184,4 +194,5 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         );
     }
 }
+
 export const PwrAutoComplete = withStyles(styles as any)(PwrAutoCompleteModule);

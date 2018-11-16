@@ -27,13 +27,14 @@ interface ViewCardLocalState {
 
 interface ViewCardDispatch {
     deleteViewProfile(id: string): void;
+
     navigateTo(target: string): void;
+
     //generate(viewProfileId: string, templateId: string): void;
     updateViewProfile(viewProfileId: string, name: string, description: string, charsPerLine: number): void;
 }
 
-class ViewCardModule extends React.Component<
-    ViewCardProps
+class ViewCardModule extends React.Component<ViewCardProps
     & ViewCardLocalProps
     & ViewCardDispatch, ViewCardLocalState> {
 
@@ -41,9 +42,9 @@ class ViewCardModule extends React.Component<
         super(props);
         this.state = {
             dialogOpen: false,
-            generatorOpen : false,
+            generatorOpen: false,
 
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ViewCardLocalProps): ViewCardProps {
@@ -58,7 +59,7 @@ class ViewCardModule extends React.Component<
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             //generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
             updateViewProfile: (viewProfileId, name, description, charsPerLine) => {
-                dispatch(ViewProfileActionCreator.AsyncUpdateViewProfile(viewProfileId, description, name, charsPerLine))
+                dispatch(ViewProfileActionCreator.AsyncUpdateViewProfile(viewProfileId, description, name, charsPerLine));
             }
         };
     }
@@ -66,12 +67,13 @@ class ViewCardModule extends React.Component<
     private setDialogOpen(open: boolean) {
         this.setState({
             dialogOpen: open
-        })
+        });
     }
-    private setGeneratorOpen(open : boolean){
+
+    private setGeneratorOpen(open: boolean) {
         this.setState({
             generatorOpen: open
-        })
+        });
     }
 
     private handleUpdate = (name: string, description: string, charsPerLine: number) => {
@@ -83,66 +85,66 @@ class ViewCardModule extends React.Component<
 
     render() {
         return (
-        <Card className="fullWidth">
-            <ViewProfileDialog
-                viewProfile={this.props.viewProfile}
-                onClose={() => this.setDialogOpen(false)}
-                onSave={this.handleUpdate}
-                open={this.state.dialogOpen}
-            />
+            <Card className="fullWidth">
+                <ViewProfileDialog
+                    viewProfile={this.props.viewProfile}
+                    onClose={() => this.setDialogOpen(false)}
+                    onSave={this.handleUpdate}
+                    open={this.state.dialogOpen}
+                />
 
-            <ProfileGenerator
-                open={this.state.generatorOpen}
-                onClose={() => this.setGeneratorOpen(false)}
-                viewProfileId={this.props.viewProfile.id}
-            />
-            <CardHeader
-                title={this.props.viewProfile.viewProfileInfo.name}
-                subheader={PowerLocalize.get("ViewProfileCard.Subtitle") + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
-            />
-            <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
-            <CardActions>
-                <div>
-                    <Button
-                        style={{marginLeft:'8px',marginTop:'5px'}}
-                        variant={'raised'}
-                        className="mui-margin"
-                        onClick={() => this.setDialogOpen(true)}
-                    >
-                        <Icon className="material-icons">info</Icon>
-                        {PowerLocalize.get("ViewProfileCard.Action.EditInfo")}
-                    </Button>
-                    <Button
-                        style={{marginLeft:'8px', marginTop:'5px'}}
-                        variant={'raised'}
-                        className="mui-margin"
-                        onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(":id", this.props.viewProfileId))}
-                    >
-                        <Icon className="material-icons">edit</Icon>
-                        {PowerLocalize.get("ViewProfileCard.Action.Edit")}
-                    </Button>
-                    <Button
-                        style={{marginLeft:'8px', marginTop:'5px', backgroundColor:'#ff8e01'}}
-                        variant={'raised'}
-                        className="mui-margin pwr-btn-error"
-                        onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
-                    >
-                        <Icon className="material-icons">delete</Icon>
-                        {PowerLocalize.get("Action.Delete")}
-                    </Button>
-                    <Button
-                        style={{marginLeft:'8px', marginTop:'5px'}}
-                        variant={'raised'}
-                        className="mui-margin"
-                        color={'primary'}
-                        onClick={() => this.setGeneratorOpen(true)}
-                    >
-                        <Icon className="material-icons">open_in_new</Icon>
-                        {PowerLocalize.get("Action.Generate.Word")}
-                    </Button>
-                </div>
-            </CardActions>
-        </Card>);
+                <ProfileGenerator
+                    open={this.state.generatorOpen}
+                    onClose={() => this.setGeneratorOpen(false)}
+                    viewProfileId={this.props.viewProfile.id}
+                />
+                <CardHeader
+                    title={this.props.viewProfile.viewProfileInfo.name}
+                    subheader={PowerLocalize.get('ViewProfileCard.Subtitle') + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
+                />
+                <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
+                <CardActions>
+                    <div>
+                        <Button
+                            style={{marginLeft: '8px', marginTop: '5px'}}
+                            variant={'raised'}
+                            className="mui-margin"
+                            onClick={() => this.setDialogOpen(true)}
+                        >
+                            <Icon className="material-icons">info</Icon>
+                            {PowerLocalize.get('ViewProfileCard.Action.EditInfo')}
+                        </Button>
+                        <Button
+                            style={{marginLeft: '8px', marginTop: '5px'}}
+                            variant={'raised'}
+                            className="mui-margin"
+                            onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(':id', this.props.viewProfileId))}
+                        >
+                            <Icon className="material-icons">edit</Icon>
+                            {PowerLocalize.get('ViewProfileCard.Action.Edit')}
+                        </Button>
+                        <Button
+                            style={{marginLeft: '8px', marginTop: '5px', backgroundColor: '#ff8e01'}}
+                            variant={'raised'}
+                            className="mui-margin pwr-btn-error"
+                            onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
+                        >
+                            <Icon className="material-icons">delete</Icon>
+                            {PowerLocalize.get('Action.Delete')}
+                        </Button>
+                        <Button
+                            style={{marginLeft: '8px', marginTop: '5px'}}
+                            variant={'raised'}
+                            className="mui-margin"
+                            color={'primary'}
+                            onClick={() => this.setGeneratorOpen(true)}
+                        >
+                            <Icon className="material-icons">open_in_new</Icon>
+                            {PowerLocalize.get('Action.Generate.Word')}
+                        </Button>
+                    </div>
+                </CardActions>
+            </Card>);
     }
 }
 

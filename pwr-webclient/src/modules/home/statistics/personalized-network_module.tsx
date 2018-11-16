@@ -20,17 +20,16 @@ interface PersonalizedNetworkDispatch {
 
 }
 
-class PersonalizedNetworkModule extends React.Component<
-    PersonalizedNetworkProps
+class PersonalizedNetworkModule extends React.Component<PersonalizedNetworkProps
     & PersonalizedNetworkLocalProps
     & PersonalizedNetworkDispatch, PersonalizedNetworkLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: PersonalizedNetworkLocalProps): PersonalizedNetworkProps {
-        return {}
+        return {};
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PersonalizedNetworkDispatch {
-        return {}
+        return {};
     }
 
     render() {

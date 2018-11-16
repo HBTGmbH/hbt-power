@@ -32,12 +32,13 @@ interface UsedSkillOverviewLocalState {
 
 interface UsedSkillOverviewDispatch {
     loadAllUsedSkills(): void;
+
     getSkillUsageInfo(skillName: string): void;
+
     getSkillHierarchy(skillName: string): void;
 }
 
-class UsedSkillOverviewModule extends React.Component<
-    UsedSkillOverviewProps
+class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     & UsedSkillOverviewLocalProps
     & UsedSkillOverviewDispatch, UsedSkillOverviewLocalState> {
 
@@ -81,18 +82,18 @@ class UsedSkillOverviewModule extends React.Component<
     private closeEditDialog = () => {
         this.setState({
             editOpen: false
-        })
+        });
     };
 
     private openEditDialog = () => {
         this.setState({
             editOpen: true
-        })
+        });
     };
 
     render() {
         let res = null;
-        if(this.state.filterString !== "") {
+        if (this.state.filterString !== '') {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
             //res = this.props.usedSkillNames.filter(this.state.filterString);// =>  value.sort(Comparators.getStringComparator(true));// Autocomplete
         } else {
@@ -112,8 +113,8 @@ class UsedSkillOverviewModule extends React.Component<
                         <TextField
                             value={this.state.filterString}
                             onChange={(e) => this.setState({filterString: e.target.value})}
-                            label={PowerLocalize.get("Action.Search")}
-                            style={{paddingLeft: "8px"}}
+                            label={PowerLocalize.get('Action.Search')}
+                            style={{paddingLeft: '8px'}}
                         />
                         <List>
                             {res === null ? <ListItem>ERROR</ListItem> :
@@ -121,26 +122,26 @@ class UsedSkillOverviewModule extends React.Component<
                                     <ListItem
                                         value={name}
                                         key={name}
-                                        onChange={(e:any) => console.log(e)}
+                                        onChange={(e: any) => console.log(e)}
                                     >
                                         {name}
                                     </ListItem>
                                 )
                             }
                             <ListItem
-                                value={"test"}
-                                key={"test-key"}
-                                onChange={(e:any) => console.log(e)}
+                                value={'test'}
+                                key={'test-key'}
+                                onChange={(e: any) => console.log(e)}
                             >
                                 test-placeholder
                             </ListItem>
                         </List>
                     </Paper>
                 </div>
-                {this.state.selectedSkillName !== "" ?
-                    <div className="col-md-4"  >
+                {this.state.selectedSkillName !== '' ?
+                    <div className="col-md-4">
                         <Paper id="admin-info-panel">
-                            <div className="vertical-align" style={{ height: '56px'}}>
+                            <div className="vertical-align" style={{height: '56px'}}>
                                 <div
                                     style={{fontSize: 18}}
                                 >
@@ -156,36 +157,37 @@ class UsedSkillOverviewModule extends React.Component<
                                 </span>
                                 </div>
                             </div>
-                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillQualifier")}</ListSubheader>
+                            <ListSubheader>{PowerLocalize.get('AdminClient.Infos.UsedSkills.SkillQualifier')}</ListSubheader>
                             <span className="padding-left-16px">{this.state.selectedSkillName}</span>
-                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.SkillHiearchy")}</ListSubheader>
+                            <ListSubheader>{PowerLocalize.get('AdminClient.Infos.UsedSkills.SkillHiearchy')}</ListSubheader>
                             <div className="padding-left-16px">
                                 {
                                     isNullOrUndefined(this.props.skillHierarchies.get(this.state.selectedSkillName))
-                                        ? "Keine Kategorisierung vorhanden"
+                                        ? 'Keine Kategorisierung vorhanden'
                                         : this.props.skillHierarchies.get(this.state.selectedSkillName)
 
                                 }
                             </div>
                             <Button
-                                    color={'primary'}
-                                    variant={'raised'}
-                                    onClick={this.openEditDialog}
-                                    className="mui-margin"
+                                color={'primary'}
+                                variant={'raised'}
+                                onClick={this.openEditDialog}
+                                className="mui-margin"
                             >
-                                {PowerLocalize.get("Action.Edit")}
+                                {PowerLocalize.get('Action.Edit')}
                                 <Icon className="material-icons">edit</Icon>
                             </Button>
 
-                            <ListSubheader>{PowerLocalize.get("AdminClient.Infos.UsedSkills.UsedBy")}</ListSubheader>
+                            <ListSubheader>{PowerLocalize.get('AdminClient.Infos.UsedSkills.UsedBy')}</ListSubheader>
                             <List>
-                            {
-                                !isNullOrUndefined(values) ? values.map((value, key, iter) => <ListItem disabled key={key}>{value.getFullName()}</ListItem>) : <></>
-                            }
+                                {
+                                    !isNullOrUndefined(values) ? values.map((value, key, iter) => <ListItem disabled
+                                                                                                            key={key}>{value.getFullName()}</ListItem>) : <></>
+                                }
                             </List>
                         </Paper>
                     </div>
-                        :
+                    :
                     null
                 }
             </div>

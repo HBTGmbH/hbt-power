@@ -1,4 +1,5 @@
 import {doop} from 'doop';
+
 export interface APILocalizedQualifier {
     /**
      * Technical ID
@@ -16,9 +17,20 @@ export interface APILocalizedQualifier {
 
 @doop
 export class LocalizedQualifier {
-    @doop public get id() {return doop<number, this>()};
-    @doop public get locale() {return doop<string, this>()};
-    @doop public get qualifier() {return doop<string, this>()};
+    @doop
+    public get id() {
+        return doop<number, this>();
+    };
+
+    @doop
+    public get locale() {
+        return doop<string, this>();
+    };
+
+    @doop
+    public get qualifier() {
+        return doop<string, this>();
+    };
 
     private constructor(id: number, locale: string, qualifier: string) {
         return this.id(id).locale(locale).qualifier(qualifier);

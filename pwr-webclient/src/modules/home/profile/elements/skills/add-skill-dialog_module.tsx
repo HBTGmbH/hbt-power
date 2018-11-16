@@ -327,7 +327,7 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
                                 <StepLabel>{PowerLocalize.get('AddSkillDialog.Step.2')}</StepLabel>
                             </Step>
                         </Stepper>
-                        <div style={{marginLeft: "24px"}}>
+                        <div style={{marginLeft: '24px'}}>
                             {this.renderStepContent()}
                         </div>
                     </DialogContent>

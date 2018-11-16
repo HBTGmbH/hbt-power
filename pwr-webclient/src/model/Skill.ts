@@ -2,6 +2,7 @@ import {doop} from 'doop';
 import {APISkill} from './APIProfile';
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {isNullOrUndefined} from 'util';
+
 @doop
 export class Skill {
     @doop
@@ -43,15 +44,15 @@ export class Skill {
             name: this.name(),
             rating: this.rating(),
             comment: this.comment()
-        }
+        };
     }
 
     public static createNew(qualifier: string): Skill {
-        return new Skill(qualifier, NEW_ENTITY_PREFIX + String(Skill.CURRENT_ID++), 1,"", true);
+        return new Skill(qualifier, NEW_ENTITY_PREFIX + String(Skill.CURRENT_ID++), 1, '', true);
     }
 
     public static of(name: string, level: number, comment?: string): Skill {
-        let _comment = isNullOrUndefined(comment) ? "" : comment;
+        let _comment = isNullOrUndefined(comment) ? '' : comment;
         return new Skill(name, NEW_ENTITY_PREFIX + String(Skill.CURRENT_ID++), level, _comment, true);
     }
 
@@ -62,6 +63,6 @@ export class Skill {
             Number(apiSkill.rating),
             apiSkill.comment,
             false
-        )
+        );
     }
 }

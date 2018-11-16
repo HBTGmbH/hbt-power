@@ -83,7 +83,7 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
     private handleClickTapField = () => {
         this.setState({
             dialogOpen: true
-        })
+        });
     };
 
     private handleEditButtonClick = () => {
@@ -100,7 +100,7 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
         this.props.onSave(entry, name);
         this.setState({
             dialogOpen: false
-        })
+        });
     };
 
     private handleCloseRequest = () => {
@@ -110,14 +110,15 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
     };
 
 
-
     render() {
 
-        return(
+        return (
             <tr>
                 <td>
-                    <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.handleEditButtonClick}/>
-                    <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonClick}/>
+                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
+                                   onClick={this.handleEditButtonClick}/>
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                                   onClick={this.handleDeleteButtonClick}/>
                     <TrainingEntryDialog
                         trainingEntry={this.props.trainingEntry}
                         trainings={this.props.trainings}
@@ -128,17 +129,17 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleClickTapField}>
-                    {formatToShortDisplay(this.props.trainingEntry.startDate())}
+                        {formatToShortDisplay(this.props.trainingEntry.startDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleClickTapField}>
-                    {formatToShortDisplay(this.props.trainingEntry.endDate())}
+                        {formatToShortDisplay(this.props.trainingEntry.endDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleClickTapField}>
-                    {this.getTrainingName()}
+                        {this.getTrainingName()}
                     </div>
                 </td>
             </tr>

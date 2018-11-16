@@ -20,7 +20,9 @@ interface SkillChipLocalProps {
     style?: CSSProperties;
     textColor?: string;
     className?: string;
+
     onRatingChange(newRating: number, id: string): void;
+
     onDelete(id: string): void;
 }
 
@@ -30,8 +32,8 @@ interface SkillChipLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface SkillChipLocalState {
-    anchorEl:any,
-    popoverOpen:boolean,
+    anchorEl: any,
+    popoverOpen: boolean,
 }
 
 export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLocalState> {
@@ -42,22 +44,22 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
     };
 
     private handleDelete = () => {
-        this.props.onDelete(this.props.skill.id())
+        this.props.onDelete(this.props.skill.id());
     };
 
-    private showInfo = (event:any) => {
-    this.setState({
-        anchorEl:(!this.state.anchorEl)? event.currentTarget : null,
-        popoverOpen: !this.state.popoverOpen,
-    })
+    private showInfo = (event: any) => {
+        this.setState({
+            anchorEl: (!this.state.anchorEl) ? event.currentTarget : null,
+            popoverOpen: !this.state.popoverOpen,
+        });
     };
 
-    constructor(props:SkillChipLocalProps){
+    constructor(props: SkillChipLocalProps) {
         super(props);
         this.state = {
-            anchorEl:null,
-            popoverOpen : false,
-        }
+            anchorEl: null,
+            popoverOpen: false,
+        };
     };
 
 
@@ -76,8 +78,8 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                     open={this.state.popoverOpen}
                     onClose={this.showInfo}
                     anchorEl={this.state.anchorEl}
-                    anchorOrigin={{horizontal:'center', vertical:'bottom'}}
-                    transformOrigin={{horizontal:'center', vertical:'top'}}
+                    anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}
+                    transformOrigin={{horizontal: 'center', vertical: 'top'}}
                 >
                     <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
                 </Popover>

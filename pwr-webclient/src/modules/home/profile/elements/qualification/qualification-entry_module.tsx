@@ -75,14 +75,14 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
     private handleEditButtonClick = () => {
         this.setState({
             dialogOpen: true
-        })
+        });
     };
 
     private handleSaveRequest = (entry: QualificationEntry, name: NameEntity) => {
         this.props.onSave(entry, name);
         this.setState({
             dialogOpen: false
-        })
+        });
     };
 
     private handleCloseRequest = () => {
@@ -92,11 +92,13 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
     };
 
     render() {
-        return(
+        return (
             <tr>
                 <td>
-                    <PwrIconButton iconName={"edit"} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.handleEditButtonClick}/>
-                    <PwrIconButton iconName={"delete"} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.handleDeleteButtonClick}/>
+                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
+                                   onClick={this.handleEditButtonClick}/>
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                                   onClick={this.handleDeleteButtonClick}/>
                     <QualificationEntryDialog
                         qualificationEntry={this.props.qualificationEntry}
                         qualifications={this.props.qualifications}
@@ -107,7 +109,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleFieldTouchClick}>
-                    {formatToYear(this.props.qualificationEntry.date())}
+                        {formatToYear(this.props.qualificationEntry.date())}
                     </div>
                 </td>
                 <td>

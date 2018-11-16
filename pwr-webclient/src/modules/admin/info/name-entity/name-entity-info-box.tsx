@@ -16,14 +16,15 @@ interface NameEntityInfoBoxState {
 class NameEntityInfoBoxModule extends React.Component<NameEntityInfoBoxProps, NameEntityInfoBoxState> {
 
     private renderUsedBy = () => {
-        return <List style={{paddingTop:'5px'}}>
-            {this.props.usedBy.map((value, key) => <ListItem style={{paddingLeft:'30px', paddingTop:'5px'}} key={key}>{value.initials()}</ListItem>)}
+        return <List style={{paddingTop: '5px'}}>
+            {this.props.usedBy.map((value, key) => <ListItem style={{paddingLeft: '30px', paddingTop: '5px'}}
+                                                             key={key}>{value.initials()}</ListItem>)}
         </List>;
     };
 
     render() {
-        return (<div >
-            <PwrIconHeader title={"Info"} muiIconName={"info_outline"}/>
+        return (<div>
+            <PwrIconHeader title={'Info'} muiIconName={'info_outline'}/>
             <ListSubheader>Bezeichnung</ListSubheader>
             <span className="padding-left-32px">{this.props.nameEntity.name()}</span>
             <ListSubheader>Benutzt von</ListSubheader>

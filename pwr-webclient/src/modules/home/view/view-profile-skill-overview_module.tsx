@@ -33,14 +33,17 @@ interface ViewProfileSkillOverviewLocalState {
 
 interface ViewProfileSkillOverviewDispatch {
     moveEntry(id: string, type: string, sourceIndex: number, targetIndex: number): void;
+
     toggleEntry(id: string, type: string, index: number, isEnabled: boolean): void;
+
     toggleSkill(id: string, skillName: string, isEnabled: boolean): void;
+
     setDisplayCategory(id: string, skillName: string, newDisplayCategoryName: string): void;
+
     moveNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, sourceIndex: number, targetIndex: number): void;
 }
 
-class ViewProfileSkillOverviewModule extends React.Component<
-    ViewProfileSkillOverviewProps
+class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOverviewProps
     & ViewProfileSkillOverviewLocalProps
     & ViewProfileSkillOverviewDispatch, ViewProfileSkillOverviewLocalState> {
 
@@ -61,7 +64,9 @@ class ViewProfileSkillOverviewModule extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileSkillOverviewDispatch {
         return {
             moveEntry: (id, type, sourceIndex, targetIndex) => dispatch(ViewProfileActionCreator.AsyncMoveEntry(id, type, sourceIndex, targetIndex)),
-            toggleEntry: (id, type, index, isEnabled) => {dispatch(ViewProfileActionCreator.AsyncToggleEntry(id, type, index, isEnabled));},
+            toggleEntry: (id, type, index, isEnabled) => {
+                dispatch(ViewProfileActionCreator.AsyncToggleEntry(id, type, index, isEnabled));
+            },
             moveNestedEntry: (id, container, containerIndex, type, sourceIndex, targetIndex) => {
                 dispatch(ViewProfileActionCreator.AsyncMoveNestedEntry(id, container, containerIndex, type, sourceIndex, targetIndex));
             },
@@ -74,14 +79,14 @@ class ViewProfileSkillOverviewModule extends React.Component<
         this.setState({
             editSkillOpen: true,
             editSkill: skill
-        })
+        });
     };
 
     private closeEditSkillDialog = () => {
         this.setState({
             editSkillOpen: false,
             editSkill: null
-        })
+        });
     };
 
     private handleChangeDisplayCategory = (skillName: string, newDisplayCategoryName: string) => {
@@ -110,8 +115,8 @@ class ViewProfileSkillOverviewModule extends React.Component<
         let res: Array<JSX.Element> = [];
         res.push(
             <td key={'ViewSkill_' + entry.name}
-                     className="cursor-pointer"
-                     onClick={() => this.editSkill(entry)}
+                className="cursor-pointer"
+                onClick={() => this.editSkill(entry)}
             >
                 {entry.name}
             </td>);
@@ -125,7 +130,7 @@ class ViewProfileSkillOverviewModule extends React.Component<
             <td key={'ViewCategory_' + entry.name}>
                 <ExpansionPanel>
                     <ExpansionPanelSummary expandIcon={<Icon className={'material-ui'}>arrow_down</Icon>}>
-                        <Typography style={{flexBasis:'33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography style={{flexBasis: '33.33%'}} variant={'headline'}>{entry.name}</Typography>
                         <Typography variant={'caption'}>{entry.displaySkills.length + ' Skills'}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>

@@ -25,6 +25,7 @@ interface MissingCommonDashboardElementLocalState {
 
 interface MissingCommonDashboardElementDispatch {
     navigateTo(target: string): void;
+
     loadSkillStatistics(): void;
 }
 
@@ -33,14 +34,14 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
     static mapStateToProps(state: ApplicationState, localProps: MissingCommonDashboardElementLocalProps): MissingCommonDashboardElementProps {
         return {
             profileSkillMetrics: state.statisticsReducer.activeProfileMetric(),
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): MissingCommonDashboardElementDispatch {
         return {
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
-        }
+        };
     }
 
     private loadSkillStatistics = () => {
@@ -51,7 +52,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
 
 
     private renderMissingSkills = () => {
-        if(this.props.profileSkillMetrics.missingSkills().size == 0) {
+        if (this.props.profileSkillMetrics.missingSkills().size == 0) {
             return PowerLocalize.get('None');
         }
         let missingSkills: String = '';
@@ -65,13 +66,13 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
     };
 
     render() {
-        if(isNullOrUndefined(this.props.profileSkillMetrics)){
+        if (isNullOrUndefined(this.props.profileSkillMetrics)) {
             return <div/>;
         } else {
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar  sizes={'80'} src={getImagePath()+"/icon_chart.svg"} />
+                        <Avatar sizes={'80'} src={getImagePath() + '/icon_chart.svg'}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                         Standard-Skills, die diesem Profil fehlen: {this.renderMissingSkills()}
@@ -79,7 +80,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                     <div className="col-md-3 col-sm-12">
                         <Button
                             variant={'raised'}
-                            style={{marginTop: "8px"}}
+                            style={{marginTop: '8px'}}
                             color={'primary'}
                             onClick={() => this.loadSkillStatistics()}
                         >

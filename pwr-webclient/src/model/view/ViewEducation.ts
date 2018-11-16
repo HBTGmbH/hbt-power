@@ -1,4 +1,5 @@
 import {isNullOrUndefined} from 'util';
+
 export class ViewEducation {
     name: string;
     startDate: Date;
@@ -17,8 +18,8 @@ export class ViewEducation {
 
     public static of(viewEducation: ViewEducation) {
         return new ViewEducation(viewEducation.name,
-            isNullOrUndefined(viewEducation.startDate) ? null :new Date(viewEducation.startDate),
-            isNullOrUndefined(viewEducation.endDate) ? null :new Date(viewEducation.endDate),
+            isNullOrUndefined(viewEducation.startDate) ? null : new Date(viewEducation.startDate),
+            isNullOrUndefined(viewEducation.endDate) ? null : new Date(viewEducation.endDate),
             viewEducation.degree, viewEducation.enabled);
     }
 }

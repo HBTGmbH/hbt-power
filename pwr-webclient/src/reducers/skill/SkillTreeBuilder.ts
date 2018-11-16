@@ -31,7 +31,7 @@ export class SkillTreeBuilder {
 
     public build = (): SkillTreeBuilderResult => {
         this.addCategoryToTree(this.originalRoot);
-        console.debug("Tree Done", this.treeRoot);
+        console.debug('Tree Done', this.treeRoot);
         const categoriesById = Immutable.Map<number, SkillCategory>(this.categories.entries());
         const skillsById = Immutable.Map<number, SkillServiceSkill>(this.skills.entries());
         this.treeRoot.clearFilter();
@@ -40,7 +40,7 @@ export class SkillTreeBuilder {
             tree: this.treeRoot,
             categoriesById: categoriesById,
             skillsById: skillsById
-        }
+        };
     };
 
     private addCategoryToTree = (category: TCategoryNode): SkillTreeNode => {
@@ -65,6 +65,6 @@ export class SkillTreeBuilder {
         let skillTreeNode = new SkillNode(skill.id, false);
         this.skills.set(skillServiceSkill.id(), skillServiceSkill);
         return skillTreeNode;
-    }
+    };
 
 }

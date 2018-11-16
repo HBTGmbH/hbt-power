@@ -32,8 +32,7 @@ interface ConsultantGridDispatch {
 
 }
 
-class ConsultantGridModule extends React.Component<
-    ConsultantGridProps
+class ConsultantGridModule extends React.Component<ConsultantGridProps
     & ConsultantGridLocalProps
     & ConsultantGridDispatch, ConsultantGridLocalState> {
 
@@ -42,19 +41,19 @@ class ConsultantGridModule extends React.Component<
         this.state = {
             createDialogOpen: false,
             showInactive: false
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ConsultantGridLocalProps): ConsultantGridProps {
         return {
             consultantsByInitials: state.adminReducer.consultantsByInitials()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantGridDispatch {
         return {
             refreshConsultants: () => dispatch(AdminActionCreator.AsyncGetAllConsultants())
-        }
+        };
     }
 
     public componentDidMount() {
@@ -64,17 +63,17 @@ class ConsultantGridModule extends React.Component<
     private showDialog = () => {
         this.setState({
             createDialogOpen: true
-        })
+        });
     };
 
     private hideDialog = () => {
         this.setState({
             createDialogOpen: false
-        })
+        });
     };
 
     private filterInactive = (v: ConsultantInfo) => {
-        if(!this.state.showInactive) {
+        if (!this.state.showInactive) {
             return v.active();
         }
         return true;
@@ -96,7 +95,7 @@ class ConsultantGridModule extends React.Component<
                     >
                         <Icon className="material-icons">refresh</Icon>
                         {PowerLocalize.get('Action.Update')}
-                        </Button>
+                    </Button>
                     <Button
                         variant={'raised'}
                         style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
@@ -105,13 +104,13 @@ class ConsultantGridModule extends React.Component<
                         <Icon className="material-icons">add</Icon>
                         {PowerLocalize.get('Action.CreateNewConsultant')}
                     </Button>
-                    <FormControl style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}} >
+                    <FormControl style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}>
                         <FormControlLabel
                             control={<Checkbox
                                 checked={this.state.showInactive}
                                 onChange={(e: object, v: boolean) => this.setState({showInactive: v})}/>}
-                            label={"Show inactive"}
-                         />
+                            label={'Show inactive'}
+                        />
 
                     </FormControl>
                 </div>
@@ -121,13 +120,14 @@ class ConsultantGridModule extends React.Component<
                         cellHeight={310}
                         spacing={5}
                     >
-                    {
-                        this.props.consultantsByInitials
-                            .filter(this.filterInactive)
-                            .map(consultantInfo => {
-                                return <ConsultantTile key={"ConsultantTile." + consultantInfo.initials()} initials={consultantInfo.initials()}/>
-                            }).toArray()
-                    }
+                        {
+                            this.props.consultantsByInitials
+                                .filter(this.filterInactive)
+                                .map(consultantInfo => {
+                                    return <ConsultantTile key={'ConsultantTile.' + consultantInfo.initials()}
+                                                           initials={consultantInfo.initials()}/>;
+                                }).toArray()
+                        }
                     </GridList>
                 </div>
             </div>

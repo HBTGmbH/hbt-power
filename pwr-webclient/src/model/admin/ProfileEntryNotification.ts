@@ -11,16 +11,27 @@ export interface APIProfileEntryNotification extends APIAdminNotification {
 
 @doop
 export class ProfileEntryNotification {
-    @doop public get adminNotification() {return doop<AdminNotification, this>()};
-    @doop public get profileEntryId() {return doop<number, this>()}
-    @doop public get nameEntity() {return doop<NameEntity, this>()};
+    @doop
+    public get adminNotification() {
+        return doop<AdminNotification, this>();
+    };
+
+    @doop
+    public get profileEntryId() {
+        return doop<number, this>();
+    }
+
+    @doop
+    public get nameEntity() {
+        return doop<NameEntity, this>();
+    };
 
     protected constructor(adminNotification: AdminNotification,
                           profileEntryId: number,
                           nameEntity: NameEntity
     ) {
 
-            return this.adminNotification(adminNotification)
+        return this.adminNotification(adminNotification)
             .profileEntryId(profileEntryId)
             .nameEntity(nameEntity);
     }
@@ -34,7 +45,7 @@ export class ProfileEntryNotification {
             AdminNotification.fromAPI(apiProfileEntryNotification),
             apiProfileEntryNotification.profileEntryId,
             NameEntity.fromAPI(apiProfileEntryNotification.nameEntity)
-        )
+        );
     }
 
     public toAPI(): APIProfileEntryNotification {

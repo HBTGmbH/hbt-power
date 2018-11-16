@@ -29,6 +29,7 @@ interface ConsultantCreateDialogProps {
  */
 interface ConsultantCreateDialogLocalProps {
     show: boolean;
+
     onClose(): void;
 }
 
@@ -48,8 +49,7 @@ interface ConsultantCreateDialogDispatch {
     createConsultant(consultantInfo: ConsultantInfo): void;
 }
 
-class ConsultantCreateDialogModule extends React.Component<
-    ConsultantCreateDialogProps
+class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialogProps
     & ConsultantCreateDialogLocalProps
     & ConsultantCreateDialogDispatch, ConsultantCreateDialogLocalState> {
 
@@ -57,21 +57,21 @@ class ConsultantCreateDialogModule extends React.Component<
         super(props);
         this.state = {
             consultantInfo: ConsultantInfo.empty()
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ConsultantCreateDialogLocalProps): ConsultantCreateDialogProps {
-        return {}
+        return {};
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantCreateDialogDispatch {
         return {
             createConsultant: (info) => dispatch(AdminActionCreator.AsyncCreateConsultant(info))
-        }
+        };
     }
 
     private closeAndReset = () => {
-        this.setState ({
+        this.setState({
             consultantInfo: ConsultantInfo.empty()
         });
         this.props.onClose();
@@ -97,25 +97,25 @@ class ConsultantCreateDialogModule extends React.Component<
     private setTitle = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.title(val)
-        })
+        });
     };
 
     private setInitials = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.initials(val)
-        })
+        });
     };
 
     private setActive = (val: boolean) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.active(val)
-        })
+        });
     };
 
     private setBirthDate = (val: Date) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.birthDate(val)
-        })
+        });
     };
 
 
@@ -127,7 +127,7 @@ class ConsultantCreateDialogModule extends React.Component<
             color={'primary'}
             onClick={this.saveAndReset}
         >
-            {PowerLocalize.get("Action.Save")}
+            {PowerLocalize.get('Action.Save')}
         </Button>
         ,
         <Button
@@ -136,7 +136,7 @@ class ConsultantCreateDialogModule extends React.Component<
             color={'primary'}
             onClick={this.closeAndReset}
         >
-            {PowerLocalize.get("Action.Exit")}
+            {PowerLocalize.get('Action.Exit')}
         </Button>,
     ];
 
@@ -148,9 +148,9 @@ class ConsultantCreateDialogModule extends React.Component<
                 onClose={this.closeAndReset}
             >
                 <ConsultantEditFields
-                    firstName = {this.state.consultantInfo.firstName()}
-                    lastName = {this.state.consultantInfo.lastName()}
-                    title = {this.state.consultantInfo.title()}
+                    firstName={this.state.consultantInfo.firstName()}
+                    lastName={this.state.consultantInfo.lastName()}
+                    title={this.state.consultantInfo.title()}
                     birthDate={this.state.consultantInfo.birthDate()}
                     active={this.state.consultantInfo.active()}
                     onFirstNameChange={this.setFirstName}

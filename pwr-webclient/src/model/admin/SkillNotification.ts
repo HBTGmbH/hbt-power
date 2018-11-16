@@ -11,9 +11,20 @@ export interface APISkillNotification extends APIAdminNotification {
 
 @doop
 export class SkillNotification {
-    @doop public get adminNotification() {return doop<AdminNotification, this>()};
-    @doop public get skill() {return doop<Skill, this>()};
-    @doop public get newName() {return doop<string, this>()};
+    @doop
+    public get adminNotification() {
+        return doop<AdminNotification, this>();
+    };
+
+    @doop
+    public get skill() {
+        return doop<Skill, this>();
+    };
+
+    @doop
+    public get newName() {
+        return doop<string, this>();
+    };
 
     constructor(adminNotification: AdminNotification, skill: Skill, newName: string) {
         return this.adminNotification(adminNotification).skill(skill).newName(newName);
@@ -28,7 +39,7 @@ export class SkillNotification {
             AdminNotification.fromAPI(apiSkillNotification),
             Skill.fromAPI(apiSkillNotification.skill),
             apiSkillNotification.newName
-        )
+        );
     }
 
     public toAPI(): APISkillNotification {

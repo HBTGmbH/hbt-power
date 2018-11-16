@@ -62,7 +62,9 @@ interface ProjectsLocalState {
  */
 interface ProjectsDispatch {
     deleteProject(id: string): void;
+
     saveProject(state: ProjectDialogState): void;
+
     addProject(): void;
 }
 
@@ -92,13 +94,13 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ProfileStore>): ProjectsDispatch {
         return {
-            deleteProject: function(id: string) {
+            deleteProject: function (id: string) {
                 dispatch(ProfileActionCreator.deleteProject(id));
             },
-            saveProject: function(state: ProjectDialogState) {
+            saveProject: function (state: ProjectDialogState) {
                 dispatch(ProfileActionCreator.saveProject(state));
             },
-            addProject: function() {
+            addProject: function () {
                 dispatch(ProfileActionCreator.createProject());
             }
         };
@@ -106,9 +108,9 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
 
     private renderSingleProject = (value: Project, key: string, index: number) => {
         let x = index * 3 % 12;
-        let y = Math.floor(index/3) * 3;
+        let y = Math.floor(index / 3) * 3;
         return (
-            <div key={key} data-grid={{x: x, y:y, w: 2.95, h: 3, isDraggable: false}}>
+            <div key={key} data-grid={{x: x, y: y, w: 2.95, h: 3, isDraggable: false}}>
                 <ProjectCard
                     project={value}
                     onSave={this.props.saveProject}
@@ -116,7 +118,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
                     companies={this.props.companies}
                     projectRoles={this.props.projectRoles}
                     profile={this.props.profile}
-                    backgroundColor={"white"}
+                    backgroundColor={'white'}
                 />
             </div>);
     };
@@ -125,27 +127,27 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         let index = 0;
         return this.props.projects
             .sort(Comparators.compareProjects)
-            .map((value, key) => this.renderSingleProject(value, key, index++)).toArray()
+            .map((value, key) => this.renderSingleProject(value, key, index++)).toArray();
     };
 
     render() {
         return (
-            <div style={{alignContent:'center'}}>
+            <div style={{alignContent: 'center'}}>
                 <ResponsiveReactGridLayout
                     className="layout" breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
-                                           cols={{lg: 12, md: 9, sm: 6, xs: 3, xxs: 3}}>
+                    cols={{lg: 12, md: 9, sm: 6, xs: 3, xxs: 3}}>
                     {this.renderProjects()}
                 </ResponsiveReactGridLayout>
                 <br/>
                 <div style={{textAlign: 'center'}}>
                     <Tooltip title={PowerLocalize.get('Action.New')}>
-                    <IconButton
-                        style={{display:'inline-block'}}
-                        className="material-icons"
-                        onClick={this.props.addProject}
-                    >
-                        add
-                    </IconButton>
+                        <IconButton
+                            style={{display: 'inline-block'}}
+                            className="material-icons"
+                            onClick={this.props.addProject}
+                        >
+                            add
+                        </IconButton>
                     </Tooltip>
                 </div>
             </div>

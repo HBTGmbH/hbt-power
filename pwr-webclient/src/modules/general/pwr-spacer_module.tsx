@@ -16,7 +16,7 @@ interface PwrSpacerProps {
 
 const PwrSpacerModule = (props: PwrSpacerProps & WithStyles<'spacer'> & WithStyles<'doubleSpacer'>) => {
     const classname = props.double ? props.classes.doubleSpacer : props.classes.spacer;
-    return <div className={classname}/>
+    return <div className={classname}/>;
 };
 
 export const PwrSpacer = withStyles(styles as any)(PwrSpacerModule);

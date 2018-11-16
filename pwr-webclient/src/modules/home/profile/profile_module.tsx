@@ -171,7 +171,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     }
                 </div>
                 <Toolbar>
-                    <div style={{marginLeft: "auto"}}>
+                    <div style={{marginLeft: 'auto'}}>
                         <PwrIconButton iconName={'done'} tooltip={PowerLocalize.get('Action.Save')}
                                        onClick={this.handleSaveProfile}/>
                         <PwrIconButton iconName={'undo'} tooltip={PowerLocalize.get('Action.Undo')}

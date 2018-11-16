@@ -10,7 +10,7 @@ export namespace ViewProfileReducer {
     import SetSortInProgressAction = ViewProfileActions.SetSortInProgressAction;
 
     export function reduce(store: ViewProfileStore, action: AbstractAction) {
-        if(isNullOrUndefined(store)) {
+        if (isNullOrUndefined(store)) {
             return ViewProfileStore.empty();
         }
         switch (action.type) {

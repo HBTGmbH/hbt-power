@@ -39,6 +39,7 @@ interface KeySkillDialogProps {
 interface KeySkillDialogLocalProps {
     open: boolean;
     keySkillEntry: KeySkillEntry;
+
     requestClose(): void;
 }
 
@@ -59,8 +60,7 @@ interface KeySkillDialogDispatch {
     saveEntry(entry: KeySkillEntry, nameEntity: NameEntity): void;
 }
 
-class KeySkillDialogModule extends React.Component<
-    KeySkillDialogProps
+class KeySkillDialogModule extends React.Component<KeySkillDialogProps
     & KeySkillDialogLocalProps
     & KeySkillDialogDispatch, KeySkillDialogLocalState> {
 
@@ -69,19 +69,19 @@ class KeySkillDialogModule extends React.Component<
         this.state = {
             keySkillEntry: props.keySkillEntry,
             autoCompleteValue: NameEntityUtil.getNullTolerantName(props.keySkillEntry.nameEntityId(), props.keySkills)
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: KeySkillDialogLocalProps): KeySkillDialogProps {
         return {
             keySkills: state.databaseReducer.keySkills()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): KeySkillDialogDispatch {
         return {
             saveEntry: (entry, nameEntity) => dispatch(ProfileActionCreator.saveEntry(entry, nameEntity, ProfileElementType.KeySkill))
-        }
+        };
     }
 
     private closeDialog = () => {
@@ -91,14 +91,14 @@ class KeySkillDialogModule extends React.Component<
     private handleAutoCompleteInput = (value: string) => {
         this.setState({
             autoCompleteValue: value
-        })
+        });
     };
 
     private saveAndExit = () => {
         let name: string = this.state.autoCompleteValue;
         let keySkill: NameEntity = ProfileStore.findNameEntityByName(name, this.props.keySkills);
         let keySkillEntry: KeySkillEntry = this.state.keySkillEntry;
-        if(isNullOrUndefined(keySkill)) {
+        if (isNullOrUndefined(keySkill)) {
             keySkill = NameEntity.createNew(name);
         }
         keySkillEntry = keySkillEntry.nameEntityId(keySkill.id());
@@ -113,33 +113,34 @@ class KeySkillDialogModule extends React.Component<
 
     render() {
         return (<Dialog
-                open={this.props.open}
-                onClose={this.closeDialog}
-                title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
-                fullWidth
-                id="KeySkillEntry.Dialog"
-                aria-labelledby="KeySkillEntry.Dialog.Title"
-            >
+            open={this.props.open}
+            onClose={this.closeDialog}
+            title={PowerLocalize.get('KeySkillEntry.Dialog.Title')}
+            fullWidth
+            id="KeySkillEntry.Dialog"
+            aria-labelledby="KeySkillEntry.Dialog.Title"
+        >
             <DialogTitle id="KeySkillEntry.Dialog.Title">
                 {PowerLocalize.get('KeySkillEntry.Dialog.Title')}
             </DialogTitle>
             <DialogContent>
-            <div className="row">
-                <div className="col-md-11">
-                    <PwrAutoComplete
-                        fullWidth={true}
-                        label={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
-                        id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
-                        data={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}
-                        searchTerm={this.state.autoCompleteValue}
-                        onSearchChange={this.handleAutoCompleteInput}
-                    />
+                <div className="row">
+                    <div className="col-md-11">
+                        <PwrAutoComplete
+                            fullWidth={true}
+                            label={PowerLocalize.get('KeySkillEntry.Dialog.KeySkillName')}
+                            id={'KeySkillEntry.Dialog.KeySkillName  ' + this.props.keySkillEntry.id()}
+                            data={this.props.keySkills.map(NameEntityUtil.mapToName).toArray()}
+                            searchTerm={this.state.autoCompleteValue}
+                            onSearchChange={this.handleAutoCompleteInput}
+                        />
+                    </div>
                 </div>
-            </div>
             </DialogContent>
             <DialogActions>
-                <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
-                <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.resetAndExit}/>
+                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
+                <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                               onClick={this.resetAndExit}/>
             </DialogActions>
         </Dialog>);
     }

@@ -8,7 +8,7 @@ import {SetCurrentLocationAction, SetNavigationTargetAction} from './NavigationA
 export namespace NavigationReducer {
 
     export function reduce(store: NavigationStore, action: AbstractAction): NavigationStore {
-        if(isNullOrUndefined(store)) {
+        if (isNullOrUndefined(store)) {
             return NavigationStore.empty();
         }
         switch (action.type) {

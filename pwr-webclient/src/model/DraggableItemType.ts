@@ -1,3 +1,3 @@
 export class DraggableItemType {
-    public static readonly ROW = "ROW";
+    public static readonly ROW = 'ROW';
 }

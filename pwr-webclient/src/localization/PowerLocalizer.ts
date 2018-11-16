@@ -4,7 +4,6 @@
 import {de_locale} from './de_locale';
 import {isNullOrUndefined} from 'util';
 import {StringUtils} from '../utils/StringUtil';
-
 import formatString = StringUtils.formatString;
 
 /**
@@ -17,18 +16,18 @@ export class PowerLocalize {
      * Default locale used when an unknown locale string was provided
      * @type {string}
      */
-    public static readonly defaultLocale = "de";
+    public static readonly defaultLocale = 'de';
 
     /**
      * String returned when an unknown field name was given to the localizer.
      * @type {string}
      */
-    public static readonly noLocalizationFound = "NO_LOCALE";
+    public static readonly noLocalizationFound = 'NO_LOCALE';
 
     /**
      * The locale string that is currently used.
      */
-    private static locale: string = "de";
+    private static locale: string = 'de';
 
     /**
      * The localization that is currently used,represented by a json object that uses strings as fields.
@@ -40,10 +39,10 @@ export class PowerLocalize {
      * @param locale the new locale. Has to be a valid ISO language code (https://www.w3schools.com/tags/ref_language_codes.asp)
      */
     public static setLocale(locale: string) {
-        if(locale === "de") {
+        if (locale === 'de') {
             this.localization = de_locale;
         } else {
-            console.log("No localization available for " + locale + ". Using default " + PowerLocalize.defaultLocale);
+            console.log('No localization available for ' + locale + '. Using default ' + PowerLocalize.defaultLocale);
             this.localization = de_locale;
         }
     }
@@ -55,9 +54,9 @@ export class PowerLocalize {
      * @param field field name
      * @returns {any} localized strings.
      */
-    public static get(field: string) : string {
+    public static get(field: string): string {
         let val = this.localization[field];
-        if(isNullOrUndefined(val)) return field + "_" + PowerLocalize.noLocalizationFound;
+        if (isNullOrUndefined(val)) return field + '_' + PowerLocalize.noLocalizationFound;
         return String(val);
     }
 
@@ -68,6 +67,6 @@ export class PowerLocalize {
 
 
     public static langLevelToLocalizedString(level: string): string {
-        return PowerLocalize.get("LanguageLevel." + level);
+        return PowerLocalize.get('LanguageLevel.' + level);
     }
 }

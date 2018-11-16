@@ -1,12 +1,17 @@
 import {doop} from 'doop';
 import {APISkillUsageMetric} from './ApiMetrics';
+
 @doop
 export class SkillUsageMetric {
     @doop
-    public get skillName() {return doop<string, this>()};
+    public get skillName() {
+        return doop<string, this>();
+    };
 
     @doop
-    public get skillUsage() {return doop<number, this>()};
+    public get skillUsage() {
+        return doop<number, this>();
+    };
 
     private constructor(skillName: string, skillUsage: number) {
         return this.skillName(skillName).skillUsage(skillUsage);

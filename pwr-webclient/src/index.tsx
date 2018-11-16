@@ -30,7 +30,6 @@ PowerLocalize.setLocale(navigator.language);
 store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
 
-
 // Prevents navigation
 // TODO nt hat ne middleware dafür gemacht.
 const pageLeavePreventer = (ev: any) => {
@@ -47,9 +46,9 @@ window.onbeforeunload = pageLeavePreventer;
 
 
 const newPowerTheme = {
-    typography:{
-        fontSize:24,
-        fontFamily:[
+    typography: {
+        fontSize: 24,
+        fontFamily: [
             'Roboto',
             'sans-serif',].join(','),
     },
@@ -79,12 +78,12 @@ const newPowerTheme = {
     overrides: {
         MuiDialogContent: {
             root: {
-                overflowY: "unset",
+                overflowY: 'unset',
             }
         },
         MuiDialog: {
             paper: {
-                overflowY: "unset",
+                overflowY: 'unset',
             }
         }
     }
@@ -112,7 +111,8 @@ let App = (
                         <Route path={Paths.USER_BASE} component={PowerClient}/>
                         <Route path={Paths.ADMIN_BASE} component={AdminClient}/>
                         <ConfirmNavDialog/>
-                        <AlertContainer  ref={(a:any) => NavigationActionCreator.setAlertContainer(a)}{...alertOptions}/>
+                        <AlertContainer
+                            ref={(a: any) => NavigationActionCreator.setAlertContainer(a)}{...alertOptions}/>
                     </div>
                 </ConnectedRouter>
             </Provider>
@@ -123,5 +123,5 @@ let App = (
 
 ReactDOM.render(
     App,
-  document.getElementById('root')
+    document.getElementById('root')
 );

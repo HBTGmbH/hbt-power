@@ -40,7 +40,7 @@ export class AdminReducer {
      * @see ReceiveNotificationsAction
      */
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotificationsAction): AdminState {
-        if(isNullOrUndefined(action.notifications)) throw new TypeError("ReceiveNotificationAction.notifications must not be null or undefined.");
+        if (isNullOrUndefined(action.notifications)) throw new TypeError('ReceiveNotificationAction.notifications must not be null or undefined.');
         let apiProfileEntryNotifications = action.notifications.filter((value, index, array) => value.type === AdminNotification.TP_PROFILE_ENTRY);
         let apiProfileUpdateNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_PROFILE_UPDATE);
         let apiSkillNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_SKILL);
@@ -128,9 +128,9 @@ export class AdminReducer {
     }
 
     public static SetSkillNotificationEditStatus(state: AdminState, action: SetSkillNotificationEditStatusAction) {
-        if(typeof SkillNotificationEditStatus[action.skillNotificationEditStatus] === 'undefined')
-            throw new RangeError("Enum value for SkillNotificationEditStatus is out of range: " + action.skillNotificationEditStatus);
-        if(action.skillNotificationEditStatus === SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG) {
+        if (typeof SkillNotificationEditStatus[action.skillNotificationEditStatus] === 'undefined')
+            throw new RangeError('Enum value for SkillNotificationEditStatus is out of range: ' + action.skillNotificationEditStatus);
+        if (action.skillNotificationEditStatus === SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG) {
             state = state.isSkillNameEdited(true);
         }
         return state.skillNotificationEditStatus(action.skillNotificationEditStatus);
@@ -138,7 +138,7 @@ export class AdminReducer {
 
     public static OpenSkillNotificationDialog(state: AdminState, setSkillInfoAction: OpenSkillNotificationDialogAction) {
         let notification = state.skillNotifications().find((value, key, iter) => value.adminNotification().id() === setSkillInfoAction.notificationId);
-        return state.selectedSkillNotification(notification).skillNotificationEditStatus(SkillNotificationEditStatus.FETCHING_DATA)
+        return state.selectedSkillNotification(notification).skillNotificationEditStatus(SkillNotificationEditStatus.FETCHING_DATA);
     }
 
     public static SetSkillNotificationError(state: AdminState, action: ChangeStringValueAction) {
@@ -150,9 +150,9 @@ export class AdminReducer {
         return state.skillNotificationSelectedAction(setSkillNotificationAction.skillNotificationAction);
     }
 
-    public static reduce(state : AdminState, action: AbstractAction) : AdminState {
-        if(isNullOrUndefined(state)) return AdminState.createDefault();
-        switch(action.type) {
+    public static reduce(state: AdminState, action: AbstractAction): AdminState {
+        if (isNullOrUndefined(state)) return AdminState.createDefault();
+        switch (action.type) {
             case ActionType.ReceiveNotifications:
                 return AdminReducer.ReceiveNotifications(state, action as ReceiveNotificationsAction);
             case ActionType.ReceiveTrashedNotifications:
@@ -188,7 +188,7 @@ export class AdminReducer {
                     .skillNotificationEditStatus(SkillNotificationEditStatus.CLOSED)
                     .isSkillNameEdited(false)
                     .selectedSkillNotification(null)
-                    .skillNotificationError("")
+                    .skillNotificationError('')
                     .skillNotificationSelectedAction(SkillNotificationAction.ACTION_OK);
             case ActionType.OpenSkillNotificationDialog:
                 return AdminReducer.OpenSkillNotificationDialog(state, action as OpenSkillNotificationDialogAction);

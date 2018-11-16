@@ -21,7 +21,7 @@ export namespace NavigationActionCreator {
     let alertContainer: any = null;
 
     export function setAlertContainer(container: any) {
-        console.log("Init Container", container);
+        console.log('Init Container', container);
         alertContainer = container;
     }
 
@@ -29,14 +29,14 @@ export namespace NavigationActionCreator {
         alertContainer.show(msg, {
             time: 0,
             type: 'error',
-        })
+        });
     }
 
     export function showSuccess(msg: string) {
-       alertContainer.show(msg, {
+        alertContainer.show(msg, {
             time: 10000,
             type: 'success',
-        })
+        });
     }
 
     /**
@@ -50,25 +50,25 @@ export namespace NavigationActionCreator {
         return {
             type: ActionType.SetNavigationTarget,
             target: target
-        }
+        };
     }
 
     function SetCurrentLocation(location: string): SetCurrentLocationAction {
         return {
             type: ActionType.SetCurrentLocation,
             currentLocation: location
-        }
+        };
     }
 
     export function DropNavigationTarget(): AbstractAction {
         return {
             type: ActionType.DropNavigationTarget
-        }
+        };
     }
 
 
     function navigate(to: string, dispatch: redux.Dispatch<ApplicationState>): void {
-        console.debug("Navigating to " + to);
+        console.debug('Navigating to ' + to);
         PWR_HISTORY.push(to);
         dispatch(SetCurrentLocation(to));
     }
@@ -79,12 +79,12 @@ export namespace NavigationActionCreator {
      * @constructor
      */
     export function AsyncNavigateTo(target: string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state: ApplicationState = getState();
             let currentLocation = state.navigationSlice.currentLocation();
             let changes = state.databaseReducer.profile().changesMade();
-            if(target === Paths.USER_SPECIAL_LOGOUT ) {
-                if(changes > 0) {
+            if (target === Paths.USER_SPECIAL_LOGOUT) {
+                if (changes > 0) {
                     dispatch(SetNavigationTarget(target));
                 } else {
                     navigate(Paths.APP_ROOT, dispatch);
@@ -92,18 +92,19 @@ export namespace NavigationActionCreator {
                     dispatch(ProfileActionCreator.logOutUser());
                     dispatch(ViewProfileActionCreator.ResetViewState());
                 }
-            } if(currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && changes > 0) {
+            }
+            if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && changes > 0) {
                 dispatch(SetNavigationTarget(target));
             } else {
                 navigate(target, dispatch);
             }
-        }
+        };
     }
 
     export function AsyncContinueToTarget() {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let target: string = getState().navigationSlice.targetLocation();
-            switch(target) {
+            switch (target) {
                 case Paths.USER_SPECIAL_LOGOUT: {
                     navigate(Paths.APP_ROOT, dispatch);
                     Cookies.remove(COOKIE_INITIALS_NAME);
@@ -115,7 +116,7 @@ export namespace NavigationActionCreator {
                     navigate(target, dispatch);
                     break;
             }
-        }
+        };
     }
 
 

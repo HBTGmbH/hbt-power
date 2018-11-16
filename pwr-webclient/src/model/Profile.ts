@@ -28,33 +28,89 @@ import {KeySkillEntry} from './KeySkillEntry';
 @doop
 export class Profile {
 
-    @doop public get id(){ return doop<number, this>();};
-    @doop public get currentPosition(){ return doop<string, this>();}
-    @doop public get description(){ return doop<string, this>();}
-    @doop public get sectorEntries(){ return doop<Immutable.Map<string, SectorEntry>, this>();}
-    @doop public get trainingEntries(){ return doop<Immutable.Map<string, TrainingEntry>, this>();}
-    @doop public get careerEntries() {return doop<Immutable.Map<string, CareerEntry>, this>();}
-    @doop public get educationEntries(){ return doop<Immutable.Map<string, EducationEntry>, this>();}
-    @doop public get languageSkills(){ return doop<Immutable.Map<string, LanguageSkill>, this>();}
-    @doop public get qualificationEntries(){ return doop<Immutable.Map<string, QualificationEntry>, this>();}
-    @doop public get keySkillEntries() {return doop<Immutable.Map<string, KeySkillEntry>, this>();}
+    @doop
+    public get id() {
+        return doop<number, this>();
+    };
+
+    @doop
+    public get currentPosition() {
+        return doop<string, this>();
+    }
+
+    @doop
+    public get description() {
+        return doop<string, this>();
+    }
+
+    @doop
+    public get sectorEntries() {
+        return doop<Immutable.Map<string, SectorEntry>, this>();
+    }
+
+    @doop
+    public get trainingEntries() {
+        return doop<Immutable.Map<string, TrainingEntry>, this>();
+    }
+
+    @doop
+    public get careerEntries() {
+        return doop<Immutable.Map<string, CareerEntry>, this>();
+    }
+
+    @doop
+    public get educationEntries() {
+        return doop<Immutable.Map<string, EducationEntry>, this>();
+    }
+
+    @doop
+    public get languageSkills() {
+        return doop<Immutable.Map<string, LanguageSkill>, this>();
+    }
+
+    @doop
+    public get qualificationEntries() {
+        return doop<Immutable.Map<string, QualificationEntry>, this>();
+    }
+
+    @doop
+    public get keySkillEntries() {
+        return doop<Immutable.Map<string, KeySkillEntry>, this>();
+    }
 
     /**
      * Projects by id
      */
-    @doop public get projects(){ return doop<Immutable.Map<string, Project>, this>();}
+    @doop
+    public get projects() {
+        return doop<Immutable.Map<string, Project>, this>();
+    }
 
     /**
      * Skills by id
      */
-    @doop public get skills() { return doop<Immutable.Map<string, Skill>, this>()};
-    @doop public get lastEdited() { return doop<Date, this>();}
-    @doop public get lastEditedBy() {return doop<string, this>();}
+    @doop
+    public get skills() {
+        return doop<Immutable.Map<string, Skill>, this>();
+    };
+
+    @doop
+    public get lastEdited() {
+        return doop<Date, this>();
+    }
+
+    @doop
+    public get lastEditedBy() {
+        return doop<string, this>();
+    }
 
     /**
      * Changes made to the profile since the last save operation was performed.
      */
-    @doop public get changesMade() {return doop<number, this>();}
+    @doop
+    public get changesMade() {
+        return doop<number, this>();
+    }
 
 
     constructor(
@@ -102,7 +158,7 @@ export class Profile {
         let res: Immutable.Map<string, SectorEntry> = Immutable.Map<string, SectorEntry>();
         sectors.forEach(apiSectorEntry => {
             // In case the API returns something invalid.
-            if(!isNullOrUndefined(apiSectorEntry)) {
+            if (!isNullOrUndefined(apiSectorEntry)) {
                 // We assume that the server that provides the data is always right, which means the
                 // client is missing a data set.
                 // This adds the sector to the currently known sectorEntries.
@@ -117,7 +173,7 @@ export class Profile {
         let res: Immutable.Map<string, LanguageSkill> = Immutable.Map<string, LanguageSkill>();
         langSkills.forEach(apiLangSkill => {
             // In case the API returns something invalid.
-            if(!isNullOrUndefined(apiLangSkill)) {
+            if (!isNullOrUndefined(apiLangSkill)) {
                 let langSkill: LanguageSkill = LanguageSkill.fromAPI(apiLangSkill);
                 res = res.set(langSkill.id(), langSkill);
             }
@@ -129,7 +185,7 @@ export class Profile {
         let res: Immutable.Map<string, QualificationEntry> = Immutable.Map<string, QualificationEntry>();
         qualificationEntries.forEach(apiQualificationEntry => {
             // The API might return something invalid. Ignore.
-            if(!isNullOrUndefined(apiQualificationEntry)) {
+            if (!isNullOrUndefined(apiQualificationEntry)) {
                 let qualificationEntry: QualificationEntry = QualificationEntry.fromAPI(apiQualificationEntry);
                 res = res.set(qualificationEntry.id(), qualificationEntry);
             }
@@ -137,11 +193,11 @@ export class Profile {
         return res;
     }
 
-    private static parseTrainingEntries(career: Array<APITrainingEntry>) : Immutable.Map<string, TrainingEntry> {
+    private static parseTrainingEntries(career: Array<APITrainingEntry>): Immutable.Map<string, TrainingEntry> {
         let res = Immutable.Map<string, TrainingEntry>();
-        career.forEach(apiTrainingEntry =>{
+        career.forEach(apiTrainingEntry => {
             // The API might return something invalid. Ignore.
-            if(!isNullOrUndefined(apiTrainingEntry)) {
+            if (!isNullOrUndefined(apiTrainingEntry)) {
                 let careerElement: TrainingEntry = TrainingEntry.fromAPI(apiTrainingEntry);
                 res = res.set(careerElement.id(), careerElement);
             }
@@ -157,7 +213,7 @@ export class Profile {
         let res: Immutable.Map<string, EducationEntry> = Immutable.Map<string, EducationEntry>();
         educationEntries.forEach(apiEducationEntry => {
             // The API might return something invalid. Ignore that.
-            if(!isNullOrUndefined(apiEducationEntry)) {
+            if (!isNullOrUndefined(apiEducationEntry)) {
                 let educationEntry: EducationEntry = EducationEntry.fromAPI(apiEducationEntry);
                 res = res.set(educationEntry.id(), educationEntry);
             }
@@ -168,7 +224,7 @@ export class Profile {
     private static parseProjects(projects: Array<APIProject>): Immutable.Map<string, Project> {
         let res: Immutable.Map<string, Project> = Immutable.Map<string, Project>();
         projects.forEach(apiProject => {
-            if(!isNullOrUndefined(apiProject)){
+            if (!isNullOrUndefined(apiProject)) {
                 let project: Project = Project.fromAPI(apiProject);
                 res = res.set(project.id(), project);
             }
@@ -188,7 +244,7 @@ export class Profile {
     private static parseCareerEntries(careerEntries: Array<APICareerEntry>): Immutable.Map<string, CareerEntry> {
         let res: Immutable.Map<string, CareerEntry> = Immutable.Map<string, CareerEntry>();
         careerEntries.forEach(apiCareerEntry => {
-            if(!isNullOrUndefined(apiCareerEntry)) {
+            if (!isNullOrUndefined(apiCareerEntry)) {
                 let careerEntry: CareerEntry = CareerEntry.fromAPI(apiCareerEntry);
                 res = res.set(careerEntry.id(), careerEntry);
             }
@@ -199,7 +255,7 @@ export class Profile {
     private static parseKeySkills(apiKeySkills: Array<APIKeySkill>): Immutable.Map<string, KeySkillEntry> {
         let res: Immutable.Map<string, KeySkillEntry> = Immutable.Map<string, KeySkillEntry>();
         apiKeySkills.forEach(apiKeySkill => {
-            if(!isNullOrUndefined(apiKeySkill)) {
+            if (!isNullOrUndefined(apiKeySkill)) {
                 let keySkill: KeySkillEntry = KeySkillEntry.fromAPI(apiKeySkill);
                 res = res.set(keySkill.id(), keySkill);
             }
@@ -246,10 +302,10 @@ export class Profile {
 
         let skills: Array<APISkill> = [];
         this.skills().forEach(skill => {
-            skills.push(skill.toAPI())
+            skills.push(skill.toAPI());
         });
 
-        let careerEntries: Array<APICareerEntry> =[];
+        let careerEntries: Array<APICareerEntry> = [];
         this.careerEntries().forEach(careerEntry => {
             careerEntries.push(careerEntry.toAPI(database.careers()));
         });
@@ -299,7 +355,7 @@ export class Profile {
             Profile.parseProjects(profile.projects),
             Profile.parseSkills(profile.skills),
             new Date(profile.lastEdited),
-            "",
+            '',
             0
         );
     }
@@ -315,7 +371,7 @@ export class Profile {
     public getSkillByName(name: string): Skill {
         let res: Skill = null;
         this.skills().some((skill: Skill, key: string) => {
-            if(skill.name() == name) {
+            if (skill.name() == name) {
                 res = skill;
                 return true;
             }
@@ -357,7 +413,7 @@ export class Profile {
             Immutable.Map<string, Project>(),
             Immutable.Map<string, Skill>(),
             new Date(),
-            "",
+            '',
             0
         );
     }

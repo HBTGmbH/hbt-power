@@ -127,14 +127,15 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                 id="LanguageSkill.Dialog"
                 aria-labelledby="LanguageSkill.Dialog.Title"
             >
-                <DialogTitle id="LanguageSkill.Dialog.Title">{PowerLocalize.get('LanguageSkill.EditSkill.Title')}</DialogTitle>
+                <DialogTitle
+                    id="LanguageSkill.Dialog.Title">{PowerLocalize.get('LanguageSkill.EditSkill.Title')}</DialogTitle>
                 <DialogContent>
                     <div className="row">
                         <div className="col-md-5">
                             <FormControl>
                                 <InputLabel>{PowerLocalize.get('LanguageLevel.Singular')}</InputLabel>
                                 <Select
-                                    id={"LangSkill.Dialog.Level"}
+                                    id={'LangSkill.Dialog.Level'}
                                     value={this.state.languageSkill.level()}
                                     onChange={this.handleLevelChange}
                                 >
@@ -156,8 +157,10 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>
-                    <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.handleCloseButtonPress}/>
+                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                                   onClick={this.handleSaveButtonPress}/>
+                    <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                                   onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
             </Dialog>
         );

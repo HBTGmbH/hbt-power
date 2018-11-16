@@ -19,6 +19,7 @@ interface EditSkillDialogLocalProps {
     open: boolean;
     skillToEdit: string;
     skillInfo: Immutable.List<ConsultantInfo>;
+
     onClose(): void;
 
 }
@@ -44,14 +45,13 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
     static emptyState(): EditSkillDialogLocalState {
         return {
             stepIndex: 0,
-            newSkillName: "",
-            skillHierarchy: ""
-        }
+            newSkillName: '',
+            skillHierarchy: ''
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: EditSkillDialogLocalProps): EditSkillDialogProps {
-        return {
-        };
+        return {};
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EditSkillDialogDispatch {
@@ -62,7 +62,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
 
     public componentWillReceiveProps(newProps: EditSkillDialogProps & EditSkillDialogLocalProps & EditSkillDialogDispatch) {
         if (newProps.open !== this.props.open) {
-            this.setState(EditSkillDialogModule.emptyState())
+            this.setState(EditSkillDialogModule.emptyState());
         }
     }
 
@@ -80,10 +80,10 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
         });
     };
 
-    private changeNewSkillName = (value: string ) => {
+    private changeNewSkillName = (value: string) => {
         this.setState({
             newSkillName: value
-        })
+        });
     };
 
     private stepBack = () => {
@@ -96,16 +96,16 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
         });
     };
     private loadSkillHierarchy = () => {
-        let config: AxiosRequestConfig = {params: {qualifier: this.state.newSkillName}}
+        let config: AxiosRequestConfig = {params: {qualifier: this.state.newSkillName}};
         axios.post(postCategorizeSkill(), null, config).then((response: AxiosResponse) => {
             let apiCategory: APISkillCategory = response.data;
             let hierarchy = SkillReducer.buildHierarchy(apiCategory);
-            hierarchy = this.state.newSkillName + " => " + hierarchy;
-            this.setState({skillHierarchy: hierarchy });
-        }).catch( error => {
+            hierarchy = this.state.newSkillName + ' => ' + hierarchy;
+            this.setState({skillHierarchy: hierarchy});
+        }).catch(error => {
             console.error(error);
             console.log(error.response);
-            this.setState({skillHierarchy: "Not available." });
+            this.setState({skillHierarchy: 'Not available.'});
         });
     };
 
@@ -113,70 +113,71 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
         if (index === 0) {
             return <div>
                 <p>
-                    {PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.Content1", this.props.skillToEdit)}
+                    {PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Edit.Content1', this.props.skillToEdit)}
                 </p>
                 <p>
-                    {this.props.skillInfo.map(value => value.getFullName()).join(", ")}
+                    {this.props.skillInfo.map(value => value.getFullName()).join(', ')}
                 </p>
-            </div>
+            </div>;
         } else if (index === 1) {
             return <div>
                 <p>
-                    {PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.Content2", this.props.skillToEdit)}
+                    {PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Edit.Content2', this.props.skillToEdit)}
                 </p>
                 <SkillSearcher
                     id="EditSkillDialog.SkillSearcher"
-                    label={PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.NewSkillLabel")}
+                    label={PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Edit.NewSkillLabel')}
                     initialValue={this.state.newSkillName}
                     value={this.state.newSkillName}
                     onValueChange={this.changeNewSkillName}
                     onNewRequest={this.changeNewSkillName}
                     resetOnRequest={false}
                 />
-            </div>
+            </div>;
         } else if (index === 2) {
             let hierarchy = this.state.skillHierarchy;
-            if (hierarchy && hierarchy !== "") {
+            if (hierarchy && hierarchy !== '') {
                 return <div>
                     <p>
-                        {PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Content3_1")}
+                        {PowerLocalize.get('AdminClient.Infos.UsedSkills.Edit.Content3_1')}
                     </p>
                     <p>
                         <span className="highlighted-category">{hierarchy}</span>
                     </p>
                     <p>
-                        {PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Content3_2")}<br/>
-                        <span className="warning-note">{PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Content3_note")}</span>
+                        {PowerLocalize.get('AdminClient.Infos.UsedSkills.Edit.Content3_2')}<br/>
+                        <span
+                            className="warning-note">{PowerLocalize.get('AdminClient.Infos.UsedSkills.Edit.Content3_note')}</span>
                     </p>
-                </div>
+                </div>;
             } else {
                 return <div>
                     Currently retrieving category information...
-                </div>
+                </div>;
             }
         }
-        return <div>This should not be visible. Call a developer.</div>
+        return <div>This should not be visible. Call a developer.</div>;
     };
 
 
     render() {
-        if(!this.props.skillInfo || !this.props.skillToEdit) {
-            return <div/>
+        if (!this.props.skillInfo || !this.props.skillToEdit) {
+            return <div/>;
         }
         return (<Dialog scroll={'body'}
                         open={this.props.open}
                         onClose={this.props.onClose}>
-            <DialogTitle>{PowerLocalize.getFormatted("AdminClient.Infos.UsedSkills.Edit.Title", this.props.skillToEdit)}</DialogTitle>
+            <DialogTitle>{PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Edit.Title', this.props.skillToEdit)}</DialogTitle>
             <DialogContent>
                 <Stepper activeStep={this.state.stepIndex}>
                     <Step>
-                        <StepLabel>{PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Step1")}</StepLabel>
+                        <StepLabel>{PowerLocalize.get('AdminClient.Infos.UsedSkills.Edit.Step1')}</StepLabel>
                     </Step>
                     <Step>
-                        <StepLabel>{PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Step2")}</StepLabel>
+                        <StepLabel>{PowerLocalize.get('AdminClient.Infos.UsedSkills.Edit.Step2')}</StepLabel>
                     </Step>
                     <Step>
-                        <StepLabel>{PowerLocalize.get("AdminClient.Infos.UsedSkills.Edit.Step3")}</StepLabel>
+                        <StepLabel>{PowerLocalize.get('AdminClient.Infos.UsedSkills.Edit.Step3')}</StepLabel>
                     </Step>
                 </Stepper>
                 <div>
@@ -189,7 +190,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
                                 disabled={this.state.stepIndex === 0}
                                 onClick={this.stepBack}
                             >
-                                {PowerLocalize.get("Action.Back")}
+                                {PowerLocalize.get('Action.Back')}
                             </Button>
                             <Button
                                 variant={'raised'}
@@ -197,7 +198,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
                                 color={'primary'}
                                 onClick={this.stepForth}
                             >
-                                {this.state.stepIndex === 2 ? PowerLocalize.get("Action.Finish") : PowerLocalize.get("Action.Next")}
+                                {this.state.stepIndex === 2 ? PowerLocalize.get('Action.Finish') : PowerLocalize.get('Action.Next')}
                             </Button>
                         </div>
                     </div>

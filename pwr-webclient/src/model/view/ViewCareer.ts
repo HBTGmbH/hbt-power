@@ -1,4 +1,5 @@
 import {isNullOrUndefined} from 'util';
+
 export class ViewCareer {
     name: string;
     startDate: Date;

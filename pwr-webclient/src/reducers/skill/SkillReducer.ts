@@ -32,22 +32,22 @@ export namespace SkillReducer {
     import InitializeTreeAction = SkillActions.InitializeTreeAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
-        if(!isNullOrUndefined(category)) {
-            if(!isNullOrUndefined(category.category)) {
-                return category.qualifier +  " => " + buildHierarchy(category.category);
+        if (!isNullOrUndefined(category)) {
+            if (!isNullOrUndefined(category.category)) {
+                return category.qualifier + ' => ' + buildHierarchy(category.category);
             }
             else {
                 return category.qualifier;
             }
         }
-        return "";
+        return '';
     }
 
 
     function resetAddSkillDialog(skillStore: SkillStore): SkillStore {
         return skillStore.currentChoice(UnCategorizedSkillChoice.PROCEED_WITH_COMMENT)
-            .addSkillError(null).skillComment("").currentSkillName("").currentSkillRating(1)
-            .currentAddSkillStep(AddSkillStep.NONE).doneState("").addToProjectId("");
+            .addSkillError(null).skillComment('').currentSkillName('').currentSkillRating(1)
+            .currentAddSkillStep(AddSkillStep.NONE).doneState('').addToProjectId('');
     }
 
     /**
@@ -65,10 +65,10 @@ export namespace SkillReducer {
     }
 
     export function reduce(skillStore: SkillStore, action: AbstractAction): SkillStore {
-        if(isNullOrUndefined(skillStore)) {
+        if (isNullOrUndefined(skillStore)) {
             return SkillStore.empty();
         }
-        switch(action.type) {
+        switch (action.type) {
             case ActionType.BatchAddSkills: {
                 let act = action as BatchAddSkillsAction;
                 let store = skillStore;
@@ -86,7 +86,7 @@ export namespace SkillReducer {
             }
             case ActionType.AddCategoryToTree: {
                 let act = action as AddCategoryToTreeAction;
-                if(isNullOrUndefined(act.parentId)) {
+                if (isNullOrUndefined(act.parentId)) {
                     act.parentId = -1;
                 }
                 let map = skillStore.categoriesById();
@@ -128,7 +128,7 @@ export namespace SkillReducer {
             }
             case ActionType.RemoveSkillServiceSkill: {
                 let act = action as RemoveSkillServiceSkillAction;
-                let skill = skillStore.skillsById().get(act.skillId)
+                let skill = skillStore.skillsById().get(act.skillId);
                 let root = skillStore.skillTreeRoot();
                 root.removeSkillFromTree(skill.categoryId(), skill.id());
                 root = SkillTreeNode.shallowCopy(root);
@@ -136,9 +136,9 @@ export namespace SkillReducer {
             }
             case ActionType.ReadSkillHierarchy: {
                 let act = action as ReadSkillHierarchyAction;
-                if(!isNullOrUndefined(act.skill.category)) {
+                if (!isNullOrUndefined(act.skill.category)) {
                     let map = skillStore.categorieHierarchiesBySkillName();
-                    map = map.set(act.skill.qualifier, act.skill.qualifier + " => " + buildHierarchy(act.skill.category));
+                    map = map.set(act.skill.qualifier, act.skill.qualifier + ' => ' + buildHierarchy(act.skill.category));
                     return skillStore.categorieHierarchiesBySkillName(map);
                 }
                 return skillStore;
@@ -208,7 +208,7 @@ export namespace SkillReducer {
                 let act = action as ChangeBoolValueAction;
                 let root = skillStore.skillTreeRoot();
                 root.clearFilter();
-                if (act.value || ( skillStore.filterTerm() &&  skillStore.filterTerm().length >= 0)) {
+                if (act.value || (skillStore.filterTerm() && skillStore.filterTerm().length >= 0)) {
                     root.filter(act.value, skillStore.filterTerm(), skillStore.skillsById(), skillStore.categoriesById());
                 }
                 return skillStore.filterNonCustomSkills(act.value).skillTreeRoot(SkillTreeNode.shallowCopy(root));

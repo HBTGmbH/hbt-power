@@ -15,7 +15,7 @@ import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {Color} from '../../../../../utils/ColorUtil';
 
-const distance = require("jaro-winkler");
+const distance = require('jaro-winkler');
 
 interface SkillTreeProps {
     skills: Immutable.Map<string, Skill>;
@@ -28,26 +28,27 @@ interface SkillTreeLocalProps {
 
 interface SkillTreeLocalState {
     searchText: string;
-    selectedSkill:Skill;
+    selectedSkill: Skill;
 }
 
 interface SkillTreeDispatch {
     changeSkillRating(rating: number, id: string): void;
+
     onSkillDelete(id: string): void;
+
     getSkillServiceSkills(qualifiers: Array<string>): void;
 }
 
-class SkillTreeModule extends React.Component<
-    SkillTreeProps
+class SkillTreeModule extends React.Component<SkillTreeProps
     & SkillTreeLocalProps
     & SkillTreeDispatch, SkillTreeLocalState> {
 
-    constructor(props: SkillTreeProps& SkillTreeLocalProps& SkillTreeDispatch) {
+    constructor(props: SkillTreeProps & SkillTreeLocalProps & SkillTreeDispatch) {
         super(props);
         this.state = {
-            searchText: "",
-            selectedSkill:null,
-        }
+            searchText: '',
+            selectedSkill: null,
+        };
     }
 
     private chipContainerStyle: CSSProperties = {
@@ -60,7 +61,7 @@ class SkillTreeModule extends React.Component<
     }
 
     public componentDidUpdate(oldProps: SkillTreeProps) {
-        if(this.props.skills !== oldProps.skills) {
+        if (this.props.skills !== oldProps.skills) {
             this.props.getSkillServiceSkills(this.props.skills.toArray().map(skill => skill.name()));
         }
     }
@@ -87,9 +88,9 @@ class SkillTreeModule extends React.Component<
 
     private filterSkills = (searchText: string) => {
         let skills = this.props.skills;
-        if(searchText.trim().length != 0) {
-            return skills.filter((skill: Skill, key:string) => {
-                return distance(searchText, skill.name(), { caseSensitive: false }) >= 0.6;
+        if (searchText.trim().length != 0) {
+            return skills.filter((skill: Skill, key: string) => {
+                return distance(searchText, skill.name(), {caseSensitive: false}) >= 0.6;
             });
         }
         return null;
@@ -99,14 +100,14 @@ class SkillTreeModule extends React.Component<
         // Retreive it from the map; If it doesn't exist, it's custom
         let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
         let style = {
-            margin: "4px",
-            backgroundColor: custom ? "red" : Color.HBT_2017_GRAY.toCSSRGBString()
+            margin: '4px',
+            backgroundColor: custom ? 'red' : Color.HBT_2017_GRAY.toCSSRGBString()
         };
         return <div className="col-md-12" key={skill.id()}>
             <SkillChip
                 style={style}
                 skill={skill}
-                textColor={"white"}
+                textColor={'white'}
                 onDelete={this.props.onSkillDelete}
                 onRatingChange={this.props.changeSkillRating}
             />

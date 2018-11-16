@@ -7,11 +7,19 @@ import {doop} from 'doop';
 @doop
 export class SectorEntry {
     @doop
-    public get id(){ return doop<string,this>()}
+    public get id() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get sectorId(){ return doop<string,this>()}
+    public get sectorId() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get isNew(){ return doop<boolean,this>()}
+    public get isNew() {
+        return doop<boolean, this>();
+    }
 
 
     private static CURRENT_ID: number = 0;
@@ -31,7 +39,7 @@ export class SectorEntry {
         return new SectorEntry(
             String(apiSectorEntry.id),
             String(apiSectorEntry.nameEntity.id),
-            false)
+            false);
     }
 
     static createNew(): SectorEntry {

@@ -1,4 +1,5 @@
 import {ViewSkill} from './ViewSkill';
+
 export interface ViewCategory {
     name: string;
     enabled: boolean;

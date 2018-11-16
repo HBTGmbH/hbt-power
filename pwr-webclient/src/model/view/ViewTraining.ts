@@ -1,4 +1,5 @@
 import {isNullOrUndefined} from 'util';
+
 export class ViewTraining {
     name: string;
     startDate: Date;

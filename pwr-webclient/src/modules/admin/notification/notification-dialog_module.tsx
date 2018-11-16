@@ -55,16 +55,16 @@ interface NotificationDialogLocalState {
  */
 interface NotificationDialogDispatch {
     executeDeleteAction(id: number): void;
+
     executeOkAction(id: number): void;
+
     executePatchAction(notification: ProfileEntryNotification): void;
 
 }
 
-class NotificationDialogModule extends React.Component<
-    NotificationDialogProps
+class NotificationDialogModule extends React.Component<NotificationDialogProps
     & NotificationDialogLocalProps
     & NotificationDialogDispatch, NotificationDialogLocalState> {
-
 
 
     constructor(props: NotificationDialogProps & NotificationDialogLocalProps & NotificationDialogDispatch) {
@@ -76,7 +76,7 @@ class NotificationDialogModule extends React.Component<
         this.state = {
             stepIndex: 0,
             selectedAction: 'ok',
-            nameEntityName: ""
+            nameEntityName: ''
         };
     };
 
@@ -89,7 +89,7 @@ class NotificationDialogModule extends React.Component<
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationDialogDispatch {
         return {
             executeDeleteAction: (id) => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id)),
-            executePatchAction:  (notification) => dispatch(AdminActionCreator.AsyncNotificationInvokeEdit(notification)),
+            executePatchAction: (notification) => dispatch(AdminActionCreator.AsyncNotificationInvokeEdit(notification)),
             executeOkAction: (id) => dispatch(AdminActionCreator.AsyncNotificationInvokeOK(id))
         };
     }
@@ -101,10 +101,10 @@ class NotificationDialogModule extends React.Component<
     };
 
     private progressStep = () => {
-        if(!this.stepperHasFinished()) {
+        if (!this.stepperHasFinished()) {
             this.setState({
                 stepIndex: this.state.stepIndex + 1,
-                nameEntityName: this.state.selectedAction == 'edit' ? this.props.notification.nameEntity().name() : ""
+                nameEntityName: this.state.selectedAction == 'edit' ? this.props.notification.nameEntity().name() : ''
             });
         } else {
             this.executeSelectedAction();
@@ -129,7 +129,7 @@ class NotificationDialogModule extends React.Component<
     };
 
     private executeSelectedAction = () => {
-        switch(this.state.selectedAction){
+        switch (this.state.selectedAction) {
             case 'ok':
                 this.props.executeOkAction(this.props.notification.adminNotification().id());
                 break;
@@ -155,7 +155,7 @@ class NotificationDialogModule extends React.Component<
     private renderStepper = () => {
         // Unfortunately, this is necessary because the Stepper will attempt to render null or false
         // JSX elements in its children. Mixins don't work here
-        if(this.state.selectedAction == 'edit') {
+        if (this.state.selectedAction == 'edit') {
             return <Stepper activeStep={this.state.stepIndex}>
                 <Step>
                     <StepLabel>{PowerLocalize.get('NotificationDialog.Stepper.Label.Step0')}</StepLabel>
@@ -204,9 +204,11 @@ class NotificationDialogModule extends React.Component<
     private renderStepperContentIndex0 = () => {
         return (
             <div>
-                Im Profil von <strong>{this.props.notification.adminNotification().initials()}</strong> wurde der neue Bezeichner <strong>
+                Im Profil von <strong>{this.props.notification.adminNotification().initials()}</strong> wurde der neue
+                Bezeichner <strong>
                 {this.props.notification.nameEntity().name()}</strong> hinzugefügt.
-                Dies betrifft den Eintragstyp <strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity())}</strong>
+                Dies betrifft den
+                Eintragstyp <strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity())}</strong>
                 <br/>
                 Bitte wählen sie im nächsten Schritt eine Aktion.
             </div>);
@@ -214,14 +216,14 @@ class NotificationDialogModule extends React.Component<
 
     private renderStepperContentIndex1 = () => {
         return (
-            <div >
+            <div>
                 <RadioGroup
                     name="notificationActions"
                     //defaultSelected="ok"
                     onChange={this.setAction}
-                    style={{width: "100%"}}
+                    style={{width: '100%'}}
                 >
-                    <FormControlLabel value={""} control={
+                    <FormControlLabel value={''} control={
                         <Radio value="ok"/>
                     } label={PowerLocalize.get('Action.OK')}
                     />
@@ -240,48 +242,50 @@ class NotificationDialogModule extends React.Component<
                 </RadioGroup>
 
 
-
-                <div  style={{width: "100%", marginTop: "16px", marginBottom: "16px"}}>
-                    <strong>{PowerLocalize.get('Action.OK') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionOK.Description")}<br/><br/>
-                    <strong>{PowerLocalize.get('Action.Delete') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionDelete.Description")}<br/><br/>
-                    <strong>{PowerLocalize.get('Action.Edit') + ": "}</strong>{PowerLocalize.get("NotificationDialog.ActionEdit.Description")}<br/><br/>
+                <div style={{width: '100%', marginTop: '16px', marginBottom: '16px'}}>
+                    <strong>{PowerLocalize.get('Action.OK') + ': '}</strong>{PowerLocalize.get('NotificationDialog.ActionOK.Description')}<br/><br/>
+                    <strong>{PowerLocalize.get('Action.Delete') + ': '}</strong>{PowerLocalize.get('NotificationDialog.ActionDelete.Description')}<br/><br/>
+                    <strong>{PowerLocalize.get('Action.Edit') + ': '}</strong>{PowerLocalize.get('NotificationDialog.ActionEdit.Description')}<br/><br/>
                 </div>
             </div>
-        )
+        );
     };
 
     private renderStepperContentIndex2 = () => {
         return (<div>
                 <TextField
-                    label={PowerLocalize.get("NotificationDialog.EditNameEntity")}
+                    label={PowerLocalize.get('NotificationDialog.EditNameEntity')}
                     value={this.state.nameEntityName}
                     onChange={() => this.changeNameEntityName}
-                    />
+                />
             </div>
-        )
+        );
     };
 
     private renderStepperContent = () => {
-        if(!isNullOrUndefined(this.props.notification)) {
-            switch(this.state.stepIndex){
-                case 0: return this.renderStepperContentIndex0();
-                case 1: return this.renderStepperContentIndex1();
-                case 2: return this.renderStepperContentIndex2();
+        if (!isNullOrUndefined(this.props.notification)) {
+            switch (this.state.stepIndex) {
+                case 0:
+                    return this.renderStepperContentIndex0();
+                case 1:
+                    return this.renderStepperContentIndex1();
+                case 2:
+                    return this.renderStepperContentIndex2();
             }
 
         }
-        return <div/>
+        return <div/>;
     };
 
     private renderTitle = () => {
         return formatString(
-            PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
+            PowerLocalize.get('NotificationInbox.NameEntityNotification.SubjectTextTemplate'),
             this.props.notification.nameEntity().name(),
             NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity()));
     };
 
     render() {
-        if(!isNullOrUndefined(this.props.notification)) {
+        if (!isNullOrUndefined(this.props.notification)) {
             return (<div>
                 <Dialog
                     open={this.props.open}

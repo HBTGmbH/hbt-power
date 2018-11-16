@@ -21,6 +21,7 @@ interface SkillTreeProps {
      * @param categoryId of the clicked category
      */
     onCategorySelect?(categoryId: number): void;
+
     /**
      * Invokes when a skill has been clicked
      * @param skillId of the clicked skill
@@ -58,33 +59,36 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
     }
 
     public static defaultProps: Partial<SkillTreeProps> = {
-        onNestedListToggle: () => {},
-        onCategorySelect: () => {},
-        onSkillSelect: () => {}
+        onNestedListToggle: () => {
+        },
+        onCategorySelect: () => {
+        },
+        onSkillSelect: () => {
+        }
     };
 
-    private static CustomIcon = (props: {margin: string}) => <Icon
-            className="material-icons"
-            style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
-        >
-            extension
-        </Icon>;
-
-    private static DisplayIcon = (props: {margin: string}) => <Icon
+    private static CustomIcon = (props: { margin: string }) => <Icon
         className="material-icons"
-        style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
+        style={{marginLeft: props.margin, position: 'absolute', top: '12px'}}
+    >
+        extension
+    </Icon>;
+
+    private static DisplayIcon = (props: { margin: string }) => <Icon
+        className="material-icons"
+        style={{marginLeft: props.margin, position: 'absolute', top: '12px'}}
     >
         airplay
     </Icon>;
 
-    private static BlacklistedIcon = (props: {margin: string}) => <Icon
+    private static BlacklistedIcon = (props: { margin: string }) => <Icon
         className="material-icons blacklisted-icon"
-        style={{marginLeft: props.margin, position: "absolute", top: "12px"}}
+        style={{marginLeft: props.margin, position: 'absolute', top: '12px'}}
     >
         warning
     </Icon>;
 
-    private getSkill = (skillId: number):SkillServiceSkill => {
+    private getSkill = (skillId: number): SkillServiceSkill => {
         return this.props.skillsById.get(skillId);
     };
 
@@ -106,9 +110,9 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         if (node.payload.skillId) {
             this.props.onSkillSelect(node.payload.skillId);
         } else if (node.payload.categoryId) {
-            this.props.onCategorySelect(node.payload.categoryId)
+            this.props.onCategorySelect(node.payload.categoryId);
         } else {
-            throw RangeError("Node " + JSON.stringify(node) + " has neither skill nor category ID set!");
+            throw RangeError('Node ' + JSON.stringify(node) + ' has neither skill nor category ID set!');
         }
     };
 
@@ -116,7 +120,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         return [
             ...skillTreeNode.childNodes.filter(value => value.visible).map(this.mapNode),
             ...skillTreeNode.skillNodes.filter(value => value.visible).map(this.mapLeaf)
-        ]
+        ];
     };
 
     private mapLeaf = (skillNode: SkillNode): PwrTreeNode<TreePayload> => {
@@ -126,7 +130,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             payload: {skillId: skillNode.skillId},
             children: [],
             selected: skillNode.skillId === this.props.selectedSkillId
-        }
+        };
     };
 
     private mapNode = (skillTreeNode: SkillTreeNode): PwrTreeNode<TreePayload> => {
@@ -134,9 +138,9 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             expanded: skillTreeNode.open,
             id: `s_${skillTreeNode.skillCategoryId}`,
             children: this.mapChildNodes(skillTreeNode),
-            payload: { categoryId: skillTreeNode.skillCategoryId},
+            payload: {categoryId: skillTreeNode.skillCategoryId},
             selected: skillTreeNode.skillCategoryId === this.props.selectedCategoryId,
-        }
+        };
     };
 
 
@@ -157,10 +161,10 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
                 <Icon className="material-icons">label_outline</Icon>
             </ListItemIcon>
             <ListItemText>
-            {skill.qualifier()}
-            {skill.isCustom() ? <SkillTree.CustomIcon margin={"24px"}/> : false}
+                {skill.qualifier()}
+                {skill.isCustom() ? <SkillTree.CustomIcon margin={'24px'}/> : false}
             </ListItemText>
-        </React.Fragment>
+        </React.Fragment>;
     };
 
     private renderCategoryElement = (categoryId: number): JSX.Element => {
@@ -171,17 +175,17 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         let customIcon = null;
         let displayIcon = null;
 
-        if(skillCategory.blacklisted()) {
-            blacklistIcon = <SkillTree.BlacklistedIcon margin={currentMargin + "px"}/>;
-            currentMargin += 24
+        if (skillCategory.blacklisted()) {
+            blacklistIcon = <SkillTree.BlacklistedIcon margin={currentMargin + 'px'}/>;
+            currentMargin += 24;
         }
-        if(skillCategory.isCustom()) {
-            customIcon = <SkillTree.CustomIcon margin={currentMargin + "px"}/>;
-            currentMargin += 24
+        if (skillCategory.isCustom()) {
+            customIcon = <SkillTree.CustomIcon margin={currentMargin + 'px'}/>;
+            currentMargin += 24;
         }
-        if(skillCategory.isDisplay()) {
-            displayIcon =  <SkillTree.DisplayIcon margin={currentMargin + "px"}/>;
-            currentMargin += 24
+        if (skillCategory.isDisplay()) {
+            displayIcon = <SkillTree.DisplayIcon margin={currentMargin + 'px'}/>;
+            currentMargin += 24;
         }
 
         return <React.Fragment>
@@ -204,6 +208,6 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             nodes={this.mapNodes()}
             toggleNode={(node) => this.handleNodeToggle(node)}
             onSelect={this.handleSelection}
-        />
+        />;
     }
 }

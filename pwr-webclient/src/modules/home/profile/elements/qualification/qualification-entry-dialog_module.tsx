@@ -49,7 +49,6 @@ interface QualificationEntryDialogState {
 }
 
 
-
 export class QualificationEntryDialog extends React.Component<QualificationEntryDialogProps, QualificationEntryDialogState> {
 
     constructor(props: QualificationEntryDialogProps) {
@@ -87,7 +86,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
         let name: string = this.state.qualificationAutoCompleteValue;
         let qualification: NameEntity = ProfileStore.findNameEntityByName(name, this.props.qualifications);
         let qualificationEntry: QualificationEntry = this.state.qualificationEntry;
-        if(isNullOrUndefined(qualification)) {
+        if (isNullOrUndefined(qualification)) {
             qualification = NameEntity.createNew(name);
         }
         qualificationEntry = qualificationEntry.qualificationId(qualification.id());
@@ -96,9 +95,9 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
     };
 
     /**
-    * Callback invokes when the DatePicker's value changes.
-    * @param date is the new date.
-    */
+     * Callback invokes when the DatePicker's value changes.
+     * @param date is the new date.
+     */
     private handleChangeDate = (date: MaterialUiPickersDate) => {
         this.setState({
             qualificationEntry: this.state.qualificationEntry.date(date)
@@ -128,7 +127,7 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                                 onChange={this.handleChangeDate}
                             />
                         </div>
-                        <div className={"col-md-5"}>
+                        <div className={'col-md-5'}>
                             <PwrAutoComplete
                                 fullWidth={true}
                                 label={PowerLocalize.get('Qualification.Singular')}
@@ -141,8 +140,10 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton iconName={"save"} tooltip={PowerLocalize.get('Action.Save')} onClick={this.handleSaveButtonPress}/>
-                    <PwrIconButton iconName={"close"} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.handleCloseButtonPress}/>
+                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                                   onClick={this.handleSaveButtonPress}/>
+                    <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                                   onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
 
             </Dialog>

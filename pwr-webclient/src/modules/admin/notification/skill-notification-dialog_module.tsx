@@ -48,37 +48,41 @@ interface SkillNotificationModuleLocalState {
 
 interface SkillNotificationModuleDispatch {
     closeAndReset(): void;
+
     setSkillNotificationAction(action: SkillNotificationAction): void;
+
     categorizeSkill(name: string): void;
+
     progressFromActionSelection(): void;
+
     changeNewSkillName(name: string): void;
+
     invokeSkillNotificationEditAction(): void;
 }
 
-class SkillNotificationModuleModule extends React.Component<
-    SkillNotificationModuleProps
+class SkillNotificationModuleModule extends React.Component<SkillNotificationModuleProps
     & SkillNotificationModuleLocalProps
     & SkillNotificationModuleDispatch, SkillNotificationModuleLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: SkillNotificationModuleLocalProps): SkillNotificationModuleProps {
         let hierarchy = '';
-        if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
-            hierarchy = state.skillReducer.categorieHierarchiesBySkillName().get(state.adminReducer.selectedSkillNotification().newName())
+        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
+            hierarchy = state.skillReducer.categorieHierarchiesBySkillName().get(state.adminReducer.selectedSkillNotification().newName());
         }
         let newSkillName = '';
-        if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
+        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
             newSkillName = state.adminReducer.selectedSkillNotification().newName();
         }
         let comment = null;
         let skillName = '';
-        let initials = "";
-        let newName = "";
+        let initials = '';
+        let newName = '';
         let reason = undefined;
-        if(!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
+        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
             comment = state.adminReducer.selectedSkillNotification().skill().comment();
             skillName = state.adminReducer.selectedSkillNotification().skill().name();
             initials = state.adminReducer.selectedSkillNotification().adminNotification().initials();
-            newName = state.adminReducer.selectedSkillNotification().newName()
+            newName = state.adminReducer.selectedSkillNotification().newName();
             reason = state.adminReducer.selectedSkillNotification().adminNotification().reason();
         }
 
@@ -135,7 +139,7 @@ class SkillNotificationModuleModule extends React.Component<
                         The previously unknown skill <strong>{this.props.skillName}</strong> was added to the profile
                         of <strong>{this.props.initials}</strong>.
                     </p>
-                :
+                    :
                     <p>
                         The skill <strong>{this.props.skillName}</strong> was added to the profile
                         of <strong>{this.props.initials}</strong> but the category is blacklisted.
@@ -145,7 +149,8 @@ class SkillNotificationModuleModule extends React.Component<
                 !isNullOrUndefined(this.props.comment) ? <p>A comment was provided: {this.props.comment}</p> : false
             }
             {
-                this.props.skillEdited ? <p>The new skill name will be <strong>{this.props.newSkillName}</strong></p> : false
+                this.props.skillEdited ?
+                    <p>The new skill name will be <strong>{this.props.newSkillName}</strong></p> : false
             }
         </div>;
     };
@@ -161,16 +166,22 @@ class SkillNotificationModuleModule extends React.Component<
                 <RadioGroup
                     name="notificationAction"
                     //valueSelected={this.props.skillNotificationSelectedAction}
-                    onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {this.props.setSkillNotificationAction(value as any);}}
+                    onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {
+                        this.props.setSkillNotificationAction(value as any);
+                    }}
                 >
-                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_OK.toString()}/>} label="Accept Skill" />
-                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_EDIT.toString()}/>} label="Edit Skill" />
-                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_DELETE.toString()}/>} label="Delete Skill" />
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_OK.toString()}/>}
+                                      label="Accept Skill"/>
+                    <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_EDIT.toString()}/>}
+                                      label="Edit Skill"/>
+                    <FormControlLabel value=""
+                                      control={<Radio value={SkillNotificationAction.ACTION_DELETE.toString()}/>}
+                                      label="Delete Skill"/>
 
                 </RadioGroup>
             </FormControl>
-        </div>
-    }
+        </div>;
+    };
 
     private renderInfo = () => {
         return <div>
@@ -216,7 +227,7 @@ class SkillNotificationModuleModule extends React.Component<
     };
 
     private renderInfoCategoryError = () => {
-        console.log("Reason:", this.props.error);
+        console.log('Reason:', this.props.error);
         return <div>
             <this.SkillInfo/>
             <p>
@@ -257,13 +268,14 @@ class SkillNotificationModuleModule extends React.Component<
                 onNewRequest={this.props.changeNewSkillName}
             />
             <p>
-                Consider validating the skill category after change; If you are sure the changed skill is correct, this is not necessary.
+                Consider validating the skill category after change; If you are sure the changed skill is correct, this
+                is not necessary.
             </p>
-        </div>
+        </div>;
     };
 
     private renderContent() {
-        switch(this.props.status) {
+        switch (this.props.status) {
             case SkillNotificationEditStatus.FETCHING_DATA:
                 return this.renderPending();
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY:
@@ -288,7 +300,7 @@ class SkillNotificationModuleModule extends React.Component<
     private renderStepper = () => {
         let index = 0;
         let displayLastStepper = false;
-        switch(this.props.status) {
+        switch (this.props.status) {
             case SkillNotificationEditStatus.FETCHING_DATA:
                 index = 0;
                 break;
@@ -306,7 +318,7 @@ class SkillNotificationModuleModule extends React.Component<
             default:
                 break;
         }
-        if(this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT) {
+        if (this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT) {
             displayLastStepper = true;
         }
         let steps = [
@@ -317,7 +329,7 @@ class SkillNotificationModuleModule extends React.Component<
                 <StepLabel>Information</StepLabel>
             </Step>
         ];
-        if(displayLastStepper) steps.push(<Step key="SkillNotDlg.Step2">
+        if (displayLastStepper) steps.push(<Step key="SkillNotDlg.Step2">
             <StepLabel>Edit Skill</StepLabel>
         </Step>);
 
@@ -327,7 +339,7 @@ class SkillNotificationModuleModule extends React.Component<
     };
 
     private renderController = () => {
-        switch(this.props.status) {
+        switch (this.props.status) {
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING:
                 return (<Button
                     variant={'raised'}
@@ -338,7 +350,7 @@ class SkillNotificationModuleModule extends React.Component<
             case SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR:
-                let label = this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT ? "Continue" : "Finish";
+                let label = this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT ? 'Continue' : 'Finish';
                 return (<Button
                     variant={'raised'}
                     color={'secondary'}
@@ -356,7 +368,7 @@ class SkillNotificationModuleModule extends React.Component<
                         <Button
                             variant={'raised'}
                             color={'secondary'}
-                            style={{marginLeft: "8px"}}
+                            style={{marginLeft: '8px'}}
                             onClick={this.props.invokeSkillNotificationEditAction}
                         >Finish</Button>
                     </div>
@@ -365,7 +377,7 @@ class SkillNotificationModuleModule extends React.Component<
             case SkillNotificationEditStatus.DISPLAY_SUCCESS:
             case SkillNotificationEditStatus.FETCHING_DATA:
             default:
-                return <div/>
+                return <div/>;
         }
     };
 

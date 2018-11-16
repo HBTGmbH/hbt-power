@@ -11,7 +11,7 @@ interface ComparableNestedEntryButtonProps {
 }
 
 interface ComparableNestedEntryButtonLocalProps {
-    container: "PROJECT" | "DISPLAY_CATEGORY";
+    container: 'PROJECT' | 'DISPLAY_CATEGORY';
     containerIndex: number;
     viewProfileId: string;
     sortableEntryField: SortableEntryField;
@@ -20,42 +20,41 @@ interface ComparableNestedEntryButtonLocalProps {
 }
 
 interface ComparableNestedEntryButtonLocalState {
-    order: "asc" | "desc";
+    order: 'asc' | 'desc';
 }
 
 interface ComparableNestedEntryButtonDispatch {
-    sortNestedEntries(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number, type: SortableEntryType, field: SortableEntryField, doAscending: boolean): void;
+    sortNestedEntries(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: SortableEntryType, field: SortableEntryField, doAscending: boolean): void;
 }
 
-class ComparableNestedEntryButtonModule extends React.Component<
-    ComparableNestedEntryButtonProps
+class ComparableNestedEntryButtonModule extends React.Component<ComparableNestedEntryButtonProps
     & ComparableNestedEntryButtonLocalProps
     & ComparableNestedEntryButtonDispatch, ComparableNestedEntryButtonLocalState> {
 
     constructor(props: any) {
         super(props);
         this.state = {
-            order: "desc"
-        }
+            order: 'desc'
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ComparableNestedEntryButtonLocalProps): ComparableNestedEntryButtonProps {
-        return {}
+        return {};
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ComparableNestedEntryButtonDispatch {
         return {
             sortNestedEntries: (id, container, containerIndex, type, field, doAscending) => {
-                dispatch(ViewProfileActionCreator.AsyncAutoSortNestedEntry(id, container, containerIndex, type, field, doAscending))
+                dispatch(ViewProfileActionCreator.AsyncAutoSortNestedEntry(id, container, containerIndex, type, field, doAscending));
             }
-        }
+        };
     }
 
-    private setOrder = (order: "asc" | "desc") => {
+    private setOrder = (order: 'asc' | 'desc') => {
         this.setState({
             order: order
         });
-        let doAsc = order === "asc";
+        let doAsc = order === 'asc';
         this.props.sortNestedEntries(this.props.viewProfileId, this.props.container, this.props.containerIndex,
             this.props.sortableEntryType, this.props.sortableEntryField, doAsc);
     };

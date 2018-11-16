@@ -8,13 +8,24 @@ import {DateUtils} from '../utils/DateUtil';
 @doop
 export class QualificationEntry {
     @doop
-    public get id() {return doop<string, this>();}
+    public get id() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get qualificationId() {return doop<string, this>();}
+    public get qualificationId() {
+        return doop<string, this>();
+    }
+
     @doop
-    public get date() {return doop<Date, this>();}
+    public get date() {
+        return doop<Date, this>();
+    }
+
     @doop
-    public get isNew() {return doop<boolean, this>();}
+    public get isNew() {
+        return doop<boolean, this>();
+    }
 
     private static CURRENT_LOCAL_ID: number = 0;
 
@@ -45,6 +56,6 @@ export class QualificationEntry {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             date: DateUtils.formatLocaleDateToIso(this.date()),
             nameEntity: this.qualificationId() == UNDEFINED_ID ? null : qualifications.get(this.qualificationId()).toAPI()
-        }
+        };
     }
 }

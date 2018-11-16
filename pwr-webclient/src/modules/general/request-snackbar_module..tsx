@@ -15,8 +15,7 @@ interface RequestSnackbarState {
 export class RequestSnackbar extends React.Component<RequestSnackbarProps, RequestSnackbarState> {
 
 
-
-    private static renderSingleSnackbar(requestStatus: RequestStatus, open : boolean) {
+    private static renderSingleSnackbar(requestStatus: RequestStatus, open: boolean) {
         let msgSuccess: JSX.Element = (
             <div className="row">
                 <Icon className="material-icons" style={{color: 'green', fontSize: 45}}>done</Icon>
@@ -38,20 +37,20 @@ export class RequestSnackbar extends React.Component<RequestSnackbarProps, Reque
         );
 
         let msg: JSX.Element;
-        if(requestStatus === RequestStatus.Failiure) {
+        if (requestStatus === RequestStatus.Failiure) {
             msg = msgFail;
-        } else if(requestStatus === RequestStatus.Pending) {
+        } else if (requestStatus === RequestStatus.Pending) {
             msg = msgPending;
         } else {
-            msg =(<div/>);
+            msg = (<div/>);
         }
         return (<Snackbar open={open} autoHideDuration={300} message={msg}/>);
     }
 
 
     render() {
-        return(<div>
+        return (<div>
             {RequestSnackbar.renderSingleSnackbar(this.props.APIRequestStatus, this.props.APIRequestStatus == RequestStatus.Pending)}
-        </div>)
+        </div>);
     }
 }

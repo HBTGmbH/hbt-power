@@ -5,7 +5,7 @@ import {NameEntity} from './NameEntity';
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {Skill} from './Skill';
 import {isNullOrUndefined} from 'util';
-import {DateUtils} from "../utils/DateUtil";
+import {DateUtils} from '../utils/DateUtil';
 
 @doop
 export class Project {
@@ -14,6 +14,7 @@ export class Project {
     public get id() {
         return doop<string, this>();
     }
+
     @doop
     public get name() {
         return doop<string, this>();
@@ -106,10 +107,10 @@ export class Project {
             endDate: DateUtils.formatLocaleDateToIso(this.endDate()),
             startDate: DateUtils.formatLocaleDateToIso(this.startDate()),
             broker: isNullOrUndefined(company) ? null : company.toAPI(),
-            client:  isNullOrUndefined(customer) ? null : customer.toAPI(),
+            client: isNullOrUndefined(customer) ? null : customer.toAPI(),
             projectRoles: this.rolesToAPI(roles),
             skills: this.skillsToAPI(skills)
-        }
+        };
     }
 
     private static parseRoles(project: APIProject): Immutable.List<string> {
@@ -123,7 +124,7 @@ export class Project {
     private static parseSkills(project: APIProject): Immutable.Set<string> {
         let res = Immutable.Set<string>();
         project.skills.forEach(skill => {
-            res = res.add(String(skill.id))
+            res = res.add(String(skill.id));
         });
         return res;
     }
@@ -131,11 +132,11 @@ export class Project {
     public static createNew(): Project {
         return new Project(
             String(NEW_ENTITY_PREFIX + (Project.CURRENT_ID++)),
-            "",
+            '',
             null,
             new Date(),
             new Date(),
-            "",
+            '',
             null,
             Immutable.List<string>(),
             true,
@@ -154,7 +155,7 @@ export class Project {
             Project.parseRoles(project),
             false,
             Project.parseSkills(project)
-        )
+        );
     }
 
 

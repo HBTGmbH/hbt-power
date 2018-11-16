@@ -42,7 +42,7 @@ interface ConsultantTileLocalProps {
  */
 interface ConsultantTileLocalState {
     dialogOpen: boolean;
-    menuAnchorEl : any;
+    menuAnchorEl: any;
 }
 
 /**
@@ -52,8 +52,7 @@ interface ConsultantTileDispatch {
     redirectToUser(initials: string): void;
 }
 
-class ConsultantTileModule extends React.Component<
-    ConsultantTileProps
+class ConsultantTileModule extends React.Component<ConsultantTileProps
     & ConsultantTileLocalProps
     & ConsultantTileDispatch, ConsultantTileLocalState> {
 
@@ -62,19 +61,19 @@ class ConsultantTileModule extends React.Component<
         this.state = {
             dialogOpen: false,
             menuAnchorEl: null,
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ConsultantTileLocalProps): ConsultantTileProps {
         return {
             consultantInfo: state.adminReducer.consultantsByInitials().get(localProps.initials),
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantTileDispatch {
         return {
             redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials))
-        }
+        };
     }
 
 
@@ -90,17 +89,17 @@ class ConsultantTileModule extends React.Component<
         });
     };
 
-    private handleMenuClick = (event:any) => {
-    this.setState({
-        menuAnchorEl: event.currentTarget
-    })
+    private handleMenuClick = (event: any) => {
+        this.setState({
+            menuAnchorEl: event.currentTarget
+        });
     };
 
 
-    private handleMenuClose = (event:any) => {
+    private handleMenuClose = (event: any) => {
         this.setState({
             menuAnchorEl: null
-        })
+        });
     };
 
     /**
@@ -111,8 +110,8 @@ class ConsultantTileModule extends React.Component<
         return (<Menu
             id="menu"
             anchorEl={this.state.menuAnchorEl}
-            open = {Boolean(this.state.menuAnchorEl)}
-            onClose = {this.handleMenuClose}
+            open={Boolean(this.state.menuAnchorEl)}
+            onClose={this.handleMenuClose}
             /*anchorOrigin={{horizontal: 'right', vertical: 'top'}}
             targetOrigin={{horizontal: 'right', vertical: 'top'}}*/
         >
@@ -123,9 +122,8 @@ class ConsultantTileModule extends React.Component<
                 <ListItemIcon>
                     <Icon className="material-icons">edit</Icon>
                 </ListItemIcon>
-                <ListItemText primary={PowerLocalize.get("ConsultantTile.EditProfile")}/>
+                <ListItemText primary={PowerLocalize.get('ConsultantTile.EditProfile')}/>
             </MenuItem>
-
 
 
             <MenuItem
@@ -134,11 +132,10 @@ class ConsultantTileModule extends React.Component<
                 <ListItemIcon>
                     <Icon className="material-icons">person</Icon>
                 </ListItemIcon>
-                <ListItemText primary={PowerLocalize.get("ConsultantTile.EditConsultant")}/>
+                <ListItemText primary={PowerLocalize.get('ConsultantTile.EditConsultant')}/>
             </MenuItem>
-        </Menu>)
+        </Menu>);
     };
-
 
 
     render() {
@@ -151,7 +148,7 @@ class ConsultantTileModule extends React.Component<
                     onClose={this.closeEditDialog}
                 />
                 <GridListTile
-                    key={"ConsultantTile." + this.props.initials}
+                    key={'ConsultantTile.' + this.props.initials}
                     title={this.props.consultantInfo.getFullName()}
 
                     /*actionPosition="right"
@@ -159,19 +156,19 @@ class ConsultantTileModule extends React.Component<
                     titleBackground="linear-gradient(to bottom, rgba(70,230,230,0.7) 0%,rgba(70,230,230,0.3) 70%,rgba(70,230,230,0) 100%)"*/
                     cols={1}
                     rows={1}
-                    style={{width: "300px", height: "300px", padding:8}}
+                    style={{width: '300px', height: '300px', padding: 8}}
                 >
 
-                    <img className={this.props.consultantInfo.active() ? "" : "disabled-consultant-img"}
+                    <img className={this.props.consultantInfo.active() ? '' : 'disabled-consultant-img'}
                          src={getProfileImageLocation(this.props.consultantInfo.initials())}
-                         //src={getImagePath()+'/HBT002_Logo_neg.png'}
+                        //src={getImagePath()+'/HBT002_Logo_neg.png'}
                     />
                     <GridListTileBar
                         title={this.props.consultantInfo.getFullName()}
                         //actionIcon={this.renderMenu()
                         actionIcon={
                             <Button onClick={this.handleMenuClick}>
-                                <Icon className="material-icons" style={{color:"white"}}>menu</Icon>
+                                <Icon className="material-icons" style={{color: 'white'}}>menu</Icon>
                             </Button>
                         }
                     />

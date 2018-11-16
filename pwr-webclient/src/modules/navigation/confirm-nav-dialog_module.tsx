@@ -21,47 +21,47 @@ interface ConfirmNavDialogLocalState {
 
 interface ConfirmNavDialogDispatch {
     continueNavigation(): void;
+
     dropNavigationTarget(): void;
 }
 
-class ConfirmNavDialogModule extends React.Component<
-    ConfirmNavDialogProps
+class ConfirmNavDialogModule extends React.Component<ConfirmNavDialogProps
     & ConfirmNavDialogLocalProps
     & ConfirmNavDialogDispatch, ConfirmNavDialogLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: ConfirmNavDialogLocalProps): ConfirmNavDialogProps {
         return {
             dialogOpen: state.navigationSlice.confirmDialogOpen()
-        }
+        };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConfirmNavDialogDispatch {
         return {
             continueNavigation: () => dispatch(NavigationActionCreator.AsyncContinueToTarget()),
             dropNavigationTarget: () => dispatch(NavigationActionCreator.DropNavigationTarget())
-        }
+        };
     }
 
     render() {
         return (<Dialog
             open={this.props.dialogOpen}
-            title={PowerLocalize.get("ConfirmNavDialog.Title")}
+            title={PowerLocalize.get('ConfirmNavDialog.Title')}
         >
-            {PowerLocalize.get("ConfirmNavDialog.Content")}
+            {PowerLocalize.get('ConfirmNavDialog.Content')}
             <DialogActions>
                 <Button
                     variant={'flat'}
                     color={'primary'}
                     onClick={this.props.continueNavigation}
                 >
-                    {PowerLocalize.get("ConfirmNavDialog.Action.NavigateAnyway")}
+                    {PowerLocalize.get('ConfirmNavDialog.Action.NavigateAnyway')}
                 </Button>
                 <Button
                     variant={'flat'}
                     color={'primary'}
                     onClick={this.props.dropNavigationTarget}
                 >
-                    {PowerLocalize.get("ConfirmNavDialog.Action.CancelNavigation")}
+                    {PowerLocalize.get('ConfirmNavDialog.Action.CancelNavigation')}
                 </Button>
             </DialogActions>
         </Dialog>);

@@ -45,32 +45,38 @@ interface AdminSkillTree2Dispatch {
     loadTree(): void;
 
     whitelistCategory(categoryId: number): void;
+
     blacklistCategory(categoryId: number): void;
 
     setIsDisplayCategory(categoryId: number, isDisplay: boolean): void;
 
     addLocalization(categoryId: number, language: string, qualifier: string): void;
+
     deleteLocalization(categoryId: number, language: string): void;
 
     addSkillLocalization(skillId: number, language: string, qualifier: string): void;
+
     deleteSkillLocalization(skillId: number, language: string): void;
 
     createCategory(parentId: number, qualifier: string): void;
+
     deleteCategory(categoryId: number): void;
 
     moveSkill(newCategory: number, oldCategory: number, skillId: number): void;
+
     createSkill(qualifier: string, categoryId: number): void;
+
     deleteSkill(skillId: number): void;
 
     toggleOpen(categoryId: number): void;
+
     filter(searchTerm: string): void;
 
     changeFilterNonCustomSkills(doFiltering: boolean): void;
 }
 
 
-class AdminSkillTree2Module extends React.Component<
-    AdminSkillTree2Props
+class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
     & AdminSkillTree2LocalProps
     & AdminSkillTree2Dispatch, AdminSkillTree2LocalState> {
 
@@ -87,7 +93,6 @@ class AdminSkillTree2Module extends React.Component<
             skillNameOpen: false
         };
     }
-
 
 
     static mapStateToProps(state: ApplicationState, localProps: AdminSkillTree2LocalProps): AdminSkillTree2Props {
@@ -140,7 +145,7 @@ class AdminSkillTree2Module extends React.Component<
     };
 
     private handleCategoryBlacklistCheck = (event: any, isChecked: boolean) => {
-        if(isChecked) {
+        if (isChecked) {
             this.props.blacklistCategory(this.state.selectedCategoryId);
         } else {
             this.props.whitelistCategory(this.state.selectedCategoryId);
@@ -183,25 +188,25 @@ class AdminSkillTree2Module extends React.Component<
     private openDeleteConfirmation = () => {
         this.setState({
             deleteConfirmationOpen: true
-        })
+        });
     };
 
     private closeDeleteConfirmation = () => {
         this.setState({
             deleteConfirmationOpen: false
-        })
+        });
     };
 
     private openSkillNameDialog = () => {
         this.setState({
             skillNameOpen: true
-        })
+        });
     };
 
     private closeSkillNameDialog = () => {
         this.setState({
             skillNameOpen: false
-        })
+        });
     };
 
     private handleCreateCategory = (categoryName: string) => {
@@ -222,7 +227,7 @@ class AdminSkillTree2Module extends React.Component<
         this.setState({
             selectedCategoryId: this.NO_ID,
             deleteConfirmationOpen: false
-        })
+        });
     };
 
     private handleCheckFilterNonCustom = (event: any, isInputChecked: boolean) => {
@@ -232,13 +237,13 @@ class AdminSkillTree2Module extends React.Component<
     private openCategorySearcher = () => {
         this.setState({
             categorySearcherOpen: true
-        })
+        });
     };
 
     private closeCategorySearcher = () => {
         this.setState({
             categorySearcherOpen: false
-        })
+        });
     };
 
     private getSelectedSkill = () => {
@@ -247,8 +252,8 @@ class AdminSkillTree2Module extends React.Component<
 
     private invokeMoveSelectedSkill = (newCategoryId: number) => {
         let selectedSkill = this.getSelectedSkill();
-        console.log("NewCategoryId", newCategoryId);
-        this.props.moveSkill(newCategoryId, selectedSkill.categoryId(),  selectedSkill.id());
+        console.log('NewCategoryId', newCategoryId);
+        this.props.moveSkill(newCategoryId, selectedSkill.categoryId(), selectedSkill.id());
         this.closeCategorySearcher();
     };
 
@@ -263,14 +268,14 @@ class AdminSkillTree2Module extends React.Component<
                 onLocaleAdd={this.handleAddSkillLocale}
             />
             <Button
-                style={{margin:'4px'}}
+                style={{margin: '4px'}}
                 variant={'raised'}
                 className="mui-margin"
                 color={'primary'}
                 onClick={this.openCategorySearcher}
             >
                 <Icon className="material-icons">change_history</Icon>
-                {PowerLocalize.get("Action.ChangeCategory")}
+                {PowerLocalize.get('Action.ChangeCategory')}
             </Button>
 
             <CategorySearcher
@@ -283,13 +288,13 @@ class AdminSkillTree2Module extends React.Component<
             {
                 selectedSkill.isCustom() ?
                     <Button
-                        style={{margin:'4px'}}
+                        style={{margin: '4px'}}
                         variant={'raised'}
                         className="mui-margin"
                         color={'secondary'}
                         onClick={() => this.props.deleteSkill(selectedSkill.id())}
                     >
-                        {PowerLocalize.get("Action.DeleteSkill")}
+                        {PowerLocalize.get('Action.DeleteSkill')}
                         <Icon className="material-icons">delete</Icon>
                     </Button>
                     : false
@@ -336,39 +341,39 @@ class AdminSkillTree2Module extends React.Component<
                 onLocaleDelete={this.handleDeleteCategoryLocale}
             />
             <Button
-                style={{margin:'4px'}}
+                style={{margin: '4px'}}
                 variant={'contained'}
                 className="mui-margin"
-                size={"small"}
+                size={'small'}
                 color={'primary'}
                 onClick={this.openNameDialog}
             >
-                {PowerLocalize.get("Action.AddCategory")}
+                {PowerLocalize.get('Action.AddCategory')}
                 <Add/>
             </Button>
 
             <Button
-                style={{margin:'4px'}}
+                style={{margin: '4px'}}
                 variant={'contained'}
-                size={"small"}
+                size={'small'}
                 className="mui-margin"
                 color={'primary'}
                 onClick={this.openSkillNameDialog}
             >
-                {PowerLocalize.get("Action.AddSkillToCategory")}
+                {PowerLocalize.get('Action.AddSkillToCategory')}
                 <Add/>
             </Button>{
             selectedCategory.isCustom() ?
                 <Button
-                    style={{margin:'4px'}}
+                    style={{margin: '4px'}}
                     variant={'contained'}
                     className="mui-margin"
                     color={'primary'}
-                    size={"small"}
+                    size={'small'}
                     onClick={this.openDeleteConfirmation}
                 >
                     <Delete/>
-                    {PowerLocalize.get("Action.DeleteCategory")}
+                    {PowerLocalize.get('Action.DeleteCategory')}
                 </Button>
                 : null
         }
@@ -376,9 +381,9 @@ class AdminSkillTree2Module extends React.Component<
     };
 
     private Info = () => {
-        if(this.state.selectedCategoryId === this.NO_ID && this.state.selectedSkillId === this.NO_ID) {
+        if (this.state.selectedCategoryId === this.NO_ID && this.state.selectedSkillId === this.NO_ID) {
             return <></>;
-        } else if(this.state.selectedCategoryId === this.NO_ID) {
+        } else if (this.state.selectedCategoryId === this.NO_ID) {
             return <this.SkillInfo/>;
         } else {
             return <this.CategoryInfo/>;
@@ -390,24 +395,26 @@ class AdminSkillTree2Module extends React.Component<
             <div>
                 <SetValueDialog
                     open={this.state.categoryNameOpen}
-                    label={PowerLocalize.get("AdminClient.Info.SkillTree.NewCategory.Name")}
+                    label={PowerLocalize.get('AdminClient.Info.SkillTree.NewCategory.Name')}
                     onClose={this.closeNameDialog}
                     onOk={this.handleCreateCategory}
                 />
                 <SetValueDialog
                     open={this.state.skillNameOpen}
-                    label={PowerLocalize.get("AdminClient.Info.SkillTree.NewSkill.Name")}
+                    label={PowerLocalize.get('AdminClient.Info.SkillTree.NewSkill.Name')}
                     onClose={this.closeSkillNameDialog}
                     onOk={this.handleCreateSkill}
                 />
                 <div className="row ">
                     <Paper className="col-md-8">
                         <TextField
-                            label={PowerLocalize.get("Action.Search")}
-                            onChange={(e: any) => {this.props.filter(e.target.value)}}
+                            label={PowerLocalize.get('Action.Search')}
+                            onChange={(e: any) => {
+                                this.props.filter(e.target.value);
+                            }}
                         />
                         <FormControlLabel
-                            style={{marginLeft:'5px'}}
+                            style={{marginLeft: '5px'}}
                             control={
                                 <Checkbox
                                     onChange={this.handleCheckFilterNonCustom}
@@ -415,7 +422,7 @@ class AdminSkillTree2Module extends React.Component<
                                     color={'primary'}
                                 />
                             }
-                            label={PowerLocalize.get("AdminClient.Info.SkillTree.Filter.OnlyCustom")}
+                            label={PowerLocalize.get('AdminClient.Info.SkillTree.Filter.OnlyCustom')}
                         />
 
 

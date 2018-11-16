@@ -33,33 +33,33 @@ export namespace ViewProfileActionCreator {
         return {
             type: ActionType.SetViewProfile,
             viewProfile: viewProfile
-        }
+        };
     }
 
     export function ClearViewProfiles(): AbstractAction {
         return {
             type: ActionType.ClearViewProfiles
-        }
+        };
     }
 
     export function ResetViewState(): AbstractAction {
         return {
             type: ActionType.ResetViewState
-        }
+        };
     }
 
     export function RemoveViewProfile(id: string): RemoveViewProfileAction {
         return {
             type: ActionType.RemoveViewProfile,
             id: id
-        }
+        };
     }
 
     export function SetSortInProgress(inProgress: boolean): SetSortInProgressAction {
         return {
             type: ActionType.SetSortInProgress,
             inProgress: inProgress
-        }
+        };
     }
 
     function succeedAndRead(response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
@@ -78,13 +78,13 @@ export namespace ViewProfileActionCreator {
             };
             axios.post(ViewProfileService.postViewProfile(initials), body).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
-                NavigationActionCreator.showSuccess("View Profile created.");
+                NavigationActionCreator.showSuccess('View Profile created.');
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not create view profile!");
+                NavigationActionCreator.showError('Could not create view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
-        }
+        };
     }
 
     export function AsyncMoveEntry(id: string, movableEntry: string, sourceIndex: number, targetIndex: number) {
@@ -96,15 +96,15 @@ export namespace ViewProfileActionCreator {
                 succeedAndRead(response, dispatch);
                 dispatch(SetSortInProgress(false));
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not move entry");
+                NavigationActionCreator.showError('Could not move entry');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 dispatch(SetSortInProgress(false));
                 console.error(error);
             });
-        }
+        };
     }
 
-    export function AsyncMoveNestedEntry(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number,
+    export function AsyncMoveNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number,
                                          movableEntry: string, sourceIndex: number, targetIndex: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let initials = getState().databaseReducer.loggedInUser().initials();
@@ -114,15 +114,15 @@ export namespace ViewProfileActionCreator {
                 succeedAndRead(response, dispatch);
                 dispatch(SetSortInProgress(false));
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not move entries!");
+                NavigationActionCreator.showError('Could not move entries!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 dispatch(SetSortInProgress(false));
                 console.error(error);
             });
-        }
+        };
     }
 
-    export function AsyncToggleNestedEntry(id: string, container: "PROJECT" | "DISPLAY_CATEGORY", containerIndex: number,
+    export function AsyncToggleNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number,
                                            toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
@@ -130,11 +130,11 @@ export namespace ViewProfileActionCreator {
             axios.patch(patchToggleNestedEntry(initials, id, container, containerIndex, toggleableEntry, index, isEnabled)).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not toggle tnry!");
+                NavigationActionCreator.showError('Could not toggle tnry!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
-        }
+        };
     }
 
     export function AsyncToggleEntry(id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
@@ -144,74 +144,78 @@ export namespace ViewProfileActionCreator {
             axios.patch(patchToggleEntry(initials, id, toggleableEntry, index, isEnabled)).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not toggle entry!");
+                NavigationActionCreator.showError('Could not toggle entry!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
-        }
+        };
     }
 
     export function AsyncAutoSortEntry(id: string, entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().databaseReducer.loggedInUser().initials();
-            let config: AxiosRequestConfig = {params: {"do-ascending": doAscending}};
+            let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
             axios.patch(patchSortEntry(initials, id, entryType, field), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not sorty entry!");
+                NavigationActionCreator.showError('Could not sorty entry!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
-        }
+        };
     }
 
     export function AsyncToggleSkill(viewProfileId: string, skillName: string, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().databaseReducer.loggedInUser().initials();
-            let config: AxiosRequestConfig = {params: {"skill-name": skillName}};
+            let config: AxiosRequestConfig = {params: {'skill-name': skillName}};
             axios.patch(patchToggleSkill(initials, viewProfileId, isEnabled), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not toggle skill!");
+                NavigationActionCreator.showError('Could not toggle skill!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
-        }
+        };
     }
 
     export function AsyncSetDisplayCategory(viewProfileId: string, skillName: string, newDisplayCategoryName: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().databaseReducer.loggedInUser().initials();
-            let config: AxiosRequestConfig = {params: {"skill-name": skillName, "display-category": newDisplayCategoryName}};
+            let config: AxiosRequestConfig = {
+                params: {
+                    'skill-name': skillName,
+                    'display-category': newDisplayCategoryName
+                }
+            };
             axios.patch(patchSetDisplayCategory(initials, viewProfileId), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not set display category!");
+                NavigationActionCreator.showError('Could not set display category!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
-        }
+        };
     }
 
     export function AsyncAutoSortNestedEntry(id: string, container: string, containerIndex: number,
-                                             entryType: SortableEntryType, field: SortableEntryField,  doAscending: boolean) {
+                                             entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().databaseReducer.loggedInUser().initials();
-            let config: AxiosRequestConfig = {params: {"do-ascending": doAscending}};
+            let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
             axios.patch(patchSortNestedEntry(initials, id, container, containerIndex, entryType, field), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not sort view profile!");
+                NavigationActionCreator.showError('Could not sort view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
-        }
+        };
     }
-
 
 
     export function AsyncDeleteViewProfile(id: string) {
@@ -220,14 +224,14 @@ export namespace ViewProfileActionCreator {
             let initials = getState().databaseReducer.loggedInUser().initials();
             axios.delete(ViewProfileService.deleteViewProfile(initials, id)).then(response => {
                 dispatch(RemoveViewProfile(id));
-                NavigationActionCreator.showSuccess("View profile deleted!");
+                NavigationActionCreator.showSuccess('View profile deleted!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch((error: AxiosError) => {
                 console.error(error);
-                NavigationActionCreator.showError("Could not delete view profile!");
+                NavigationActionCreator.showError('Could not delete view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
-        }
+        };
     }
 
     function AsyncLoadViewProfile(id: string) {
@@ -237,31 +241,31 @@ export namespace ViewProfileActionCreator {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
                 console.error(error);
-                NavigationActionCreator.showError("Could not load view profile!");
+                NavigationActionCreator.showError('Could not load view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
-        }
+        };
     }
 
-    export function AsyncGenerateDocX(viewProfileId: string, templateId : string) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+    export function AsyncGenerateDocX(viewProfileId: string, templateId: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let initials = getState().databaseReducer.loggedInUser().initials();
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.post(ViewProfileService.postReport(initials, viewProfileId, templateId)).then((response: AxiosResponse) => {
                 let location = response.data;
-                console.info("Received location: ", location);
-                window.open(location, "_blank");
+                console.info('Received location: ', location);
+                window.open(location, '_blank');
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch(function (error: any) {
                 console.error(error);
-                NavigationActionCreator.showError("Could not generate document!");
+                NavigationActionCreator.showError('Could not generate document!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
-        }
+        };
     }
 
     export function AsyncUpdateViewProfile(viewProfileId: string, description: string, name: string, charsPerLine: number) {
-        return function(dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let initials = getState().databaseReducer.loggedInUser().initials();
             let data = {
                 viewDescription: description,
@@ -271,13 +275,13 @@ export namespace ViewProfileActionCreator {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.patch(ViewProfileService.patchPartialUpdate(initials, viewProfileId), data).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
-                NavigationActionCreator.showSuccess("View Profile Updated.");
+                NavigationActionCreator.showSuccess('View Profile Updated.');
             }).catch(function (error: any) {
                 console.error(error);
-                NavigationActionCreator.showError("Could not update view profiles!");
+                NavigationActionCreator.showError('Could not update view profiles!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
-        }
+        };
     }
 
     /**
@@ -292,28 +296,26 @@ export namespace ViewProfileActionCreator {
                 let ids: Array<string> = response.data;
                 ids.forEach(id => dispatch(AsyncLoadViewProfile(id)));
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError("Could not load view profiles!");
+                NavigationActionCreator.showError('Could not load view profiles!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
-        }
+        };
     }
 
     export function AsyncSetDescription(description: string, viewProfileId: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let initials = getState().databaseReducer.loggedInUser().initials();
             dispatch(CrossCuttingActionCreator.startRequest());
-            let config: AxiosRequestConfig = {headers: {"Content-Type": "text/plain"}};
+            let config: AxiosRequestConfig = {headers: {'Content-Type': 'text/plain'}};
             axios.patch(ViewProfileService.patchDescription(initials, viewProfileId), description, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch(function (error: any) {
                 console.error(error);
-                NavigationActionCreator.showError("Could not set description!");
+                NavigationActionCreator.showError('Could not set description!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
-        }
+        };
     }
-
-
 
 
 }

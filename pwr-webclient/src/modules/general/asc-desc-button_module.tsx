@@ -2,13 +2,14 @@ import * as React from 'react';
 import {Button, Icon} from '@material-ui/core';
 
 interface AscDescButtonProps {
-    initial?: 'ASC'|'DESC';
+    initial?: 'ASC' | 'DESC';
     label?: string;
-    onAscDescChange?(state: 'ASC'|'DESC'): void;
+
+    onAscDescChange?(state: 'ASC' | 'DESC'): void;
 }
 
 interface AscDescButtonState {
-    currState: 'ASC'|'DESC';
+    currState: 'ASC' | 'DESC';
     currentIconName: string;
 }
 
@@ -19,8 +20,9 @@ export class AscDescButton extends React.Component<AscDescButtonProps, AscDescBu
 
     public static defaultProps: Partial<AscDescButtonProps> = {
         initial: 'ASC',
-        label: "",
-        onAscDescChange: () => {}
+        label: '',
+        onAscDescChange: () => {
+        }
     };
 
 
@@ -35,7 +37,7 @@ export class AscDescButton extends React.Component<AscDescButtonProps, AscDescBu
     private handleButtonPress = () => {
         let newState: 'ASC' | 'DESC' = 'ASC';
         let newIcon: string = this.ascName;
-        if(this.state.currState == 'ASC') {
+        if (this.state.currState == 'ASC') {
             newState = 'DESC';
             newIcon = this.descName;
         }
@@ -59,6 +61,6 @@ export class AscDescButton extends React.Component<AscDescButtonProps, AscDescBu
             >
                 <Icon className="material-icons">{this.state.currentIconName}</Icon>
                 {this.props.label}
-                </Button>)
+            </Button>);
     }
 }

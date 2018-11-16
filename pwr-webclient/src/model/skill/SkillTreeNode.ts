@@ -38,7 +38,7 @@ export class SkillTreeNode {
     }
 
     public static root() {
-        return new SkillTreeNode(-1 , [], [], true, true);
+        return new SkillTreeNode(-1, [], [], true, true);
     }
 
     public static shallowCopy(skillTreeNode: SkillTreeNode) {
@@ -55,7 +55,7 @@ export class SkillTreeNode {
      */
     public addCategoryToTree(parentId: number, category: SkillCategory, categoriesById: Immutable.Map<number, SkillCategory>) {
         let newNodes;
-        if(this.skillCategoryId === parentId && this.getChildIndex(category.id()) === -1 ) {
+        if (this.skillCategoryId === parentId && this.getChildIndex(category.id()) === -1) {
             this.childNodes.push(SkillTreeNode.of(category));
             this.childNodes.sort(Comparators.getSkillTreeNodeComparator(categoriesById));
         } else {
@@ -64,7 +64,7 @@ export class SkillTreeNode {
     }
 
     public addSkillIdToTree(categoryId: number, skillId: number) {
-        if(categoryId === this.skillCategoryId && !this.hasSkill(skillId)) {
+        if (categoryId === this.skillCategoryId && !this.hasSkill(skillId)) {
             this.skillNodes.push(new SkillNode(skillId, true));
         } else {
             this.childNodes.forEach(child => child.addSkillIdToTree(categoryId, skillId));
@@ -76,7 +76,7 @@ export class SkillTreeNode {
     }
 
     public removeCategoryFromTree(categoryId: number) {
-        if(this.getChildIndex(categoryId) !== -1) {
+        if (this.getChildIndex(categoryId) !== -1) {
             this.removeCategoryFromChildren(categoryId);
         } else {
             this.childNodes.forEach(childNode => childNode.removeCategoryFromTree(categoryId));
@@ -84,7 +84,7 @@ export class SkillTreeNode {
     }
 
     public removeSkillFromTree(categoryId: number, skillId: number) {
-        if(this.skillCategoryId === categoryId) {
+        if (this.skillCategoryId === categoryId) {
             this.skillNodes = this.skillNodes.filter(skillNode => skillNode.skillId !== skillId);
         } else {
             this.childNodes.forEach(childNode => childNode.removeSkillFromTree(categoryId, skillId));
@@ -92,10 +92,10 @@ export class SkillTreeNode {
     }
 
     public toggleOpen(skillCategoryId: number) {
-        if(this.skillCategoryId === skillCategoryId) {
+        if (this.skillCategoryId === skillCategoryId) {
             this.open = !this.open;
         } else {
-            this.childNodes.forEach(childNode => childNode.toggleOpen(skillCategoryId))
+            this.childNodes.forEach(childNode => childNode.toggleOpen(skillCategoryId));
         }
     }
 
