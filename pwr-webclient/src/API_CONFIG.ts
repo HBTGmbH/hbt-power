@@ -342,23 +342,31 @@ export namespace TemplateService{
     }
 
     export function getTemplates(){
-        return base()+ "/view/template"
+        return base()+ "/template/"
     }
 
     export function getTemplateById(id: string){
-        return base() + "/view/template" + "/" + id;
+        return base() + "/template" + "/" + id;
     }
 
     export function CreateTemplate(name:string){
-        return base() + "/view/template" + "/" + name;
+        return base() + "/template" + "/" + name;
     }
 
     export function ChangeTemplate(id:string){
-        return base() + "/view/template" + "/" + id;
+        return base() + "/template" + "/" + id;
     }
 
     export function getPreview(id:string){
-        return base() + "/view/template"+ "/preview" + "/" + id;
+        return base() + "/template"+ "/preview" + "/" + id;
+    }
+
+    export function uploadAsTemplate(){
+        return base() + "/upload/post"
+    }
+
+    export function renderPreview(){
+        return base() + "/render/"
     }
 
 }

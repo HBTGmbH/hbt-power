@@ -9,6 +9,7 @@ export namespace TemplateReducer {
 
     import RemoveTemplateAction = TemplateActions.RemoveTemplateAction;
     import SetTemplateAction = TemplateActions.SetTemplateAction;
+    import SetPreviewAction = TemplateActions.SetPreviewAction;
 
     export function reduce(store: TemplateStore, action: AbstractAction){
         if (isNullOrUndefined(store)) {
@@ -33,7 +34,12 @@ export namespace TemplateReducer {
             }
             case ActionType.TemplateRequestFailed:{
                 console.error("TemplateRequestFailed");
+                console.log("Template Store: ",store.templates());
                 return store.templates();
+            }
+            case ActionType.SetPreview : {
+                let act: SetPreviewAction = action as SetPreviewAction;
+                return store.preview(act.url);
             }
         }
         return store;

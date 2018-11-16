@@ -9,7 +9,6 @@ import Iframe from 'react-iframe';
 
 interface ReportPreviewLocalProps{
     id?:string,
-    htmlString?: string,
     url?: string,
 }
 
@@ -27,12 +26,16 @@ class ReportPreviewModule extends React.Component<ReportPreviewLocalProps & Repo
     }
 
     render(){
-        return <Iframe
-            url={this.props.url}
-            position={"relative"}
-            height={"900px"}
+        return <div>
+            {  ((this.props.url != null) && (this.props.url != "")) ?
+                <Iframe
+                    url={this.props.url}
+                    position={"relative"}
+                    height={"calc(100vh - 88px)"}
 
-        />;
+                /> : <div>NO PREVIEW - TODO make pretty</div>
+            }
+            </div>
     }
 }
 

@@ -107,6 +107,14 @@ class ViewProfileGenerator extends React.Component<
         return items;
     };
 
+    private startGenerate = (viewID:string , tempID:string) => {
+        if(tempID == "" || tempID == null){
+            tempID = "-1";
+        }
+
+        this.props.generate(viewID,tempID);
+    };
+
 
 
     render() {
@@ -155,8 +163,8 @@ class ViewProfileGenerator extends React.Component<
                         variant={'raised'}
                         className="mui-margin"
                         color={'primary'}
-                        disabled={this.state.activeTemplateId === ""}
-                        onClick={() => this.props.generate(this.props.viewProfileId, this.state.activeTemplateId)}
+                        //disabled={this.state.activeTemplateId === ""}
+                        onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
                     >
                         <Icon className="material-icons">open_in_new</Icon>
                         {PowerLocalize.get("Action.Generate.Word")}

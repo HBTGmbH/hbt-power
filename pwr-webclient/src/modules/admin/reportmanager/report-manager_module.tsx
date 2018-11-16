@@ -38,7 +38,6 @@ interface ReportManagerDispatch{
 
     refreshTemplates():void;
     deleteTemplate(id:string):void;
-    createTemplate(name:string,description:string):void;
     changeTemplate(templateSlice:TemplateSlice):void;
     loadPreview(id:string):void;
 }
@@ -80,7 +79,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps  & ReportMa
 
             refreshTemplates: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()),
             deleteTemplate: (id:string) => dispatch(TemplateActionCreator.RemoveTemplate(id)),
-            createTemplate: (name:string,description:string)=>dispatch(TemplateActionCreator.CreateTemplate(name,description,"","")),
             changeTemplate: (templateSlice:TemplateSlice) => dispatch(TemplateActionCreator.ChangeTemplate(templateSlice)),
             loadPreview: (id:string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
         }
@@ -157,13 +155,13 @@ class ReportManagerModule extends React.Component<ReportManagerProps  & ReportMa
     };
 
     private renderPreview = () => {
-        let result: string = "http://www.hbt.de"; // TODO preview html fertig machen
+        let result: string = "";//http://www.hbt.de";  TODO preview html fertig machen
 
         if (this.state.selectedTemplate != null
             && this.state.selectedTemplate.previewUrl != ""
             && this.state.selectedTemplate.previewUrl != null) {
 
-            result = this.state.selectedTemplate.previewUrl;
+            result = ".."+this.state.selectedTemplate.previewUrl;
         }
 
         return <div style={{height:'calc(100vh - 88px)'}}>

@@ -115,7 +115,7 @@ class AdminLoginModule extends React.Component<
     };
 
     render() {
-        console.log("Admin_Login_error: ",this.getErrorText());
+        //console.log("Admin_Login_error: ",this.getErrorText());
         return (
             <div className="fittingContainer vertical-align">
                 <Paper style={{padding: "30px"}}>

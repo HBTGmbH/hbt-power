@@ -10,6 +10,7 @@ export class TemplateStore{
 
     @doop public get previews(){return doop<Immutable.Map<string, ReportPreviewFile>,this>()};
 
+    @doop public get preview() {return doop<string, this>()};
 
 
     private constructor(){
