@@ -3,7 +3,6 @@ package de.hbt.pwr.view.exception;
 import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.controller.ViewProfileController;
 import de.hbt.pwr.view.service.ReportTemplateService;
-import de.hbt.pwr.view.service.StorageService;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import org.junit.Test;
@@ -51,8 +50,6 @@ public class ViewProfileExceptionHandlerTest {
     @MockBean
     private ReportTemplateService reportTemplateService;
 
-    @MockBean
-    private StorageService storageService;
 
     @Test
     public void shouldReturnForbidden403() throws Exception {

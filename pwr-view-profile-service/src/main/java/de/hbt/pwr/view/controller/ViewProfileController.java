@@ -7,7 +7,6 @@ import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.service.ReportTemplateService;
-import de.hbt.pwr.view.service.StorageService;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
 import io.swagger.annotations.*;
@@ -61,7 +60,6 @@ public class ViewProfileController {
 
     private final ReportServiceClient reportServiceClient;
 
-    private final StorageService storageService;
 
     //private static final Logger LOG = Logger.getLogger(ViewProfileController.class);
 
@@ -70,13 +68,11 @@ public class ViewProfileController {
             , ViewProfileService viewProfileService
             , ReportServiceClient reportServiceClient
             , ReportTemplateService reportTemplateService
-            , StorageService storageService
     ) {
         this.viewProfileImporter = viewProfileImporter;
         this.viewProfileService = viewProfileService;
         this.reportServiceClient = reportServiceClient;
         this.reportTemplateService = reportTemplateService;
-        this.storageService = storageService;
     }
 
     @ApiOperation(value = "Creates a view profile for the given consultant",

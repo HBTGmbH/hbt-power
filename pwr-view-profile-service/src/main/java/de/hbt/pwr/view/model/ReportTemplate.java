@@ -47,14 +47,14 @@ public class ReportTemplate {
     public static class ReportTemplateSlice {
         public String name;
         public String description;
-        public String path;
+        public String createUser;
 
         public static ReportTemplateSlice fromJSON(String str) {
             ReportTemplateSlice toReturn = new ReportTemplateSlice();
             String[] content = str.split("\"");
             toReturn.name = content[1];
             toReturn.description = content[3];
-            toReturn.path = content[5];
+            toReturn.createUser = content[5];
 
             return toReturn;
         }

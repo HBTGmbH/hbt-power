@@ -52,7 +52,7 @@ public class ReportTemplateController {
         // TODO anhand des pfades eine html datei rendern und auf dem Server speichern und dann den link dazu speichern
         //ResponseEntity<String> resp = reportServiceClient.generateHtml(data.path); // TODO wieder hinzufügen
         //String path = resp.toString();
-        reportTemplate.setPreviewUrl("/usr/share/power2/report/previews/export_2018_11_06_13_47_49.html");//path );
+        reportTemplate.setPreviewUrl("");//path );
         ReportTemplate template = reportTemplateService.saveTemplate(reportTemplate);
 
         return ResponseEntity.ok(template);
@@ -75,10 +75,10 @@ public class ReportTemplateController {
         newTemplate.setId(id);
         newTemplate.setName(templateSlice.name);
         newTemplate.setDescription(templateSlice.description);
-        newTemplate.setPath(templateSlice.path);
+        //newTemplate.setPath(templateSlice.path); TODO
         newTemplate.setCreateUser(reportTemplateService.getTemplate(id).getCreateUser());
         newTemplate.setCreatedDate(reportTemplateService.getTemplate(id).getCreatedDate());
-        newTemplate.setPreviewUrl((templateSlice.path.equals(reportTemplateService.getTemplate(id).getPath())) ? reportTemplateService.getTemplate(id).getPreviewUrl() : "TODO render html");
+       // newTemplate.setPreviewUrl((templateSlice.path.equals(reportTemplateService.getTemplate(id).getPath())) ? reportTemplateService.getTemplate(id).getPreviewUrl() : "TODO render html");
 
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
         return ResponseEntity.ok(template);
