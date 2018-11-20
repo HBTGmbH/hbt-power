@@ -114,7 +114,8 @@ export class ProfileStore {
         projectRoles: Immutable.Map<string, NameEntity>,
         loggedInUser: ConsultantInfo,
         degrees: Immutable.List<string>,
-        currentlyUsedSkillNames: Immutable.Set<string>
+        currentlyUsedSkillNames: Immutable.Set<string>,
+        loginStatus: LoginStatus
     ) {
         return this.languageLevels(languageLevels)
             .profile(profile)
@@ -129,7 +130,8 @@ export class ProfileStore {
             .degrees(degrees)
             .careers(careers)
             .keySkills(keySkills)
-            .currentlyUsedSkillNames(currentlyUsedSkillNames);
+            .currentlyUsedSkillNames(currentlyUsedSkillNames)
+            .loginStatus(loginStatus);
     }
 
     public static createWithDefaults(): ProfileStore {
@@ -149,6 +151,7 @@ export class ProfileStore {
             ConsultantInfo.empty(),
             Immutable.List<string>(['Bachelor', 'Master', 'Doktor', 'Diplom']),
             Immutable.Set<string>(),
+            LoginStatus.INITIALS
         );
     }
 

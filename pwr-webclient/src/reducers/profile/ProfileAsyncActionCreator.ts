@@ -189,25 +189,30 @@ export class ProfileAsyncActionCreator {
 
     public static logInUser(initials: string, navTarget?: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            axios.get(getConsultantApiString(initials)).then(function (response: AxiosResponse) {
-                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
-                dispatch({
-                    type: ActionType.LogInUser,
-                    consultantInfo: ConsultantInfo.fromAPI(response.data)
-                });
-                dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
-                dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
-                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-                dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
-                dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-                if (!isNullOrUndefined(navTarget)) {
-                    dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
-                }
-            }).catch(function (error: any) {
+            if (initials.length <= 0) {
                 dispatch(ProfileActionCreator.FailLogin());
-                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT));
-            });
+            } else {
+                axios.get(getConsultantApiString(initials)).then(function (response: AxiosResponse) {
+                    dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                    dispatch({
+                        type: ActionType.LogInUser,
+                        consultantInfo: ConsultantInfo.fromAPI(response.data)
+                    });
+                    dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
+                    dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
+                    dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+                    dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
+                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
+                    Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
+                    if (!isNullOrUndefined(navTarget)) {
+                        dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
+                    }
+                }).catch(function (error: any) {
+                    dispatch(ProfileActionCreator.FailLogin());
+                    dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT));
+                });
+            }
+
         };
     }
 

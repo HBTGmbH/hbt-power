@@ -53,7 +53,7 @@ interface PowerLoginLocalState {
  */
 interface PowerLoginDispatch {
     logInUser(initials: string): void;
-
+    clearInitials(): void;
     setUserInitials(value: string): void;
 }
 
@@ -78,12 +78,13 @@ class PowerLoginModule extends React.Component<PowerLoginProps
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerLoginDispatch {
         return {
             logInUser: (initials) => dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_HOME)),
-            setUserInitials: (value) => dispatch(ProfileActionCreator.SetUserInitials(value))
+            setUserInitials: (value) => dispatch(ProfileActionCreator.SetUserInitials(value)),
+            clearInitials: () => dispatch(ProfileActionCreator.ClearUserInitials())
         };
     }
 
     componentDidMount() {
-        this.props.setUserInitials('');
+        this.props.clearInitials();
     }
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {

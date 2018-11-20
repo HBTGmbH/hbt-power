@@ -180,7 +180,7 @@ export class DatabaseReducer {
 
     private static LogOutUser(database: ProfileStore): ProfileStore {
         database = database.loggedInUser(ConsultantInfo.empty());
-        return database.profile(Profile.createDefault());
+        return database.profile(Profile.createDefault()).loginStatus(LoginStatus.INITIALS);
     }
 
     private static AddSkill(state: ProfileStore, action: AddSkillAction): ProfileStore {
@@ -188,13 +188,17 @@ export class DatabaseReducer {
         return state.profile(profile);
     }
 
-    public static SetUserInitials(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
-        let loggedInUser = state.loggedInUser().initials(action.value);
-        let status = action.value.length > 0 ? LoginStatus.INITIALS : LoginStatus.INVALID_NAME;
+    public static SetUserInitials(state: ProfileStore, initials: string,  checkValue?: boolean): ProfileStore {
+        let loggedInUser = state.loggedInUser().initials(initials);
+        let status = LoginStatus.INITIALS;
+        if (checkValue) {
+            status = initials.length > 0 ? LoginStatus.INITIALS : LoginStatus.INVALID_NAME;
+        }
         return state.loggedInUser(loggedInUser).loginStatus(status);
     }
 
     public static Reduce(state: ProfileStore, action: AbstractAction): ProfileStore {
+        console.debug("Database Reducer called with " + ActionType[action.type], action);
         if (isNullOrUndefined(state)) {
             state = ProfileStore.createWithDefaults();
         }
@@ -228,10 +232,13 @@ export class DatabaseReducer {
             case ActionType.AddSkill:
                 return DatabaseReducer.AddSkill(state, action as AddSkillAction);
             case ActionType.SetUserInitials:
-                return DatabaseReducer.SetUserInitials(state, action as ChangeStringValueAction);
+                return DatabaseReducer.SetUserInitials(state, (<ChangeStringValueAction>action).value, true);
             case ActionType.RemoveSkillFromProject: {
                 let profile = ProfileReducer.reducerHandleRemoveSkillFromProject(state.profile(), action as RemoveSkillFromProjectAction);
                 return state.profile(profile);
+            }
+            case ActionType.ClearUserInitials: {
+                return DatabaseReducer.SetUserInitials(state, '', false);
             }
             default:
                 return state;

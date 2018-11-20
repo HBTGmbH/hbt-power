@@ -132,6 +132,12 @@ export class ProfileActionCreator {
             value: initials
         };
     }
+
+    public static ClearUserInitials(): AbstractAction {
+        return {
+            type: ActionType.ClearUserInitials
+        }
+    }
 }
 
 

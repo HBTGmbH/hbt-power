@@ -3,6 +3,7 @@
  */
 
 export enum ActionType {
+    ClearUserInitials,
 
     AddSkill,
     RemoveSkillFromProject,
