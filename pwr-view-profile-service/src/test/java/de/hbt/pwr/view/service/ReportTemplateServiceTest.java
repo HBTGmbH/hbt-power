@@ -29,9 +29,9 @@ public class ReportTemplateServiceTest {
 
 
     private final List<ReportTemplate> testReportTemplates = Arrays.asList(
-            ReportTemplate.builder().id("111").name("temp1").description("testDescr1").previewUrl("a/a/a").build(),
-            ReportTemplate.builder().id("222").name("temp2").description("testDescr2").previewUrl("b/b/b").build(),
-            ReportTemplate.builder().id("333").name("temp3").description("testDescr3").previewUrl("c/c/c").build()
+            ReportTemplate.builder().id("111").name("temp1").description("testDescr1").previewFilename("a/a/a").build(),
+            ReportTemplate.builder().id("222").name("temp2").description("testDescr2").previewFilename("b/b/b").build(),
+            ReportTemplate.builder().id("333").name("temp3").description("testDescr3").previewFilename("c/c/c").build()
     );
 
 

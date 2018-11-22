@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+@Component
 @FeignClient(value = "pwr-report-service", fallbackFactory = FileUploadClientFallbackFactory.class)
 public interface FileUploadClient {
     @PostMapping("/upload/post")
@@ -20,7 +21,7 @@ public interface FileUploadClient {
     @GetMapping("/all")
     ResponseEntity listUploadedFiles(Model model);
 
-    @GetMapping("/files/{filename:.+}")
+    @GetMapping("/files/{filename}")
     ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename);
 }
 
@@ -30,17 +31,17 @@ class FileUploadClientFallbackFactory implements FallbackFactory<FileUploadClien
     @Override
     public FileUploadClient create(Throwable cause) {
         return new FileUploadClient() {
-            @PostMapping("/upload/post")
+            @Override
             public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
                 return ResponseEntity.ok("uploading failed " + cause.getMessage());
             }
 
-            @GetMapping("/all")
+            @Override
             public ResponseEntity listUploadedFiles(Model model) {
                 return ResponseEntity.ok("listUploadedFiles " + cause.getMessage());
             }
 
-            @GetMapping("/files/{filename:.+}")
+            @Override
             public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
                 return ResponseEntity.notFound().build();
             }

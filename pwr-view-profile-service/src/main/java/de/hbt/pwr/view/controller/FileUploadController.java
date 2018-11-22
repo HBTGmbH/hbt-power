@@ -4,6 +4,7 @@ import de.hbt.pwr.view.client.files.FileUploadClient;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.repo.ReportTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 
+@ComponentScan
 @RequestMapping("/upload")
 @Controller
 public class FileUploadController {
@@ -29,9 +31,9 @@ public class FileUploadController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity listUploadedFiles(Model model) throws IOException {
-
-        return ResponseEntity.ok(model);
+    public ResponseEntity<Model> listUploadedFiles(Model model) throws IOException {
+        ResponseEntity res = fileUploadClient.listUploadedFiles(model);
+        return res;
     }
 
     @GetMapping("/files/{filename:.+}")
@@ -51,8 +53,8 @@ public class FileUploadController {
         newTemplate.setDescription(templateSlice.description);
         newTemplate.setCreatedDate(LocalDate.now());
         newTemplate.setPath(path.toString());
-        newTemplate.setCreateUser(templateSlice.createUser);// TODO
-        newTemplate.setPreviewUrl("");// TODO
+        newTemplate.setCreateUser(templateSlice.createUser);
+        newTemplate.setPreviewFilename("");// TODO
 
         ReportTemplate template = reportTemplateRepository.save(newTemplate);
 

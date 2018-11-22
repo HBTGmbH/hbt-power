@@ -23,7 +23,7 @@ public class ReportTemplate {
     private String path;
     private String createUser;
     private LocalDate createdDate;
-    private String previewUrl;
+    private String previewFilename;
 
 
     @Override

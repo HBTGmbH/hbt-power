@@ -79,15 +79,17 @@ public class ReportTemplateService {
 
 
     @NotNull
-    public String getPreviewURL(@NotNull String id) {
-        ReportTemplate result = reportTemplateRepository.findReportTemplateById(id);
-        return result.getPreviewUrl();
+    public String getPreviewFilename(@NotNull String id) {
+        if(reportTemplateRepository.findReportTemplateById(id) != null){
+            return reportTemplateRepository.findReportTemplateById(id).getPreviewFilename();
+        }
+        return null;
     }
 
     @NotNull
-    public List<String> getAllPreviewURL() {
+    public List<String> getAllPreviewFilenames() {
         return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
-                .map(ReportTemplate::getPreviewUrl)
+                .map(ReportTemplate::getPreviewFilename)
                 .collect(Collectors.toList());
     }
 
