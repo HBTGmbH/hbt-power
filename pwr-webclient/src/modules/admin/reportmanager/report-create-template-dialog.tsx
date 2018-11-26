@@ -203,6 +203,9 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
         </div>;
     };
 
+    // TODO validate Name to not ovverride the file
+    // Client and Server side
+
     render() {
         return <Dialog
             onClose={() => {
@@ -233,14 +236,13 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                     </div>
                     <div className={'col-md-6'}>
                         <Paper>
-                            <ReportPreview url={this.state.previewServerUrl}/>
+                            <ReportPreview templateId={this.state.previewServerUrl}/>
                         </Paper>
                     </div>
                 </div>
             </DialogContent>
         </Dialog>;
     }
-
 }
 
 

@@ -362,12 +362,24 @@ export namespace TemplateService {
         return base() + '/template' + '/preview' + '/' + id;
     }
 
+    export function getAllPreviews() {
+        return base() + "/template" + "/preview" + "/all";
+    }
+
     export function uploadAsTemplate() {
         return base() + '/upload/post';
     }
 
     export function renderPreview() {
         return base() + '/render/';
+    }
+
+    export function getPreviewFromReport(filename:string){
+        return "http://power02.corp.hbt.de:9000/pwr-report-service/upload/files/"+filename;
+    }
+
+    export function getAllFiles() {
+        return base() + "/upload" + "/all"
     }
 
 }

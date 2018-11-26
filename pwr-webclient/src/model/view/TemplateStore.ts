@@ -16,17 +16,11 @@ export class TemplateStore {
         return doop<Immutable.Map<string, ReportPreviewFile>, this>();
     };
 
-    @doop
-    public get preview() {
-        return doop<string, this>();
-    };
-
-
     private constructor() {
         return this;
     }
 
     public static empty(): TemplateStore {
-        return new TemplateStore().templates(Immutable.Map<string, Template>());
+        return new TemplateStore().templates(Immutable.Map<string, Template>()).previews(Immutable.Map<string,ReportPreviewFile>());
     }
 }

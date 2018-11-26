@@ -19,6 +19,7 @@ import Typography from '@material-ui/core/Typography/Typography';
 import {ReportPreviewFile} from '../../../model/view/ReportPreviewFile';
 import {CreateTemplateDialog} from './report-create-template-dialog';
 import {ReportPreview} from './report-preview_module';
+import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 
 
 interface ReportManagerProps {
@@ -26,6 +27,7 @@ interface ReportManagerProps {
     templates: Immutable.Map<string, Template>;
     allTemplates: Array<Template>;
     previewFiles: Immutable.Map<string, ReportPreviewFile>;
+
 }
 
 interface ReportManagerLocalProps {
@@ -42,6 +44,8 @@ interface ReportManagerDispatch {
     changeTemplate(templateSlice: TemplateSlice): void;
 
     loadPreview(id: string): void;
+
+    getAllPreviews(): void;
 }
 
 interface ReportManagerState {
@@ -51,6 +55,8 @@ interface ReportManagerState {
     templateDescription: string;
 
     createDialogOpen: boolean;
+
+    previewFilenames: Array<string>;
 }
 
 class ReportManagerModule extends React.Component<ReportManagerProps & ReportManagerLocalProps & ReportManagerDispatch, ReportManagerState> {
@@ -63,6 +69,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             templateName: '',
             templateDescription: '',
             createDialogOpen: false,
+            previewFilenames: null,
         };
     }
 
@@ -83,6 +90,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             deleteTemplate: (id: string) => dispatch(TemplateActionCreator.RemoveTemplate(id)),
             changeTemplate: (templateSlice: TemplateSlice) => dispatch(TemplateActionCreator.ChangeTemplate(templateSlice)),
             loadPreview: (id: string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
+            getAllPreviews: () => dispatch(TemplateActionCreator.AsyncLoadAllPreviews()),
         };
     }
 
@@ -96,6 +104,8 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             console.log('TemplatesArray == null');
             this.props.refreshTemplates();
         }
+        
+        this.props.templates.forEach(value => {console.log(value.previewFilename);this.state.previewFilenames.push(value.previewFilename)});
     }
 
     private selectTemplate = (newTemplate: Template) => {
@@ -106,12 +116,28 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             templateName: newTemplate.name,
             templateDescription: newTemplate.description,
         });
-        this.renderPreview();
+        //this.renderPreview();
     };
 
     private changeTemplate() {
 
     }
+
+    private loadAllPreviews = () => {
+        /*this.props.templates.forEach(value => {
+            this.props.loadPreview(value.id);
+        });*/
+        if(this.state.previewFilenames != null) {
+            this.state.previewFilenames.forEach(value => {
+                this.props.loadPreview(value)
+            });
+        }
+    };
+
+    private getAllPreviews = () => {
+        this.props.getAllPreviews();
+    };
+
 
     private openCreateTemplateDialog = () => {
         this.setState({
@@ -146,8 +172,15 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         }
 
         this.props.allTemplates.map((template, key) => {
-            items.push(
+            //{this.state.previewFilenames.indexOf(template.previewFilename) != null ? : <></>}
+                items.push(
                 <ListItem key={key} button onClick={() => this.selectTemplate(template)}>
+                    {this.state.previewFilenames != null ?
+                            this.state.previewFilenames.indexOf(template.previewFilename) != null ?
+                                <ListItemIcon children={<Icon className="material-icons">dehaze</Icon>} />
+                            : <></>
+                        : <></>
+                    }
                     <ListItemText primary={template.name}
                                   secondary={template.createdDate + '  |  ' + template.createUser}/>
                 </ListItem>
@@ -160,14 +193,14 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         let result: string = '';//http://www.hbt.de";  TODO preview html fertig machen
 
         if (this.state.selectedTemplate != null
-            && this.state.selectedTemplate.previewUrl != ''
-            && this.state.selectedTemplate.previewUrl != null) {
+            && this.state.selectedTemplate.previewFilename != ''
+            && this.state.selectedTemplate.previewFilename != null) {
 
-            result = '..' + this.state.selectedTemplate.previewUrl;
+            result = this.state.selectedTemplate.previewFilename;
         }
 
         return <div style={{height: 'calc(100vh - 88px)'}}>
-            <ReportPreview url={result}/>
+            <ReportPreview templateId={this.state.selectedTemplate.id}/>
         </div>;
     };
 
@@ -183,6 +216,14 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                 <Paper>
                     <List>
                         <ListItem button onClick={() => {
+                            this.getAllPreviews();
+                        }}>
+                            <Icon className={'material-icons'}>add</Icon>
+                            <ListItemText primary={'Load All Previews'}/>
+                        </ListItem>
+
+
+                        <ListItem button onClick={() => {
                             this.openCreateTemplateDialog();
                         }}>
                             <Icon className={'material-icons'}>add</Icon>
@@ -197,7 +238,10 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             </div>
             <div className={'col-md-7'} style={{height: '100%'}}>
                 <Paper style={{height: '100%'}}>
-                    {this.renderPreview()}
+                    <div style={{height: 'calc(100vh - 88px)'}}>
+                        <ReportPreview
+                            templateId={this.state.selectedTemplate != null ? this.state.selectedTemplate.id : ''}/>
+                    </div>
                 </Paper>
             </div>
             <div className={'col-md-3'}>
@@ -228,7 +272,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                                 <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Preview - Path</Typography>
                                     <Typography
-                                        variant={'subheading'}>{this.state.selectedTemplate.previewUrl}</Typography>
+                                        variant={'subheading'}>{this.state.selectedTemplate.previewFilename}</Typography>
                                 </div>
                                 <div className={'report-text-field'}>
                                     <Typography variant={'body2'}>Id</Typography>
@@ -245,6 +289,13 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                                 </div>
                             </div>
                     }
+                </Paper>
+                <Paper>
+                    <PwrIconHeader muiIconName={'info_outline'} title={'Controlls'}/>
+                    <Button onClick={() => this.loadAllPreviews()}>load All Previews</Button>
+                    <Button onClick={() => this.getAllPreviews()}>Get All Previews</Button>
+                    <Button onClick={() => this.props.loadPreview("test.jpg")}>load Preview: test</Button>
+                    <Button onClick={() => this.loadAllPreviews()}>load All Previews</Button>
                 </Paper>
             </div>
         </div>

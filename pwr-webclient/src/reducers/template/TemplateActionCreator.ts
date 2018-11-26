@@ -79,10 +79,13 @@ export namespace TemplateActionCreator {
     }
 
 
-    export function SetPreview(url: string): SetPreviewAction {
+    export function SetPreview(tempalteId: string, filename:string,content:string, file:File): SetPreviewAction {
         return {
             type: ActionType.SetPreview,
-            url: url,
+            templateId: tempalteId,
+            filename: filename,
+            content: content,
+            file: file,
         };
 
     }
@@ -102,8 +105,8 @@ export namespace TemplateActionCreator {
     }
 
     function PreviewReceived(id: string, response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
-        let url: string = response.data;
-        dispatch(SetPreview(url));
+        console.log("Preview Received ",response);
+        dispatch(SetPreview(id,"hardcoded filename","hardcoded content",response.data));
     }
 
     function AsyncChangeTemplate(templateSlice: TemplateSlice) {
@@ -148,7 +151,7 @@ export namespace TemplateActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(TemplateService.getTemplateById(id)).then((response: AxiosResponse) => {
-                console.log('AsyncLoadTemplate resonse:', response.data);
+                //console.log('AsyncLoadTemplate resonse:', response.data);
                 TemplateReceived(response, dispatch);
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch((error: AxiosError) => {
@@ -176,17 +179,70 @@ export namespace TemplateActionCreator {
 
     export function AsyncLoadPreview(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            if(id != ""){
+                dispatch(CrossCuttingActionCreator.startRequest());
+                axios.get(TemplateService.getPreview(id))// url address
+                    .then((response: AxiosResponse) => {
+                        console.log(response);
+                        PreviewReceived(id, response.data, dispatch);      // in den state laden
+                        dispatch(CrossCuttingActionCreator.endRequest());
+                    })
+                    .catch(function (error: any) {
+                        console.error(error);
+                        dispatch(CrossCuttingActionCreator.endRequest());
+                    });
+            }
+        }
+    }
+
+
+    export function AsyncLoadPreviewFromReport(filename: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            if(filename != ""){
+                dispatch(CrossCuttingActionCreator.startRequest());
+                axios.get(TemplateService.getPreviewFromReport(filename))// url address
+                    .then((response: AxiosResponse) => {
+                        console.log(response);
+                        PreviewReceived(filename, response.data, dispatch);      // in den state laden
+                        dispatch(CrossCuttingActionCreator.endRequest());
+                    })
+                    .catch(function (error: any) {
+                        console.error(error);
+                        dispatch(CrossCuttingActionCreator.endRequest());
+                    });
+            }
+        }
+    }
+
+    export function AsyncLoadAllPreviews() {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.get(TemplateService.getPreview(id))// url address
+            axios.get(TemplateService.getAllPreviews())
+                .then( (response: AxiosResponse) => {
+                        console.log("All Preview Files",response.data);
+                    dispatch(CrossCuttingActionCreator.endRequest());
+                    }
+                )
+                .catch(function(error:any){
+                   console.error(error);
+                   dispatch(CrossCuttingActionCreator.endRequest());
+                });
+        }
+    }
+
+    export function AsyncLoadAllFiles() {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
+            dispatch(CrossCuttingActionCreator.startRequest());
+            axios.get(TemplateService.getAllFiles())
                 .then((response: AxiosResponse) => {
-                    PreviewReceived(id, response.data, dispatch);      // in den state laden
+                    console.log("All Files ",response.data);
                     dispatch(CrossCuttingActionCreator.endRequest());
                 })
-                .catch(function (error: any) {
-                    console.error(error);
+                .catch(function(error:any){
+                   console.error(error) ;
                     dispatch(CrossCuttingActionCreator.endRequest());
                 });
-        };
+        }
     }
 
     export function AsyncUploadFileAsTemplate(file: any, name: string, description: string, createUser: string) {
