@@ -104,8 +104,12 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             console.log('TemplatesArray == null');
             this.props.refreshTemplates();
         }
-        
-        this.props.templates.forEach(value => {console.log(value.previewFilename);this.state.previewFilenames.push(value.previewFilename)});
+        if(this.props.templates != null) {
+            this.props.templates.forEach(value => {
+                console.log(value.previewFilename);
+                this.state.previewFilenames.push(value.previewFilename)
+            });
+        }
     }
 
     private selectTemplate = (newTemplate: Template) => {
