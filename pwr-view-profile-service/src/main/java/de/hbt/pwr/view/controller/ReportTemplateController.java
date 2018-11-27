@@ -112,4 +112,9 @@ public class ReportTemplateController {
     public ResponseEntity<List<String>> getAllPreviews() {
         return ResponseEntity.ok(reportTemplateService.getAllPreviewFilenames());
     }
+
+    @GetMapping(path = "preview/ids")
+    public ResponseEntity<List<String>> getAllPreviewTemplateIds(){
+        return ResponseEntity.ok(reportTemplateService.getAllPreviewTemplateIds());
+    }
 }

@@ -93,4 +93,10 @@ public class ReportTemplateService {
                 .collect(Collectors.toList());
     }
 
+    public List<String> getAllPreviewTemplateIds(){
+        return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
+                .map(reportTemplate ->  reportTemplate.getPreviewFilename() != null ? reportTemplate.getId(): "")
+                .collect(Collectors.toList());
+    }
+
 }

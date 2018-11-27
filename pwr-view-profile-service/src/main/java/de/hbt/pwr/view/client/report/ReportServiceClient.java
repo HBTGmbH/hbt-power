@@ -3,12 +3,12 @@ package de.hbt.pwr.view.client.report;
 import de.hbt.pwr.view.client.report.model.ReportInfo;
 import feign.hystrix.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+@Component
 @FeignClient(value = "pwr-report-service", fallbackFactory = ReportServiceClientFallbackFactory.class)
 public interface ReportServiceClient {
     @PostMapping("/report")
@@ -19,6 +19,9 @@ public interface ReportServiceClient {
     @PostMapping(value = "/report/preview", produces = "text/plain", consumes = "text/plain")
     ResponseEntity<String> generateHtml(@RequestParam("path") String templatePath);
 
+
+    @GetMapping(value = "/files/{filename}", produces = "text/html")
+    ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename);
 
 }
 
@@ -36,6 +39,11 @@ class ReportServiceClientFallbackFactory implements FallbackFactory<ReportServic
             @Override
             public ResponseEntity<String> generateHtml(String templatePath) {
                 return ResponseEntity.ok("generateHtml Failed: "+cause.getMessage());
+            }
+
+            @Override
+            public ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename){
+                return ResponseEntity.badRequest().build();
             }
         };
     }
