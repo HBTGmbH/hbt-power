@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @FeignClient(value = "pwr-report-service", fallbackFactory = ReportServiceClientFallbackFactory.class)
@@ -22,6 +23,10 @@ public interface ReportServiceClient {
 
     @GetMapping(value = "/files/{filename}", produces = "text/html")
     ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename);
+
+
+    @PostMapping(value = "/upload/post")
+    ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile file);
 
 }
 
@@ -44,6 +49,11 @@ class ReportServiceClientFallbackFactory implements FallbackFactory<ReportServic
             @Override
             public ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename){
                 return ResponseEntity.badRequest().build();
+            }
+
+            @Override
+            public ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile file){
+                return ResponseEntity.unprocessableEntity().build();
             }
         };
     }

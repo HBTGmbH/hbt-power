@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 
 @ComponentScan
 @RequestMapping("/upload")
@@ -44,8 +43,8 @@ public class FileUploadController {
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        //return fileUploadClient.serveFile(filename);
-        return reportServiceClient.serveFile(filename);
+        return fileUploadClient.serveFile(filename);
+        //return reportServiceClient.serveFile(filename);
     }
 
     @PostMapping(path = "/post")
@@ -53,10 +52,19 @@ public class FileUploadController {
         ReportTemplate newTemplate = new ReportTemplate();
         ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
 
-        ResponseEntity<List<String>> response = fileUploadClient.uploadFile(file);
-        List<String> data = response.getBody();
-        String path = data.get(0);
-        String filename = data.get(1).split("\\\\")[data.get(1).split("\\\\").length - 1];
+        ResponseEntity<String> response = fileUploadClient.uploadFile(file);//reportServiceClient.uploadFile(file);
+        String path, filename;
+        String[] strings;
+        if (response.getBody() != null){
+            strings = response.getBody().split(",");
+            path =  strings.length > 0 ? strings[0] : "Response is null!";
+            filename = strings.length > 1 ? strings[1] : "Response is null!";
+        }
+        else{
+            path =  "Path";
+            filename = "Filename";
+        }
+
         newTemplate.setName(templateSlice.name);
         newTemplate.setDescription(templateSlice.description);
         newTemplate.setCreatedDate(LocalDate.now());
