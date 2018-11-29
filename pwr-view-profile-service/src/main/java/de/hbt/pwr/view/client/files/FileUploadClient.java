@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.client.files;
 
+import feign.Headers;
 import feign.Param;
 import feign.hystrix.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 @FeignClient(value = "pwr-report-service", fallbackFactory = FileUploadClientFallbackFactory.class)
 public interface FileUploadClient {
 
-    @PostMapping(value = "/upload/post")
-        //@Headers("Content-Type: multipart/form-data")
+    @PostMapping(value = "/upload/post", consumes = "multipart/form-data")
+    @Headers("content-type: multipart/form-data")
     ResponseEntity<String> uploadFile(@Param("file") MultipartFile file);
 
     @GetMapping("/all")
@@ -42,7 +43,7 @@ class FileUploadClientFallbackFactory implements FallbackFactory<FileUploadClien
 
             @Override
             public ResponseEntity listUploadedFiles(Model model) {
-                return ResponseEntity.ok("listUploadedFiles " + cause.getMessage());
+                return ResponseEntity.ok("Listing of uploaded files failed: " + cause.getMessage());
             }
 
             @Override

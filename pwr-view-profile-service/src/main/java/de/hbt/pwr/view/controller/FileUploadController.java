@@ -49,10 +49,12 @@ public class FileUploadController {
 
     @PostMapping(path = "/post")
     public ResponseEntity<String> uploadTemplate(@RequestParam("file") MultipartFile file, @RequestParam("templateSlice") String templateString) {
+
+
         ReportTemplate newTemplate = new ReportTemplate();
         ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
 
-        ResponseEntity<String> response = fileUploadClient.uploadFile(file);//reportServiceClient.uploadFile(file);
+        ResponseEntity<String> response = fileUploadClient.uploadFile(file);
         String path, filename;
         String[] strings;
         if (response.getBody() != null){
@@ -61,8 +63,8 @@ public class FileUploadController {
             filename = strings.length > 1 ? strings[1] : "Response is null!";
         }
         else{
-            path =  "Path";
-            filename = "Filename";
+            path =  response.toString();
+            filename = response.getHeaders().toString();
         }
 
         newTemplate.setName(templateSlice.name);

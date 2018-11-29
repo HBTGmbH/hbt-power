@@ -25,7 +25,7 @@ public interface ReportServiceClient {
     ResponseEntity<Resource> serveFile(@PathVariable("filename") String filename);
 
 
-    @PostMapping(value = "/upload/post")
+    @PostMapping(value = "/upload/post",headers = "multipart/form-data", produces = "multipart/form-data")
     ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile file);
 
 }
