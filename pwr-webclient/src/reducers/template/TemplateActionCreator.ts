@@ -180,16 +180,16 @@ export namespace TemplateActionCreator {
     export function AsyncLoadPreview(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             if(id != ""){
-                dispatch(CrossCuttingActionCreator.startRequest());
-                axios.get(TemplateService.getPreview(id))// url address
+                //dispatch(CrossCuttingActionCreator.startRequest());
+                axios.get(TemplateService.getPreview(id),{})// url address
                     .then((response: AxiosResponse) => {
                         console.log(response);
                         PreviewReceived(id, response.data, dispatch);      // in den state laden
-                        dispatch(CrossCuttingActionCreator.endRequest());
+                       // dispatch(CrossCuttingActionCreator.endRequest());
                     })
                     .catch(function (error: any) {
                         console.error(error);
-                        dispatch(CrossCuttingActionCreator.endRequest());
+                     //   dispatch(CrossCuttingActionCreator.endRequest());
                     });
             }
         }
@@ -199,16 +199,16 @@ export namespace TemplateActionCreator {
     export function AsyncLoadPreviewFromReport(filename: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             if(filename != ""){
-                dispatch(CrossCuttingActionCreator.startRequest());
+               // dispatch(CrossCuttingActionCreator.startRequest());
                 axios.get(TemplateService.getPreviewFromReport(filename))// url address
                     .then((response: AxiosResponse) => {
                         console.log(response);
                         PreviewReceived(filename, response.data, dispatch);      // in den state laden
-                        dispatch(CrossCuttingActionCreator.endRequest());
+                 //       dispatch(CrossCuttingActionCreator.endRequest());
                     })
                     .catch(function (error: any) {
                         console.error(error);
-                        dispatch(CrossCuttingActionCreator.endRequest());
+                   //     dispatch(CrossCuttingActionCreator.endRequest());
                     });
             }
         }

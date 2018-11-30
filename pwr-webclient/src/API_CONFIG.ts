@@ -375,7 +375,7 @@ export namespace TemplateService {
     }
 
     export function getPreviewFromReport(filename:string){
-        return "http://power02.corp.hbt.de:9000/pwr-report-service/upload/files/"+filename;
+        return "http://localhost:9005/file/"+filename;
     }
 
     export function getAllFiles() {

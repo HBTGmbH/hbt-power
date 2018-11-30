@@ -24,7 +24,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 
 interface ReportManagerProps {
     consultantsByInitials: Immutable.Map<string, ConsultantInfo>;
-    templates: Immutable.Map<string, Template>;
+    //templates: Immutable.Map<string, Template>;
     allTemplates: Array<Template>;
     previewFiles: Immutable.Map<string, ReportPreviewFile>;
 
@@ -76,7 +76,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
     static mapStateToProps(state: ApplicationState, localProps: ReportManagerLocalProps): ReportManagerProps {
         return {
             consultantsByInitials: state.adminReducer.consultantsByInitials(),
-            templates: state.templateSlice.templates(),
+            //templates: state.templateSlice.templates(),
             allTemplates: state.templateSlice.templates().toArray(),
             previewFiles: state.templateSlice.previews(),
         };
@@ -95,17 +95,17 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
     }
 
     public componentDidMount() {
-        if (this.props.templates == null) {
+        /*if (this.props.templates == null) {
             console.log('Templates == null');
             this.props.refreshTemplates();
-        }
+        }*/
 
         if (this.props.allTemplates == null) {
             console.log('TemplatesArray == null');
             this.props.refreshTemplates();
         }
-        if(this.props.templates != null) {
-            this.props.templates.forEach(value => {
+        if(this.props.allTemplates != null && this.state.previewFilenames != null) {
+            this.props.allTemplates.forEach(value => {
                 console.log(value.previewFilename);
                 this.state.previewFilenames.push(value.previewFilename)
             });
@@ -219,14 +219,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             <div className={'col-md-2'} style={{height: '100%'}}>
                 <Paper>
                     <List>
-                        <ListItem button onClick={() => {
-                            this.getAllPreviews();
-                        }}>
-                            <Icon className={'material-icons'}>add</Icon>
-                            <ListItemText primary={'Load All Previews'}/>
-                        </ListItem>
-
-
                         <ListItem button onClick={() => {
                             this.openCreateTemplateDialog();
                         }}>

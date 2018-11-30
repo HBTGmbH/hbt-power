@@ -103,7 +103,8 @@ class ReportPreviewModule extends React.Component<ReportPreviewProps & ReportPre
     render() {
 
         return <div>
-            {this.renderFile()}
+            {/*this.renderFile()*/}
+            <Iframe url={""}/>
         </div>;
     }
 }
