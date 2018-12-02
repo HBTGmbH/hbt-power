@@ -10,9 +10,7 @@ import Icon from '@material-ui/core/Icon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {RequestStatus} from '../../Store';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
-import {RequestSnackbar} from '../general/request-snackbar_module.';
 import {Paths} from '../../Paths';
 import {Link, Route} from 'react-router-dom';
 import {ApplicationState} from '../../reducers/reducerIndex';
@@ -30,6 +28,7 @@ import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 import Divider from '@material-ui/core/Divider/Divider';
 import {ReportManager} from './reportmanager/report-manager_module';
 import {TemplateActionCreator} from '../../reducers/template/TemplateActionCreator';
+import {ProfileLoadingSpinner} from '../home/profile/profile-loading-spinner_module';
 
 
 /**
@@ -39,7 +38,6 @@ import {TemplateActionCreator} from '../../reducers/template/TemplateActionCreat
  * otherwise the component will not render and update correctly.
  */
 interface AdminClientProps {
-    requestStatus: RequestStatus;
     username: string;
     password: string;
 }
@@ -93,7 +91,6 @@ class AdminClientModule extends React.Component<AdminClientProps
 
     static mapStateToProps(state: ApplicationState, localProps: AdminClientLocalProps): AdminClientProps {
         return {
-            requestStatus: state.adminReducer.requestStatus(),
             username: state.adminReducer.adminName(),
             password: state.adminReducer.adminPass()
         };
@@ -268,7 +265,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                         <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2}/>
                         <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={AdminProfileOverview}/>
                     </div>
-                    <RequestSnackbar APIRequestStatus={this.props.requestStatus}/>
+                   <ProfileLoadingSpinner />
                 </div>
             </div>);
     }

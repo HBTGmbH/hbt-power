@@ -38,7 +38,6 @@ export class ConsultantEditFields extends React.Component<ConsultantEditFieldsPr
                 label={PowerLocalize.get('FirstName')}
                 onChange={(e, v) => this.props.onFirstNameChange(v)}
             />
-            <br/>
             <LimitedTextField
                 maxCharacters={100}
                 value={this.props.lastName}
@@ -51,33 +50,20 @@ export class ConsultantEditFields extends React.Component<ConsultantEditFieldsPr
                 label={PowerLocalize.get('Title.Singular')}
                 onChange={(e, v) => this.props.onTitleChange(v)}
             />
-            <br/>
-
-            <FormControl style={{float: 'right'}}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={this.props.active}
-                            onChange={(e: any, v: boolean) => this.props.onActiveChange(v)}
-                            color={'primary'}
-                        />
-                    }
-                    label={PowerLocalize.get('ConsultantEdit.Active')}
-                />
-
-            </FormControl>
+            <div>
+                <FormControl style={{float: 'left'}}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={this.props.active}
+                                onChange={(e: any, v: boolean) => this.props.onActiveChange(v)}
+                                color={'primary'}
+                            />
+                        }
+                        label={PowerLocalize.get('ConsultantEdit.Active')}
+                    />
+                </FormControl>
+            </div>
         </div>);
     }
 }
-
-/*
-
-
-<DatePicker
-                style={{width: "350px"}}
-                label={PowerLocalize.get("Birthdate")}
-                value={this.props.birthDate}
-                formatDate={formatFullLocalizedDate}
-                onChange={(e: null, date: Date) => this.props.onBirthDateChange(date)}
-            />
- */
