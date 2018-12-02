@@ -7,13 +7,13 @@ import axios from 'axios';
 import {MetaDataStore} from '../../model/metadata/MetaDataStore';
 import {
     getApiPrefix,
-    getProfileBuildInfo,
     getReportBuildInfo,
     getSkillBuildInfo,
     getStatisticsBuildsInfo,
     ViewProfileService
 } from '../../API_CONFIG';
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
+import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 
 export interface AddOrReplaceBuildInfoAction extends AbstractAction {
     service: string;
@@ -24,7 +24,11 @@ export interface AddOrReplaceClientInfoAction extends AbstractAction {
     info: ClientBuildInfo
 }
 
+
+
 export namespace MetaDataActionCreator {
+
+    const profileServiceClient = ProfileServiceClient.instance();
 
     export function AddOrReplaceBuildInfo(service: string, buildInfo: BuildInfo): AddOrReplaceBuildInfoAction {
         return {
@@ -54,6 +58,14 @@ export namespace MetaDataActionCreator {
         };
     }
 
+    const available = (service: string, dispatch: redux.Dispatch<ApplicationState>) => {
+        return buildInfo => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(buildInfo)))
+    };
+
+    const notAvailable = (service: string, dispatch: redux.Dispatch<ApplicationState>) => {
+        return error => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.offline(service)));
+    };
+
     function FetchClientBuildInfo() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             axios.get(getApiPrefix() + '/build_info.json').then(response => {
@@ -71,7 +83,9 @@ export namespace MetaDataActionCreator {
 
     export function FetchAllBuildInfo() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(FetchBuildInfo(MetaDataStore.KEY_PROFILE, getProfileBuildInfo()));
+            profileServiceClient.getBuildInfo()
+                .then(available(MetaDataStore.KEY_PROFILE, dispatch))
+                .catch(notAvailable(MetaDataStore.KEY_PROFILE, dispatch));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_STATISTICS, getStatisticsBuildsInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_SKILL, getSkillBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_REPORT, getReportBuildInfo()));

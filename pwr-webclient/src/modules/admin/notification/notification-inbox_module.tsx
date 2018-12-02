@@ -56,7 +56,7 @@ interface NotificationInboxLocalState {
 interface NotificationInboxDispatch {
     getNotifications(user: string, pass: string): void;
 
-    trashNotifications(ids: Array<number>, user: string, pass: string): void;
+    trashNotifications(ids: Array<number>): void;
 }
 
 class NotificationInboxModule extends React.Component<NotificationInboxProps
@@ -86,11 +86,9 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationInboxDispatch {
         return {
             getNotifications: (user, pass) => {
-                dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));
+                dispatch(AdminActionCreator.AsyncRequestNotifications());
             },
-            trashNotifications: (ids, user, pass) => {
-                dispatch(AdminActionCreator.AsyncTrashNotifications(ids, user, pass));
-            }
+            trashNotifications: (ids) => dispatch(AdminActionCreator.AsyncTrashNotifications(ids))
         };
     }
 
@@ -98,40 +96,36 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
         this.props.getNotifications(this.props.username, this.props.password);
     }
 
-    private handleTrashSelectedProfileEntryNotification = (rows: Array<number>, entries: Immutable.List<ProfileEntryNotification>) => {
-        let ids: Array<number> = [];
-        rows.forEach(rowNum => {
-            ids.push(entries.get(rowNum).adminNotification().id());
-        });
-        this.props.trashNotifications(ids, this.props.username, this.props.password);
+    private gatherIdsProfileEntry = (rows: Array<number>, entries: Immutable.List<ProfileEntryNotification>) => {
+        return rows
+            .map(rowNumber => entries.get(rowNumber))
+            .map(notification => notification.adminNotification().id());
     };
 
-    private handleTrashSelectedProfileUpdateNotification = (rows: Array<number>, entries: Immutable.List<AdminNotification>) => {
-        let ids: Array<number> = [];
-        rows.forEach(rowNum => {
-            ids.push(entries.get(rowNum).id());
-        });
-        console.log('IDs', ids);
-        this.props.trashNotifications(ids, this.props.username, this.props.password);
+    private gatherIdsProfileUpdate = (rows: Array<number>, entries: Immutable.List<AdminNotification>) => {
+        return rows
+            .map(rowNumber => entries.get(rowNumber))
+            .map(notification => notification.id());
     };
 
-    private handleTrashSelectedSkillNotification = (rows: Array<number>, entries: Immutable.List<SkillNotification>) => {
-        let ids: Array<number> = [];
-        rows.forEach(rowNum => {
-            ids.push(entries.get(rowNum).adminNotification().id());
-        });
-        this.props.trashNotifications(ids, this.props.username, this.props.password);
+    private gatherIdsSkill = (rows: Array<number>, entries: Immutable.List<SkillNotification>) => {
+        return rows
+            .map(rowNumber => entries.get(rowNumber))
+            .map(notification => notification.adminNotification().id());
     };
 
     private handleTrashNotifications = () => {
-        this.handleTrashSelectedProfileEntryNotification(this.state.selectedProfileEntryRows, this.props.profileEntryNotifications);
-        this.handleTrashSelectedProfileUpdateNotification(this.state.selectedProfileUpdateRows, this.props.profileUpdateNotifications);
-        this.handleTrashSelectedSkillNotification(this.state.selectedSkillRows, this.props.skillNotifications);
+        const allIds: Array<number> = [
+            ...this.gatherIdsProfileEntry(this.state.selectedProfileEntryRows, this.props.profileEntryNotifications),
+            ...this.gatherIdsProfileUpdate(this.state.selectedProfileUpdateRows, this.props.profileUpdateNotifications),
+            ...this.gatherIdsSkill(this.state.selectedSkillRows, this.props.skillNotifications),
+        ];
         this.setState({
             selectedProfileEntryRows: [],
             selectedProfileUpdateRows: [],
             selectedSkillRows: []
         });
+        this.props.trashNotifications(allIds);
     };
 
 

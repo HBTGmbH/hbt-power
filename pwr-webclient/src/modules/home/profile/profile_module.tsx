@@ -49,8 +49,8 @@ interface ProfileLocalState {
 
 interface ProfileDispatch {
     reloadProfile(initials: string): void;
-
     saveProfile(initials: string, database: ProfileStore): void;
+    preFetchSuggestions(): void;
 }
 
 class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & ProfileDispatch, ProfileLocalState> {
@@ -76,7 +76,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
             },
             saveProfile: function (initials: string, database: ProfileStore) {
                 dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()));
-            }
+            },
+            preFetchSuggestions: () => dispatch(ProfileAsyncActionCreator.requestAllNameEntities())
         };
     }
 
@@ -101,6 +102,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
 
     };
+
+    componentDidMount() {
+        this.props.preFetchSuggestions();
+    }
 
     render() {
         return (

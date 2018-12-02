@@ -1,4 +1,4 @@
-import {applyMiddleware, combineReducers, createStore, Reducer} from 'redux';
+import {applyMiddleware, combineReducers, createStore, Reducer, Store} from 'redux';
 import {AdminReducer} from './admin/AdminReducer';
 import {DatabaseReducer} from './profile/DatabaseReducer';
 import {StatisticsReducer} from './statistics/StatisticsReducer';
@@ -37,7 +37,7 @@ export interface ApplicationState {
 }
 
 
-const ApplicationStore = combineReducers({
+const ApplicationStore: Reducer<ApplicationState> = combineReducers({
     databaseReducer: DatabaseReducer.Reduce,
     adminReducer: AdminReducer.reduce,
     statisticsReducer: StatisticsReducer.reduce,
@@ -52,7 +52,7 @@ const ApplicationStore = combineReducers({
 export const PWR_HISTORY = createHistory();
 const reactRouterMiddleware = routerMiddleware(PWR_HISTORY);
 
-export const store = createStore(
+export const store: Store<ApplicationState> = createStore(
     ApplicationStore,
     applyMiddleware(
         thunkMiddleware,

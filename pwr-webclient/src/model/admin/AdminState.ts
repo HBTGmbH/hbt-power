@@ -135,7 +135,8 @@ export class AdminState {
             auth: {
                 username: this.adminName(),
                 password: this.adminPass()
-            }
+            },
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
         };
     }
 }

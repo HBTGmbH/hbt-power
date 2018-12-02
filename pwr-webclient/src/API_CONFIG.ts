@@ -92,47 +92,6 @@ export function getProfileAPIString(initials: string): string {
     return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/profiles/' + initials;
 }
 
-export function getLangSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/languages';
-}
-
-export function getEducationSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/educations';
-}
-
-export function getQualificationSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/qualifications';
-}
-
-export function getTrainingSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/trainings';
-}
-
-export function getSectorsSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/sectors';
-}
-
-export function getKeySkillsSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/keyskills';
-}
-
-export function getCareerSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/career';
-}
-
-
-export function getProjectRolesSuggestionAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/projectroles';
-}
-
-export function getCompanySuggestionsAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/companies';
-}
-
-export function getAllCurrentlyUsedSkillNames(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/suggestions/skills';
-}
-
 export function getProfileImageLocation(initials: string): string {
     return POWER_IMAGE_PATH + '/profile_pictures/foto_' + initials + '.jpg';
 }
@@ -250,16 +209,6 @@ export function patchMoveSkill(skillId: number, newCategoryId: number) {
     return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/' + skillId + '/category/' + newCategoryId;
 }
 
-export namespace AdminService {
-
-    function base() {
-        return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE;
-    }
-
-    export function patchRenameSkill(): string {
-        return base() + '/admin/skills/name';
-    }
-}
 
 export namespace ViewProfileService {
 

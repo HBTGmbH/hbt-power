@@ -52,6 +52,18 @@ export class ConsultantInfo {
             !isNullOrUndefined(apiConsultant.profile), apiConsultant.title, new Date(apiConsultant.birthDate), apiConsultant.active);
     }
 
+    public toAPI(): APIConsultant {
+        return {
+            profile: null,
+            active: this.active(),
+            initials: this.initials(),
+            firstName: this.firstName(),
+            lastName: this.lastName(),
+            title: this.title(),
+            birthDate: !isNullOrUndefined(this.birthDate()) ? this.birthDate().toISOString() : null
+        };
+    }
+
     public static empty() {
         return new ConsultantInfo('', '', '', false, '', new Date(), true);
     }

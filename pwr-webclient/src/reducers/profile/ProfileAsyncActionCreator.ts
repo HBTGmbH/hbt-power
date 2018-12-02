@@ -1,21 +1,5 @@
 import * as redux from 'redux';
-import axios, {AxiosResponse} from 'axios';
-import {
-    getAllCurrentlyUsedSkillNames,
-    getCareerSuggestionAPIString,
-    getCompanySuggestionsAPIString,
-    getConsultantApiString,
-    getEducationSuggestionAPIString,
-    getKeySkillsSuggestionAPIString,
-    getLangSuggestionAPIString,
-    getProfileAPIString,
-    getProjectRolesSuggestionAPIString,
-    getQualificationSuggestionAPIString,
-    getSectorsSuggestionAPIString,
-    getTrainingSuggestionAPIString
-} from '../../API_CONFIG';
 import {APIProfile} from '../../model/APIProfile';
-import {ProfileStore} from '../../model/ProfileStore';
 import {ApplicationState} from '../reducerIndex';
 import {APIRequestType} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
@@ -29,8 +13,14 @@ import {isNullOrUndefined} from 'util';
 import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {ProfileServiceError} from '../../model/ProfileServiceError';
-import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
+import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
+
+const profileServiceClient = ProfileServiceClient.instance();
+
+const succeedCall = (type: APIRequestType, dispatch: redux.Dispatch<ApplicationState>) => {
+    return (data: any) => dispatch(ProfileActionCreator.APIRequestSuccessfull(data, type));
+};
 
 export class ProfileAsyncActionCreator {
 
@@ -51,7 +41,6 @@ export class ProfileAsyncActionCreator {
 
     public static requestAllNameEntities() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            //console.log("Requesting all.",{});
             dispatch(ProfileAsyncActionCreator.requestQualifications());
             dispatch(ProfileAsyncActionCreator.requestLanguages());
             dispatch(ProfileAsyncActionCreator.requestEducations());
@@ -64,126 +53,100 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    /**
-     *
-     * @param initials
-     */
     public static requestSingleProfile(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(CrossCuttingActionCreator.startRequest());
-            axios.get(getProfileAPIString(initials)).then(function (response: AxiosResponse) {
-                let profile: APIProfile = Object.assign({}, response.data);
-                dispatch(CrossCuttingActionCreator.endRequest());
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile));
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.handleProfileServiceError(error, 'Could not read profile');
-                dispatch(CrossCuttingActionCreator.endRequest());
-            });
-
+            profileServiceClient.getProfile(initials)
+                .then(profile => dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile)))
+                .catch(console.error);
         };
     }
 
     public static saveFullProfile(initials: string, profile: APIProfile) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(CrossCuttingActionCreator.startRequest());
-            axios.put(getProfileAPIString(initials), profile).then(function (response: AxiosResponse) {
+            profileServiceClient.saveProfile(initials, profile).then(profile => {
                 NavigationActionCreator.showSuccess('Profile saved!');
-                dispatch(CrossCuttingActionCreator.endRequest());
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, APIRequestType.SaveProfile));
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.handleProfileServiceError(error, 'Could not save profile');
-                dispatch(CrossCuttingActionCreator.endRequest());
-            });
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.SaveProfile));
+            }).catch(console.error);
         };
-    }
-
-    private static abstractAPISuggestionRequest(dispatch: redux.Dispatch<ApplicationState>, apiString: string, type: APIRequestType) {
-        dispatch(CrossCuttingActionCreator.startRequest());
-        axios.get(apiString).then(function (response: AxiosResponse) {
-            dispatch(CrossCuttingActionCreator.endRequest());
-            dispatch(ProfileActionCreator.APIRequestSuccessfull(response.data, type));
-        }).catch(function (error: any) {
-            ProfileAsyncActionCreator.handleProfileServiceError(error, 'Unable to read suggestions');
-            dispatch(CrossCuttingActionCreator.endRequest());
-        });
     }
 
     public static requestLanguages() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(dispatch, getLangSuggestionAPIString(), APIRequestType.RequestLanguages);
+            profileServiceClient.getLanguageSuggestions()
+                .then(succeedCall(APIRequestType.RequestLanguages, dispatch))
+                .catch(console.error);
         };
     }
 
     public static requestEducations() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getEducationSuggestionAPIString(),
-                APIRequestType.RequestEducations);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getEducationSuggestions()
+                .then(succeedCall(APIRequestType.RequestEducations, dispatch))
+                .catch(console.error);
         };
     }
 
     public static requestQualifications() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getQualificationSuggestionAPIString(),
-                APIRequestType.RequestQualifications);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getQualificationSuggestions()
+                .then(succeedCall(APIRequestType.RequestQualifications, dispatch))
+                .catch(console.error);
         };
     }
 
     public static requestTrainings() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getTrainingSuggestionAPIString(),
-                APIRequestType.RequestTrainings);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getTrainingSuggestions()
+                .then(succeedCall(APIRequestType.RequestTrainings, dispatch))
+                .catch(console.error);
         };
     }
 
     public static requestSectors() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getSectorsSuggestionAPIString(),
-                APIRequestType.RequestSectors);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getSectorSuggestions()
+                .then(succeedCall(APIRequestType.RequestSectors, dispatch))
+                .catch(console.error);
         };
     }
 
     public static requestKeySkills() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getKeySkillsSuggestionAPIString(),
-                APIRequestType.RequestKeySkills);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getKeySkillSuggestions()
+                .then(succeedCall(APIRequestType.RequestKeySkills, dispatch))
+                .catch(console.error);
         };
     }
 
-
     public static requestCareers() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getCareerSuggestionAPIString(),
-                APIRequestType.RequestCareers);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getCareerSuggestions()
+                .then(succeedCall(APIRequestType.RequestCareers, dispatch))
+                .catch(console.error);
         };
     }
 
     public static requestProjectRoles() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getProjectRolesSuggestionAPIString(),
-                APIRequestType.RequestProjectRoles);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getProjectRoleSuggestions()
+                .then(succeedCall(APIRequestType.RequestProjectRoles, dispatch))
+                .catch(console.error);
         };
     }
 
     public static requestCompanies() {
-        return function (dispatch: redux.Dispatch<ProfileStore>) {
-            ProfileAsyncActionCreator.abstractAPISuggestionRequest(
-                dispatch,
-                getCompanySuggestionsAPIString(),
-                APIRequestType.RequestCompanies);
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getCompanySuggestions()
+                .then(succeedCall(APIRequestType.RequestCompanies, dispatch))
+                .catch(console.error);
+        };
+    }
+
+    public static getAllCurrentlyUsedSkills() {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.getSkillSuggestions()
+                .then(succeedCall(APIRequestType.RequestSkillNames, dispatch))
+                .catch(console.error);
         };
     }
 
@@ -192,13 +155,12 @@ export class ProfileAsyncActionCreator {
             if (initials.length <= 0) {
                 dispatch(ProfileActionCreator.FailLogin());
             } else {
-                axios.get(getConsultantApiString(initials)).then(function (response: AxiosResponse) {
+                profileServiceClient.getConsultant(initials).then(consultant => {
                     dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                     dispatch({
                         type: ActionType.LogInUser,
-                        consultantInfo: ConsultantInfo.fromAPI(response.data)
+                        consultantInfo: ConsultantInfo.fromAPI(consultant)
                     });
-                    dispatch(ProfileAsyncActionCreator.requestAllNameEntities());
                     dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                     dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                     dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
@@ -207,7 +169,7 @@ export class ProfileAsyncActionCreator {
                     if (!isNullOrUndefined(navTarget)) {
                         dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
                     }
-                }).catch(function (error: any) {
+                }).catch(error => {
                     dispatch(ProfileActionCreator.FailLogin());
                     dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT));
                 });
@@ -216,17 +178,5 @@ export class ProfileAsyncActionCreator {
         };
     }
 
-    public static getAllCurrentlyUsedSkills() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(CrossCuttingActionCreator.startRequest());
-            axios.get(getAllCurrentlyUsedSkillNames()).then((response: AxiosResponse) => {
-                let apiData: Array<String> = response.data;
-                dispatch(CrossCuttingActionCreator.endRequest());
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(apiData, APIRequestType.RequestSkillNames));
-            }).catch(function (error: any) {
-                ProfileAsyncActionCreator.handleProfileServiceError(error, 'Could not read used skills');
-                dispatch(CrossCuttingActionCreator.endRequest());
-            });
-        };
-    }
+
 }

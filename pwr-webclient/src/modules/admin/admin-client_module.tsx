@@ -102,7 +102,7 @@ class AdminClientModule extends React.Component<AdminClientProps
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminClientDispatch {
         return {
             getNotifications: (user, pass) => {
-                dispatch(AdminActionCreator.AsyncRequestNotifications(user, pass));
+                dispatch(AdminActionCreator.AsyncRequestNotifications());
             },
             navigateToInbox: (user, pass) => {
                 dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass));
