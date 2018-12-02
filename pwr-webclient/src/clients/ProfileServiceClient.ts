@@ -7,6 +7,8 @@ import {APIBuildInfo} from '../model/metadata/BuildInfo';
 import {APIAdminNotification} from '../model/admin/AdminNotification';
 import {store} from '../reducers/reducerIndex';
 
+declare const POWER_PROFILE_SERVICE_URL: string;
+
 /**
  * Singleton for configuration purposes? I don't know, doesn't matter for now. Maybe if the whole URL-Configuration
  * is being reworked, this will make sense.
