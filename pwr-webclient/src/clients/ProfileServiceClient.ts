@@ -6,6 +6,8 @@ import {PowerHttpClient} from './PowerHttpClient';
 import {APIBuildInfo} from '../model/metadata/BuildInfo';
 import {APIAdminNotification} from '../model/admin/AdminNotification';
 import {store} from '../reducers/reducerIndex';
+import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
+import {SkillNotification} from '../model/admin/SkillNotification';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -183,6 +185,27 @@ export class ProfileServiceClient extends PowerHttpClient {
         let config = this.credentialsConfig();
         this.beginRequest();
         return this.preProcess(axios.head(url, config));
-    }
+    };
+
+    public invokeNotificationDelete = (notificationId: number): Promise<void> => {
+        const url = this.base() + "/api/admin/notifications/" + notificationId;
+        const config = this.credentialsConfig();
+        this.beginRequest();
+        return this.preProcess(axios.delete(url, config));
+    };
+
+    public invokeNotificationOK = (notificationId: number): Promise<void> => {
+        const url = this.base() + "/api/admin/notifications/" + notificationId;
+        const config = this.credentialsConfig();
+        this.beginRequest();
+        return this.preProcess(axios.put(url, null, config));
+    };
+
+    public invokeNotificationEdit = (notification: ProfileEntryNotification | SkillNotification): Promise<void> => {
+        const url = this.base() + "/api/admin/notifications";
+        const config = this.credentialsConfig();
+        this.beginRequest();
+        return this.preProcess(  axios.patch(url, notification.toAPI(), config));
+    };
 
 }

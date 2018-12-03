@@ -14,7 +14,7 @@ import {
 } from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
-import {getNotificationAPIString, getSkillByName, postCategorizeSkill} from '../../API_CONFIG';
+import {getSkillByName, postCategorizeSkill} from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
@@ -57,13 +57,6 @@ export class AdminActionCreator {
         }
     }
 
-
-    public static RequestNotifications(): AbstractAction {
-        return {
-            type: ActionType.RequestNotifications
-        };
-    }
-
     public static ReceiveNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveNotifications,
@@ -71,49 +64,10 @@ export class AdminActionCreator {
         };
     }
 
-    public static FailReceiveNotifications(): AbstractAction {
-        return {
-            type: ActionType.FailRequestNotifications
-        };
-    }
-
-    public static RequestTrashedNotifications(): AbstractAction {
-        return {
-            type: ActionType.RequestTrashedNotifications
-        };
-    }
-
     public static ReceiveTrashedNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveTrashedNotifications,
             notifications: notifications
-        };
-    }
-
-    public static FailReceiveTrashedNotifications(): AbstractAction {
-        return {
-            type: ActionType.FailRequestTrashedNotifications
-        };
-    }
-
-    public static RequestNotificationTrashing(): ChangeRequestStatusAction {
-        return {
-            type: ActionType.RequestNotificationTrashing,
-            requestStatus: RequestStatus.Pending
-        };
-    }
-
-    public static RequestNotificationTrashingSuccess(): ChangeRequestStatusAction {
-        return {
-            type: ActionType.RequestNotificationTrashing,
-            requestStatus: RequestStatus.Successful
-        };
-    }
-
-    public static RequestNotificationTrashingFail(): ChangeRequestStatusAction {
-        return {
-            type: ActionType.RequestNotificationTrashing,
-            requestStatus: RequestStatus.Failiure
         };
     }
 
@@ -286,87 +240,38 @@ export class AdminActionCreator {
 
     public static AsyncNotificationInvokeDelete(notificationId: number) {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
-            let adminState = getState().adminReducer;
-            let config = {
-                auth: {
-                    username: adminState.adminName(),
-                    password: adminState.adminPass()
-                },
-                headers: {'X-Requested-With': 'XMLHttpRequest'}
-            };
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
-            axios.delete(getNotificationAPIString() + '/' + notificationId, config).then(function (response: AxiosResponse) {
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
-            }).catch(function (error: any) {
-                AdminActionCreator.logAxiosError(error);
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
-            });
+            profileServiceClient.invokeNotificationDelete(notificationId)
+                .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
+                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .catch(console.error);
         };
     }
 
     public static AsyncNotificationInvokeOK(notificationId: number) {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
-            let adminState = getState().adminReducer;
-            let config = {
-                auth: {
-                    username: adminState.adminName(),
-                    password: adminState.adminPass()
-                },
-                headers: {'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json'}
-            };
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
-            axios.put(getNotificationAPIString() + '/' + notificationId, '', config).then(function (response: AxiosResponse) {
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
-            }).catch(function (error: any) {
-                AdminActionCreator.logAxiosError(error);
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
-            });
+            profileServiceClient.invokeNotificationOK(notificationId)
+                .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
+                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .catch(console.error);
         };
     }
 
     public static AsyncNotificationInvokeEdit(notification: ProfileEntryNotification) {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
-            let adminState = getState().adminReducer;
-            let config = {
-                auth: {
-                    username: adminState.adminName(),
-                    password: adminState.adminPass()
-                },
-                headers: {'X-Requested-With': 'XMLHttpRequest'}
-            };
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
-            axios.patch(getNotificationAPIString(), notification.toAPI(), config).then(function (response: AxiosResponse) {
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
-            }).catch(function (error: any) {
-                AdminActionCreator.logAxiosError(error);
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
-            });
+            profileServiceClient.invokeNotificationEdit(notification)
+                .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
+                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .catch(console.error);
         };
     }
 
     public static AsyncNotificationInvokeSkillEdit() {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
-            let adminState = getState().adminReducer;
-            let notification = adminState.selectedSkillNotification();
-            let config = {
-                auth: {
-                    username: adminState.adminName(),
-                    password: adminState.adminPass()
-                },
-                headers: {'X-Requested-With': 'XMLHttpRequest'}
-            };
-            dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Pending));
             dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
-            axios.patch(getNotificationAPIString(), notification.toAPI(), config).then(function (response: AxiosResponse) {
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
-            }).catch(function (error: any) {
-                AdminActionCreator.logAxiosError(error);
-                dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Failiure));
-            });
+            profileServiceClient.invokeNotificationEdit(getState().adminReducer.selectedSkillNotification())
+                .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
+                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .catch(console.error);
         };
     }
 
@@ -430,16 +335,20 @@ export class AdminActionCreator {
         };
     }
 
+    public static AsyncLoadConsultant(initials: string) {
+        return function (dispatch: redux.Dispatch<AdminState>) {
+            profileServiceClient.getConsultant(initials)
+                .then(res => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(res))))
+                .catch(console.error);
+        }
+    }
+
     public static AsyncCreateConsultant(consultantInfo: ConsultantInfo) {
         return function (dispatch: redux.Dispatch<AdminState>) {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.createConsultant(apiConsultant)
-                .then(value => {
-                    NavigationActionCreator.showSuccess('Created consultant ' + consultantInfo.initials());
-                    profileServiceClient.getConsultant(consultantInfo.initials())
-                        .then(res => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(res))))
-                        .catch(console.error);
-                })
+                .then(value => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
+                .then(() => NavigationActionCreator.showSuccess('Created consultant ' + consultantInfo.initials()))
                 .catch(console.error);
         };
     }

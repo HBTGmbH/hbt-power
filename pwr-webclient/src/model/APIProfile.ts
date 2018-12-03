@@ -93,11 +93,6 @@ export interface APIProfile {
 
 }
 
-export interface APIProfileUpdateResponse {
-    profile: APIProfile;
-    notifications: Array<any>;
-}
-
 /**
  * Just the relevant information
  */

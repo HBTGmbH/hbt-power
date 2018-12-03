@@ -1,13 +1,5 @@
 import {SortableEntryField, SortableEntryType} from './model/view/NameComparableType';
 
-declare const POWER_API_HOST: string;
-
-declare const POWER_API_PREFIX: string;
-
-declare const POWER_API_PORT: string;
-
-declare const POWER_API_SUFFIX_PROFILE: string;
-
 declare const POWER_API_HOST_STATISTICS: string;
 
 declare const POWER_API_SUFFIX_STATISTICS: string;
@@ -20,8 +12,6 @@ declare const POWER_API_PORT_SKILL: string;
 
 declare const POWER_API_SUFFIX_SKILL: string;
 
-declare const POWER_PROFILE_META_INFO: string;
-
 declare const POWER_API_META_INFO_REPORT: string;
 
 declare const POWER_IMAGE_PATH: string;
@@ -33,15 +23,6 @@ declare const POWER_API_SUFFIX_VIEW: string;
 
 export function getImagePath(): string {
     return POWER_IMAGE_PATH;
-}
-
-export function getApiPrefix(): string {
-    return POWER_API_PREFIX;
-}
-
-
-export function getProfileBuildInfo(): string {
-    return POWER_PROFILE_META_INFO + '/info';
 }
 
 export function getStatisticsBuildsInfo(): string {
@@ -58,38 +39,6 @@ export function getReportBuildInfo(): string {
 
 export function getSearchSkill(): string {
     return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/search';
-}
-
-export function getConsultantApiString(initials: string): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/consultants/' + initials;
-}
-
-export function getAdminAuthAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/admin';
-}
-
-export function getAllConsultantsString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/consultants';
-}
-
-export function postConsultantActionString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/consultants';
-}
-
-export function patchConsultantActionString(initials: string): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/consultants/' + initials;
-}
-
-export function getNotificationAPIString(): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/admin/notifications';
-}
-
-export function getNotificationTrashAPIString(): string {
-    return getNotificationAPIString() + '/trash';
-}
-
-export function getProfileAPIString(initials: string): string {
-    return POWER_API_HOST + ':' + POWER_API_PORT + POWER_API_SUFFIX_PROFILE + '/profiles/' + initials;
 }
 
 export function getProfileImageLocation(initials: string): string {

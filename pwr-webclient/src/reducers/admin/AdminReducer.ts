@@ -84,14 +84,6 @@ export class AdminReducer {
         return state.requestStatus(action.requestStatus);
     }
 
-    public static FailRequest(state: AdminState): AdminState {
-        return state.requestStatus(RequestStatus.Failiure);
-    }
-
-    public static PendRequest(state: AdminState): AdminState {
-        return state.requestStatus(RequestStatus.Pending);
-    }
-
     public static ChangeUsername(state: AdminState, action: ChangeStringValueAction) {
         return state.adminName(action.value);
     }
@@ -157,14 +149,6 @@ export class AdminReducer {
                 return AdminReducer.ReceiveNotifications(state, action as ReceiveNotificationsAction);
             case ActionType.ReceiveTrashedNotifications:
                 return AdminReducer.ReceiveTrashedNotifications(state, action as ReceiveNotificationsAction);
-            case ActionType.RequestTrashedNotifications:
-            case ActionType.RequestNotifications:
-                return AdminReducer.PendRequest(state);
-            case ActionType.FailRequestTrashedNotifications:
-            case ActionType.FailRequestNotifications:
-                return AdminReducer.FailRequest(state);
-            case ActionType.RequestNotificationTrashing:
-                return AdminReducer.RequestNotificationTrashing(state, action as ChangeRequestStatusAction);
             case ActionType.AdminRequestStatus:
                 return state.requestStatus((action as ChangeRequestStatusAction).requestStatus);
             case ActionType.ChangeAdminLoginStatus:

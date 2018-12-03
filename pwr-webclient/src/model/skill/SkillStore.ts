@@ -200,8 +200,4 @@ export class SkillStore {
     public skillWithQualifierExists(qualifier: string) {
         return this.skillsByQualifier().has(qualifier);
     }
-
-    public retrieveTree = (filterNonCustoom: boolean) => {
-
-    };
 }

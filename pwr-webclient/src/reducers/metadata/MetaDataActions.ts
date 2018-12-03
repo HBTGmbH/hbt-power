@@ -5,15 +5,10 @@ import {ApplicationState} from '../reducerIndex';
 import * as redux from 'redux';
 import axios from 'axios';
 import {MetaDataStore} from '../../model/metadata/MetaDataStore';
-import {
-    getApiPrefix,
-    getReportBuildInfo,
-    getSkillBuildInfo,
-    getStatisticsBuildsInfo,
-    ViewProfileService
-} from '../../API_CONFIG';
+import {getReportBuildInfo, getSkillBuildInfo, getStatisticsBuildsInfo, ViewProfileService} from '../../API_CONFIG';
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
+import {ClientClient} from '../../clients/ClientClient';
 
 export interface AddOrReplaceBuildInfoAction extends AbstractAction {
     service: string;
@@ -29,6 +24,7 @@ export interface AddOrReplaceClientInfoAction extends AbstractAction {
 export namespace MetaDataActionCreator {
 
     const profileServiceClient = ProfileServiceClient.instance();
+    const clientClient = new ClientClient();
 
     export function AddOrReplaceBuildInfo(service: string, buildInfo: BuildInfo): AddOrReplaceBuildInfoAction {
         return {
@@ -68,16 +64,12 @@ export namespace MetaDataActionCreator {
 
     function FetchClientBuildInfo() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getApiPrefix() + '/build_info.json').then(response => {
-                if (response.data != null) {
-                    dispatch(AddOrReplaceClientInfo(response.data));
-                } else {
-                    dispatch(AddOrReplaceClientInfo(null));
-                }
-            }).catch(error => {
-                console.error(error);
-                dispatch(AddOrReplaceClientInfo(null));
-            });
+            clientClient.getClientBuildInfo()
+                .then(value => dispatch(AddOrReplaceClientInfo(value)))
+                .catch(error => {
+                    console.error(error);
+                    dispatch(AddOrReplaceClientInfo(null))
+                });
         };
     }
 

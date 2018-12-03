@@ -33,22 +33,12 @@ export enum ActionType {
     // == Single ConsultantProfile Actions == //
     ChangeAbstract,
     // == Admin Actions
-    RequestNotifications,
     ReceiveNotifications,
-    FailRequestNotifications,
-
-    RequestTrashedNotifications,
     ReceiveTrashedNotifications,
-    FailRequestTrashedNotifications,
-
-    RequestNotificationTrashing,
-
     AdminRequestStatus,
     SetCustomSkillFiltering,
-
     ChangeUsername,
     ChangePassword,
-
     ChangeAdminLoginStatus,
     LogInAdmin,
     LogOutAdmin,

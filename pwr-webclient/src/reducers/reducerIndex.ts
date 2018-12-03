@@ -59,6 +59,3 @@ export const store: Store<ApplicationState> = createStore(
         reactRouterMiddleware
     )
 );
-
-
-export default ApplicationStore;
