@@ -14,8 +14,6 @@ import {
 } from './admin-actions';
 import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
-import {getSkillByName, postCategorizeSkill} from '../../API_CONFIG';
-import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
@@ -35,28 +33,12 @@ import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {PowerApiError} from '../../clients/PowerHttpClient';
+import {SkillServiceClient} from '../../clients/SkillServiceClient';
 
 const profileServiceClient = ProfileServiceClient.instance();
+const skillServiceClient = new SkillServiceClient();
 
 export class AdminActionCreator {
-    private static logAxiosError(error: any) {
-        if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.error(error.response.data);
-            console.error(error.response.status);
-            console.error(error.response.headers);
-        } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            console.error(error.request);
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            console.error('Error', error.message);
-        }
-    }
-
     public static ReceiveNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveNotifications,
@@ -242,7 +224,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationDelete(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .then(() => NavigationActionCreator.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -251,7 +233,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationOK(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .then(() => NavigationActionCreator.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -260,7 +242,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationEdit(notification)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .then(() => NavigationActionCreator.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -270,7 +252,7 @@ export class AdminActionCreator {
             dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
             profileServiceClient.invokeNotificationEdit(getState().adminReducer.selectedSkillNotification())
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() =>  NavigationActionCreator.showSuccess("Success"))
+                .then(() => NavigationActionCreator.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -340,7 +322,7 @@ export class AdminActionCreator {
             profileServiceClient.getConsultant(initials)
                 .then(res => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(res))))
                 .catch(console.error);
-        }
+        };
     }
 
     public static AsyncCreateConsultant(consultantInfo: ConsultantInfo) {
@@ -358,7 +340,7 @@ export class AdminActionCreator {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.updateConsultant(apiConsultant)
                 .then(consultant => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(consultant))))
-                .then(ingored => NavigationActionCreator.showSuccess("Consultant " + apiConsultant.initials + " updated!"))
+                .then(ingored => NavigationActionCreator.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
                 .catch(console.error);
         };
     }
@@ -366,25 +348,26 @@ export class AdminActionCreator {
     public static AsyncOpenSkillNotificationDialog(notificationId: number) {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.OpenSkillNotificationDialog(notificationId));
-            let notification = getState().adminReducer.skillNotifications().find(notification => notification.adminNotification().id() === notificationId);
-
-            let config: AxiosRequestConfig = {params: {qualifier: notification.skill().name()}};
-            axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
-                let apiSkillServiceSkill: APISkillServiceSkill = response.data;
-                if (isNullOrUndefined(apiSkillServiceSkill.category)) {
-                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY));
-                } else {
-                    console.log('apiSkillServiceSkill', apiSkillServiceSkill);
-                    dispatch(SkillActionCreator.ReadSkillHierarchy(apiSkillServiceSkill));
-                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY));
-                }
-            }).catch(function (error: AxiosError) {
-                console.error(error);
-                dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_ERROR));
-            });
+            let notification = getState().adminReducer.findSkillNotification(notificationId);
+            skillServiceClient.getSkillByName(notification.skill().name())
+                .then(skill => {
+                    if (isNullOrUndefined(skill.category)) {
+                        dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY));
+                    } else {
+                        dispatch(SkillActionCreator.ReadSkillHierarchy(skill));
+                        dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY));
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_ERROR));
+                });
         };
     };
 
+    private static skillAround = (category: APISkillCategory, skillName: string): APISkillServiceSkill => {
+        return {'id': -1, 'category': category, 'qualifier': skillName};
+    };
 
     /**
      * Transition from DISPLAY_INFO_NO_CATEGORY to CATEGORY_PENDING
@@ -393,34 +376,24 @@ export class AdminActionCreator {
      */
     public static AsyncCategorizeSkill(skillName: string) {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
-            console.info('Invoking remote categorization for skill \'' + skillName + '\'');
             let adminState = getState().adminReducer;
-            let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY,
-                SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG];
+            let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY, SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG];
             if (allowedStates.indexOf(adminState.skillNotificationEditStatus()) === -1) {
                 throw new RangeError('Invalid status for AsyncCategorizeSkill. Expected one of ' + allowedStates);
             } else {
-                let config: AxiosRequestConfig = {params: {qualifier: skillName}};
-                axios.post(postCategorizeSkill(), null, config).then((response: AxiosResponse) => {
-                    let apiCategory: APISkillCategory = response.data;
-                    // Build a skill around the category
-                    let skillServiceSkill: APISkillServiceSkill = {
-                        id: -1,
-                        category: apiCategory,
-                        qualifier: skillName
-                    };
-                    dispatch(SkillActionCreator.ReadSkillHierarchy(skillServiceSkill));
-                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY));
-                }).catch(function (error: AxiosError) {
-                    console.error(error);
-                    console.log(error.response);
-                    if (!isNullOrUndefined(error.response)) {
-                        dispatch(AdminActionCreator.SetSkillNotificationErrorText('ERR_' + error.response.status));
-                    } else {
-                        dispatch(AdminActionCreator.SetSkillNotificationErrorText('ERR_UNKNOWN'));
-                    }
-                    dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR));
-                });
+                skillServiceClient.categorizeSkill(skillName)
+                    .then(category => AdminActionCreator.skillAround(category, skillName))
+                    .then(skill => dispatch(SkillActionCreator.ReadSkillHierarchy(skill)))
+                    .then(() => dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY)))
+                    .catch(error => {
+                        console.error(error);
+                        if (!isNullOrUndefined(error.response)) {
+                            dispatch(AdminActionCreator.SetSkillNotificationErrorText('ERR_' + error.response.status));
+                        } else {
+                            dispatch(AdminActionCreator.SetSkillNotificationErrorText('ERR_UNKNOWN'));
+                        }
+                        dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR));
+                    });
             }
         };
     }
@@ -453,14 +426,11 @@ export class AdminActionCreator {
         };
     }
 
-
     public static AsyncChangeSkillName(oldName: string, newName: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             profileServiceClient.renameSkill(oldName, newName)
-                .then(() => {
-                    dispatch(ProfileAsyncActionCreator.getAllCurrentlyUsedSkills());
-                    NavigationActionCreator.showSuccess('Renamed ' + oldName + ' to ' + newName);
-                })
+                .then(() => dispatch(ProfileAsyncActionCreator.getAllCurrentlyUsedSkills()))
+                .then(() => NavigationActionCreator.showSuccess('Renamed ' + oldName + ' to ' + newName))
                 .catch(console.error);
         };
     }

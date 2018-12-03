@@ -139,4 +139,8 @@ export class AdminState {
             headers: {'X-Requested-With': 'XMLHttpRequest'}
         };
     }
+
+    public findSkillNotification = (notificationId: number): SkillNotification => {
+        return this.skillNotifications().find(notification => notification.adminNotification().id() === notificationId);
+    }
 }

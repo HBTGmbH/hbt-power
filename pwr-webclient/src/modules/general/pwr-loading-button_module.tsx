@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Button, CircularProgress, WithStyles, withStyles} from '@material-ui/core';
 import {green} from '@material-ui/core/colors';
-import {Save} from '@material-ui/icons';
+import {Loop} from '@material-ui/icons';
 
 interface PwrLoadingButtonProps {
     loading: boolean;
@@ -34,7 +34,7 @@ class PwrLoadingButtonModule extends React.Component<PwrLoadingButtonProps & Wit
                 color="secondary"
                 disabled={this.props.loading}
             >
-                <Save/>
+                <Loop/>
             </Button>
             {this.props.loading && <CircularProgress size={68} className={this.props.classes.fabProgress}/>}
         </div>;
