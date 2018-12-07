@@ -23,4 +23,8 @@ public class UploadFileResponse {
         this.fileType = fileType;
         this.size = size;
     }
+
+    public static UploadFileResponse empty(){
+        return new UploadFileResponse("","","","",0);
+    }
 }

@@ -7,6 +7,7 @@ import de.hbt.pwr.view.model.UploadFileResponse;
 import de.hbt.pwr.view.service.ReportTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -56,18 +57,31 @@ public class ReportTemplateController {
 
         ReportTemplate newTemplate = new ReportTemplate();
         ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
+        UploadFileResponse previewFileResponse = UploadFileResponse.empty();
+        UploadFileResponse designFileResponse = UploadFileResponse.empty();
 
-        UploadFileResponse designFileResponse = fileUploadClient.uploadFile(file).getBody();
-        UploadFileResponse previewFileResponse = reportServiceClient.generateHtml(designFileResponse.getFileId()).getBody();
+        ResponseEntity<UploadFileResponse> fileRes = fileUploadClient.uploadFile(file);
 
-        if (!designFileResponse.getFileId().equals("")) {
+        if (fileRes.getStatusCode() == HttpStatus.OK) {
+            designFileResponse = fileRes.getBody();
+            ResponseEntity<UploadFileResponse> previewRes = reportServiceClient.generateHtml(designFileResponse.getFileId());
+
+            if (previewRes.getStatusCode() == HttpStatus.OK) {
+                previewFileResponse = previewRes.getBody();
+            }
+        }
+
+        if (designFileResponse != UploadFileResponse.empty()) {
             newTemplate.setName(templateSlice.name);
             newTemplate.setDescription(templateSlice.description);
             newTemplate.setCreatedDate(LocalDate.now());
             newTemplate.setFileId(designFileResponse.getFileId());
             newTemplate.setCreateUser(templateSlice.createUser);
-            newTemplate.setPreviewId(previewFileResponse.getFileId());
-
+            if (designFileResponse != UploadFileResponse.empty()) {
+                newTemplate.setPreviewId(previewFileResponse.getFileId());
+            } else {
+                newTemplate.setPreviewId("Preview rendering failed!");// TODO maybe default ID ??
+            }
             ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
 
             return ResponseEntity.ok(template.toString());

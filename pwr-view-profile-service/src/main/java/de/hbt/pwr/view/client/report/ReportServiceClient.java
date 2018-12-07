@@ -7,10 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Component
 @FeignClient(value = "pwr-report-service", fallbackFactory = ReportServiceClientFallbackFactory.class)
@@ -20,8 +17,8 @@ public interface ReportServiceClient {
                                           @RequestParam("type") String type,
                                           @RequestParam(value = "charsperline", required = false) Integer charsPerLine);
 
-    @GetMapping("html")
-    ResponseEntity<UploadFileResponse> generateHtml(@RequestParam("fileId") String templatePath);
+    @GetMapping("html/{fileId}")
+    ResponseEntity<UploadFileResponse> generateHtml(@PathVariable("fileId") String templatePath);
 
 }
 
