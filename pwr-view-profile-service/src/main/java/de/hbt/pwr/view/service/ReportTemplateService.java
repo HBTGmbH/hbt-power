@@ -71,7 +71,7 @@ public class ReportTemplateService {
         template.setCreateUser(newTemplate.getCreateUser());
         template.setName(newTemplate.getName());
         template.setDescription(newTemplate.getDescription());
-        template.setPath(newTemplate.getPath());
+        template.setFileId(newTemplate.getFileId());
 
         reportTemplateRepository.save(template);
         return template;
@@ -81,7 +81,7 @@ public class ReportTemplateService {
     @NotNull
     public String getPreviewFilename(@NotNull String id) {
         if(reportTemplateRepository.findReportTemplateById(id) != null){
-            return reportTemplateRepository.findReportTemplateById(id).getPreviewFilename();
+            return reportTemplateRepository.findReportTemplateById(id).getPreviewId();
         }
         return null;
     }
@@ -89,13 +89,13 @@ public class ReportTemplateService {
     @NotNull
     public List<String> getAllPreviewFilenames() {
         return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
-                .map(ReportTemplate::getPreviewFilename)
+                .map(ReportTemplate::getPreviewId)
                 .collect(Collectors.toList());
     }
 
     public List<String> getAllPreviewTemplateIds(){
         return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
-                .map(reportTemplate ->  reportTemplate.getPreviewFilename() != null ? reportTemplate.getId(): "")
+                .map(reportTemplate ->  reportTemplate.getPreviewId() != null ? reportTemplate.getId(): "")
                 .collect(Collectors.toList());
     }
 

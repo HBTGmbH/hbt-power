@@ -29,9 +29,9 @@ public class ReportTemplateServiceTest {
 
 
     private final List<ReportTemplate> testReportTemplates = Arrays.asList(
-            ReportTemplate.builder().id("111").name("temp1").description("testDescr1").previewFilename("a/a/a").build(),
-            ReportTemplate.builder().id("222").name("temp2").description("testDescr2").previewFilename("b/b/b").build(),
-            ReportTemplate.builder().id("333").name("temp3").description("testDescr3").previewFilename("c/c/c").build()
+            ReportTemplate.builder().id("111").name("temp1").description("testDescr1").previewId("a/a/a").build(),
+            ReportTemplate.builder().id("222").name("temp2").description("testDescr2").previewId("b/b/b").build(),
+            ReportTemplate.builder().id("333").name("temp3").description("testDescr3").previewId("c/c/c").build()
     );
 
 
@@ -65,7 +65,7 @@ public class ReportTemplateServiceTest {
 
     @Test
     public void shouldAddTemplateAndGetItBack() {
-        ReportTemplate expected = ReportTemplate.builder().id("444").name("temp4").description("testDescr4").path("d/d/d").build();
+        ReportTemplate expected = ReportTemplate.builder().id("444").name("temp4").description("testDescr4").fileId("ddd").build();
         when(reportTemplateRepository.findById(eq("444"))).thenReturn(of(expected));
         ReportTemplate temp = reportTemplateService.getTemplate("444");
         //verify(reportTemplateRepository, times(1)).findById(eq("444"));

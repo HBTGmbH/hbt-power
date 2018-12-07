@@ -20,27 +20,29 @@ public class ReportTemplate {
     private String id = null;
     private String name;
     private String description;
-    private String path;
+    private String fileId;
     private String createUser;
     private LocalDate createdDate;
-    private String previewFilename;
-
+    private String previewId;
 
     @Override
     public String toString() {
         if (id != null) {
-            return id;
+            return String.format(
+                    "ReportTemplate: {\n id: %s,\n name: %s,\n description: %s,\n fileId: %s,\n createUser: %s,\n createDate: %s\n}",
+                    id, name, description, fileId, createUser, createdDate
+            );
         }
         return String.format(
-                "ReportTemplate --  name:%s, description=%s, path=%s, createUser=%s, createDate=%s",
-                name, description, path, createUser, createdDate
+                "ReportTemplate: {\n id: null,\n name: %s,\n description: %s,\n fileId: %s,\n createUser: %s,\n createDate: %s\n}",
+                name, description, fileId, createUser, createdDate
         );
     }
 
 
     public static class ReportTemplateShort {
         public String description;
-        public String path;
+        public String fileId;
         public String createUser;
     }
 

@@ -105,7 +105,7 @@ if $cygwin ; then
   [ -n "$JAVA_HOME" ] &&
     JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
   [ -n "$CLASSPATH" ] &&
-    CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
+    CLASSPATH=`cygpath --fileId --unix "$CLASSPATH"`
 fi
 
 # For Migwn, ensure paths are in UNIX format before anything is touched
@@ -207,13 +207,13 @@ MAVEN_OPTS="$(concat_lines "$MAVEN_PROJECTBASEDIR/.mvn/jvm.config") $MAVEN_OPTS"
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   [ -n "$M2_HOME" ] &&
-    M2_HOME=`cygpath --path --windows "$M2_HOME"`
+    M2_HOME=`cygpath --fileId --windows "$M2_HOME"`
   [ -n "$JAVA_HOME" ] &&
-    JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
+    JAVA_HOME=`cygpath --fileId --windows "$JAVA_HOME"`
   [ -n "$CLASSPATH" ] &&
-    CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
+    CLASSPATH=`cygpath --fileId --windows "$CLASSPATH"`
   [ -n "$MAVEN_PROJECTBASEDIR" ] &&
-    MAVEN_PROJECTBASEDIR=`cygpath --path --windows "$MAVEN_PROJECTBASEDIR"`
+    MAVEN_PROJECTBASEDIR=`cygpath --fileId --windows "$MAVEN_PROJECTBASEDIR"`
 fi
 
 WRAPPER_LAUNCHER=org.apache.maven.wrapper.MavenWrapperMain

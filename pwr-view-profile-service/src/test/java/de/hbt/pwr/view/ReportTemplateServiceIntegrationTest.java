@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -113,72 +112,4 @@ public class ReportTemplateServiceIntegrationTest {
         assertThat(result).contains(id2);
 
     }
-
-    @Test
-    public void addViaAPI() throws Exception {
-        String id;
-
-        String name = "No.1";
-        String description = "template1";
-        String path = "a/a/a";
-        String user = "tst";
-
-        ReportTemplate.ReportTemplateShort info = new ReportTemplate.ReportTemplateShort();
-        info.createUser = user;
-        info.description = description;
-        info.path = path;
-
-        ResponseEntity<ReportTemplate> response = reportTemplateController.createTemplate(name, info);
-        String r_name = response.getBody().getName();
-        String r_description = response.getBody().getDescription();
-        String r_path = response.getBody().getPath();
-        String r_user = response.getBody().getCreateUser();
-
-        id = response.getBody().getId();
-
-        ReportTemplate template = reportTemplateService.getTemplate(id);
-
-        assertThat(r_name).isEqualTo(name).isEqualTo(template.getName());
-        assertThat(r_description).isEqualTo(description).isEqualTo(template.getDescription());
-        assertThat(r_path).isEqualTo(path).isEqualTo(template.getPath());
-        assertThat(r_user).isEqualTo(user).isEqualTo(template.getCreateUser());
-    }
-
-    @Test
-    public void getViaAPI() throws Exception {
-        String name = "No.1";
-        String description = "template1";
-        String path = "a/a/a";
-        String user = "tst";
-        ReportTemplate.ReportTemplateShort info = new ReportTemplate.ReportTemplateShort();
-        info.createUser = user;
-        info.description = description;
-        info.path = path;
-
-        ResponseEntity<ReportTemplate> response1 = reportTemplateController.createTemplate(name, info);
-
-        name = "No.2";
-        description = "template2";
-        path = "b/b/b";
-        user = "oth";
-        info = new ReportTemplate.ReportTemplateShort();
-        info.createUser = user;
-        info.description = description;
-        info.path = path;
-
-        ResponseEntity<ReportTemplate> response2 = reportTemplateController.createTemplate(name, info);
-
-        List<String> result = reportTemplateService.getTemplateIds();
-
-        ReportTemplate template2 = reportTemplateService.getTemplate(response2.getBody().getId());
-
-
-        assertThat(template2.getName()).isEqualTo(name);
-
-        assertThat(result).contains(response1.getBody().getId());
-        assertThat(result).contains(response2.getBody().getId());
-
-    }
-
-
 }
