@@ -30,10 +30,6 @@ interface ReportCreateTemplateDispatch {
 
     saveTemplate(file: File, name: string, desc: string, createUser: string): void;
 
-    renderTemplate(file: File): void;
-
-    createTemplate(name: string, descr: string, initials: string, path: string): void;
-
 }
 
 interface ReportCreateTemplateState {
@@ -41,7 +37,6 @@ interface ReportCreateTemplateState {
     tempName: string;
     tempDescription: string;
     tempInitials: string;
-    tempPath: string;
     file: any;
     previewServerUrl: string;
 }
@@ -59,8 +54,6 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
         return {
             loadPreview: (id: string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
             saveTemplate: (file: any, name: string, desc: string, createUser: string) => dispatch(TemplateActionCreator.AsyncUploadFileAsTemplate(file, name, desc, createUser)),
-            renderTemplate: (file: any) => dispatch(TemplateActionCreator.AsyncRenderTemplatePreview(file)),
-            createTemplate: (name: string, descr: string, initials: string, path: string) => dispatch(TemplateActionCreator.AsyncCreateTemplate(name, descr, initials, path)),
         };
     }
 
@@ -80,7 +73,6 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
             tempName: '',
             tempDescription: '',
             tempInitials: '',
-            tempPath: '',
             file: null,
             previewServerUrl: '',
         };
@@ -93,15 +85,10 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
         }
     };
 
-    private createTemplate = () => {
-        console.log('Create Template');
-        this.props.createTemplate(this.state.tempName, this.state.tempDescription, this.state.tempInitials, this.state.tempPath);
-    };
-
     private renderTemplate = () => {
         if (this.state.file != null) {
-            this.props.renderTemplate(this.state.file);
-            console.log('trying to render file... ', this.state.file);
+            //this.props.renderTemplate(this.state.file);
+            //console.log('trying to render file... ', this.state.file);
         }
     };
 
@@ -111,7 +98,7 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
             file: e.target.files[0],
         });
 
-        this.props.renderTemplate(this.state.file);
+        //this.props.renderTemplate(this.state.file);
     };
 
     private verifyFile = () => {
@@ -123,9 +110,9 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
         return <div style={{padding: '2em'}}>
             {/* Für das freie Erstellen von Templates
 
-            <Typography className={"vertical-align"}>Template hochladen</Typography>
             < Button className={""} onClick={() => {}} ><Icon>attach_file</Icon></Button>
             */}
+            <Typography className={"vertical-align"}>Template hochladen</Typography>
             <input
                 type={'file'}
                 value={this.state.fileName}
@@ -140,7 +127,7 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                 - verify file type .rptdesign ??
                 - if rendered and file received display the preview
             */}
-            { //this.verifyFile() == false ? <div className={"vertical-align"}>Select a .rptdesing file</div> :
+            { this.verifyFile() == false ? <div className={"vertical-align"}>Select a .rptdesing file</div> :
                 <div>
                     <TextField
                         label={'Name'}
@@ -159,11 +146,11 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                     <TextField
                         label={'Initials'}
                         onChange={(e: any) => {
-                            this.setState({tempPath: e.target.value});
+                            this.setState({tempInitials: e.target.value});
                         }}
                     />
 
-                    <Button
+                    {/*<Button
                         style={{marginTop: '5px'}}
                         variant={'contained'}
                         className={'vertical-align'}
@@ -173,10 +160,10 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                     >
                         <Icon>present_to_all</Icon>
                         Render
-                    </Button>
+                    </Button>*/}
 
                     <Button
-                        style={{marginTop: '5px'}}
+                        style={{marginTop: '10px'}}
                         variant={'contained'}
                         className={'vertical-align'}
                         color={'primary'}
@@ -185,7 +172,7 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                         }}// createTemplate for old version
                     >
                         <Icon>send</Icon>
-                        Upload
+                         Upload
                     </Button>
                 </div>
             }
@@ -203,8 +190,6 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
         </div>;
     };
 
-    // TODO validate Name to not ovverride the file
-    // Client and Server side
 
     render() {
         return <Dialog
@@ -231,7 +216,6 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                     <div className={'col-md-3'}>
                         <Paper>
                             {this.renderUpload()}
-
                         </Paper>
                     </div>
                     <div className={'col-md-6'}>

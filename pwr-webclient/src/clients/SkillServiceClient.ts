@@ -17,11 +17,11 @@ export class SkillServiceClient extends PowerHttpClient {
         const url = this.base() + "/skill/byName";
         const config: AxiosRequestConfig = {params: {qualifier: name}};
         return this.preProcess(axios.get(getSkillByName(), config));
-    }
+    };
 
     public categorizeSkill = (name: string): Promise<APISkillCategory> => {
         const url = this.base() + "/skill";
         const config: AxiosRequestConfig = {params: {qualifier: name}};
         return this.preProcess(axios.post(url, null, config));
-    }
+    };
 }

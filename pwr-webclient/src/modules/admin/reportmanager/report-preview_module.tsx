@@ -6,6 +6,7 @@ import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCr
 import Iframe from 'react-iframe';
 import {ReportPreviewFile} from '../../../model/view/ReportPreviewFile';
 import {Template} from '../../../model/view/Template';
+import {TemplateService} from '../../../API_CONFIG';
 
 
 interface ReportPreviewProps {
@@ -31,14 +32,12 @@ interface ReportPreviewDispatch {
 
 class ReportPreviewModule extends React.Component<ReportPreviewProps & ReportPreviewLocalProps & ReportPreviewDispatch, ReportPreviewState> {
 
-
-
     constructor(props:ReportPreviewProps & ReportPreviewLocalProps & ReportPreviewDispatch){
         super(props);
         this.state= {
             reportPreviewFile:null,
         };
-        console.log("report-preview_module#constructor: finished");
+        //console.log("report-preview_module#constructor: finished");
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ReportPreviewLocalProps): ReportPreviewProps {
@@ -56,7 +55,7 @@ class ReportPreviewModule extends React.Component<ReportPreviewProps & ReportPre
     }
 
     public componentWillMount(){
-        console.log("report-preview_module#componentsWillMount");
+        //console.log("report-preview_module#componentsWillMount");
         if(this.props.templateId != ""){
            this.props.loadPreview(this.props.templateId);
         }
@@ -70,41 +69,37 @@ class ReportPreviewModule extends React.Component<ReportPreviewProps & ReportPre
                     reportPreviewFile: this.props.files[this.props.templateId],
                 })
             }else{
-                console.log("report_preview_module#ComponentDidMount: files[templateID] == null");
+                //console.log("report_preview_module#ComponentDidMount: files[templateID] == null");
             }
         }else{
-            console.log("report_preview_module#ComponentDidMount: files == null");
+           // console.log("report_preview_module#ComponentDidMount: files == null");
         }
     }
 
     public componentDidUpdate(){
         if(this.props.templateId != "" && this.state.reportPreviewFile == null ){
-            console.log("componentDidUpdate: loadFromReport");
-            this.props.loadPreviewFromReport(this.props.templates.get(this.props.templateId).previewFilename);
+            //console.log("componentDidUpdate: loadFromReport");
+            //this.props.loadPreviewFromReport(this.props.templates.get(this.props.templateId).previewFilename);
         }
 
-        console.log("report-preview_module: files",this.props.files);
+       // console.log("report-preview_module: files",this.props.files);
     }
 
 
     public renderFile = () => {
-      if(this.props.templateId != ""){
-          if(this.state.reportPreviewFile != null){
-              if(this.state.reportPreviewFile.id != ""){
-                    return <div>htmlRenderer ?? oder etwas anders suchen</div>;
-              }else{console.log("report_preview_module#renderFile : reportPreviewFile.id is empty "); }
-          }else{console.log("report_preview_module#renderFile : reportPreviewFile is null ");}
-      }  else{console.log("report_preview_module#renderFile : templateId is empty ");}
-        return <div>NO PREVIEW - TODO make pretty</div>;
+        if(this.props.templateId != ""){
+            return<Iframe
+                //url={TemplateService.getPreview(this.props.templateId)}
+                url ={"http://power02.corp.hbt.de:9000/pwr-view-profile-service/template/preview/"+this.props.templateId}
+            />; // FIXME url as string works TODO
+        }  else return <></>
     };
 
 
 
     render() {
-
         return <div>
-            {/*this.renderFile()*/}
-            <Iframe url={""}/>
+            {this.renderFile()}
         </div>;
     }
 }

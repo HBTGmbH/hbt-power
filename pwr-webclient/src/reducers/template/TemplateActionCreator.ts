@@ -126,11 +126,11 @@ export namespace TemplateActionCreator {
         };
     }
 
-
+/*
     export function AsyncCreateTemplate(name: string, description: string, initials: string, path: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.post(TemplateService.CreateTemplate(name), {
+            axios.post(TemplateService.CreateTemplate(), {
                 description: description,
                 path: path,
                 createUser: initials,
@@ -146,7 +146,7 @@ export namespace TemplateActionCreator {
                 });
         };
     }
-
+*/
     function AsyncLoadTemplate(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
@@ -165,7 +165,7 @@ export namespace TemplateActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(ClearTemplates());
-            axios.get(TemplateService.getTemplates()).then((response: AxiosResponse) => {
+            axios.get(TemplateService.getAllTemplates()).then((response: AxiosResponse) => {
                 let ids: Array<string> = response.data;
                 ids.forEach(id => dispatch(AsyncLoadTemplate(id)));
                 dispatch(CrossCuttingActionCreator.endRequest());
@@ -180,16 +180,16 @@ export namespace TemplateActionCreator {
     export function AsyncLoadPreview(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             if(id != ""){
-                //dispatch(CrossCuttingActionCreator.startRequest());
+                dispatch(CrossCuttingActionCreator.startRequest());
                 axios.get(TemplateService.getPreview(id),{})// url address
                     .then((response: AxiosResponse) => {
                         console.log(response);
                         PreviewReceived(id, response.data, dispatch);      // in den state laden
-                       // dispatch(CrossCuttingActionCreator.endRequest());
+                        dispatch(CrossCuttingActionCreator.endRequest());
                     })
                     .catch(function (error: any) {
                         console.error(error);
-                     //   dispatch(CrossCuttingActionCreator.endRequest());
+                        dispatch(CrossCuttingActionCreator.endRequest());
                     });
             }
         }
@@ -267,6 +267,7 @@ export namespace TemplateActionCreator {
         };
     }
 
+    /* TODO was besseres hierfür ausdenken
     export function AsyncRenderTemplatePreview(file: any) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let formData = new FormData();
@@ -285,5 +286,5 @@ export namespace TemplateActionCreator {
         };
     }
 
-
+*/
 }

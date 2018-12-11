@@ -1,3 +1,8 @@
+const POWER_PROFILE_SERVICE_URL = "http://power02.corp.hbt.de:9000/pwr-profile-service";
+const POWER_SKILL_SERVICE_URL = "http://power02.corp.hbt.de:9000/pwr-skill-service";
+const CLIENT_BUILD_INFO_LOCATION = "http://power02.corp.hbt.de/power/build_info.json";
+
+
 const POWER_API_HOST = "https://power.hbt.de";
 const POWER_API_PORT = "";
 const POWER_API_PREFIX = "/power";

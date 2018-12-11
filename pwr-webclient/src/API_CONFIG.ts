@@ -240,16 +240,20 @@ export namespace TemplateService {
         return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
     }
 
-    export function getTemplates() {
+    export function getAllTemplates() {
         return base() + '/template/';
+    }
+
+    export function uploadAsTemplate() {
+        return base() + '/template/';
+    }
+
+    export function deleteTemplates(id:string) {
+        return base() + '/template/'+id;
     }
 
     export function getTemplateById(id: string) {
         return base() + '/template' + '/' + id;
-    }
-
-    export function CreateTemplate(name: string) {
-        return base() + '/template' + '/' + name;
     }
 
     export function ChangeTemplate(id: string) {
@@ -261,15 +265,7 @@ export namespace TemplateService {
     }
 
     export function getAllPreviews() {
-        return base() + "/template" + "/preview" + "/all";
-    }
-
-    export function uploadAsTemplate() {
-        return base() + '/upload/post';
-    }
-
-    export function renderPreview() {
-        return base() + '/render/';
+        return base() + "/template" + "/preview";
     }
 
     export function getPreviewFromReport(filename:string){
@@ -277,7 +273,7 @@ export namespace TemplateService {
     }
 
     export function getAllFiles() {
-        return base() + "/upload" + "/all"
+        return base() + "/file";
     }
 
 }

@@ -5,8 +5,6 @@ export class Template {
     path: string;
     createUser: string;
     createdDate: string;
-    previewFilename: string;
-
 
     constructor(template: Template) {
         this.id = template.id;
@@ -15,7 +13,6 @@ export class Template {
         this.path = template.path;
         this.createUser = template.createUser;
         this.createdDate = template.createdDate;
-        this.previewFilename = template.previewFilename;
     }
 }
 

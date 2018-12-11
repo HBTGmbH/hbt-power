@@ -77,7 +77,7 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() +  "/api/consultants/" + consultant.initials;
         this.beginRequest();
         return this.preProcess(axios.patch(url, consultant));
-    }
+    };
 
     public getQualificationSuggestions = (): Promise<Array<NameEntity>> => {
         const url = this.base() + '/api/suggestions/qualifications';
