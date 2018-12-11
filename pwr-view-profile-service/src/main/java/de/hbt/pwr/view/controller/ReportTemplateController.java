@@ -53,7 +53,7 @@ public class ReportTemplateController {
     }
 
     @PostMapping
-    public ResponseEntity<String> uploadTemplate(@RequestParam("file") MultipartFile file, @RequestParam("templateSlice") String templateString) {
+    public ResponseEntity<ReportTemplate> uploadTemplate(@RequestParam("file") MultipartFile file, @RequestParam("templateSlice") String templateString) {
 
         ReportTemplate newTemplate = new ReportTemplate();
         ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
@@ -84,7 +84,7 @@ public class ReportTemplateController {
             }
             ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
 
-            return ResponseEntity.ok(template.toString());
+            return ResponseEntity.ok(template);
         } else {
             return ResponseEntity.notFound().build();
         }
