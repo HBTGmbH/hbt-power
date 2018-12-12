@@ -102,7 +102,7 @@ export class SkillTreeNode {
     public filter(onlyCustomSkills: boolean, searchTerm: string, skillsById: Immutable.Map<number, SkillServiceSkill>, skillCategoriesById: Immutable.Map<number, SkillCategory>) {
         let visible = false;
         this.childNodes.forEach(childNode => {
-            // MUST execute filter first.
+            // MUST onConfirm filter first.
             visible = childNode.filter(onlyCustomSkills, searchTerm, skillsById, skillCategoriesById) || visible;
         });
         this.skillNodes.forEach(skillNode => {

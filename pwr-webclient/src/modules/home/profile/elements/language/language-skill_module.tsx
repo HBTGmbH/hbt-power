@@ -74,7 +74,7 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
                 <td>
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
                                    onClick={this.handleEditButtonPress}/>
-                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
                                    onClick={this.handleDeleteButtonPress}/>
                     <LanguageSkillDialog
                         languageSkill={this.props.languageSkill}

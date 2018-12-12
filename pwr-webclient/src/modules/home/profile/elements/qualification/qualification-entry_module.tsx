@@ -97,7 +97,7 @@ export class SingleQualificationEntry extends React.Component<QualificationEntry
                 <td>
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
                                    onClick={this.handleEditButtonClick}/>
-                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
                                    onClick={this.handleDeleteButtonClick}/>
                     <QualificationEntryDialog
                         qualificationEntry={this.props.qualificationEntry}

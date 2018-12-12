@@ -97,7 +97,7 @@ export class SingleEducationElement extends React.Component<EducationEntryLocalP
                 <td>
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
                                    onClick={this.handleEditButtonPress}/>
-                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
                                    onClick={this.handleDeleteButtonPress}/>
 
                     <EducationEntryDialogModule

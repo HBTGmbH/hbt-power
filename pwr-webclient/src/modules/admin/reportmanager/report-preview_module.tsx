@@ -89,6 +89,7 @@ class ReportPreviewModule extends React.Component<ReportPreviewProps & ReportPre
     public renderFile = () => {
         if(this.props.templateId != ""){
             return<Iframe
+                sandbox={"allow-same-origin"}
                 //url={TemplateService.getPreview(this.props.templateId)}
                 url ={"http://power02.corp.hbt.de:9000/pwr-view-profile-service/template/preview/"+this.props.templateId}
             />; // FIXME url as string works TODO

@@ -73,7 +73,7 @@ export class SingleSectorModule extends React.Component<SingleSectorLocalProps, 
                 <td>
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
                                    onClick={this.handleEditButtonClick}/>
-                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
                                    onClick={this.handleDeleteButtonClick}/>
                     <div style={{width: '80%'}}>
                         <SectorEntryDialog

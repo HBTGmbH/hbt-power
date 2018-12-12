@@ -101,7 +101,7 @@ class SingleKeySkillModule extends React.Component<SingleKeySkillProps
                 <td>
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
                                    onClick={this.openDialog}/>
-                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
                                    onClick={this.deleteEntry}/>
                     <KeySkillDialog
                         open={this.state.dialogOpen}

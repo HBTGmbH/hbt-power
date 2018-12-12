@@ -34,7 +34,7 @@ export function getSkillBuildInfo(): string {
 }
 
 export function getReportBuildInfo(): string {
-    return POWER_API_META_INFO_REPORT + '/info';
+    return POWER_API_META_INFO_REPORT + '/actuator/info';
 }
 
 export function getSearchSkill(): string {

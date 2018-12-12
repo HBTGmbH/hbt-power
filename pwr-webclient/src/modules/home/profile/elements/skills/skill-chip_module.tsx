@@ -5,6 +5,7 @@ import {Chip} from '@material-ui/core';
 import {StarRating} from '../../../../star-rating_module.';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import Popover from '@material-ui/core/Popover/Popover';
+import {PwrDeleteConfirm} from '../../../../general/pwr-delete-confirm';
 
 
 /**
@@ -34,6 +35,7 @@ interface SkillChipLocalProps {
 interface SkillChipLocalState {
     anchorEl: any,
     popoverOpen: boolean,
+    openDelete:boolean,
 }
 
 export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLocalState> {
@@ -54,11 +56,24 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         });
     };
 
+    private openDeleteConfirm = () => {
+        this.setState({
+            openDelete:true,
+        })
+    };
+
+    private closeConfirm = () => {
+        this.setState({
+            openDelete:false,
+        })
+    };
+
     constructor(props: SkillChipLocalProps) {
         super(props);
         this.state = {
             anchorEl: null,
             popoverOpen: false,
+            openDelete:false,
         };
     };
 
@@ -66,12 +81,19 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
     render() {
         return (
             <div>
+                <PwrDeleteConfirm
+                    open={this.state.openDelete}
+                    onClose={this.closeConfirm}
+                    onConfirm={this.handleDelete}
+                    header={"Skill "+this.props.skill.name()+" löschen"}
+                    infoText={"Willst du den Skill löschen?"}
+                />
                 <Chip
                     avatar={<Avatar>{this.props.skill.rating()}</Avatar>}
                     label={this.props.skill.name()}
                     style={this.props.style}
                     className={this.props.className}
-                    onDelete={this.handleDelete}
+                    onDelete={this.openDeleteConfirm}
                     onClick={this.showInfo}
                 />
                 <Popover

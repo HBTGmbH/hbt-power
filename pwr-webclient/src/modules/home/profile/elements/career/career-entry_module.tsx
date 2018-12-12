@@ -100,7 +100,7 @@ class SingleCareerEntryModule extends React.Component<SingleCareerEntryProps
         return (<tr>
             <td>
                 <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
-                <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
                                onClick={this.handleDeleteButtonPress}/>
                 <CareerEntryDialog
                     open={this.state.dialogOpen}

@@ -116,7 +116,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
             </ExpansionPanelDetails>
             <CardActions>
                 <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
-                <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
                                onClick={this.deleteButtonPress}/>
             </CardActions>
         </ExpansionPanel>;
