@@ -123,6 +123,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                         {
                             this.props.consultantsByInitials
                                 .filter(this.filterInactive)
+                                .sortBy(value => value.lastName())
                                 .map(consultantInfo => {
                                     return <ConsultantTile key={'ConsultantTile.' + consultantInfo.initials()}
                                                            initials={consultantInfo.initials()}/>;
