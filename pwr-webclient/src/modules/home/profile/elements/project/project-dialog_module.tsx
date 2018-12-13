@@ -21,6 +21,7 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {ComparatorBuilder} from 'ts-comparator';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
+import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -184,6 +185,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
     };
 
 
+
     public render() {
         {
             console.log('endRender_project(brokerAC): ', this.state.brokerACValue);
@@ -224,26 +226,17 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <PwrSpacer double={true}/>
                     <div className="row">
                         <div className="col-md-5">
-                            <DatePicker
-                                autoOk
-                                fullWidth={true}
-                                label={PowerLocalize.get('Project.StartDate')}
-                                id={'ProjectDialog.StartDate' + this.props.project.id()}
-                                value={this.state.project.startDate()}
+                            <PwrYearPicker
+                                label={"Start"}
                                 onChange={this.changeStartDate}
-                                format="DD.MM.YYYY"
-                                todayLabel={PowerLocalize.get('Today')}
+                                placeholderDate={this.state.project.startDate()}
                             />
                         </div>
                         <div className="col-md-5">
-                            <DatePicker
-                                label={PowerLocalize.get('Project.EndDate')}
-                                value={this.state.project.endDate()}
-                                id={'ProjectDialog.EndDate' + this.props.project.id()}
+                            <PwrYearPicker
+                                label={"Start"}
                                 onChange={this.changeEndDate}
-                                showTodayButton
-                                format="DD.MM.YYYY"
-                                todayLabel={PowerLocalize.get('Today')}
+                                placeholderDate={this.state.project.endDate()}
                             />
                         </div>
                     </div>

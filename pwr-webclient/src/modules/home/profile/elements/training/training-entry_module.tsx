@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Immutable from 'immutable';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {formatToShortDisplay, formatToYear} from '../../../../../utils/DateUtil';
 import {TrainingEntry} from '../../../../../model/TrainingEntry';
 import {NameEntity} from '../../../../../model/NameEntity';
 import {TrainingEntryDialog} from './training-entry-dialog_module';
@@ -129,12 +129,12 @@ export class SingleTrainingEntry extends React.Component<TrainingEntryLocalProps
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleClickTapField}>
-                        {formatToShortDisplay(this.props.trainingEntry.startDate())}
+                        {formatToYear(this.props.trainingEntry.startDate())}
                     </div>
                 </td>
                 <td>
                     <div className="fittingContainer" onClick={this.handleClickTapField}>
-                        {formatToShortDisplay(this.props.trainingEntry.endDate())}
+                        {formatToYear(this.props.trainingEntry.endDate())}
                     </div>
                 </td>
                 <td>

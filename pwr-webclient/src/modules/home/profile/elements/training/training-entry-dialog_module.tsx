@@ -15,6 +15,7 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {DatePicker} from 'material-ui-pickers';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
+import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 
 interface TrainingEntryDialogProps {
     /**
@@ -127,24 +128,26 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                 <DialogContent>
                     <div className="row">
                         <div className="col-md-5">
-                            <DatePicker
+                            {/*<DatePicker
                                 label={PowerLocalize.get('Begin')}
                                 id={'TrainingEntry.Dialog.StartDate' + this.props.trainingEntry.id}
                                 value={this.state.trainingEntry.startDate()}
                                 onChange={this.handleChangeStartDate}
                                 showTodayButton
                                 todayLabel={PowerLocalize.get('Today')}
-                            />
+                            />*/}
+                            <PwrYearPicker onChange={this.handleChangeStartDate} placeholderDate={this.state.trainingEntry.startDate()} label={"Start"}/>
                         </div>
                         <div className="col-md-5">
-                            <DatePicker
+                            {/*<DatePicker
                                 label={PowerLocalize.get('End')}
                                 id={'TrainingEntry.Dialog.EndDate' + this.props.trainingEntry.id}
                                 value={this.state.trainingEntry.endDate()}
                                 onChange={this.handleChangeEndDate}
                                 showTodayButton
                                 todayLabel={PowerLocalize.get('Today')}
-                            />
+                            />*/}
+                            <PwrYearPicker onChange={this.handleChangeEndDate} placeholderDate={this.state.trainingEntry.endDate()} label={"Ende"}/>
                         </div>
                     </div>
                     <PwrSpacer/>

@@ -7,7 +7,7 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {Profile} from '../../../../../model/Profile';
-import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {formatToShortDisplay, formatToYear} from '../../../../../utils/DateUtil';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
@@ -80,8 +80,8 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     };
 
     private renderTitle = () => {
-        return 'Tätig als ' + this.getRoleNameList() + ' von ' + formatToShortDisplay(this.props.project.startDate())
-            + ' bis ' + formatToShortDisplay(this.props.project.endDate());
+        return 'Tätig als ' + this.getRoleNameList() + ' von ' + formatToYear(this.props.project.startDate())
+            + ' bis ' + formatToYear(this.props.project.endDate());
     };
 
     render() {

@@ -18,6 +18,7 @@ import {DatePicker} from 'material-ui-pickers';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
+import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 
 
 interface EducationEntryDialogLocalProps {
@@ -146,6 +147,17 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         this.closeDialog();
     };
 
+    private handleStartDateChange = (date: Date) => {
+        this.setState({
+           entry : this.state.entry.startDate(date)
+        });
+
+    };
+    private handleEndDateChange = (date: Date) => {
+        this.setState({
+            entry : this.state.entry.endDate(date)
+        });
+    };
 
     render() {
         return <Dialog
@@ -163,7 +175,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 <div className="row">
                     <div className="col-md-5 col-sm-6 ">
                         <form>
-                            <DatePicker
+                            {/* <DatePicker
                                 autoOk
                                 label={PowerLocalize.get('Begin')}
                                 id={'EducationEntry.StartDate' + this.props.educationEntry.id}
@@ -172,21 +184,17 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                                     this.state.entry.startDate(date);
                                 }}
                                 format="DD.MM.YYYY"
-                            />
+                            />*/}
+                            <PwrYearPicker onChange={this.handleStartDateChange}
+                                           placeholderDate={this.state.entry.startDate()}
+                                           label={'Start'}/>
 
                         </form>
                     </div>
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                         <form noValidate>
-                            <DatePicker
-                                autoOk
-                                label={PowerLocalize.get('End')}
-                                id={'EducationEntry.EndDate' + this.props.educationEntry.id}
-                                value={this.state.entry.startDate()}
-                                onChange={(date: Date) => {
-                                    this.state.entry.endDate(date);
-                                }}
-                                format="DD.MM.YYYY"
+                            <PwrYearPicker onChange={this.handleEndDateChange}
+                                           placeholderDate={this.state.entry.endDate()} label={'Ende'}
                             />
                         </form>
                     </div>

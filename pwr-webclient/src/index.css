@@ -250,3 +250,7 @@ body {
     margin: 2%;
     background-color: #ececec;
 }
+
+[class*="MuiInputAdornment-root"] {
+    height: auto !important;
+}

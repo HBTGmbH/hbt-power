@@ -19,6 +19,8 @@ import {DatePicker} from 'material-ui-pickers';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
+import Icon from '@material-ui/core/Icon/Icon';
+import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 
 
 /**
@@ -162,9 +164,8 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
             id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
             value={this.state.careerEntry.endDate()}
             onChange={this.changeEndDate}
-            showTodayButton
-            todayLabel={PowerLocalize.get('Today')}
-            format="DD.MM.YYYY"
+            openToYearSelection
+            format="YYYY"
         />;
     };
 
@@ -181,16 +182,32 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
             <DialogContent>
                 <div className="row">
                     <div className="col-md-5 col-sm-6 col-sm-offset-0">
-                        <DatePicker
+                        {/*<DatePicker
                             autoOk
                             label={'Start Date'}
                             value={this.state.careerEntry.startDate()}
                             onChange={this.changeStartDate}
-                            format="DD.MM.YYYY"
+                            format="YYYY"
+                            openToYearSelection
+                            keyboard
+                            keyboardIcon={<Icon></Icon>}
+                        />*/}
+                        <PwrYearPicker
+                            label={"Start"}
+                            onChange={this.changeStartDate}
+                            placeholderDate={this.state.careerEntry.startDate()}
                         />
+
                     </div>
                     <div className="col-md-5 col-sm-6">
-                        {this.renderEndDateChoice()}
+                        {
+                            //this.renderEndDateChoice()
+                        }
+                        <PwrYearPicker
+                            label={"Ende"}
+                            onChange={this.changeEndDate}
+                            placeholderDate={this.state.careerEntry.endDate()}
+                        />
                     </div>
                 </div>
                 <PwrSpacer double={true}/>

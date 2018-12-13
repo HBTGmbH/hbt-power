@@ -15,6 +15,7 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {DatePicker} from 'material-ui-pickers';
 import {MaterialUiPickersDate} from 'material-ui-pickers/typings/date';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
+import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 
 
 interface QualificationEntryDialogProps {
@@ -120,11 +121,16 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                 <DialogContent>
                     <div className="row">
                         <div className="col-md-5">
-                            <DatePicker
+                            {/*<DatePicker
                                 id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
                                 label={PowerLocalize.get('Begin')}
                                 value={this.state.qualificationEntry.date()}
                                 onChange={this.handleChangeDate}
+                            />*/}
+                            <PwrYearPicker
+                                label={"Datum"}
+                                onChange={this.handleChangeDate}
+                                placeholderDate={this.state.qualificationEntry.date()}
                             />
                         </div>
                         <div className={'col-md-5'}>
