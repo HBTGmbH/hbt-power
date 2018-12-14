@@ -72,7 +72,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
 
     public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): DescriptionDispatch {
         return {
-            changeAbstract: function (newAbstract: string) {
+            changeAbstract: (newAbstract: string) => {
                 dispatch(ProfileActionCreator.changeAbstract(newAbstract));
             }
         };
@@ -95,7 +95,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
                     fullWidth={true}
                     multiline={true}
                     rows={10}
-                    onChange={() => this.handleTextChange}
+                    onChange={(e: any) => this.handleTextChange(e)}
                     value={this.props.abstractText}
                 />
                 <LinearProgress

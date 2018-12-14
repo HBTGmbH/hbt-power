@@ -21,6 +21,10 @@ import {isNullOrUndefined} from 'util';
 export class ProfileStore {
 
     @doop
+    public get modified(){
+        return doop<number,this>();
+    }
+    @doop
     public get languageLevels() {
         return doop<Array<string>, this>();
     };
@@ -131,7 +135,8 @@ export class ProfileStore {
             .careers(careers)
             .keySkills(keySkills)
             .currentlyUsedSkillNames(currentlyUsedSkillNames)
-            .loginStatus(loginStatus);
+            .loginStatus(loginStatus)
+            .modified(0);
     }
 
     public static createWithDefaults(): ProfileStore {
@@ -299,7 +304,8 @@ export class ProfileStore {
             .companies(companies)
             .projectRoles(projectRoles)
             .careers(careers)
-            .keySkills(keySkills);
+            .keySkills(keySkills)
+            .modified(0);
     }
 
 

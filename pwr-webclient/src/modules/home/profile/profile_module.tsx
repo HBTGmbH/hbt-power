@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {CardHeader, Divider, Paper, Tab, Tabs, Toolbar} from '@material-ui/core';
+import {CardHeader, Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {ProfileDescription} from './elements/abstract_module';
 import {LanguageSkills} from './elements/language/languages_module';
 import {Sectors} from './elements/sectors/sectors_module';
@@ -20,7 +20,7 @@ import {Careers} from './elements/career/career_module';
 import {KeySkills} from './elements/keyskill/keySkill_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Avatar from '@material-ui/core/Avatar/Avatar';
-import {PwrIconButton} from '../../general/pwr-icon-button';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener/ClickAwayListener';
 
 
 interface ProfileProps {
@@ -49,7 +49,9 @@ interface ProfileLocalState {
 
 interface ProfileDispatch {
     reloadProfile(initials: string): void;
+
     saveProfile(initials: string, database: ProfileStore): void;
+
     preFetchSuggestions(): void;
 }
 
@@ -80,6 +82,18 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
             preFetchSuggestions: () => dispatch(ProfileAsyncActionCreator.requestAllNameEntities())
         };
     }
+
+    public componentDidUpdate() {
+        if (this.props.database.modified() == 1) {
+            this.handleSaveProfile();
+        }
+    }
+
+    private handleClickAway = () => {
+        if (this.props.database.modified() != 0) {
+            this.handleSaveProfile();
+        }
+    };
 
     private handleReloadProfile = () => {
         this.props.reloadProfile(this.props.loggedInUser.initials());
@@ -133,10 +147,12 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <Divider/>
                         <div className="row">
                             <div className="col-md-6 col-sm-12">
-                                <ProfileDescription
-                                    hintText={PowerLocalize.get('Profile.Description')}
-                                    initialMaxCharacters={500}
-                                />
+                                <ClickAwayListener onClickAway={this.handleClickAway}>
+                                    <ProfileDescription
+                                        hintText={PowerLocalize.get('Profile.Description')}
+                                        initialMaxCharacters={500}
+                                    />
+                                </ClickAwayListener>
                             </div>
                             <div className="col-md-6 col-sm-12">
                                 <LanguageSkills/>
@@ -175,14 +191,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     </div>
                     }
                 </div>
-                <Toolbar>
-                    <div style={{marginLeft: 'auto'}}>
-                        <PwrIconButton iconName={'done'} tooltip={PowerLocalize.get('Action.Save')}
-                                       onClick={this.handleSaveProfile}/>
-                        <PwrIconButton iconName={'undo'} tooltip={PowerLocalize.get('Action.Undo')}
-                                       onClick={this.handleReloadProfile}/>
-                    </div>
-                </Toolbar>
             </Paper>
         );
     }

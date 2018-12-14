@@ -37,12 +37,18 @@ export class DatabaseReducer {
     }
 
     private static HandleChangeAbstract(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
+        state = state.modified(2);
         let newProfile: Profile = state.profile().description(action.value);
         return state.profile(newProfile);
     }
 
+    private static HandleDatabaseModified(state: ProfileStore): ProfileStore {
+        return state.modified(1);
+    }
+
 
     private static DeleteEntry(state: ProfileStore, action: DeleteEntryAction): ProfileStore {
+        state = this.HandleDatabaseModified(state);
         let newProfile: Profile = ProfileReducer.reducerHandleRemoveEntry(state.profile(), action);
         return state.profile(newProfile);
     }
@@ -53,6 +59,7 @@ export class DatabaseReducer {
     }
 
     private static UpdateNameEntity(database: ProfileStore, entity: NameEntity, type: ProfileElementType): ProfileStore {
+        database = this.HandleDatabaseModified(database);
         switch (type) {
             case ProfileElementType.TrainingEntry:
                 return database.trainings(database.trainings().set(entity.id(), entity));
@@ -86,6 +93,7 @@ export class DatabaseReducer {
         let idToRemove: string = (<DeleteProjectAction> action).id;
         let newProfile: Profile = database.profile();
         newProfile = newProfile.projects(newProfile.projects().remove(idToRemove));
+        database = this.HandleDatabaseModified(database);
         return database.profile(newProfile);
     }
 
@@ -124,6 +132,7 @@ export class DatabaseReducer {
         project = project.endCustomerId(endCustomer.id());
 
         let profile: Profile = ProfileReducer.reducerHandleSaveProject(database.profile(), project);
+        database = this.HandleDatabaseModified(database);
         return database.profile(profile);
     }
 
@@ -135,10 +144,12 @@ export class DatabaseReducer {
     }
 
     private static UpdateSkillRating(database: ProfileStore, action: UpdateSkillRatingAction): ProfileStore {
+        database = this.HandleDatabaseModified(database);
         return database.profile(ProfileReducer.reducerHandleUpdateSkillRating(database.profile(), action));
     }
 
     private static DeleteSkill(database: ProfileStore, action: DeleteSkillAction): ProfileStore {
+        database = this.HandleDatabaseModified(database);
         return database.profile(ProfileReducer.reducerHandleDeleteSkill(database.profile(), action));
     }
 
@@ -185,10 +196,11 @@ export class DatabaseReducer {
 
     private static AddSkill(state: ProfileStore, action: AddSkillAction): ProfileStore {
         let profile = ProfileReducer.reducerHandleAddSkill(state.profile(), action);
+        state = this.HandleDatabaseModified(state);
         return state.profile(profile);
     }
 
-    public static SetUserInitials(state: ProfileStore, initials: string,  checkValue?: boolean): ProfileStore {
+    public static SetUserInitials(state: ProfileStore, initials: string, checkValue?: boolean): ProfileStore {
         let loggedInUser = state.loggedInUser().initials(initials);
         let status = LoginStatus.INITIALS;
         if (checkValue) {
@@ -198,7 +210,6 @@ export class DatabaseReducer {
     }
 
     public static Reduce(state: ProfileStore, action: AbstractAction): ProfileStore {
-        console.debug("Database Reducer called with " + ActionType[action.type], action);
         if (isNullOrUndefined(state)) {
             state = ProfileStore.createWithDefaults();
         }
