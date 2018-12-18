@@ -1,7 +1,9 @@
 import * as React from 'react';
-import {DatePicker} from 'material-ui-pickers';
 import Icon from '@material-ui/core/Icon/Icon';
 
+const DatePicker = require("material-ui-pickers").DatePicker;
+
+console.log(DatePicker);
 
 interface PwrYearPickerProps{
     onChange(date:Date):void;
@@ -28,13 +30,13 @@ export class PwrYearPicker extends React.Component<PwrYearPickerProps,PwrYearPic
                 autoOk
                 label={this.props.label}
                 placeholder={this.props.placeholderDate.toString()}
-                value={this.state.selectedDate}
+                value={this.props.placeholderDate.toString()}
                 onChange={this.props.onChange}
                 format="YYYY"
                 openToYearSelection
                 keyboard
                 keyboardIcon={<Icon className={"material-icons"}>date_range</Icon>}
-                //disableOpenOnEnter
+                disableOpenOnEnter
             />
     }
 }

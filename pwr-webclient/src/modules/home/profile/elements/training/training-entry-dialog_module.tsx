@@ -79,10 +79,14 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         });
     };
 
-    private handleChangeStartDate = (date) => {
+    private handleChangeStartDate = (date:Date) => {
+        console.log("Training Picker: "+date);
+        let entry:TrainingEntry = this.state.trainingEntry.startDate(date);
+        console.log("new Entry      :"+entry.startDate());
         this.setState({
-            trainingEntry: this.state.trainingEntry.startDate(date)
+            trainingEntry: entry
         });
+        //console.log("Date in State  : "+this.state.trainingEntry.startDate());
     };
 
     /**
@@ -113,6 +117,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
 
 
     render() {
+        console.log("Date in State  : "+this.state.trainingEntry.startDate());
         return (
             <Dialog
                 open={this.props.open}
