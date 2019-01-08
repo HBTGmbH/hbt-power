@@ -15,42 +15,42 @@ import TextField from '@material-ui/core/TextField/TextField';
 import {ReportPreview} from './report-preview_module';
 
 
-interface ReportCreateTemplateLocalProps {
+interface ReportUploadTemplateLocalProps {
     open: boolean;
 
     onClose(): void;
 }
 
-interface ReportCreateTemplateProps {
+interface ReportUploadTemplateProps {
     currentUser: string;
 }
 
-interface ReportCreateTemplateDispatch {
+interface ReportUploadTemplateDispatch {
     loadPreview(id: string): void;
 
     saveTemplate(file: File, name: string, desc: string, createUser: string): void;
 
 }
 
-interface ReportCreateTemplateState {
+interface ReportUploadTemplateState {
     fileName: string;
     tempName: string;
     tempDescription: string;
     tempInitials: string;
     file: any;
-    previewServerUrl: string;
+    previewTemplateId: string;
 }
 
 
-class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplateProps & ReportCreateTemplateLocalProps & ReportCreateTemplateDispatch, ReportCreateTemplateState> {
+class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplateProps & ReportUploadTemplateLocalProps & ReportUploadTemplateDispatch, ReportUploadTemplateState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: ReportCreateTemplateLocalProps): ReportCreateTemplateProps {
+    static mapStateToProps(state: ApplicationState, localProps: ReportUploadTemplateLocalProps): ReportUploadTemplateProps {
         return {
             currentUser: state.adminReducer.adminName(),
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportCreateTemplateDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportUploadTemplateDispatch {
         return {
             loadPreview: (id: string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
             saveTemplate: (file: any, name: string, desc: string, createUser: string) => dispatch(TemplateActionCreator.AsyncUploadFileAsTemplate(file, name, desc, createUser)),
@@ -58,30 +58,30 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
     }
 
 
-    constructor(props: ReportCreateTemplateProps
-        & ReportCreateTemplateLocalProps
-        & ReportCreateTemplateDispatch) {
+    constructor(props: ReportUploadTemplateProps
+        & ReportUploadTemplateLocalProps
+        & ReportUploadTemplateDispatch) {
         super(props);
         this.resetState(props);
     }
 
-    private resetState(props: ReportCreateTemplateProps
-        & ReportCreateTemplateLocalProps
-        & ReportCreateTemplateDispatch) {
+    private resetState(props: ReportUploadTemplateProps
+        & ReportUploadTemplateLocalProps
+        & ReportUploadTemplateDispatch) {
         this.state = {
             fileName: '',
             tempName: '',
             tempDescription: '',
             tempInitials: '',
             file: null,
-            previewServerUrl: '',
+            previewTemplateId: '',
         };
     }
 
     private uploadTemplate = () => {
         if (this.state.file != null) {
-            this.props.saveTemplate(this.state.file, this.state.tempName, this.state.tempDescription, this.props.currentUser);
             console.log('trying to upload file... ', this.state.file);
+            this.props.saveTemplate(this.state.file, this.state.tempName, this.state.tempDescription, this.props.currentUser);
         }
     };
 
@@ -112,7 +112,7 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
 
             < Button className={""} onClick={() => {}} ><Icon>attach_file</Icon></Button>
             */}
-            <Typography className={"vertical-align"}>Template hochladen</Typography>
+            <Typography className={'vertical-align'}>Template hochladen</Typography>
             <input
                 type={'file'}
                 value={this.state.fileName}
@@ -127,7 +127,7 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                 - verify file type .rptdesign ??
                 - if rendered and file received display the preview
             */}
-            { this.verifyFile() == false ? <div className={"vertical-align"}>Select a .rptdesing file</div> :
+            {this.verifyFile() == false ? <div className={'row'}>Select a .rptdesing file</div> :
                 <div>
                     <TextField
                         label={'Name'}
@@ -169,10 +169,10 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                         color={'primary'}
                         onClick={() => {
                             this.uploadTemplate();
-                        }}// createTemplate for old version
+                        }}
                     >
                         <Icon>send</Icon>
-                         Upload
+                        Upload
                     </Button>
                 </div>
             }
@@ -205,9 +205,6 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                         <Button variant={'raised'} style={{margin: '5px'}} onClick={() => {
                             this.props.onClose();
                         }}><Icon>close</Icon></Button>
-                        {/*<Button variant={'raised'} style={{margin:"5px"}} onClick={()=>{} }><Icon>save</Icon><Icon>close</Icon></Button>
-                        <Button variant={'raised'} style={{margin:"5px"}} onClick={()=>{} }><Icon className={"mui-icons"}>save</Icon></Button>*/}
-
                         <Typography variant={'body1'} style={{marginLeft: '5em'}}
                                     color={'textSecondary'}> {this.state.tempName}</Typography>
                     </Toolbar>
@@ -220,7 +217,7 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
                     </div>
                     <div className={'col-md-6'}>
                         <Paper>
-                            <ReportPreview templateId={this.state.previewServerUrl}/>
+                            <ReportPreview templateId={this.state.previewTemplateId}/>
                         </Paper>
                     </div>
                 </div>
@@ -230,4 +227,4 @@ class ReportCreateTemplateDialog extends React.Component<ReportCreateTemplatePro
 }
 
 
-export const CreateTemplateDialog: React.ComponentClass<ReportCreateTemplateLocalProps> = connect(ReportCreateTemplateDialog.mapStateToProps, ReportCreateTemplateDialog.mapDispatchToProps)(ReportCreateTemplateDialog);
+export const UploadTemplateDialog: React.ComponentClass<ReportUploadTemplateLocalProps> = connect(ReportUploadTemplateDialog.mapStateToProps, ReportUploadTemplateDialog.mapDispatchToProps)(ReportUploadTemplateDialog);

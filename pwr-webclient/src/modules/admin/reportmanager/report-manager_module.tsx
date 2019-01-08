@@ -12,7 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import Divider from '@material-ui/core/Divider/Divider';
 import Paper from '@material-ui/core/Paper/Paper';
 import List from '@material-ui/core/List/List';
-import {CreateTemplateDialog} from './report-create-template-dialog';
+import {UploadTemplateDialog} from './report-upload-template-dialog';
 import {ReportManagerInfoBox} from './report-manager-infobox_module';
 
 interface ReportManagerProps {
@@ -107,7 +107,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
     render() {
         return <div>
-            <CreateTemplateDialog
+            <UploadTemplateDialog
                 open={this.state.createDialogOpen}
                 onClose={() => this.onCreateDialogClose()}
             />
