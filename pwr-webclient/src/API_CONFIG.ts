@@ -269,7 +269,7 @@ export namespace TemplateService {
     }
 
     export function getPreviewFromReport(filename:string){
-        return "http://localhost:9005/file/"+filename;
+        return "http://localhost:9005/file/"+filename; // TODO vernünftig machen
     }
 
     export function getAllFiles() {

@@ -108,10 +108,6 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
 
     private renderUpload = () => {
         return <div style={{padding: '2em'}}>
-            {/* Für das freie Erstellen von Templates
-
-            < Button className={""} onClick={() => {}} ><Icon>attach_file</Icon></Button>
-            */}
             <Typography className={'vertical-align'}>Template hochladen</Typography>
             <input
                 type={'file'}
@@ -121,12 +117,6 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
                 }}
             />
 
-            {/*
-                start async rendering after onChange
-                - display loading bar/ circle
-                - verify file type .rptdesign ??
-                - if rendered and file received display the preview
-            */}
             {this.verifyFile() == false ? <div className={'row'}>Select a .rptdesing file</div> :
                 <div>
                     <TextField
@@ -150,18 +140,6 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
                         }}
                     />
 
-                    {/*<Button
-                        style={{marginTop: '5px'}}
-                        variant={'contained'}
-                        className={'vertical-align'}
-                        onClick={() => {
-                            this.renderTemplate();
-                        }}
-                    >
-                        <Icon>present_to_all</Icon>
-                        Render
-                    </Button>*/}
-
                     <Button
                         style={{marginTop: '10px'}}
                         variant={'contained'}
@@ -178,18 +156,6 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
             }
         </div>;
     };
-
-    private renderTemplatePreview = () => {
-        return <div>
-            {/*
-          TODO render preview // system dafür ausdenken, axios response in den state laden und in mapstatetoprops rausladen
-          TODO als html oder als docx??
-
-
-          */}
-        </div>;
-    };
-
 
     render() {
         return <Dialog
