@@ -5,6 +5,8 @@ import {
     Button,
     CircularProgress,
     Dialog,
+    DialogContent,
+    DialogTitle,
     FormControl,
     FormControlLabel,
     IconButton,
@@ -22,7 +24,7 @@ import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAct
 import {SkillSearcher} from '../../general/skill-search_module';
 import {AdminNotificationReason} from '../../../model/admin/AdminNotificationReason';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
@@ -382,23 +384,21 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
     };
 
     render() {
-        return (<Dialog
-            open={this.props.status !== SkillNotificationEditStatus.CLOSED}
+        return <Dialog id="SkillNotificationDialog"
+                       open={this.props.status !== SkillNotificationEditStatus.CLOSED}
+                       onClose={this.props.closeAndReset}
+                       scroll={'paper'}
+                       fullWidth
         >
-            {this.renderContent()}
-            {this.renderStepper()}
-            {this.renderController()}
-            <DialogActions>
-                <Button
-                    variant={'flat'}
-                    key="SkillNotDlg.CloseAndReset"
-                    color={'primary'}
-                    onClick={this.props.closeAndReset}
-                >
-                    Cancle
-                </Button>
-            </DialogActions>
-        </Dialog>);
+            <DialogTitle id="SkillNotificationDialog.Title">
+                {PowerLocalize.get('SkillNotificationDialog.Title')}
+            </DialogTitle>
+            <DialogContent id="SkillNotificationDialog.Content">
+                {this.renderContent()}
+                {this.renderStepper()}
+                {this.renderController()}
+            </DialogContent>
+        </Dialog>;
     }
 }
 

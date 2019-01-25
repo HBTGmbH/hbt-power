@@ -104,6 +104,7 @@ export const de_locale: any = {
     'NotificationDialog.ActionDelete.Description': 'Der Bezeichner ist ungültig und wird gelöscht. Sämtliche Profileinträge aller Profile, die diesen Bezeichner verwenden, werden ebenfalls gelöscht.',
 
     'NotificationDialog.EditNameEntity': 'Neuer Bezeichner',
+    'SkillNotificationDialog.Title': 'Skill Meldung Bearbeiten',
     'ConsultantTile.EditProfile': 'Profil bearbeiten',
     'ConsultantTile.EditConsultant': 'Berater bearbeiten',
     'UserLogin.LoginFailed': 'Login fehlgeschlagen',

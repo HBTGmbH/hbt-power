@@ -58,6 +58,7 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
                 <TableCell>{notification.adminNotification().initials()}</TableCell>
                 <TableCell
                     className="cursor-pointer"
+                    onClick={() => this.showNotificationDialog(key)}
                 >
                     {formatString(
                         PowerLocalize.get('NotificationInbox.NameEntityNotification.SubjectTextTemplate'),

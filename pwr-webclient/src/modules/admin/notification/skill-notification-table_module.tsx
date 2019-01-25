@@ -12,7 +12,6 @@ import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
-import formatString = StringUtils.formatString;
 
 
 interface SkillNotificationTableProps {
@@ -48,19 +47,18 @@ class SkillNotificationTableModule extends React.Component<SkillNotificationTabl
     }
 
     private handleSelectAll = (e: any, checked: boolean) => {
-        let selection: Array<number>;
-        selection = [];
+        let selection: Array<number> = [];
         if (checked) {
-            this.props.skillNotifications.map((value, key) => {
-                selection.push(key);
-            });
-        } else {
-
+            selection = this.props.skillNotifications.map((value, key) => key).toArray();
         }
         this.props.onRowSelection(selection);
     };
 
-    private handleSingleRow = (e: any, checked: boolean, key: number) => {
+    private openDialogFor = (notificationIndex: number) => {
+        return () => this.props.onDialogOpen(notificationIndex);
+    };
+
+    private handleSingleRow = (key: number) => {
         let selection = this.props.selectedRows;
         let isSelected: boolean = this.props.selectedRows.indexOf(key) !== -1;
         if (isSelected) {
@@ -86,8 +84,7 @@ class SkillNotificationTableModule extends React.Component<SkillNotificationTabl
     };
 
     private mapRow = (notification: SkillNotification, key: number) => {
-        let isSelected: boolean;
-        isSelected = this.props.selectedRows.indexOf(key) !== -1;
+        let isSelected = this.props.selectedRows.indexOf(key) !== -1;
         return (
             <TableRow
                 hover
@@ -99,34 +96,18 @@ class SkillNotificationTableModule extends React.Component<SkillNotificationTabl
                 <TableCell padding={'checkbox'}>
                     <FormGroup>
                         <Checkbox checked={isSelected}
-                                  onChange={(event: any, checked: boolean) => {
-                                      this.handleSingleRow(event, checked, key);
-                                  }}
+                                  onChange={() => this.handleSingleRow(key)}
                                   color="primary"/>
                     </FormGroup>
                 </TableCell>
                 <TableCell>{notification.adminNotification().initials()}</TableCell>
-                <TableCell
-                    className="cursor-pointer"
-                >
-                    {formatString(PowerLocalize.get('NotificationInbox.SkillNotification.SubjectTextTemplate'),
-                        notification.skill().name())
-                    }
+                <TableCell className="cursor-pointer" onClick={this.openDialogFor(key)}>
+                    {PowerLocalize.getFormatted('NotificationInbox.SkillNotification.SubjectTextTemplate', notification.skill().name())}
                 </TableCell>
                 <TableCell>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableCell>
             </TableRow>
         );
     };
-
-
-    private handleCellClick = (rowNum: number, colNum: number) => {
-        // Ignore the checkboxes.
-        if (colNum >= 0) {
-            let id = this.props.skillNotifications.get(rowNum).adminNotification().id();
-            this.props.onDialogOpen(id);
-        }
-    };
-
 
     render() {
         return (<div>
