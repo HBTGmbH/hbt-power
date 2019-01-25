@@ -165,7 +165,7 @@ export class ProfileAsyncActionCreator {
                     dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                     dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
                     dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                    Cookies.set(COOKIE_INITIALS_NAME, initials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
+                    window.localStorage.setItem(COOKIE_INITIALS_NAME, initials);
                     if (!isNullOrUndefined(navTarget)) {
                         dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
                     }

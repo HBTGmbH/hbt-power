@@ -9,6 +9,7 @@ import {SortableEntryField, SortableEntryType} from '../../model/view/NameCompar
 import {AbstractAction} from '../profile/database-actions';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import {TemplateActionCreator} from '../template/TemplateActionCreator';
 
 export namespace ViewProfileActionCreator {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
@@ -253,8 +254,8 @@ export namespace ViewProfileActionCreator {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.post(ViewProfileService.postReport(initials, viewProfileId, templateId)).then((response: AxiosResponse) => {
                 let location = response.data;
-                console.info('Received location: ', location);
-                window.open(location, '_blank');
+                console.info('Received Export: ', location);
+                dispatch(TemplateActionCreator.AsyncDownloadFile('d3361df8-47d7-4a4c-bc43-da4ddff0c136'));
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch(function (error: any) {
                 console.error(error);

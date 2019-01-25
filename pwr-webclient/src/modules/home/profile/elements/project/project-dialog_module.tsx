@@ -16,7 +16,6 @@ import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreat
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import {DatePicker} from 'material-ui-pickers';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {ComparatorBuilder} from 'ts-comparator';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
@@ -49,6 +48,7 @@ export interface ProjectDialogState {
     roles: Array<string>;
     clientACValue: string; // Autocomplete value of the client field
     brokerACValue: string; // Autocomplete value of the broker field
+    roleACValue: string;
 }
 
 class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & ProjectDialogDispatch, ProjectDialogState> {
@@ -77,15 +77,15 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
     }
 
     private forceReset(props: ProjectDialogLocalProps, initial: boolean) {
-        let roles: Array<string> = [];
-        props.project.roleIds().forEach(id => {
-            roles.push(NameEntityUtil.getNullTolerantName(id, props.projectRoles));
-        });
+        let roles: Array<string> = props.project.roleIds()
+            .map(id => NameEntityUtil.getNullTolerantName(id, props.projectRoles))
+            .toArray();
         let state = {
             project: props.project,
             roles: roles,
             clientACValue: NameEntityUtil.getNullTolerantName(props.project.endCustomerId(), props.companies),
             brokerACValue: NameEntityUtil.getNullTolerantName(props.project.brokerId(), props.companies),
+            roleACValue: ''
         };
         if (initial) {
             this.state = state;
@@ -163,6 +163,12 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         });
     };
 
+    private handleRoleInput = (text: string) => {
+        this.setState({
+            roleACValue: text
+        });
+    };
+
     private handleBrokerChange = (chosenRequest: string) => {
         this.setState({
             brokerACValue: chosenRequest
@@ -183,7 +189,6 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
             this.changeEndDate(null);
         }
     };
-
 
 
     public render() {
@@ -227,14 +232,14 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <div className="row">
                         <div className="col-md-5">
                             <PwrYearPicker
-                                label={"Start"}
+                                label={'Start'}
                                 onChange={this.changeStartDate}
                                 placeholderDate={this.state.project.startDate()}
                             />
                         </div>
                         <div className="col-md-5">
                             <PwrYearPicker
-                                label={"Start"}
+                                label={'Start'}
                                 onChange={this.changeEndDate}
                                 placeholderDate={this.state.project.endDate()}
                             />
@@ -266,14 +271,17 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <PwrSpacer double={true}/>
                     <div className="row">
                         <div className="col-md-10">
-
-                            <ChipInput
+                            <PwrAutoComplete
                                 fullWidth={true}
+                                multi
                                 label={PowerLocalize.get('Project.Dialog.Roles.Title')}
-                                dataSource={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
-                                value={this.state.roles}
+                                id={'ProjectDialog.ProjectRoles.' + this.props.project.id}
+                                data={this.props.projectRoles.toArray().map(NameEntityUtil.mapToName)}
                                 onAdd={(chip) => this.handleAddRole(chip)}
-                                onDelete={(chip, index) => this.handleRemoveRole(chip)}
+                                onRemove={(chip) => this.handleRemoveRole(chip)}
+                                onSearchChange={this.handleRoleInput}
+                                searchTerm={this.state.roleACValue}
+                                chips={this.state.roles}
                             />
                         </div>
                     </div>

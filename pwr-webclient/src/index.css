@@ -251,6 +251,6 @@ body {
     background-color: #ececec;
 }
 
-[class*="MuiInputAdornment-root"] {
-    height: auto !important;
-}
+/*[class*="MuiInputAdornment-root"] {*/
+    /*height: auto !important;*/
+/*}*/

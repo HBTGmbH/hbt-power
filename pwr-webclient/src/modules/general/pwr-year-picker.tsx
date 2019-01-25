@@ -1,5 +1,7 @@
 import * as React from 'react';
 import Icon from '@material-ui/core/Icon/Icon';
+import {StringUtils} from '../../utils/StringUtil';
+import dateToString = StringUtils.dateToString;
 
 const DatePicker = require("material-ui-pickers").DatePicker;
 
@@ -29,8 +31,8 @@ export class PwrYearPicker extends React.Component<PwrYearPickerProps,PwrYearPic
         return <DatePicker
                 autoOk
                 label={this.props.label}
-                placeholder={this.props.placeholderDate.toString()}
-                value={this.props.placeholderDate.toString()}
+                placeholder={"Year"}
+                value={this.props.placeholderDate}
                 onChange={this.props.onChange}
                 format="YYYY"
                 openToYearSelection

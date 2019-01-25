@@ -291,6 +291,9 @@ export class AdminActionCreator {
                 if (!restoreRoute) {
                     PWR_HISTORY.push(Paths.ADMIN_INBOX);
                 }
+                if (window.location.pathname.startsWith("/app/home")) {
+                    PWR_HISTORY.push(Paths.ADMIN_INBOX);
+                }
             }).catch((error: PowerApiError) => {
                 console.error(error);
                 if (error.status != -1) {

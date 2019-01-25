@@ -11,10 +11,7 @@ const ChipInput = require('material-ui-chip-input').default;
 
 
 function filter(suggestions: Array<string>, searchTerm: string, filter: (searchTerm: string, value: string) => boolean) {
-    console.log('Filter before', suggestions);
-    let res = suggestions.filter(value => filter(searchTerm, value));
-    console.log('Filter after', res);
-    return res;
+    return suggestions.filter(value => filter(searchTerm, value));
 }
 
 const styles = theme => ({
@@ -115,6 +112,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
     };
 
     renderChipInput = (inputProps) => {
+        console.log(inputProps);
         const {classes, autoFocus, value, onChange, onAdd, onDelete, chips, ref, ...other} = inputProps;
         return (
             <ChipInput
@@ -166,6 +164,8 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
             renderSuggestion: this.renderSuggestion,
         };
 
+
+        console.log("Props.Chips",this.props.chips);
         return (
             <Autosuggest
                 id={this.props.id}

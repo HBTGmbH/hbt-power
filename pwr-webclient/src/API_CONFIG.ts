@@ -277,3 +277,13 @@ export namespace TemplateService {
     }
 
 }
+
+export namespace ReportService {
+    function base(){
+        return POWER_API_HOST + ":" + POWER_API_PORT_REPORT + POWER_API_SUFFIX_REPORT;
+    }
+
+    export function getFileById(id:string){
+        return base() + "/file/"+id;
+    }
+}

@@ -28,4 +28,12 @@ export namespace StringUtils {
 
         return searchTextIndex === searchText.length;
     }
+
+
+    export function dateToString(date: Date) {
+        if (date == null) {
+            return "";
+        }
+        return date.toString();
+    }
 }

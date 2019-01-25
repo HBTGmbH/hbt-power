@@ -49,7 +49,7 @@ export class Paths {
     }
 
     private userAvailableInCookies = () => {
-        return !isNullOrUndefined(Cookies.get(COOKIE_INITIALS_NAME));
+        return !isNullOrUndefined(window.localStorage.getItem(COOKIE_INITIALS_NAME));
     };
 
     private adminAvailableInCookies = () => {
@@ -59,16 +59,11 @@ export class Paths {
     public restorePath() {
         console.info('Current history location is ', location.pathname);
         if (this.adminAvailableInCookies()) {
+            console.info("Admin is available; Performing admin login!");
             store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
         } else if (this.userAvailableInCookies()) {
-            const storedInitials = Cookies.get(COOKIE_INITIALS_NAME);
-            // renew the cookie to hold another fixed period of time.
-            Cookies.set(COOKIE_INITIALS_NAME, storedInitials, {expires: COOKIE_INITIALS_EXPIRATION_TIME});
-            if (location.pathname !== Paths.APP_ROOT) {
-                store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, location.pathname));
-            } else {
-                store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, Paths.USER_HOME));
-            }
+            const storedInitials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
+            store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, location.pathname));
         } else {
             store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
         }

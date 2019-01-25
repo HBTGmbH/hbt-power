@@ -85,6 +85,11 @@ const newPowerTheme = {
             paper: {
                 overflowY: 'unset',
             }
+        },
+        MuiInputAdornment: {
+            root: {
+                height: 'auto'
+            }
         }
     }
 };

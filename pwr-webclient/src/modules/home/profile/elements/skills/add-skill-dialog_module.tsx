@@ -258,10 +258,10 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
     private renderDone = (): JSX.Element => {
         let btn;
         if (this.props.doneState === 'SKILL_EXISTS') {
-            btn = <div><PwrIconButton style={{color: 'green'}} iconName="info" onClick={this.props.progress}
+            btn = <div><PwrIconButton style={{color: 'green', width:160, height:160}} iconName="info" onClick={this.props.progress}
                                       tooltip="Skill Already Exists"/>Skill Already Exists</div>;
         } else {
-            btn = <PwrIconButton style={{color: 'green'}} iconName="check_circle" onClick={this.props.progress}
+            btn = <PwrIconButton style={{color: 'green', width:160, height:160}} iconName="check_circle" onClick={this.props.progress}
                                  tooltip="OK"/>;
         }
 

@@ -69,3 +69,16 @@ export function compareNumbers(n1: number, n2: number) {
     return 1;
 }
 
+export function orDefault<V, R>(keyExtractor: (v:V) => R, def: R) {
+    return (value: V) => {
+        try {
+            return keyExtractor(value);
+        } catch (error) {
+            if (error instanceof TypeError) {
+                return def;
+            } else {
+                throw error;
+            }
+        }
+    }
+}

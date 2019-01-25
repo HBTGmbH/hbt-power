@@ -5,7 +5,7 @@ import {AbstractAction} from '../profile/database-actions';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosError, AxiosResponse} from 'axios';
-import {TemplateService} from '../../API_CONFIG';
+import {ReportService, TemplateService} from '../../API_CONFIG';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 
 export namespace TemplateActionCreator {
@@ -79,7 +79,7 @@ export namespace TemplateActionCreator {
     }
 
 
-    export function SetPreview(tempalteId: string, filename:string,content:string, file:File): SetPreviewAction {
+    export function SetPreview(tempalteId: string, filename: string, content: string, file: File): SetPreviewAction {
         return {
             type: ActionType.SetPreview,
             templateId: tempalteId,
@@ -105,8 +105,25 @@ export namespace TemplateActionCreator {
     }
 
     function PreviewReceived(id: string, response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
-        console.log("Preview Received ",response);
-        dispatch(SetPreview(id,"hardcoded filename","hardcoded content",response.data));
+        console.log('Preview Received ', response);
+        dispatch(SetPreview(id, 'hardcoded filename', 'hardcoded content', response.data));
+    }
+
+    function DownloadFile(response:AxiosResponse){
+        console.log("File received");
+        let blob:Blob = new Blob(response.data,{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        let a:any = document.createElement("a");
+        a.style = "display: none";
+        document.body.appendChild(a);
+        //Create a DOMString representing the blob
+        //and point the link element towards it
+        let url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = 'exportFile.docx';
+        //programatically click the link to trigger the download
+        a.click();
+        //release the reference to the file by revoking the Object URL
+        window.URL.revokeObjectURL(url);
     }
 
     function AsyncChangeTemplate(templateSlice: TemplateSlice) {
@@ -126,27 +143,43 @@ export namespace TemplateActionCreator {
         };
     }
 
-/*
-    export function AsyncCreateTemplate(name: string, description: string, initials: string, path: string) {
+    /*
+        export function AsyncCreateTemplate(name: string, description: string, initials: string, path: string) {
+            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+                dispatch(CrossCuttingActionCreator.startRequest());
+                axios.post(TemplateService.CreateTemplate(), {
+                    description: description,
+                    path: path,
+                    createUser: initials,
+                })
+                    .then((response: AxiosResponse) => {
+                        TemplateReceived(response, dispatch);
+                        dispatch(CrossCuttingActionCreator.endRequest());
+                    })
+                    .catch((error: AxiosError) => {
+                        dispatch(CrossCuttingActionCreator.endRequest());
+                        dispatch(TemplateActionCreator.TemplateRequestFailed());
+                        console.error(error);
+                    });
+            };
+        }
+    */
+
+
+    export function AsyncDownloadFile(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.post(TemplateService.CreateTemplate(), {
-                description: description,
-                path: path,
-                createUser: initials,
-            })
-                .then((response: AxiosResponse) => {
-                    TemplateReceived(response, dispatch);
-                    dispatch(CrossCuttingActionCreator.endRequest());
-                })
-                .catch((error: AxiosError) => {
-                    dispatch(CrossCuttingActionCreator.endRequest());
-                    dispatch(TemplateActionCreator.TemplateRequestFailed());
-                    console.error(error);
-                });
+            axios.get(ReportService.getFileById(id)).then((response: AxiosResponse) => {
+                DownloadFile(response);
+                dispatch(CrossCuttingActionCreator.endRequest());
+            }).catch((error: AxiosError) => {
+                dispatch(CrossCuttingActionCreator.endRequest());
+                console.error('AsyncDownloadFile', error);
+            });
         };
     }
-*/
+
+
     function AsyncLoadTemplate(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
@@ -179,9 +212,9 @@ export namespace TemplateActionCreator {
 
     export function AsyncLoadPreview(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            if(id != ""){
+            if (id != '') {
                 dispatch(CrossCuttingActionCreator.startRequest());
-                axios.get(TemplateService.getPreview(id),{})// url address
+                axios.get(TemplateService.getPreview(id), {})// url address
                     .then((response: AxiosResponse) => {
                         console.log(response);
                         PreviewReceived(id, response.data, dispatch);      // in den state laden
@@ -192,57 +225,57 @@ export namespace TemplateActionCreator {
                         dispatch(CrossCuttingActionCreator.endRequest());
                     });
             }
-        }
+        };
     }
 
 
     export function AsyncLoadPreviewFromReport(filename: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            if(filename != ""){
-               // dispatch(CrossCuttingActionCreator.startRequest());
+            if (filename != '') {
+                // dispatch(CrossCuttingActionCreator.startRequest());
                 axios.get(TemplateService.getPreviewFromReport(filename))// url address
                     .then((response: AxiosResponse) => {
                         console.log(response);
                         PreviewReceived(filename, response.data, dispatch);      // in den state laden
-                 //       dispatch(CrossCuttingActionCreator.endRequest());
+                        //       dispatch(CrossCuttingActionCreator.endRequest());
                     })
                     .catch(function (error: any) {
                         console.error(error);
-                   //     dispatch(CrossCuttingActionCreator.endRequest());
+                        //     dispatch(CrossCuttingActionCreator.endRequest());
                     });
             }
-        }
+        };
     }
 
     export function AsyncLoadAllPreviews() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(TemplateService.getAllPreviews())
-                .then( (response: AxiosResponse) => {
-                        console.log("All Preview Files",response.data);
-                    dispatch(CrossCuttingActionCreator.endRequest());
+                .then((response: AxiosResponse) => {
+                        console.log('All Preview Files', response.data);
+                        dispatch(CrossCuttingActionCreator.endRequest());
                     }
                 )
-                .catch(function(error:any){
-                   console.error(error);
-                   dispatch(CrossCuttingActionCreator.endRequest());
+                .catch(function (error: any) {
+                    console.error(error);
+                    dispatch(CrossCuttingActionCreator.endRequest());
                 });
-        }
+        };
     }
 
     export function AsyncLoadAllFiles() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState){
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(TemplateService.getAllFiles())
                 .then((response: AxiosResponse) => {
-                    console.log("All Files ",response.data);
+                    console.log('All Files ', response.data);
                     dispatch(CrossCuttingActionCreator.endRequest());
                 })
-                .catch(function(error:any){
-                   console.error(error) ;
+                .catch(function (error: any) {
+                    console.error(error);
                     dispatch(CrossCuttingActionCreator.endRequest());
                 });
-        }
+        };
     }
 
     export function AsyncUploadFileAsTemplate(file: any, name: string, description: string, createUser: string) {

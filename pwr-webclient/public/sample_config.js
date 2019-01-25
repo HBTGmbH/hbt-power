@@ -21,6 +21,10 @@ const POWER_API_HOST_VIEW = "https://power.hbt.de";
 const POWER_API_PORT_VIEW = "";
 const POWER_API_SUFFIX_VIEW = POWER_API_PREFIX + "/api/pwr-view-profile-service";
 
+const POWER_API_HOST_REPORT = "https://power.hbt.de";
+const POWER_API_PORT_REPORT = "";
+const POWER_API_SUFFIX_REPORT = POWER_API_PREFIX + "/api/pwr-report-service";
+
 const POWER_API_META_INFO_REPORT = "https://power.hbt.de/" + POWER_API_PREFIX + "/api/pwr-report-service/meta";
 
 const POWER_IMAGE_PATH = POWER_API_PREFIX + "/img";
