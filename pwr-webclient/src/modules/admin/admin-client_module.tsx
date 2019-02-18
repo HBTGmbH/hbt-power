@@ -191,7 +191,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                                     </ListItemIcon>
                                     <ListItemText primary={'Berater'}/>
                                 </ListItem>
-                                {/*<ListItem
+                                <ListItem
                                     button
                                     key="Templates"
                                     onClick={this.props.navigateToReportManager}
@@ -200,7 +200,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                                         <Icon className="material-icons">description</Icon>
                                     </ListItemIcon>
                                     <ListItemText primary={'Report Manager'}/>
-                                </ListItem>*/}
+                                </ListItem>
                                 <Divider/>
                                 <ListSubheader>Informationen</ListSubheader>
                                 <List>

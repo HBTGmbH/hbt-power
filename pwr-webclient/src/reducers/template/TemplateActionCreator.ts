@@ -111,7 +111,7 @@ export namespace TemplateActionCreator {
 
     function DownloadFile(response:AxiosResponse){
         console.log("File received");
-        let blob:Blob = new Blob(response.data,{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        let blob:Blob = new Blob([response.data],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
         let a:any = document.createElement("a");
         a.style = "display: none";
         document.body.appendChild(a);
@@ -166,10 +166,28 @@ export namespace TemplateActionCreator {
     */
 
 
+    export function DownloadReportFile(location:string){
+        console.log("File received");
+        let blob:Blob = new Blob([""],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        let a:any = document.createElement("a");
+        a.style = "display: none";
+        document.body.appendChild(a);
+        //Create a DOMString representing the blob
+        //and point the link element towards it
+        let url = window.URL.createObjectURL(blob);
+        a.href = location;
+        a.download = 'exportFile.docx';
+        //programatically click the link to trigger the download
+        a.click();
+        //release the reference to the file by revoking the Object URL
+        window.URL.revokeObjectURL(url);
+    }
+
     export function AsyncDownloadFile(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(ReportService.getFileById(id)).then((response: AxiosResponse) => {
+
                 DownloadFile(response);
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch((error: AxiosError) => {

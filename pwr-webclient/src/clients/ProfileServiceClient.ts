@@ -98,7 +98,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     public getTrainingSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/api/suggestions/trainings';
+        const url = this.base() + '/suggestions/trainings';
         this.beginRequest();
         return this.preProcess(axios.get(url));
     };
@@ -116,7 +116,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     public getCareerSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/api/suggestions/career';
+        const url = this.base() + '/suggestions/career';
         this.beginRequest();
         return this.preProcess(axios.get(url));
     };
@@ -181,7 +181,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     public authenticateAdmin = (): Promise<void> => {
-        const url = this.base() + "/admin";
+        const url = this.base() + "/admin/";
         let config = this.credentialsConfig();
         this.beginRequest();
         return this.preProcess(axios.head(url, config));
