@@ -20,7 +20,7 @@ import {Careers} from './elements/career/career_module';
 import {KeySkills} from './elements/keyskill/keySkill_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Avatar from '@material-ui/core/Avatar/Avatar';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener/ClickAwayListener';
+import {ProfileModificationStatus} from '../../../model/ProfileModificationStatus';
 
 
 interface ProfileProps {
@@ -84,16 +84,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 
     public componentDidUpdate() {
-        if (this.props.database.modified() == 1) {
+        if (this.props.database.modified() == ProfileModificationStatus.MODIFIED) {
             this.handleSaveProfile();
         }
     }
-
-    private handleClickAway = () => {
-        if (this.props.database.modified() != 0) {
-            this.handleSaveProfile();
-        }
-    };
 
     private handleReloadProfile = () => {
         this.props.reloadProfile(this.props.loggedInUser.initials());
@@ -147,12 +141,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         <Divider/>
                         <div className="row">
                             <div className="col-md-6 col-sm-12">
-                                <ClickAwayListener onClickAway={this.handleClickAway}>
-                                    <ProfileDescription
-                                        hintText={PowerLocalize.get('Profile.Description')}
-                                        initialMaxCharacters={500}
-                                    />
-                                </ClickAwayListener>
+                                <ProfileDescription
+                                    hintText={PowerLocalize.get('Profile.Description')}
+                                    initialMaxCharacters={500}
+                                />
                             </div>
                             <div className="col-md-6 col-sm-12">
                                 <LanguageSkills/>

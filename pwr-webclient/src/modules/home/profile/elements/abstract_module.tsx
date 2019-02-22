@@ -5,6 +5,7 @@ import {Color} from '../../../../utils/ColorUtil';
 import {LinearProgress, TextField} from '@material-ui/core';
 import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
+import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 
 interface DescriptionProps {
     abstractText: string;
@@ -36,6 +37,7 @@ interface DescriptionLocalState {
  */
 interface DescriptionDispatch {
     changeAbstract(newAbstract: string): void;
+    saveProfile(): void;
 }
 
 /**
@@ -74,7 +76,8 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         return {
             changeAbstract: (newAbstract: string) => {
                 dispatch(ProfileActionCreator.changeAbstract(newAbstract));
-            }
+            },
+            saveProfile: () => dispatch(ProfileAsyncActionCreator.saveCurrentProfile())
         };
     }
 
@@ -95,6 +98,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
                     fullWidth={true}
                     multiline={true}
                     rows={10}
+                    onBlur={this.props.saveProfile}
                     onChange={(e: any) => this.handleTextChange(e)}
                     value={this.props.abstractText}
                 />

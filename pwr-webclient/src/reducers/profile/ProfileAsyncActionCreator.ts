@@ -10,8 +10,7 @@ import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {Paths} from '../../Paths';
 import {isNullOrUndefined} from 'util';
-import {COOKIE_INITIALS_EXPIRATION_TIME, COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
-import * as Cookies from 'js-cookie';
+import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import {ProfileServiceError} from '../../model/ProfileServiceError';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
@@ -62,7 +61,19 @@ export class ProfileAsyncActionCreator {
     }
 
     public static saveFullProfile(initials: string, profile: APIProfile) {
+        console.log("Saving full profile " + initials);
         return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileServiceClient.saveProfile(initials, profile).then(profile => {
+                NavigationActionCreator.showSuccess('Profile saved!');
+                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.SaveProfile));
+            }).catch(console.error);
+        };
+    }
+
+    public static saveCurrentProfile() {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            const initials = getState().databaseReducer.loggedInUser().initials();
+            const profile = getState().databaseReducer.serializeToAPI();
             profileServiceClient.saveProfile(initials, profile).then(profile => {
                 NavigationActionCreator.showSuccess('Profile saved!');
                 dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.SaveProfile));

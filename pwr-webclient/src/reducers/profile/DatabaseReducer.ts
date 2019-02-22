@@ -13,6 +13,7 @@ import {
     RemoveSkillFromProjectAction,
     SaveEntryAction,
     SaveProjectAction,
+    SetModifiedAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {ProfileStore} from '../../model/ProfileStore';
@@ -25,6 +26,7 @@ import {ActionType} from '../ActionType';
 import * as Immutable from 'immutable';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {ProfileModificationStatus} from '../../model/ProfileModificationStatus';
 
 export class DatabaseReducer {
     private static AddAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
@@ -37,13 +39,13 @@ export class DatabaseReducer {
     }
 
     private static HandleChangeAbstract(state: ProfileStore, action: ChangeStringValueAction): ProfileStore {
-        state = state.modified(2);
+        state = state.modified(ProfileModificationStatus.ABSTRACT_MODIFIED);
         let newProfile: Profile = state.profile().description(action.value);
         return state.profile(newProfile);
     }
 
     private static HandleDatabaseModified(state: ProfileStore): ProfileStore {
-        return state.modified(1);
+        return state.modified(ProfileModificationStatus.MODIFIED);
     }
 
 
@@ -250,6 +252,10 @@ export class DatabaseReducer {
             }
             case ActionType.ClearUserInitials: {
                 return DatabaseReducer.SetUserInitials(state, '', false);
+            }
+            case ActionType.SetModifiedStatus: {
+                let act = action as SetModifiedAction;
+                return state.modified(act.modified);
             }
             default:
                 return state;

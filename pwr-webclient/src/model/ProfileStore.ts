@@ -7,6 +7,7 @@ import {doop} from 'doop';
 import {LoginStatus} from './LoginStatus';
 import {ConsultantInfo} from './ConsultantInfo';
 import {isNullOrUndefined} from 'util';
+import {ProfileModificationStatus} from './ProfileModificationStatus';
 
 
 /**
@@ -22,7 +23,7 @@ export class ProfileStore {
 
     @doop
     public get modified(){
-        return doop<number,this>();
+        return doop<ProfileModificationStatus, this>();
     }
     @doop
     public get languageLevels() {
@@ -136,7 +137,7 @@ export class ProfileStore {
             .keySkills(keySkills)
             .currentlyUsedSkillNames(currentlyUsedSkillNames)
             .loginStatus(loginStatus)
-            .modified(0);
+            .modified(ProfileModificationStatus.NOT_MODIFIED);
     }
 
     public static createWithDefaults(): ProfileStore {
@@ -305,7 +306,7 @@ export class ProfileStore {
             .projectRoles(projectRoles)
             .careers(careers)
             .keySkills(keySkills)
-            .modified(0);
+            .modified(ProfileModificationStatus.NOT_MODIFIED);
     }
 
 

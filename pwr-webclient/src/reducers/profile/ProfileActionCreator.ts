@@ -10,10 +10,12 @@ import {
     ReceiveAPIResponseAction,
     SaveEntryAction,
     SaveProjectAction,
+    SetModifiedAction,
     UpdateSkillRatingAction
 } from './database-actions';
 import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ActionType} from '../ActionType';
+import {ProfileModificationStatus} from '../../model/ProfileModificationStatus';
 
 export class ProfileActionCreator {
     public static changeAbstract(newAbstract: string): ChangeStringValueAction {
@@ -136,6 +138,13 @@ export class ProfileActionCreator {
     public static ClearUserInitials(): AbstractAction {
         return {
             type: ActionType.ClearUserInitials
+        }
+    }
+
+    public static SetModifiedStatus(modified: ProfileModificationStatus): SetModifiedAction {
+        return {
+            type: ActionType.SetModifiedStatus,
+            modified: modified
         }
     }
 }

@@ -10,6 +10,7 @@ import {ProjectDialogState} from '../../modules/home/profile/elements/project/pr
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {Action} from 'redux';
+import {ProfileModificationStatus} from '../../model/ProfileModificationStatus';
 
 export interface AbstractAction extends Action {
     type: ActionType;
@@ -101,5 +102,9 @@ export interface RemoveSkillFromProjectAction extends AbstractAction {
     projectId: string;
 }
 
+export interface SetModifiedAction extends AbstractAction {
+    type: ActionType.SetModifiedStatus;
+    modified: ProfileModificationStatus;
+}
 
 
