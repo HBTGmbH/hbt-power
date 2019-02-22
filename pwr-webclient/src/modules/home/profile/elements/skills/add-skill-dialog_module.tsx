@@ -28,7 +28,7 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
-import {Check} from '@material-ui/icons';
+import {Save} from '@material-ui/icons';
 
 
 interface AddSkillDialogProps {
@@ -262,10 +262,12 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
             btn = <div>
                 <div className="Aligner">
                 <Button variant="fab"
+                        autoFocus
+                        color="primary"
                         onClick={this.props.progress}
-                        style={{color: 'green', width:70, height:70, fontSize:"70px"}}
+                        style={{color: 'white', width:70, height:70, fontSize:"60px"}}
                         aria-label={PowerLocalize.get('AddSkillDialog.Save')}>
-                    <Check fontSize="inherit"/>
+                    <Save fontSize="inherit"/>
                 </Button>
                 </div>
                 <div className="Aligner">
@@ -274,10 +276,12 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
             </div>
         } else {
             btn = <Button variant="fab"
+                          autoFocus
+                          color="primary"
                           onClick={this.props.progress}
-                          style={{color: 'green', width:70, height:70, fontSize: "70px"}}
+                          style={{color: 'white', width:70, height:70, fontSize: "60px"}}
                           aria-label={PowerLocalize.get('AddSkillDialog.Save')}>
-                <Check fontSize="inherit"/>
+                <Save fontSize="inherit"/>
             </Button>
         }
 
