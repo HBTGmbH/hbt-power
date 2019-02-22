@@ -149,18 +149,24 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             <div className="col-md-6 col-sm-12">
                                 <LanguageSkills/>
                             </div>
+                        </div>
+                        <div className="row">
                             <div className="col-md-6 col-sm-12 ">
                                 <TrainingEntries/>
                             </div>
                             <div className="col-md-6 col-sm-12">
                                 <EducationList/>
                             </div>
+                        </div>
+                        <div className="row">
                             <div className="col-md-6 col-sm-12">
                                 <Qualifications/>
                             </div>
                             <div className="col-md-6 col-sm-12">
                                 <Sectors/>
                             </div>
+                        </div>
+                        <div className="row">
                             <div className="col-md-6 col-sm-12">
                                 <KeySkills/>
                             </div>

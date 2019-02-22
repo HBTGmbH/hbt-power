@@ -28,6 +28,7 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Typography from '@material-ui/core/Typography/Typography';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
+import {Check} from '@material-ui/icons';
 
 
 interface AddSkillDialogProps {
@@ -258,16 +259,35 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
     private renderDone = (): JSX.Element => {
         let btn;
         if (this.props.doneState === 'SKILL_EXISTS') {
-            btn = <div><PwrIconButton style={{color: 'green', width:160, height:160}} iconName="info" onClick={this.props.progress}
-                                      tooltip="Skill Already Exists"/>Skill Already Exists</div>;
+            btn = <div>
+                <div className="Aligner">
+                <Button variant="fab"
+                        onClick={this.props.progress}
+                        style={{color: 'green', width:70, height:70, fontSize:"70px"}}
+                        aria-label={PowerLocalize.get('AddSkillDialog.Save')}>
+                    <Check fontSize="inherit"/>
+                </Button>
+                </div>
+                <div className="Aligner">
+                    Skill Already Exists
+                </div>
+            </div>
         } else {
-            btn = <PwrIconButton style={{color: 'green', width:160, height:160}} iconName="check_circle" onClick={this.props.progress}
-                                 tooltip="OK"/>;
+            btn = <Button variant="fab"
+                          onClick={this.props.progress}
+                          style={{color: 'green', width:70, height:70, fontSize: "70px"}}
+                          aria-label={PowerLocalize.get('AddSkillDialog.Save')}>
+                <Check fontSize="inherit"/>
+            </Button>
         }
 
-        return <div style={{textAlign: 'center'}}>
-            {PowerLocalize.get('AddSkillDialog.Done')}<br/>
-            {btn}
+        return <div>
+            <div className="Aligner">
+                {PowerLocalize.get('Action.Save')}
+            </div>
+           <div className="Aligner">
+               {btn}
+           </div>
         </div>;
     };
 

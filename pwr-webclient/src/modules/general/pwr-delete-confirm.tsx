@@ -52,14 +52,13 @@ export class PwrDeleteConfirm extends React.Component<PwrDeleteConfirmProps> {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={this.confirmAndClose}>
-                    {PowerLocalize.get('Action.OK')}
+                <Button variant="contained" color="primary" onClick={this.confirmAndClose} autoFocus>
+                    {PowerLocalize.get('Action.Yes')}
                 </Button>
-                <Button onClick={this.close}>
-                    {PowerLocalize.get('Action.Close')}
+                <Button color="primary" onClick={this.close}>
+                    {PowerLocalize.get('Action.No')}
                 </Button>
             </DialogActions>
-
         </Dialog>;
     }
 }

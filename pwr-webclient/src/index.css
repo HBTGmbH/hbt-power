@@ -95,6 +95,12 @@ body {
     cursor: pointer;
 }
 
+.Aligner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .Aligner-item--top {
     align-self: flex-start;
 }
@@ -244,6 +250,10 @@ body {
 .pwr-btn-error {
     background-color: #ff8e01;
     color: white;
+}
+
+.pwr-flat-warn-button {
+    color: #ff8e01 !important;
 }
 
 .report-text-field {

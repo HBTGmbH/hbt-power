@@ -112,7 +112,6 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
     };
 
     renderChipInput = (inputProps) => {
-        console.log(inputProps);
         const {classes, autoFocus, value, onChange, onAdd, onDelete, chips, ref, ...other} = inputProps;
         return (
             <ChipInput
@@ -137,9 +136,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                 <div>
                     {parts.map((part, index) => {
                         return part.highlight ? (
-                            <span key={String(index)} style={{fontWeight: 500}}>
-              {part.text}
-            </span>
+                            <span key={String(index)} style={{fontWeight: 500}}>{part.text}</span>
                         ) : (
                             <strong key={String(index)} style={{fontWeight: 300}}>
                                 {part.text}
@@ -164,8 +161,6 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
             renderSuggestion: this.renderSuggestion,
         };
 
-
-        console.log("Props.Chips",this.props.chips);
         return (
             <Autosuggest
                 id={this.props.id}

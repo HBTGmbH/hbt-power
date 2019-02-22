@@ -6,9 +6,11 @@ import {LinearProgress, TextField} from '@material-ui/core';
 import {ProfileActionCreator} from '../../../../reducers/profile/ProfileActionCreator';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
+import {ProfileModificationStatus} from '../../../../model/ProfileModificationStatus';
 
 interface DescriptionProps {
     abstractText: string;
+    modificationState: ProfileModificationStatus;
 }
 
 /**
@@ -68,7 +70,8 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
 
     public static mapStateToProps(state: ApplicationState, localProps: DescriptionLocalProps): DescriptionProps {
         return {
-            abstractText: state.databaseReducer.profile().description()
+            abstractText: state.databaseReducer.profile().description(),
+            modificationState: state.databaseReducer.modified()
         };
     }
 
@@ -90,6 +93,16 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         });
     };
 
+    private handleTextBlur = () => {
+        if (this.props.modificationState === ProfileModificationStatus.ABSTRACT_MODIFIED) {
+            this.props.saveProfile();
+        }
+    };
+
+    private progressValue = () => {
+        return (this.props.abstractText.length / this.state.maxCharacters) * 100;
+    };
+
     render() {
         return (
             <div>
@@ -98,14 +111,14 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
                     fullWidth={true}
                     multiline={true}
                     rows={10}
-                    onBlur={this.props.saveProfile}
+                    onBlur={this.handleTextBlur}
                     onChange={(e: any) => this.handleTextChange(e)}
                     value={this.props.abstractText}
                 />
                 <LinearProgress
-                    value={(this.props.abstractText.length / this.state.maxCharacters) * 100}
-                    variant={'determinate'}
-                    color={'primary'}
+                    value={this.progressValue()}
+                    variant='determinate'
+                    color='primary'
                 />
                 <div>Zeichen: {this.props.abstractText.length}/{this.state.maxCharacters}</div>
             </div>
