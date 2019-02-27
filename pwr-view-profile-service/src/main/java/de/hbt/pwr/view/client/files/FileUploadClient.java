@@ -39,8 +39,8 @@ class FileUploadClientFallbackFactory implements FallbackFactory<FileUploadClien
     public FileUploadClient create(Throwable cause) {
         return new FileUploadClient() {
             @Override
-            public ResponseEntity<UploadFileResponse> uploadFile(@Param("file") MultipartFile file) {
-                return ResponseEntity.badRequest().build();
+            public ResponseEntity uploadFile(@Param("file") MultipartFile file) {
+                return ResponseEntity.ok("Listing of uploaded files failed: " + cause.getMessage());//return ResponseEntity.badRequest().build();
             }
 
             @Override

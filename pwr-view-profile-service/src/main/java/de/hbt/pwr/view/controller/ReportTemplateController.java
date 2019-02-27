@@ -64,7 +64,7 @@ public class ReportTemplateController {
 
         if (fileRes.getStatusCode() == HttpStatus.OK) {
             designFileResponse = fileRes.getBody();
-            ResponseEntity<UploadFileResponse> previewRes = reportServiceClient.generateHtml(designFileResponse.getFileId());
+            ResponseEntity<UploadFileResponse> previewRes = reportServiceClient.generatePdf(designFileResponse.getFileId());
 
             if (previewRes.getStatusCode() == HttpStatus.OK) {
                 previewFileResponse = previewRes.getBody();

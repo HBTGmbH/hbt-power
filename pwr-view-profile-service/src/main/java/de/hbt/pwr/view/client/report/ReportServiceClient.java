@@ -17,8 +17,8 @@ public interface ReportServiceClient {
                                           @RequestParam("type") String type,
                                           @RequestParam(value = "charsperline", required = false) Integer charsPerLine);
 
-    @GetMapping("html/{fileId}")
-    ResponseEntity<UploadFileResponse> generateHtml(@PathVariable("fileId") String templatePath);
+    @GetMapping("pdf/{fileId}")
+    ResponseEntity<UploadFileResponse> generatePdf(@PathVariable("fileId") String templatePath);
 
 }
 
@@ -34,7 +34,7 @@ class ReportServiceClientFallbackFactory implements FallbackFactory<ReportServic
             }
 
             @Override
-            public ResponseEntity generateHtml(String templatePath) {
+            public ResponseEntity generatePdf(String templatePath) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Feign Client failed to generate Html");
             }
         };
