@@ -21,8 +21,12 @@ import {ComparatorBuilder} from 'ts-comparator';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
+import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
+import {PwrTextLength} from '../../../../general/pwr-text-length_module';
 
 const ChipInput = require('material-ui-chip-input').default;
+
+const TEXTLIMIT = 4000;
 
 interface ProjectDialogLocalProps {
     open: boolean;
@@ -131,7 +135,10 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
     };
 
     private changeDescription = (event: any) => {
-        this.updateProject(this.state.project.description(event.target.value));
+        if(event.target.value.length <= TEXTLIMIT){
+            this.updateProject(this.state.project.description(event.target.value));
+        }
+
     };
 
     private handleSaveButtonPress = () => {
@@ -190,6 +197,10 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         }
     };
 
+
+    private handleTextLengthError =(amt:number) => {
+        this.props.project.description(this.props.project.description().substring(0,TEXTLIMIT));
+    };
 
     public render() {
         {
@@ -297,6 +308,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 id={'Project.Description.' + this.state.project.id()}
                                 onChange={(e: any) => this.changeDescription(e)}
                             />
+                            <PwrTextLength value={this.state.project.description()} maxChars={TEXTLIMIT} OnError={this.handleTextLengthError}/>
                         </div>
                     </div>
                     <PwrSpacer double={true}/>
