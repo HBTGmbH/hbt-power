@@ -3,6 +3,7 @@
  */
 
 export enum ActionType {
+
     SaveLanguageSkill,
     SetModifiedStatus,
     ClearUserInitials,
@@ -57,6 +58,9 @@ export enum ActionType {
     SetSkillNotificationError,
     SetSkillNotificationAction,
     SetNewSkillName,
+
+    SetReportUploadPending,
+    SetReportUploadProgress,
 
     // == Statistics
     ReceiveSkillUsageMetrics,

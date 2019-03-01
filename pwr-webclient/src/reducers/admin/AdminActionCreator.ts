@@ -1,4 +1,9 @@
-import {AbstractAction, ChangeBoolValueAction, ChangeStringValueAction} from '../profile/database-actions';
+import {
+    AbstractAction,
+    ChangeBoolValueAction,
+    ChangeNumberValueAction,
+    ChangeStringValueAction
+} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import {APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
@@ -168,6 +173,21 @@ export class AdminActionCreator {
             value: doFilter
         };
     }
+
+    public static SetReportUploadPending(pending: boolean): ChangeBoolValueAction {
+        return {
+            type: ActionType.SetReportUploadPending,
+            value: pending
+        }
+    }
+
+    public static SetReportUploadProgress(progress: number): ChangeNumberValueAction {
+        return {
+            type: ActionType.SetReportUploadProgress,
+            value: progress
+        }
+    }
+
 
     public static AsyncRequestNotifications() {
         return function (dispatch: redux.Dispatch<AdminState>) {

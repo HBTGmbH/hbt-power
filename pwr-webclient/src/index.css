@@ -261,6 +261,12 @@ body {
     padding: 2px;
 }
 
+.Report-Uploader {
+    padding: 30px;
+    display: inline-block;
+    width: 100%;
+}
+
 /*[class*="MuiInputAdornment-root"] {*/
     /*height: auto !important;*/
 /*}*/

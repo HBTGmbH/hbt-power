@@ -92,6 +92,17 @@ export class AdminState {
         return doop<boolean, this>();
     };
 
+    @doop
+    public get templateUploadProgress() {
+        return doop<number, this>();
+    }
+
+    @doop
+    public get templateUploadPending() {
+        return doop<boolean, this>();
+    }
+
+
     private constructor(profileEntryNotifications: Immutable.List<ProfileEntryNotification>,
                         profileUpdateNotifications: Immutable.List<AdminNotification>,
                         skillNotifications: Immutable.List<SkillNotification>,
@@ -106,7 +117,9 @@ export class AdminState {
                         selectedSkillNotification: SkillNotification,
                         skillNotificationError: string,
                         skillNotificationSelectedAction: SkillNotificationAction,
-                        isSkillNameEdited: boolean
+                        isSkillNameEdited: boolean,
+                        templateUploadProgress: number,
+                        templateUploadPending: boolean
     ) {
         return this.profileEntryNotifications(profileEntryNotifications)
             .profileUpdateNotifications(profileUpdateNotifications)
@@ -117,7 +130,9 @@ export class AdminState {
             .selectedSkillNotification(selectedSkillNotification)
             .skillNotificationError(skillNotificationError)
             .skillNotificationSelectedAction(skillNotificationSelectedAction)
-            .isSkillNameEdited(isSkillNameEdited);
+            .isSkillNameEdited(isSkillNameEdited)
+            .templateUploadProgress(templateUploadProgress)
+            .templateUploadPending(templateUploadPending);
     }
 
     public static createDefault() {
@@ -127,7 +142,7 @@ export class AdminState {
             Immutable.List<AdminNotification>(),
             RequestStatus.Inactive, LoginStatus.INITIALS, '', '', Immutable.Map<string, ConsultantInfo>(),
             '',
-            SkillNotificationEditStatus.CLOSED, null, '', SkillNotificationAction.ACTION_OK, false);
+            SkillNotificationEditStatus.CLOSED, null, '', SkillNotificationAction.ACTION_OK, false, 0, false);
     }
 
     public adminAuthConfig(): AxiosRequestConfig {

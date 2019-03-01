@@ -4,9 +4,11 @@ import {Template, TemplateSlice} from '../../model/view/Template';
 import {AbstractAction} from '../profile/database-actions';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ReportService, TemplateService} from '../../API_CONFIG';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
+import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import {AdminActionCreator} from '../admin/AdminActionCreator';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -109,11 +111,11 @@ export namespace TemplateActionCreator {
         dispatch(SetPreview(id, 'hardcoded filename', 'hardcoded content', response.data));
     }
 
-    function DownloadFile(response:AxiosResponse){
-        console.log("File received");
-        let blob:Blob = new Blob([response.data],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-        let a:any = document.createElement("a");
-        a.style = "display: none";
+    function DownloadFile(response: AxiosResponse) {
+        console.log('File received');
+        let blob: Blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        let a: any = document.createElement('a');
+        a.style = 'display: none';
         document.body.appendChild(a);
         //Create a DOMString representing the blob
         //and point the link element towards it
@@ -166,11 +168,11 @@ export namespace TemplateActionCreator {
     */
 
 
-    export function DownloadReportFile(location:string){
-        console.log("File received");
-        let blob:Blob = new Blob([""],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-        let a:any = document.createElement("a");
-        a.style = "display: none";
+    export function DownloadReportFile(location: string) {
+        console.log('File received');
+        let blob: Blob = new Blob([''], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        let a: any = document.createElement('a');
+        a.style = 'display: none';
         document.body.appendChild(a);
         //Create a DOMString representing the blob
         //and point the link element towards it
@@ -298,22 +300,30 @@ export namespace TemplateActionCreator {
 
     export function AsyncUploadFileAsTemplate(file: any, name: string, description: string, createUser: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
-            let formData = new FormData();
+            const formData = new FormData();
             formData.append('file', file);
-            formData.append('templateSlice', '{name:"' + name + '", description:"' + description + '",createUser:"' + createUser + '"}');
-
-            console.log('Async File: ', formData);
-            axios.post(TemplateService.uploadAsTemplate(), formData, {headers: {'content-type': 'multipart/form-data'}})
+            formData.append('templateSlice', JSON.stringify({
+                name: name,
+                description: description,
+                createUser: createUser
+            }));
+            const config: AxiosRequestConfig = {
+                headers: {'content-type': 'multipart/form-data'},
+                onUploadProgress: (event) => {
+                    const percentProgress = (event.loaded * 100) / event.total;
+                    dispatch(AdminActionCreator.SetReportUploadProgress(percentProgress));
+                }
+            };
+            // TODO mp move this into client
+            dispatch(AdminActionCreator.SetReportUploadPending(true));
+            axios.post(TemplateService.uploadAsTemplate(), formData, config)
                 .then((response: AxiosResponse) => {
-                    // success message
-                    console.log(response.data);
-                    dispatch(CrossCuttingActionCreator.endRequest());
+                    dispatch(AdminActionCreator.SetReportUploadPending(false));
+                    NavigationActionCreator.showSuccess('Template erfolgreich hochgeladen!');
                 })
                 .catch(function (error: any) {
-                    console.log(error);
-                    // upload failed message
-                    dispatch(CrossCuttingActionCreator.endRequest());
+                    dispatch(AdminActionCreator.SetReportUploadPending(false));
+                    NavigationActionCreator.showError('Upload Fehlgeschlagen: ' + error.toString());
                 });
         };
     }

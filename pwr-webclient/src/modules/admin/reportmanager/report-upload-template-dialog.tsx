@@ -13,6 +13,10 @@ import Icon from '@material-ui/core/Icon/Icon';
 import Paper from '@material-ui/core/Paper/Paper';
 import TextField from '@material-ui/core/TextField/TextField';
 import {ReportPreview} from './report-preview_module';
+import Dropzone from 'react-dropzone';
+import {isNullOrUndefined} from 'util';
+import {CloudUpload} from '@material-ui/icons';
+import {LinearProgress} from '@material-ui/core';
 
 
 interface ReportUploadTemplateLocalProps {
@@ -23,6 +27,8 @@ interface ReportUploadTemplateLocalProps {
 
 interface ReportUploadTemplateProps {
     currentUser: string;
+    progressPercent: number;
+    pending: boolean;
 }
 
 interface ReportUploadTemplateDispatch {
@@ -37,7 +43,7 @@ interface ReportUploadTemplateState {
     tempName: string;
     tempDescription: string;
     tempInitials: string;
-    file: any;
+    file: File;
     previewTemplateId: string;
 }
 
@@ -47,6 +53,8 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
     static mapStateToProps(state: ApplicationState, localProps: ReportUploadTemplateLocalProps): ReportUploadTemplateProps {
         return {
             currentUser: state.adminReducer.adminName(),
+            pending: state.adminReducer.templateUploadPending(),
+            progressPercent: state.adminReducer.templateUploadProgress()
         };
     }
 
@@ -101,59 +109,103 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
         //this.props.renderTemplate(this.state.file);
     };
 
-    private verifyFile = () => {
-        // TODO geht wahrscheinlich besser
-        return this.state.fileName.split('.')[1] == 'rptdesign';
+    private isValidFile = (): boolean => {
+        if (this.state.file) {
+            return /.*\.rptdesign/.test(this.state.file.name);
+        }
+        return false;
     };
 
+    private dropZoneClassNames = (isDragActive: boolean) => {
+        let classes = ['dropzone'];
+        if (isDragActive) {
+            classes.push('dropzone--isActive');
+        }
+        return classes.join(' ');
+    };
+
+    private handleFileDrop = (acceptedFiles: Array<File>, rejectedFiles: Array<File>) => {
+        if (acceptedFiles.length > 0) {
+            this.setState({
+                file: acceptedFiles[0]
+            });
+        }
+    };
+
+    private Progress = () => this.props.pending ? <LinearProgress variant="determinate" value={this.props.progressPercent} /> : <></>;
+
     private renderUpload = () => {
-        return <div style={{padding: '2em'}}>
+        return <div style={{padding: '2em'}} className={'Report-Uploader'}>
             <Typography className={'vertical-align'}>Template hochladen</Typography>
-            <input
-                type={'file'}
-                value={this.state.fileName}
-                onChange={(e: any) => {
-                    this.onInputChange(e);
-                }}
-            />
-
-            {this.verifyFile() == false ? <div className={'row'}>Select a .rptdesing file</div> :
+            <div className="Report-Uploader">
+                <div style={{width: '100%'}}>
+                    <div className="Aligner">
+                        <Dropzone
+                            onDrop={this.handleFileDrop}
+                            multiple={false}
+                            accept=".rptdesign"
+                        >
+                            <div className="Aligner" style={{height: '100%', textAlign: 'center'}}>
+                                {!isNullOrUndefined(this.state.file) ?
+                                    <span>
+                                        Selected File:<br/>
+                                        {this.state.file.name}
+                                    </span> :
+                                    <div className="Aligner"><CloudUpload/></div>}
+                            </div>
+                        </Dropzone>
+                    </div>
+                </div>
+            </div>
+            {this.isValidFile() == false ? <div className={'row'}>Select a .rptdesing file</div> :
                 <div>
-                    <TextField
-                        label={'Name'}
-                        onChange={(e: any) => {
-                            this.setState({tempName: e.target.value});
-                        }
-                        }
-                    />
-                    <TextField
-                        label={'Description'}
-                        onChange={(e: any) => {
-                            this.setState({tempDescription: e.target.value});
-                        }
-                        }
-                    />
-                    <TextField
-                        label={'Initials'}
-                        onChange={(e: any) => {
-                            this.setState({tempInitials: e.target.value});
-                        }}
-                    />
+                    <div className={'Aligner'}>
+                        <TextField
+                            label={'Name'}
+                            onChange={(e: any) => {
+                                this.setState({tempName: e.target.value});
+                            }
+                            }
+                        />
+                    </div>
+                    <div className={'Aligner'}>
+                        <TextField
+                            label={'Description'}
+                            onChange={(e: any) => {
+                                this.setState({tempDescription: e.target.value});
+                            }
+                            }
+                        />
+                    </div>
+                    <div className={'Aligner'}>
+                        <TextField
+                            label={'Initials'}
+                            onChange={(e: any) => {
+                                this.setState({tempInitials: e.target.value});
+                            }}
+                        />
+                    </div>
 
-                    <Button
-                        style={{marginTop: '10px'}}
-                        variant={'contained'}
-                        className={'vertical-align'}
-                        color={'primary'}
-                        onClick={() => {
-                            this.uploadTemplate();
-                        }}
-                    >
-                        <Icon>send</Icon>
-                        Upload
-                    </Button>
+                    <div className={'Aligner'}>
+                        <Button
+                            style={{marginTop: '10px'}}
+                            variant={'contained'}
+                            className={'vertical-align'}
+                            color={'primary'}
+                            onClick={() => {
+                                this.uploadTemplate();
+                            }}
+                        >
+                            <Icon>send</Icon>
+                            Upload
+                        </Button>
+                    </div>
                 </div>
             }
+            <div>
+                <this.Progress/>
+            </div>
+
         </div>;
     };
 

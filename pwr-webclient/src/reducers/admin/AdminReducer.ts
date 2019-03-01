@@ -1,5 +1,10 @@
 import {AdminState} from '../../model/admin/AdminState';
-import {AbstractAction, ChangeStringValueAction} from '../profile/database-actions';
+import {
+    AbstractAction,
+    ChangeBoolValueAction,
+    ChangeNumberValueAction,
+    ChangeStringValueAction
+} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeLoginStatusAction,
@@ -184,6 +189,14 @@ export class AdminReducer {
                 let act = action as SetNewSkillNameAction;
                 // TODO change the other notification, too
                 return state.selectedSkillNotification(state.selectedSkillNotification().newName(act.name));
+            }
+            case ActionType.SetReportUploadProgress: {
+                let act = action as ChangeNumberValueAction;
+                return state.templateUploadProgress(act.value);
+            }
+            case ActionType.SetReportUploadPending: {
+                let act = action as ChangeBoolValueAction;
+                return state.templateUploadPending(act.value);
             }
             default:
                 return state;
