@@ -16,6 +16,7 @@ import {DatePicker} from 'material-ui-pickers';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
+import {PwrError, PwrErrorType} from '../../../../general/pwr-error_module';
 
 interface TrainingEntryDialogProps {
     /**
@@ -51,6 +52,7 @@ interface TrainingEntryDialogProps {
 interface TrainingEntryDialogState {
     trainingEntryValue: string;
     trainingEntry: TrainingEntry;
+    dateError:PwrErrorType;
 }
 
 
@@ -60,10 +62,14 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         super(props);
         this.state = {
             trainingEntryValue: this.getEducationEntryName(),
-            trainingEntry: props.trainingEntry
+            trainingEntry: props.trainingEntry,
+            dateError:null,
         };
     }
 
+    public componentDidUpdate(){
+        this.checkDates();
+    }
     private getEducationEntryName = () => {
         return NameEntityUtil.getNullTolerantName(this.props.trainingEntry.trainingId(), this.props.trainings);
     };
@@ -73,6 +79,24 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         this.props.onClose();
     };
 
+    private setError = (error: PwrErrorType) => {
+        if (this.state.dateError !== error) {
+            this.setState({
+                dateError: error,
+            });
+        }
+    };
+
+    private checkDates = () => {
+        const endDate = this.state.trainingEntry.endDate();
+        const startDate = this.state.trainingEntry.startDate();
+        if (endDate < startDate) {
+            this.setError(PwrErrorType.DATE_START_AFTER_END);
+        } else {
+            this.setError(null);
+        }
+    };
+
     private handleChangeEndDate = (date) => {
         this.setState({
             trainingEntry: this.state.trainingEntry.endDate(date)
@@ -80,13 +104,9 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
     };
 
     private handleChangeStartDate = (date:Date) => {
-        console.log("Training Picker: "+date);
-        let entry:TrainingEntry = this.state.trainingEntry.startDate(date);
-        console.log("new Entry      :"+entry.startDate());
         this.setState({
-            trainingEntry: entry
+            trainingEntry: this.state.trainingEntry.startDate(date)
         });
-        //console.log("Date in State  : "+this.state.trainingEntry.startDate());
     };
 
     /**
@@ -131,27 +151,16 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                     {PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 </DialogTitle>
                 <DialogContent>
+                    <div className={"row"}>
+                        <div className={"col-md-12"}>
+                            <PwrError error={this.state.dateError}/>
+                        </div>
+                    </div>
                     <div className="row">
                         <div className="col-md-5">
-                            {/*<DatePicker
-                                label={PowerLocalize.get('Begin')}
-                                id={'TrainingEntry.Dialog.StartDate' + this.props.trainingEntry.id}
-                                value={this.state.trainingEntry.startDate()}
-                                onChange={this.handleChangeStartDate}
-                                showTodayButton
-                                todayLabel={PowerLocalize.get('Today')}
-                            />*/}
                             <PwrYearPicker onChange={this.handleChangeStartDate} placeholderDate={this.state.trainingEntry.startDate()} label={"Start"}/>
                         </div>
                         <div className="col-md-5">
-                            {/*<DatePicker
-                                label={PowerLocalize.get('End')}
-                                id={'TrainingEntry.Dialog.EndDate' + this.props.trainingEntry.id}
-                                value={this.state.trainingEntry.endDate()}
-                                onChange={this.handleChangeEndDate}
-                                showTodayButton
-                                todayLabel={PowerLocalize.get('Today')}
-                            />*/}
                             <PwrYearPicker onChange={this.handleChangeEndDate} placeholderDate={this.state.trainingEntry.endDate()} label={"Ende"}/>
                         </div>
                     </div>
@@ -170,7 +179,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} disabled={!!this.state.dateError}
                                    onClick={this.handleSaveButtonPress}/>
                     <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
                                    onClick={this.handleCloseButtonPress}/>
