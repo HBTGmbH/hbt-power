@@ -13,6 +13,9 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import {ReportPreview} from '../../admin/reportmanager/report-preview_module';
+import {PwrSelectableList} from '../../general/Pwr-selecable-list';
+import AppBar from '@material-ui/core/AppBar/AppBar';
+import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 
 
 interface ViewProfileGeneratorProps {
@@ -124,54 +127,61 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                 title={PowerLocalize.get('Generator.Title')}
                 open={this.props.open}
                 onClose={this.closeAndReset}
-                fullWidth
+                fullScreen
+                style={{overflowY: 'scroll'}}
             >
                 <DialogTitle>{PowerLocalize.get('Generator.Title')}</DialogTitle>
                 <DialogContent>
-                    <div className="col-md-5">
+                    <AppBar>
+                        <Toolbar>
+                            <Button
+                                color={'primary'}
+                                variant={"outlined"}
+                                className="mui-margin"
+                                disabled={this.state.activeTemplateId == ''}
+                                onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
+                            >
+                                <Icon className="material-icons">open_in_new</Icon>
+                                {PowerLocalize.get('Action.Generate.Word')}
+                            </Button>
+
+                            <Button
+                                variant={'outlined'}
+                                color={'secondary'}
+                                onClick={this.props.onClose}
+                            >
+                                <Icon className="material-icons">close</Icon>
+                                {PowerLocalize.get('Action.Close')}
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                    <div className="col-md-4">
                         <h4 className="row">{PowerLocalize.get('Generator.TemplateList')}</h4>
-                        <div className="row"
-                             style={{maxHeight: 350, overflowY: 'auto', overflowX: 'hidden', minWidth: '200px'}}>
+                        <div className="row">
                             <List>
-                                {this.renderListItems()}
+                                <PwrSelectableList>
+                                    {this.renderListItems()}
+                                </PwrSelectableList>
                             </List>
                         </div>
                     </div>
-                    <div className="col-md-6" >
-                        <h4 className="row" style={{marginLeft:"2px"}}> {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].name : ' '}</h4>
-                        <div className={"row"} style={{marginLeft:"2px", minHeight:"150px"}}>
+                    <div className="col-md-8">
+                        <h4 className="row"
+                            style={{marginLeft: '2px'}}> {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].name : ' '} </h4>
+                        <div className={'row'} style={{marginLeft: '2px', height: 'calc(100vh - 300px)'}}>
                             <ReportPreview templateId={this.state.activeTemplateId}/>
                         </div>
-                        {/*
-                        <div className={"row"} style={{marginLeft:"2px"}}>
+
+                        <div className={'row'} style={{marginLeft: '2px'}}>
                             {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].description : PowerLocalize.get('Generator.DescriptionPlaceholder')}
-                            <br/>
+
                             {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].createUser + '  |  ' : ' '}
                             {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].createdDate : ' '}
                         </div>
-                        */}
-                        {/*<div>{this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].id : ' '}</div>*/}
+
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <Button
-                        variant={'raised'}
-                        className="mui-margin"
-                        color={'primary'}
-                        disabled={this.state.activeTemplateId == ""}
-                        onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
-                    >
-                        <Icon className="material-icons">open_in_new</Icon>
-                        {PowerLocalize.get('Action.Generate.Word')}
-                    </Button>
 
-                    <Button
-                        onClick={this.props.onClose}
-                    >
-                        <Icon className="material-icons">close</Icon>
-                        {PowerLocalize.get('Action.Close')}
-                    </Button>
-                </DialogActions>
             </Dialog>
         );
     }

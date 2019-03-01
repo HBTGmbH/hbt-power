@@ -140,8 +140,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     value={this.state.tabValue}
                     onChange={(e: any, v: number) => this.setState({tabValue: v})}
                     centered
-                    style={{backgroundColor: '#191e55'/* TODO use withStyles/withTheme */}}
-                    textColor={'secondary'}
+
                 >
                     <Tab value={0} label={PowerLocalize.get('ViewProfileOveview.Entries')}/>
                     <Tab value={1} label={PowerLocalize.get('ViewProfileOveview.Projects')}/>

@@ -26,6 +26,11 @@ export class PwrYearPicker extends React.Component<PwrYearPickerProps,PwrYearPic
         }
     }
 
+    private onChangeDate = (date:Date) => {
+        date.setFullYear(date.getFullYear(),1,1);
+
+          this.props.onChange(date);
+    };
 
     render(){
         return <DatePicker

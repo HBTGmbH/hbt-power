@@ -1,44 +1,37 @@
-import {connect} from 'react-redux';
 import * as React from 'react';
 import {Template} from '../../../model/view/Template';
-import Button from '@material-ui/core/Button/Button';
-import Divider from '@material-ui/core/Divider/Divider';
 import Typography from '@material-ui/core/Typography/Typography';
-import {PwrIconHeader} from '../../general/pwr-icon-header';
+import {InfoPaper} from '../../general/info-paper_module.';
 
 interface ReportManagerProps {
-    selectedTemplate:Template;
+    selectedTemplate: Template;
 }
 
-export class ReportManagerInfoBox extends React.Component<ReportManagerProps>{
-    render(){
-        return <div>
-            <PwrIconHeader muiIconName={'info_outline'} title={'Info'}/>
+export class ReportManagerInfoBox extends React.Component<ReportManagerProps> {
+    render() {
+        return <InfoPaper title={'Info'}>
             <div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'body2'}>Name</Typography>
-                    <Typography variant={'subheading'}>{this.props.selectedTemplate.name}</Typography>
+                    <Typography variant={'subheading'}>Name</Typography>
+                    <Typography variant={'body1'}>{this.props.selectedTemplate.name}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'body2'}>Beschreibung</Typography>
-                    <Typography
-                        variant={'subheading'}>{this.props.selectedTemplate.description}</Typography>
+                    <Typography variant={'subheading'}>Beschreibung</Typography>
+                    <Typography variant={'body1'}>{this.props.selectedTemplate.description}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'body2'}>Ersteller</Typography>
-                    <Typography
-                        variant={'subheading'}>{this.props.selectedTemplate.createUser}</Typography>
+                    <Typography variant={'subheading'}>Ersteller</Typography>
+                    <Typography variant={'body1'}>{this.props.selectedTemplate.createUser}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'body2'}>Datum</Typography>
-                    <Typography
-                        variant={'subheading'}>{this.props.selectedTemplate.createdDate}</Typography>
+                    <Typography variant={'subheading'}>Datum</Typography>
+                    <Typography variant={'body1'}>{this.props.selectedTemplate.createdDate}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'body2'}>Id</Typography>
-                    <Typography variant={'subheading'}>{this.props.selectedTemplate.id}</Typography>
+                    <Typography variant={'subheading'}>Id</Typography>
+                    <Typography variant={'body1'}>{this.props.selectedTemplate.id}</Typography>
                 </div>
             </div>
-        </div>
+        </InfoPaper>;
     }
 }

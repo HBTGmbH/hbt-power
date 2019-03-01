@@ -121,14 +121,12 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                 <Tabs
                     value={this.state.tabValue}
                     centered
-                    style={{backgroundColor: '#191e55'}}
-                    textColor={'secondary'}
                     onChange={(e: any, v: any) => {
                         this.setState({tabValue: v});
                     }}
                 >
-                    <Tab value={0} label={PowerLocalize.get('ProfileModule.Tabs.Profile.Title')}/>
-                    <Tab value={1} label={PowerLocalize.get('ProfileModule.Tabs.Projects.Title')}/>
+                    <Tab textColor={'secondary'} value={0} label={PowerLocalize.get('ProfileModule.Tabs.Profile.Title')}/>
+                    <Tab textColor={'primary'} value={1} label={PowerLocalize.get('ProfileModule.Tabs.Projects.Title')}/>
                     <Tab value={2} label="Skills"/>
                 </Tabs>
                 <div>

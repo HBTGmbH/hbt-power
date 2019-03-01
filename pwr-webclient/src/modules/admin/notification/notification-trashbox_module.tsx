@@ -130,8 +130,8 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
                         </Button>
                     </div>
                 </div>
-                <div style={{backgroundColor: '#191e55'}}>
-                    <Tabs value={0} centered fullWidth textColor={'secondary'}>
+                <div>
+                    <Tabs value={0} centered fullWidth >
                         <Tab
                             icon={<Icon className="material-icons">delete</Icon>}
                             label={PowerLocalize.get('NotificationInbox.TrashedMessages')}

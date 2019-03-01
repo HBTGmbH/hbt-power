@@ -163,11 +163,8 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
                 </div>
                 <Tabs
                     value={this.state.tabValue}
-                    style={{backgroundColor: this.props.theme.palette.primary.main}}
                     centered
                     fullWidth
-                    indicatorColor={'secondary'}
-                    textColor={'secondary'}
                     onChange={this.handleTabChange}
                 >
                     <Tab icon={<Icon className="material-icons">add_box</Icon>}

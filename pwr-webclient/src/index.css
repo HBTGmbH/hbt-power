@@ -257,8 +257,8 @@ body {
 }
 
 .report-text-field {
-    margin: 2%;
-    background-color: #ececec;
+    margin: 4px;
+    padding: 2px;
 }
 
 /*[class*="MuiInputAdornment-root"] {*/

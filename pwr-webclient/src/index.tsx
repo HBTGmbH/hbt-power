@@ -20,6 +20,7 @@ import {ConnectedRouter} from 'react-router-redux';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
+import {ThemeOptions} from '@material-ui/core/styles/createMuiTheme';
 
 const AlertContainer = require('react-alert').default;
 
@@ -45,7 +46,7 @@ const pageLeavePreventer = (ev: any) => {
 window.onbeforeunload = pageLeavePreventer;
 
 
-const newPowerTheme = {
+const newPowerTheme:ThemeOptions = {
     typography: {
         fontSize: 24,
         fontFamily: [
@@ -54,20 +55,22 @@ const newPowerTheme = {
     },
     palette: {
         primary: {
-            light: Color.HBT_2017_LIGHT_BLUE.toCSSRGBString(),
-            main: Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
-            dark: Color.HBT_2017_DARK_BLUE.toCSSRGBString(),
-            contrastText: Color.HBT_2017_WHITE.toCSSRGBString(),
+            light: '#474b77',
+            main: '#191E55',
+            dark: '#11153b',
+            contrastText:'#fff',
         },
         secondary: {
-            main: Color.HBT_2017_WHITE.toCSSRGBString(),
+            light: '#6bebeb',
+            main: '#46E6E6',
+            dark: '#31a1a1',
         },
         error: {
             main: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
         },
         text: {
-            secondary: Color.HBT_2017_GRAY.toCSSRGBString(),
-            disabled: Color.HBT_2017_GRAY.toCSSRGBAString(0.3),
+
+            //disabled: Color.HBT_2017_GRAY.toCSSRGBAString(0.5),
         }
     },
     props: {
@@ -90,7 +93,20 @@ const newPowerTheme = {
             root: {
                 height: 'auto'
             }
+        },
+        MuiTabs: {
+            root: {
+                color: '#fff',
+                indicatorColor: '#46E6E6',
+                backgroundColor: "#191E55"
+            }
+        },
+        MuiTab: {
+            selected: {
+                color: '#46E6E6'
+            }
         }
+
     }
 };
 

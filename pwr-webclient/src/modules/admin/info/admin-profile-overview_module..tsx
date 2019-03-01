@@ -12,7 +12,6 @@ interface AdminProfileOverviewState {
     index: number;
 }
 
-//mui v0.2 Tabs -> style={{marginTop: "8px"}}
 class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewProps, AdminProfileOverviewState> {
 
     constructor(props: AdminProfileOverviewProps) {
@@ -35,10 +34,8 @@ class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewPro
                     <Tabs fullWidth
                           centered
                           value={this.state.index}
-                          style={{backgroundColor: this.props.theme.palette.primary.main}}
-                          indicatorColor={'secondary'}
-                          textColor={'secondary'}
-                          onChange={this.setIndex}>
+                          onChange={this.setIndex}
+                    >
                         <Tab label={PowerLocalize.get('AdminClient.Overview.NameEntity')} value={0}/>
                         <Tab label={PowerLocalize.get('AdminClient.Overview.Skills')} value={1}/>
                     </Tabs>
