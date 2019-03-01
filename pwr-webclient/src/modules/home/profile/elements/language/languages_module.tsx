@@ -10,6 +10,9 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
 import {ProfileElement} from '../../profile-element_module';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
+import {LanguageSkillDialog} from './language-skill-dialog_module';
+import {DEFAULT_LANG_LEVEL} from '../../../../../model/PwrConstants';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;
@@ -33,7 +36,7 @@ interface LanguageLocalProps {
  * There is no need for a non-local state, as redux will manage this part.
  */
 interface LanguageLocalState {
-
+    createOpen: boolean;
 }
 
 interface LanguageDispatch {
@@ -41,23 +44,17 @@ interface LanguageDispatch {
 
     deleteLanguageSkill(id: string): void;
 
-    saveLanguageSkill(langSkill: LanguageSkill, name: NameEntity): void;
+    saveLanguageSkill(id: string, name: string, level: string): void;
 }
 
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
 
-    private renderSingleLanguage = (language: LanguageSkill, id: string) => {
-        return (
-            <SingleLanguage
-                languages={this.props.languages}
-                languageSkill={this.props.languageSkills.get(id)}
-                key={id}
-                onDelete={this.props.deleteLanguageSkill}
-                onSave={this.props.saveLanguageSkill}
-                languageLevels={this.props.languageLevels}
-            />
-        );
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            createOpen: false
+        };
+    }
 
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps): LanguageProps {
         return {
@@ -75,25 +72,79 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
             deleteLanguageSkill: function (id: string) {
                 dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.LanguageEntry));
             },
-            saveLanguageSkill: function (langSkill: LanguageSkill, name: NameEntity) {
-                dispatch(ProfileActionCreator.saveEntry(langSkill, name, ProfileElementType.LanguageEntry));
-            }
+            saveLanguageSkill: (id, name, level) => dispatch(ProfileActionCreator.SaveLanguage(id, name, level))
         };
     }
 
+    private openCreate = () => {
+        this.setCreateOpen(true);
+    };
+
+    private closeCreate = () => {
+        this.setCreateOpen(false);
+    };
+
+    private setCreateOpen = (open: boolean) => {
+        this.setState({createOpen: open});
+    };
+
+    private saveAsNew = (name: string, level: string) => {
+        this.props.saveLanguageSkill(null, name, level);
+        this.closeCreate();
+    };
+
+    private levels = () => {
+        return this.props.languageLevels;
+    };
+
+    private languages = () => {
+        return this.props.languages.toArray().map(NameEntityUtil.mapToName);
+    };
+
     private handleAddElement = () => {
-        this.props.addLanguageSkill();
+        this.openCreate();
+    };
+
+    private languageFrom = (languageId: string) => {
+        return this.props.languages.get(languageId).name();
+    };
+
+    private saveLanguage = (id: string, languageName: string, languageLevel: string) => {
+        this.props.saveLanguageSkill(id, languageName, languageLevel);
+    };
+
+    private renderSingleLanguage = (language: LanguageSkill, id: string) => {
+        return (
+            <SingleLanguage
+                id={language.id()}
+                level={language.level()}
+                language={this.languageFrom(language.languageId())}
+                availableLevels={this.levels()}
+                availableLanguages={this.languages()}
+                onSave={(name, level) => this.saveLanguage(id, name, level)}
+                onDelete={() => this.props.deleteLanguageSkill(language.id())}
+            />
+        );
     };
 
     render() {
         return (
-            <ProfileElement
-                title={PowerLocalize.get('Language.Singular')}
-                subtitle={PowerLocalize.get('LanguageSkill.Description')}
-                onAddElement={this.handleAddElement}
-            >
-                {this.props.languageSkills.map(this.renderSingleLanguage).toArray()}
-            </ProfileElement>
+            <React.Fragment>
+                <LanguageSkillDialog key="Dialog" languageName={''} languageLevel={DEFAULT_LANG_LEVEL}
+                                     availableLanguages={this.languages()}
+                                     availableLevels={this.levels()}
+                                     open={this.state.createOpen}
+                                     onSave={this.saveAsNew}
+                                     onClose={this.closeCreate}
+                />
+                <ProfileElement key="Element"
+                    title={PowerLocalize.get('Language.Singular')}
+                    subtitle={PowerLocalize.get('LanguageSkill.Description')}
+                    onAddElement={this.handleAddElement}
+                >
+                    {this.props.languageSkills.map(this.renderSingleLanguage).toArray()}
+                </ProfileElement>
+            </React.Fragment>
         );
     }
 }

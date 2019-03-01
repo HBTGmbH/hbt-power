@@ -1,53 +1,31 @@
 ///<reference path="../../../../../../node_modules/immutable/dist/immutable.d.ts"/>
 import * as React from 'react';
-import {ProfileStore} from '../../../../../model/ProfileStore';
 import {Dialog, MenuItem, Select} from '@material-ui/core';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {NameEntity} from '../../../../../model/NameEntity';
-import * as Immutable from 'immutable';
 import {LanguageSkill} from '../../../../../model/LanguageSkill';
-import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
-import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 
 
 interface EducationEntryDialogLocalProps {
-
-    languageSkill: LanguageSkill;
-
-    languages: Immutable.Map<string, NameEntity>;
-
-    languageLevels: Array<string>;
-
+    languageName: string;
+    languageLevel: string;
+    availableLanguages: Array<string>;
+    availableLevels: Array<string>;
     open: boolean;
 
-    /**
-     * Invoked when the save button is pressed.
-     * @param skill
-     * @param nameEntity
-     */
-    onSave(skill: LanguageSkill, nameEntity: NameEntity): void;
-
-    /**
-     * Invoked when that thing is supposed to be closed.
-     */
+    onSave(languageName: string, languageLevel: string): void;
     onClose(): void;
 }
 
-/**
- * Local state of the module.
- *
- * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
- */
 interface EducationEntryDialogLocalState {
-    languageAutoCompleteValue: string;
-    languageSkill: LanguageSkill;
+    currentLanguageName: string;
+    currentLanguageLevel: string;
 }
 
 
@@ -56,8 +34,8 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
     constructor(props: EducationEntryDialogLocalProps) {
         super(props);
         this.state = {
-            languageAutoCompleteValue: this.getLanguageName(),
-            languageSkill: this.props.languageSkill,
+            currentLanguageName: props.languageName,
+            currentLanguageLevel: props.languageLevel
         };
     }
 
@@ -65,12 +43,6 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
         return (<MenuItem value={languageLevel}
                           key={languageLevel}>{PowerLocalize.langLevelToLocalizedString(languageLevel)}</MenuItem>);
     }
-
-    private getLanguageName = () => {
-        let id: string = this.props.languageSkill.languageId();
-        return id == null ? '' : this.props.languages.get(id).name();
-    };
-
 
     private closeDialog = () => {
         this.props.onClose();
@@ -82,11 +54,11 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
      * @param searchText the text that had been typed into the autocomplete
      */
     private handleLanguageFieldInput = (searchText: string) => {
-        this.setState({languageAutoCompleteValue: searchText});
+        this.setState({currentLanguageName: searchText});
     };
 
     private handleLanguageFieldRequest = (chosenRequest: any) => {
-        this.setState({languageAutoCompleteValue: chosenRequest});
+        this.setState({currentLanguageName: chosenRequest});
     };
 
     private handleCloseButtonPress = () => {
@@ -95,26 +67,15 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
 
 
     private handleSaveButtonPress = () => {
-        let name: string = this.state.languageAutoCompleteValue;
-        let language: NameEntity = ProfileStore.findNameEntityByName(name, this.props.languages);
-        let languageSkill: LanguageSkill = this.state.languageSkill;
-        if (isNullOrUndefined(language)) {
-            language = NameEntity.createNew(name);
-        }
-        languageSkill = languageSkill.languageId(language.id());
-        this.props.onSave(languageSkill, language);
+        this.props.onSave(this.state.currentLanguageName, this.state.currentLanguageLevel);
         this.closeDialog();
     };
 
     private handleLevelChange = (event) => {
-        let value: string = event.target.value;
-        let skill: LanguageSkill = this.state.languageSkill;
-        skill = skill.level(value);
         this.setState({
-            languageSkill: skill
+            currentLanguageLevel: event.target.value
         });
     };
-
 
     render() {
         return (
@@ -136,11 +97,12 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                                 <InputLabel>{PowerLocalize.get('LanguageLevel.Singular')}</InputLabel>
                                 <Select
                                     id={'LangSkill.Dialog.Level'}
-                                    value={this.state.languageSkill.level()}
+                                    value={this.state.currentLanguageLevel}
                                     onChange={this.handleLevelChange}
+
                                 >
                                     {
-                                        this.props.languageLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
+                                        this.props.availableLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
                                     }
                                 </Select>
                             </FormControl>
@@ -148,18 +110,18 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                         <div className="col-md-5">
                             <PwrAutoComplete
                                 label={PowerLocalize.get('Language.Singular')}
-                                id={'LangSkill.Dialog.Autocomplete.' + this.props.languageSkill.id()}
-                                data={this.props.languages.map(NameEntityUtil.mapToName).toArray()}
-                                searchTerm={this.state.languageAutoCompleteValue}
+                                id={'Language.Dialog.AutoComplete.Language'}
+                                data={this.props.availableLanguages}
+                                searchTerm={this.state.currentLanguageName}
                                 onSearchChange={this.handleLanguageFieldInput}
                             />
                         </div>
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                    <PwrIconButton id="Language.Dialog.Save" iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
                                    onClick={this.handleSaveButtonPress}/>
-                    <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                    <PwrIconButton id="Language.Dialog.Close" iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
                                    onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
             </Dialog>

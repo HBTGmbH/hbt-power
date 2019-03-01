@@ -22,7 +22,7 @@ import {KeySkillEntry} from '../../model/KeySkillEntry';
 
 export class ProfileReducer {
 
-    private static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
+    public static updateEntry(profile: Profile, entry: any, entryType: ProfileElementType) {
         switch (entryType) {
             case ProfileElementType.TrainingEntry: {
                 let tEntry: TrainingEntry = entry as TrainingEntry;

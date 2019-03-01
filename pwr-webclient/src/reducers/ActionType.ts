@@ -3,6 +3,7 @@
  */
 
 export enum ActionType {
+    SaveLanguageSkill,
     SetModifiedStatus,
     ClearUserInitials,
 

@@ -107,4 +107,9 @@ export interface SetModifiedAction extends AbstractAction {
     modified: ProfileModificationStatus;
 }
 
+export interface SaveLanguageAction extends AbstractAction {
+    id: string;
+    level: string;
+    name: string;
+}
 

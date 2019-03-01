@@ -12,6 +12,7 @@ import {
     ReceiveAPIResponseAction,
     RemoveSkillFromProjectAction,
     SaveEntryAction,
+    SaveLanguageAction,
     SaveProjectAction,
     SetModifiedAction,
     UpdateSkillRatingAction
@@ -27,6 +28,7 @@ import * as Immutable from 'immutable';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ProfileModificationStatus} from '../../model/ProfileModificationStatus';
+import {LanguageSkill} from '../../model/LanguageSkill';
 
 export class DatabaseReducer {
     private static AddAPINameEntities(names: Array<APINameEntity>, reference: Immutable.Map<string, NameEntity>): Immutable.Map<string, NameEntity> {
@@ -256,6 +258,21 @@ export class DatabaseReducer {
             case ActionType.SetModifiedStatus: {
                 let act = action as SetModifiedAction;
                 return state.modified(act.modified);
+            }
+            case ActionType.SaveLanguageSkill: {
+                const act = action as SaveLanguageAction;
+                let language = state.profile().languageSkills().get(act.id);
+                if (!language) {
+                    language = LanguageSkill.createNew()
+                }
+                let nameEntity = state.findNameEntityByName(act.name, ProfileElementType.LanguageEntry);
+                if (!nameEntity) {
+                    nameEntity = NameEntity.createNew(act.name);
+                }
+                language = language.level(act.level).languageId(nameEntity.id());
+                const profile = ProfileReducer.updateEntry(state.profile(), language, ProfileElementType.LanguageEntry);
+                return DatabaseReducer.UpdateNameEntity(state, nameEntity, ProfileElementType.LanguageEntry)
+                    .profile(profile);
             }
             default:
                 return state;

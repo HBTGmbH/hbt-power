@@ -9,6 +9,7 @@ import {
     DeleteProjectAction,
     ReceiveAPIResponseAction,
     SaveEntryAction,
+    SaveLanguageAction,
     SaveProjectAction,
     SetModifiedAction,
     UpdateSkillRatingAction
@@ -145,6 +146,15 @@ export class ProfileActionCreator {
         return {
             type: ActionType.SetModifiedStatus,
             modified: modified
+        }
+    }
+
+    public static SaveLanguage(id: string, name: string, level: string): SaveLanguageAction {
+        return {
+            type: ActionType.SaveLanguageSkill,
+            id: id,
+            level: level,
+            name: name
         }
     }
 }
