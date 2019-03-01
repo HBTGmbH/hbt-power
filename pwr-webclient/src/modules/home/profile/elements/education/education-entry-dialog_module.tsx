@@ -19,6 +19,7 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
+import {PwrError, PwrErrorType} from '../../../../general/pwr-error_module';
 
 
 interface EducationEntryDialogLocalProps {
@@ -57,6 +58,7 @@ interface EducationEntryDialogLocalProps {
 interface EducationEntryDialogLocalState {
     educationAutoComplete: string;
     entry: EducationEntry;
+    dateError: PwrErrorType;
 }
 
 
@@ -67,6 +69,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         this.state = {
             educationAutoComplete: this.getEducationEntryName(this.props.educationEntry.nameEntityId()),
             entry: this.props.educationEntry,
+            dateError:null,
         };
         if (isNullOrUndefined(this.state.entry.degree())) {
             this.setState({
@@ -79,6 +82,9 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         return NameEntityUtil.getNullTolerantName(id, this.props.educations);
     };
 
+    public componentDidUpdate(){
+        this.checkDates();
+    }
 
     private closeDialog = () => {
         this.props.onClose();
@@ -147,6 +153,24 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
         this.closeDialog();
     };
 
+    private checkDates = () => {
+        const endDate = this.state.entry.endDate();
+        const startDate = this.state.entry.startDate();
+        if (endDate < startDate) {
+            this.setError(PwrErrorType.DATE_START_AFTER_END);
+        } else {
+            this.setError(null);
+        }
+    };
+
+    private setError = (error: PwrErrorType) => {
+        if (this.state.dateError !== error) {
+            this.setState({
+                dateError: error,
+            });
+        }
+    };
+
     private handleStartDateChange = (date: Date) => {
         this.setState({
            entry : this.state.entry.startDate(date)
@@ -172,23 +196,17 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 {PowerLocalize.get('EducationEntry.EditEntry.Title')}
             </DialogTitle>
             <DialogContent>
+                <div className={"row"}>
+                    <div className={"col-md-12"}>
+                        <PwrError error={this.state.dateError}/>
+                    </div>
+                </div>
                 <div className="row">
                     <div className="col-md-5 col-sm-6 ">
                         <form>
-                            {/* <DatePicker
-                                autoOk
-                                label={PowerLocalize.get('Begin')}
-                                id={'EducationEntry.StartDate' + this.props.educationEntry.id}
-                                value={this.state.entry.endDate()}
-                                onChange={(date: Date) => {
-                                    this.state.entry.startDate(date);
-                                }}
-                                format="DD.MM.YYYY"
-                            />*/}
                             <PwrYearPicker onChange={this.handleStartDateChange}
                                            placeholderDate={this.state.entry.startDate()}
                                            label={'Start'}/>
-
                         </form>
                     </div>
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
@@ -233,7 +251,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 </div>
             </DialogContent>
             <DialogActions>
-                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} disabled={!!this.state.dateError}
                                onClick={this.handleSaveButtonPress}/>
                 <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
                                onClick={this.handleCloseButtonPress}/>

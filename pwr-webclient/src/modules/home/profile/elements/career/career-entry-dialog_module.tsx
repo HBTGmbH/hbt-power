@@ -15,12 +15,11 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import {DatePicker} from 'material-ui-pickers';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
-import Icon from '@material-ui/core/Icon/Icon';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
+import {PwrError, PwrErrorType} from '../../../../general/pwr-error_module';
 
 
 /**
@@ -58,6 +57,7 @@ interface CareerEntryDialogLocalState {
     careerEntry: CareerEntry;
     autoCompleteValue: string;
     searchResult: string;
+    dateError: PwrErrorType;
 }
 
 /**
@@ -77,6 +77,7 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
             careerEntry: props.careerEntry,
             autoCompleteValue: NameEntityUtil.getNullTolerantName(props.careerEntry.nameEntityId(), props.careers),
             searchResult: '',
+            dateError: null,
         };
     }
 
@@ -92,21 +93,44 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
         };
     }
 
+    public componentDidUpdate() {
+        this.checkDates();
+    }
+
     private closeDialog = () => {
         this.props.requestClose();
+    };
+
+    private setError = (error: PwrErrorType) => {
+        if (this.state.dateError !== error) {
+            this.setState({
+                dateError: error,
+            });
+        }
     };
 
     private changeStartDate = (date: Date) => {
         this.setState({
             careerEntry: this.state.careerEntry.startDate(date)
         });
+        this.checkDates();
     };
 
     private changeEndDate = (date: Date) => {
         this.setState({
             careerEntry: this.state.careerEntry.endDate(date)
         });
+        this.checkDates();
+    };
 
+    private checkDates = () => {
+        const endDate = this.state.careerEntry.endDate();
+        const startDate = this.state.careerEntry.startDate();
+        if (endDate < startDate) {
+            this.setError(PwrErrorType.DATE_START_AFTER_END);
+        } else {
+            this.setError(null);
+        }
     };
 
     private handleAutoCompleteInput = (value: string) => {
@@ -158,16 +182,6 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
         });
     };
 
-    private renderEndDateChoice = () => {
-        return <DatePicker
-            label={PowerLocalize.get('End')}
-            id={'CareerEntry.Dialog.EndDate' + this.props.careerEntry.id()}
-            value={this.state.careerEntry.endDate()}
-            onChange={this.changeEndDate}
-            openToYearSelection
-            format="YYYY"
-        />;
-    };
 
     render() {
         return <Dialog
@@ -180,31 +194,24 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
                 {PowerLocalize.get('CareerEntry.Dialog.Title')}
             </DialogTitle>
             <DialogContent>
+                <div className={'row'}>
+                    <div className={'col-md-12'}>
+                        <PwrError error={this.state.dateError}/>
+                    </div>
+                </div>
+                <PwrSpacer double={false}/>
                 <div className="row">
                     <div className="col-md-5 col-sm-6 col-sm-offset-0">
-                        {/*<DatePicker
-                            autoOk
-                            label={'Start Date'}
-                            value={this.state.careerEntry.startDate()}
-                            onChange={this.changeStartDate}
-                            format="YYYY"
-                            openToYearSelection
-                            keyboard
-                            keyboardIcon={<Icon></Icon>}
-                        />*/}
                         <PwrYearPicker
-                            label={"Start"}
+                            label={'Start'}
                             onChange={this.changeStartDate}
                             placeholderDate={this.state.careerEntry.startDate()}
                         />
 
                     </div>
                     <div className="col-md-5 col-sm-6">
-                        {
-                            //this.renderEndDateChoice()
-                        }
                         <PwrYearPicker
-                            label={"Ende"}
+                            label={'Ende'}
                             onChange={this.changeEndDate}
                             placeholderDate={this.state.careerEntry.endDate()}
                         />
@@ -223,7 +230,9 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
                 </div>
             </DialogContent>
             <DialogActions>
-                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndExit}/>
+                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                               disabled={!!this.state.dateError}
+                               onClick={this.saveAndExit}/>
                 <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
                                onClick={this.resetAndExit}/>
             </DialogActions>

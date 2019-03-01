@@ -319,6 +319,8 @@ export const de_locale: any = {
     'Project': 'Projekt',
     'CareerEntry': 'Werdegang',
     'Company': 'Unternehmen',
-    'ProjectRole': 'Projektrolle'
+    'ProjectRole': 'Projektrolle',
+    // == Enum Error localization == //
+    "PwrError.DATE_START_AFTER_END": "Das Startdatum darf nicht nach dem Enddatum liegen"
 
 };

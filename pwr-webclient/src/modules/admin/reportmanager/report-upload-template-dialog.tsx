@@ -187,6 +187,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
                         </Paper>
                     </div>
                 </div>
+
             </DialogContent>
         </Dialog>;
     }

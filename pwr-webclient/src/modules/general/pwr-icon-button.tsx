@@ -1,8 +1,10 @@
 import * as React from 'react';
 import {Icon, IconButton, Tooltip} from '@material-ui/core';
 import {PwrDeleteConfirm} from './pwr-delete-confirm';
+import {IconButtonProps} from '@material-ui/core/IconButton/IconButton';
 
-interface PwrIconButtonProps {
+
+interface PwrIconButtonProps extends IconButtonProps {
     id?: string;
     iconName: string;
     tooltip: string;
@@ -49,7 +51,8 @@ export class PwrIconButton extends React.Component<PwrIconButtonProps, PwrIconBu
                               onConfirm={this.props.onClick}
             />
             <Tooltip title={this.props.tooltip}>
-                <IconButton id={this.buttonId()} autoFocus={this.props.autoFocus} aria-label={this.props.tooltip}
+                <IconButton {...this.props} id={this.buttonId()} autoFocus={this.props.autoFocus}
+                            aria-label={this.props.tooltip}
                             onClick={this.getClick} style={this.props.style}>
                     <Icon>{this.props.iconName}</Icon>
                 </IconButton>

@@ -12,6 +12,7 @@ import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import DraftsIcon from '@material-ui/icons/Drafts';
+import {ReportPreview} from '../../admin/reportmanager/report-preview_module';
 
 
 interface ViewProfileGeneratorProps {
@@ -89,7 +90,6 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         let items: any = [];
         let label: string = '';
 
-        // TODO localize
         if (this.props.allTemplates.length === 0) {
             items.push(
                 <p key={'noTemp'}> Keine Templates vorhanden.</p>
@@ -137,35 +137,28 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                             </List>
                         </div>
                     </div>
-                    <div className="col-md-6" color="red">
-                        <h4> {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].name : ' '}</h4>
-                        <div style={{height: '60%'}}>
-                            {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].description : PowerLocalize.get('Generator.DescriptionPlaceholder')}
+                    <div className="col-md-6" >
+                        <h4 className="row" style={{marginLeft:"2px"}}> {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].name : ' '}</h4>
+                        <div className={"row"} style={{marginLeft:"2px", minHeight:"150px"}}>
+                            <ReportPreview templateId={this.state.activeTemplateId}/>
                         </div>
-                        <div>
-                            <hr/>
+                        {/*
+                        <div className={"row"} style={{marginLeft:"2px"}}>
+                            {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].description : PowerLocalize.get('Generator.DescriptionPlaceholder')}
+                            <br/>
                             {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].createUser + '  |  ' : ' '}
                             {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].createdDate : ' '}
                         </div>
-                        <div>{this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].id : ' '}</div>
+                        */}
+                        {/*<div>{this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].id : ' '}</div>*/}
                     </div>
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        variant={'flat'}
-                        className="mui-margin"
-                        color={'primary'}
-                        //onClick={}  TODO Für Admin den Button aktivieren für ReportManager
-                    >
-                        <Icon className="material-icons"> add </Icon>
-                        {PowerLocalize.get('Action.Generate.NewTemplate')}
-                    </Button>
-
-                    <Button
                         variant={'raised'}
                         className="mui-margin"
                         color={'primary'}
-                        //disabled={this.state.activeTemplateId === ""}
+                        disabled={this.state.activeTemplateId == ""}
                         onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
                     >
                         <Icon className="material-icons">open_in_new</Icon>
