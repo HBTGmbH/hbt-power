@@ -93,25 +93,28 @@ public class ReportTemplateController {
 
     @DeleteMapping("{id}")
     public ResponseEntity deleteTemplate(@PathVariable String id) {
+        fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getPreviewId());
+        fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getFileId());
         reportTemplateService.deleteTemplate(id);
         return ResponseEntity.ok("Success");
     }
 
 
-    @PatchMapping("{id}")
+    @PostMapping("{id}")
     public ResponseEntity updateTemplate(
             @PathVariable("id") String id,
-            @RequestBody ReportTemplate.ReportTemplateSlice templateSlice) {
+            @RequestParam("templateSlice") String templateString) {
+
+
+        ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
 
         ReportTemplate newTemplate = new ReportTemplate();
-        newTemplate.setId(id);
         newTemplate.setName(templateSlice.name);
         newTemplate.setDescription(templateSlice.description);
-        //newTemplate.setFileId(templateSlice.fileId); TODO
+        newTemplate.setFileId(reportTemplateService.getTemplate(id).getFileId());
         newTemplate.setCreateUser(reportTemplateService.getTemplate(id).getCreateUser());
         newTemplate.setCreatedDate(reportTemplateService.getTemplate(id).getCreatedDate());
-        // newTemplate.setPreviewId((templateSlice.fileId.equals(reportTemplateService.getTemplate(id).getFileId())) ? reportTemplateService.getTemplate(id).getPreviewId() : "TODO render html");
-
+        newTemplate.setPreviewId(reportTemplateService.getTemplate(id).getPreviewId());
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
         return ResponseEntity.ok(template);
     }

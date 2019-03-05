@@ -37,9 +37,9 @@ public class ReportTemplateService {
     public ReportTemplate getTemplate(@NotNull String id) throws TemplateNotFoundException {
         LOG.debug("getTemplate ", id);
         reportTemplateRepository.findAll().forEach(reportTemplate -> LOG.debug(reportTemplate.getId()));
-        if(reportTemplateRepository.findById(id).isPresent()){
+        if (reportTemplateRepository.findById(id).isPresent()) {
             return reportTemplateRepository.findById(id).get();
-        }else{
+        } else {
             throw new TemplateNotFoundException(id);
         }
 
@@ -55,6 +55,7 @@ public class ReportTemplateService {
 
     @NotNull
     public void deleteTemplate(@NotNull String id) {
+
         reportTemplateRepository.findById(id)
                 .map(peek(reportTemplateRepository::delete))
                 .orElseThrow(() -> new TemplateNotFoundException(id));
@@ -62,8 +63,10 @@ public class ReportTemplateService {
 
     @NotNull
     public ReportTemplate updateTemplate(@NotNull String id, @NotNull ReportTemplate newTemplate) {
-        ReportTemplate template = reportTemplateRepository.findReportTemplateById(id);
-        if (template == null) {
+        ReportTemplate template;
+        if (reportTemplateRepository.findById(id).isPresent()) {
+            template = reportTemplateRepository.findById(id).get();
+        } else {
             throw new TemplateNotFoundException(id);
         }
 
@@ -72,6 +75,7 @@ public class ReportTemplateService {
         template.setName(newTemplate.getName());
         template.setDescription(newTemplate.getDescription());
         template.setFileId(newTemplate.getFileId());
+        template.setPreviewId(newTemplate.getPreviewId());
 
         reportTemplateRepository.save(template);
         return template;
@@ -80,7 +84,7 @@ public class ReportTemplateService {
 
     @NotNull
     public String getPreviewFilename(@NotNull String id) {
-        if(reportTemplateRepository.findReportTemplateById(id) != null){
+        if (reportTemplateRepository.findReportTemplateById(id) != null) {
             return reportTemplateRepository.findReportTemplateById(id).getPreviewId();
         }
         return null;
@@ -93,9 +97,9 @@ public class ReportTemplateService {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getAllPreviewTemplateIds(){
+    public List<String> getAllPreviewTemplateIds() {
         return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
-                .map(reportTemplate ->  reportTemplate.getPreviewId() != null ? reportTemplate.getId(): "")
+                .map(reportTemplate -> reportTemplate.getPreviewId() != null ? reportTemplate.getId() : "")
                 .collect(Collectors.toList());
     }
 

@@ -8,10 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
@@ -29,7 +26,10 @@ public interface FileUploadClient {
 
     @GetMapping("file/{fileId}")
     @ResponseBody
-    ResponseEntity<Resource> serveFile(@PathVariable("fileId") String filename);
+    ResponseEntity<Resource> serveFile(@PathVariable("fileId") String fileId);
+
+    @DeleteMapping("file/{fileId}")
+    ResponseEntity deleteFile(@PathVariable("fileId") String fileId);
 }
 
 
@@ -50,6 +50,11 @@ class FileUploadClientFallbackFactory implements FallbackFactory<FileUploadClien
 
             @Override
             public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+                return ResponseEntity.notFound().build();
+            }
+
+            @Override
+            public ResponseEntity deleteFile(@PathVariable String fileId){
                 return ResponseEntity.notFound().build();
             }
         };
