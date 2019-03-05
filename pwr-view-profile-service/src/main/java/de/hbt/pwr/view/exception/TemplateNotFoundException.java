@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * Exception that indicates that the requested view profile id
- * does not represent a view profile.
- * @author nt / nt@hbt.de
- * @since 26.09.2017
+ * does not represent a template.
+ * @author mp / mp@hbt.de
+ * @since 6.11.2018
  */
 public class TemplateNotFoundException extends RuntimeException {
 

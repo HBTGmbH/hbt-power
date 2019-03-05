@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "pwr-profile-service")
 public interface ProfileServiceClient {
 
-    @GetMapping("/api/profiles/{initials}")
+    @GetMapping("/profiles/{initials}")
     Profile getSingleProfile(@PathVariable("initials") String initials);
 
-    @GetMapping("/api/consultants/{initials}")
+    @GetMapping("/consultants/{initials}")
     ResponseEntity<ConsultantInfo> findByInitials(@PathVariable("initials") String initials);
 
 }

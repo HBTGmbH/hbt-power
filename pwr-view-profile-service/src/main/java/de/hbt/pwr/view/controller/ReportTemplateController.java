@@ -2,9 +2,12 @@ package de.hbt.pwr.view.controller;
 
 import de.hbt.pwr.view.client.files.FileUploadClient;
 import de.hbt.pwr.view.client.report.ReportServiceClient;
+import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.UploadFileResponse;
 import de.hbt.pwr.view.service.ReportTemplateService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ import java.util.List;
 @RequestMapping("/template")
 @Controller
 public class ReportTemplateController {
+
+    private static final Logger LOG  = LogManager.getLogger(SkillServiceFallback.class);
 
     private final ReportTemplateService reportTemplateService;
 
@@ -63,6 +68,7 @@ public class ReportTemplateController {
         ResponseEntity<UploadFileResponse> fileRes = fileUploadClient.uploadFile(file);
 
         if (fileRes.getStatusCode() == HttpStatus.OK) {
+            LOG.info(fileRes.getBody());
             designFileResponse = fileRes.getBody();
             ResponseEntity<UploadFileResponse> previewRes = reportServiceClient.generatePdf(designFileResponse.getFileId());
 
