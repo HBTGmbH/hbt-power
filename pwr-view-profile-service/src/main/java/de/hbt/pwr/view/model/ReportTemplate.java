@@ -54,9 +54,9 @@ public class ReportTemplate {
         public static ReportTemplateSlice fromJSON(String str) {
             ReportTemplateSlice toReturn = new ReportTemplateSlice();
             String[] content = str.split("\"");
-            toReturn.name = content[1];
-            toReturn.description = content[3];
-            toReturn.createUser = content[5];
+            toReturn.name = content[3];
+            toReturn.description = content[7];
+            toReturn.createUser = content[11];
 
             return toReturn;
         }
