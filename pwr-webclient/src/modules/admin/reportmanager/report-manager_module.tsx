@@ -6,7 +6,6 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {ReportPreview} from './report-preview_module';
 import ListItem from '@material-ui/core/ListItem/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Icon from '@material-ui/core/Icon/Icon';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import Divider from '@material-ui/core/Divider/Divider';
@@ -67,7 +66,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
     }
 
     public componentDidMount(){
-        console.log(this.props.allTemplates);
+        //console.log(this.props.allTemplates);
 
     }
 
@@ -123,7 +122,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                         </ListItem>
                     </List>
                     <Divider/>
-                    <List style={{height: '90%', overflowY:'auto'}}>
+                    <List style={{height: 'calc(100vh - 88px)', overflowY:'auto'}}>
                         {
                             this.renderListItems()
                         }
@@ -132,7 +131,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             </div>
 
 
-            <div className={'col-md-7'} style={{height: '100%'}}>
+            <div className={'col-md-6'} style={{height: '100%'}}>
                 <Paper style={{height: '100%'}}>
                     <div style={{height: 'calc(100vh - 88px)'}}>
                         <ReportPreview
@@ -142,7 +141,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             </div>
 
 
-            <div className={'col-md-3'}>
+            <div className={'col-md-3'} style={{marginLeft:'10px'}}>
                 <Paper>
                     {
                         this.state.selectedTemplate == null ? <></> :
@@ -154,15 +153,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             </div>
         </div>;
     }
-
-    
-    /*
-    TODO
-    Scroll bars anpassen...
-     iframe nach rechts...
-     upload ...
-     rptdesign anpassen -> bilder auf den server legen
-     */
 
 }
 

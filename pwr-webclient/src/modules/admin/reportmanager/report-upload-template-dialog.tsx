@@ -233,11 +233,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
                             {this.renderUpload()}
                         </Paper>
                     </div>
-                    <div className={'col-md-6'}>
-                        <Paper>
-                            <ReportPreview templateId={this.state.previewTemplateId}/>
-                        </Paper>
-                    </div>
+
                 </div>
 
             </DialogContent>

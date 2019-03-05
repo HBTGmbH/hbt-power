@@ -23,7 +23,7 @@ export namespace TemplateActions {
         id: string,
         name: string,
         description: string,
-        path: string,
+        user: string,
     }
 
     export interface SetPreviewAction extends AbstractAction {

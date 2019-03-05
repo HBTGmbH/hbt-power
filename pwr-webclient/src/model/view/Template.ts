@@ -2,17 +2,19 @@ export class Template {
     id: string;
     name: string;
     description: string;
-    path: string;
+    fileId:string;
     createUser: string;
     createdDate: string;
+    previewId:string;
 
     constructor(template: Template) {
         this.id = template.id;
         this.name = template.name;
         this.description = template.description;
-        this.path = template.path;
+        this.fileId = template.fileId;
         this.createUser = template.createUser;
         this.createdDate = template.createdDate;
+        this.previewId = template.previewId;
     }
 }
 
@@ -21,12 +23,12 @@ export class TemplateSlice {
     id: string;
     name: string;
     description: string;
-    path: string;
+    user: string;
 
-    constructor(id: string, name: string, description: string, path: string) {
+    constructor(id: string, name: string, description: string, user: string) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.path = path;
+        this.user = user;
     }
 }

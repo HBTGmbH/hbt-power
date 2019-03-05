@@ -9,6 +9,7 @@ import {ReportService, TemplateService} from '../../API_CONFIG';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
+import {string} from 'prop-types';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -70,7 +71,7 @@ export namespace TemplateActionCreator {
             id: template.id,
             name: template.name,
             description: template.description,
-            path: template.path,
+            user: template.user,
         };
     }
 
@@ -128,15 +129,31 @@ export namespace TemplateActionCreator {
         window.URL.revokeObjectURL(url);
     }
 
-    function AsyncChangeTemplate(templateSlice: TemplateSlice) {
+    export function AsyncChangeTemplate(templateSlice: TemplateSlice) {
+        const formData = new FormData();
+        formData.append('templateSlice', JSON.stringify({
+            name: templateSlice.name,
+            description: templateSlice.description,
+            createUser: templateSlice.user
+        }));
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            axios.patch(TemplateService.ChangeTemplate(templateSlice.id), {
-                name: templateSlice.name,
-                description: templateSlice.description,
-                path: templateSlice.path,
-            })
+            axios.post(TemplateService.changeTemplate(templateSlice.id), formData)
                 .then((response: AxiosResponse) => {
                     TemplateReceived(response, dispatch);
+                })
+                .catch((error: AxiosError) => {
+                    //dispatch(TemplateActionCreator.TemplateRequestFailed());
+                    console.error(error);
+                });
+        };
+    }
+
+
+    export function AsyncDeleteTemplate(id:string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            axios.delete(TemplateService.deleteTemplate(id))
+                .then((response: AxiosResponse) => {
+                    // TODO
                 })
                 .catch((error: AxiosError) => {
                     dispatch(TemplateActionCreator.TemplateRequestFailed());
@@ -144,7 +161,6 @@ export namespace TemplateActionCreator {
                 });
         };
     }
-
     /*
         export function AsyncCreateTemplate(name: string, description: string, initials: string, path: string) {
             return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
@@ -178,7 +194,9 @@ export namespace TemplateActionCreator {
         //and point the link element towards it
         let url = window.URL.createObjectURL(blob);
         a.href = location;
-        a.download = 'exportFile.docx';
+
+        let name:string = location.split('\\')[location.split('\\').length];
+        a.download = name;
         //programatically click the link to trigger the download
         a.click();
         //release the reference to the file by revoking the Object URL

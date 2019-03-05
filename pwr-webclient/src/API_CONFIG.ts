@@ -248,7 +248,7 @@ export namespace TemplateService {
         return base() + '/template/';
     }
 
-    export function deleteTemplates(id:string) {
+    export function deleteTemplate(id:string) {
         return base() + '/template/'+id;
     }
 
@@ -256,7 +256,7 @@ export namespace TemplateService {
         return base() + '/template' + '/' + id;
     }
 
-    export function ChangeTemplate(id: string) {
+    export function changeTemplate(id: string) {
         return base() + '/template' + '/' + id;
     }
 
