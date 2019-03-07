@@ -20,6 +20,8 @@ import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 import {PwrError, PwrErrorType} from '../../../../general/pwr-error_module';
+import {DatePickerType} from '../../../../../model/DatePickerType';
+import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 
 
 interface EducationEntryDialogLocalProps {
@@ -204,15 +206,21 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 <div className="row">
                     <div className="col-md-5 col-sm-6 ">
                         <form>
-                            <PwrYearPicker onChange={this.handleStartDateChange}
-                                           placeholderDate={this.state.entry.startDate()}
-                                           label={'Start'}/>
+                            <PwrDatePicker
+                                onChange={this.handleStartDateChange}
+                                placeholderDate={this.state.entry.startDate()}
+                                label={'Start'}
+                                type={DatePickerType.YEAR}
+                            />
                         </form>
                     </div>
                     <div className="col-md-5 col-sm-6 col-md-offset-1 col-sm-offset-0">
                         <form noValidate>
-                            <PwrYearPicker onChange={this.handleEndDateChange}
-                                           placeholderDate={this.state.entry.endDate()} label={'Ende'}
+                            <PwrDatePicker
+                                onChange={this.handleEndDateChange}
+                                placeholderDate={this.state.entry.startDate()}
+                                label={'Ende'}
+                                type={DatePickerType.YEAR}
                             />
                         </form>
                     </div>

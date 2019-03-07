@@ -137,7 +137,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
 
 
     render() {
-        console.log("Date in State  : "+this.state.trainingEntry.startDate());
+        //console.log("Date in State  : "+this.state.trainingEntry.startDate());
         return (
             <Dialog
                 open={this.props.open}
@@ -167,7 +167,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                     <PwrSpacer/>
                     <div className="row">
                         <div className="col-md-5">
-                            <PwrAutoComplete
+                             <PwrAutoComplete
                                 fullWidth={true}
                                 label={PowerLocalize.get('Training.Singular')}
                                 id={'TrainingEntry.Dialog.Value.' + this.props.trainingEntry.id}

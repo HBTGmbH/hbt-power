@@ -1,9 +1,9 @@
-import * as Autosuggest from 'react-autosuggest';
+import Autosuggest from 'react-autosuggest'; // standard ' * as '
 import * as React from 'react';
 import {MenuItem, Paper, TextField, WithStyles, withStyles} from '@material-ui/core';
 import {StringUtils} from '../../utils/StringUtil';
-import * as match from 'autosuggest-highlight/match';
-import * as parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
 import filterFuzzy = StringUtils.filterFuzzy;
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input

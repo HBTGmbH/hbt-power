@@ -116,6 +116,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
     private renderSingleLanguage = (language: LanguageSkill, id: string) => {
         return (
             <SingleLanguage
+                key={language.id()}
                 id={language.id()}
                 level={language.level()}
                 language={this.languageFrom(language.languageId())}

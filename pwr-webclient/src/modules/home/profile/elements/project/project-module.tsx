@@ -94,7 +94,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
             }}
         >
             <ExpansionPanelSummary
-                title={this.props.project.name() + ' für ' + this.getEndCustomerName()}
+                title={this.props.project.name() != null ? this.props.project.name() + ' für ' + this.getEndCustomerName() : "Error"}
             >
                 <div>
                     <Typography

@@ -20,6 +20,8 @@ import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 import {PwrError, PwrErrorType} from '../../../../general/pwr-error_module';
+import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
+import {DatePickerType} from '../../../../../model/DatePickerType';
 
 
 /**
@@ -202,18 +204,20 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
                 <PwrSpacer double={false}/>
                 <div className="row">
                     <div className="col-md-5 col-sm-6 col-sm-offset-0">
-                        <PwrYearPicker
-                            label={'Start'}
+                        <PwrDatePicker
                             onChange={this.changeStartDate}
                             placeholderDate={this.state.careerEntry.startDate()}
+                            label={'Start'}
+                            type={DatePickerType.YEAR}
                         />
 
                     </div>
                     <div className="col-md-5 col-sm-6">
-                        <PwrYearPicker
-                            label={'Ende'}
+                        <PwrDatePicker
                             onChange={this.changeEndDate}
                             placeholderDate={this.state.careerEntry.endDate()}
+                            label={'Ende'}
+                            type={DatePickerType.YEAR}
                         />
                     </div>
                 </div>

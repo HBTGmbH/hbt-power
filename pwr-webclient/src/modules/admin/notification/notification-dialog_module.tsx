@@ -231,7 +231,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
     private renderStepperContentIndex1 = () => {
         return (
             <div>
-                <FormControl component="fieldset">
+                <FormControl>
                     <RadioGroup
                         name="notificationActions"
                         id="NotificationDialog.Actions.RadioGroup"

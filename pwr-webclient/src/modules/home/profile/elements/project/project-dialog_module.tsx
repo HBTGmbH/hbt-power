@@ -23,6 +23,8 @@ import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
 import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
 import {PwrTextLength} from '../../../../general/pwr-text-length_module';
+import {DatePickerType} from '../../../../../model/DatePickerType';
+import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -112,6 +114,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
     private renderSkills = () => {
         return this.props.project.skillIDs()
             .sort(ComparatorBuilder.comparing((s: string) => s).build())
+            .filter(value => this.props.profile.getSkill(value) != null)
             .map(skillId => <Chip
                 key={'SkillChip_' + skillId}
                 style={{margin: 4}}
@@ -242,17 +245,19 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <PwrSpacer double={true}/>
                     <div className="row">
                         <div className="col-md-5">
-                            <PwrYearPicker
-                                label={'Start'}
-                                onChange={this.changeStartDate}
-                                placeholderDate={this.state.project.startDate()}
-                            />
+                            <PwrDatePicker
+                            onChange={this.changeStartDate}
+                            placeholderDate={this.state.project.startDate()}
+                            label={'Start'}
+                            type={DatePickerType.MONTH_YEAR}
+                        />
                         </div>
                         <div className="col-md-5">
-                            <PwrYearPicker
-                                label={'Start'}
+                            <PwrDatePicker
                                 onChange={this.changeEndDate}
                                 placeholderDate={this.state.project.endDate()}
+                                label={'Ende'}
+                                type={DatePickerType.MONTH_YEAR}
                             />
                         </div>
                     </div>

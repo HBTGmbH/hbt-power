@@ -18,9 +18,9 @@ import {Color} from './utils/ColorUtil';
 import {Route} from 'react-router-dom';
 import {ConnectedRouter} from 'react-router-redux';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
-import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
-import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
 import {ThemeOptions} from '@material-ui/core/styles/createMuiTheme';
+import {MuiPickersUtilsProvider} from 'material-ui-pickers';
+import MomentUtils from "@date-io/moment";
 
 const AlertContainer = require('react-alert').default;
 
@@ -32,7 +32,6 @@ store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 
 
 // Prevents navigation
-// TODO nt hat ne middleware dafür gemacht.
 const pageLeavePreventer = (ev: any) => {
     let state: ApplicationState = store.getState() as ApplicationState;
     let changes = state.databaseReducer.profile().changesMade();
@@ -48,6 +47,7 @@ window.onbeforeunload = pageLeavePreventer;
 
 const newPowerTheme:ThemeOptions = {
     typography: {
+        useNextVariants: true,
         fontSize: 24,
         fontFamily: [
             'Roboto',
@@ -122,7 +122,7 @@ const alertOptions = {
 
 
 let App = (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <MuiPickersUtilsProvider utils={MomentUtils}>
         <MuiThemeProvider theme={POWER_MUI_THEME}>
             <Provider store={store}>
                 <ConnectedRouter history={PWR_HISTORY}>

@@ -1,6 +1,7 @@
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
+import {isMoment} from 'moment';
 
 const optionsShortDisplay: DateTimeFormatOptions = {
     year: 'numeric',
@@ -96,7 +97,15 @@ export namespace DateUtils {
         if (isNullOrUndefined(date)) {
             return null;
         }
-        const dateString = date.toLocaleDateString('de-De');
+
+        let dateString: string;
+        if (isMoment(date)) {
+            let dateFormat = 'DD.MM.YYYY';
+            date.local();
+            dateString = date.format(dateFormat);
+        } else {
+            dateString = '' + date.toLocaleDateString('de-De');
+        }
         let splitted: Array<string> = dateString.split('.').reverse();
         splitted = splitted.map(splitString => {
             if (splitString.length === 1) {

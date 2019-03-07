@@ -5,7 +5,6 @@ import dateToString = StringUtils.dateToString;
 
 const DatePicker = require("material-ui-pickers").DatePicker;
 
-console.log(DatePicker);
 
 interface PwrYearPickerProps{
     onChange(date:Date):void;

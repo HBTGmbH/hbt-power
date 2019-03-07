@@ -12,10 +12,10 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
-import {DatePicker} from 'material-ui-pickers';
 import {MaterialUiPickersDate} from 'material-ui-pickers/typings/date';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
-import {PwrYearPicker} from '../../../../general/pwr-year-picker';
+import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
+import {DatePickerType} from '../../../../../model/DatePickerType';
 
 
 interface QualificationEntryDialogProps {
@@ -121,17 +121,10 @@ export class QualificationEntryDialog extends React.Component<QualificationEntry
                 <DialogContent>
                     <div className="row">
                         <div className="col-md-5">
-                            {/*<DatePicker
-                                id={'QualificationEntry.StartDate' + this.props.qualificationEntry.id}
-                                label={PowerLocalize.get('Begin')}
-                                value={this.state.qualificationEntry.date()}
-                                onChange={this.handleChangeDate}
-                            />*/}
-                            <PwrYearPicker
-                                label={"Datum"}
-                                onChange={this.handleChangeDate}
-                                placeholderDate={this.state.qualificationEntry.date()}
-                            />
+                            <PwrDatePicker onChange={this.handleChangeDate}
+                                           placeholderDate={this.state.qualificationEntry.date()}
+                                           label={'Datum'}
+                                           type={DatePickerType.YEAR}/>
                         </div>
                         <div className={'col-md-5'}>
                             <PwrAutoComplete
