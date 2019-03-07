@@ -188,10 +188,10 @@ class AdminLoginModule extends React.Component<AdminLoginProps
                                 }
                             </div>
                             <div className="vertical-align">
-                                <Button variant={'raised'} style={{float: 'left', marginRight: '5px'}}
+                                <Button variant={'contained'} style={{float: 'left', marginRight: '5px'}}
                                         onClick={this.handleAttemptLogIn}
                                         color={'primary'}>{PowerLocalize.get('Action.Login')}</Button>
-                                <Button variant={'flat'} style={{float: 'right', marginRight: '5px'}}
+                                <Button variant={'text'} style={{float: 'right', marginRight: '5px'}}
                                         href={Paths.APP_ROOT}
                                 >{'Zurück'}</Button>
                             </div>

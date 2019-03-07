@@ -170,7 +170,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                             </div>
                             <Button
                                 color={'primary'}
-                                variant={'raised'}
+                                variant={'contained'}
                                 onClick={this.openEditDialog}
                                 className="mui-margin"
                             >

@@ -185,7 +185,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
                         {this.getStepContent(this.state.stepIndex)}
                         <div style={{marginTop: 12}}>
                             <Button
-                                variant={'flat'}
+                                variant={'text'}
                                 className="mui-margin"
                                 disabled={this.state.stepIndex === 0}
                                 onClick={this.stepBack}
@@ -193,7 +193,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
                                 {PowerLocalize.get('Action.Back')}
                             </Button>
                             <Button
-                                variant={'raised'}
+                                variant={'contained'}
                                 className="mui-margin"
                                 color={'primary'}
                                 onClick={this.stepForth}

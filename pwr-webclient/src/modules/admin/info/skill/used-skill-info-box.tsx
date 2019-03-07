@@ -52,7 +52,7 @@ export class UsedSkillInfoBox extends React.Component<UsedSkillInfoBoxProps, Use
             <div className="padding-left-32px">
                 <Button
                     color={'primary'}
-                    variant={'raised'}
+                    variant={'contained'}
                     onClick={() => this.props.onOpenEdit(this.props.skillName)}
                     className="mui-margin"
                 >

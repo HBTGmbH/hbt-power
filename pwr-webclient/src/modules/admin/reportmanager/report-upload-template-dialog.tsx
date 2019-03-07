@@ -220,7 +220,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
             <DialogContent>
                 <AppBar style={{height: '60px'}}>
                     <Toolbar>
-                        <Button variant={'raised'} style={{margin: '5px'}} onClick={() => {
+                        <Button variant={'contained'} style={{margin: '5px'}} onClick={() => {
                             this.props.onClose();
                         }}><Icon>close</Icon></Button>
                         <Typography variant={'body1'} style={{marginLeft: '5em'}}

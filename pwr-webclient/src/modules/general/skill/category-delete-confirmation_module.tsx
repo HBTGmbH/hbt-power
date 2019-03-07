@@ -34,12 +34,12 @@ export class CategoryDeleteConfirmation extends React.Component<CategoryDeleteCo
 
                 <DialogActions>
                     <Button
-                        variant={'flat'}
+                        variant={'text'}
                         color={'primary'}
                         onClick={this.props.onDeclineDelete}
                     >{PowerLocalize.get('Action.No')}</Button>,
                     <Button
-                        variant={'flat'}
+                        variant={'text'}
                         color={'secondary'}
                         onClick={this.props.onAcceptDelete}
                     >{PowerLocalize.get('Action.Yes')}</Button>

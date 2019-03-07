@@ -88,7 +88,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                 />
                 <div className="row">
                     <Button
-                        variant={'raised'}
+                        variant={'contained'}
                         style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
 
                         onClick={this.props.refreshConsultants}
@@ -97,7 +97,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                         {PowerLocalize.get('Action.Update')}
                     </Button>
                     <Button
-                        variant={'raised'}
+                        variant={'contained'}
                         style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
                         onClick={this.showDialog}
                     >

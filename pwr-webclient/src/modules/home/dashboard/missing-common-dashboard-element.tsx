@@ -79,7 +79,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                     </span>
                     <div className="col-md-3 col-sm-12">
                         <Button
-                            variant={'raised'}
+                            variant={'contained'}
                             style={{marginTop: '8px'}}
                             color={'primary'}
                             onClick={() => this.loadSkillStatistics()}

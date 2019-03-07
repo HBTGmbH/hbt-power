@@ -58,7 +58,7 @@ export class ProfileElement extends React.Component<ProfileElementLocalProps, {}
                         expandIcon={<Icon className={'material-icon'}>keyboard_arrow_down</Icon>}
                     >
                         <div>
-                            <Typography variant={'headline'}>{this.props.title}</Typography>
+                            <Typography variant={'h5'}>{this.props.title}</Typography>
                             <Typography variant={'caption'}>{this.props.subtitle}</Typography>
                         </div>
                     </ExpansionPanelSummary>

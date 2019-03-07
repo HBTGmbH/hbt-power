@@ -40,23 +40,23 @@ export class ReportManagerInfoBox extends React.Component<ReportManagerProps ,Re
             <ReportManagerEditDialog open={this.state.open} templateId={this.props.selectedTemplate.id}  onClose={this.toggleChangeTemplate}/>
             <div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'subheading'}>Name</Typography>
+                    <Typography variant={'subtitle1'}>Name</Typography>
                     <Typography variant={'body1'}>{this.props.selectedTemplate.name}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'subheading'}>Beschreibung</Typography>
+                    <Typography variant={'subtitle1'}>Beschreibung</Typography>
                     <Typography variant={'body1'}>{this.props.selectedTemplate.description}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'subheading'}>Ersteller</Typography>
+                    <Typography variant={'subtitle1'}>Ersteller</Typography>
                     <Typography variant={'body1'}>{this.props.selectedTemplate.createUser}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'subheading'}>Datum</Typography>
+                    <Typography variant={'subtitle1'}>Datum</Typography>
                     <Typography variant={'body1'}>{this.props.selectedTemplate.createdDate}</Typography>
                 </div>
                 <div className={'report-text-field'}>
-                    <Typography variant={'subheading'}>Id</Typography>
+                    <Typography variant={'subtitle1'}>Id</Typography>
                     <Typography variant={'body1'}>{this.props.selectedTemplate.id}</Typography>
                 </div>
             </div>

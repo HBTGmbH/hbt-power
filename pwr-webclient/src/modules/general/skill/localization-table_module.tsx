@@ -145,7 +145,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                         />
                         {PowerLocalize.get('LocalizationTable.Content.Description')}<br/>
                         <Button
-                            variant={'flat'}
+                            variant={'text'}
                             color={'primary'}
                             onClick={() => window.open('https://www.loc.gov/standards/iso639-2/php/code_list.php')}
                         >
@@ -180,13 +180,13 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                     </DialogContent>
                     <DialogActions>
                         <Button
-                            variant={'flat'}
+                            variant={'text'}
                             color={'primary'}
                             onClick={this.invokeAdd}
 
                         >{PowerLocalize.get('Action.OK')}</Button>,
                         <Button
-                            variant={'flat'}
+                            variant={'text'}
                             color={'secondary'}
                             onClick={this.closeDialog}
                         >{PowerLocalize.get('Action.Close')}</Button>

@@ -123,7 +123,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
 
         <Button
             key="save"
-            variant={'flat'}
+            variant={'text'}
             color={'primary'}
             onClick={this.saveAndReset}
         >
@@ -132,7 +132,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
         ,
         <Button
             key="exit"
-            variant={'flat'}
+            variant={'text'}
             color={'primary'}
             onClick={this.closeAndReset}
         >

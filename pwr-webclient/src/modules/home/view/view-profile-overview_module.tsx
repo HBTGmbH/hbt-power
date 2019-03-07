@@ -126,7 +126,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     </div>
                     <div className="col-md-6">
                         <Button
-                            variant={'raised'}
+                            variant={'contained'}
                             className="mui-margin float-right"
                             color={'primary'}
                             onClick={() => this.setGeneratorOpen(true)}

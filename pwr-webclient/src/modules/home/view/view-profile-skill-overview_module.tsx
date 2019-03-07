@@ -130,7 +130,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             <td key={'ViewCategory_' + entry.name}>
                 <ExpansionPanel>
                     <ExpansionPanelSummary expandIcon={<Icon className={'material-ui'}>arrow_down</Icon>}>
-                        <Typography style={{flexBasis: '33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography style={{flexBasis: '33.33%'}} variant={'h5'}>{entry.name}</Typography>
                         <Typography variant={'caption'}>{entry.displaySkills.length + ' Skills'}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>

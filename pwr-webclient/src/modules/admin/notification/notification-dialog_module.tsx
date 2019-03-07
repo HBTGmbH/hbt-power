@@ -197,7 +197,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
         return <div style={{marginTop: 12}}>
             <Button
                 id="NotificationActionDialog.Prev"
-                variant={'flat'}
+                variant={'text'}
                 disabled={this.state.stepIndex == 0}
                 onClick={this.backStep}
                 style={{marginRight: 12}}
@@ -206,7 +206,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
             </Button>
             <Button
                 id="NotificationActionDialog.Next"
-                variant={'raised'}
+                variant={'contained'}
                 color={'primary'}
                 onClick={this.progressStep}
             >

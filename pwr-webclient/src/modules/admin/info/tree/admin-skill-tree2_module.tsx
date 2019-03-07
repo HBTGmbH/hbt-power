@@ -269,7 +269,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             />
             <Button
                 style={{margin: '4px'}}
-                variant={'raised'}
+                variant={'contained'}
                 className="mui-margin"
                 color={'primary'}
                 onClick={this.openCategorySearcher}
@@ -289,7 +289,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
                 selectedSkill.isCustom() ?
                     <Button
                         style={{margin: '4px'}}
-                        variant={'raised'}
+                        variant={'contained'}
                         className="mui-margin"
                         color={'secondary'}
                         onClick={() => this.props.deleteSkill(selectedSkill.id())}

@@ -98,7 +98,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
             >
                 <div>
                     <Typography
-                        variant={'headline'}>{this.props.project.name() + ' für ' + this.getEndCustomerName()}</Typography>
+                        variant={'h5'}>{this.props.project.name() + ' für ' + this.getEndCustomerName()}</Typography>
                     <Typography variant={'caption'}>{this.renderTitle()}</Typography>
                 </div>
             </ExpansionPanelSummary>

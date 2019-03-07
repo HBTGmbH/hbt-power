@@ -142,7 +142,7 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
                     <div className="row">
                         <div className="col-md-9">
                             <Button
-                                variant={'raised'}
+                                variant={'contained'}
                                 style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
                                 onClick={() => this.props.getNotifications(this.props.username, this.props.password)}
                             >
@@ -151,7 +151,7 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
                             </Button>
 
                             <Button
-                                variant={'raised'}
+                                variant={'contained'}
                                 style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
                                 onClick={this.handleTrashNotifications}
                             >

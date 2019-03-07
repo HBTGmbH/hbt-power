@@ -75,7 +75,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
                         <Button
-                            variant={'raised'}
+                            variant={'contained'}
                             style={{marginTop: '8px'}}
                             color={'primary'}
                             onClick={this.handleEditButtonClick}

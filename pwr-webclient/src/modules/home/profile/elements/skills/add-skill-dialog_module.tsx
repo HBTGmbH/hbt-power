@@ -144,7 +144,7 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
                     onRatingChange={this.props.changeSkillRating}
                 />
                 <Button
-                    variant={'raised'}
+                    variant={'contained'}
                     onClick={this.props.progress}
                 >
                     {PowerLocalize.get('AddSkillDialog.ButtonProceed')}
@@ -184,7 +184,7 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
             <div className="row">
                 <div className="col-md-6">
                     <Button
-                        variant={'raised'}
+                        variant={'contained'}
                         className="mui-margin"
                         onClick={this.props.progress}
                     >
@@ -193,7 +193,7 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
                 </div>
                 <div className="col-md-6">
                     <Button
-                        variant={'raised'}
+                        variant={'contained'}
                         className="mui-margin"
                         color={'secondary'}
                         onClick={this.props.stepBackToSkillInfo}
@@ -250,7 +250,7 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
 
             </div>
             <Button
-                variant={'raised'}
+                variant={'contained'}
                 onClick={this.props.progress}
             >{PowerLocalize.get('AddSkillDialog.ButtonProceed')}</Button>
         </div>;
@@ -316,7 +316,7 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
         return (
             <div>
                 <Button
-                    variant={'raised'}
+                    variant={'contained'}
                     onClick={this.handleOpen}
                 >
                     {PowerLocalize.get('AddSkillDialog.Title')}

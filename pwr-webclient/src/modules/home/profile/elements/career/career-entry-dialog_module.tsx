@@ -235,7 +235,7 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
             </DialogContent>
             <DialogActions>
                 <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
-                               disabled={!!this.state.dateError}
+                               iconButtonProps={{disabled:!!this.state.dateError}}
                                onClick={this.saveAndExit}/>
                 <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
                                onClick={this.resetAndExit}/>

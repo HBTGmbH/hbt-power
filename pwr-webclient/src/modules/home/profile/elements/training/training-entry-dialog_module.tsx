@@ -12,7 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
-import {DatePicker} from 'material-ui-pickers';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {PwrYearPicker} from '../../../../general/pwr-year-picker';
@@ -52,7 +51,7 @@ interface TrainingEntryDialogProps {
 interface TrainingEntryDialogState {
     trainingEntryValue: string;
     trainingEntry: TrainingEntry;
-    dateError:PwrErrorType;
+    dateError: PwrErrorType;
 }
 
 
@@ -63,13 +62,14 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         this.state = {
             trainingEntryValue: this.getEducationEntryName(),
             trainingEntry: props.trainingEntry,
-            dateError:null,
+            dateError: null,
         };
     }
 
-    public componentDidUpdate(){
+    public componentDidUpdate() {
         this.checkDates();
     }
+
     private getEducationEntryName = () => {
         return NameEntityUtil.getNullTolerantName(this.props.trainingEntry.trainingId(), this.props.trainings);
     };
@@ -103,7 +103,7 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
         });
     };
 
-    private handleChangeStartDate = (date:Date) => {
+    private handleChangeStartDate = (date: Date) => {
         this.setState({
             trainingEntry: this.state.trainingEntry.startDate(date)
         });
@@ -151,23 +151,25 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                     {PowerLocalize.get('TrainingEntry.Dialog.Title')}
                 </DialogTitle>
                 <DialogContent>
-                    <div className={"row"}>
-                        <div className={"col-md-12"}>
+                    <div className={'row'}>
+                        <div className={'col-md-12'}>
                             <PwrError error={this.state.dateError}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-5">
-                            <PwrYearPicker onChange={this.handleChangeStartDate} placeholderDate={this.state.trainingEntry.startDate()} label={"Start"}/>
+                            <PwrYearPicker onChange={this.handleChangeStartDate}
+                                           placeholderDate={this.state.trainingEntry.startDate()} label={'Start'}/>
                         </div>
                         <div className="col-md-5">
-                            <PwrYearPicker onChange={this.handleChangeEndDate} placeholderDate={this.state.trainingEntry.endDate()} label={"Ende"}/>
+                            <PwrYearPicker onChange={this.handleChangeEndDate}
+                                           placeholderDate={this.state.trainingEntry.endDate()} label={'Ende'}/>
                         </div>
                     </div>
                     <PwrSpacer/>
                     <div className="row">
                         <div className="col-md-5">
-                             <PwrAutoComplete
+                            <PwrAutoComplete
                                 fullWidth={true}
                                 label={PowerLocalize.get('Training.Singular')}
                                 id={'TrainingEntry.Dialog.Value.' + this.props.trainingEntry.id}
@@ -179,7 +181,8 @@ export class TrainingEntryDialog extends React.Component<TrainingEntryDialogProp
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} disabled={!!this.state.dateError}
+                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                                   iconButtonProps={{disabled: !!this.state.dateError}}
                                    onClick={this.handleSaveButtonPress}/>
                     <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
                                    onClick={this.handleCloseButtonPress}/>

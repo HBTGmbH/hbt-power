@@ -98,7 +98,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
                     <ExpansionPanelSummary
                         title={entry.name}
                     >
-                        <Typography style={{flexBasis: '33.33%'}} variant={'headline'}>{entry.name}</Typography>
+                        <Typography style={{flexBasis: '33.33%'}} variant={'h5'}>{entry.name}</Typography>
                         <Typography
                             variant={'caption'}>{'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}</Typography>
                     </ExpansionPanelSummary>
@@ -154,7 +154,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
                     toggleableEntryType="PROJECT"
                     renderEntry={this.renderProjects}
                     headers={[<span>
-                        <Button variant={'flat'} disabled={true}>Name</Button>
+                        <Button variant={'text'} disabled={true}>Name</Button>
                         {EntryRenderers.renderStartDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
                         {EntryRenderers.renderEndDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
                             </span>]}

@@ -96,7 +96,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         }
         actions.push(
             <Button
-                variant={'flat'}
+                variant={'text'}
                 color={'primary'}
                 onClick={this.closeAndSave}
                 key={'CloseAndSafe'}
@@ -106,7 +106,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             </Button>);
         actions.push(
             <Button
-                variant={'flat'}
+                variant={'text'}
                 onClick={this.props.onClose}
                 key={'Close'}
             >

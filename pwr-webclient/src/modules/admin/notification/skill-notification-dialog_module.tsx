@@ -219,7 +219,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
             <p>
                 This skill was not yet categorized.
                 <Button
-                    variant={'flat'}
+                    variant={'text'}
                     color={'secondary'}
                     onClick={() => this.props.categorizeSkill(this.props.skillName)}
                 >Categorize now.</Button>
@@ -344,7 +344,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         switch (this.props.status) {
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING:
                 return (<Button
-                    variant={'raised'}
+                    variant={'contained'}
                     color={'secondary'}
                     onClick={() => this.props.categorizeSkill(this.props.skillName)}
                     disabled={true}
@@ -354,7 +354,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR:
                 let label = this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT ? 'Continue' : 'Finish';
                 return (<Button
-                    variant={'raised'}
+                    variant={'contained'}
                     color={'secondary'}
                     onClick={this.props.progressFromActionSelection}
                 >{label}</Button>);
@@ -362,13 +362,13 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
                 return (
                     <div>
                         <Button
-                            variant={'raised'}
+                            variant={'contained'}
                             color={'primary'}
 
                             onClick={() => this.props.categorizeSkill(this.props.newName)}
                         >Validate</Button>
                         <Button
-                            variant={'raised'}
+                            variant={'contained'}
                             color={'secondary'}
                             style={{marginLeft: '8px'}}
                             onClick={this.props.invokeSkillNotificationEditAction}

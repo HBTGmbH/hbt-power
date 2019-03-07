@@ -53,7 +53,7 @@ export class SetValueDialog extends React.Component<SetValueDialogProps, SetValu
             </DialogContent>
             <DialogActions>
                 <Button
-                    variant={'flat'}
+                    variant={'text'}
                     color={'primary'}
                     onClick={this.invokeOk}
 
@@ -61,7 +61,7 @@ export class SetValueDialog extends React.Component<SetValueDialogProps, SetValu
                     {PowerLocalize.get('Action.OK')}
                 </Button>
                 <Button
-                    variant={'flat'}
+                    variant={'text'}
                     color={'secondary'}
                     onClick={this.props.onClose}
                 >{PowerLocalize.get('Action.Close')}</Button>

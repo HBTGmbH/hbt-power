@@ -113,7 +113,7 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
                 <div className="row">
                     <div className="col-md-9">
                         <Button
-                            variant={'raised'}
+                            variant={'contained'}
                             style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
                             onClick={() => this.props.getTrashedNotifications(this.props.username, this.props.password)}
                         >
@@ -121,7 +121,7 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
                             <Icon className="material-icons">refresh</Icon>
                         </Button>
                         <Button
-                            variant={'raised'}
+                            variant={'contained'}
                             style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
                             onClick={() => this.props.finalDeleteTrashed(this.props.username, this.props.password)}
                         >

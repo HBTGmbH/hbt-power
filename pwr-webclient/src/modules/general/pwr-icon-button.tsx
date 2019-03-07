@@ -5,7 +5,7 @@ import {IconButtonProps} from '@material-ui/core/IconButton/IconButton';
 import {deleteBlacklistCategory} from '../../API_CONFIG';
 
 
-interface PwrIconButtonProps extends IconButtonProps {
+interface PwrIconButtonProps {
     id?: string;
     iconName: string;
     tooltip: string;
@@ -15,6 +15,7 @@ interface PwrIconButtonProps extends IconButtonProps {
     isDeleteButton?: boolean;
     style?: any;
     autoFocus?: boolean;
+    iconButtonProps?:IconButtonProps;
 }
 
 interface PwrIconButtonState {
@@ -46,8 +47,6 @@ export class PwrIconButton extends React.Component<PwrIconButtonProps, PwrIconBu
         return undefined;
     }
 
-    // TODO props filtern vor durchreichen  iconName, isDeleteButton
-
     render() {
         return <div style={{float: 'left'}} id={this.props.id}>
             <PwrDeleteConfirm open={this.state.confirmDialogOpen}
@@ -55,7 +54,7 @@ export class PwrIconButton extends React.Component<PwrIconButtonProps, PwrIconBu
                               onConfirm={this.props.onClick}
             />
             <Tooltip title={this.props.tooltip}>
-                <IconButton {...this.props} id={this.buttonId()} autoFocus={this.props.autoFocus}
+                <IconButton {...this.props.iconButtonProps} id={this.buttonId()} autoFocus={this.props.autoFocus}
                             aria-label={this.props.tooltip}
                             onClick={this.getClick} style={this.props.style}
                 >

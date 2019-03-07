@@ -148,7 +148,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     type="new"
                                 />
                                 <Button
-                                    variant={'raised'}
+                                    variant={'contained'}
                                     color={'primary'}
                                     className="mui-margin"
                                     onClick={() => this.setViewDialogOpen(true)}

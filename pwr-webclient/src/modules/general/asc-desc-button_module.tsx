@@ -55,7 +55,7 @@ export class AscDescButton extends React.Component<AscDescButtonProps, AscDescBu
     render() {
         return (
             <Button
-                variant={'flat'}
+                variant={'text'}
                 onClick={this.handleButtonPress}
 
             >

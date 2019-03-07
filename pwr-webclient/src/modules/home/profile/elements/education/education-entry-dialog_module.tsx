@@ -259,7 +259,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                 </div>
             </DialogContent>
             <DialogActions>
-                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} disabled={!!this.state.dateError}
+                <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} iconButtonProps={{disabled:!!this.state.dateError}}
                                onClick={this.handleSaveButtonPress}/>
                 <PwrIconButton iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
                                onClick={this.handleCloseButtonPress}/>

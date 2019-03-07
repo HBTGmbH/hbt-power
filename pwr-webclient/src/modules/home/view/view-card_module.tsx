@@ -107,7 +107,7 @@ class ViewCardModule extends React.Component<ViewCardProps
                     <div>
                         <Button
                             style={{marginLeft: '8px', marginTop: '5px'}}
-                            variant={'raised'}
+                            variant={'contained'}
                             className="mui-margin"
                             onClick={() => this.setDialogOpen(true)}
                         >
@@ -116,7 +116,7 @@ class ViewCardModule extends React.Component<ViewCardProps
                         </Button>
                         <Button
                             style={{marginLeft: '8px', marginTop: '5px'}}
-                            variant={'raised'}
+                            variant={'contained'}
                             className="mui-margin"
                             onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(':id', this.props.viewProfileId))}
                         >
@@ -125,7 +125,7 @@ class ViewCardModule extends React.Component<ViewCardProps
                         </Button>
                         <Button
                             style={{marginLeft: '8px', marginTop: '5px', backgroundColor: '#ff8e01'}}
-                            variant={'raised'}
+                            variant={'contained'}
                             className="mui-margin pwr-btn-error"
                             onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
                         >
@@ -134,7 +134,7 @@ class ViewCardModule extends React.Component<ViewCardProps
                         </Button>
                         <Button
                             style={{marginLeft: '8px', marginTop: '5px'}}
-                            variant={'raised'}
+                            variant={'contained'}
                             className="mui-margin"
                             color={'primary'}
                             onClick={() => this.setGeneratorOpen(true)}

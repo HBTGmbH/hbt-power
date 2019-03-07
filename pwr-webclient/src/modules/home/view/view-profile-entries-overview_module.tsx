@@ -118,7 +118,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntrie
                         headers={[EntryRenderers.renderNameButton(SortableEntryType.EDUCATION, this.props.viewProfileId),
                             EntryRenderers.renderStartDate(SortableEntryType.EDUCATION, this.props.viewProfileId),
                             EntryRenderers.renderEndDate(SortableEntryType.EDUCATION, this.props.viewProfileId),
-                            <Button variant={'flat'}
+                            <Button variant={'text'}
                                     disabled={true}>{PowerLocalize.get('ViewEntryField.Degree')}</Button>]}
                         entries={this.props.viewProfile.educations}
                         onMove={this.handleMove}
@@ -146,7 +146,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntrie
                         toggleableEntryType="LANGUAGE"
                         renderEntry={EntryRenderers.renderLanguage}
                         headers={[EntryRenderers.renderNameButton(SortableEntryType.LANGUAGE, this.props.viewProfileId),
-                            <Button variant={'flat'}
+                            <Button variant={'text'}
                                     disabled={true}>{PowerLocalize.get('ViewEntryField.Level')}</Button>]}
                         entries={this.props.viewProfile.languages}
                         onMove={this.handleMove}
@@ -161,7 +161,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntrie
                         toggleableEntryType="QUALIFICATION"
                         renderEntry={EntryRenderers.renderQualification}
                         headers={[EntryRenderers.renderNameButton(SortableEntryType.QUALIFICATION, this.props.viewProfileId),
-                            <Button variant={'flat'} disabled={true}>Date</Button>]}
+                            <Button variant={'text'} disabled={true}>Date</Button>]}
                         entries={this.props.viewProfile.qualifications}
                         onMove={this.handleMove}
                         onToggle={this.handleToggle}

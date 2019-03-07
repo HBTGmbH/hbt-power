@@ -139,7 +139,7 @@ class PowerLoginModule extends React.Component<PowerLoginProps
                                 {this.renderInputField()}
                             </div>
                             <br/>
-                            <Button variant="raised"
+                            <Button variant={'contained'}
                                     onClick={this.handleProgressButtonClick}
                                     disabled={this.hasError()}
                                     color={'primary'}>Weiter</Button>
