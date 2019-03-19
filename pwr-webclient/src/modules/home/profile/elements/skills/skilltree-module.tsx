@@ -103,7 +103,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
             margin: '4px',
             backgroundColor: custom ? 'red' : Color.HBT_2017_GRAY.toCSSRGBString()
         };
-        return <div className="col-md-12" key={skill.id()}>
+        return <div className="col-md-2" key={skill.id()}>
             <SkillChip
                 style={style}
                 skill={skill}
@@ -128,7 +128,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
                 <AddSkillDialog/>
 
                 <div>
-                    <ListSubheader>Rot = Unbekannter Skill</ListSubheader>
+                    <ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>
                     <div className="row">
                         {this.renderSkills()}
                     </div>

@@ -25,6 +25,7 @@ import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
 import {PwrTextLength} from '../../../../general/pwr-text-length_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
+import Avatar from '@material-ui/core/Avatar/Avatar';
 
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -116,6 +117,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
             .sort(ComparatorBuilder.comparing((s: string) => s).build())
             .filter(value => this.props.profile.getSkill(value) != null)
             .map(skillId => <Chip
+                avatar={<Avatar>{this.props.profile.getSkill(skillId).rating()}</Avatar>}
                 key={'SkillChip_' + skillId}
                 style={{margin: 4}}
                 onDelete={() => {
@@ -154,6 +156,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
 
     private handleAddRole = (value: string) => {
+        console.log("Project_Module add: "+value);
         if (this.state.roles.length < 3) {
             this.setState({
                 roles: [...this.state.roles, value]
@@ -207,7 +210,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
     public render() {
         {
-            console.log('endRender_project(brokerAC): ', this.state.brokerACValue);
+            console.debug('endRender_project(brokerAC): ', this.state.brokerACValue);
             //console.log("Rollen: "+this.props.projectRoles.toArray().map(NameEntityUtil.mapToName))
         }
         return (
@@ -218,7 +221,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                 <AppBar>
                     <Toolbar>
                         <Typography style={{color: 'white', flex: 1}}
-                                    variant={'title'}>{PowerLocalize.get('ProjectDialog.Title')}</Typography>
+                                    variant={'h6'}>{PowerLocalize.get('ProjectDialog.Title')}</Typography>
                         <PwrIconButton style={{color: 'white'}} tooltip={PowerLocalize.get('Action.Save')}
                                        iconName="save"
                                        onClick={this.handleSaveButtonPress}/>

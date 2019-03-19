@@ -148,6 +148,16 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         );
     };
 
+// TODO use event.code == 'Enter' -- deprecated , but was undefined in development ,mp
+    private handleOnKeyDown(event:KeyboardEvent){
+        if(this.props.onAdd != null && event.keyCode == 13){
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onAdd(this.state.suggestions[0]);
+        }
+
+    }
+
 
     render() {
         const {classes} = this.props;
@@ -173,6 +183,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                     onChange: (event, {newValue}) => this.props.onSearchChange(newValue),
                     onAdd: (chip) => this.props.onAdd(chip),
                     onDelete: (chip, index) => this.props.onRemove(chip),
+                    onKeyDown: (event) => this.handleOnKeyDown(event),
                 }}
                 theme={{
                     container: classes.container,

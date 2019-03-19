@@ -331,7 +331,7 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
                     <AppBar>
                         <Toolbar>
                             <Typography style={{color: 'white', flex: 1}}
-                                        variant={'title'}>{PowerLocalize.get('AddSkillDialog.Title')}</Typography>
+                                        variant={'h6'}>{PowerLocalize.get('AddSkillDialog.Title')}</Typography>
                             <PwrIconButton onClick={this.props.closeDialog} tooltip={PowerLocalize.get('Action.Close')}
                                            iconName={'close'}/>
                         </Toolbar>

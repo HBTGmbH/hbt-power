@@ -7,12 +7,11 @@ import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {Profile} from '../../../../../model/Profile';
-import {formatToShortDisplay, formatToYear} from '../../../../../utils/DateUtil';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
+import {formatToYear} from '../../../../../utils/DateUtil';
 import Typography from '@material-ui/core/Typography/Typography';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import Card from '@material-ui/core/Card/Card';
+import CardContent from '@material-ui/core/CardContent/CardContent';
 
 interface ProjectModuleProps {
     project: Project;
@@ -85,12 +84,51 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
     };
 
     render() {
-        return <ExpansionPanel
+
+        return <Card style={{
+            backgroundColor: this.props.backgroundColor,
+            width: '100%',
+            height: '100%',
+            //overflowY:'hidden'
+        }}>
+            <CardContent>
+                <div>
+                    <Typography variant={'h6'}>
+                        {this.props.project.name() != null ? this.props.project.name() + ' für ' + this.getEndCustomerName() : 'Error'}
+                    </Typography>
+                    <Typography variant={'caption'}>
+                        {this.renderTitle()}
+                    </Typography>
+                </div>
+                <hr/>
+                <Typography variant={'body2'} className={"fittingContainer"}>
+                    {this.props.project.description()}
+                </Typography>
+            </CardContent>
+
+            <CardActions>
+                <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
+                <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
+                               onClick={this.deleteButtonPress}/>
+            </CardActions>
+            <ProjectDialog key={'projectDialog.' + this.props.project.id()}
+                           open={this.state.dialogIsOpen}
+                           project={this.props.project}
+                           onClose={this.closeDialog}
+                           onSave={this.handleSaveRequest}
+                           companies={this.props.companies}
+                           projectRoles={this.props.projectRoles}
+                           profile={this.props.profile}
+            />
+        </Card>;
+
+        /*return <ExpansionPanel
             defaultExpanded
             style={{
                 backgroundColor: this.props.backgroundColor,
                 width: '100%',
-                height: '100%'
+                height: '100%',
+                //overflowY:'hidden'
             }}
         >
             <ExpansionPanelSummary
@@ -98,7 +136,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
             >
                 <div>
                     <Typography
-                        variant={'h5'}>{this.props.project.name() + ' für ' + this.getEndCustomerName()}</Typography>
+                        variant={'h6'}>{this.props.project.name() + ' für ' + this.getEndCustomerName()}</Typography>
                     <Typography variant={'caption'}>{this.renderTitle()}</Typography>
                 </div>
             </ExpansionPanelSummary>
@@ -120,5 +158,6 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                                onClick={this.deleteButtonPress}/>
             </CardActions>
         </ExpansionPanel>;
+                               */
     }
 }
