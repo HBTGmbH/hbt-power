@@ -3,6 +3,7 @@ package de.hbt.pwr.view.controller;
 import de.hbt.pwr.view.client.files.FileUploadClient;
 import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.client.skill.SkillServiceFallback;
+import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.UploadFileResponse;
 import de.hbt.pwr.view.service.ReportTemplateService;
@@ -62,38 +63,32 @@ public class ReportTemplateController {
 
         ReportTemplate newTemplate = new ReportTemplate();
         ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
-        UploadFileResponse previewFileResponse = UploadFileResponse.empty();
-        UploadFileResponse designFileResponse = UploadFileResponse.empty();
+        ResponseEntity<UploadFileResponse> designFileResponseEntity = fileUploadClient.uploadFile(file);
 
-        ResponseEntity<UploadFileResponse> fileRes = fileUploadClient.uploadFile(file);
+        if (designFileResponseEntity.getStatusCode() == HttpStatus.OK) {
+            LOG.info(designFileResponseEntity.getBody());
+            UploadFileResponse designFileResponse = designFileResponseEntity.getBody();
+            ResponseEntity<UploadFileResponse> previewFileResponseEntity = reportServiceClient.generatePdf(designFileResponse.getFileId());
 
-        if (fileRes.getStatusCode() == HttpStatus.OK) {
-            LOG.info(fileRes.getBody());
-            designFileResponse = fileRes.getBody();
-            ResponseEntity<UploadFileResponse> previewRes = reportServiceClient.generatePdf(designFileResponse.getFileId());
-
-            if (previewRes.getStatusCode() == HttpStatus.OK) {
-                previewFileResponse = previewRes.getBody();
-            }
-        }
-
-        if (designFileResponse != UploadFileResponse.empty()) {
-            newTemplate.setName(templateSlice.name);
-            newTemplate.setDescription(templateSlice.description);
-            newTemplate.setCreatedDate(LocalDate.now());
-            newTemplate.setFileId(designFileResponse.getFileId());
-            newTemplate.setCreateUser(templateSlice.createUser);
-            if (designFileResponse != UploadFileResponse.empty()) {
+            if (previewFileResponseEntity.getStatusCode() == HttpStatus.OK) {
+                UploadFileResponse previewFileResponse = previewFileResponseEntity.getBody();
+                newTemplate.setName(templateSlice.name);
+                newTemplate.setDescription(templateSlice.description);
+                newTemplate.setCreatedDate(LocalDate.now());
+                newTemplate.setFileId(designFileResponse.getFileId());
+                newTemplate.setCreateUser(templateSlice.createUser);
                 newTemplate.setPreviewId(previewFileResponse.getFileId());
+                ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
+                return ResponseEntity.ok(template);
             } else {
-                newTemplate.setPreviewId("Preview rendering failed!");// TODO maybe default ID ??
+                // TODO delete design file (compensation for failed transaction)
+                throw new RuntimeException("Could not store preview for template " + designFileResponse.getFileId());
             }
-            ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
 
-            return ResponseEntity.ok(template);
         } else {
-            return ResponseEntity.notFound().build();
+            throw new RuntimeException("Could not store template.");
         }
+
     }
 
 
@@ -130,12 +125,14 @@ public class ReportTemplateController {
     //---------------
 
     @GetMapping("preview/{id}")
-    public ResponseEntity<Resource> getPreview(@PathVariable String id) {
+    public ResponseEntity<Resource> getPreview(@PathVariable String id) throws TemplateNotFoundException {
         ReportTemplate template = reportTemplateService.getTemplate(id);
         if (template != null) {
             String filename = template.getPreviewId();
             if (filename != null && !filename.equals("")) {
+
                 ResponseEntity<Resource> res = fileUploadClient.serveFile(filename);
+                LOG.info("Preview Received for %s is "+res,id);
                 return res;
             }
         }
