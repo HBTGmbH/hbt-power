@@ -30,7 +30,7 @@ export function getStatisticsBuildsInfo(): string {
 }
 
 export function getSkillBuildInfo(): string {
-    return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/actuator/info';
+    return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/meta/info';
 }
 
 export function getReportBuildInfo(): string {
