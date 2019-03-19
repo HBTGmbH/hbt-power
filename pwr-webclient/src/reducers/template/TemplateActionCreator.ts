@@ -10,6 +10,7 @@ import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreat
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {string} from 'prop-types';
+import {Paths} from '../../Paths';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -139,10 +140,10 @@ export namespace TemplateActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             axios.post(TemplateService.changeTemplate(templateSlice.id), formData)
                 .then((response: AxiosResponse) => {
-                    TemplateReceived(response, dispatch);
+                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                 })
                 .catch((error: AxiosError) => {
-                    //dispatch(TemplateActionCreator.TemplateRequestFailed());
+                    dispatch(TemplateActionCreator.TemplateRequestFailed());
                     console.error(error);
                 });
         };
@@ -154,6 +155,7 @@ export namespace TemplateActionCreator {
             axios.delete(TemplateService.deleteTemplate(id))
                 .then((response: AxiosResponse) => {
                     // TODO
+                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                 })
                 .catch((error: AxiosError) => {
                     dispatch(TemplateActionCreator.TemplateRequestFailed());
@@ -337,7 +339,9 @@ export namespace TemplateActionCreator {
             axios.post(TemplateService.uploadAsTemplate(), formData, config)
                 .then((response: AxiosResponse) => {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
+                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                     NavigationActionCreator.showSuccess('Template erfolgreich hochgeladen!');
+                    dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TEMPLATES));
                 })
                 .catch(function (error: any) {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
