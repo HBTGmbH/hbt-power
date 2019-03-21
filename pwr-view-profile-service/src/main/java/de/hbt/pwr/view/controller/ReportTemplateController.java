@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 @CrossOrigin
 @RequestMapping("/template")
 @Controller
@@ -115,12 +117,35 @@ public class ReportTemplateController {
         ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
 
         ReportTemplate newTemplate = new ReportTemplate();
+        ReportTemplate oldTemplate = reportTemplateService.getTemplate(id);
+
         newTemplate.setName(templateSlice.name);
         newTemplate.setDescription(templateSlice.description);
-        newTemplate.setFileId(reportTemplateService.getTemplate(id).getFileId());
-        newTemplate.setCreateUser(reportTemplateService.getTemplate(id).getCreateUser());
-        newTemplate.setCreatedDate(reportTemplateService.getTemplate(id).getCreatedDate());
-        newTemplate.setPreviewId(reportTemplateService.getTemplate(id).getPreviewId());
+        newTemplate.setFileId(oldTemplate.getFileId());
+        newTemplate.setCreateUser(oldTemplate.getCreateUser());
+        newTemplate.setCreatedDate(oldTemplate.getCreatedDate());
+        newTemplate.setPreviewId(oldTemplate.getPreviewId());
+        ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
+        return ResponseEntity.ok(template);
+    }
+
+    @PostMapping("{id}")
+    public ResponseEntity updateTemplate(
+            @PathVariable("id") String id,
+            @RequestBody ReportTemplate newTemplate) {
+
+
+
+        ReportTemplate oldTemplate = reportTemplateService.getTemplate(id);
+
+        newTemplate.setName(isNotBlank(newTemplate.getName())?newTemplate.getName():oldTemplate.getName());
+        newTemplate.setDescription(isNotBlank(newTemplate.getDescription())?newTemplate.getDescription():oldTemplate.getDescription());
+        newTemplate.setFileId(isNotBlank(newTemplate.getFileId())?newTemplate.getFileId():oldTemplate.getFileId());
+        newTemplate.setCreateUser(isNotBlank(newTemplate.getCreateUser())?newTemplate.getCreateUser():oldTemplate.getCreateUser());
+        newTemplate.setCreatedDate(oldTemplate.getCreatedDate());
+        newTemplate.setPreviewId(isNotBlank(newTemplate.getPreviewId())?newTemplate.getPreviewId():oldTemplate.getPreviewId());
+
+
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
         return ResponseEntity.ok(template);
     }
@@ -137,7 +162,7 @@ public class ReportTemplateController {
             if (filename != null && !filename.equals("")) {
 
                 ResponseEntity<Resource> res = fileUploadClient.serveFile(filename);
-                LOG.info("Preview Received for %s is "+res,id);
+                LOG.info("Preview Received for %s is %s",id,res.toString());
                 return res;
             }
         }
