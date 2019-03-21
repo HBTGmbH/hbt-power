@@ -107,7 +107,7 @@ public class ReportTemplateController {
         return ResponseEntity.ok("Success");
     }
 
-
+    /*
     @PostMapping("{id}")
     public ResponseEntity updateTemplate(
             @PathVariable("id") String id,
@@ -128,6 +128,7 @@ public class ReportTemplateController {
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
         return ResponseEntity.ok(template);
     }
+    // */
 
     @PostMapping("{id}")
     public ResponseEntity updateTemplate(
