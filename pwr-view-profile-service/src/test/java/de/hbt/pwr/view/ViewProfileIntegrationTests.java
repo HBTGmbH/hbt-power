@@ -6,10 +6,7 @@ import de.hbt.pwr.view.client.profile.model.Profile;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,6 +81,7 @@ public class ViewProfileIntegrationTests {
     }
 
     @Test
+    @Ignore
     public void profileIsImportedAndSavedWithoutException() throws IOException {
         addTestData();
         ViewProfile retrieved = viewProfileService.getByIdAndCheckOwner(viewProfile.getId(), initials);

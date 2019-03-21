@@ -2,7 +2,6 @@ package de.hbt.pwr.view.controller;
 
 import de.hbt.pwr.view.client.files.FileUploadClient;
 import de.hbt.pwr.view.client.report.ReportServiceClient;
-import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.UploadFileResponse;
@@ -25,7 +24,7 @@ import java.util.List;
 @Controller
 public class ReportTemplateController {
 
-    private static final Logger LOG  = LogManager.getLogger(SkillServiceFallback.class);
+    private static final Logger LOG  = LogManager.getLogger(ReportTemplateController.class);
 
     private final ReportTemplateService reportTemplateService;
 
@@ -82,11 +81,11 @@ public class ReportTemplateController {
                 return ResponseEntity.ok(template);
             } else {
                 // TODO delete design file (compensation for failed transaction)
-                throw new RuntimeException("Could not store preview for template " + designFileResponse.getFileId());
+                throw new RuntimeException("Could not store preview for template " + designFileResponse.getFileId() + " - Status: " + previewFileResponseEntity.getStatusCode().value());
             }
 
         } else {
-            throw new RuntimeException("Could not store template.");
+            throw new RuntimeException("Could not store template - Status: " + designFileResponseEntity.getStatusCode().value());
         }
 
     }
@@ -94,8 +93,14 @@ public class ReportTemplateController {
 
     @DeleteMapping("{id}")
     public ResponseEntity deleteTemplate(@PathVariable String id) {
-        fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getPreviewId());
-        fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getFileId());
+        if(!reportTemplateService.getTemplate(id).getPreviewId().equals("") && reportTemplateService.getTemplate(id).getPreviewId() != null){
+
+            fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getPreviewId());
+        }
+        if(!reportTemplateService.getTemplate(id).getFileId().equals("") && reportTemplateService.getTemplate(id).getFileId() != null)
+        {
+            fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getFileId());
+        }
         reportTemplateService.deleteTemplate(id);
         return ResponseEntity.ok("Success");
     }

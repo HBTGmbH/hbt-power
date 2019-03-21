@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
-@FeignClient(value = "pwr-skill-service", fallback = SkillServiceFallback.class)
+@FeignClient(value = "pwr-skill-service")
 public interface SkillServiceClient {
     @GetMapping("/skill/byName")
     SkillServiceSkill getSkillByName(@RequestParam("qualifier") String qualifier);

@@ -2,6 +2,7 @@ package de.hbt.pwr.view.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Getter
 @Setter
@@ -27,4 +28,16 @@ public class UploadFileResponse {
     public static UploadFileResponse empty(){
         return new UploadFileResponse("","","","",0);
     }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("fileId", fileId)
+                .append("fileName", fileName)
+                .append("fileDownloadUri", fileDownloadUri)
+                .append("fileType", fileType)
+                .append("size", size)
+                .toString();
+    }
+
 }
