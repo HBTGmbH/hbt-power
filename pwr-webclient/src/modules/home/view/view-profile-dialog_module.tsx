@@ -10,8 +10,8 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
+import Fab from '@material-ui/core/Fab/Fab';
 
-// TODO slider
 
 interface ViewProfileDialogProps {
     open: boolean;
@@ -153,38 +153,22 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                 />
                 <div>
                     <ListSubheader>Chars per Line</ListSubheader>
-                    <Button
+                    <Fab
                         style={{width: '40px', height: '40px', padding: '0', marginRight: '15px'}}
-                        variant={'fab'}
                         color={'primary'}
                         onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0) ? (this.state.charsPerLine - 1) : 0)}
                     >
                         <RemoveIcon/>
-                    </Button>
 
+                    </Fab>
                     {this.state.charsPerLine}
-
-                    <Button
+                    <Fab
                         style={{width: '40px', height: '40px', padding: '0', marginLeft: '15px'}}
-                        variant={'fab'} color={'primary'}
+                        color={'primary'}
                         onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100) ? (this.state.charsPerLine + 1) : 100)}
                     >
                         <AddIcon/>
-                    </Button>
-
-
-                    {/* <TextField
-                        value={this.state.charsPerLine}
-                        label={PowerLocalize.get('ViewProfileDialog.CharsPerLine')}
-                        disabled={false}
-                    />
-                    <Slider
-                        value={this.state.charsPerLine}
-                        min={10}
-                        step={1}
-                        max={99}
-                        onChange={this.changeCharsPerLine}
-                    />*/}
+                    </Fab>
                 </div>
             </DialogContent>
             <DialogActions>

@@ -29,6 +29,7 @@ import Typography from '@material-ui/core/Typography/Typography';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {Save} from '@material-ui/icons';
+import Fab from '@material-ui/core/Fab/Fab';
 
 
 interface AddSkillDialogProps {
@@ -261,37 +262,37 @@ class AddSkillDialogModule extends React.Component<AddSkillDialogProps
         if (this.props.doneState === 'SKILL_EXISTS') {
             btn = <div>
                 <div className="Aligner">
-                <Button variant="fab"
+                    <Fab
                         autoFocus
                         color="primary"
                         onClick={this.props.progress}
-                        style={{color: 'white', width:70, height:70, fontSize:"60px"}}
+                        style={{color: 'white', width: 70, height: 70, fontSize: '60px'}}
                         aria-label={PowerLocalize.get('AddSkillDialog.Save')}>
-                    <Save fontSize="inherit"/>
-                </Button>
+                        <Save fontSize="inherit"/>
+                    </Fab>
                 </div>
                 <div className="Aligner">
                     Skill Already Exists
                 </div>
-            </div>
+            </div>;
         } else {
-            btn = <Button variant="fab"
-                          autoFocus
-                          color="primary"
-                          onClick={this.props.progress}
-                          style={{color: 'white', width:70, height:70, fontSize: "60px"}}
-                          aria-label={PowerLocalize.get('AddSkillDialog.Save')}>
+            btn = <Fab
+                autoFocus
+                color="primary"
+                onClick={this.props.progress}
+                style={{color: 'white', width: 70, height: 70, fontSize: '60px'}}
+                aria-label={PowerLocalize.get('AddSkillDialog.Save')}>
                 <Save fontSize="inherit"/>
-            </Button>
+            </Fab>;
         }
 
         return <div>
             <div className="Aligner">
                 {PowerLocalize.get('Action.Save')}
             </div>
-           <div className="Aligner">
-               {btn}
-           </div>
+            <div className="Aligner">
+                {btn}
+            </div>
         </div>;
     };
 

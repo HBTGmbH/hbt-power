@@ -135,7 +135,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                     <AppBar>
                         <Toolbar>
                             <Button
-                                color={'primary'}
+                                color={'secondary'}
                                 variant={"outlined"}
                                 className="mui-margin"
                                 disabled={this.state.activeTemplateId == ''}

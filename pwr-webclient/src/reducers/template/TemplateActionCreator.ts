@@ -130,15 +130,11 @@ export namespace TemplateActionCreator {
         window.URL.revokeObjectURL(url);
     }
 
-    export function AsyncChangeTemplate(templateSlice: TemplateSlice) {
-        const formData = new FormData();
-        formData.append('templateSlice', JSON.stringify({
-            name: templateSlice.name,
-            description: templateSlice.description,
-            createUser: templateSlice.user
-        }));
+    export function AsyncChangeTemplate(template: Template) {
+
+
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            axios.post(TemplateService.changeTemplate(templateSlice.id), formData)
+            axios.post(TemplateService.changeTemplate(template.id), template)
                 .then((response: AxiosResponse) => {
                     dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                 })
@@ -154,7 +150,6 @@ export namespace TemplateActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             axios.delete(TemplateService.deleteTemplate(id))
                 .then((response: AxiosResponse) => {
-                    // TODO
                     dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                 })
                 .catch((error: AxiosError) => {
@@ -163,6 +158,7 @@ export namespace TemplateActionCreator {
                 });
         };
     }
+
     /*
         export function AsyncCreateTemplate(name: string, description: string, initials: string, path: string) {
             return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
@@ -197,7 +193,9 @@ export namespace TemplateActionCreator {
         let url = window.URL.createObjectURL(blob);
         a.href = location;
 
-        let name:string = location.split('\\')[location.split('\\').length];
+        let name:string = location.split('/')[location.split('/').length-1];
+        console.log(name);
+        name = name.split('.')[0];
         a.download = name;
         //programatically click the link to trigger the download
         a.click();
@@ -341,33 +339,13 @@ export namespace TemplateActionCreator {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
                     dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                     NavigationActionCreator.showSuccess('Template erfolgreich hochgeladen!');
-                    dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TEMPLATES));
+                    dispatch(AdminActionCreator.SetReportUploadProgress(0));
                 })
                 .catch(function (error: any) {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
                     NavigationActionCreator.showError('Upload Fehlgeschlagen: ' + error.toString());
+                    dispatch(AdminActionCreator.SetReportUploadProgress(0));
                 });
         };
     }
-
-    /* TODO was besseres hierfür ausdenken
-    export function AsyncRenderTemplatePreview(file: any) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let formData = new FormData();
-            formData.append('file', file);
-            dispatch(CrossCuttingActionCreator.startRequest());
-            axios.post(TemplateService.renderPreview(), formData)
-                .then((response: AxiosResponse) => {
-                    // success message
-                    dispatch(CrossCuttingActionCreator.endRequest());
-                })
-                .catch(function (error: any) {
-                    console.log(error);
-                    // upload failed message
-                    dispatch(CrossCuttingActionCreator.endRequest());
-                });
-        };
-    }
-
-*/
 }

@@ -16,6 +16,10 @@ export class Template {
         this.createdDate = template.createdDate;
         this.previewId = template.previewId;
     }
+
+    public static empty():Template{
+        return new Template({id:"",name:"",description:"",fileId:"",createUser:"",createdDate:"",previewId:""});
+    }
 }
 
 

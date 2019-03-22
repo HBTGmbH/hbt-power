@@ -1,7 +1,8 @@
 import * as React from 'react';
-import {Button, CircularProgress, WithStyles, withStyles} from '@material-ui/core';
+import {CircularProgress, WithStyles, withStyles} from '@material-ui/core';
 import {green} from '@material-ui/core/colors';
 import {Loop} from '@material-ui/icons';
+import Fab from '@material-ui/core/Fab/Fab';
 
 interface PwrLoadingButtonProps {
     loading: boolean;
@@ -29,13 +30,12 @@ class PwrLoadingButtonModule extends React.Component<PwrLoadingButtonProps & Wit
 
     render() {
         return <div className={this.props.classes.wrapper}>
-            <Button
-                variant="fab"
+            <Fab
                 color="secondary"
                 disabled={this.props.loading}
             >
                 <Loop/>
-            </Button>
+            </Fab>
             {this.props.loading && <CircularProgress size={68} className={this.props.classes.fabProgress}/>}
         </div>;
     }

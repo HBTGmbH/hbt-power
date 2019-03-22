@@ -106,7 +106,6 @@ const newPowerTheme:ThemeOptions = {
                 color: '#46E6E6'
             }
         }
-
     }
 };
 

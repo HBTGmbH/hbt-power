@@ -35,7 +35,6 @@ interface ReportManagerState {
 
 class ReportManagerModule extends React.Component<ReportManagerProps & ReportManagerLocalProps & ReportManagerDispatch, ReportManagerState> {
 
-
     constructor(props: ReportManagerProps & ReportManagerLocalProps & ReportManagerDispatch) {
         super(props);
 
@@ -58,7 +57,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         };
     }
 
-
     public componentWillMount(){
         if(this.props.allTemplates.length == 0){
             this.props.loadAllTemplates();
@@ -67,6 +65,10 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
     public componentDidMount(){
         //console.log(this.props.allTemplates);
+
+    }
+
+    public componentDidUpdate(){
 
     }
 
@@ -93,7 +95,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
         this.props.allTemplates.map((value, key) => {
             items.push(<ListItem key={key} button onClick={() => this.selectTemplate(value)}>
-                {/*<ListItemIcon children={<Icon className="material-icons">dehaze</Icon>}/>*/}
                 <ListItemText
                     style={{fontSize:"1rem"}}
                     primary={value.name}
@@ -130,7 +131,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                 </Paper>
             </div>
 
-
             <div className={'col-md-6'} style={{height: '100%'}}>
                 <Paper style={{height: '100%'}}>
                     <div style={{height: 'calc(100vh - 88px)'}}>
@@ -139,7 +139,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                     </div>
                 </Paper>
             </div>
-
 
             <div className={'col-md-3'} style={{marginLeft:'10px'}}>
                 <Paper>

@@ -255,7 +255,7 @@ export namespace ViewProfileActionCreator {
             axios.post(ViewProfileService.postReport(initials, viewProfileId, templateId)).then((response: AxiosResponse) => {
                 let location = response.data;
                 console.info('Received Export: ', location);
-                TemplateActionCreator.DownloadReportFile(response.data);
+                TemplateActionCreator.DownloadReportFile(location);
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch(function (error: any) {
                 console.error(error);

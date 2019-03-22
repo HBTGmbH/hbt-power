@@ -11,6 +11,7 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import Button from '@material-ui/core/Button/Button';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
+import Fab from '@material-ui/core/Fab/Fab';
 
 const Recharts = require('recharts');
 
@@ -151,24 +152,22 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
                 <CardContent>
                     <ListSubheader>{PowerLocalize.get('SkillStatistics.OccurrenceRating.Title')}</ListSubheader>
                     <div style={{marginLeft: '30px'}}>
-                        <Button
-                            style={{width: '40px', height: '40px', padding: '0', marginRight: '15px'}}
-                            variant={'fab'}
-                            color={'primary'}
-                            onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength > 0) ? (this.state.skillOccLevelLength - 1) : 0})}
+                        <Fab style={{width: '40px', height: '40px', padding: '0', marginRight: '15px'}}
+                             color={'primary'}
+                             onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength > 0) ? (this.state.skillOccLevelLength - 1) : 0})}
                         >
                             <RemoveIcon/>
-                        </Button>
+                        </Fab>
 
                         {this.state.skillOccLevelLength}
 
-                        <Button
+                        <Fab
                             style={{width: '40px', height: '40px', padding: '0', marginLeft: '15px'}}
-                            variant={'fab'} color={'primary'}
+                            color={'primary'}
                             onClick={() => this.setState({skillOccLevelLength: (this.state.skillOccLevelLength < 100) ? (this.state.skillOccLevelLength + 1) : 100})}
                         >
                             <AddIcon/>
-                        </Button>
+                        </Fab>
                     </div>
 
                     <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
