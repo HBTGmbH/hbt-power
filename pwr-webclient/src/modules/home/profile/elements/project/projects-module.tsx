@@ -7,14 +7,15 @@ import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActio
 import {ProjectCard} from './project-module';
 import {NameEntity} from '../../../../../model/NameEntity';
 import * as Immutable from 'immutable';
-import {IconButton} from '@material-ui/core';
-import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {ProjectDialogState} from './project-dialog_module';
 import {Profile} from '../../../../../model/Profile';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import {Comparators} from '../../../../../utils/Comparators';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import Grid from '@material-ui/core/Grid/Grid';
+import IconButton from '@material-ui/core/IconButton/IconButton';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -123,22 +124,58 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
             </div>);
     };
 
+    private renderSingleProject2 = (value: Project, key: string, index: number) => {
+
+        return (
+            <Grid key={key} item xs={12} sm={6} md={4} spacing={16} style={{height: '35vh'}}>
+                <ProjectCard
+                    project={value}
+                    onSave={this.props.saveProject}
+                    onDelete={this.props.deleteProject}
+                    companies={this.props.companies}
+                    projectRoles={this.props.projectRoles}
+                    profile={this.props.profile}
+                    backgroundColor={'white'}
+                />
+            </Grid>);
+    };
+
     private renderProjects = () => {
         let index = 0;
         return this.props.projects
             .sort(Comparators.compareProjects)
-            .map((value, key) => this.renderSingleProject(value, key, index++)).toArray();
+            .map((value, key) => this.renderSingleProject2(value, key, index++)).toArray();
     };
 
     render() {
         return (
             <div style={{alignContent: 'center'}}>
-                <ResponsiveReactGridLayout
+                {/*} <ResponsiveReactGridLayout
                     className="layout" breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
                     cols={{lg: 12, md: 9, sm: 6, xs: 3, xxs: 3}}>
                     {this.renderProjects()}
                 </ResponsiveReactGridLayout>
                 <br/>
+                <div style={{textAlign: 'center'}}>
+                    <Tooltip title={PowerLocalize.get('Action.New')}>
+                        <IconButton
+                            style={{display: 'inline-block'}}
+                            className="material-icons"
+                            onClick={this.props.addProject}
+                        >
+                            add
+                        </IconButton>
+                    </Tooltip>
+                </div>*/}
+                <Grid
+                    container
+                    spacing={8}
+                    //wrap="nowrap"
+                    justify={'flex-start'}
+                    alignItems={'flex-start'}
+                >
+                    {this.renderProjects()}
+                </Grid>
                 <div style={{textAlign: 'center'}}>
                     <Tooltip title={PowerLocalize.get('Action.New')}>
                         <IconButton

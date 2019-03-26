@@ -111,7 +111,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
 
     render() {
         return (
-            <div className="row">
+            <div>
                 <div className="col-md-5 col-md-offset-1">
                     <div className="row">
                         <div className="col-md-12">

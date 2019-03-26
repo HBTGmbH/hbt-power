@@ -14,8 +14,7 @@ import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreat
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {Color} from '../../../../../utils/ColorUtil';
-import {AddSkill} from './add-skill_module';
-import {StarRating} from '../../../../star-rating_module.';
+import Grid from '@material-ui/core/Grid/Grid';
 
 const distance = require('jaro-winkler');
 
@@ -105,7 +104,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
             margin: '4px',
             backgroundColor: custom ? 'red' : Color.HBT_2017_GRAY.toCSSRGBString()
         };
-        return <div className="col-md-2" key={skill.id()}>
+        return <Grid item key={skill.id()}>
             <SkillChip
                 style={style}
                 skill={skill}
@@ -113,7 +112,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
                 onDelete={this.props.onSkillDelete}
                 onRatingChange={this.props.changeSkillRating}
             />
-        </div>;
+        </Grid>;
     };
 
     private renderSkills = () => {
@@ -131,8 +130,13 @@ class SkillTreeModule extends React.Component<SkillTreeProps
                 {/*<AddSkill/>*/}
                 <div>
                     <ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>
-                    <div className="row">
-                        {this.renderSkills()}
+                    <div
+                        //className="col-md-11"
+                    >
+                        <Grid container spacing={8}>
+                            {this.renderSkills()}
+                        </Grid>
+
                     </div>
                 </div>
             </div>
