@@ -128,7 +128,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
         return (
             <div>
                 <AddSkillDialog/>
-                <AddSkill/>
+                {/*<AddSkill/>*/}
                 <div>
                     <ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>
                     <div className="row">
