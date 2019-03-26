@@ -100,17 +100,16 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         spacing={8}
                         item
                         xs
-                        style={{overflowY: 'hidden'}}
+                        style={{overflowY: 'auto', marginLeft: '10px', marginRight: '10px'}}
                     >
                         <Typography
                             variant={'body2'}
-                            style={{margin: '5px'}}
+                            style={{marginRight: '5px'}}
                         >
                             {
                                 this.props.project.description()
                             }
                         </Typography>
-
                     </Grid>
                 </Grid>
                 <Grid item spacing={8}>
@@ -131,86 +130,5 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                 />
             </Grid>
         </Paper>;
-        /*
-
-    return <Card style={{
-        backgroundColor: this.props.backgroundColor,
-        width: '100%',
-        height: '100%',
-        //overflowY:'hidden'
-    }}>
-        <CardContent>
-            <div>
-                <Typography variant={'h6'}>
-                    {this.props.project.name() != null ? this.props.project.name() + ' für ' + this.getEndCustomerName() : 'Error'}
-                </Typography>
-                <Typography variant={'caption'}>
-                    {this.renderTitle()}
-                </Typography>
-            </div>
-            <hr/>
-            <div style={{height: '70%', overflowY: 'hidden'}}>
-                <Typography
-                    variant={'body2'}
-                    //noWrap
-                >
-                    {this.props.project.description()}
-                </Typography>
-            </div>
-        </CardContent>
-
-        <CardActions>
-            <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
-            <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
-                           onClick={this.deleteButtonPress}/>
-        </CardActions>
-        <ProjectDialog key={'projectDialog.' + this.props.project.id()}
-                       open={this.state.dialogIsOpen}
-                       project={this.props.project}
-                       onClose={this.closeDialog}
-                       onSave={this.handleSaveRequest}
-                       companies={this.props.companies}
-                       projectRoles={this.props.projectRoles}
-                       profile={this.props.profile}
-        />
-    </Card>;
-
-    /*return <ExpansionPanel
-        defaultExpanded
-        style={{
-            backgroundColor: this.props.backgroundColor,
-            width: '100%',
-            height: '100%',
-            //overflowY:'hidden'
-        }}
-    >
-        <ExpansionPanelSummary
-            title={this.props.project.name() != null ? this.props.project.name() + ' für ' + this.getEndCustomerName() : "Error"}
-        >
-            <div>
-                <Typography
-                    variant={'h6'}>{this.props.project.name() + ' für ' + this.getEndCustomerName()}</Typography>
-                <Typography variant={'caption'}>{this.renderTitle()}</Typography>
-            </div>
-        </ExpansionPanelSummary>
-        <ProjectDialog key={'projectDialog.' + this.props.project.id()}
-                       open={this.state.dialogIsOpen}
-                       project={this.props.project}
-                       onClose={this.closeDialog}
-                       onSave={this.handleSaveRequest}
-                       companies={this.props.companies}
-                       projectRoles={this.props.projectRoles}
-                       profile={this.props.profile}
-        />
-        <ExpansionPanelDetails>
-            {this.props.project.description()}
-        </ExpansionPanelDetails>
-        <CardActions>
-            <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.openDialog}/>
-            <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
-                           onClick={this.deleteButtonPress}/>
-        </CardActions>
-    </ExpansionPanel>;
-                           */
     }
 }
