@@ -252,7 +252,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
 
     private invokeMoveSelectedSkill = (newCategoryId: number) => {
         let selectedSkill = this.getSelectedSkill();
-        console.log('NewCategoryId', newCategoryId);
+        //console.log('NewCategoryId', newCategoryId);
         this.props.moveSkill(newCategoryId, selectedSkill.categoryId(), selectedSkill.id());
         this.closeCategorySearcher();
     };

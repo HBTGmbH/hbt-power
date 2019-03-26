@@ -88,7 +88,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
 
     private uploadTemplate = () => {
         if (this.state.file != null) {
-            console.log('trying to upload file... ', this.state.file);
+            console.debug('trying to upload file... ', this.state.file);
             this.props.saveTemplate(this.state.file, this.state.tempName, this.state.tempDescription, this.props.currentUser);
         }
     };

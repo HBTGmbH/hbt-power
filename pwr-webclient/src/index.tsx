@@ -35,7 +35,7 @@ store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 const pageLeavePreventer = (ev: any) => {
     let state: ApplicationState = store.getState() as ApplicationState;
     let changes = state.databaseReducer.profile().changesMade();
-    console.log('Changes', changes);
+    console.debug('Changes', changes);
     return changes > 0 ? 'DoNotLeave' : null;
 };
 

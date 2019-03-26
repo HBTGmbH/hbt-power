@@ -104,7 +104,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
             this.setState({skillHierarchy: hierarchy});
         }).catch(error => {
             console.error(error);
-            console.log(error.response);
+            //console.log(error.response);
             this.setState({skillHierarchy: 'Not available.'});
         });
     };

@@ -601,7 +601,7 @@ export namespace SkillActionCreator {
                 handleSkillServiceError(error);
             });
         };
-    };
+    }
 
 
     export function AsyncProgressAddSkill() {
@@ -673,5 +673,29 @@ export namespace SkillActionCreator {
         };
 
     }
+
+    function GetHierarchyForSkillName(skillName:string)
+    {
+
+    }
+
+
+     export function AsyncAddSkill(skillName:string) {
+         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+             let state = getState().skillReducer;
+
+             let skill = getState().databaseReducer.profile().getSkillByName(skillName);
+             if(!isNullOrUndefined(skill))// ist schon im profil enthalten
+             {
+                 // dispatch message
+             }
+             else
+             {
+                 let hierarchy = state.categorieHierarchiesBySkillName().get(state.currentSkillName());
+             }
+
+         };
+     }
+
 
 }

@@ -111,7 +111,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                          className={this.selectedClass(name)}
                          value={name}
                          key={name}
-                         onChange={(e: any) => console.log(e)}
+                         onChange={(e: any) => console.debug(e)}
                          onClick={() => this.handleSkillSelect(null, name)}
         >
             {name}

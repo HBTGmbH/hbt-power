@@ -99,7 +99,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         } else {
             this.setState(state);
         }
-        console.log(this.state);
+        console.debug(this.state);
     }
 
     public componentWillReceiveProps(props: ProjectDialogLocalProps) {
@@ -156,7 +156,6 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
 
 
     private handleAddRole = (value: string) => {
-        console.log("Project_Module add: "+value);
         if (this.state.roles.length < 3) {
             this.setState({
                 roles: [...this.state.roles, value]

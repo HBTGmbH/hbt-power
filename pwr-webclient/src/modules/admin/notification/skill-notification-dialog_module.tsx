@@ -229,7 +229,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
     };
 
     private renderInfoCategoryError = () => {
-        console.log('Reason:', this.props.error);
+        console.debug('Reason:', this.props.error);
         return <div>
             <this.SkillInfo/>
             <p>

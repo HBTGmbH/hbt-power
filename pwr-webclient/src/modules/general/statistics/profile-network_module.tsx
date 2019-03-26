@@ -121,7 +121,7 @@ class ProfileNetworkGraphModule extends React.Component<ProfileNetworkGraphProps
             this.network = new vis.Network(container, data, options);
 
             this.network.on('click', params => {
-                console.log(params);
+                //console.log(params);
                 this.setState({
                     selectedNodeProperties: params.nodes.length > 0 ? params : null
                 });

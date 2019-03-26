@@ -372,7 +372,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.OpenSkillNotificationDialog(notificationId));
             let notification = getState().adminReducer.findSkillNotification(notificationId);
-            skillServiceClient.getSkillByName(notification.skill().name())
+            skillServiceClient.getSkillByName("testertest")//notification.skill().name())
                 .then(skill => {
                     if (isNullOrUndefined(skill.category)) {
                         dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY));

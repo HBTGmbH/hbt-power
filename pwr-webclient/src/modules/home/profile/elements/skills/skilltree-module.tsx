@@ -14,6 +14,8 @@ import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreat
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {Color} from '../../../../../utils/ColorUtil';
+import {AddSkill} from './add-skill_module';
+import {StarRating} from '../../../../star-rating_module.';
 
 const distance = require('jaro-winkler');
 
@@ -126,7 +128,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
         return (
             <div>
                 <AddSkillDialog/>
-
+                <AddSkill/>
                 <div>
                     <ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>
                     <div className="row">

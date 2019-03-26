@@ -122,7 +122,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                                     <ListItem
                                         value={name}
                                         key={name}
-                                        onChange={(e: any) => console.log(e)}
+                                        onChange={(e: any) => console.debug(e)}
                                     >
                                         {name}
                                     </ListItem>
@@ -131,7 +131,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                             <ListItem
                                 value={'test'}
                                 key={'test-key'}
-                                onChange={(e: any) => console.log(e)}
+                                onChange={(e: any) => console.debug(e)}
                             >
                                 test-placeholder
                             </ListItem>

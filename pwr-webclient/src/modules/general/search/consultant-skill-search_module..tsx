@@ -64,14 +64,14 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     };
 
     private handleAddSkill = (skill: string) => {
-        console.log('Add skill', skill);
+        //console.log('Add skill', skill);
         this.setState({
             currentSearchSkills: this.state.currentSearchSkills.push(skill)
         });
     };
 
     private handleRemoveSkill = (skill: string) => {
-        console.log('Remove skill', skill);
+        //console.log('Remove skill', skill);
         this.setState({
             currentSearchSkills: Immutable.List<string>(this.state.currentSearchSkills.filter(s => s != skill))
         });

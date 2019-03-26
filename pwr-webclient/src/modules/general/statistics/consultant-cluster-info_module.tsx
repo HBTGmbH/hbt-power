@@ -48,7 +48,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
     }
 
     public componentWillReceiveProps(nextProps: ConsultantClusterInfoProps) {
-        console.log(nextProps.info !== this.props.info);
+        //console.log(nextProps.info !== this.props.info);
         if (nextProps.info !== this.props.info) {
             this.setState({
                 tags: this.renderTags(nextProps)
@@ -96,7 +96,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
     };
 
     private handleTagClick = (evt: React.SyntheticEvent<any>, tagName: string) => {
-        console.log(tagName + ' clicked');
+        //console.log(tagName + ' clicked');
         this.setState({
             skillInfoPopoverAnchor: evt.currentTarget,
             skillInfoPopoverOpen: true,

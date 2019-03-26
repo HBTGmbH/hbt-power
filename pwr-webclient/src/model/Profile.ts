@@ -331,7 +331,7 @@ export class Profile {
             careerEntries: careerEntries,
             keySkillEntries: keySkillEntries
         };
-        console.log('Serialized profile:', res);
+        console.debug('Serialized profile:', res);
         return res;
     };
 

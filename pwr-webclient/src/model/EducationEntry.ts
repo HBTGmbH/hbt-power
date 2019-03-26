@@ -87,7 +87,6 @@ export class EducationEntry {
     }
 
     public toAPIEducationEntry(educations: Immutable.Map<string, NameEntity>): APIEducationStep {
-        console.log(this);
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             startDate: DateUtils.formatLocaleDateToIso(this.startDate()),

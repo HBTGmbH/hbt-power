@@ -27,13 +27,11 @@ export interface PwrDeleteConfirmProps {
 export class PwrDeleteConfirm extends React.Component<PwrDeleteConfirmProps> {
 
     private confirmAndClose = () => {
-        console.log("confirmAndClose",this.props.onClose());
         this.props.onConfirm();
         this.props.onClose();
     };
 
     private close = () => {
-        console.log("close");
         this.props.onClose();
     };
 

@@ -13,7 +13,7 @@ import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {ViewProfile} from '../../model/view/ViewProfile';
-import {getImagePath} from '../../API_CONFIG';
+import {getImagePath, getProfileImageLocation} from '../../API_CONFIG';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
@@ -295,15 +295,11 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
                         {this.renderPower()}
                         <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}>
-                            <Avatar>
-                                {this.getInitials()}
-                            </Avatar>
+                            <Avatar
+                                src={getProfileImageLocation(this.getInitials())}
+                                style={{width: 40, height: 40}}
+                            />
                         </Tooltip>
-                        {/*
-                                <Typography style={{color:'white', paddingRight:'5px'}}>
-                                          {PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}
-                                </Typography>
-                            */}
                         {
                             this.props.loggedInAsAdmin ?
                                 <Tooltip title={PowerLocalize.get('Tooolbar.ToAdminOverview')}>
