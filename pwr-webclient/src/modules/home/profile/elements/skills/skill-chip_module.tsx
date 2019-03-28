@@ -21,8 +21,10 @@ interface SkillChipLocalProps {
     style?: CSSProperties;
     textColor?: string;
     className?: string;
-
-    onRatingChange(newRating: number, id: string): void;
+    showRating?:boolean;
+    canChangeRating?:boolean;
+    canDelete?:boolean;
+    onRatingChange?(newRating: number, id: string): void;
 
     onDelete(id: string): void;
 }
@@ -54,6 +56,13 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
             anchorEl: (!this.state.anchorEl) ? event.currentTarget : null,
             popoverOpen: !this.state.popoverOpen,
         });
+    };
+
+    private renderAvatar = () => {
+        return this.props.showRating ?
+            <Avatar>{this.props.skill.rating()}</Avatar>
+            :
+            <></>
     };
 
     private openDeleteConfirm = () => {
@@ -89,13 +98,15 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                     infoText={"Willst du den Skill löschen?"}
                 />
                 <Chip
-                    avatar={<Avatar>{this.props.skill.rating()}</Avatar>}
+                    color={'primary'}
+                    avatar={this.renderAvatar()}
                     label={this.props.skill.name()}
                     style={this.props.style}
                     className={this.props.className}
                     onDelete={this.openDeleteConfirm}
                     onClick={this.showInfo}
                 />
+                {this.props.canChangeRating ?
                 <Popover
                     open={this.state.popoverOpen}
                     onClose={this.showInfo}
@@ -105,6 +116,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
                 >
                     <StarRating rating={this.props.skill.rating()} onRatingChange={this.handleRatingChange}/>
                 </Popover>
+                    :<></>}
             </div>
         );
     }

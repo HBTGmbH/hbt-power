@@ -26,6 +26,7 @@ import {PwrTextLength} from '../../../../general/pwr-text-length_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import Avatar from '@material-ui/core/Avatar/Avatar';
+import {SkillChip} from '../skills/skill-chip_module';
 
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -116,15 +117,15 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         return this.props.project.skillIDs()
             .sort(ComparatorBuilder.comparing((s: string) => s).build())
             .filter(value => this.props.profile.getSkill(value) != null)
-            .map(skillId => <Chip
-                avatar={<Avatar>{this.props.profile.getSkill(skillId).rating()}</Avatar>}
-                key={'SkillChip_' + skillId}
-                style={{margin: 4}}
-                onDelete={() => {
-                    this.handleDeleteSkill(skillId);
-                }}
-                label={this.props.profile.getSkill(skillId).name()}
-            />);
+            .map(skillId =>
+                <SkillChip
+                    key={skillId}
+                    skill={this.props.profile.getSkill(skillId)}
+                    onDelete={() => this.handleDeleteSkill(skillId)}
+                    showRating={true}
+                    canChangeRating={false}
+                />
+            )
     };
 
     private changeStartDate = (date: Date) => {

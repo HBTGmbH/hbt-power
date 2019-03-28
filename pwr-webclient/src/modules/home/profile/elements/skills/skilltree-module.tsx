@@ -103,7 +103,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
         let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
         let style = {
             margin: '4px',
-            backgroundColor: custom ? 'red' : Color.HBT_2017_GRAY.toCSSRGBString()
+            backgroundColor: custom ? 'red' : '',
         };
         return <div className="col-md-2" key={skill.id()}>
             <SkillChip
@@ -112,6 +112,9 @@ class SkillTreeModule extends React.Component<SkillTreeProps
                 textColor={'white'}
                 onDelete={this.props.onSkillDelete}
                 onRatingChange={this.props.changeSkillRating}
+                canChangeRating
+                canDelete
+                showRating
             />
         </div>;
     };
@@ -127,10 +130,10 @@ class SkillTreeModule extends React.Component<SkillTreeProps
     render() {
         return (
             <div>
-                <AddSkillDialog/>
-                {/*<AddSkill/>*/}
+                {/*<AddSkillDialog/><ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>*/}
+                <AddSkill/>
                 <div>
-                    <ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>
+
                     <div className="row">
                         {this.renderSkills()}
                     </div>

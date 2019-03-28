@@ -371,6 +371,7 @@ export class AdminActionCreator {
     public static AsyncOpenSkillNotificationDialog(notificationId: number) {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.OpenSkillNotificationDialog(notificationId));
+            console.log(getState().adminReducer);
             let notification = getState().adminReducer.findSkillNotification(notificationId);
             skillServiceClient.getSkillByName("testertest")//notification.skill().name())
                 .then(skill => {
