@@ -26,7 +26,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 @Controller
 public class ReportTemplateController {
 
-    private static final Logger LOG  = LogManager.getLogger(ReportTemplateController.class);
+    private static final Logger LOG = LogManager.getLogger(ReportTemplateController.class);
 
     private final ReportTemplateService reportTemplateService;
 
@@ -67,7 +67,7 @@ public class ReportTemplateController {
         ResponseEntity<UploadFileResponse> designFileResponseEntity = fileUploadClient.uploadFile(file);
 
         if (designFileResponseEntity.getStatusCode() == HttpStatus.OK) {
-            LOG.info(designFileResponseEntity.getBody());
+            LOG.debug(designFileResponseEntity.getBody());
             UploadFileResponse designFileResponse = designFileResponseEntity.getBody();
             ResponseEntity<UploadFileResponse> previewFileResponseEntity = reportServiceClient.generatePdf(designFileResponse.getFileId());
 
@@ -82,7 +82,7 @@ public class ReportTemplateController {
                 ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
                 return ResponseEntity.ok(template);
             } else {
-                // TODO delete design file (compensation for failed transaction)
+                fileUploadClient.deleteFile(designFileResponse.getFileId());
                 throw new RuntimeException("Could not store preview for template " + designFileResponse.getFileId() + " - Status: " + previewFileResponseEntity.getStatusCode().value());
             }
 
@@ -95,12 +95,11 @@ public class ReportTemplateController {
 
     @DeleteMapping("{id}")
     public ResponseEntity deleteTemplate(@PathVariable String id) {
-        if(!reportTemplateService.getTemplate(id).getPreviewId().equals("") && reportTemplateService.getTemplate(id).getPreviewId() != null){
+        if (!reportTemplateService.getTemplate(id).getPreviewId().equals("") && reportTemplateService.getTemplate(id).getPreviewId() != null) {
 
             fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getPreviewId());
         }
-        if(!reportTemplateService.getTemplate(id).getFileId().equals("") && reportTemplateService.getTemplate(id).getFileId() != null)
-        {
+        if (!reportTemplateService.getTemplate(id).getFileId().equals("") && reportTemplateService.getTemplate(id).getFileId() != null) {
             fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getFileId());
         }
         reportTemplateService.deleteTemplate(id);
@@ -136,15 +135,14 @@ public class ReportTemplateController {
             @RequestBody ReportTemplate newTemplate) {
 
 
-
         ReportTemplate oldTemplate = reportTemplateService.getTemplate(id);
 
-        newTemplate.setName(isNotBlank(newTemplate.getName())?newTemplate.getName():oldTemplate.getName());
-        newTemplate.setDescription(isNotBlank(newTemplate.getDescription())?newTemplate.getDescription():oldTemplate.getDescription());
-        newTemplate.setFileId(isNotBlank(newTemplate.getFileId())?newTemplate.getFileId():oldTemplate.getFileId());
-        newTemplate.setCreateUser(isNotBlank(newTemplate.getCreateUser())?newTemplate.getCreateUser():oldTemplate.getCreateUser());
+        newTemplate.setName(isNotBlank(newTemplate.getName()) ? newTemplate.getName() : oldTemplate.getName());
+        newTemplate.setDescription(isNotBlank(newTemplate.getDescription()) ? newTemplate.getDescription() : oldTemplate.getDescription());
+        newTemplate.setFileId(isNotBlank(newTemplate.getFileId()) ? newTemplate.getFileId() : oldTemplate.getFileId());
+        newTemplate.setCreateUser(isNotBlank(newTemplate.getCreateUser()) ? newTemplate.getCreateUser() : oldTemplate.getCreateUser());
         newTemplate.setCreatedDate(oldTemplate.getCreatedDate());
-        newTemplate.setPreviewId(isNotBlank(newTemplate.getPreviewId())?newTemplate.getPreviewId():oldTemplate.getPreviewId());
+        newTemplate.setPreviewId(isNotBlank(newTemplate.getPreviewId()) ? newTemplate.getPreviewId() : oldTemplate.getPreviewId());
 
 
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
@@ -163,7 +161,7 @@ public class ReportTemplateController {
             if (filename != null && !filename.equals("")) {
 
                 ResponseEntity<Resource> res = fileUploadClient.serveFile(filename);
-                LOG.info("Preview Received for %s is %s",id,res.toString());
+                LOG.debug("Preview Received for " + id + " is " + res.getBody().toString());
                 return res;
             }
         }
