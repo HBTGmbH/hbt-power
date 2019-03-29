@@ -1,0 +1,113 @@
+{
+  "id": 49,
+  "description": "",
+  "lastEdited": "2018-04-23T19:12:36",
+  "languages": [],
+  "qualification": [],
+  "trainingEntries": [],
+  "education": [],
+  "sectors": [],
+  "careerEntries": [],
+  "keySkillEntries": [],
+  "projects": [
+    {
+      "name": "Warpdrive",
+      "client": {
+        "id": 211,
+        "name": "Starfleet",
+        "type": "COMPANY"
+      },
+      "broker": {
+        "id": 8,
+        "name": "",
+        "type": "COMPANY"
+      },
+      "projectRoles": [
+        {
+          "id": 173,
+          "name": "Software-Tester",
+          "type": "PROJECT_ROLE"
+        },
+        {
+          "id": 212,
+          "name": "Engineer",
+          "type": "PROJECT_ROLE"
+        }
+      ],
+      "skills": [
+        {
+          "id": 2430,
+          "name": "Engineering",
+          "rating": 5,
+          "comment": ""
+        },
+        {
+          "id": 2431,
+          "name": "Warp",
+          "rating": 3,
+          "comment": ""
+        },
+        {
+          "id": 2428,
+          "name": "Dancing",
+          "rating": 3,
+          "comment": ""
+        }
+      ],
+      "startDate": "2088-04-24",
+      "endDate": "2090-04-23",
+      "description": "",
+      "id": 317
+    }
+  ],
+  "skills": [
+    {
+      "id": 2426,
+      "name": "React.js",
+      "rating": 3,
+      "comment": ""
+    },
+    {
+      "id": 2427,
+      "name": "Java",
+      "rating": 5,
+      "comment": ""
+    },
+    {
+      "id": 2430,
+      "name": "Engineering",
+      "rating": 5,
+      "comment": ""
+    },
+    {
+      "id": 2429,
+      "name": "MySQL",
+      "rating": 3,
+      "comment": ""
+    },
+    {
+      "id": 2431,
+      "name": "Warp",
+      "rating": 3,
+      "comment": ""
+    },
+    {
+      "id": 2428,
+      "name": "Dancing",
+      "rating": 3,
+      "comment": ""
+    },
+    {
+      "id": 2425,
+      "name": "JavaScript",
+      "rating": 4,
+      "comment": ""
+    },
+    {
+      "id": 2424,
+      "name": "POSTMAN",
+      "rating": 3,
+      "comment": ""
+    }
+  ]
+}

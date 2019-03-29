@@ -1,0 +1,98 @@
+spring:
+    application:
+      name: pwr-profile-service # This name is used to register the application with the eurka service discovery
+    jackson:
+      serialization:
+        write_dates_as_timestamps: false
+    datasource:
+      # The driver you want to use. No native queries are used, so any relation database should work
+      driver-class-name: com.mysql.jdbc.Driver
+      # Database configuration
+      username: root
+      password: secretPassword
+      url: jdbc:mysql://localhost:3306/profile
+# For local development, you should switch each service to a different port.
+server:
+    port: 9004
+logging:
+  level:
+    ROOT: info
+    de.hbt.pwr: debug
+    org.springframework.web: debug
+  file: profile-service.log
+# This service can be polite!
+isPolite: true
+# Quite the antipattern. This is used in another service. Someone should fix this...
+default-chars-per-line: 32
+feign:
+  hystrix:
+    enabled: true # Enables Hystrix Fallback for Feign clients.
+# Profile for testing
+---
+spring:
+  profiles: test
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: ''
+    url: jdbc:h2:mem:datajpa
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: create
+      use-new-id-generator-mappings: false
+eureka:
+  client:
+    enabled: false
+pwr-skill-service:
+  ribbon:
+    enabled: false
+# Below are some sample profiles you can use to develop
+# Both work on a localhost database
+# the localDev profile connects itself to an eureka instance
+# The localDevNoEureka profile does not connect to an eureka instance
+---
+spring:
+  profiles: bootstrapDatabase
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/profile
+jpa:
+  hibernate:
+    ddl-auto: create
+---
+spring:
+  profiles: localDev
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: secretPassword
+    url: jdbc:mysql://localhost:3306/profile
+  jpa:
+    hibernate:
+      ddl-auto: none
+      use-new-id-generator-mappings: false
+eureka:
+  client:
+    enabled: true
+    service-url:
+       defaultZone: http://development-database::8761/eureka
+---
+spring:
+  profiles: localDevNoEureka
+  datasource:
+      driver-class-name: com.mysql.jdbc.Driver
+      username: root
+      password: secretPassword
+      url: jdbc:mysql://localhost:3306/profile
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+eureka:
+  client:
+    enabled: false
+
+
+
