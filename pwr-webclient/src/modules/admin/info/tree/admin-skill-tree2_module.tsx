@@ -38,6 +38,7 @@ interface AdminSkillTree2LocalState {
     skillNameOpen: boolean;
     deleteConfirmationOpen: boolean;
     categorySearcherOpen: boolean;
+    moveCategorySearcher: boolean;
 
 }
 
@@ -61,6 +62,8 @@ interface AdminSkillTree2Dispatch {
     createCategory(parentId: number, qualifier: string): void;
 
     deleteCategory(categoryId: number): void;
+
+    moveCategory(newCategoryId: number, selectedCategoryId: number): void;
 
     moveSkill(newCategory: number, oldCategory: number, skillId: number): void;
 
@@ -90,10 +93,10 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             categoryNameOpen: false,
             deleteConfirmationOpen: false,
             categorySearcherOpen: false,
-            skillNameOpen: false
+            skillNameOpen: false,
+            moveCategorySearcher: false,
         };
     }
-
 
     static mapStateToProps(state: ApplicationState, localProps: AdminSkillTree2LocalProps): AdminSkillTree2Props {
         return {
@@ -114,6 +117,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             deleteLocalization: (categoryId, language) => dispatch(SkillActionCreator.AsyncDeleteLocale(categoryId, language)),
             createCategory: (parentId, qualifier) => dispatch(SkillActionCreator.AsyncCreateCategory(qualifier, parentId)),
             deleteCategory: categoryId => dispatch(SkillActionCreator.AsyncDeleteCategory(categoryId)),
+            moveCategory: (newCategoryId, selectedCategoryId) => dispatch(SkillActionCreator.AsyncMoveCategory(newCategoryId, selectedCategoryId)),
             moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.Skill.AsyncMoveSkill(skillId, newCategory, oldCategory)),
             createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.Skill.AsyncCreateSkill(qualifier, categoryId)),
             deleteSkill: skillId => dispatch(SkillActionCreator.Skill.AsyncDeleteSkill(skillId)),
@@ -230,6 +234,13 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
         });
     };
 
+    private invokeMoveSelectedCategory = (newCategoryId: number) => {
+        let selectedCategory = this.getSelectedCategory();
+        // console.log("NewCategoryId", newCategoryId);
+        this.props.moveCategory(newCategoryId, selectedCategory.id());
+        this.closeCategorySearcher();
+    };
+
     private handleCheckFilterNonCustom = (event: any, isInputChecked: boolean) => {
         this.props.changeFilterNonCustomSkills(isInputChecked);
     };
@@ -240,10 +251,21 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
         });
     };
 
+    private openMoveCategorySearcher = () => {
+        this.setState({
+            moveCategorySearcher: true
+        });
+    };
+
     private closeCategorySearcher = () => {
         this.setState({
-            categorySearcherOpen: false
+            categorySearcherOpen: false,
+            moveCategorySearcher: false,
         });
+    };
+
+    private getSelectedCategory = () => {
+        return this.props.categoriesById.get(this.state.selectedCategoryId);
     };
 
     private getSelectedSkill = () => {
@@ -310,6 +332,13 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
                 open={this.state.deleteConfirmationOpen}
                 onDeclineDelete={this.closeDeleteConfirmation}
                 onAcceptDelete={this.handleDeleteSelectedCategory}
+            />
+            <CategorySearcher
+                skillStore={this.props.skillStore}
+                open={this.state.moveCategorySearcher}
+                categories={this.props.categoriesById.toArray().filter((value, index) => value.id() !== selectedCategory.id())}
+                onClose={this.closeCategorySearcher}
+                onSelectCategory={this.invokeMoveSelectedCategory}
             />
             <ListSubheader>{selectedCategory.qualifier()}</ListSubheader>
             <FormControlLabel

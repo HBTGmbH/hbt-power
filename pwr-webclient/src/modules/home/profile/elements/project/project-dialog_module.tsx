@@ -123,7 +123,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                 onDelete={() => {
                     this.handleDeleteSkill(skillId);
                 }}
-                label={this.props.profile.getSkill(skillId).name()}
+                label={this.props.profile.getSkill(skillId) == null ? skillId  + " fehlt" : this.props.profile.getSkill(skillId).name()}
             />);
     };
 
