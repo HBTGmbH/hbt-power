@@ -58,13 +58,13 @@ class ProfileStatisticsModule extends React.Component<
         let careerCount = this.props.profile.careerEntries().count();
         let keySkillCount = this.props.profile.keySkillEntries().count();
         const data = [
-            {name: PowerLocalize.get('Language.Abbreviation'),value: langCount},
-            {name: PowerLocalize.get('Sector.Abbreviation'),value: secCount},
-            {name: PowerLocalize.get('Qualification.Abbreviation'),value: qualCount},
-            {name: PowerLocalize.get('Education.Abbreviation'),value: edCount},
-            {name: PowerLocalize.get('Training.Abbreviation'),value: trainCount},
-            {name: PowerLocalize.get('Career.Abbreviation'),value: careerCount},
-            {name: PowerLocalize.get('KeySkill.Abbreviation'),value: keySkillCount},
+            {name: PowerLocalize.get('Language.Plural'),value: langCount},
+            {name: PowerLocalize.get('Sector.Plural'),value: secCount},
+            {name: PowerLocalize.get('Qualification.Plural'),value: qualCount},
+            {name: PowerLocalize.get('Education.Plural'),value: edCount},
+            {name: PowerLocalize.get('Training.Plural'),value: trainCount},
+            {name: PowerLocalize.get('Career.Plural'),value: careerCount},
+            {name: PowerLocalize.get('KeySkill.Plural'),value: keySkillCount},
         ];
         return(
                 <Recharts.ResponsiveContainer minHeight={200} maxHeight={400}>

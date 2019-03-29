@@ -245,6 +245,9 @@ export function deleteCustomSkill(skillId: number) {
 export function deleteCategory(parentId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + parentId;
 }
+export function patchMoveCategory(newParentId: number, toMoveId: number) {
+    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + toMoveId + "/category/" + newParentId;
+}
 
 export function patchMoveSkill(skillId: number, newCategoryId: number) {
     return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/skill/" + skillId + "/category/" + newCategoryId;

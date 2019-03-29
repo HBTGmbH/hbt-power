@@ -23,9 +23,6 @@ export enum ActionType {
     CreateEntry,
     DeleteEntry,
     APIRequestSuccess,
-    APIRequestSuccess_NoContent,
-    APIRequestFail,
-    APIRequestPending,
     ChangeLanguageSkillLevel,
 
     ChangeFirstName,
@@ -87,6 +84,7 @@ export enum ActionType {
     ReadSkillHierarchy,
     SetTreeChildrenOpen,
     FilterTree,
+    MoveCategory,
 
     UpdateSkillCategory,
     RemoveSkillCategory,
@@ -124,4 +122,7 @@ export enum ActionType {
     SetSortInProgress,
     ResetViewState,
     ClearViewProfiles,
+
+    // == Cross Cutting
+    SetRequestPending
 }

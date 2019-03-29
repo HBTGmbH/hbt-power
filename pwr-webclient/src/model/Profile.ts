@@ -310,6 +310,7 @@ export class Profile {
     }
 
     public getSkill(id: string): Skill {
+
         return this.skills().get(id);
     }
 

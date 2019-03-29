@@ -12,7 +12,7 @@ import {
     getCategoryById,
     getCategoryChildrenByCategoryId,
     getFullTree,
-    getSkillByName,
+    getSkillByName, patchMoveCategory,
     patchMoveSkill,
     patchSetIsDisplayCategory,
     postLocaleToCategory,
@@ -49,6 +49,7 @@ export namespace SkillActionCreator {
     import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
     import FilterTreeAction = SkillActions.FilterTreeAction;
     import InitializeTreeAction = SkillActions.InitializeTreeAction;
+    import MoveCategoryAction = SkillActions.MoveCategoryAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {
@@ -57,6 +58,8 @@ export namespace SkillActionCreator {
             toAdd: category
         };
     }
+
+
 
     export function AddSkillToTree(categoryId: number, skill: SkillServiceSkill): AddSkillToTreeAction {
         return {
@@ -176,6 +179,14 @@ export namespace SkillActionCreator {
         }
     }
 
+    function MoveCategory(newParentId:number, toMoveId:number) {
+        return {
+            type:ActionType.MoveCategory,
+            newParentId:newParentId,
+            toMoveId: toMoveId,
+        }
+    }
+
     function MoveSkill(originCategoryId: number, targetCategoryId: number, skillId: number): MoveSkillAction {
         return {
             type: ActionType.MoveSkill,
@@ -286,6 +297,18 @@ export namespace SkillActionCreator {
                 }
             }).catch(handleSkillServiceError);
         };
+    }
+
+    export function AsyncMoveCategory(newParentId:number, toMoveId: number){
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            axios.patch(patchMoveCategory(newParentId,toMoveId)).then((response: AxiosResponse) => {
+                dispatch(MoveCategory(newParentId, toMoveId));
+
+                // reload tree
+                //dispatch(AsyncLoadTree());
+                succeedAPICall(dispatch);
+            }).catch(handleSkillServiceError);
+        }
     }
 
 
@@ -450,7 +473,6 @@ export namespace SkillActionCreator {
 
         const checkAndInvoke = (skills: Array<SkillServiceSkill>, skillsChanged: number, remainingRequests: number, dsp: redux.Dispatch<ApplicationState>) => {
             if(remainingRequests <= 0) {
-                dsp(ProfileActionCreator.SucceedAPIRequest());
                 if(skillsChanged != 0) {
                     dsp(BatchAddSkills(skills));
                 }
@@ -466,8 +488,6 @@ export namespace SkillActionCreator {
                 });
                 let remaining = filteredQualifiers.length;
                 if(remaining > 0) {
-                    dispatch(ProfileActionCreator.APIRequestPending());
-
                     for(let i = 0; i < filteredQualifiers.length; i++) {
                         getSkillByQualifier(filteredQualifiers[i], skill => {
                             remaining--;

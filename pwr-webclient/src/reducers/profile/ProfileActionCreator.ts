@@ -24,16 +24,6 @@ export class ProfileActionCreator {
     }
 
     /**
-     * Creates an action that updates the state so that its profile request status is pending.
-     * @returns {{type: ActionType}}
-     */
-    public static APIRequestPending() : AbstractAction {
-        return {
-            type: ActionType.APIRequestPending
-        };
-    }
-
-    /**
      * Creates an action that update the state so the received consultant profile is used to replace
      * the current profile.
      * @param payload
@@ -45,10 +35,6 @@ export class ProfileActionCreator {
             payload: payload,
             requestType: reqType
         };
-    }
-
-    public static APIRequestFailed() : AbstractAction {
-        return { type: ActionType.APIRequestFail };
     }
 
     public static deleteEntry(id: string, elementType: ProfileElementType): DeleteEntryAction {
@@ -131,15 +117,6 @@ export class ProfileActionCreator {
             type: ActionType.RemoveSkillFromProject,
             skillId: skillId,
             projectId: projectId
-        }
-    }
-
-
-
-
-    public static SucceedAPIRequest(): AbstractAction {
-        return {
-            type:ActionType.APIRequestSuccess_NoContent
         }
     }
 
