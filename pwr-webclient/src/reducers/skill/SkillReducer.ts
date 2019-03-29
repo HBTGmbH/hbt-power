@@ -8,13 +8,12 @@ import {
 import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {SkillActions} from './SkillActions';
-import {APISkillCategory, SkillCategory} from '../../model/skill/SkillCategory';
+import {APISkillCategory} from '../../model/skill/SkillCategory';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {SkillTreeNode} from '../../model/skill/SkillTreeNode';
 import {SkillTreeBuilder} from './SkillTreeBuilder';
-import {store} from '../reducerIndex';
 
 export namespace SkillReducer {
     import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;

@@ -2,8 +2,6 @@ import * as Immutable from 'immutable';
 import {SkillCategory} from './SkillCategory';
 import {Comparators} from '../../utils/Comparators';
 import {SkillServiceSkill} from './SkillServiceSkill';
-import {SkillStore} from './SkillStore';
-import {stat} from 'fs';
 
 
 export class SkillNode {

@@ -12,7 +12,8 @@ import {
     getCategoryById,
     getCategoryChildrenByCategoryId,
     getFullTree,
-    getSkillByName, patchMoveCategory,
+    getSkillByName,
+    patchMoveCategory,
     patchMoveSkill,
     patchSetIsDisplayCategory,
     postLocaleToCategory,
@@ -49,7 +50,6 @@ export namespace SkillActionCreator {
     import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
     import FilterTreeAction = SkillActions.FilterTreeAction;
     import InitializeTreeAction = SkillActions.InitializeTreeAction;
-    import MoveCategoryAction = SkillActions.MoveCategoryAction;
 
     export function AddCategoryToTree(parentId: number, category: SkillCategory): AddCategoryToTreeAction {
         return {

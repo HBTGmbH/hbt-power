@@ -20,8 +20,6 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {ComparatorBuilder} from 'ts-comparator';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
-import {PwrYearPicker} from '../../../../general/pwr-year-picker';
-import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
 import {PwrTextLength} from '../../../../general/pwr-text-length_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';

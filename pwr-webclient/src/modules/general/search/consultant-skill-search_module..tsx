@@ -60,7 +60,9 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     };
 
     public componentDidUpdate(prevProps: ConsultantSkillSearchProps, prevState: ConsultantSkillSearchState) {
-        if (this.state.currentSearchSkills != prevState.currentSearchSkills) this.executeSearch();
+        if (this.state.currentSearchSkills != prevState.currentSearchSkills){
+            this.executeSearch();
+        }
     };
 
     private handleAddSkill = (skill: string) => {
@@ -89,15 +91,9 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
                 searchTerm: value
             });
             axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
-                if (response.status === 200) {
-                    this.setState({
-                        currentSuggestSkills: response.data
-                    });
-                } else if (response.status === 204) {
-                    this.setState({
-                        currentSuggestSkills: []
-                    });
-                }
+                this.setState({
+                    currentSuggestSkills: response.data
+                });
             }).catch((error: any) => {
                 console.error((error));
             });
@@ -120,6 +116,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
         return (<Paper style={{padding: '16px'}}>
             <div className="row" style={{paddingLeft: '20px'}}>
                 <PwrAutoComplete fullWidth={true}
+                                 disableFiltering={true}
                                  data={this.state.currentSuggestSkills}
                                  searchTerm={this.state.searchTerm}
                                  chips={this.state.currentSearchSkills.toArray()}
