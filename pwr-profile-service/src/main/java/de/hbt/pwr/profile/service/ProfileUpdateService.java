@@ -6,7 +6,6 @@ import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.*;
-import javafx.util.Pair;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,21 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 @Transactional
 @Service
 public class ProfileUpdateService {
+
+    private static class Pair<K, V> {
+        private K key;
+        private V value;
+        private Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+        private K getKey() {
+            return key;
+        }
+        private V getValue() {
+            return value;
+        }
+    }
 
     private static final Logger LOG = getLogger(ProfileUpdateService.class);
 
