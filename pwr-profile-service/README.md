@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/HBTGmbH/pwr-profile-service.svg?branch=travis)](https://travis-ci.org/HBTGmbH/pwr-profile-service)
+[![Build Status](https://travis-ci.org/HBTGmbH/pwr-profile-service.svg?branch=master)](https://travis-ci.org/HBTGmbH/pwr-profile-service)
 
 # Profile Service #
 ## About ##
