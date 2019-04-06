@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/HBTGmbH/pwr-profile-service.svg?branch=travis)](https://travis-ci.org/HBTGmbH/pwr-profile-service)
+
 # Profile Service #
 ## About ##
 Build for HBT's profile management suite, the profile service gathers and consolidates marketable master data

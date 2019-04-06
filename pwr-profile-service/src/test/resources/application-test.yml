@@ -1,0 +1,22 @@
+logging:
+  level:
+    # Reduce framework logging for tests
+    root: WARN
+    org.springframework.web: WARN
+    org.hibernate: WARN
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: ''
+    url: jdbc:h2:mem:datajpa
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: create
+      use-new-id-generator-mappings: false
+eureka:
+  client:
+    enabled: false
+pwr-skill-service:
+  ribbon:
+    enabled: false

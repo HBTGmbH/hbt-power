@@ -27,29 +27,6 @@ default-chars-per-line: 32
 feign:
   hystrix:
     enabled: true # Enables Hystrix Fallback for Feign clients.
-# Profile for testing
----
-spring:
-  profiles: test
-  datasource:
-    driver-class-name: org.h2.Driver
-    password: ''
-    url: jdbc:h2:mem:datajpa
-    username: sa
-  jpa:
-    hibernate:
-      ddl-auto: create
-      use-new-id-generator-mappings: false
-eureka:
-  client:
-    enabled: false
-pwr-skill-service:
-  ribbon:
-    enabled: false
-# Below are some sample profiles you can use to develop
-# Both work on a localhost database
-# the localDev profile connects itself to an eureka instance
-# The localDevNoEureka profile does not connect to an eureka instance
 ---
 spring:
   profiles: bootstrapDatabase
