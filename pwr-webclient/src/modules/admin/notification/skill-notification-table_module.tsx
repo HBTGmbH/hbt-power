@@ -101,7 +101,7 @@ class SkillNotificationTableModule extends React.Component<SkillNotificationTabl
                     </FormGroup>
                 </TableCell>
                 <TableCell>{notification.adminNotification().initials()}</TableCell>
-                <TableCell className="cursor-pointer" onClick={this.openDialogFor(key)}>
+                <TableCell className="cursor-pointer" onClick={this.openDialogFor(notification.adminNotification().id())}>
                     {PowerLocalize.getFormatted('NotificationInbox.SkillNotification.SubjectTextTemplate', notification.skill().name())}
                 </TableCell>
                 <TableCell>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableCell>

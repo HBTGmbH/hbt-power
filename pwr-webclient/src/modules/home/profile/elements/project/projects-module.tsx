@@ -112,7 +112,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
     private renderSingleProject = (value: Project, key: string) => {
 
         return (
-            <Grid key={key} item xs={12} sm={6} md={4} spacing={16} style={{height: '35vh',minHeight:'230px'}}>
+            <Grid key={key} item xs={12} sm={6} md={4} style={{height: '35vh',minHeight:'230px'}}>
                 <ProjectCard
                     project={value}
                     onSave={this.props.saveProject}

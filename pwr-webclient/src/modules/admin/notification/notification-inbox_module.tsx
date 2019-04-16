@@ -164,7 +164,7 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
                 <Tabs
                     value={this.state.tabValue}
                     centered
-                    fullWidth
+                    variant={'fullWidth'}
                     onChange={this.handleTabChange}
                 >
                     <Tab icon={<Icon className="material-icons">add_box</Icon>}

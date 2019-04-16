@@ -87,7 +87,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
             <Grid item container spacing={8} direction={'column'} style={{height: '100%'}}>
                 <Grid item container spacing={8} direction={'column'} wrap={'nowrap'}
                       style={{height: 'calc(100% - 48px)'}}>
-                    <Grid item spacing={8}>
+                    <Grid item>
                         <Typography variant={'h6'} style={{margin: '5px'}}>
                             {this.props.project.name() != null ? this.props.project.name() + ' für ' + this.getEndCustomerName() : 'Error'}
                         </Typography>
@@ -97,7 +97,6 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         <hr/>
                     </Grid>
                     <Grid
-                        spacing={8}
                         item
                         xs
                         style={{overflowY: 'auto', marginLeft: '10px', marginRight: '10px'}}
@@ -112,7 +111,7 @@ export class ProjectCard extends React.Component<ProjectModuleProps, ProjectModu
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid item spacing={8}>
+                <Grid item>
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
                                    onClick={this.openDialog}/>
                     <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton

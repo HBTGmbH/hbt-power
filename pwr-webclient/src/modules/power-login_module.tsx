@@ -145,9 +145,8 @@ class PowerLoginModule extends React.Component<PowerLoginProps
                                     color={'primary'}>Weiter</Button>
                             <br/>
                             <br/>
-                            <Link to={Paths.ADMIN_LOGIN}><Button variant="flat">Admin</Button></Link>
+                            <Link to={Paths.ADMIN_LOGIN}><Button variant={'text'}>Admin</Button></Link>
                         </div>
-
                     </div>
                 </div>
                 <div className="vertical-align" style={{marginTop: '50px'}}>

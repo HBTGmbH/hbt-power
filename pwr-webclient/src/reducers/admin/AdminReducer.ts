@@ -184,6 +184,7 @@ export class AdminReducer {
             case ActionType.SetSkillNotificationError:
                 return AdminReducer.SetSkillNotificationError(state, action as ChangeStringValueAction);
             case ActionType.SetSkillNotificationAction:
+                console.log("Reducer: ",action);
                 return AdminReducer.SetSkillNotification(state, action as SetSkillNotificationActionAction);
             case ActionType.SetNewSkillName: {
                 let act = action as SetNewSkillNameAction;
