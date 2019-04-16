@@ -60,7 +60,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
         this.props.profileSkillMetrics.missingSkills().forEach((com: string) => {
             missingSkills += prefix;
             missingSkills += com;
-            prefix = ' ,';
+            prefix = ', ';
         });
         return missingSkills;
     };

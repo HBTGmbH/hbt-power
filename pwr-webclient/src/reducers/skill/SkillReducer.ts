@@ -30,6 +30,7 @@ export namespace SkillReducer {
     import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
     import FilterTreeAction = SkillActions.FilterTreeAction;
     import InitializeTreeAction = SkillActions.InitializeTreeAction;
+    import MoveCategoryAction = SkillActions.MoveCategoryAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
         if (!isNullOrUndefined(category)) {
@@ -116,6 +117,19 @@ export namespace SkillReducer {
                 root = SkillTreeNode.shallowCopy(root);
                 return addOrUpdateSkill(skillStore, act.toAdd).skillTreeRoot(root);
             }
+            case ActionType.MoveCategory:{
+                let act = action as MoveCategoryAction;
+
+                let root = skillStore.skillTreeRoot();
+
+                let removedNode = root.removeCategoryFromTree(act.toMoveId);
+                root.addNodeToTree(removedNode, act.newParentId);
+                root.sort(skillStore.categoriesById(), skillStore.skillsById());
+                root.setVisibility(removedNode.skillCategoryId,true);
+                let newMap = skillStore.parentCategoryIdById().set(removedNode.skillCategoryId, act.newParentId);
+                return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root)).parentCategoryIdById(newMap);
+
+            }
             case ActionType.MoveSkill: {
                 let act = action as MoveSkillAction;
                 let skill = skillStore.skillsById().get(act.skillId).categoryId(act.targetCategoryId);
@@ -192,7 +206,7 @@ export namespace SkillReducer {
             case ActionType.SetTreeChildrenOpen: {
                 let act = action as SetTreeChildrenOpenAction;
                 let root = skillStore.skillTreeRoot();
-                root.toggleOpen(act.categoryId);
+                root.toggleOpenDown(act.categoryId);
                 return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root));
             }
             case ActionType.FilterTree: {

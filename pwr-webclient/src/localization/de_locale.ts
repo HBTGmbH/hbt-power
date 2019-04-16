@@ -300,6 +300,7 @@ export const de_locale: any = {
     'Action.AddCategory': 'Kategorie Hinzufügen',
     'Action.DeleteCategory': 'Kategorie Löschen',
     'Action.ChangeCategory': 'Kategorie Ändern',
+    'Action.MoveCategory':   'Kategorie verschieben',
     'Action.DeleteSkill': 'Skill löschen',
     'Action.AddSkillToCategory': 'Skill hinzufügen',
     'Action.SearchSkill': 'Skill suchen',

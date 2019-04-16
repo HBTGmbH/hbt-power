@@ -75,11 +75,15 @@ export class SkillTreeNode {
         this.addSkillIdToTree(categoryId, skill.id());
     }
 
-    public removeCategoryFromTree(categoryId: number) {
-        if (this.getChildIndex(categoryId) !== -1) {
+    public removeCategoryFromTree(categoryId: number): SkillTreeNode {
+        let index =this.getChildIndex(categoryId);
+        if(index !== -1) {let category = this.childNodes[index];
             this.removeCategoryFromChildren(categoryId);
+            return category;
+        } else if (this.childNodes.length > 0) {
+            return this.childNodes.map(childNode => childNode.removeCategoryFromTree(categoryId)).find(value => !!value);
         } else {
-            this.childNodes.forEach(childNode => childNode.removeCategoryFromTree(categoryId));
+            return null;
         }
     }
 
@@ -91,12 +95,19 @@ export class SkillTreeNode {
         }
     }
 
-    public toggleOpen(skillCategoryId: number) {
+    public toggleOpenDown(skillCategoryId: number) {
         if (this.skillCategoryId === skillCategoryId) {
             this.open = !this.open;
         } else {
-            this.childNodes.forEach(childNode => childNode.toggleOpen(skillCategoryId));
+            this.childNodes.forEach(childNode => childNode.toggleOpenDown(skillCategoryId));
         }
+    }
+
+    public setVisibility(nodeId: number, status:boolean){
+        if(this.skillCategoryId === nodeId){
+            this.open = status;
+        }
+        this.childNodes.forEach(childNode => childNode.setVisibility(nodeId,true));
     }
 
     public filter(onlyCustomSkills: boolean, searchTerm: string, skillsById: Immutable.Map<number, SkillServiceSkill>, skillCategoriesById: Immutable.Map<number, SkillCategory>) {
@@ -153,5 +164,13 @@ export class SkillTreeNode {
 
     private hasSkill(skillIdToFind: number): boolean {
         return this.skillNodes.some(skillNodes => skillNodes.skillId === skillIdToFind);
+    }
+
+    public addNodeToTree(categoryNod: SkillTreeNode, parentNodeId: number) {
+        if (this.skillCategoryId === parentNodeId) {
+            this.childNodes.push(categoryNod);
+        } else {
+            this.childNodes.forEach(childNode => childNode.addNodeToTree(categoryNod, parentNodeId))
+        }
     }
 }

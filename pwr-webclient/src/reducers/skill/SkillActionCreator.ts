@@ -13,6 +13,7 @@ import {
     getCategoryChildrenByCategoryId,
     getFullTree,
     getSkillByName,
+    patchMoveCategory,
     patchMoveSkill,
     patchSetIsDisplayCategory,
     postLocaleToCategory,
@@ -57,6 +58,8 @@ export namespace SkillActionCreator {
             toAdd: category
         };
     }
+
+
 
     export function AddSkillToTree(categoryId: number, skill: SkillServiceSkill): AddSkillToTreeAction {
         return {
@@ -176,6 +179,14 @@ export namespace SkillActionCreator {
         };
     }
 
+    function MoveCategory(newParentId:number, toMoveId:number) {
+        return {
+            type:ActionType.MoveCategory,
+            newParentId:newParentId,
+            toMoveId: toMoveId,
+        }
+    }
+
     function MoveSkill(originCategoryId: number, targetCategoryId: number, skillId: number): MoveSkillAction {
         return {
             type: ActionType.MoveSkill,
@@ -286,6 +297,18 @@ export namespace SkillActionCreator {
                 }
             }).catch(handleSkillServiceError);
         };
+    }
+
+    export function AsyncMoveCategory(newParentId:number, toMoveId: number){
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            axios.patch(patchMoveCategory(newParentId,toMoveId)).then((response: AxiosResponse) => {
+                dispatch(MoveCategory(newParentId, toMoveId));
+
+                // reload tree
+                //dispatch(AsyncLoadTree());
+                succeedAPICall(dispatch);
+            }).catch(handleSkillServiceError);
+        }
     }
 
 

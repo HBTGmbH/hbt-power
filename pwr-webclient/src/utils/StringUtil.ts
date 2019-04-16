@@ -29,6 +29,9 @@ export namespace StringUtils {
         return searchTextIndex === searchText.length;
     }
 
+    export function noOpFilter(searchText: string, key: string): boolean {
+        return true;
+    }
 
     export function dateToString(date: Date) {
         if (date == null) {

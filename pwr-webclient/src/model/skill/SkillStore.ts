@@ -62,6 +62,7 @@ export class SkillStore {
 
     /**
      * Used to restore the backward reference from a skill category back to its parent.
+     * key = skillId, value = parentId
      * @return {Doop<Map<string, string>, this>}
      */
     @doop

@@ -44,6 +44,8 @@ export interface PwrAutoCompleteProps {
     chips?: Array<string>;
     label: string;
 
+    disableFiltering?: boolean;
+
     onAdd?(item: string);
 
     onRemove?(item: string);
@@ -62,9 +64,17 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         suggestions: [],
     };
 
+    dataFilteredBy = (value: string) => {
+        if (this.props.disableFiltering) {
+            return this.props.data;
+        } else {
+            return filter(this.props.data, value, filterFuzzy);
+        }
+    };
+
     handleSuggestionsFetchRequested = ({value}) => {
         this.setState({
-            suggestions: filter(this.props.data, value, filterFuzzy),
+            suggestions: this.dataFilteredBy(value),
         });
     };
 
@@ -164,7 +174,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
 
         const autosuggestProps = {
             renderInputComponent: this.props.multi ? this.renderChipInput : this.renderInputComponent,
-            suggestions: this.state.suggestions,
+            suggestions: this.dataFilteredBy(this.props.searchTerm),
             onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
             onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
             getSuggestionValue: (v) => v,
