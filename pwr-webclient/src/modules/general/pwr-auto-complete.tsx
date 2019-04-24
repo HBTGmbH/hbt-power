@@ -50,7 +50,7 @@ export interface PwrAutoCompleteProps {
 
     onRemove?(item: string);
 
-    onSearchChange(selectedItem: string): void;
+    onSearchChange(selectedItem: string, navigation?: boolean): void;
 }
 
 type Styles =
@@ -84,11 +84,20 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         });
     };
 
-    handleChange = name => (event, {newValue}) => {
-        this.setState({
-            [name]: newValue,
-        });
+    handleChange = (event: any, newValue: string) => {
+
+        let searchTerm:string=newValue;
+
+        let navigation: boolean = false;
+        if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
+
+            navigation = true;
+            searchTerm=this.props.searchTerm;
+        }
+
+        this.props.onSearchChange(searchTerm, navigation);
     };
+
 
     handleClick = (item: string) => {
         if (this.props.onAdd) {
@@ -158,16 +167,6 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         );
     };
 
-// TODO use event.code == 'Enter' -- deprecated , but was undefined in development ,mp
-    private handleOnKeyDown(event:KeyboardEvent){
-        if(this.props.onAdd != null && event.keyCode == 13){
-            event.preventDefault();
-            event.stopPropagation();
-            this.props.onAdd(this.state.suggestions[0]);
-        }
-
-    }
-
 
     render() {
         const {classes} = this.props;
@@ -190,10 +189,9 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                     placeholder: this.props.label,
                     value: this.props.searchTerm,
                     chips: this.props.chips,
-                    onChange: (event, {newValue}) => this.props.onSearchChange(newValue),
+                    onChange: (event, {newValue}) => this.handleChange(event, newValue),
                     onAdd: (chip) => this.props.onAdd(chip),
                     onDelete: (chip, index) => this.props.onRemove(chip),
-                    onKeyDown: (event) => this.handleOnKeyDown(event),
                 }}
                 theme={{
                     container: classes.container,

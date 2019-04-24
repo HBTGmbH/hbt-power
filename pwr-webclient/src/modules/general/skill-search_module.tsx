@@ -62,29 +62,41 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         resetOnRequest: true
     };
 
-    private requestSkills = (searchText: string) => {
-        this.props.onValueChange(searchText);
-        this.setState({
-            searchText: searchText
-        });
-        if (!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
-            let reqParams = {
-                maxResults: this.props.maxResults,
-                searchterm: searchText
-            };
-            axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
-                if (response.status === 200) {
-                    this.setState({
-                        skills: response.data
-                    });
-                } else if (response.status === 204) {
-                    this.setState({
-                        skills: []
-                    });
-                }
-            }).catch((error: any) => {
-                console.error((error));
+    private requestSkills = (searchText: string, navigation?: boolean) => {
+        console.log('Skill-Searcher requestSkills:  ' + navigation);
+        console.log('Skill-Searcher requestSkills:  ' + searchText);
+        if (navigation) {
+            this.setState({
+                searchText: searchText
             });
+            console.log('navigation');
+            console.log('Skill-Searcher skills:  ' + this.state.skills);
+            return;
+        } else {
+            console.log('NO navigation');
+            this.props.onValueChange(searchText);
+            this.setState({
+                searchText: searchText
+            });
+            if (!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
+                let reqParams = {
+                    maxResults: this.props.maxResults,
+                    searchterm: searchText
+                };
+                axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
+                    if (response.status === 200) {
+                        this.setState({
+                            skills: response.data
+                        });
+                    } else if (response.status === 204) {
+                        this.setState({
+                            skills: []
+                        });
+                    }
+                }).catch((error: any) => {
+                    console.error((error));
+                });
+            }
         }
     };
 
@@ -104,6 +116,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
             data={this.state.skills}
             searchTerm={this.state.searchText}
             onSearchChange={this.requestSkills}
+           // disableFiltering
         />;
     }
 }
