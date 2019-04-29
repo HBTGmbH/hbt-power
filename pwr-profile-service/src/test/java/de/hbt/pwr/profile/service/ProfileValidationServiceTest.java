@@ -73,7 +73,7 @@ public class ProfileValidationServiceTest {
     }
 
     @Test
-    public void whenValidtingEntries_withEqualStartAndEndDate_shouldNotReturnError() {
+    public void whenValidatingEntries_withEqualStartAndEndDate_shouldNotReturnError() {
         profile.getTrainingEntries().add(trainingEntry("Keksmeisterschaft", forYear(2010), forYear(2010)));
         Collection<String> errors = profileValidationService.validateProfile(profile);
         assertThat(errors).isEmpty();

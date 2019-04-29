@@ -100,4 +100,19 @@ public class ConsultantsEndpoint {
         Consultant result = consultantService.updatePersonalData(initials, consultant);
         return ResponseEntity.ok(consultant);
     }
+
+    @DeleteMapping("{initials}/delete")
+    @ApiOperation(value = "Deletes a Consultant")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted.", response = boolean.class),
+            @ApiResponse(code = 404, message = "No consultant found to delete at the given URI."),
+            @ApiResponse(code = 423, message = "Consultant exists but is active")
+    })
+    public ResponseEntity delete(@PathVariable("initials") String initials) {
+        boolean isDeleted = consultantService.deleteConsultant(initials);
+        if (isDeleted)
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.notFound().build();
+    }
 }

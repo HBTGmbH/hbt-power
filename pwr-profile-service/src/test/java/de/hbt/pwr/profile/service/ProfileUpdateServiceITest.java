@@ -105,6 +105,9 @@ public class ProfileUpdateServiceITest {
         assertThat(languageSkillSet).containsExactlyInAnyOrder(lang1, lang2, lang3);
     }
 
+
+
+
     /**
      * Thats the removal of an invalid {@link ProfileEntry} where an entry
      * does not have a {@link ProfileEntry#getNameEntity()} set.
@@ -212,6 +215,82 @@ public class ProfileUpdateServiceITest {
         assertThat(foundS5).isEqualTo(skillOptional.get());
     }
 
+    @Test
+    @Transactional
+    public void testImportProjectSkills_withDuplicate_thenChangeRating() {
+        initTestData();
+        Profile profile = new Profile();
+        profileRepository.saveAndFlush(profile);
+        Set<Skill> profileSkills = new HashSet<>();
+        profile.setSkills(profileSkills);
+        profileSkills.add(s1);
+        profileSkills.add(s2);
+        profileSkills.add(s3);
+
+        profileRepository.saveAndFlush(profile);
+        Skill s5 = new Skill("S5", 3);
+        Set<Skill> projectSkills = new HashSet<>();
+        projectSkills.add(s1);
+        projectSkills.add(s4);
+        projectSkills.add(s5);
+
+        Project p = new Project();
+        p.setSkills(projectSkills);
+        p.setProjectRoles(new HashSet<>());
+        p.setClient(new NameEntity("Aldi", NameEntityType.COMPANY));
+        p.setBroker(new NameEntity("Aldi", NameEntityType.COMPANY));
+        p.setStartDate(LocalDate.now());
+        p.setEndDate(LocalDate.now());
+        p.setName("Test");
+        p.setDescription("This is a test project");
+
+        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p);
+        profile = profileUpdateService.updateProfile(profile);
+
+        profile.getSkills().forEach(skill -> skill.setRating(5));
+        profile = profileUpdateService.updateProfile(profile);
+        profileRepository.saveAndFlush(profile);
+        assertThat(profileSkills.size()).isEqualTo(5);
+        Optional<Skill> skillOptional = profileSkills.stream().filter(skill -> skill.getName().equals("S5")).findFirst();
+        assertThat(skillOptional).isPresent();
+        Skill foundS5 = skillRepository.findByName("S5").get();
+        assertThat(foundS5).isNotNull();
+        assertThat(foundS5).isEqualTo(skillOptional.get());
+        assertThat(foundS5.getRating()).isEqualTo(5);
+    }
+
+    @Test
+    @Transactional
+    public void testAddSkillChangeRating(){
+        Profile profile = new Profile();
+        profileRepository.saveAndFlush(profile);
+        Skill mySQL = new Skill("MySQL", 1);
+        Skill test = new Skill("test", 1);
+
+        Set<Skill> skillSet = new HashSet<>();
+        skillSet.add(test);
+        skillSet.add(mySQL);
+        profile.setSkills(skillSet);
+        profileUpdateService.importProfile(profile);
+        profileRepository.saveAndFlush(profile);
+
+
+
+        Skill duplicate = new Skill(mySQL.getName(),5);
+        profile.getSkills().add(duplicate);
+
+        profile = profileUpdateService.updateProfile(profile);
+        profileRepository.saveAndFlush(profile);
+
+        Set<Skill> resultSkills = profileRepository.findById(profile.getId()).get().getSkills();
+        assertThat(profile.getSkills().size()).isEqualTo(2);
+        Optional<Skill> skillDuplicateOptional =
+                resultSkills.stream().filter(skill -> skill.getName().equals(duplicate.getName())).findFirst();
+        assertThat(skillDuplicateOptional.isPresent());
+        assertThat(skillDuplicateOptional.get().getRating()).isEqualTo(5);
+
+    }
+
     /**
      * Validates that possible duplicate skills (Profile has skill "foo" with an id, project has skill "foo" without an id)
      * are interpreted correctly
@@ -226,6 +305,8 @@ public class ProfileUpdateServiceITest {
         profileSkills.add(s1);
         profileSkills.add(s2);
         profileSkills.add(s3);
+        profileRepository.saveAndFlush(profile);
+
         Skill s5 = new Skill("S3", 3);
         Set<Skill> projectSkills = new HashSet<>();
         projectSkills.add(s4);
@@ -485,7 +566,7 @@ public class ProfileUpdateServiceITest {
 
         profile = profileUpdateService.updateProfile(profile);
 
-        assertThat(profile.getLastEdited()).isBefore(LocalDateTime.now());
+        assertThat(profile.getLastEdited()).isBeforeOrEqualTo(LocalDateTime.now());
 
         assertContainsEntryWithName(profile.getEducation(), educationEntry1.getNameEntity());
         assertContainsEntryWithName(profile.getEducation(), educationEntry2.getNameEntity());

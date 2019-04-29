@@ -342,7 +342,9 @@ public class ProfileUpdateService {
     public Profile updateProfile(Profile profile) {
         importProfile(profile);
         profile.setLastEdited(LocalDateTime.now());
+        LOG.info("Profile getting saved...");
         profile = profileRepository.save(profile);
+        LOG.info("Profile saved...");
         adminNotificationService.createProfileUpdatedNotification(profile);
         return profile;
     }
