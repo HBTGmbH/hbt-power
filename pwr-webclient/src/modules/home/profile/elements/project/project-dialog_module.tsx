@@ -27,6 +27,7 @@ import {DatePickerType} from '../../../../../model/DatePickerType';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import {SkillChip} from '../skills/skill-chip_module';
+import {AddSkill} from '../skills/add-skill_module';
 
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -323,9 +324,10 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <div className="row">
                         <div className="col-md-10">
                             <Typography variant="subtitle1">Skills</Typography>
-                            <AddSkillDialog
+                            <AddSkill projectId={this.props.project.id()}/>
+                            {/*<AddSkillDialog
                                 onOpen={() => this.props.onOpenAddSkill(this.props.project.id())}
-                            />
+                            />*/}
                         </div>
                     </div>
                     <PwrSpacer double={true}/>

@@ -176,8 +176,6 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         return <div
             onKeyDown={this.handleKeyPress}
             id={'addSkillMain'}
-          //style={{width:'50%'}}
-            className={"col-md-6 col-xs-12"}
         >
             <div>
                 <Button onClick={this.toggleShowHelp}><HelpOutline/></Button>
@@ -186,13 +184,14 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
                         <Step key={'Step0'}>
                             <StepLabel>Text eingeben</StepLabel>
                             <StepContent>
-                            Hallo ich bin der Test, ob man hier was einfügen kann.
+                            Nach einem Skill suchen und mit Enter bestätigen
                             </StepContent>
                         </Step>
                         <Step key={'Step1'}>
                             <StepLabel>Level anpassen</StepLabel>
                             <StepContent>
-                                Hallo ich bin auch ein Test, ob man hier was einfügen kann.
+                                Kategorie überprüfen. <br/>
+                                Mit den Pfeiltasten links/rechts das Level einstellen und mit Enter bestätigen
                             </StepContent>
                         </Step>
 
@@ -200,7 +199,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
 
             </div>
             <div style={{minHeight: '49px'}}>
-                <div id={'addSkillTextField'} onClick={() => this.setState({progressState: 0})} style={{float: 'left'}}>
+                <div id={'addSkillTextField'} onClick={() => this.setState({progressState: 0})} style={{float: 'left', width:'45%'}}>
                     <SkillSearcher
                         id={'testName'}
                         label={'Skill'}
