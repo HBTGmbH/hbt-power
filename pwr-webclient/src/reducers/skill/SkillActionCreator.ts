@@ -675,27 +675,33 @@ export namespace SkillActionCreator {
     }
 
 
-     export function AsyncAddSkill(skillName:string) {
-         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-             let state = getState().skillReducer;
+    export function AsyncAddSkill(skillName: string, rating: number, projectId?: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let state = getState().skillReducer;
 
-             let exists = getState().skillReducer.skillWithQualifierExists(skillName);
-             if(getState().skillReducer.skillWithQualifierExists(skillName)) { // skill existiert bereits
+            let exists = getState().skillReducer.skillWithQualifierExists(skillName);
+            if (skillName != '') {//getState().skillReducer.skillWithQualifierExists(skillName)) { // skill existiert bereits
 
-                 let skill = getState().databaseReducer.profile().getSkillByName(skillName);
-                 if (!isNullOrUndefined(skill))// ist schon im profil enthalten
-                 {
-                     // dispatch message
-                 }
-                 else {
-                     // skill dem Profil hinzufügen
-                 }
-             } else {
-                 // skill existiert noch nicht
-                 // skill neu erstellen
-             }
-         };
-     }
+                let skill = getState().databaseReducer.profile().getSkillByName(skillName);
+                if (!isNullOrUndefined(skill))// ist schon im profil enthalten
+                {
+                    // dispatch message
+                    //console.log('skill: ' + skillName + ' already exists!');
+                }
+                else {
+                  //  console.log('trying to add skill: ' + skillName);
+                    if (projectId)
+                        dispatch(ProfileActionCreator.AddSkill(skillName, rating, '', projectId));
+                    else
+                        dispatch(ProfileActionCreator.AddSkill(skillName, rating, ''));
+                }
+            } else {
+                // skill existiert noch nicht
+                //console.log('skill: ' + skillName + ' does not exists!');
+                // skill neu erstellen
+            }
+        };
+    }
 
 
 }
