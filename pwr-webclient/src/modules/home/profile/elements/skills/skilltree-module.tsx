@@ -16,6 +16,7 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {Color} from '../../../../../utils/ColorUtil';
 import {AddSkill} from './add-skill_module';
 import {StarRating} from '../../../../star-rating_module.';
+import Grid from '@material-ui/core/Grid/Grid';
 
 const distance = require('jaro-winkler');
 
@@ -134,9 +135,9 @@ class SkillTreeModule extends React.Component<SkillTreeProps
                 <div className={"col-md-12"}>
                     <AddSkill/>
                 </div>
-                <div className="row">
+                <Grid spacing={8} container className="row">
                     {this.renderSkills()}
-                </div>
+                </Grid>
             </div>
         );
     }
