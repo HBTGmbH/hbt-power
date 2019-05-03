@@ -20,10 +20,14 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {ComparatorBuilder} from 'ts-comparator';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
+import {PwrYearPicker} from '../../../../general/pwr-year-picker';
+import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
 import {PwrTextLength} from '../../../../general/pwr-text-length_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import Avatar from '@material-ui/core/Avatar/Avatar';
+import {SkillChip} from '../skills/skill-chip_module';
+import {AddSkill} from '../skills/add-skill_module';
 
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -114,15 +118,15 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
         return this.props.project.skillIDs()
             .sort(ComparatorBuilder.comparing((s: string) => s).build())
             .filter(value => this.props.profile.getSkill(value) != null)
-            .map(skillId => <Chip
-                avatar={<Avatar>{this.props.profile.getSkill(skillId).rating()}</Avatar>}
-                key={'SkillChip_' + skillId}
-                style={{margin: 4}}
-                onDelete={() => {
-                    this.handleDeleteSkill(skillId);
-                }}
-                label={this.props.profile.getSkill(skillId) == null ? skillId  + " fehlt" : this.props.profile.getSkill(skillId).name()}
-            />);
+            .map(skillId =>
+                <SkillChip
+                    key={skillId}
+                    skill={this.props.profile.getSkill(skillId)}
+                    onDelete={() => this.handleDeleteSkill(skillId)}
+                    showRating={true}
+                    canChangeRating={false}
+                />
+            )
     };
 
     private changeStartDate = (date: Date) => {
@@ -319,10 +323,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <PwrSpacer double={true}/>
                     <div className="row">
                         <div className="col-md-10">
-                            <Typography variant="subtitle1">Skills</Typography>
-                            <AddSkillDialog
-                                onOpen={() => this.props.onOpenAddSkill(this.props.project.id())}
-                            />
+                            <AddSkill projectId={this.props.project.id()}/>
                         </div>
                     </div>
                     <PwrSpacer double={true}/>

@@ -14,7 +14,8 @@ import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreat
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {Color} from '../../../../../utils/ColorUtil';
-import Grid from '@material-ui/core/Grid/Grid';
+import {AddSkill} from './add-skill_module';
+import {StarRating} from '../../../../star-rating_module.';
 
 const distance = require('jaro-winkler');
 
@@ -102,7 +103,7 @@ class SkillTreeModule extends React.Component<SkillTreeProps
         let custom = isNullOrUndefined(this.props.serviceSkillsByQualifier.get(skill.name()));
         let style = {
             margin: '4px',
-            backgroundColor: custom ? 'red' : Color.HBT_2017_GRAY.toCSSRGBString()
+            backgroundColor: custom ? 'red' : '',
         };
         return <Grid item key={skill.id()}>
             <SkillChip
@@ -111,6 +112,9 @@ class SkillTreeModule extends React.Component<SkillTreeProps
                 textColor={'white'}
                 onDelete={this.props.onSkillDelete}
                 onRatingChange={this.props.changeSkillRating}
+                canChangeRating
+                canDelete
+                showRating
             />
         </Grid>;
     };
@@ -126,18 +130,12 @@ class SkillTreeModule extends React.Component<SkillTreeProps
     render() {
         return (
             <div>
-                <AddSkillDialog/>
-                {/*<AddSkill/>*/}
-                <div>
-                    <ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>
-                    <div
-                        //className="col-md-11"
-                    >
-                        <Grid container spacing={8}>
-                            {this.renderSkills()}
-                        </Grid>
-
-                    </div>
+                {/*<AddSkillDialog/><ListSubheader>Rot hinterlegte Skills sind noch in der Prüfung</ListSubheader>*/}
+                <div className={"col-md-12"}>
+                    <AddSkill/>
+                </div>
+                <div className="row">
+                    {this.renderSkills()}
                 </div>
             </div>
         );
