@@ -51,7 +51,10 @@ export class SkillServiceSkill {
 
     public static fromAPI(api: APISkillServiceSkill) {
         let categoryId = !isNullOrUndefined(api.category) ? api.category.id : null;
-        let qualifiers = api.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
+        let qualifiers:Array<LocalizedQualifier> = [];
+        if(api.qualifiers != null) {
+            qualifiers = api.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
+        }
         return new SkillServiceSkill(api.id,
             api.qualifier,
             categoryId,

@@ -18,7 +18,7 @@ import Stepper from '@material-ui/core/Stepper/Stepper';
 import Step from '@material-ui/core/Step/Step';
 import StepLabel from '@material-ui/core/StepLabel/StepLabel';
 import StepContent from '@material-ui/core/StepContent/StepContent';
-import HelpOutline from '@material-ui/icons/HelpOutline'
+import HelpOutline from '@material-ui/icons/HelpOutline';
 
 interface AddSkill_ModuleProps {
     histories: Immutable.Map<string, string>;
@@ -124,7 +124,6 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
     };
 
     private onAddSkill = () => {
-        // console.log('onAddSkill');
         this.props.onAddSkill(this.state.skillName, this.state.skillRating, this.props.projectId);
         this.resetState();
     };
@@ -137,13 +136,11 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         if (this.state.progressState == 0 && event.key == 'Enter' && !isNullOrUndefined(this.state.skillName)) {
             if (this.props.histories.has(this.state.skillName)) {
                 let history = this.props.histories.get(this.state.skillName);
-               // console.log(history);
                 this.setState({skillCategory: history});
             } else {
 
                 this.requestSkillCategory();
             }
-            //console.log('Progress zu 1');
             this.setState({progressState: 1});
             // TODO remove focus from Textfield
             document.getElementById('addSkillMain').focus();
@@ -176,15 +173,19 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         return <div
             onKeyDown={this.handleKeyPress}
             id={'addSkillMain'}
+            className={'col-md-7 row'}
         >
-            <div>
+            <div
+                id={'helpStepper'}
+                className={'col-md-8'}
+            >
                 <Button onClick={this.toggleShowHelp}><HelpOutline/></Button>
                 {!this.state.showHelp ? <></> :
                     <Stepper activeStep={this.state.progressState}>
                         <Step key={'Step0'}>
                             <StepLabel>Text eingeben</StepLabel>
                             <StepContent>
-                            Nach einem Skill suchen und mit Enter bestätigen
+                                Nach einem Skill suchen und mit Enter bestätigen
                             </StepContent>
                         </Step>
                         <Step key={'Step1'}>
@@ -198,8 +199,12 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
                     </Stepper>}
 
             </div>
-            <div style={{minHeight: '49px'}}>
-                <div id={'addSkillTextField'} onClick={() => this.setState({progressState: 0})} style={{float: 'left', width:'45%'}}>
+            <div
+                style={{minHeight: '49px'}}
+                id={'skillSearcher'}
+                className={'col-md-12'}
+            >
+                <div id={'addSkillTextField'} onClick={() => this.setState({progressState: 0})} className={'col-md-4'}>
                     <SkillSearcher
                         id={'testName'}
                         label={'Skill'}
@@ -207,18 +212,18 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
                         onValueChange={this.handleOnChange}
                     />
                 </div>
-                <div>
-                    <div id={'addSkillRatingSelect'} style={{float: 'left'}}>
-                        {this.state.progressState == 1 ? <ArrowLeft/> : <></>}
-                        <StarRating rating={this.state.skillRating} onRatingChange={this.handleRatingChange}/>
-                        {this.state.progressState == 1 ? <ArrowRight/> : <></>}
-                    </div>
-                    <Button variant={'contained'} onClick={this.onAddSkill}>
-                        {this.state.progressState == 1 ? 'Enter' : 'Bestätigen'}
-                    </Button>
+                <div id={'addSkillRatingSelect'} className={'col-md-6'}>
+                    {this.state.progressState == 1 ? <ArrowLeft/> : <></>}
+                    <StarRating rating={this.state.skillRating} onRatingChange={this.handleRatingChange}/>
+                    {this.state.progressState == 1 ? <ArrowRight/> : <></>}
                 </div>
+                <Button variant={'contained'} onClick={this.onAddSkill} className={'col-md-2'}>
+                    {this.state.progressState == 1 ? 'Enter' : 'Bestätigen'}
+                </Button>
             </div>
-            <div>
+            <div
+                className={'col-md-12'}
+            >
                 <Typography>{this.state.skillCategory != '' ? 'Kategorie: ' + this.state.skillCategory : 'Keine Kategorie gefunden'}</Typography>
             </div>
         </div>;
@@ -228,4 +233,3 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
 
 export const AddSkill: React.ComponentClass<AddSkill_ModuleLocalProps> =
     connect(AddSkill_Module.mapStateToProps, AddSkill_Module.mapDispatchToProps)(AddSkill_Module);
-;

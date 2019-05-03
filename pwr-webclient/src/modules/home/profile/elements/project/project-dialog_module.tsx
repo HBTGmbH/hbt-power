@@ -323,11 +323,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <PwrSpacer double={true}/>
                     <div className="row">
                         <div className="col-md-10">
-                            <Typography variant="subtitle1">Skills</Typography>
                             <AddSkill projectId={this.props.project.id()}/>
-                            {/*<AddSkillDialog
-                                onOpen={() => this.props.onOpenAddSkill(this.props.project.id())}
-                            />*/}
                         </div>
                     </div>
                     <PwrSpacer double={true}/>
