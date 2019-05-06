@@ -95,7 +95,7 @@ public class ProfileUpdateService {
             res = concurrentEntity;
         } else {
             res.setType(newEntityType);
-            res = nameEntityRepository.save(nameEntity);
+            res = nameEntityRepository.saveAndFlush(nameEntity);
             created = true;
         }
         return new Pair<>(created, res);
@@ -141,7 +141,7 @@ public class ProfileUpdateService {
         if (concurrent == null) {
             // Only persist if the ID is null, otherwise, leave 'res = skill'
             if (skill.getId() == null) {
-                res = skillRepository.save(skill);
+                res = skillRepository.saveAndFlush(skill);
                 newSkillCreated = true;
             } else {
                 res = skill;
@@ -151,7 +151,7 @@ public class ProfileUpdateService {
             if (skill.getRating() > concurrent.getRating()) {
                 res.setRating(skill.getRating());
             }
-            res = skillRepository.save(res);
+            res = skillRepository.saveAndFlush(res);
         }
         // Do notifications
         adminNotificationService.createSkillNotification(profile, skill, newSkillCreated);
@@ -195,7 +195,7 @@ public class ProfileUpdateService {
                 .stream()
                 .map(ne -> mergeNameEntity(ne, NameEntityType.PROJECT_ROLE).getValue())
                 .collect(Collectors.toSet()));
-        return projectRepository.save(project);
+        return projectRepository.saveAndFlush(project);
     }
 
 
@@ -343,7 +343,7 @@ public class ProfileUpdateService {
         importProfile(profile);
         profile.setLastEdited(LocalDateTime.now());
         LOG.info("Profile getting saved...");
-        profile = profileRepository.save(profile);
+        profile = profileRepository.saveAndFlush(profile);
         LOG.info("Profile saved...");
         adminNotificationService.createProfileUpdatedNotification(profile);
         return profile;
