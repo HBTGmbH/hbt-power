@@ -152,12 +152,20 @@ public class AdminNotificationService {
         adminNotificationRepository.delete(skillNotification);
     }
 
-    void createProfileEntryNotification(Profile profile, Long profileEntryId, NameEntity nameEntity) {
-        adminNotificationRepository.save(new ProfileEntryNotification(profile, profileEntryId, nameEntity));
+    public AdminNotification createProfileEntryNotification(Profile profile, Long profileEntryId, NameEntity nameEntity) {
+        return new ProfileEntryNotification(profile, profileEntryId, nameEntity);
     }
 
-    void createProfileUpdatedNotification(Profile profile) {
-        adminNotificationRepository.save(new ProfileUpdatedNotification(profile));
+    public AdminNotification createProfileUpdatedNotification(Profile profile) {
+        return new ProfileUpdatedNotification(profile);
+    }
+
+    public void emit(AdminNotification adminNotification) {
+        adminNotificationRepository.save(adminNotification);
+    }
+
+    public void emit(Iterable<AdminNotification> adminNotifications) {
+        adminNotificationRepository.saveAll(adminNotifications);
     }
 
     /**
@@ -166,22 +174,23 @@ public class AdminNotificationService {
      * @param profile which caused the notification
      * @param skill   for reference
      */
-    public void createSkillNotification(Profile profile, Skill skill, boolean newSkillCreated) {
+    public Optional<AdminNotification> createSkillNotification(Profile profile, Skill skill, boolean newSkillCreated) {
         // Priority: Blacklist first, if not blacklist, check unknown
         SkillCategory category = skillProfileClient.updateAndGetCategory(skill.getName()).getBody();
         if (category != null && category.isBlacklisted()) {
-            createBlacklistedSkillNotification(profile, skill);
+            return Optional.of(createBlacklistedSkillNotification(profile, skill));
         } else if (newSkillCreated) {
-            createUnknownSkillNotification(profile, skill);
+            return Optional.of(createUnknownSkillNotification(profile, skill));
         }
+        return Optional.empty();
     }
 
-    public void createUnknownSkillNotification(Profile profile, Skill skill) {
-        adminNotificationRepository.save(new SkillNotification(profile, AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN, skill));
+    public AdminNotification createUnknownSkillNotification(Profile profile, Skill skill) {
+        return new SkillNotification(profile, AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN, skill);
     }
 
-    public void createBlacklistedSkillNotification(Profile profile, Skill skill) {
-        adminNotificationRepository.save(new SkillNotification(profile, AdminNotificationReason.DANGEROUS_SKILL_ADDED_BLACKLISTED, skill));
+    public AdminNotification createBlacklistedSkillNotification(Profile profile, Skill skill) {
+        return new SkillNotification(profile, AdminNotificationReason.DANGEROUS_SKILL_ADDED_BLACKLISTED, skill);
     }
 
     /**
