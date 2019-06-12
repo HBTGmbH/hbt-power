@@ -145,11 +145,12 @@ public class ProfileUpdateService {
                 res = skill;
             }
             // persist in any case, Skill might be detached and then a merge occurs (update)
-            res = skillRepository.save(skill);
+            res = skillRepository.saveAndFlush(skill);
         } else {
             res = concurrent;
             if (skill.getRating() > concurrent.getRating()) {
                 res.setRating(skill.getRating());
+                skillRepository.flush();
             }
         }
         // Do notifications
@@ -172,10 +173,12 @@ public class ProfileUpdateService {
         Set<Skill> newProjectSkills = new HashSet<>();
         projectSkills.forEach(skill -> {
             skill = importSkill(profile, skill, profileSkillsByLcName);
-            profileSkillsByLcName.put(skill.getName().toLowerCase(), skill);
-            // Only works on well defined hash code AND correctly persisted skill (With correct ID set)
-            profileSkills.add(skill);
             newProjectSkills.add(skill);
+
+            // Only works on well defined hash code AND correctly persisted skill (With correct ID set)
+            if(profileSkills.add(skill)) {
+                profileSkillsByLcName.put(skill.getName().toLowerCase(), skill);
+            }
         });
         project.getSkills().clear(); // do not replace persistent collection but modify them
         project.getSkills().addAll(newProjectSkills);
@@ -196,9 +199,22 @@ public class ProfileUpdateService {
                 .stream()
                 .map(ne -> mergeNameEntity(ne, NameEntityType.PROJECT_ROLE).getValue())
                 .collect(Collectors.toSet()));
-        return projectRepository.save(project);
+
+        if(isNewProject(project)) {
+            return projectRepository.saveAndFlush(project);
+        }
+
+        // echt scheiße!
+        Set<Skill> skills = new HashSet<>(project.getSkills());
+        project.getSkills().clear();
+        project = projectRepository.saveAndFlush(project);
+        project.getSkills().addAll(skills);
+        return projectRepository.saveAndFlush(project);
     }
 
+    private boolean isNewProject(Project project) {
+        return project.getId() == null;
+    }
 
     private void persistNameEntities(Profile profile) {
         if (profile.getEducation().size() > 0) {

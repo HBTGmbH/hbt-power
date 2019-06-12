@@ -3,8 +3,6 @@ package de.hbt.pwr.profile.model.profile.entries;
 import de.hbt.pwr.profile.model.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -49,7 +47,6 @@ public class Project {
      * Skills of a project. Skills occuring in a project need to occur in the profile, too.
      */
     @ManyToMany(fetch = FetchType.EAGER)
-    @Cascade(value = {CascadeType.SAVE_UPDATE})
     private Set<Skill> skills = new HashSet<>();
 
     private LocalDate startDate;
