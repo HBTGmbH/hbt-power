@@ -130,28 +130,27 @@ public class ProfileUpdateService {
     }
 
 
-    private Skill importSkill(Profile profile, Skill skill, Map<String, Skill> skillsByName) {
+    private Skill importSkill(Profile profile, Skill skill, Map<String, Skill> skillsByLcName) {
         // Fix skill name
         boolean newSkillCreated = false;
         skill.setName(skill.getName().trim());
         Skill res;
-        Skill concurrent = skillsByName.get(skill.getName().toLowerCase());
+        Skill concurrent = skillsByLcName.get(skill.getName().toLowerCase());
         LOG.debug("Skill: " + skill.toString());
         LOG.debug("Concurrent skill: " + (concurrent == null ? null : concurrent.toString()));
         if (concurrent == null) {
-            // Only persist if the ID is null, otherwise, leave 'res = skill'
             if (skill.getId() == null) {
-                res = skillRepository.save(skill);
                 newSkillCreated = true;
             } else {
                 res = skill;
             }
+            // persist in any case, Skill might be detached and then a merge occurs (update)
+            res = skillRepository.save(skill);
         } else {
             res = concurrent;
             if (skill.getRating() > concurrent.getRating()) {
                 res.setRating(skill.getRating());
             }
-            res = skillRepository.save(res);
         }
         // Do notifications
         adminNotificationService.createSkillNotification(profile, skill, newSkillCreated);
@@ -167,17 +166,19 @@ public class ProfileUpdateService {
      */
     protected Project importProjectSkills(Profile profile, Project project) {
         Set<Skill> profileSkills = profile.getSkills();
-        Set<Skill> skills = project.getSkills();
-        Map<String, Skill> profileSkillsByName = new HashMap<>();
-        profileSkills.forEach(skill -> profileSkillsByName.put(skill.getName().toLowerCase(), skill));
-        skills = skills.stream().map(skill -> {
-            skill = importSkill(profile, skill, profileSkillsByName);
-            profileSkillsByName.put(skill.getName().toLowerCase(), skill);
+        Set<Skill> projectSkills = project.getSkills();
+        Map<String, Skill> profileSkillsByLcName = new HashMap<>();
+        profileSkills.forEach(skill -> profileSkillsByLcName.put(skill.getName().toLowerCase(), skill));
+        Set<Skill> newProjectSkills = new HashSet<>();
+        projectSkills.forEach(skill -> {
+            skill = importSkill(profile, skill, profileSkillsByLcName);
+            profileSkillsByLcName.put(skill.getName().toLowerCase(), skill);
             // Only works on well defined hash code AND correctly persisted skill (With correct ID set)
             profileSkills.add(skill);
-            return skill;
-        }).collect(Collectors.toSet());
-        project.setSkills(skills);
+            newProjectSkills.add(skill);
+        });
+        project.getSkills().clear(); // do not replace persistent collection but modify them
+        project.getSkills().addAll(newProjectSkills);
         return project;
     }
 
@@ -303,18 +304,21 @@ public class ProfileUpdateService {
 
 
     protected void importProfileSkills(Profile profile) {
-        Map<String, Skill> skillsByName = new HashMap<>();
+        Map<String, Skill> skillsByLcName = new HashMap<>();
         profile.getSkills().forEach(skill -> {
-            Skill res = importSkill(profile, skill, skillsByName);
-            skillsByName.put(res.getName().toLowerCase(), res);
+            Skill res = importSkill(profile, skill, skillsByLcName);
+            skillsByLcName.put(res.getName().toLowerCase(), res);
         });
-        profile.setSkills(new HashSet<>(skillsByName.values()));
+        profile.getSkills().clear(); // do not replace but modify persistent collection
+        profile.getSkills().addAll(skillsByLcName.values());
     }
 
     protected void importProjectSkills(Profile profile) {
-        profile.setProjects(profile.getProjects().stream()
+        Set<Project> projects = profile.getProjects().stream()
                 .map(project -> importProjectSkills(profile, project))
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet());
+        profile.getProjects().clear();
+        profile.getProjects().addAll(projects);
     }
 
 
