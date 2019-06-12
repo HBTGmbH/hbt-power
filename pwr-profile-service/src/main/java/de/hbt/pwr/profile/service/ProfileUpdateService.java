@@ -101,7 +101,7 @@ public class ProfileUpdateService {
         return new Pair<>(created, res);
     }
 
-    private <T extends ProfileEntry> T persistEntry(T entry, Profile profile, NameEntityType nameEntityType) {
+    public <T extends ProfileEntry> T persistEntry(T entry, Profile profile, NameEntityType nameEntityType) {
         Pair<Boolean, NameEntity> res = mergeNameEntity(entry.getNameEntity(), nameEntityType);
         entry.setNameEntity(res.getValue());
         entry = profileEntryDAO.update(entry);
@@ -348,6 +348,4 @@ public class ProfileUpdateService {
         adminNotificationService.createProfileUpdatedNotification(profile);
         return profile;
     }
-
-
 }

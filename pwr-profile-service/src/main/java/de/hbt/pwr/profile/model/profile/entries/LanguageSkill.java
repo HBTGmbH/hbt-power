@@ -1,6 +1,7 @@
 package de.hbt.pwr.profile.model.profile.entries;
 
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
+import lombok.Builder;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,6 +19,7 @@ public class LanguageSkill extends ProfileEntry {
     public LanguageSkill() {
     }
 
+    @Builder
     public LanguageSkill(Long id, NameEntity language, LanguageSkillLevel level) {
         this.nameEntity = language;
         this.id = id;

@@ -1,5 +1,7 @@
 package de.hbt.pwr.profile.model.profile.entries;
 
+import lombok.Builder;
+
 import javax.persistence.Entity;
 import java.time.LocalDate;
 
@@ -10,6 +12,7 @@ public class TrainingEntry extends CareerElement {
 
     }
 
+    @Builder
     public TrainingEntry(Long id, NameEntity training, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.nameEntity = training;
