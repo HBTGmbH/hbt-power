@@ -18,7 +18,7 @@ public class Project {
 
     @javax.persistence.Id
     @GeneratedValue
-    private Long Id;
+    private Long id;
 
     /**
      * Name of the project. Defined by the consultant participating in the project.
@@ -79,11 +79,11 @@ public class Project {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -151,9 +151,53 @@ public class Project {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Project project = (Project) o;
+
+        if (id != null ? !id.equals(project.id) : project.id != null) return false;
+        if (name != null ? !name.equals(project.name) : project.name != null) return false;
+        if (description != null ? !description.equals(project.description) : project.description != null) return false;
+        if (client != null ? !client.equals(project.client) : project.client != null) return false;
+        if (broker != null ? !broker.equals(project.broker) : project.broker != null) return false;
+        if (projectRoles != null ? !projectRoles.equals(project.projectRoles) : project.projectRoles != null) return false;
+        if (skills != null ? !skills.equals(project.skills) : project.skills != null) return false;
+        if (startDate != null ? !startDate.equals(project.startDate) : project.startDate != null) return false;
+        return endDate != null ? endDate.equals(project.endDate) : project.endDate == null;
+    }
+
+    /*
+   his.name = name;
+        this.client = client;
+        this.broker = broker;
+        this.projectRoles = projectRoles;
+        this.skills = skills;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+   */
+
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (client != null ? client.hashCode() : 0);
+        result = 31 * result + (broker != null ? broker.hashCode() : 0);
+        result = 31 * result + (projectRoles != null ? projectRoles.hashCode() : 0);
+        result = 31 * result + (skills != null ? skills.hashCode() : 0);
+        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
+        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Project{" +
-                "Id=" + Id +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", client=" + client +
                 ", broker=" + broker +

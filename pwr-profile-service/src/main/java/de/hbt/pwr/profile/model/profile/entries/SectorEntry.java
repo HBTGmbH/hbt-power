@@ -26,7 +26,7 @@ public class SectorEntry extends ProfileEntry {
     public String toString() {
         return "SectorEntry{" +
                 "hash=" + this.hashCode() +
-                ", Id=" + id +
+                ", id=" + id +
                 '}';
     }
 

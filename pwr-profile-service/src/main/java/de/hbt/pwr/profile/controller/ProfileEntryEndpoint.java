@@ -133,7 +133,7 @@ public class ProfileEntryEndpoint {
     @PutMapping("/skill")
     public Skill updateSkill(@PathVariable("initials") String initials, @RequestBody Skill skill) {
         Profile p = consultantService.getProfileByInitials(initials);
-        Skill s = profileEntryService.updateSkill(skill, p);
+        Skill s = profileEntryService.updateProfileSkills(skill, p);
         return s;
     }
 
@@ -148,6 +148,7 @@ public class ProfileEntryEndpoint {
     public Project updateProject(@PathVariable("initials") String initials, @RequestBody Project project) {
         Profile p = consultantService.getProfileByInitials(initials);
         project = profileEntryService.updateProject(project, p);
+
         return project;
     }
 
