@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -114,49 +115,49 @@ public class ProfileEntryService {
         saveProfile(profile);
     }
 
+    // TODO beim adden eines Skills der schon eine ID hat fliegt eine
+    // TODO PersistentObjectException: detached entity passed to persist: de.hbt.pwr.profile.model.Skill
 
     public Skill updateProfileSkills(Skill skill, Profile profile) {
-// Fix skill name
         skill.setName(skill.getName().trim());
-        Skill res;
+        Skill res = skill;
         Skill concurrent = profile.getSkills()
                 .stream().filter(s -> s.getName().toLowerCase().equals(skill.getName().toLowerCase()))
                 .findAny().orElse(null);
 
         if (concurrent == null) {
-            // Only persist if the ID is null, otherwise, leave 'res = skill'
             if (skill.getId() == null) {
                 res = skillRepository.save(skill);
                 profile.getSkills().add(res);
             } else {
-                res = skill;
                 profile.getSkills().add(res);
             }
-        } else {
-            res = concurrent;
-            if (skill.getRating() > res.getRating()) {
-                res.setRating(skill.getRating());
-            }
         }
-        return skillRepository.save(res);
+        return skillRepository.saveAndFlush(res); // hier tritt der fehler auf
     }
-
 
     private Skill handleSkill(Skill skill, Set<Skill> profileSkills) {
         if (!profileSkills.contains(skill)) {
             if (skill.getId() == null) {
-                skill = skillRepository.save(skill);
+                skill = skillRepository.saveAndFlush(skill);
                 profileSkills.add(skill);
             } else {
-                // rating check
                 Skill finalSkill = skill;
-                Optional<Skill> opt = profileSkills.stream().filter(skill1 -> skill1.getName().toLowerCase().equals(finalSkill.getName().toLowerCase())).findAny();
+                Optional<Skill> opt = profileSkills.stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase())).findAny();
                 if (opt.isPresent()) {
                     // change rating
                     skill.setRating(max(skill.getRating(), opt.get().getRating()));
                     opt.get().setRating(max(skill.getRating(), opt.get().getRating()));
                 } else {
-                    profileSkills.add(skill);
+                    Optional<Skill> inRepo = skillRepository.findByName(skill.getName().toLowerCase());
+                    if (inRepo.isPresent()) {
+                        Skill s = inRepo.get();
+                        profileSkills.add(s);
+                    } else {
+                        skill.setId(null);
+                        skill = skillRepository.saveAndFlush(skill);
+                        profileSkills.add(skill);
+                    }
                 }
             }
         }
@@ -164,17 +165,13 @@ public class ProfileEntryService {
     }
 
     private Set<Skill> updateProjectSkills(Project project, Profile profile) {
-        // 1. alle skills loopen
-        // 2. prüfen ob jeder skill aus dem projekt auch im profile vorkommt
-        // 3. wenn ja rating prüfen
-        // 4. wenn nein -> neuen skill bei nullID, -> skill dem Profil hinzufügen
-
         Set<Skill> projectSkills = project.getSkills();
         Set<Skill> profileSkills = profile.getSkills();
         projectSkills = projectSkills.stream().map(s -> handleSkill(s, profileSkills)).collect(Collectors.toSet());
-        return null;
+        project.getSkills().clear();
+        project.setSkills(projectSkills);
+        return project.getSkills();
     }
-
 
 
     public void deleteSkill(Long id, Profile p) {
@@ -203,6 +200,7 @@ public class ProfileEntryService {
     }
 
     public Project updateProject(Project project, Profile p) {
+        //TODO verbindung von Profile und Project
         if (project.getBroker() != null) {
             project.setBroker(validateNameEntity(project.getBroker(), NameEntityType.COMPANY));
         }
@@ -216,12 +214,18 @@ public class ProfileEntryService {
             project.setProjectRoles(roles);
         }
         if (project.getSkills() != null && project.getSkills().size() != 0) {
-            updateProjectSkills(project,p);
+            p.setSkills(updateProjectSkills(project, p));
         }
+        p.setLastEdited(LocalDateTime.now());
         if (project.getId() == null) {
-            project = projectRepository.save(project);
+            project = projectRepository.saveAndFlush(project);
+            p.getProjects().add(project);
+        } else {
+            Long projectId = project.getId();
+            p.getProjects().removeIf(project1 -> project1.getId().equals(projectId));
             p.getProjects().add(project);
         }
+        projectRepository.save(project);
         saveProfile(p);
         return project;
     }

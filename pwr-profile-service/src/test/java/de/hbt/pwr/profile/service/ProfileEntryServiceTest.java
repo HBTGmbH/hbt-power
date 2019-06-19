@@ -319,4 +319,31 @@ public class ProfileEntryServiceTest {
         project = profileEntryService.updateProject(project,p);
         assertThat(p.getProjects().iterator().next().getProjectRoles().size()).isEqualTo(0);
     }
+
+    @Test
+    public void shouldAddProjectSkillsToProfile(){
+        Project project = Project.builder().id(null).name("project").skills(new HashSet<>()).build();
+        Skill s1 = Skill.builder().id(189L).rating(3).name("S1").build();
+        project.getSkills().add(s1);
+
+        Profile p = Profile.empty();
+        profileEntryService.updateProject(project,p);
+
+        assertThat(p.getProjects().size()).isEqualTo(1);
+        assertThat(p.getSkills().size()).isEqualTo(1);
+        assertThat(p.getSkills().iterator().next()).isEqualTo(s1);
+    }
+
+    @Test
+    public void shouldPersistASkillOnlyOnce(){
+        Skill s1 = Skill.builder().id(null).name("S1").rating(3).build();
+        Profile p = new Profile();
+        Project project = new Project();
+        project.getSkills().add(s1);
+        profileEntryService.updateProfileSkills(s1,p);
+        profileEntryService.updateProject(project,p);
+    }
+
+
+    // TODO Skill löschen wenn er im Project enthalten ist ?!!?
 }

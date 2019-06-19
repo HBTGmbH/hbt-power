@@ -149,7 +149,7 @@ public class Project {
     public void setSkills(Set<Skill> skills) {
         this.skills = skills;
     }
-
+/*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -168,16 +168,7 @@ public class Project {
         return endDate != null ? endDate.equals(project.endDate) : project.endDate == null;
     }
 
-    /*
-   his.name = name;
-        this.client = client;
-        this.broker = broker;
-        this.projectRoles = projectRoles;
-        this.skills = skills;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-   */
+
 
 
     @Override
@@ -193,6 +184,7 @@ public class Project {
         result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
         return result;
     }
+    */
 
     @Override
     public String toString() {

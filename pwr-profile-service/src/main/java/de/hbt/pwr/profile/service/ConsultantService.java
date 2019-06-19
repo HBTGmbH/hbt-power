@@ -122,6 +122,6 @@ public class ConsultantService {
         return consultantRepository.findByInitials(initials)
                 .map(this::validateActive)
                 .map(this::toProfile)
-                .orElseThrow(() -> new WebApplicationException(NOT_FOUND, "No consultant with initials '" + initials + "'found."));
+                .orElseThrow(() -> new WebApplicationException(NOT_FOUND, "No consultant with initials '" + initials + "' found."));
     }
 }
