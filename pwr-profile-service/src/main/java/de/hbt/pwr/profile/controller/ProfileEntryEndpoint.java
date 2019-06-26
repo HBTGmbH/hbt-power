@@ -138,7 +138,7 @@ public class ProfileEntryEndpoint {
     }
 
     @DeleteMapping("/skill/{id}")
-    public void deleteSkill(@PathVariable("initials")String initials, @PathVariable("id") Long id){
+    public void deleteSkill(@PathVariable("initials") String initials, @PathVariable("id") Long id) {
         Profile p = consultantService.getProfileByInitials(initials);
         profileEntryService.deleteSkill(id, p);
     }
@@ -148,12 +148,11 @@ public class ProfileEntryEndpoint {
     public Project updateProject(@PathVariable("initials") String initials, @RequestBody Project project) {
         Profile p = consultantService.getProfileByInitials(initials);
         project = profileEntryService.updateProject(project, p);
-
-        return project;
+        return project; // TODO im client nach antwort die profil skills aktualisieren
     }
 
     @DeleteMapping("/project/{id}")
-    public void deleteProject(@PathVariable("initials")String initials, @PathVariable("id") Long id){
+    public void deleteProject(@PathVariable("initials") String initials, @PathVariable("id") Long id) {
         Profile p = consultantService.getProfileByInitials(initials);
         profileEntryService.deleteProject(id, p);
     }

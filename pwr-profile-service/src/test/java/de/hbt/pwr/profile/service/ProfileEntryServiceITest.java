@@ -180,19 +180,7 @@ public class ProfileEntryServiceITest {
     }
 
 
-    @Test
-    public void shouldUpdateDescriptionProject(){
-        Profile p = new Profile();
-        p = profileRepository.save(p);
-        Project project = new Project();
-        project.setDescription("Test");
-        profileEntryService.updateProject(project,p);
-        assertThat(p.getProjects().iterator().next().getDescription()).isEqualTo("Test");
 
-        project.setDescription("Hallo");
-        profileEntryService.updateProject(project,p);
-        assertThat(p.getProjects().iterator().next().getDescription()).isEqualTo("Hallo");
-    }
 
 
     @Test

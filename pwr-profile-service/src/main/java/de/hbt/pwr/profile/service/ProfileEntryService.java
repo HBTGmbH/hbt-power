@@ -6,6 +6,7 @@ import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.lang.StrictMath.max;
-
+@Slf4j
 @Service
 public class ProfileEntryService {
 
@@ -39,9 +39,6 @@ public class ProfileEntryService {
         this.projectRepository = projectRepository;
     }
 
-    private Profile saveProfile(Profile profile) {
-        return profileRepository.save(profile);
-    }
 
     public ProfileEntry updateProfileEntry(ProfileEntry profileEntry, Profile profile, NameEntityType nameEntityType) {
         NameEntity nameEntity = validateNameEntity(profileEntry.getNameEntity(), nameEntityType);
@@ -75,7 +72,6 @@ public class ProfileEntryService {
                 break;
             default:
         }
-        saveProfile(profile);
         return profileEntry;
     }
 
@@ -112,54 +108,37 @@ public class ProfileEntryService {
                 break;
             default:
         }
-        saveProfile(profile);
     }
-
-    // TODO beim adden eines Skills der schon eine ID hat fliegt eine
-    // TODO PersistentObjectException: detached entity passed to persist: de.hbt.pwr.profile.model.Skill
 
     public Skill updateProfileSkills(Skill skill, Profile profile) {
         skill.setName(skill.getName().trim());
-        Skill res = skill;
+        Skill finalSkill = skill;
         Skill concurrent = profile.getSkills()
-                .stream().filter(s -> s.getName().toLowerCase().equals(skill.getName().toLowerCase()))
+                .stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase()))
                 .findAny().orElse(null);
 
-        if (concurrent == null) {
-            if (skill.getId() == null) {
-                res = skillRepository.save(skill);
-                profile.getSkills().add(res);
-            } else {
-                profile.getSkills().add(res);
-            }
+        if (concurrent != null ) {
+            skill = concurrent;
+            profile.getSkills().remove(concurrent);
         }
-        return skillRepository.saveAndFlush(res); // hier tritt der fehler auf
+        skill = skillRepository.save(skill);
+        profile.getSkills().add(skill);
+        profileRepository.saveAndFlush(profile);
+        return skill;
     }
 
-    private Skill handleSkill(Skill skill, Set<Skill> profileSkills) {
-        if (!profileSkills.contains(skill)) {
+    private Skill handleProjectSkill(Skill skill, Set<Skill> profileSkills) {
+        skill.setName(skill.getName().trim());
+        Skill finalSkill = skill;
+        Skill inPro = profileSkills.stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase())).findAny().orElse(null);
+        if (inPro == null) {
+            // nicht im profil
             if (skill.getId() == null) {
-                skill = skillRepository.saveAndFlush(skill);
-                profileSkills.add(skill);
-            } else {
-                Skill finalSkill = skill;
-                Optional<Skill> opt = profileSkills.stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase())).findAny();
-                if (opt.isPresent()) {
-                    // change rating
-                    skill.setRating(max(skill.getRating(), opt.get().getRating()));
-                    opt.get().setRating(max(skill.getRating(), opt.get().getRating()));
-                } else {
-                    Optional<Skill> inRepo = skillRepository.findByName(skill.getName().toLowerCase());
-                    if (inRepo.isPresent()) {
-                        Skill s = inRepo.get();
-                        profileSkills.add(s);
-                    } else {
-                        skill.setId(null);
-                        skill = skillRepository.saveAndFlush(skill);
-                        profileSkills.add(skill);
-                    }
-                }
+                skill = skillRepository.save(skill);
             }
+            profileSkills.add(skill);
+        } else {
+            skill = inPro;
         }
         return skill;
     }
@@ -167,10 +146,10 @@ public class ProfileEntryService {
     private Set<Skill> updateProjectSkills(Project project, Profile profile) {
         Set<Skill> projectSkills = project.getSkills();
         Set<Skill> profileSkills = profile.getSkills();
-        projectSkills = projectSkills.stream().map(s -> handleSkill(s, profileSkills)).collect(Collectors.toSet());
+        projectSkills = projectSkills.stream().map(s -> handleProjectSkill(s, profileSkills)).collect(Collectors.toSet());
         project.getSkills().clear();
-        project.setSkills(projectSkills);
-        return project.getSkills();
+        project.getSkills().addAll(projectSkills);
+        return profileSkills;
     }
 
 
@@ -180,7 +159,6 @@ public class ProfileEntryService {
                 .findAny()
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Skill with id: " + id + " was not found!"));
         p.getSkills().remove(toRemove);
-        saveProfile(p);
     }
 
     private NameEntity validateNameEntity(NameEntity nameEntity, NameEntityType type) {
@@ -199,34 +177,48 @@ public class ProfileEntryService {
         return res;
     }
 
-    public Project updateProject(Project project, Profile p) {
-        //TODO verbindung von Profile und Project
-        if (project.getBroker() != null) {
+    public Project updateProject(Project project, Profile profile) {
+
+        if (project == null){
+            return null;
+        }
+        Optional<Project> repoProject = project.getId() != null ? projectRepository.findById(project.getId()) : Optional.empty();
+
+        // clean up data / relations
+        if (project.getBroker() != null && (!repoProject.isPresent() || !project.getBroker().equals(repoProject.get().getBroker()))) {
             project.setBroker(validateNameEntity(project.getBroker(), NameEntityType.COMPANY));
         }
-        if (project.getClient() != null) {
+        if (project.getClient() != null && (!repoProject.isPresent() || !project.getClient().equals(repoProject.get().getClient()))) {
             project.setClient(validateNameEntity(project.getClient(), NameEntityType.COMPANY));
         }
-        if (project.getProjectRoles() != null && project.getProjectRoles().size() != 0) {
+        if (project.getProjectRoles() != null
+                && project.getProjectRoles().size() != 0
+                && (!repoProject.isPresent() || !project.getProjectRoles().equals(repoProject.get().getProjectRoles()))
+                ) {
             Set<NameEntity> roles = project.getProjectRoles().stream()
                     .map(ne -> validateNameEntity(ne, NameEntityType.PROJECT_ROLE))
                     .collect(Collectors.toSet());
             project.setProjectRoles(roles);
         }
-        if (project.getSkills() != null && project.getSkills().size() != 0) {
-            p.setSkills(updateProjectSkills(project, p));
+        if (project.getSkills() != null
+                && project.getSkills().size() != 0
+                && (!repoProject.isPresent() || !project.getSkills().equals(repoProject.get().getSkills()))
+                ) {
+            updateProjectSkills(project, profile);
         }
-        p.setLastEdited(LocalDateTime.now());
-        if (project.getId() == null) {
-            project = projectRepository.saveAndFlush(project);
-            p.getProjects().add(project);
-        } else {
-            Long projectId = project.getId();
-            p.getProjects().removeIf(project1 -> project1.getId().equals(projectId));
-            p.getProjects().add(project);
+
+        profile.setLastEdited(LocalDateTime.now());
+
+        // persist new project or merge existing one
+        log.debug("saving project");
+        project = projectRepository.save(project);
+
+        profile.getProjects().add(project);
+
+        if (project.getSkills() != null) {
+            profile.getSkills().addAll(project.getSkills());  //TODO entscheiden ob die randeffekte hier auftreten sollen bzw. wie sie geändert werden sollen
         }
-        projectRepository.save(project);
-        saveProfile(p);
+        profileRepository.save(profile);
         return project;
     }
 
@@ -235,6 +227,5 @@ public class ProfileEntryService {
                 .filter(project -> project.getId().equals(id)).findAny()
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Project with id: " + id + " ws not found!"));
         p.getProjects().remove(remove);
-        saveProfile(p);
     }
 }
