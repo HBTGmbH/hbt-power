@@ -52,6 +52,7 @@ export enum ActionType {
     ReceiveAllConsultants,
     ReceiveSingleConsultant,
 
+    // == Notification Dialog
     OpenSkillNotificationDialog,
     SetSkillNotificationEditStatus,
     CloseAndResetSkillNotificationDlg,
@@ -59,6 +60,7 @@ export enum ActionType {
     SetSkillNotificationAction,
     SetNewSkillName,
 
+    // == Report Upload
     SetReportUploadPending,
     SetReportUploadProgress,
 
@@ -102,7 +104,7 @@ export enum ActionType {
     SetAddToProjectId,
     ResetAddSkillDialog,
 
-    // == MEta data
+    // == Meta data
     AddOrReplaceBuildInfo,
     AddOrReplaceClientInfo,
     SetServiceAvaiabiltiy,
@@ -131,4 +133,13 @@ export enum ActionType {
     ChangeTemplate,
     SetPreview,
     TemplateRequestFailed,
+
+    // == Profile Actions
+    UpdateEntrySuccessful,
+    DeleteEntrySuccessful,
+    UpdateProfileSkillSuccessful,
+    DeleteProfileSkillSuccessful,
+    UpdateProjectSuccessful,
+    DeleteProjectSuccessful,
+
 }

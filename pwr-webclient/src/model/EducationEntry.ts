@@ -1,4 +1,4 @@
-import {APIEducationStep} from './APIProfile';
+import {APIEducationEntry} from './APIProfile';
 import * as Immutable from 'immutable';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
@@ -57,12 +57,12 @@ export class EducationEntry {
 
 
     /**
-     * Creates a new {@link EducationEntry} from the {@link APIEducationStep}. The date represented as string
+     * Creates a new {@link EducationEntry} from the {@link APIEducationEntry}. The date represented as string
      * is parsed as to a {@link Date} object.
      * @param apiEducation
      * @returns {EducationEntry}
      */
-    public static fromAPI(apiEducation: APIEducationStep): EducationEntry {
+    public static fromAPI(apiEducation: APIEducationEntry): EducationEntry {
         return new EducationEntry(
             String(apiEducation.id),
             new Date(apiEducation.startDate),
@@ -86,7 +86,7 @@ export class EducationEntry {
         return isNullOrUndefined(this.degree()) || this.degree() === EducationEntry.NO_DEGREE_VALUE;
     }
 
-    public toAPIEducationEntry(educations: Immutable.Map<string, NameEntity>): APIEducationStep {
+    public toAPIEducationEntry(educations: Immutable.Map<string, NameEntity>): APIEducationEntry {
         return {
             id: this.isNew() ? null : Number.parseInt(this.id()),
             startDate: DateUtils.formatLocaleDateToIso(this.startDate()),

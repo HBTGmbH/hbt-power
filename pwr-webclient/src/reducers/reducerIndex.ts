@@ -8,7 +8,8 @@ import {SkillReducer} from './skill/SkillReducer';
 import {MetaDataReducer} from './metadata/MetaDataReducer';
 import {NavigationReducer} from './navigation/NavigationReducer';
 import {ViewProfileReducer} from './view/ViewProfileReducer';
-import {ProfileStore} from '../model/ProfileStore';
+import * as ProfileStoreOld from '../model/ProfileStore';
+import {ProfileStore} from './profile-new/ProfileStore';
 import {AdminState} from '../model/admin/AdminState';
 import {StatisticsStore} from '../model/statistics/StatisticsStore';
 import {SkillStore} from '../model/skill/SkillStore';
@@ -21,10 +22,12 @@ import {CrossCuttingReducer} from './crosscutting/CrossCuttingReducer';
 import {CrossCuttingStore} from '../model/crosscutting/CrossCuttingStore';
 import {TemplateStore} from '../model/view/TemplateStore';
 import {TemplateReducer} from './template/TemplateReducer';
+import {reduce} from './profile-new/ProfileReducer';
 
 
 export interface ApplicationState {
-    databaseReducer: ProfileStore;
+    profile: ProfileStore;
+    databaseReducer: ProfileStoreOld.ProfileStore;
     adminReducer: AdminState;
     statisticsReducer: StatisticsStore;
     skillReducer: SkillStore;
@@ -38,6 +41,7 @@ export interface ApplicationState {
 
 
 const ApplicationStore: Reducer<ApplicationState> = combineReducers({
+    profile: reduce,
     databaseReducer: DatabaseReducer.Reduce,
     adminReducer: AdminReducer.reduce,
     statisticsReducer: StatisticsReducer.reduce,

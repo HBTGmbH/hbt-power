@@ -5,7 +5,7 @@ import {QualificationEntry} from './QualificationEntry';
 import {TrainingEntry} from './TrainingEntry';
 import {
     APICareerEntry,
-    APIEducationStep,
+    APIEducationEntry,
     APIKeySkill,
     APILanguageSkill,
     APIProfile,
@@ -209,7 +209,7 @@ export class Profile {
      *
      * @param educationEntries
      */
-    private static parseEducationEntries(educationEntries: Array<APIEducationStep>): Immutable.Map<string, EducationEntry> {
+    private static parseEducationEntries(educationEntries: Array<APIEducationEntry>): Immutable.Map<string, EducationEntry> {
         let res: Immutable.Map<string, EducationEntry> = Immutable.Map<string, EducationEntry>();
         educationEntries.forEach(apiEducationEntry => {
             // The API might return something invalid. Ignore that.
@@ -274,7 +274,7 @@ export class Profile {
         });
 
         // Maps all education steps into an API format.
-        let educations: Array<APIEducationStep> = [];
+        let educations: Array<APIEducationEntry> = [];
         this.educationEntries().forEach(educationEntry => {
             educations.push(educationEntry.toAPIEducationEntry(database.educations()));
         });

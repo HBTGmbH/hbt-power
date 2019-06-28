@@ -18,7 +18,7 @@ import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 const profileServiceClient = ProfileServiceClient.instance();
 
 const succeedCall = (type: APIRequestType, dispatch: redux.Dispatch<ApplicationState>) => {
-    return (data: any) => dispatch(ProfileActionCreator.APIRequestSuccessfull(data, type));
+    return (data: any) => dispatch(ProfileActionCreator.APIRequestSuccessful(data, type));
 };
 
 export class ProfileAsyncActionCreator {
@@ -55,7 +55,7 @@ export class ProfileAsyncActionCreator {
     public static requestSingleProfile(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.getProfile(initials)
-                .then(profile => dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.RequestProfile)))
+                .then(profile => dispatch(ProfileActionCreator.APIRequestSuccessful(profile, APIRequestType.RequestProfile)))
                 .catch(console.error);
         };
     }
@@ -65,7 +65,7 @@ export class ProfileAsyncActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.saveProfile(initials, profile).then(profile => {
                 NavigationActionCreator.showSuccess('Profile saved!');
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.SaveProfile));
+                dispatch(ProfileActionCreator.APIRequestSuccessful(profile, APIRequestType.SaveProfile));
             }).catch(console.error);
         };
     }
@@ -76,7 +76,7 @@ export class ProfileAsyncActionCreator {
             const profile = getState().databaseReducer.serializeToAPI();
             profileServiceClient.saveProfile(initials, profile).then(profile => {
                 NavigationActionCreator.showSuccess('Profile saved!');
-                dispatch(ProfileActionCreator.APIRequestSuccessfull(profile, APIRequestType.SaveProfile));
+                dispatch(ProfileActionCreator.APIRequestSuccessful(profile, APIRequestType.SaveProfile));
             }).catch(console.error);
         };
     }

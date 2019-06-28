@@ -1,5 +1,5 @@
 import {doop} from 'doop';
-import {APICareerEntry, APIEducationStep} from './APIProfile';
+import {APICareerEntry, APIEducationEntry} from './APIProfile';
 import {EducationEntry} from './EducationEntry';
 import {NEW_ENTITY_PREFIX, UNDEFINED_ID} from './PwrConstants';
 import {NameEntity} from './NameEntity';
@@ -49,7 +49,7 @@ export class CareerEntry {
 
 
     /**
-     * Creates a new {@link EducationEntry} from the {@link APIEducationStep}. The date represented as string
+     * Creates a new {@link EducationEntry} from the {@link APIEducationEntry}. The date represented as string
      * is parsed as to a {@link Date} object.
      * @param apiCareer
      * @returns {EducationEntry}

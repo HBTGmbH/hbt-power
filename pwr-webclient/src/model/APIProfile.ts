@@ -12,7 +12,7 @@ export interface APILanguageSkill {
     level: string;
 }
 
-export interface APIEducationStep {
+export interface APIEducationEntry {
     id: number;
     startDate: string;
     endDate: string;
@@ -86,7 +86,7 @@ export interface APIProfile {
     keySkillEntries: Array<APIKeySkill>;
     languages: Array<APILanguageSkill>;
     qualification: Array<APIQualificationEntry>;
-    education: Array<APIEducationStep>;
+    education: Array<APIEducationEntry>;
     sectors: Array<APISectorEntry>;
     projects: Array<APIProject>;
     skills: Array<APISkill>;

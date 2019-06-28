@@ -1,5 +1,13 @@
 import {Promise} from 'es6-promise';
-import {APIConsultant, APIProfile} from '../model/APIProfile';
+import {
+    APICareerEntry,
+    APIConsultant, APIEducationEntry,
+    APIKeySkill,
+    APILanguageSkill,
+    APIProfile, APIProject,
+    APIQualificationEntry,
+    APISectorEntry, APISkill, APITrainingEntry
+} from '../model/APIProfile';
 import axios, {AxiosRequestConfig} from 'axios';
 import {NameEntity} from '../model/NameEntity';
 import {PowerHttpClient} from './PowerHttpClient';
@@ -8,6 +16,7 @@ import {APIAdminNotification} from '../model/admin/AdminNotification';
 import {store} from '../reducers/reducerIndex';
 import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
 import {SkillNotification} from '../model/admin/SkillNotification';
+import {Language} from '../reducers/profile-new/model/Language';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -25,7 +34,7 @@ export class ProfileServiceClient extends PowerHttpClient {
 
     public static instance(): ProfileServiceClient {
         if (!this._instance) {
-          this._instance = new ProfileServiceClient();
+            this._instance = new ProfileServiceClient();
         }
         return this._instance;
     }
@@ -50,14 +59,129 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.preProcess(axios.put(url, profile));
     };
 
+    //---------------------------------------------- Profile Entries ---------------------------------------------- //
+
+    public saveLanguage = (initials: string, entry: APILanguageSkill): Promise<Language> => {
+        const url = this.base() + '/profile/' + initials + '/language';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteLanguage = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/language/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveQualification = (initials: string, entry: APIQualificationEntry): Promise<APIQualificationEntry> => {
+        const url = this.base() + '/profile/' + initials + '/qualification';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteQualification = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/qualification/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveSector = (initials: string, entry: APISectorEntry): Promise<APISectorEntry> => {
+        const url = this.base() + '/profile/' + initials + '/sector';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteSector = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/sector/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveKeySkill = (initials: string, entry: APIKeySkill): Promise<APIKeySkill> => {
+        const url = this.base() + '/profile/' + initials + '/keyskill';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteKeySkill = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/keyskill/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveCareer = (initials: string, entry: APICareerEntry): Promise<APICareerEntry> => {
+        const url = this.base() + '/profile/' + initials + '/career';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteCareer = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/career/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveTraining = (initials: string, entry: APITrainingEntry): Promise<APITrainingEntry> => {
+        const url = this.base() + '/profile/' + initials + '/training';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteTraining = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/training/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveEducation = (initials: string, entry: APIEducationEntry): Promise<APIEducationEntry> => {
+        const url = this.base() + '/profile/' + initials + '/education';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteEducation = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/education/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveProfileSkill = (initials: string, entry: APISkill): Promise<APISkill> => {
+        const url = this.base() + '/profile/' + initials + '/skill';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteProfileSkill = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/skill/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+
+    public saveProject = (initials: string, entry: APIProject): Promise<APIProject> => {
+        const url = this.base() + '/profile/' + initials + '/project';
+        this.beginRequest();
+        return this.preProcess(axios.put(url, entry));
+    };
+    public deleteProject = (initials: string, id: number) => {
+        const url = this.base() + '/profile/' + initials + '/project/' + id;
+        this.beginRequest();
+        return this.preProcess(axios.delete(url));
+    };
+
+    // TODO werbetext (profile#description)
+    // end
+
+
+
+
     public getConsultant = (initials: string): Promise<APIConsultant> => {
-        const url = this.base() +  '/consultants/' + initials;
+        const url = this.base() + '/consultants/' + initials;
         this.beginRequest();
         return this.preProcess(axios.get(url));
     };
 
     public getConsultants = (): Promise<Array<APIConsultant>> => {
-        const url = this.base() +  "/consultants/";
+        const url = this.base() + '/consultants/';
         this.beginRequest();
         return this.preProcess(axios.get(url));
     };
@@ -68,13 +192,13 @@ export class ProfileServiceClient extends PowerHttpClient {
                 action: 'new'
             }
         };
-        const url = this.base() +  "/consultants/";
+        const url = this.base() + '/consultants/';
         this.beginRequest();
         return this.preProcess(axios.post(url, consultant, config));
     };
 
     public updateConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {
-        const url = this.base() +  "/consultants/" + consultant.initials;
+        const url = this.base() + '/consultants/' + consultant.initials;
         this.beginRequest();
         return this.preProcess(axios.patch(url, consultant));
     };
@@ -140,37 +264,37 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     public getBuildInfo = (): Promise<APIBuildInfo> => {
-        const url = this.base() + "/actuator/info";
+        const url = this.base() + '/actuator/info';
         this.beginRequest();
         return this.preProcess(axios.get(url));
     };
 
     public getAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
-        const url = this.base() + "/admin/notifications";
+        const url = this.base() + '/admin/notifications';
         this.beginRequest();
         return this.preProcess(axios.get(url, this.credentialsConfig()));
     };
 
     public getTrashedAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
-        const url = this.base() + "/admin/notifications/trash";
+        const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
         return this.preProcess(axios.get(url, this.credentialsConfig()));
     };
 
     public trashNotifications = (ids: Array<number>): Promise<void> => {
-        const url = this.base() + "/admin/notifications/trash";
+        const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
         return this.preProcess(axios.put(url, ids, this.credentialsConfig()));
     };
 
     public deleteTrashedNotifications = (): Promise<void> => {
-        const url = this.base() + "/admin/notifications/trash";
+        const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
         return this.preProcess(axios.delete(url, this.credentialsConfig()));
     };
 
     public renameSkill = (oldName: string, newName: string): Promise<void> => {
-        const url = this.base() + "/admin/skills/name";
+        const url = this.base() + '/admin/skills/name';
         let config = this.credentialsConfig();
         config.params = {
             oldname: oldName,
@@ -181,31 +305,31 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     public authenticateAdmin = (): Promise<void> => {
-        const url = this.base() + "/admin/";
+        const url = this.base() + '/admin/';
         let config = this.credentialsConfig();
         this.beginRequest();
         return this.preProcess(axios.head(url, config));
     };
 
     public invokeNotificationDelete = (notificationId: number): Promise<void> => {
-        const url = this.base() + "/admin/notifications/" + notificationId;
+        const url = this.base() + '/admin/notifications/' + notificationId;
         const config = this.credentialsConfig();
         this.beginRequest();
         return this.preProcess(axios.delete(url, config));
     };
 
     public invokeNotificationOK = (notificationId: number): Promise<void> => {
-        const url = this.base() + "/admin/notifications/" + notificationId;
+        const url = this.base() + '/admin/notifications/' + notificationId;
         const config = this.credentialsConfig();
         this.beginRequest();
         return this.preProcess(axios.put(url, null, config));
     };
 
     public invokeNotificationEdit = (notification: ProfileEntryNotification | SkillNotification): Promise<void> => {
-        const url = this.base() + "/admin/notifications";
+        const url = this.base() + '/admin/notifications';
         const config = this.credentialsConfig();
         this.beginRequest();
-        return this.preProcess(  axios.patch(url, notification.toAPI(), config));
+        return this.preProcess(axios.patch(url, notification.toAPI(), config));
     };
 
 }

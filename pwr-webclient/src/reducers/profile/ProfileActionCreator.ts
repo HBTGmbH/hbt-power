@@ -32,7 +32,7 @@ export class ProfileActionCreator {
      * @param payload
      * @param reqType
      */
-    public static APIRequestSuccessfull(payload: any, reqType: APIRequestType): ReceiveAPIResponseAction {
+    public static APIRequestSuccessful(payload: any, reqType: APIRequestType): ReceiveAPIResponseAction {
         return {
             type: ActionType.APIRequestSuccess,
             payload: payload,
