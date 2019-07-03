@@ -1,65 +1,118 @@
 package de.hbt.pwr.profile.model.profile;
 
 import de.hbt.pwr.profile.model.profile.entries.*;
+import org.apache.commons.lang.NotImplementedException;
+
+import java.util.Set;
 
 /**
  * Created by nt on 08.05.2017.
  */
+@SuppressWarnings("unchecked")
 public enum NameEntityType {
-    EDUCATION {
+    EDUCATION() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
             return EducationEntry.class;
         }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            return (Set<Entry>) profile.getEducation();
+        }
     },
-    LANGUAGE {
+    LANGUAGE() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
             return LanguageSkill.class;
         }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            return (Set<Entry>) profile.getLanguages();
+        }
     },
-    QUALIFICATION {
+    QUALIFICATION() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
             return QualificationEntry.class;
         }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            return (Set<Entry>) profile.getQualification();
+        }
     },
-    SECTOR {
+    SECTOR() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
             return SectorEntry.class;
         }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            return (Set<Entry>) profile.getSectors();
+        }
     },
-    TRAINING {
+    TRAINING() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
             return TrainingEntry.class;
         }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            return (Set<Entry>) profile.getTrainingEntries();
+        }
     },
-    CAREER {
+    CAREER() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
             return CareerEntry.class;
         }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            return (Set<Entry>) profile.getCareerEntries();
+        }
     },
-    KEY_SKILL {
+    KEY_SKILL() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
             return KeySkillEntry.class;
         }
-    },
-    COMPANY {
+
         @Override
-        public Class<? extends ProfileEntry> getProfileEntryClass() {
-            return null;
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            return (Set<Entry>) profile.getKeySkillEntries();
         }
     },
-    PROJECT_ROLE {
+    COMPANY() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
-            return null;
+            throw new NotImplementedException("No idea what this is supposed to do");
+        }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            throw new NotImplementedException("No idea what this is supposed to do");
+        }
+    },
+    PROJECT_ROLE() {
+        @Override
+        public Class<? extends ProfileEntry> getProfileEntryClass() {
+            throw new NotImplementedException("No idea what this is supposed to do");
+        }
+
+        @Override
+        public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
+            throw new NotImplementedException("No idea what this is supposed to do");
         }
     };
 
     public abstract Class<? extends ProfileEntry> getProfileEntryClass();
+
+    public abstract <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile);
 }
+
+

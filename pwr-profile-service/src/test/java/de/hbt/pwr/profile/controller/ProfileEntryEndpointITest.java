@@ -3,8 +3,11 @@ package de.hbt.pwr.profile.controller;
 import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.model.Consultant;
+import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
+import de.hbt.pwr.profile.model.profile.entries.Project;
 import de.hbt.pwr.profile.service.ConsultantService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,9 +39,15 @@ public class ProfileEntryEndpointITest {
 
     @Before
     public void setup() {
-        testConsultant = consultantRepository.findByInitials("abc")
-                .orElseGet(() -> consultantService.createNewConsultant("abc", "a", "b", "", LocalDate.now()));
+        testConsultant = consultantService.createNewConsultant("abc", "a", "b", "", LocalDate.now());
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        testConsultant.setActive(false);
+        consultantService.updatePersonalData("abc",testConsultant);
+        consultantService.deleteConsultant("abc");
     }
 
     @Test
@@ -46,6 +55,29 @@ public class ProfileEntryEndpointITest {
         Profile p = consultantService.getProfileByInitials("abc");
         assertThat(p.getId()).isNotNull();
 
+    }
+
+
+    @Test
+    public void saveSkillInProfile(){
+        Skill s = Skill.builder().id(null).name("skilli").rating(3).build();
+
+        s = endpoint.updateSkill("abc",s);
+        Profile p = consultantService.getProfileByInitials("abc");
+        assertThat(p.getSkills().size()).isEqualTo(1);
+        assertThat(p.getSkills()).contains(s);
+    }
+
+
+    @Test
+    public void saveProjectToProfile(){
+        Project project = new Project();
+
+
+        project = endpoint.updateProject("abc",project);
+        Profile p = consultantService.getProfileByInitials("abc");
+        assertThat(p.getProjects()).hasSize(1);
+        assertThat(p.getProjects()).usingFieldByFieldElementComparator().contains(project);
     }
 
 

@@ -3,9 +3,12 @@ package de.hbt.pwr.profile.service;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
+import de.hbt.pwr.profile.model.profile.BaseProfile;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
-import de.hbt.pwr.profile.model.profile.entries.*;
+import de.hbt.pwr.profile.model.profile.entries.NameEntity;
+import de.hbt.pwr.profile.model.profile.entries.ProfileEntry;
+import de.hbt.pwr.profile.model.profile.entries.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,8 +42,17 @@ public class ProfileEntryService {
         this.projectRepository = projectRepository;
     }
 
+    public BaseProfile updateBaseProfile(Profile p, BaseProfile baseProfile) {
+        p.setDescription(baseProfile.getDescription());
+        p.setLastEdited(LocalDateTime.now());
+        p = profileRepository.save(p);
+        return new BaseProfile(p.getId(),p.getDescription(),p.getLastEdited());
+    }
 
-    public ProfileEntry updateProfileEntry(ProfileEntry profileEntry, Profile profile, NameEntityType nameEntityType) {
+
+    // TODO 2: Result Messages
+    // TODO 3: Leere Name Entity/Validierung von fachlichen Daten
+    public <Entry extends ProfileEntry> Entry updateProfileEntry(Entry profileEntry, Profile profile, NameEntityType nameEntityType) {
         NameEntity nameEntity = validateNameEntity(profileEntry.getNameEntity(), nameEntityType);
         profileEntry.setNameEntity(nameEntity);
         if (profileEntry.getId() != null) {
@@ -48,83 +60,36 @@ public class ProfileEntryService {
         } else {
             profileEntry = profileEntryDAO.persist(profileEntry);
         }
-        switch (nameEntityType) {
-            case LANGUAGE:
-                profile.getLanguages().add((LanguageSkill) profileEntry);
-                break;
-            case EDUCATION:
-                profile.getEducation().add((EducationEntry) profileEntry);
-                break;
-            case KEY_SKILL:
-                profile.getKeySkillEntries().add((KeySkillEntry) profileEntry);
-                break;
-            case QUALIFICATION:
-                profile.getQualification().add((QualificationEntry) profileEntry);
-                break;
-            case SECTOR:
-                profile.getSectors().add((SectorEntry) profileEntry);
-                break;
-            case TRAINING:
-                profile.getTrainingEntries().add((TrainingEntry) profileEntry);
-                break;
-            case CAREER:
-                profile.getCareerEntries().add((CareerEntry) profileEntry);
-                break;
-            default:
-        }
+        nameEntityType.getEntryCollection(profile).add(profileEntry);
         return profileEntry;
     }
 
     public void deleteEntryWithId(Long id, Profile profile, NameEntityType nameEntityType) {
-        ProfileEntry profileEntry;
-        switch (nameEntityType) {
-            case LANGUAGE:
-                profileEntry = profileEntryDAO.find(id, LanguageSkill.class);
-                profile.getLanguages().remove(profileEntry);
-                break;
-            case EDUCATION:
-                profileEntry = profileEntryDAO.find(id, EducationEntry.class);
-                profile.getEducation().remove(profileEntry);
-                break;
-            case KEY_SKILL:
-                profileEntry = profileEntryDAO.find(id, KeySkillEntry.class);
-                profile.getKeySkillEntries().remove(profileEntry);
-                break;
-            case QUALIFICATION:
-                profileEntry = profileEntryDAO.find(id, QualificationEntry.class);
-                profile.getQualification().remove(profileEntry);
-                break;
-            case SECTOR:
-                profileEntry = profileEntryDAO.find(id, SectorEntry.class);
-                profile.getSectors().remove(profileEntry);
-                break;
-            case TRAINING:
-                profileEntry = profileEntryDAO.find(id, TrainingEntry.class);
-                profile.getTrainingEntries().remove(profileEntry);
-                break;
-            case CAREER:
-                profileEntry = profileEntryDAO.find(id, CareerEntry.class);
-                profile.getCareerEntries().remove(profileEntry);
-                break;
-            default:
-        }
+        nameEntityType.getEntryCollection(profile).removeIf(profileEntry -> profileEntry.getId().equals(id));
     }
 
     public Skill updateProfileSkills(Skill skill, Profile profile) {
-        skill.setName(skill.getName().trim());
-        Skill finalSkill = skill;
-        Skill concurrent = profile.getSkills()
-                .stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase()))
-                .findAny().orElse(null);
+        Optional<Skill> concurrent = profile.getSkills()
+                .stream().filter(s -> hasEqualName(s, skill))
+                .findAny();
+        return concurrent
+                .map(s -> updateSkill(s, skill))
+                .orElseGet(() -> createNewInProfile(skill, profile));
+    }
 
-        if (concurrent != null ) {
-            skill = concurrent;
-            profile.getSkills().remove(concurrent);
-        }
-        skill = skillRepository.save(skill);
-        profile.getSkills().add(skill);
-        profileRepository.saveAndFlush(profile);
-        return skill;
+    private Skill updateSkill(Skill concurrent, Skill base) {
+        concurrent.setRating(base.getRating());
+        return concurrent;
+    }
+
+    private Skill createNewInProfile(Skill skill, Profile profile) {
+        Skill saved = skillRepository.save(skill);
+        profile.getSkills().add(saved);
+        return saved;
+    }
+
+    private boolean hasEqualName(Skill skill, Skill otherSkill) {
+        return skill.getName().toLowerCase().equals(otherSkill.getName().toLowerCase());
     }
 
     private Skill handleProjectSkill(Skill skill, Set<Skill> profileSkills) {
@@ -154,6 +119,7 @@ public class ProfileEntryService {
 
 
     public void deleteSkill(Long id, Profile p) {
+        // TODO check Projects to delete orphan skills
         Skill toRemove = p.getSkills().stream()
                 .filter(skill -> skill.getId().equals(id))
                 .findAny()
@@ -179,7 +145,7 @@ public class ProfileEntryService {
 
     public Project updateProject(Project project, Profile profile) {
 
-        if (project == null){
+        if (project == null) {
             return null;
         }
         Optional<Project> repoProject = project.getId() != null ? projectRepository.findById(project.getId()) : Optional.empty();

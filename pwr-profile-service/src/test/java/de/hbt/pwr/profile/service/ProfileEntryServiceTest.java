@@ -151,7 +151,7 @@ public class ProfileEntryServiceTest {
     @Test
     public void shouldNotDeleteLanguageSkill_WhenNotExisting() {
         Profile profile = new Profile();
-        LanguageSkill language = LanguageSkill.builder().level(LanguageSkillLevel.ADVANCED).language(NameEntity.builder().name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
+        LanguageSkill language = LanguageSkill.builder().id(44L).level(LanguageSkillLevel.ADVANCED).language(NameEntity.builder().name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
         LanguageSkill deleteLevel = LanguageSkill.builder().id(543L).level(LanguageSkillLevel.BASIC).language(NameEntity.builder().name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
         LanguageSkill deleteName = LanguageSkill.builder().id(123L).level(LanguageSkillLevel.ADVANCED).language(NameEntity.builder().name("Schwedisch").type(NameEntityType.LANGUAGE).build()).build();
         profile.getLanguages().add(language);

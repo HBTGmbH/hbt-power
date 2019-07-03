@@ -127,19 +127,6 @@ public class ProfileEntryServiceITest {
     }
 
     @Test
-    public void shouldNotUpdateSkillRating(){
-        Profile p = new Profile();
-        p = profileRepository.save(p);
-        Skill s1 = Skill.builder().name("hello").rating(5).build();
-        s1 = profileEntryService.updateProfileSkills(s1,p);
-        p = profileRepository.save(p);
-        Skill s2 = Skill.builder().name("hello").rating(4).build();
-        s2 = profileEntryService.updateProfileSkills(s2,p);
-
-        assertThat(p.getSkills()).containsExactly(s1);
-    }
-
-    @Test
     public void shouldAddProjectToProfile(){
         Profile p = new Profile();
         p = profileRepository.save(p);

@@ -38,20 +38,17 @@
         {
           "id": 2430,
           "name": "Engineering",
-          "rating": 5,
-          "comment": ""
+          "rating": 5
         },
         {
           "id": 2431,
           "name": "Warp",
-          "rating": 3,
-          "comment": ""
+          "rating": 3
         },
         {
           "id": 2428,
           "name": "Dancing",
-          "rating": 3,
-          "comment": ""
+          "rating": 3
         }
       ],
       "startDate": "2088-04-24",
@@ -64,50 +61,42 @@
     {
       "id": 2426,
       "name": "React.js",
-      "rating": 3,
-      "comment": ""
+      "rating": 3
     },
     {
       "id": 2427,
       "name": "Java",
-      "rating": 5,
-      "comment": ""
+      "rating": 5
     },
     {
       "id": 2430,
       "name": "Engineering",
-      "rating": 5,
-      "comment": ""
+      "rating": 5
     },
     {
       "id": 2429,
       "name": "MySQL",
-      "rating": 3,
-      "comment": ""
+      "rating": 3
     },
     {
       "id": 2431,
       "name": "Warp",
-      "rating": 3,
-      "comment": ""
+      "rating": 3
     },
     {
       "id": 2428,
       "name": "Dancing",
-      "rating": 3,
-      "comment": ""
+      "rating": 3
     },
     {
       "id": 2425,
       "name": "JavaScript",
-      "rating": 4,
-      "comment": ""
+      "rating": 4
     },
     {
       "id": 2424,
       "name": "POSTMAN",
-      "rating": 3,
-      "comment": ""
+      "rating": 3
     }
   ]
 }
