@@ -18,7 +18,7 @@ import java.util.Collection;
 @Transactional
 @Slf4j
 @RestController
-@RequestMapping(value = "/profile/{initials}", produces = "application/json", consumes = "application/json")
+@RequestMapping(value = "/profile/{initials}", produces = "application/json")
 public class ProfileEntryEndpoint {
 
 
