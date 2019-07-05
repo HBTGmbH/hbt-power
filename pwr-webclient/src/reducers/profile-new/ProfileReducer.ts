@@ -100,7 +100,7 @@ function replaceProjects(action: ProjectLoadAction, profile: Profile): Profile {
 }
 
 function handleBaseProfile(action: BaseProfileLoadAction, profile: Profile): Profile {
-    let newProfile = {...profile, ...{id: action.baseProfile.id}};
+    let newProfile = {...profile, id: action.baseProfile.id};
     newProfile = {...newProfile, ...{description: action.baseProfile.description}};
     return {...newProfile, ...{lastEdited: action.baseProfile.lastEdited}};
 }

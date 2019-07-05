@@ -23,6 +23,7 @@ import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ProfileModificationStatus} from '../../../model/ProfileModificationStatus';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/ProfileDataAsyncActionCreator';
 import {Profile} from '../../../reducers/profile-new/model/Profile';
+import {LanguageModule} from './elements/language/language_module';
 
 
 interface ProfileProps {
@@ -78,8 +79,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileDispatch {
         return {
             reloadProfile: function (initials: string) {
-                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
-                dispatch(ProfileDataAsyncActionCreator.loadBaseProfile("ppp"));
+                //dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             saveProfile: function (initials: string, database: ProfileStore) {
                 dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()));
@@ -149,8 +150,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                                     initialMaxCharacters={500}
                                 />
                             </div>
-                            <div className="col-md-6 col-sm-12">
-                                <LanguageSkills/>
+                            <div className="col-md-4 col-sm-12">
+                                {/* <LanguageSkills/>  */}
+                                <LanguageModule/>
                             </div>
                         </div>
                         <div className="row">

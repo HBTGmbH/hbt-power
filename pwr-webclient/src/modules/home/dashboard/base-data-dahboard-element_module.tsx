@@ -49,7 +49,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
         return {
             requestSingleProfile: function (initials: string = 'ppp') {
                 console.log("initials: ",initials);
-                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                //dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
