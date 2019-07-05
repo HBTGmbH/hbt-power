@@ -10,11 +10,14 @@ import {Paths} from '../../../Paths';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {getRandomGreeting} from '../../../model/PwrConstants';
 import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
+import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/ProfileDataAsyncActionCreator';
+import {Profile} from '../../../reducers/profile-new/model/Profile';
 
 interface BaseDataDashboardElementProps {
     initials: string;
     name: string;
     lastEdited: Date;
+    profile:Profile;
 }
 
 interface BaseDataDashboardElementLocalProps {
@@ -37,14 +40,17 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
         return {
             initials: state.databaseReducer.loggedInUser().initials(),
             name: state.databaseReducer.loggedInUser().firstName(),
-            lastEdited: state.databaseReducer.profile().lastEdited()
+            lastEdited: state.databaseReducer.profile().lastEdited(), // TODO changed
+            profile: state.profile.profile
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BaseDataDashboardElementDispatch {
         return {
-            requestSingleProfile: function (initials: string) {
+            requestSingleProfile: function (initials: string = 'ppp') {
+                console.log("initials: ",initials);
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
         };

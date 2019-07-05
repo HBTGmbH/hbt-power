@@ -5,6 +5,7 @@ import * as React from 'react';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {NameEntity} from '../../../../../reducers/profile-new/model/NameEntity';
 
 interface SingleLanguageState {
     dialogOpen: boolean;
@@ -18,7 +19,7 @@ interface SingleLanguageProps {
     availableLanguages: Array<string>;
     availableLevels: Array<string>;
     onDelete(): void;
-    onSave(languageName: string, languageSkill: string): void;
+    onSave(languageName: NameEntity, languageSkill: string): void;
 }
 
 export class SingleLanguage extends React.Component<SingleLanguageProps, SingleLanguageState> {
@@ -34,7 +35,7 @@ export class SingleLanguage extends React.Component<SingleLanguageProps, SingleL
         this.props.onDelete();
     };
 
-    private handleSaveRequest = (languageName: string, languageLevel: string) => {
+    private handleSaveRequest = (languageName: NameEntity, languageLevel: string) => {
         this.props.onSave(languageName, languageLevel);
         this.closeDialog();
     };

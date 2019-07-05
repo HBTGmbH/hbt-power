@@ -21,11 +21,14 @@ import {KeySkills} from './elements/keyskill/keySkill_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ProfileModificationStatus} from '../../../model/ProfileModificationStatus';
+import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/ProfileDataAsyncActionCreator';
+import {Profile} from '../../../reducers/profile-new/model/Profile';
 
 
 interface ProfileProps {
     database: ProfileStore;
     loggedInUser: ConsultantInfo;
+    profile:Profile;
 }
 
 /**
@@ -67,7 +70,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps): ProfileProps {
         return {
             database: state.databaseReducer,
-            loggedInUser: state.databaseReducer.loggedInUser()
+            loggedInUser: state.databaseReducer.loggedInUser(),
+            profile: state.profile.profile,
         };
     }
 
@@ -75,6 +79,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return {
             reloadProfile: function (initials: string) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                dispatch(ProfileDataAsyncActionCreator.loadBaseProfile("ppp"));
             },
             saveProfile: function (initials: string, database: ProfileStore) {
                 dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()));

@@ -10,28 +10,31 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
+import {NameEntity, newNameEntity} from '../../../../../reducers/profile-new/model/NameEntity';
+import {NameEntityType} from '../../../../../reducers/profile-new/model/NameEntityType';
 
 
-interface EducationEntryDialogLocalProps {
+interface LanguageDialogLocalProps {
     languageName: string;
     languageLevel: string;
     availableLanguages: Array<string>;
     availableLevels: Array<string>;
     open: boolean;
 
-    onSave(languageName: string, languageLevel: string): void;
+    onSave(languageName: NameEntity, languageLevel: string): void;
+
     onClose(): void;
 }
 
-interface EducationEntryDialogLocalState {
+interface LanguageDialogLocalState {
     currentLanguageName: string;
     currentLanguageLevel: string;
 }
 
 
-export class LanguageSkillDialog extends React.Component<EducationEntryDialogLocalProps, EducationEntryDialogLocalState> {
+export class LanguageSkillDialog extends React.Component<LanguageDialogLocalProps, LanguageDialogLocalState> {
 
-    constructor(props: EducationEntryDialogLocalProps) {
+    constructor(props: LanguageDialogLocalProps) {
         super(props);
         this.state = {
             currentLanguageName: props.languageName,
@@ -67,7 +70,7 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
 
 
     private handleSaveButtonPress = () => {
-        this.props.onSave(this.state.currentLanguageName, this.state.currentLanguageLevel);
+        this.props.onSave(newNameEntity(null, this.state.currentLanguageName, NameEntityType.LANGUAGE), this.state.currentLanguageLevel);
         this.closeDialog();
     };
 
@@ -119,9 +122,11 @@ export class LanguageSkillDialog extends React.Component<EducationEntryDialogLoc
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <PwrIconButton id="Language.Dialog.Save" iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                    <PwrIconButton id="Language.Dialog.Save" iconName={'save'}
+                                   tooltip={PowerLocalize.get('Action.Save')}
                                    onClick={this.handleSaveButtonPress}/>
-                    <PwrIconButton id="Language.Dialog.Close" iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                    <PwrIconButton id="Language.Dialog.Close" iconName={'close'}
+                                   tooltip={PowerLocalize.get('Action.Exit')}
                                    onClick={this.handleCloseButtonPress}/>
                 </DialogActions>
             </Dialog>

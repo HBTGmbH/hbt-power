@@ -1,214 +1,331 @@
 import * as redux from 'redux';
-import {APIRequestType} from '../../Store';
-import {ProfileActionCreator} from '../profile/ProfileActionCreator';
-import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {ApplicationState} from '../reducerIndex';
-import {
-    APICareerEntry, APIEducationEntry,
-    APIKeySkill,
-    APILanguageSkill, APIProject,
-    APIQualificationEntry,
-    APISectorEntry, APISkill, APITrainingEntry
-} from '../../model/APIProfile';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
-import {entryUpdateAction, EntryUpdateAction} from './actions/EntryUpdateAction';
+import {entryUpdateAction} from './actions/EntryUpdateAction';
 import {Language} from './model/Language';
+import {Profile} from './model/Profile';
+import {ProfileEntry} from './model/ProfileEntry';
+import {entryDeleteAction} from './actions/EntryDeleteAction';
+import {projectUpdateAction} from './actions/ProjectUpdateAction';
+import {skillDeleteAction} from './actions/SkillDeleteAction';
+import {skillUpdateAction} from './actions/SkillUpdateAction';
+import {projectDeleteAction} from './actions/ProjectDeleteAction';
+import {Project} from './model/Project';
+import {ProfileSkill} from './model/ProfileSkill';
+import {Qualification} from './model/Qualification';
+import {IndustrialSector} from './model/IndustrialSector';
+import {SpecialField} from './model/SpecialField';
+import {Career} from './model/Career';
+import {FurtherTraining} from './model/FurtherTraining';
+import {Education} from './model/Education';
+import {ProfileUpdateServiceClient} from './client/ProfileUpdateServiceClient';
+import {baseProfileLoadAction} from './actions/BaseProfileLoadAction';
+import {entryLoadAction} from './actions/EntryLoadAction';
+import {projectLoadAction} from './actions/ProjectLoadAction';
+import {skillLoadAction} from './actions/SkillLoadAction';
 
-const profileServiceClient = ProfileServiceClient.instance();
+const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
 
-const succeedCall = (type: APIRequestType, dispatch: redux.Dispatch<ApplicationState>) => {
-    return (data: any) => dispatch(ProfileActionCreator.APIRequestSuccessful(data, type));
+const handleError = (error: any) => {
+    NavigationActionCreator.showError(error.status + ' -- ' + error.message);
+    console.error(error);
 };
 
 export class ProfileDataAsyncActionCreator {
 
 
-    public static loadProfile(initials: string) {
+    public static loadBaseProfile(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.getProfile(initials)
-                .then(profile => dispatch(ProfileActionCreator.APIRequestSuccessful(profile, APIRequestType.RequestProfile)))
-                .catch(console.error);
+            profileUpdateServiceClient.getBaseProfile(initials).then(profile => {
+                    console.log('BaseProfile Loaded');
+                    dispatch(baseProfileLoadAction(profile));
+                }
+            ).catch(error => handleError(error));
         };
     }
+
+    // TODO einloggen um initialen zu speichern !!
+
+
+    public static loadFullProfile(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            console.log('new full Profile loading...');
+            initials = 'ppp'; // TODO remove after Testing
+            dispatch(ProfileDataAsyncActionCreator.loadBaseProfile(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadLanguage(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadQualification(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadSector(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadKeySkill(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadCareer(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadTraining(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadEducation(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadProfileSkills(initials));
+            dispatch(ProfileDataAsyncActionCreator.loadProject(initials));
+        };
+    }
+
 
     // --------------------------- ---------------------- Language ---------------------- ----------------------------//
     public static saveLanguage(initials: string, entity: Language) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveLanguage(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Sprache: ' + entity.nameEntity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(entryUpdateAction(entity,'languages'));
+            profileUpdateServiceClient.saveLanguage(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Sprache: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    dispatch(entryUpdateAction(value, 'languages' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteLanguage(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteLanguage(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteLanguage(initials, id).then(value => {
+                    dispatch(entryDeleteAction(id, 'languages' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+    public static loadLanguage(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getLanguages(initials).then(value =>
+                dispatch(entryLoadAction(value, 'languages' as keyof Profile & Array<ProfileEntry>))
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- Qualification ---------------------- ----------------------------//
-    public static saveQualification(initials: string, entity: APIQualificationEntry) {
+    public static saveQualification(initials: string, entity: Qualification) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveQualification(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Qualifikation: ' + entity.nameEntity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
+            profileUpdateServiceClient.saveQualification(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Qualifikation: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    dispatch(entryUpdateAction(value, 'qualification' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteQualification(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteQualification(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteQualification(initials, id).then(value => {
+                    dispatch(entryDeleteAction(id, 'qualification' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+    public static loadQualification(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getQualifications(initials).then(value => {
+                    dispatch(entryLoadAction(value, 'qualification' as keyof Profile & Array<ProfileEntry>));
+                }
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- Sector ---------------------- ----------------------------//
-    public static saveSector(initials: string, entity: APISectorEntry) {
+    public static saveSector(initials: string, entity: IndustrialSector) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveSector(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Branche: ' + entity.nameEntity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
+            profileUpdateServiceClient.saveSector(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Branche: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    dispatch(entryUpdateAction(value, 'sectors' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteSector(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteSector(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteSector(initials, id).then(value => {
+                    dispatch(entryDeleteAction(id, 'sectors' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+
+    public static loadSector(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getSectors(initials).then(value => {
+                    dispatch(entryLoadAction(value, 'sectors' as keyof Profile & Array<ProfileEntry>));
+                }
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- KeySkill ---------------------- ----------------------------//
-    public static saveKeySkill(initials: string, entity: APIKeySkill) {
+    public static saveKeySkill(initials: string, entity: SpecialField) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveKeySkill(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Spezialgebiet: ' + entity.nameEntity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
+            profileUpdateServiceClient.saveKeySkill(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Spezialgebiet: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    dispatch(entryUpdateAction(value, 'specialFieldEntries' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteKeySkill(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteKeySkill(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteKeySkill(initials, id).then(value => {
+                    dispatch(entryDeleteAction(id, 'specialFieldEntries' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+    public static loadKeySkill(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getSpecialFields(initials).then(value => {
+                    dispatch(entryLoadAction(value, 'specialFieldEntries' as keyof Profile & Array<ProfileEntry>));
+                }
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- Career ---------------------- ----------------------------//
-    public static saveCareer(initials: string, entity: APICareerEntry) {
+    public static saveCareer(initials: string, entity: Career) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveCareer(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Werdegang: ' + entity.nameEntity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
+            profileUpdateServiceClient.saveCareer(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Werdegang: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    dispatch(entryUpdateAction(value, 'career' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteCareer(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteCareer(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteCareer(initials, id).then(value => {
+                    dispatch(entryDeleteAction(id, 'career' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+
+    public static loadCareer(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getCareers(initials).then(value => {
+                    dispatch(entryLoadAction(value, 'career' as keyof Profile & Array<ProfileEntry>));
+                }
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- Training ---------------------- ----------------------------//
-    public static saveTraining(initials: string, entity: APITrainingEntry) {
+    public static saveTraining(initials: string, entity: FurtherTraining) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveTraining(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Weiterbildung: ' + entity.nameEntity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
+            profileUpdateServiceClient.saveTraining(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Weiterbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    dispatch(entryUpdateAction(value, 'training' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteTraining(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteTraining(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteTraining(initials, id).then(value => {
+                    dispatch(entryDeleteAction(id, 'training' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+
+    public static loadTraining(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getTrainings(initials).then(value => {
+                    dispatch(entryLoadAction(value, 'training' as keyof Profile & Array<ProfileEntry>));
+                }
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- Education ---------------------- ----------------------------//
-    public static saveEducation(initials: string, entity: APIEducationEntry) {
+    public static saveEducation(initials: string, entity: Education) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveEducation(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Ausbildung: ' + entity.nameEntity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
+            profileUpdateServiceClient.saveEducation(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Ausbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    dispatch(entryUpdateAction(value, 'education' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteEducation(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteEducation(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteEducation(initials, id).then(value => {
+                    dispatch(entryDeleteAction(id, 'education' as keyof Profile & Array<ProfileEntry>));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+    public static loadEducation(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getEducation(initials).then(value => {
+                    dispatch(entryLoadAction(value, 'education' as keyof Profile & Array<ProfileEntry>));
+                }
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- Skill ---------------------- ----------------------------//
-    public static saveProfileSkill(initials: string, entity: APISkill) {
+    public static saveProfileSkill(initials: string, entity: ProfileSkill) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveProfileSkill(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Skill: ' + entity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
+            profileUpdateServiceClient.saveProfileSkill(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Skill: ' + value.name + ' erfolgreich hinzugefügt!');
+                    dispatch(skillUpdateAction(value));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteProfileSkill(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteProfileSkill(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteProfileSkill(initials, id).then(value => {
+                    dispatch(skillDeleteAction(id));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+    public static loadProfileSkills(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getSkills(initials).then(value => {
+                    dispatch(skillLoadAction(value));
+                }
+            ).catch(error => handleError(error));
         };
     }
 
     // --------------------------- ---------------------- Projects ---------------------- ----------------------------//
-    public static saveProject(initials: string, entity: APIProject) {
+    public static saveProject(initials: string, entity: Project) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveProject(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Project: ' + entity.name + ' erfolgreich hinzugefügt!');
-                    dispatch(ProfileActionCreator.APIRequestSuccessful(value, APIRequestType.SaveProfile)); // TODO neu implementieren
-                    // TODO die mögliche änderung der profilskill beachten
+            profileUpdateServiceClient.saveProject(initials, entity).then(value => {
+                    NavigationActionCreator.showSuccess('Project: ' + value.name + ' erfolgreich hinzugefügt!');
+                    dispatch(projectUpdateAction(value));
+                    dispatch(ProfileDataAsyncActionCreator.loadProfileSkills(initials));
                 }
-            ).catch(error => NavigationActionCreator.showError(error));
+            ).catch(error => handleError(error));
         };
     }
 
     public static deleteProject(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.deleteProject(initials, id).then(value => {
-                    console.log('neu laden des profiles'); // TODO
+            profileUpdateServiceClient.deleteProject(initials, id).then(value => {
+                    dispatch(projectDeleteAction(id));
                 }
-            ).catch(error => console.error(error));
+            ).catch(error => handleError(error));
+        };
+    }
+
+    public static loadProject(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            profileUpdateServiceClient.getProjects(initials).then(value => {
+                    dispatch(projectLoadAction(value));
+                }
+            ).catch(error => handleError(error));
         };
     }
 }

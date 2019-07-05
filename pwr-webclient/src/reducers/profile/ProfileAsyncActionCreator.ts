@@ -14,6 +14,7 @@ import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import {ProfileServiceError} from '../../model/ProfileServiceError';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
+import {ProfileDataAsyncActionCreator} from '../profile-new/ProfileDataAsyncActionCreator';
 
 const profileServiceClient = ProfileServiceClient.instance();
 
@@ -61,7 +62,7 @@ export class ProfileAsyncActionCreator {
     }
 
     public static saveFullProfile(initials: string, profile: APIProfile) {
-        console.log("Saving full profile " + initials);
+        console.log('Saving full profile ' + initials);
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.saveProfile(initials, profile).then(profile => {
                 NavigationActionCreator.showSuccess('Profile saved!');
@@ -168,6 +169,7 @@ export class ProfileAsyncActionCreator {
             } else {
                 profileServiceClient.getConsultant(initials).then(consultant => {
                     dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                    dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
                     dispatch({
                         type: ActionType.LogInUser,
                         consultantInfo: ConsultantInfo.fromAPI(consultant)

@@ -13,9 +13,13 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {DEFAULT_LANG_LEVEL} from '../../../../../model/PwrConstants';
+import {Language, newLanguage} from '../../../../../reducers/profile-new/model/Language';
+import * as NameEntityNew from '../../../../../reducers/profile-new/model/NameEntity';
+import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/ProfileDataAsyncActionCreator';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;
+    languageArray: Array<Language>;
     languages: Immutable.Map<string, NameEntity>;
     languageLevels: Array<string>;
 }
@@ -42,9 +46,9 @@ interface LanguageLocalState {
 interface LanguageDispatch {
     addLanguageSkill(): void;
 
-    deleteLanguageSkill(id: string): void;
+    deleteLanguageSkill(id: number): void;
 
-    saveLanguageSkill(id: string, name: string, level: string): void;
+    saveLanguageSkill(id: number, name: NameEntityNew.NameEntity, level: string): void;
 }
 
 class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps & LanguageDispatch, LanguageLocalState> {
@@ -59,6 +63,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps): LanguageProps {
         return {
             languageSkills: state.databaseReducer.profile().languageSkills(),
+            languageArray: state.profile.profile.languages,
             languages: state.databaseReducer.languages(),
             languageLevels: state.databaseReducer.languageLevels()
         };
@@ -69,10 +74,12 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
             addLanguageSkill: function () {
                 dispatch(ProfileActionCreator.createEntry(ProfileElementType.LanguageEntry));
             },
-            deleteLanguageSkill: function (id: string) {
-                dispatch(ProfileActionCreator.deleteEntry(id, ProfileElementType.LanguageEntry));
+            deleteLanguageSkill: function (id: number) {
+                dispatch(ProfileDataAsyncActionCreator.deleteLanguage("ppp",id)); // TODO initials
             },
-            saveLanguageSkill: (id, name, level) => dispatch(ProfileActionCreator.SaveLanguage(id, name, level))
+            saveLanguageSkill: (id, name, level) =>  {
+                dispatch(ProfileDataAsyncActionCreator.saveLanguage("ppp", newLanguage(id,name,level)))
+            }
         };
     }
 
@@ -88,7 +95,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         this.setState({createOpen: open});
     };
 
-    private saveAsNew = (name: string, level: string) => {
+    private saveAsNew = (name: NameEntityNew.NameEntity, level: string) => {
         this.props.saveLanguageSkill(null, name, level);
         this.closeCreate();
     };
@@ -109,21 +116,21 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
         return this.props.languages.get(languageId).name();
     };
 
-    private saveLanguage = (id: string, languageName: string, languageLevel: string) => {
+    private saveLanguage = (id: number, languageName: NameEntityNew.NameEntity, languageLevel: string) => {
         this.props.saveLanguageSkill(id, languageName, languageLevel);
     };
 
-    private renderSingleLanguage = (language: LanguageSkill, id: string) => {
+    private renderSingleLanguage = (language: Language, id: number) => {
         return (
             <SingleLanguage
-                key={language.id()}
-                id={language.id()}
-                level={language.level()}
-                language={this.languageFrom(language.languageId())}
+                key={language.id}
+                id={language.id.toString()}
+                level={language.level}
+                language={language.nameEntity.name}
                 availableLevels={this.levels()}
                 availableLanguages={this.languages()}
                 onSave={(name, level) => this.saveLanguage(id, name, level)}
-                onDelete={() => this.props.deleteLanguageSkill(language.id())}
+                onDelete={() => this.props.deleteLanguageSkill(language.id)}
             />
         );
     };
@@ -143,7 +150,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
                     subtitle={PowerLocalize.get('LanguageSkill.Description')}
                     onAddElement={this.handleAddElement}
                 >
-                    {this.props.languageSkills.map(this.renderSingleLanguage).toArray()}
+                    {this.props.languageArray.map(this.renderSingleLanguage)}
                 </ProfileElement>
             </React.Fragment>
         );

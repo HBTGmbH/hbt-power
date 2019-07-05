@@ -22,7 +22,14 @@ import {Profile} from '../../model/Profile';
 import {ProfileReducer} from './profile-reducer';
 import {NameEntity} from '../../model/NameEntity';
 import {Project} from '../../model/Project';
-import {APINameEntity} from '../../model/APIProfile';
+import {
+    APICareerEntry,
+    APIConsultant, APIEducationEntry, APIKeySkill,
+    APILanguageSkill,
+    APINameEntity,
+    APIProfile,
+    APIProject, APIQualificationEntry, APISectorEntry, APISkill, APITrainingEntry
+} from '../../model/APIProfile';
 import {ActionType} from '../ActionType';
 import * as Immutable from 'immutable';
 import {LoginStatus} from '../../model/LoginStatus';
@@ -214,8 +221,33 @@ export class DatabaseReducer {
     }
 
     public static Reduce(state: ProfileStore, action: AbstractAction): ProfileStore {
+        state = ProfileStore.createWithDefaults();
+
+        let profile: APIProfile = {
+            id: 0,
+            description: 'hi',
+            currentPosition: 'test',
+            lastEdited: '02-01-2019',
+            trainingEntries: [],
+            careerEntries: [],
+            keySkillEntries: [],
+            languages: [],
+            qualification: [],
+            education: [],
+            sectors: [],
+            projects: [],
+            skills: []
+        };
+        let info: APIConsultant = {
+            initials: 'ppp',
+            firstName: 'p',
+            lastName: 'a',
+            title: 'p',
+            profile: profile,
+            birthDate: null,
+            active: true
+        };
+        state.loggedInUser(ConsultantInfo.fromAPI(info));
         return state;
     }
-
-
 }

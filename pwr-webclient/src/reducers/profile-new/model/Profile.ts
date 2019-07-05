@@ -11,11 +11,10 @@ import {Project} from './Project';
 export interface Profile {
     id: number;
     description: string;
-    currentPosition: string;
     lastEdited: string;
     trainingEntries: Array<FurtherTraining>;
     careerEntries: Array<Career>;
-    keySkillEntries: Array<SpecialField>;
+    specialFieldEntries: Array<SpecialField>;
     languages: Array<Language>;
     qualification: Array<Qualification>;
     education: Array<Education>;

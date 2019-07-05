@@ -1,13 +1,5 @@
 import {Promise} from 'es6-promise';
-import {
-    APICareerEntry,
-    APIConsultant, APIEducationEntry,
-    APIKeySkill,
-    APILanguageSkill,
-    APIProfile, APIProject,
-    APIQualificationEntry,
-    APISectorEntry, APISkill, APITrainingEntry
-} from '../model/APIProfile';
+import {APIConsultant, APIProfile} from '../model/APIProfile';
 import axios, {AxiosRequestConfig} from 'axios';
 import {NameEntity} from '../model/NameEntity';
 import {PowerHttpClient} from './PowerHttpClient';
@@ -16,7 +8,6 @@ import {APIAdminNotification} from '../model/admin/AdminNotification';
 import {store} from '../reducers/reducerIndex';
 import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
 import {SkillNotification} from '../model/admin/SkillNotification';
-import {Language} from '../reducers/profile-new/model/Language';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -58,121 +49,6 @@ export class ProfileServiceClient extends PowerHttpClient {
         this.beginRequest();
         return this.preProcess(axios.put(url, profile));
     };
-
-    //---------------------------------------------- Profile Entries ---------------------------------------------- //
-
-    public saveLanguage = (initials: string, entry: APILanguageSkill): Promise<Language> => {
-        const url = this.base() + '/profile/' + initials + '/language';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteLanguage = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/language/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveQualification = (initials: string, entry: APIQualificationEntry): Promise<APIQualificationEntry> => {
-        const url = this.base() + '/profile/' + initials + '/qualification';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteQualification = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/qualification/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveSector = (initials: string, entry: APISectorEntry): Promise<APISectorEntry> => {
-        const url = this.base() + '/profile/' + initials + '/sector';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteSector = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/sector/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveKeySkill = (initials: string, entry: APIKeySkill): Promise<APIKeySkill> => {
-        const url = this.base() + '/profile/' + initials + '/keyskill';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteKeySkill = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/keyskill/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveCareer = (initials: string, entry: APICareerEntry): Promise<APICareerEntry> => {
-        const url = this.base() + '/profile/' + initials + '/career';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteCareer = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/career/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveTraining = (initials: string, entry: APITrainingEntry): Promise<APITrainingEntry> => {
-        const url = this.base() + '/profile/' + initials + '/training';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteTraining = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/training/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveEducation = (initials: string, entry: APIEducationEntry): Promise<APIEducationEntry> => {
-        const url = this.base() + '/profile/' + initials + '/education';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteEducation = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/education/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveProfileSkill = (initials: string, entry: APISkill): Promise<APISkill> => {
-        const url = this.base() + '/profile/' + initials + '/skill';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteProfileSkill = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/skill/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-
-    public saveProject = (initials: string, entry: APIProject): Promise<APIProject> => {
-        const url = this.base() + '/profile/' + initials + '/project';
-        this.beginRequest();
-        return this.preProcess(axios.put(url, entry));
-    };
-    public deleteProject = (initials: string, id: number) => {
-        const url = this.base() + '/profile/' + initials + '/project/' + id;
-        this.beginRequest();
-        return this.preProcess(axios.delete(url));
-    };
-
-    // TODO werbetext (profile#description)
-    // end
-
-
-
 
     public getConsultant = (initials: string): Promise<APIConsultant> => {
         const url = this.base() + '/consultants/' + initials;

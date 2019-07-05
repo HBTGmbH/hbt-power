@@ -16,6 +16,7 @@ import {ViewProfileDialog} from './view/view-profile-dialog_module';
 import {BaseDataDashboardElement} from './dashboard/base-data-dahboard-element_module';
 import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-element_module';
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
+import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/ProfileDataAsyncActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -84,6 +85,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
         return {
             requestSingleProfile: function (initials: string) {
                 dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                dispatch(ProfileDataAsyncActionCreator.loadBaseProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             createViewProfile: (description, name) => dispatch(ViewProfileActionCreator.AsyncCreateViewProfile(description, name)),

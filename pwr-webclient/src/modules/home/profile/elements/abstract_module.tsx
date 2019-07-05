@@ -70,7 +70,7 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
 
     public static mapStateToProps(state: ApplicationState, localProps: DescriptionLocalProps): DescriptionProps {
         return {
-            abstractText: state.databaseReducer.profile().description(),
+            abstractText: state.profile.profile.description, // TODO state.databaseReducer.profile().description(),
             modificationState: state.databaseReducer.modified()
         };
     }

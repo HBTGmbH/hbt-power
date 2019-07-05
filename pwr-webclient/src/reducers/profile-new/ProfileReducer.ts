@@ -13,9 +13,12 @@ import {SkillDeleteAction} from './actions/SkillDeleteAction';
 import {ProjectDeleteAction} from './actions/ProjectDeleteAction';
 import {ProjectUpdateAction} from './actions/ProjectUpdateAction';
 import {Project} from './model/Project';
+import {EntryLoadAction} from './actions/EntryLoadAction';
+import {SkillLoadAction} from './actions/SkillLoadAction';
+import {ProjectLoadAction} from './actions/ProjectLoadAction';
+import {BaseProfileLoadAction} from './actions/BaseProfileLoadAction';
 
 export function reduce(store: ProfileStore = emptyStore, action: AbstractAction): ProfileStore {
-
     switch (action.type) {
         case ActionType.UpdateEntrySuccessful: {
             let profile = handleUpdateEntry(action as EntryUpdateAction, store.profile);
@@ -41,24 +44,65 @@ export function reduce(store: ProfileStore = emptyStore, action: AbstractAction)
             let profile = handleDeleteProject(action as ProjectDeleteAction, store.profile);
             return replaceProfile(store, profile);
         }
-        default:
-            return store;
+        case ActionType.LoadEntriesAction: {
+            let profile = replaceField(action as EntryLoadAction, store.profile);
+            return replaceProfile(store, profile);
+        }
+        case ActionType.LoadSkillsAction: {
+            let profile = replaceSkills(action as SkillLoadAction, store.profile);
+            return replaceProfile(store, profile);
+        }
+        case ActionType.LoadProjectsAction: {
+            let profile = replaceProjects(action as ProjectLoadAction, store.profile);
+            return replaceProfile(store, profile);
+        }
+        case ActionType.LoadBaseProfileAction: {
+            let profile = handleBaseProfile(action as BaseProfileLoadAction, store.profile);
+            return replaceProfile(store, profile);
+        }
     }
     return store;
 }
 
-const projectsByStartDate = ComparatorBuilder.comparing<Project>(t => t.startDate.getFullYear()).build();
+const projectsByStartDate = ComparatorBuilder.comparing<Project>(t => t.startDate).build();
 const skillByName = ComparatorBuilder.comparing<ProfileSkill>(t => t.name).build();
 const byName = ComparatorBuilder.comparing<ProfileEntry>(t => t.nameEntity.name).build();
 const byId = (id: number) => (other: ProfileEntry) => other.id === id;
 
 function replaceProfile(store: ProfileStore, profile: Profile): ProfileStore {
+    console.log("new Profile: ",profile);
     return {...store, ...{profile: profile}};
 }
 
 function sortAndReplace(profile: Profile, field: ProfileEntryField, collection: Array<ProfileEntry>) {
     collection.sort(byName);
     return {...profile, ...{[field]: collection}};
+}
+
+function replaceField(action: EntryLoadAction, profile: Profile): Profile {
+    let newField: Array<ProfileEntry> = [];
+    newField.push(...action.entry);
+    return sortAndReplace(profile, action.field, newField);
+}
+
+function replaceSkills(action: SkillLoadAction, profile: Profile): Profile {
+    let newSkills: Array<ProfileSkill> = [];
+    newSkills.push(...action.skills);
+    newSkills.sort(skillByName);
+    return {...profile, ...{skills: newSkills}};
+}
+
+function replaceProjects(action: ProjectLoadAction, profile: Profile): Profile {
+    let newProjects: Array<Project> = [];
+    newProjects.push(...action.projects);
+    newProjects.sort(projectsByStartDate);
+    return {...profile, ...{projects: newProjects}};
+}
+
+function handleBaseProfile(action: BaseProfileLoadAction, profile: Profile): Profile {
+    let newProfile = {...profile, ...{id: action.baseProfile.id}};
+    newProfile = {...newProfile, ...{description: action.baseProfile.description}};
+    return {...newProfile, ...{lastEdited: action.baseProfile.lastEdited}};
 }
 
 function handleUpdateEntry(action: EntryUpdateAction, profile: Profile): Profile {
@@ -80,7 +124,6 @@ function handleUpdateSkill(action: SkillUpdateAction, profile: Profile): Profile
     newSkills.push(action.skill);
     newSkills.sort(skillByName);
     return {...profile, ...{skills: newSkills}};
-
 }
 
 function handleDeleteSkill(action: SkillDeleteAction, profile: Profile): Profile {
@@ -97,7 +140,6 @@ function handleUpdateProject(action: ProjectUpdateAction, profile: Profile): Pro
     newProjects.push(action.project);
     newProjects.sort(projectsByStartDate);
     return {...profile, ...{projects: newProjects}};
-
 }
 
 function handleDeleteProject(action: ProjectDeleteAction, profile: Profile): Profile {
