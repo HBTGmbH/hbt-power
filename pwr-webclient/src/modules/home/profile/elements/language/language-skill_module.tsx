@@ -5,7 +5,7 @@ import * as React from 'react';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
-import {NameEntity} from '../../../../../reducers/profile-new/model/NameEntity';
+import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
 
 interface SingleLanguageState {
     dialogOpen: boolean;

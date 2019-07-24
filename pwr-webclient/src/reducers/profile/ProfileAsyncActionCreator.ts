@@ -14,7 +14,10 @@ import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import {ProfileServiceError} from '../../model/ProfileServiceError';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
-import {ProfileDataAsyncActionCreator} from '../profile-new/ProfileDataAsyncActionCreator';
+import {ProfileDataAsyncActionCreator} from '../profile-new/profile/ProfileDataAsyncActionCreator';
+import {ConsultantAsyncActionCreator} from '../profile-new/consultant/ConsultantAsyncActionCreator';
+import {ConsultantClient} from '../profile-new/consultant/ConsultantClient';
+import {consultantUpdateAction} from '../profile-new/consultant/actions/ConsultantUpdateAction';
 
 const profileServiceClient = ProfileServiceClient.instance();
 
@@ -167,13 +170,10 @@ export class ProfileAsyncActionCreator {
             if (initials.length <= 0) {
                 dispatch(ProfileActionCreator.FailLogin());
             } else {
-                profileServiceClient.getConsultant(initials).then(consultant => {
-                    dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                ConsultantClient.instance().getConsultant(initials).then(consultant => {
+                    dispatch(consultantUpdateAction(consultant));
                     dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
-                    dispatch({
-                        type: ActionType.LogInUser,
-                        consultantInfo: ConsultantInfo.fromAPI(consultant)
-                    });
+
                     dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                     dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                     dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());

@@ -12,6 +12,7 @@ import {ViewProfileSkillOverview} from './view-profile-skill-overview_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {LimitedTextField} from '../../general/limited-text-field-module';
+import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 
 
 interface ViewProfileOverviewProps {
@@ -113,7 +114,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                             disabled={this.state.descriptionDisabled}
                             onToggleEdit={this.handleToggleEdit}
                             useToggleEditButton={true}
-                            maxCharacters={500}
+                            maxCharacters={PROFILE_DESCRIPTION_LENGTH}
                             label={PowerLocalize.get('Profile.Description')}
                             value={this.state.currentDescription}
                             fullWidth={true}

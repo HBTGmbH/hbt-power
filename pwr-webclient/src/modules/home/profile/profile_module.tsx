@@ -1,35 +1,42 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
-import {CardHeader, Divider, Paper, Tab, Tabs} from '@material-ui/core';
-import {ProfileDescription} from './elements/abstract_module';
-import {LanguageSkills} from './elements/language/languages_module';
-import {Sectors} from './elements/sectors/sectors_module';
-import {TrainingEntries} from './elements/training/training_module';
-import {EducationList} from './elements/education/eduction_module';
-import {Qualifications} from './elements/qualification/qualification_module';
+import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileStore} from '../../../model/ProfileStore';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {Projects} from './elements/project/projects-module';
 import {SkillTree} from './elements/skills/skilltree-module';
 import {getProfileImageLocation} from '../../../API_CONFIG';
-import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {isNullOrUndefined} from 'util';
-import {Careers} from './elements/career/career_module';
-import {KeySkills} from './elements/keyskill/keySkill_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Avatar from '@material-ui/core/Avatar/Avatar';
-import {ProfileModificationStatus} from '../../../model/ProfileModificationStatus';
-import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/ProfileDataAsyncActionCreator';
-import {Profile} from '../../../reducers/profile-new/model/Profile';
-import {LanguageModule} from './elements/language/language_module';
+import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
+import Grid from '@material-ui/core/Grid/Grid';
+import Typography from '@material-ui/core/Typography/Typography';
+import {SuggestionAsyncActionCreator} from '../../../reducers/suggestions/SuggestionAsyncActionCreator';
+import {SuggestionStore} from '../../../reducers/suggestions/SuggestionStore';
+import {Paths} from '../../../Paths';
+import {COOKIE_INITIALS_NAME} from '../../../model/PwrConstants';
+import {Consultant} from '../../../reducers/profile-new/consultant/model/Consultant';
+import {ProfileEntryModule} from './profile-entry_module';
+import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
+import {FurtherTraining} from '../../../reducers/profile-new/profile/model/FurtherTraining';
+import {Language} from '../../../reducers/profile-new/profile/model/Language';
+import {Education} from '../../../reducers/profile-new/profile/model/Education';
+import {Qualification} from '../../../reducers/profile-new/profile/model/Qualification';
+import {IndustrialSector} from '../../../reducers/profile-new/profile/model/IndustrialSector';
+import {SpecialField} from '../../../reducers/profile-new/profile/model/SpecialField';
+import {Career} from '../../../reducers/profile-new/profile/model/Career';
+import {ProfileDescription} from './elements/profile-description_module';
 
 
 interface ProfileProps {
     database: ProfileStore;
-    loggedInUser: ConsultantInfo;
-    profile:Profile;
+    suggestions: SuggestionStore;
+    loggedInUser: Consultant;
+    profile: Profile;
 }
 
 /**
@@ -52,9 +59,9 @@ interface ProfileLocalState {
 }
 
 interface ProfileDispatch {
-    reloadProfile(initials: string): void;
+    logInUser(initials: string): void;
 
-    saveProfile(initials: string, database: ProfileStore): void;
+    loadFullProfile(initials: string): void;
 
     preFetchSuggestions(): void;
 }
@@ -70,132 +77,222 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps): ProfileProps {
         return {
+            suggestions: state.suggestionStore,
             database: state.databaseReducer,
-            loggedInUser: state.databaseReducer.loggedInUser(),
-            profile: state.profile.profile,
+            loggedInUser: state.profileStore.consultant,
+            profile: state.profileStore.profile,
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileDispatch {
         return {
-            reloadProfile: function (initials: string) {
-                //dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
-                dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
-            },
-            saveProfile: function (initials: string, database: ProfileStore) {
-                dispatch(ProfileAsyncActionCreator.saveFullProfile(initials, database.serializeToAPI()));
-            },
-            preFetchSuggestions: () => dispatch(ProfileAsyncActionCreator.requestAllNameEntities())
+            logInUser: (initials) => dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_PROFILE)),
+            loadFullProfile: (initials) => dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials)),
+            preFetchSuggestions: () => dispatch(SuggestionAsyncActionCreator.requestAllNameEntities())
         };
     }
 
-    public componentDidUpdate() {
-        if (this.props.database.modified() == ProfileModificationStatus.MODIFIED) {
-            this.handleSaveProfile();
-        }
-    }
-
-    private handleReloadProfile = () => {
-        this.props.reloadProfile(this.props.loggedInUser.initials());
-    };
-
-    private handleSaveProfile = () => {
-        this.props.saveProfile(this.props.loggedInUser.initials(), this.props.database);
-    };
-
     private getInitials = () => {
-        return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials();
-    };
-
-    private renderAvatar = () => {
-        return (
-            <Avatar
-                src={getProfileImageLocation(this.getInitials())}
-                style={{width: 80, height: 80}}
-            />);
-
-
+        return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials;
     };
 
     componentDidMount() {
+        if ((isNullOrUndefined(this.props.loggedInUser) || isNullOrUndefined(this.props.profile))
+            && !isNullOrUndefined(window.localStorage.getItem(COOKIE_INITIALS_NAME))) {
+            this.props.logInUser(window.localStorage.getItem(COOKIE_INITIALS_NAME));
+        }
         this.props.preFetchSuggestions();
     }
 
-    render() {
+    private checkProfile = () => {
+        const p: Profile = this.props.profile;
+        return p
+            && p.id
+            && p.description
+            && p.lastEdited
+            && p.trainings
+            && p.careers
+            && p.specialFieldEntries
+            && p.languages
+            && p.qualification
+            && p.education
+            && p.sectors
+            && p.projects
+            && p.skills;
+    };
+
+    private renderLanguageInfo = (entry: ProfileEntry, id: number) => {
+        const language: Language = entry as Language;
         return (
-            <Paper className="mui-margin">
-                <Tabs
-                    value={this.state.tabValue}
-                    centered
-                    onChange={(e: any, v: any) => {
-                        this.setState({tabValue: v});
-                    }}
-                >
-                    <Tab textColor={'secondary'} value={0} label={PowerLocalize.get('ProfileModule.Tabs.Profile.Title')}/>
-                    <Tab textColor={'primary'} value={1} label={PowerLocalize.get('ProfileModule.Tabs.Projects.Title')}/>
-                    <Tab value={2} label="Skills"/>
-                </Tabs>
-                <div>
-                    {this.state.tabValue === 0 &&
-                    <div className="mui-margin">
-                        <CardHeader
-                            title={isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.getFullName()}
-                            avatar={this.renderAvatar()}
-                        />
-                        <Divider/>
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12">
-                                <ProfileDescription
-                                    hintText={PowerLocalize.get('Profile.Description')}
-                                    initialMaxCharacters={500}
-                                />
-                            </div>
-                            <div className="col-md-4 col-sm-12">
-                                {/* <LanguageSkills/>  */}
-                                <LanguageModule/>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12 ">
-                                <TrainingEntries/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <EducationList/>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12">
-                                <Qualifications/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <Sectors/>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-6 col-sm-12">
-                                <KeySkills/>
-                            </div>
-                            <div className="col-md-6 col-sm-12">
-                                <Careers/>
-                            </div>
-                        </div>
-                    </div>
-                    }
 
-                    {this.state.tabValue === 1 &&
-                    <div className="mui-margin">
-                        <Projects/>
-                    </div>
-                    }
+            <Typography variant={'body2'}>
+                {PowerLocalize.langLevelToLocalizedString(language.level)}
+            </Typography>
 
-                    {this.state.tabValue === 2 &&
-                    <div className="mui-margin">
-                        <SkillTree/>
-                    </div>
-                    }
-                </div>
-            </Paper>
         );
+    };
+    private renderTrainingInfo = (entry: ProfileEntry, id: number) => {
+        const training: FurtherTraining = entry as FurtherTraining;
+        return (
+
+            <Typography variant={'body2'}>
+                {training.startDate} - {training.endDate}
+            </Typography>
+
+        );
+    };
+    private renderEducationInfo = (entry: ProfileEntry, id: number) => {
+        const education: Education = entry as Education;
+        return (
+
+            <Typography variant={'body2'}>
+                {education.startDate} - {education.endDate} | {education.degree}
+            </Typography>
+
+        );
+    };
+    private renderQualificationInfo = (entry: ProfileEntry, id: number) => {
+        const qualification: Qualification = entry as Qualification;
+        return (
+            <Grid item>
+                <Typography variant={'body2'}>
+                    {qualification.date}
+                </Typography>
+            </Grid>
+        );
+    };
+    private renderSectorInfo = (entry: ProfileEntry, id: number) => {
+        const sector: IndustrialSector = entry as IndustrialSector;
+        return (
+            <Grid item>
+                <Typography variant={'body2'}>
+                </Typography>
+            </Grid>
+        );
+    };
+    private renderKeySkillInfo = (entry: ProfileEntry, id: number) => {
+        const specialField: SpecialField = entry as SpecialField;
+        return (
+            <Grid item>
+                <Typography variant={'body2'}>
+                </Typography>
+            </Grid>
+        );
+    };
+    private renderCareerInfo = (entry: ProfileEntry, id: number) => {
+        const career: Career = entry as Career;                                   //TODO Daten Format ändern MM.YYYY
+        return (
+            <Grid item>
+                <Typography variant={'body2'}>
+                    {career.startDate} - {career.endDate}
+                </Typography>
+            </Grid>
+        );
+    };
+
+    render() {
+        return <Paper className="mui-margin">
+            <Tabs
+                value={this.state.tabValue}
+                centered
+                onChange={(e: any, v: any) => {
+                    this.setState({tabValue: v});
+                }}
+            >
+                <Tab textColor={'secondary'} value={0}
+                     label={PowerLocalize.get('ProfileModule.Tabs.Profile.Title')}/>
+                <Tab textColor={'primary'} value={1}
+                     label={PowerLocalize.get('ProfileModule.Tabs.Projects.Title')}/>
+                <Tab value={2} label="Skills"/>
+            </Tabs>
+            <div>
+                {this.state.tabValue === 0 &&
+                <div className="mui-margin">
+                    <Grid container direction={'row'} justify={'flex-start'} alignItems={'center'} spacing={8}>
+                        <Grid
+                            item
+                            container
+                            direction={'column'}
+                            justify={'flex-start'}
+                            alignItems={'flex-start'}
+                            spacing={8}
+                            md={2}
+                            xs={12}
+                        >
+                            <Grid item md={12}>
+                                <Typography
+                                    className={'fullWidth'}
+                                    variant={'h6'}
+                                >
+                                    {
+                                        this.props.loggedInUser != null
+                                            ? this.props.loggedInUser.firstName + ' ' + this.props.loggedInUser.lastName
+                                            : 'No Name'
+                                    }
+                                </Typography>
+                            </Grid>
+                            <Grid item md={12}>
+                                <Avatar
+                                    src={getProfileImageLocation(this.getInitials())}
+                                    style={{width: 90, height: 90}}
+                                />
+                            </Grid>
+                        </Grid>
+
+                        <Grid item md={6} xs={12}>
+                            <ProfileDescription/>
+                        </Grid>
+                        <Grid item md={11}>
+                            <Divider/>
+                        </Grid>
+                    </Grid>
+
+
+                    <Grid container spacing={16} className="mui-margin">
+                        <Grid item md={6} xs={12}>
+                            <ProfileEntryModule type={'LANGUAGE'}
+                                                renderSingleElementInfo={this.renderLanguageInfo}/>
+                        </Grid>
+                        < Grid item md={6} xs={12}>
+                            <ProfileEntryModule type={'TRAINING'}
+                                                renderSingleElementInfo={this.renderTrainingInfo}/>
+                        </Grid>
+                        <Grid item md={6} xs={12}>
+                            <ProfileEntryModule type={'EDUCATION'}
+                                                renderSingleElementInfo={this.renderEducationInfo}/>
+                        </Grid>
+                        <Grid item md={6} xs={12}>
+                            <ProfileEntryModule type={'QUALIFICATION'}
+                                                renderSingleElementInfo={this.renderQualificationInfo}/>
+                        </Grid>
+                        <Grid item md={6} xs={12}>
+                            <ProfileEntryModule type={'SECTOR'} renderSingleElementInfo={this.renderSectorInfo}/>
+                        </Grid>
+                        <Grid item md={6} xs={12}>
+                            <ProfileEntryModule type={'KEY_SKILL'}
+                                                renderSingleElementInfo={this.renderKeySkillInfo}/>
+                        </Grid>
+                        <Grid item md={6} xs={12}>
+                            <ProfileEntryModule type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>
+                        </Grid>
+                    </Grid>
+
+                </div>
+                }
+
+                {this.state.tabValue === 1 &&
+                <div className="mui-margin">
+                    <Projects/>
+                </div>
+                }
+
+                {this.state.tabValue === 2 &&
+                <div className="mui-margin">
+                    <SkillTree/>
+                </div>
+                }
+            </div>
+        </Paper>;
     }
 }
 

@@ -10,8 +10,8 @@ import {Paths} from '../../../Paths';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {getRandomGreeting} from '../../../model/PwrConstants';
 import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
-import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/ProfileDataAsyncActionCreator';
-import {Profile} from '../../../reducers/profile-new/model/Profile';
+import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
 
 interface BaseDataDashboardElementProps {
     initials: string;
@@ -41,7 +41,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
             initials: state.databaseReducer.loggedInUser().initials(),
             name: state.databaseReducer.loggedInUser().firstName(),
             lastEdited: state.databaseReducer.profile().lastEdited(), // TODO changed
-            profile: state.profile.profile
+            profile: state.profileStore.profile
         };
     }
 

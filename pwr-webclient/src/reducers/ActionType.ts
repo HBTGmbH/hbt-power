@@ -144,6 +144,14 @@ export enum ActionType {
     LoadBaseProfileAction,
     LoadEntriesAction,
     LoadSkillsAction,
-    LoadProjectsAction
+    LoadProjectsAction,
+
+    // == Consultant
+    UpdateConsultantAction,
+
+    // == SuggestionActions
+    UpdateSuggestionField,
+    UpdateSkillSuggestionField
+
 
 }

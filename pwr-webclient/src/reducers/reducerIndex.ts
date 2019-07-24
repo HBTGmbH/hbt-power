@@ -22,11 +22,14 @@ import {CrossCuttingReducer} from './crosscutting/CrossCuttingReducer';
 import {CrossCuttingStore} from '../model/crosscutting/CrossCuttingStore';
 import {TemplateStore} from '../model/view/TemplateStore';
 import {TemplateReducer} from './template/TemplateReducer';
-import {reduce} from './profile-new/ProfileReducer';
+import {reduceProfile} from './profile-new/profile/ProfileReducer';
+import {reduceSuggestion} from './suggestions/SuggestionReducer';
+import {SuggestionStore} from './suggestions/SuggestionStore';
 
 
 export interface ApplicationState {
-    profile: ProfileStore;
+    profileStore: ProfileStore;
+    suggestionStore: SuggestionStore;
     databaseReducer: ProfileStoreOld.ProfileStore;
     adminReducer: AdminState;
     statisticsReducer: StatisticsStore;
@@ -41,7 +44,8 @@ export interface ApplicationState {
 
 
 const ApplicationStore: Reducer<ApplicationState> = combineReducers({
-    profile: reduce,
+    profileStore: reduceProfile,
+    suggestionStore: reduceSuggestion,
     databaseReducer: DatabaseReducer.Reduce,
     adminReducer: AdminReducer.reduce,
     statisticsReducer: StatisticsReducer.reduce,

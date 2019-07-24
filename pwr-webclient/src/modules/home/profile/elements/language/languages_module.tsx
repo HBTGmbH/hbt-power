@@ -13,9 +13,10 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {NameEntityUtil} from '../../../../../utils/NameEntityUtil';
 import {LanguageSkillDialog} from './language-skill-dialog_module';
 import {DEFAULT_LANG_LEVEL} from '../../../../../model/PwrConstants';
-import {Language, newLanguage} from '../../../../../reducers/profile-new/model/Language';
-import * as NameEntityNew from '../../../../../reducers/profile-new/model/NameEntity';
-import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/ProfileDataAsyncActionCreator';
+import {Language, newLanguage} from '../../../../../reducers/profile-new/profile/model/Language';
+import * as NameEntityNew from '../../../../../reducers/profile-new/profile/model/NameEntity';
+import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {toLanguageLevel} from '../../../../../reducers/profile-new/profile/model/LanguageLevel';
 
 interface LanguageProps {
     languageSkills: Immutable.Map<string, LanguageSkill>;
@@ -63,7 +64,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
     static mapStateToProps(state: ApplicationState, localProps: LanguageLocalProps): LanguageProps {
         return {
             languageSkills: state.databaseReducer.profile().languageSkills(),
-            languageArray: state.profile.profile.languages,
+            languageArray: state.profileStore.profile.languages,
             languages: state.databaseReducer.languages(),
             languageLevels: state.databaseReducer.languageLevels()
         };
@@ -78,7 +79,7 @@ class LanguagesModule extends React.Component<LanguageProps & LanguageLocalProps
                 dispatch(ProfileDataAsyncActionCreator.deleteLanguage("ppp",id)); // TODO initials
             },
             saveLanguageSkill: (id, name, level) =>  {
-                dispatch(ProfileDataAsyncActionCreator.saveLanguage("ppp", newLanguage(id,name,level)))
+                dispatch(ProfileDataAsyncActionCreator.saveLanguage("ppp", newLanguage(id,name,toLanguageLevel(level))))
             }
         };
     }

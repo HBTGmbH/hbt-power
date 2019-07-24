@@ -252,7 +252,7 @@ export class ProfileStore {
         });
         //console.info('...done.');
 
-        //console.info('Parsing careerEntries...');
+        //console.info('Parsing careers...');
         let careers = this.careers();
         profileFromAPI.careerEntries.forEach(careerEntry => {
             let career: NameEntity = NameEntity.fromAPI(careerEntry.nameEntity);

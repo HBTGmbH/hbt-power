@@ -200,7 +200,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                     suggestion: classes.suggestion,
                 }}
                 renderSuggestionsContainer={options => (
-                    <Paper {...options.containerProps} square>
+                    <Paper {...options.containerProps} square fullWidth>
                         {options.children}
                     </Paper>
                 )}

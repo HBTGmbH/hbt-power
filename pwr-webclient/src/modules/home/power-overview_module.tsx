@@ -16,7 +16,11 @@ import {ViewProfileDialog} from './view/view-profile-dialog_module';
 import {BaseDataDashboardElement} from './dashboard/base-data-dahboard-element_module';
 import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-element_module';
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
-import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/ProfileDataAsyncActionCreator';
+import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
+import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
+import {Paths} from '../../Paths';
+import {isNullOrUndefined} from 'util';
 
 /**
  * Properties that are managed by react-redux.
@@ -25,7 +29,7 @@ import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/ProfileD
  * otherwise the component will not render and update correctly.
  */
 interface PowerOverviewProps {
-    loggedInUser: ConsultantInfo;
+    loggedInUser: Consultant;
     profile: Profile;
     viewProfiles: Array<ViewProfile>;
 }
@@ -75,7 +79,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
 
     static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
         return {
-            loggedInUser: state.databaseReducer.loggedInUser(),
+            loggedInUser: state.profileStore.consultant,
             profile: state.databaseReducer.profile(),
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray()
         };
@@ -90,6 +94,18 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             createViewProfile: (description, name) => dispatch(ViewProfileActionCreator.AsyncCreateViewProfile(description, name)),
         };
+    }
+
+    componentWillMount() {
+        console.log("Overview WillMount!");
+        if (!this.props.loggedInUser) {
+            const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
+            if (!isNullOrUndefined(initials)) {
+                this.props.navigateTo(Paths.APP_ROOT);
+            } else {
+                this.props.requestSingleProfile(initials);
+            }
+        }
     }
 
     private setViewDialogOpen(isOpen: boolean) {

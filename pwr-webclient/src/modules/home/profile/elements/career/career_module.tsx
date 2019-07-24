@@ -1,89 +1,116 @@
-import {connect} from 'react-redux';
 import * as React from 'react';
+import * as NameEntityNew from '../../../../../reducers/profile-new/profile/model/NameEntity';
 import * as redux from 'redux';
-import * as Immutable from 'immutable';
-import {ProfileElementType} from '../../../../../Store';
-import {ProfileElement} from '../../profile-element_module';
-import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {CareerEntry} from '../../../../../model/CareerEntry';
-import {SingleCareerEntry} from './career-entry_module';
-import {ProfileActionCreator} from '../../../../../reducers/profile/ProfileActionCreator';
+import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
+import {connect} from 'react-redux';
+import Typography from '@material-ui/core/Typography/Typography';
+import Grid from '@material-ui/core/Grid/Grid';
+import Button from '@material-ui/core/Button/Button';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {Career, newCareer} from '../../../../../reducers/profile-new/profile/model/Career';
+import {isNullOrUndefined} from 'util';
 
-/**
- * Properties that are managed by react-redux.
- *
- * Each property defined here will also need a corresponding mapping in the {@link Careers.mapStateToProps} method,
- * otherwise the component will not render and update correctly.
- */
-interface CareersProps {
-    careerEntries: Immutable.Map<string, CareerEntry>;
+interface CareerProps {
+    profileCareers: Array<Career>
 }
 
-/**
- * Local properties of this module.
- *
- * These properties are used to initialize the local state and to control everything that is solely used for the display layer.
- *
- * Data that is intended not only for display needs to be placed in the {@link CareersProps} and will then be
- * managed by redux.
- */
-interface CareersLocalProps {
+interface CareerLocalProps {
 
 }
 
-/**
- * Local state of the module.
- *
- * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
- */
-interface CareersLocalState {
-
+interface CareerLocalState {
+    selectId: number;
 }
 
-/**
- * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
- */
-interface CareersDispatch {
-    addCareerEntry(): void;
+interface CareerDispatch {
+
+    deleteCareer(id: number): void;
+
+    saveCareer(id: number, name: NameEntityNew.NameEntity, startDate: Date, endDate: Date): void;
 }
 
-class CareersModule extends React.Component<CareersProps & CareersLocalProps & CareersDispatch, CareersLocalState> {
+class Career_module extends React.Component<CareerProps & CareerLocalProps & CareerDispatch, CareerLocalState> {
+    constructor(props) {
+        super(props);
+        this.resetState();
+    }
 
-    static mapStateToProps(state: ApplicationState, localProps: CareersLocalProps): CareersProps {
-        return {
-            careerEntries: state.databaseReducer.profile().careerEntries()
+    private resetState() {
+        this.state = {
+            selectId: -1,
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): CareersDispatch {
+    static mapStateToProps(state: ApplicationState, localProps: CareerLocalProps): CareerProps {
+        const entries = (state.profileStore != null && state.profileStore.profile != null) ? state.profileStore.profile['career'] : [];
         return {
-            addCareerEntry: () => dispatch(ProfileActionCreator.createEntry(ProfileElementType.CareerEntry))
+            profileCareers: entries,
         };
     }
+
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): CareerDispatch {
+        return {
+            deleteCareer: function (id: number) {
+                dispatch(ProfileDataAsyncActionCreator.deleteCareer('ppp', id)); // TODO initials
+            },
+            saveCareer: (id, name, start, end) => {
+                dispatch(ProfileDataAsyncActionCreator.saveCareer('ppp', newCareer(id, name, start, end)));
+            }
+        };
+    }
+
+    private singleCareer = (entry: Career, id: number) => {
+        return (<Grid key={id} item container alignItems={'flex-end'} spacing={8}
+                      onClick={() => this.setState({selectId: id})}>
+
+                <Grid item container md={2}>
+                    {
+                        id != this.state.selectId ? <></> : <Grid item>
+                            <PwrIconButton iconName={'delete'} tooltip={'Löschen'}
+                                           onClick={() => console.log('löschen' + entry.nameEntity.name)}/>
+                            <PwrIconButton iconName={'add'} tooltip={'Bearbeiten'}
+                                           onClick={() => console.log('bearbeiten' + entry.nameEntity.name)}/>
+                        </Grid>
+                    }
+                </Grid>
+                <Grid item>
+                    <Typography variant={'h5'}> {entry.nameEntity.name}</Typography>
+                </Grid>
+                <Grid item>
+                    <Typography
+                        variant={'body2'}> </Typography>
+                </Grid>
+            </Grid>
+        );
+    };
 
 
     render() {
-        return (<ProfileElement
-            title={PowerLocalize.get('Career.Singular')}
-            subtitle={PowerLocalize.get('CareerEntry.Description')}
-            onAddElement={this.props.addCareerEntry}
-        >
-            {this.props.careerEntries.map((education, key) => {
-                return (
-                    <SingleCareerEntry
-                        key={'SingleEducationElement.' + key}
-                        careerEntryId={education.id()}
-                    />
-                );
-            }).toList()}
-        </ProfileElement>);
+        return (
+            <div>
+                <Grid container spacing={0} alignItems={'center'}>
+                    <Grid item md={9}>
+                        <Typography variant={'h4'}>Werdegang</Typography>
+                    </Grid>
+                    <Grid item md={3}>
+                        <Button variant={'outlined'}>NEU</Button>
+                    </Grid>
+                    <Grid item md={12}>
+                        <hr style={{marginTop: '2px'}}/>
+                    </Grid>
+                    <Grid item container md={10}>
+                        {
+                            !isNullOrUndefined(this.props.profileCareers) ?
+                                this.props.profileCareers.map(this.singleCareer) :
+                                <Grid item> <Typography variant={'body1'}>Füge einen Werdegangschritt
+                                    hinzu</Typography></Grid>
+                        }
+                    </Grid>
+                </Grid>
+            </div>
+        );
     }
 }
 
-/**
- * @see CareersModule
- * @author nt
- * @since 12.06.2017
- */
-export const Careers: React.ComponentClass<CareersLocalProps> = connect(CareersModule.mapStateToProps, CareersModule.mapDispatchToProps)(CareersModule);
+export const CareerModule: React.ComponentClass<CareerLocalProps> = connect(Career_module.mapStateToProps, Career_module.mapDispatchToProps)(Career_module);

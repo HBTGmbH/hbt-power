@@ -21,6 +21,7 @@ import {NavigationActionCreator} from './reducers/navigation/NavigationActionCre
 import {ThemeOptions} from '@material-ui/core/styles/createMuiTheme';
 import {MuiPickersUtilsProvider} from 'material-ui-pickers';
 import MomentUtils from "@date-io/moment";
+import {LoginModule} from './modules/login_module';
 
 const AlertContainer = require('react-alert').default;
 
@@ -126,7 +127,7 @@ let App = (
             <Provider store={store}>
                 <ConnectedRouter history={PWR_HISTORY}>
                     <div>
-                        <Route exact path={Paths.APP_ROOT} component={PowerLogin}/>
+                        <Route exact path={Paths.APP_ROOT} component={LoginModule}/>
                         <Route exact path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
                         <Route path={Paths.USER_BASE} component={PowerClient}/>
                         <Route path={Paths.ADMIN_BASE} component={AdminClient}/>

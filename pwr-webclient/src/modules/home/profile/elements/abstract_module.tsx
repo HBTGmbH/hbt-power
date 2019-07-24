@@ -32,6 +32,8 @@ interface DescriptionLocalProps {
 interface DescriptionLocalState {
     maxCharacters: number;
     currentBarColor: string;
+
+    text: string;
 }
 
 /**
@@ -39,6 +41,7 @@ interface DescriptionLocalState {
  */
 interface DescriptionDispatch {
     changeAbstract(newAbstract: string): void;
+
     saveProfile(): void;
 }
 
@@ -54,7 +57,8 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
         super(props);
         this.state = {
             maxCharacters: props.initialMaxCharacters,
-            currentBarColor: DescriptionModule.calcColor(props.abstractText.length, props.initialMaxCharacters).toCSSRGBString()
+            currentBarColor: DescriptionModule.calcColor(props.abstractText.length, props.initialMaxCharacters).toCSSRGBString(),
+            text: props.abstractText
         };
     }
 
@@ -69,8 +73,14 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
     }
 
     public static mapStateToProps(state: ApplicationState, localProps: DescriptionLocalProps): DescriptionProps {
+        const description =
+            state.profileStore != null
+            && state.profileStore.profile != null
+            && state.profileStore.profile.description
+                ? state.profileStore.profile.description
+                : '';
         return {
-            abstractText: state.profile.profile.description, // TODO state.databaseReducer.profile().description(),
+            abstractText: description, // TODO state.databaseReducer.profile().description(),
             modificationState: state.databaseReducer.modified()
         };
     }
@@ -126,4 +136,4 @@ class DescriptionModule extends React.Component<DescriptionLocalProps & Descript
     }
 }
 
-export const ProfileDescription: React.ComponentClass<DescriptionLocalProps> = connect(DescriptionModule.mapStateToProps, DescriptionModule.mapDispatchToProps)(DescriptionModule);
+//export const ProfileDescription: React.ComponentClass<DescriptionLocalProps> = connect(DescriptionModule.mapStateToProps, DescriptionModule.mapDispatchToProps)(DescriptionModule);

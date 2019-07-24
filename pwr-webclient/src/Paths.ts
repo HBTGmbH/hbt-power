@@ -59,9 +59,10 @@ export class Paths {
     public restorePath() {
         console.info('Current history location is ', location.pathname);
         if (this.adminAvailableInCookies()) {
-            console.info("Admin is available; Performing admin login!");
+            console.info('Admin is available; Performing admin login!');
             store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
         } else if (this.userAvailableInCookies()) {
+            console.info('User restored from local storage');
             const storedInitials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
             store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, location.pathname));
         } else {

@@ -10,8 +10,8 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {PwrAutoComplete} from '../../../../general/pwr-auto-complete';
-import {NameEntity, newNameEntity} from '../../../../../reducers/profile-new/model/NameEntity';
-import {NameEntityType} from '../../../../../reducers/profile-new/model/NameEntityType';
+import {NameEntity, newNameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
+import {NameEntityType} from '../../../../../reducers/profile-new/profile/model/NameEntityType';
 
 
 interface LanguageDialogLocalProps {
@@ -97,18 +97,18 @@ export class LanguageSkillDialog extends React.Component<LanguageDialogLocalProp
                     <div className="row">
                         <div className="col-md-5">
                             <FormControl>
-                                <InputLabel>{PowerLocalize.get('LanguageLevel.Singular')}</InputLabel>
-                                <Select
-                                    id={'LangSkill.Dialog.Level'}
-                                    value={this.state.currentLanguageLevel}
-                                    onChange={this.handleLevelChange}
+                            <InputLabel>{PowerLocalize.get('LanguageLevel.Singular')}</InputLabel>
+                            <Select
+                                id={'LangSkill.Dialog.Level'}
+                                value={this.state.currentLanguageLevel}
+                                onChange={this.handleLevelChange}
 
-                                >
-                                    {
-                                        this.props.availableLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
-                                    }
-                                </Select>
-                            </FormControl>
+                            >
+                                {
+                                    this.props.availableLevels.map(LanguageSkillDialog.renderSingleDropDownElement)
+                                }
+                            </Select>
+                        </FormControl>
                         </div>
                         <div className="col-md-5">
                             <PwrAutoComplete
