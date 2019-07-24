@@ -21,6 +21,7 @@ import {KeySkills} from './elements/keyskill/keySkill_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ProfileModificationStatus} from '../../../model/ProfileModificationStatus';
+import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 
 
 interface ProfileProps {
@@ -141,7 +142,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             <div className="col-md-6 col-sm-12">
                                 <ProfileDescription
                                     hintText={PowerLocalize.get('Profile.Description')}
-                                    initialMaxCharacters={500}
+                                    initialMaxCharacters={PROFILE_DESCRIPTION_LENGTH}
                                 />
                             </div>
                             <div className="col-md-6 col-sm-12">

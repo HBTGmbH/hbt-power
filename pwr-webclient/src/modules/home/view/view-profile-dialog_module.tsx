@@ -11,6 +11,7 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 import Fab from '@material-ui/core/Fab/Fab';
+import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 
 
 interface ViewProfileDialogProps {
@@ -140,7 +141,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   label={PowerLocalize.get('ViewProfileDialog.Name')}
                 />
                 <LimitedTextField onChange={this.changeDescription}
-                                  maxCharacters={500}
+                                  maxCharacters={PROFILE_DESCRIPTION_LENGTH}
                                   value={this.state.description}
                                   fullWidth={true}
                                   multiLine={true}
