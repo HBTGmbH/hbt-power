@@ -687,7 +687,7 @@ export namespace SkillActionCreator {
                 }
             } else if (step === AddSkillStep.DONE) {
                 if (state.addToProjectId().length > 0) {
-                    dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment(), state.addToProjectId()));
+                    dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment(), Number(state.addToProjectId())));
                 } else if (state.doneState() !== 'SKILL_EXISTS') {
                     dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment()));
                 }
@@ -698,7 +698,7 @@ export namespace SkillActionCreator {
     }
 
 
-    export function AsyncAddSkill(skillName: string, rating: number, projectId?: string) {
+    export function AsyncAddSkill(skillName: string, rating: number, projectId?: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state = getState().skillReducer;
 

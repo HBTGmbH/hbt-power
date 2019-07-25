@@ -93,7 +93,7 @@ export interface AddSkillAction extends AbstractAction {
     skillName: string;
     rating: number;
     comment: string;
-    projectId?: string
+    projectId?: number;
 }
 
 export interface RemoveSkillFromProjectAction extends AbstractAction {

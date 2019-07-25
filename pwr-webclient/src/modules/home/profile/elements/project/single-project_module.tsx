@@ -10,11 +10,11 @@ import {NameEntity} from '../../../../../reducers/profile-new/profile/model/Name
 import {ProfileStore} from '../../../../../reducers/profile-new/ProfileStore';
 import Grid from '@material-ui/core/Grid/Grid';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {ProjectDialog} from './project-dialog_module';
 import Paper from '@material-ui/core/Paper/Paper';
 import Typography from '@material-ui/core/Typography/Typography';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {formatToYear} from '../../../../../utils/DateUtil';
+import {ProjectDialog} from './project-edit-dialog_module';
 
 interface ProjectProps {
     allProjectRoles: Array<NameEntity>;
@@ -132,10 +132,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                                open={this.state.dialogOpen}
                                project={this.props.project}
                                onClose={() => this.setState({dialogOpen: false})}
-                               onSave={this.handleSaveRequest}
-                               companies={this.props.allCompanies}
-                               projectRoles={this.props.allProjectRoles}
-                               profile={this.props.profile}
                 />
             </Grid>
         </Paper>);

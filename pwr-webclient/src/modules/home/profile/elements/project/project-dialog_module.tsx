@@ -323,7 +323,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                     <PwrSpacer double={true}/>
                     <div className="row">
                         <div className="col-md-10">
-                            <AddSkill projectId={this.props.project.id()}/>
+                            <AddSkill projectId={Number(this.props.project.id())}/>
                         </div>
                     </div>
                     <PwrSpacer double={true}/>

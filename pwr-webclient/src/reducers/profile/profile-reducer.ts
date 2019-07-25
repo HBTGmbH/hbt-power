@@ -197,7 +197,7 @@ export class ProfileReducer {
             profile = profile.skills(skills).changesMade(profile.changesMade() + 1);
         }
         if (!isNullOrUndefined(action.projectId)) {
-            let project = profile.projects().get(action.projectId);
+            let project = profile.projects().get('' + action.projectId);
             project = project.skillIDs(project.skillIDs().add(skill.id()));
             let projects = profile.projects();
             projects = projects.set(project.id(), project);

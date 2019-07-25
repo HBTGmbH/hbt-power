@@ -25,11 +25,11 @@ interface AddSkill_ModuleProps {
 }
 
 interface AddSkill_ModuleLocalProps {
-    projectId?: string;
+    projectId?: number;
 }
 
 interface AddSkill_ModuleDispatch {
-    onAddSkill(name: string, rating: number, projectId: string): void;
+    onAddSkill(name: string, rating: number, projectId: number): void;
 
     requestSkillHierarchy(name: string): void;
 }
@@ -68,7 +68,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AddSkill_ModuleDispatch {
         return {
-            onAddSkill: (name: string, rating: number, projectId: string) => dispatch(SkillActionCreator.AsyncAddSkill(name, rating, projectId)),
+            onAddSkill: (name: string, rating: number, projectId: number) => dispatch(SkillActionCreator.AsyncAddSkill(name, rating, projectId)),
             requestSkillHierarchy: (name: string) => dispatch(SkillActionCreator.AsyncRequestSkillHierarchy(name)),
         };
     }

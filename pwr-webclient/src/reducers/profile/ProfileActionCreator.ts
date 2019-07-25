@@ -105,7 +105,7 @@ export class ProfileActionCreator {
         };
     }
 
-    public static AddSkill(skillName: string, rating: number, comment: string, projectId?: string): AddSkillAction {
+    public static AddSkill(skillName: string, rating: number, comment: string, projectId?: number): AddSkillAction {
         return {
             type: ActionType.AddSkill,
             skillName: skillName,
