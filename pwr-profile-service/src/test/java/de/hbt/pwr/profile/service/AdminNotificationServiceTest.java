@@ -98,8 +98,9 @@ public class AdminNotificationServiceTest {
 
         Project project = new Project();
         project.setSkills(new HashSet<>(Arrays.asList(keep1, delete1)));
-        profile.getProjects().add(project);
+        projectRepository.saveAndFlush(project);
 
+        profile.getProjects().add(project);
         profileRepository.saveAndFlush(profile);
         ReflectionTestUtils.invokeMethod(adminNotificationService, "deleteSkillsWithSameName", delete1.getName());
 
@@ -248,6 +249,7 @@ public class AdminNotificationServiceTest {
         p.getSkills().add(blacklistedSkill);
 
         profileUpdateService.importProfile(p);
+
         Collection<AdminNotification> ads = adminNotificationRepository.findAllByAdminNotificationStatus(AdminNotificationStatus.ALIVE);
         assertThat(ads.size()).isEqualTo(1);
         assertThat(ads.iterator().next().getReason().equals(AdminNotificationReason.DANGEROUS_SKILL_ADDED_BLACKLISTED));
@@ -272,6 +274,7 @@ public class AdminNotificationServiceTest {
         p.getSkills().add(blacklistedSkill);
 
         profileUpdateService.importProfile(p);
+
         List<AdminNotification> ads = new ArrayList<>(adminNotificationRepository.findAllByAdminNotificationStatus(AdminNotificationStatus.ALIVE));
         assertThat(ads.size()).isEqualTo(1);
         assertThat(ads.get(0).getReason()).isEqualTo(AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN);
@@ -340,7 +343,7 @@ public class AdminNotificationServiceTest {
         p = profileRepository.saveAndFlush(p);
         p.getLanguages().add(new LanguageSkill(new NameEntity("Language_1", NameEntityType.LANGUAGE), LanguageSkillLevel.ADVANCED));
 
-        profileUpdateService.updateProfile(p);
+        p = profileUpdateService.updateProfile(p);
         NameEntity originalNameEntity = nameEntityRepository.findByName("Language_1");
 
         Collection<ProfileEntryNotification> profileEntryNotifications = adminNotificationService.findAllAliveBy(ProfileEntryNotification.class);

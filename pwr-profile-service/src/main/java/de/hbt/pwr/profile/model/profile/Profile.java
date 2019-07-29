@@ -78,7 +78,6 @@ public class Profile {
      * All projects associated with this profile.
      */
     @OneToMany(fetch = FetchType.EAGER)
-    @Cascade(CascadeType.ALL)
     @JoinColumn(name = "PROFILE_ID")
     @Fetch(FetchMode.SUBSELECT)
     private Set<Project> projects = new HashSet<>();

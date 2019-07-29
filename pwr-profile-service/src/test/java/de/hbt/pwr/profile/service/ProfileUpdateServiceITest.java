@@ -2,10 +2,7 @@ package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.notification.AdminNotificationStatus;
-import de.hbt.pwr.profile.model.notification.ProfileEntryNotification;
-import de.hbt.pwr.profile.model.notification.ProfileUpdatedNotification;
-import de.hbt.pwr.profile.model.notification.SkillNotification;
+import de.hbt.pwr.profile.model.notification.*;
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
@@ -14,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -47,6 +45,9 @@ public class ProfileUpdateServiceITest {
 
     @Inject
     private SkillRepository skillRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Inject
     private ProfileRepository profileRepository;
@@ -160,6 +161,7 @@ public class ProfileUpdateServiceITest {
     @Transactional
     public void testPersistNewEntries() {
         initTestData();
+        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile p = new Profile();
         LanguageSkill lang2 = new LanguageSkill(null, n2, LanguageSkillLevel.BASIC);
         LanguageSkill lang3 = new LanguageSkill(null, n3, LanguageSkillLevel.BUSINESS_FLUENT);
@@ -168,7 +170,7 @@ public class ProfileUpdateServiceITest {
         Set<LanguageSkill> languageSkillSet = new HashSet<>();
         languageSkillSet.add(lang2);
         languageSkillSet.add(lang3);
-        languageSkillSet = ReflectionTestUtils.invokeMethod(profileUpdateService, "persistEntries", languageSkillSet, p, NameEntityType.LANGUAGE);
+        languageSkillSet = ReflectionTestUtils.invokeMethod(profileUpdateService, "persistEntries", languageSkillSet, p, NameEntityType.LANGUAGE,adminNotifications);
         assertThat(languageSkillSet.size()).isEqualTo(2);
     }
 
@@ -182,6 +184,7 @@ public class ProfileUpdateServiceITest {
     @Transactional
     public void testImportProjectSkills() {
         initTestData();
+        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile profile = new Profile();
         profileRepository.saveAndFlush(profile);
         Set<Skill> profileSkills = new HashSet<>();
@@ -206,7 +209,7 @@ public class ProfileUpdateServiceITest {
         p.setName("Test");
         p.setDescription("This is a test project");
 
-        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p);
+        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p, adminNotifications);
         assertThat(profileSkills.size()).isEqualTo(5);
         Optional<Skill> skillOptional = profileSkills.stream().filter(skill -> skill.getName().equals("S5")).findFirst();
         assertThat(skillOptional).isPresent();
@@ -299,6 +302,7 @@ public class ProfileUpdateServiceITest {
     @Transactional
     public void testImportProjectSkillsWithDuplicate() {
         initTestData();
+        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile profile = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
         profile.setSkills(profileSkills);
@@ -322,7 +326,7 @@ public class ProfileUpdateServiceITest {
         p.setName("Test");
         p.setDescription("This is a test project");
 
-        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p);
+        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p, adminNotifications);
         assertThat(profileSkills.size()).isEqualTo(4);
         assertThat(profileSkills).containsExactlyInAnyOrder(s1, s2, s3, s4);
         assertThat(p.getSkills()).containsExactlyInAnyOrder(s3, s4);
@@ -336,6 +340,7 @@ public class ProfileUpdateServiceITest {
     @Test
     @Transactional
     public void testImportProfileSkillsWithDuplicates() {
+        Set<AdminNotification> adminNotifications = new HashSet<>();
         initTestData();
         Profile p = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
@@ -346,7 +351,7 @@ public class ProfileUpdateServiceITest {
         profileSkills.add(s3);
         profileSkills.add(duplicate);
 
-        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p);
+        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p, adminNotifications);
         Set<Skill> resultSkills = p.getSkills();
         assertThat(resultSkills).contains(s2);
         assertThat(resultSkills).contains(s3);
@@ -367,6 +372,7 @@ public class ProfileUpdateServiceITest {
     @Transactional
     public void testImportProfileSkillsWithCaseUnsensitiveDuplicates() {
         initTestData();
+        Set<AdminNotification> notifications = new HashSet<>();
         Profile p = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
         p.setSkills(profileSkills);
@@ -376,7 +382,7 @@ public class ProfileUpdateServiceITest {
         profileSkills.add(s3);
         profileSkills.add(duplicate);
 
-        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p);
+        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p, notifications);
         Set<Skill> resultSkills = p.getSkills();
         assertThat(resultSkills).contains(s2);
         assertThat(resultSkills).contains(s3);
@@ -395,6 +401,7 @@ public class ProfileUpdateServiceITest {
     @Transactional
     public void testImportProfileSkillsWithDuplicateRatingConflict() {
         initTestData();
+        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile p = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
         p.setSkills(profileSkills);
@@ -405,7 +412,7 @@ public class ProfileUpdateServiceITest {
         profileSkills.add(s3);
         profileSkills.add(duplicate);
 
-        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p);
+        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p, adminNotifications);
         Set<Skill> resultSkills = p.getSkills();
         assertThat(resultSkills.size()).isEqualTo(3);
         assertThat(resultSkills).contains(s2);
