@@ -66,7 +66,7 @@ export class EducationEntry {
         return new EducationEntry(
             String(apiEducation.id),
             new Date(apiEducation.startDate),
-            new Date(apiEducation.endDate),
+            !isNullOrUndefined(apiEducation.endDate) ? new Date(apiEducation.endDate):null,
             String(apiEducation.nameEntity.id),
             isNullOrUndefined(apiEducation.degree) ? EducationEntry.NO_DEGREE_VALUE : apiEducation.degree,
             false);

@@ -66,7 +66,7 @@ export const de_locale: any = {
     'EducationEntry.Dialog.EducationName': 'Studiengangs-/Ausbildungsbezeichner',
     'EducationEntry.Description': 'Beschreibt fachliche, schulische oder akademische Ausbildungsschritte',
     'SectorEntry.Dialog.Title': 'Branche bearbeiten',
-    'SectorEntry.Description': 'Beschreibt eine Geschäftsfeld oder Tätigkeitsbereich eines Beraters, z.B. Automotive',
+    'SectorEntry.Description': 'Beschreibt die Branchenzuordnung der Projekte/Kunden für die der Berater tätig ist/war',
     'LanguageSkill.EditSkill.Title': 'Sprache bearbeiten',
     'LanguageSkill.Description': 'Beschreibt eine (Fremd)Sprache',
     'ProfileModule.Tabs.Profile.Title': 'Berater',

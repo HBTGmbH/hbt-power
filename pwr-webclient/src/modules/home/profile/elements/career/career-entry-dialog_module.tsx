@@ -128,7 +128,7 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
     private checkDates = () => {
         const endDate = this.state.careerEntry.endDate();
         const startDate = this.state.careerEntry.startDate();
-        if (endDate < startDate) {
+        if (!isNullOrUndefined(endDate) && endDate < startDate) {
             this.setError(PwrErrorType.DATE_START_AFTER_END);
         } else {
             this.setError(null);
@@ -218,6 +218,7 @@ class CareerEntryDialogModule extends React.Component<CareerEntryDialogProps
                             placeholderDate={this.state.careerEntry.endDate()}
                             label={'Ende'}
                             type={DatePickerType.YEAR}
+                            today
                         />
                     </div>
                 </div>

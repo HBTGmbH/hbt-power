@@ -158,7 +158,7 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
     private checkDates = () => {
         const endDate = this.state.entry.endDate();
         const startDate = this.state.entry.startDate();
-        if (endDate < startDate) {
+        if (!isNullOrUndefined(endDate) && endDate < startDate) {
             this.setError(PwrErrorType.DATE_START_AFTER_END);
         } else {
             this.setError(null);
@@ -218,9 +218,10 @@ export class EducationEntryDialogModule extends React.Component<EducationEntryDi
                         <form noValidate>
                             <PwrDatePicker
                                 onChange={this.handleEndDateChange}
-                                placeholderDate={this.state.entry.startDate()}
+                                placeholderDate={this.state.entry.endDate()}
                                 label={'Ende'}
                                 type={DatePickerType.YEAR}
+                                today
                             />
                         </form>
                     </div>

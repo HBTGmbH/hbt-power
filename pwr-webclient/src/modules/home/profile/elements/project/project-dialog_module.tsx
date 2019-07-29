@@ -258,6 +258,7 @@ class ProjectDialogModule extends React.Component<ProjectDialogLocalProps & Proj
                                 placeholderDate={this.state.project.endDate()}
                                 label={'Ende'}
                                 type={DatePickerType.MONTH_YEAR}
+                                today
                             />
                         </div>
                     </div>
