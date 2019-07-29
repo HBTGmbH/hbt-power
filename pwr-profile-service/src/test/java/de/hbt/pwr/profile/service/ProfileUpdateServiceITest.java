@@ -247,7 +247,7 @@ public class ProfileUpdateServiceITest {
         p.setName("Test");
         p.setDescription("This is a test project");
 
-        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p);
+        p = profileUpdateService.importProjectSkills(profile, p, new HashSet<>());
         profile = profileUpdateService.updateProfile(profile);
 
         profile.getSkills().forEach(skill -> skill.setRating(5));

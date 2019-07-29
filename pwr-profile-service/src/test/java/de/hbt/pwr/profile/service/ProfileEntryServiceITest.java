@@ -2,6 +2,7 @@ package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.data.NameEntityRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
+import de.hbt.pwr.profile.data.ProjectRepository;
 import de.hbt.pwr.profile.data.SkillRepository;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
@@ -36,6 +37,8 @@ public class ProfileEntryServiceITest {
     private NameEntityRepository nameEntityRepository;
     @Autowired
     private SkillRepository skillRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -141,6 +144,7 @@ public class ProfileEntryServiceITest {
         // TODO: works when Project's equals and hashcode are not overridden
         Profile p = new Profile();
         Project project = new Project();
+        project = projectRepository.saveAndFlush(project);
         p.getProjects().add(project);
         p = profileRepository.save(p);
 
