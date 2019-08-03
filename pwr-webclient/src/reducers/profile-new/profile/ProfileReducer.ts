@@ -1,5 +1,4 @@
 import {emptyStore, ProfileStore} from '../ProfileStore';
-import {AbstractAction} from '../../profile/database-actions';
 import {ActionType} from '../../ActionType';
 import {EntryUpdateAction} from './actions/EntryUpdateAction';
 import {Profile} from './model/Profile';
@@ -10,15 +9,24 @@ import {ProfileEntryField} from './model/ProfileEntryField';
 import {SkillUpdateAction} from './actions/SkillUpdateAction';
 import {ProfileSkill} from './model/ProfileSkill';
 import {SkillDeleteAction} from './actions/SkillDeleteAction';
-import {ProjectDeleteAction} from './actions/ProjectDeleteAction';
-import {ProjectUpdateAction} from './actions/ProjectUpdateAction';
 import {Project} from './model/Project';
 import {EntryLoadAction} from './actions/EntryLoadAction';
 import {SkillLoadAction} from './actions/SkillLoadAction';
-import {ProjectLoadAction} from './actions/ProjectLoadAction';
 import {BaseProfileLoadAction} from './actions/BaseProfileLoadAction';
 import {ConsultantUpdateAction} from '../consultant/actions/ConsultantUpdateAction';
 import {isNullOrUndefined} from 'util';
+import {
+    ProjectDeleteAction,
+    ProjectLoadAction,
+    ProjectUpdateAction,
+    SelectProjectAction,
+    SetEditingProjectAction
+} from './actions/ProjectActions';
+import {AbstractAction} from '../../profile/database-actions';
+import {replaceAtIndex} from '../../../utils/ImmutableUtils';
+import {newNameEntity} from './model/NameEntity';
+import {NameEntityType} from './model/NameEntityType';
+
 
 export function reduceProfile(store: ProfileStore = emptyStore, action: AbstractAction): ProfileStore {
     switch (action.type) {
@@ -39,8 +47,19 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
             return replaceProfile(store, profile);
         }
         case ActionType.UpdateProjectSuccessful: {
-            let profile = handleUpdateProject(action as ProjectUpdateAction, store.profile);
-            return replaceProfile(store, profile);
+            // We successfully saved something
+            // 1. Replace the project collection with the saved project
+            // 2. Reset the editing project
+            // 3. Release edit mode
+            const profile = handleUpdateProject(action as ProjectUpdateAction, store.profile, store.selectedProjectIndex);
+            const updatedStore = replaceProfile(store, profile);
+            return {
+                ...updatedStore,
+                ...{
+                    isProjectEditing: false,
+                    editedProject: getProject(updatedStore.selectedProjectIndex, updatedStore)
+                }
+            };
         }
         case ActionType.DeleteProjectSuccessful: {
             let profile = handleDeleteProject(action as ProjectDeleteAction, store.profile);
@@ -62,9 +81,21 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
             let profile = handleBaseProfile(action as BaseProfileLoadAction, store.profile);
             return replaceProfile(store, profile);
         }
-
         case ActionType.UpdateConsultantAction: {
             return handleConsultantUpdate(action as ConsultantUpdateAction, store);
+        }
+        case ActionType.SelectProject: {
+            return handleSelectProject((action as SelectProjectAction).value, cancelEditMode(store));
+        }
+        case ActionType.SetEditingProject: {
+            const editedProject = (action as SetEditingProjectAction).project;
+            return {...store, editedProject};
+        }
+        case ActionType.EditSelectedProject: {
+            return {...store, ...{isProjectEditing: true}};
+        }
+        case ActionType.CancelEditSelectedProject: {
+            return cancelEditMode(store);
         }
     }
     return store;
@@ -144,12 +175,8 @@ function handleDeleteSkill(action: SkillDeleteAction, profile: Profile): Profile
     return {...profile, ...{skills: newSkills}};
 }
 
-function handleUpdateProject(action: ProjectUpdateAction, profile: Profile): Profile {
-    let projects = profile.projects;
-    let newProjects = projects.filter(s => s.id == action.project.id);
-    newProjects.push(action.project);
-    //newProjects.map(p => p.startDate = isNullOrUndefined(p.startDate) ? new Date() : p.startDate);
-    //newProjects.sort(projectsByStartDate);
+function handleUpdateProject(action: ProjectUpdateAction, profile: Profile, projectIndex): Profile {
+    const newProjects = replaceAtIndex(action.project, profile.projects, projectIndex);
     return {...profile, ...{projects: newProjects}};
 }
 
@@ -158,6 +185,26 @@ function handleDeleteProject(action: ProjectDeleteAction, profile: Profile): Pro
     let newProjects = project.filter(s => s.id !== action.id);
     newProjects.sort(projectsByStartDate);
     return {...profile, ...{projects: newProjects}};
+}
+
+function handleSelectProject(selectedProjectIndex: number, store: ProfileStore): ProfileStore {
+    let editedProject = getProject(selectedProjectIndex, store);
+    // fix name entities
+    return {...store, selectedProjectIndex, editedProject};
+}
+
+function getProject(index: number, store: ProfileStore): Project {
+    if (store.profile.projects.length < index) {
+        throw new Error(`Not enough projects for index ${index} available. Got ${store.profile.projects.length} in profile id = ${store.profile.id}`);
+    }
+    return store.profile.projects[index];
+}
+
+function cancelEditMode(store: ProfileStore): ProfileStore {
+    // First we need to restore the original project
+    const restored = handleSelectProject(store.selectedProjectIndex, store);
+    // Now we can deactivate the edit mode
+    return {...restored, ...{isProjectEditing: false}};
 }
 
 

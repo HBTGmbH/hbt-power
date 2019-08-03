@@ -25,6 +25,7 @@ import {TemplateReducer} from './template/TemplateReducer';
 import {reduceProfile} from './profile-new/profile/ProfileReducer';
 import {reduceSuggestion} from './suggestions/SuggestionReducer';
 import {SuggestionStore} from './suggestions/SuggestionStore';
+import {composeWithDevTools} from 'redux-devtools-extension';
 
 
 export interface ApplicationState {
@@ -60,10 +61,14 @@ const ApplicationStore: Reducer<ApplicationState> = combineReducers({
 export const PWR_HISTORY = createHistory();
 const reactRouterMiddleware = routerMiddleware(PWR_HISTORY);
 
+const composeEnhancers = composeWithDevTools({
+    // Specify name here, actionsBlacklist, actionsCreators and other options if needed
+});
+
 export const store: Store<ApplicationState> = createStore(
     ApplicationStore,
-    applyMiddleware(
+    composeEnhancers(applyMiddleware(
         thunkMiddleware,
         reactRouterMiddleware
-    )
+    ))
 );

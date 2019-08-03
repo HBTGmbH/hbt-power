@@ -14,7 +14,6 @@ import {
     SetModifiedAction,
     UpdateSkillRatingAction
 } from './database-actions';
-import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ActionType} from '../ActionType';
 import {ProfileModificationStatus} from '../../model/ProfileModificationStatus';
 
@@ -61,13 +60,6 @@ export class ProfileActionCreator {
             entry: entry,
             nameEntity: nameEntity,
             entryType: elementType
-        };
-    }
-
-    public static saveProject(state: ProjectDialogState): SaveProjectAction {
-        return {
-            type: ActionType.SaveProject,
-            state: state
         };
     }
 

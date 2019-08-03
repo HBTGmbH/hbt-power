@@ -33,6 +33,13 @@ export namespace StringUtils {
         return true;
     }
 
+    export function defaultString(value?: string) {
+        if (value) {
+            return value;
+        }
+        return "";
+    }
+
     export function dateToString(date: Date) {
         if (date == null) {
             return "";

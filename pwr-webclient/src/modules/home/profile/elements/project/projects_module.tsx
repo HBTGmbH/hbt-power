@@ -8,18 +8,18 @@ import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new
 import * as redux from 'redux';
 import {isNullOrUndefined} from 'util';
 import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
-import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import Grid from '@material-ui/core/Grid/Grid';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import IconButton from '@material-ui/core/IconButton/IconButton';
-import {SingleProject} from './single-project_module';
+import {SelectedProject} from './single-project_module';
+import {StringUtils} from '../../../../../utils/StringUtil';
+import {List} from '@material-ui/core';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import {Add} from '@material-ui/icons';
+import {selectProject} from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
+import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 
 interface ProjectsProps {
-
     projects: Array<Project>
-    projectRoles: Array<NameEntity>;
-    companies: Array<NameEntity>;
-    initials: string;
 }
 
 
@@ -32,59 +32,62 @@ interface ProjectsLocalState {
 }
 
 interface ProjectsDispatch {
-    deleteProject(initials: string, id: number): void;
-
-    saveProject(initials: string, project: Project): void;
+    selectProject(index: number): void;
 }
 
-class Projects_module extends React.Component<ProjectsProps & ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
+class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
 
     constructor(props) {
         super(props);
-        this.state = {};
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ProjectsProps): ProjectsProps {
         const projects = !isNullOrUndefined(state.profileStore.profile) ? state.profileStore.profile.projects : [];
-        const projectRoles = !isNullOrUndefined(state.suggestionStore) ? state.suggestionStore.allProjectRoles : [];
-        const companies = !isNullOrUndefined(state.suggestionStore) ? state.suggestionStore.allCompanies : [];
-        const initials = !isNullOrUndefined(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
         return {
-            projects: projects,
-            projectRoles: projectRoles,
-            companies: companies,
-            initials: initials
+            projects: projects
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ProfileStore>): ProjectsDispatch {
         return {
-            deleteProject: (initials, id) => {
-                dispatch(ProfileDataAsyncActionCreator.deleteProject(initials, id));
-            },
-            saveProject: (initials, project) => {
-                dispatch(ProfileDataAsyncActionCreator.saveProject(initials, project));
-            }
+            selectProject: index => dispatch(selectProject(index))
         };
     }
 
-    private renderSingleProject = (project:Project) => {
-        return (<SingleProject project={project}/>)
+    private renderProjectListItem = (project: Project, index: number) => {
+        const name = StringUtils.defaultString(project.name);
+        const client =  StringUtils.defaultString(nameEntityName(project.client));
+        return <ListItem button key={project.id} onClick={event => this.props.selectProject(index)}>
+            <ListItemText primary={`${name} für ${client}`} />
+        </ListItem>
+    };
+
+
+    private addNewProject = () => {
+        throw new Error("NOT IMPLEMENTED!");
     };
 
     render() {
-        return (<div style={{alignContent: 'center'}}>
-            <Grid
-                container
-                spacing={8}
-                justify={'flex-start'}
-                alignItems={'flex-start'}
-            >
-                {this.props.projects.map((p) => this.renderSingleProject(p))}
-            </Grid>
-        </div>);
+        if (!this.props.projects) {
+            return <React.Fragment/>;
+        }
+        return <div className="row">
+            <div className="col-md-3">
+                <List>
+                    {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
+                    <ListItem>
+                        <ListItemIcon>
+                            <Add/>
+                        </ListItemIcon>
+                        <ListItemText primary="Add Project" onClick={() => this.addNewProject()}/>
+                    </ListItem>
+                </List>
+            </div>
+            <div className="col-md-9">
+                <SelectedProject/>
+            </div>
+        </div>
     }
-
 }
 
-export const Projects: React.ComponentClass<ProjectsLocalProps> = connect(Projects_module.mapStateToProps, Projects_module.mapDispatchToProps)(Projects_module);
+export const Projects: React.ComponentClass<ProjectsLocalProps> = connect(ProjectsModule.mapStateToProps, ProjectsModule.mapDispatchToProps)(ProjectsModule);

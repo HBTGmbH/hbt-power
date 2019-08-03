@@ -2,7 +2,6 @@ import {ProfileEntryType} from './model/ProfileEntryType';
 import {SuggestionField} from '../../suggestions/model/SuggestionField';
 import {ProfileEntryField} from './model/ProfileEntryField';
 import {ProfileDataAsyncActionCreator} from './ProfileDataAsyncActionCreator';
-import {Dispatch} from 'react-redux';
 import {ApplicationState} from '../../reducerIndex';
 import {ProfileEntryDialogState} from '../../../modules/home/profile/profile-entry-edit_module';
 import {newLanguage} from './model/Language';
@@ -15,6 +14,8 @@ import {newSpecialField} from './model/SpecialField';
 import {newQualification} from './model/Qualification';
 import {newIndustrialSector} from './model/IndustrialSector';
 import {newTraining} from './model/FurtherTraining';
+import {Dispatch} from 'redux';
+import {AbstractAction} from '../../profile/database-actions';
 
 export class ProfileTypeDataMapper {
 
@@ -72,7 +73,7 @@ export class ProfileTypeDataMapper {
         return null;
     }
 
-    public static getUpdateFunction(type: ProfileEntryType, dispatch: Dispatch<ApplicationState>) {
+    public static getUpdateFunction(type: ProfileEntryType, dispatch: Dispatch<AbstractAction>) {
         switch (type) {
             case 'LANGUAGE': {
                 return (initials, entry) => {

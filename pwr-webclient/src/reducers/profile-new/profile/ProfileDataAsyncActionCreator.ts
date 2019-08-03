@@ -6,10 +6,8 @@ import {Language} from './model/Language';
 import {Profile} from './model/Profile';
 import {ProfileEntry} from './model/ProfileEntry';
 import {entryDeleteAction} from './actions/EntryDeleteAction';
-import {projectUpdateAction} from './actions/ProjectUpdateAction';
 import {skillDeleteAction} from './actions/SkillDeleteAction';
 import {skillUpdateAction} from './actions/SkillUpdateAction';
-import {projectDeleteAction} from './actions/ProjectDeleteAction';
 import {Project} from './model/Project';
 import {ProfileSkill} from './model/ProfileSkill';
 import {Qualification} from './model/Qualification';
@@ -21,9 +19,10 @@ import {Education} from './model/Education';
 import {ProfileUpdateServiceClient} from './client/ProfileUpdateServiceClient';
 import {baseProfileLoadAction} from './actions/BaseProfileLoadAction';
 import {entryLoadAction} from './actions/EntryLoadAction';
-import {projectLoadAction} from './actions/ProjectLoadAction';
 import {skillLoadAction} from './actions/SkillLoadAction';
 import {isNullOrUndefined} from 'util';
+import {projectDeleteAction, projectLoadAction, projectUpdateSuccessAction} from './actions/ProjectActions';
+import {AbstractAction} from '../../profile/database-actions';
 
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
 
@@ -67,7 +66,7 @@ export class ProfileDataAsyncActionCreator {
                 dispatch(ProfileDataAsyncActionCreator.loadTraining(initials));
                 dispatch(ProfileDataAsyncActionCreator.loadEducation(initials));
                 dispatch(ProfileDataAsyncActionCreator.loadProfileSkills(initials));
-                dispatch(ProfileDataAsyncActionCreator.loadProject(initials));
+                dispatch(ProfileDataAsyncActionCreator.loadAllProjects(initials));
             } else {
                 // Get Initials
             }
@@ -77,7 +76,7 @@ export class ProfileDataAsyncActionCreator {
 
     // --------------------------- ---------------------- Language ---------------------- ----------------------------//
     public static saveLanguage(initials: string, entity: Language) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return (dispatch: redux.Dispatch<AbstractAction>) => {
             profileUpdateServiceClient.saveLanguage(initials, entity).then(value => {
                     NavigationActionCreator.showSuccess('Sprache: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, 'languages' as keyof Profile & Array<ProfileEntry>));
@@ -87,7 +86,7 @@ export class ProfileDataAsyncActionCreator {
     }
 
     public static deleteLanguage(initials: string, id: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch<AbstractAction>) {
             profileUpdateServiceClient.deleteLanguage(initials, id).then(value => {
                     dispatch(entryDeleteAction(id, 'languages' as keyof Profile & Array<ProfileEntry>));
                 }
@@ -310,14 +309,18 @@ export class ProfileDataAsyncActionCreator {
     }
 
     // --------------------------- ---------------------- Projects ---------------------- ----------------------------//
-    public static saveProject(initials: string, entity: Project) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileUpdateServiceClient.saveProject(initials, entity).then(value => {
-                    NavigationActionCreator.showSuccess('Project: ' + value.name + ' erfolgreich hinzugefügt!');
-                    dispatch(projectUpdateAction(value));
+    public static saveSelectedProject() {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            const selectedProject = getState().profileStore.editedProject;
+            const initials = getState().profileStore.consultant.initials;
+            profileUpdateServiceClient.saveProject(initials, selectedProject)
+                .then(restoreProjectDates)
+                .then(project => {
+                    dispatch(projectUpdateSuccessAction(project));
                     dispatch(ProfileDataAsyncActionCreator.loadProfileSkills(initials));
-                }
-            ).catch(error => handleError(error));
+                    NavigationActionCreator.showSuccess('Project: ' + project.name + ' saved.');
+                })
+                .catch(error => handleError(error));
         };
     }
 
@@ -330,12 +333,30 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
-    public static loadProject(initials: string) {
+    public static loadAllProjects(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileUpdateServiceClient.getProjects(initials).then(value => {
-                    dispatch(projectLoadAction(value));
-                }
-            ).catch(error => handleError(error));
+            profileUpdateServiceClient
+                .getProjects(initials)
+                .then(restoreProjectsDates)
+                .then(value => dispatch(projectLoadAction(value)))
+                .catch(error => handleError(error));
         };
     }
+}
+
+function restoreProjectsDates(projects: Array<Project>): Array<Project> {
+    return projects.map(project => restoreProjectDates(project));
+}
+
+function restoreProjectDates(project: Project): Project {
+    project.startDate = restoreDate(project.startDate as any);
+    project.endDate = restoreDate(project.endDate as any);
+    return project;
+}
+
+function restoreDate(dateString: string): Date {
+    if (!dateString) {
+        return null;
+    }
+    return new Date(dateString);
 }

@@ -5,7 +5,6 @@ import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileStore} from '../../../model/ProfileStore';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
-import {Projects} from './elements/project/projects-module';
 import {SkillTree} from './elements/skills/skilltree-module';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
@@ -30,6 +29,7 @@ import {IndustrialSector} from '../../../reducers/profile-new/profile/model/Indu
 import {SpecialField} from '../../../reducers/profile-new/profile/model/SpecialField';
 import {Career} from '../../../reducers/profile-new/profile/model/Career';
 import {ProfileDescription} from './elements/profile-description_module';
+import {Projects} from './elements/project/projects_module';
 
 
 interface ProfileProps {

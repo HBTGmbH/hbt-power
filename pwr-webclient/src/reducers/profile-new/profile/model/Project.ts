@@ -5,8 +5,8 @@ export interface Project {
     id: number;
     name: string;
     description: string;
-    endDate: Date
-    startDate: Date
+    endDate: Date;
+    startDate: Date;
     broker: NameEntity;
     client: NameEntity;
     skills: Array<ProfileSkill>;

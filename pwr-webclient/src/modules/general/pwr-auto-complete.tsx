@@ -42,6 +42,7 @@ export interface PwrAutoCompleteProps {
     searchTerm?: string;
     data: Array<string>;
     chips?: Array<string>;
+    disabled?: boolean;
     label: string;
 
     disableFiltering?: boolean;
@@ -59,7 +60,7 @@ type Styles =
     & WithStyles<'suggestion'>
     & WithStyles<'suggestionsList'>;
 
-class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Styles, {}> {
+export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Styles, {}> {
     state = {
         suggestions: [],
     };
@@ -116,6 +117,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                 id={this.props.id + '_inputField'}
                 label={this.props.label}
                 fullWidth={this.props.fullWidth}
+                disabled={this.props.disabled}
                 InputProps={{
                     inputRef: node => {
                         ref(node);
@@ -134,6 +136,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         const {classes, autoFocus, value, onChange, onAdd, onDelete, chips, ref, ...other} = inputProps;
         return (
             <ChipInput
+                disabled={this.props.disabled}
                 label={this.props.label}
                 fullWidth={true}
                 clearInputValueOnChange

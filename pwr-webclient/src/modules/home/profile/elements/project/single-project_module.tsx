@@ -1,40 +1,78 @@
 import {Project} from '../../../../../reducers/profile-new/profile/model/Project';
 
 import * as React from 'react';
-import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import * as redux from 'redux';
 import {isNullOrUndefined} from 'util';
 import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
-import {ProfileStore} from '../../../../../reducers/profile-new/ProfileStore';
 import Grid from '@material-ui/core/Grid/Grid';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import Paper from '@material-ui/core/Paper/Paper';
 import Typography from '@material-ui/core/Typography/Typography';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {formatToYear} from '../../../../../utils/DateUtil';
-import {ProjectDialog} from './project-edit-dialog_module';
+import {StringUtils} from '../../../../../utils/StringUtil';
+import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
+import {DatePickerType} from '../../../../../model/DatePickerType';
+import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
+import {connect} from 'react-redux';
+import {nameEntityName} from '../../../../../utils/NullSafeUtils';
+import {PwrInputField} from '../../../../general/pwr-input-field';
+import {
+    cancelEditSelectedProjectAction,
+    editSelectedProjectAction,
+    setEditingProjectAction
+} from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
+import {NameEntityType} from '../../../../../reducers/profile-new/profile/model/NameEntityType';
+import {PwrProjectRoleAutocomplete} from '../../../../general/autocompletes/pwr-project-role-autocomplete-module';
+import {immutablePush, immutableRemove} from '../../../../../utils/ImmutableUtils';
+import {SkillSearcher} from '../../../../general/skill-search_module';
+import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
+import {PwrBody, PwrFormCaption, PwrFormSubCaption, PwrFormSubtitle} from '../../../../general/pwr-typography';
+import {PwrSpacer} from '../../../../general/pwr-spacer_module';
+
+const chooseClientName = (project: Project) => {
+    if (project.client) {
+        return project.client.name;
+    }
+    return '';
+};
+
+const chooseBrokerName = (project: Project) => {
+    if (project.broker) {
+        return project.broker.name;
+    }
+    return '';
+};
+
 
 interface ProjectProps {
-    allProjectRoles: Array<NameEntity>;
-    allCompanies: Array<NameEntity>;
     initials: string;
+    editedProject: Project;
+    isEditing: boolean;
 }
 
 
 interface ProjectLocalProps {
-    project: Project;
 }
 
 interface ProjectLocalState {
-    dialogOpen: boolean;
+    projectRoleSearchValue: string;
+    skillSearchValue: string;
 }
 
 interface ProjectDispatch {
+    // Non-Persistent Actions
+    updateEditingProject(project: Project): void;
+
+    beginEdit();
+
+    cancelEdit();
+
+    // Persistent Actions
     deleteProject(initials: string, id: number): void;
 
-    saveProject(initials: string, project: Project): void;
+    saveSelectedProject(): void;
 }
 
 class Project_module extends React.Component<ProjectProps & ProjectLocalProps & ProjectDispatch, ProjectLocalState> {
@@ -42,101 +80,246 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     constructor(props) {
         super(props);
         this.state = {
-            dialogOpen: false
+            projectRoleSearchValue: "",
+            skillSearchValue: ""
         };
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ProjectLocalProps): ProjectProps {
-        const projects = !isNullOrUndefined(state.profileStore.profile) ? state.profileStore.profile.projects : [];
-        const projectRoles = !isNullOrUndefined(state.suggestionStore) ? state.suggestionStore.allProjectRoles : [];
-        const companies = !isNullOrUndefined(state.suggestionStore) ? state.suggestionStore.allCompanies : [];
         const initials = !isNullOrUndefined(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
         return {
-            allProjectRoles: projectRoles,
-            allCompanies: companies,
-            initials: initials
+            initials: initials,
+            editedProject: state.profileStore.editedProject,
+            isEditing: state.profileStore.isProjectEditing
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ProfileStore>): ProjectDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProjectDispatch {
         return {
             deleteProject: (initials, id) => {
                 dispatch(ProfileDataAsyncActionCreator.deleteProject(initials, id));
             },
-            saveProject: (initials, project) => {
-                dispatch(ProfileDataAsyncActionCreator.saveProject(initials, project));
+            saveSelectedProject() {
+                dispatch(ProfileDataAsyncActionCreator.saveSelectedProject());
+            },
+            updateEditingProject(project: Project): void {
+                dispatch(setEditingProjectAction(project));
+            },
+            beginEdit: () => {
+                dispatch(editSelectedProjectAction());
+            },
+            cancelEdit() {
+                dispatch(cancelEditSelectedProjectAction());
             }
         };
     }
 
     private deleteButtonPress = () => {
-        this.props.deleteProject(this.props.initials, this.props.project.id);
+        this.props.deleteProject(this.props.initials, this.project().id);
+    };
+
+    private project = (): Project => {
+        return this.props.editedProject;
     };
 
     private title = () => {
-        const name = !isNullOrUndefined(this.props.project.name) ? this.props.project.name : '';
-        const client = !isNullOrUndefined(this.props.project.client) ? this.props.project.client : '';
+        const name = StringUtils.defaultString(this.project().name);
+        const client = StringUtils.defaultString(this.project().client.name);
+        return `${name} für ${client}`;
+    };
 
-        return name + ' für ' + client;
+    private client = () => {
+        return StringUtils.defaultString(nameEntityName(this.project().client));
+    };
+
+    private broker = () => {
+        return StringUtils.defaultString(nameEntityName(this.project().broker));
     };
 
     private subtitle = () => {
-        const roles: Array<NameEntity> = !isNullOrUndefined(this.props.project.projectRoles) && !isNullOrUndefined(this.props.project.projectRoles) ? this.props.project.projectRoles : [];
-        let roleString = '';
-        roles.map(r => roleString.concat(r.name + ', '));
-        roleString = roleString.substring(0, roleString.length - 1);
+        const roleNames = this.project().projectRoles
+            .map(value => value.name)
+            .join(", ");
 
-        const start = !isNullOrUndefined(this.props.project.startDate) ? formatToYear(this.props.project.startDate) : '';
-        const end = !isNullOrUndefined(this.props.project.endDate) ? formatToYear(this.props.project.endDate) : 'Heute';
-        return 'Tätig als ' + roleString + ' von ' + start + ' bis ' + end;
+        const start = !isNullOrUndefined(this.project().startDate) ? formatToYear(this.project().startDate) : '';
+        const end = !isNullOrUndefined(this.project().endDate) ? formatToYear(this.project().endDate) : 'Heute';
+        return `Tätig als ${roleNames} von ${start} bis ${end}`;
+    };
 
+
+    private isEditDisabled() {
+        return !this.isEditEnabled();
+    }
+
+    private isEditEnabled() {
+        return this.props.isEditing;
+    }
+
+    private setName = (name: string) => {
+        const project = {...this.project(), name};
+        this.props.updateEditingProject(project);
+    };
+
+    private setDescription = (description) => {
+        const project = {...this.project(), description};
+        this.props.updateEditingProject(project);
+    };
+
+    private setEndDate = (endDate) => {
+        const project = {...this.project(), endDate};
+        this.props.updateEditingProject(project);
+    };
+
+    private setStartDate = (startDate) => {
+        const project = {...this.project(), startDate};
+        this.props.updateEditingProject(project);
+    };
+
+    private setClientName = (name) => {
+        let client = this.project().client;
+        if (!client) {
+            client = {name: name, id: null, type: NameEntityType.COMPANY};
+        }
+        client = {...client, name};
+        const project = {...this.project(), client};
+        this.props.updateEditingProject(project);
+    };
+
+    private setBrokerName = (name) => {
+        let broker = this.project().broker;
+        if (!broker) {
+            broker = {name: name, id: null, type: NameEntityType.COMPANY};
+        }
+        broker = {...broker, name};
+        const project = {...this.project(), broker};
+        this.props.updateEditingProject(project);
+    };
+
+    private addProjectRole = (role: NameEntity) => {
+      const projectRoles = immutablePush(role, this.project().projectRoles);
+      this.props.updateEditingProject({...this.project(), projectRoles});
+    };
+
+    private removeProjectRole = (role: NameEntity) => {
+        const projectRoles = immutableRemove(role, this.project().projectRoles);
+        this.props.updateEditingProject({...this.project(), projectRoles});
+    };
+
+    private beginEdit = () => {
+        console.log("EDIT");
+        this.props.beginEdit();
+    };
+
+    private cancelEdit = () => {
+        this.props.cancelEdit();
+    };
+
+    private save = () => {
+        this.props.saveSelectedProject();
+    };
+
+    private addSkill = (skillName) => {
+        const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0};
+        const skills = immutablePush(newSkill, this.project().skills);
+        this.props.updateEditingProject({...this.project(), skills});
     };
 
     render() {
-        return (<Paper style={{height: '100%'}}>
-            <Grid item container spacing={8} direction={'column'} style={{height: '100%'}}>
-                <Grid item container spacing={8} direction={'column'} wrap={'nowrap'}
-                      style={{height: 'calc(100% - 48px)'}}>
-                    <Grid item>
-                        <Typography variant={'h6'} style={{margin: '5px'}}>
-                            {this.title()}
-                        </Typography>
-                        <Typography variant={'caption'} style={{margin: '5px'}}>
-                            {this.subtitle()}
-                        </Typography>
-                        <hr/>
-                    </Grid>
-                    <Grid
-                        item
-                        xs
-                        style={{overflowY: 'auto', marginLeft: '10px', marginRight: '10px'}}
-                    >
-                        <Typography
-                            variant={'body2'}
-                            style={{marginRight: '5px'}}
-                        >
-                            {
-                                this.props.project.description
-                            }
-                        </Typography>
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
-                                   onClick={() => this.setState({dialogOpen: true})}/>
-                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton
-                                   onClick={this.deleteButtonPress}/>
+        if (!this.project()) {
+            return <span>No Project Selected (Todo Auto-Select first project)</span>;
+        }
+        return (
+            <div>
+                <div>
+                    <PwrFormCaption>{this.title()}</PwrFormCaption>
+                    <PwrFormSubtitle>{this.subtitle()}</PwrFormSubtitle>
+                </div>
+                    <div>
+                        <PwrFormSubCaption>General Data</PwrFormSubCaption>
+                        <PwrSpacer/>
+                        <PwrInputField
+                            disabled={this.isEditDisabled()}
+                            id="project-title"
+                            label="Project Name"
+                            onValueChange={this.setName}
+                            value={this.project().name}
+                        />
+                        <PwrSpacer/>
+                        <PwrInputField
+                            disabled={this.isEditDisabled()}
+                            id="project-description"
+                            label="Project Description"
+                            value={this.project().description}
+                            onValueChange={this.setDescription}
+                            fullWidth
+                            multiline
+                            rows={4}
+                        />
+                        <PwrSpacer/>
+                        <PwrDatePicker label="Project Start Date"
+                                       disabled={this.isEditDisabled()}
+                                       onChange={this.setStartDate}
+                                       placeholderDate={this.project().startDate}
+                                       type={DatePickerType.MONTH_YEAR}
+                        />
+                        <PwrDatePicker label="Project End Date"
+                                       disabled={this.isEditDisabled()}
+                                       onChange={this.setEndDate}
+                                       placeholderDate={this.project().endDate}
+                                       type={DatePickerType.MONTH_YEAR}
+                        />
+                        <PwrSpacer/>
+                        <PwrProjectRoleAutocomplete fullWidth={true}
+                                                    multi={true}
+                                                    disabled={this.isEditDisabled()}
+                                                    searchTerm={this.state.projectRoleSearchValue}
+                                                    onChangeRole={role => this.setState({projectRoleSearchValue: role.name})}
+                                                    onAddRole={role => this.addProjectRole(role)}
+                                                    onRemoveRole={role => this.removeProjectRole(role)}
+                                                    label="Project Roles"
+                                                    items={this.project().projectRoles}>
 
-                </Grid>
-                <ProjectDialog key={'projectDialog.' + this.props.project.id}
-                               open={this.state.dialogOpen}
-                               project={this.props.project}
-                               onClose={() => this.setState({dialogOpen: false})}
-                />
-            </Grid>
-        </Paper>);
+                        </PwrProjectRoleAutocomplete>
+                    </div>
+                <PwrSpacer/>
+                    <div>
+                        <PwrFormSubCaption>Client</PwrFormSubCaption>
+                        <PwrSpacer/>
+                        <PwrCompanyAutocomplete fullWidth={true} label="Project Client"
+                                                searchTerm={this.client()}
+                                                disabled={this.isEditDisabled()}
+                                                onSearchChange={this.setClientName}/>
+                        <PwrSpacer/>
+                        <PwrCompanyAutocomplete fullWidth={true} label="Project Broker"
+                                                searchTerm={this.broker()}
+                                                disabled={this.isEditDisabled()}
+                                                onSearchChange={this.setBrokerName}/>
+                    </div>
+                <PwrSpacer/>
+                    <div>
+                        <PwrFormSubCaption>Skills</PwrFormSubCaption>
+                        <SkillSearcher
+                            disabled={this.isEditDisabled()}
+                            id="SelectedProject.SkillSearcher"
+                            label="Add Skill"
+                            initialValue={this.state.skillSearchValue}
+                            value={this.state.skillSearchValue}
+                            onValueChange={skillSearchValue => this.setState({skillSearchValue})}
+                            onNewRequest={this.addSkill}
+                        />
+                        <PwrFormSubCaption>Skills in this Project</PwrFormSubCaption>
+                        {this.project().skills.map(skill => <div key={skill.name}>{skill.name}</div>)}
+                    </div>
+                    <div>
+                        {this.isEditDisabled() && <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.beginEdit}/>}
+                        {this.isEditEnabled() && <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} onClick={this.save}/>}
+                        {this.isEditEnabled() && <PwrIconButton iconName={'cancel'} tooltip={PowerLocalize.get('Action.Cancel')} onClick={this.cancelEdit}/>}
+                        <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton onClick={this.deleteButtonPress}/>
+                    </div>
+            </div>
+        );
     }
 
 }
 
-export const SingleProject: React.ComponentClass<ProjectLocalProps> = connect(Project_module.mapStateToProps, Project_module.mapDispatchToProps)(Project_module);
+export const SelectedProject: React.ComponentClass<ProjectLocalProps> = connect(Project_module.mapStateToProps, Project_module.mapDispatchToProps)(Project_module);

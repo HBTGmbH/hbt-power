@@ -6,7 +6,6 @@
 import {APIRequestType, ProfileElementType} from '../../Store';
 
 import {NameEntity} from '../../model/NameEntity';
-import {ProjectDialogState} from '../../modules/home/profile/elements/project/project-dialog_module';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {Action} from 'redux';
@@ -66,7 +65,7 @@ export interface SaveEntryAction extends AbstractAction {
 }
 
 export interface SaveProjectAction extends AbstractAction {
-    state: ProjectDialogState
+    state: any
 }
 
 export interface DeleteProjectAction extends AbstractAction {

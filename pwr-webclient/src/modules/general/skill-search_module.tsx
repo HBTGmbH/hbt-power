@@ -7,6 +7,7 @@ import {PwrAutoComplete} from './pwr-auto-complete';
 
 interface SkillSearcherProps {
     label?: string;
+    disabled?: boolean;
     maxResults?: number;
     maxHeight?: number | string;
     id: string;
@@ -59,7 +60,8 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         },
         onValueChange: val => {
         },
-        resetOnRequest: true
+        resetOnRequest: true,
+        disabled: false
     };
 
     private requestSkills = (searchText: string, navigation?: boolean) => {
@@ -110,6 +112,7 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     render() {
         return <PwrAutoComplete
+            disabled={this.props.disabled}
             fullWidth={this.props.fullWidth}
             label={this.props.label}
             id={this.props.id}
