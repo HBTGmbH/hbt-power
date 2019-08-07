@@ -188,7 +188,6 @@ export class AdminReducer {
                 return AdminReducer.SetSkillNotification(state, action as SetSkillNotificationActionAction);
             case ActionType.SetNewSkillName: {
                 let act = action as SetNewSkillNameAction;
-                // TODO change the other notification, too
                 return state.selectedSkillNotification(state.selectedSkillNotification().newName(act.name));
             }
             case ActionType.SetReportUploadProgress: {

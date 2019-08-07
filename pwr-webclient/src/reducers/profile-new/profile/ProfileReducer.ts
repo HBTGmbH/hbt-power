@@ -9,7 +9,7 @@ import {ProfileEntryField} from './model/ProfileEntryField';
 import {SkillUpdateAction} from './actions/SkillUpdateAction';
 import {ProfileSkill} from './model/ProfileSkill';
 import {SkillDeleteAction} from './actions/SkillDeleteAction';
-import {Project} from './model/Project';
+import {emptyProject, Project} from './model/Project';
 import {EntryLoadAction} from './actions/EntryLoadAction';
 import {SkillLoadAction} from './actions/SkillLoadAction';
 import {BaseProfileLoadAction} from './actions/BaseProfileLoadAction';
@@ -23,9 +23,8 @@ import {
     SetEditingProjectAction
 } from './actions/ProjectActions';
 import {AbstractAction} from '../../profile/database-actions';
-import {replaceAtIndex} from '../../../utils/ImmutableUtils';
-import {newNameEntity} from './model/NameEntity';
-import {NameEntityType} from './model/NameEntityType';
+import {immutableUnshift, replaceAtIndex} from '../../../utils/ImmutableUtils';
+import {PROJECTS_BY_START_DATE} from '../../../utils/Comparators';
 
 
 export function reduceProfile(store: ProfileStore = emptyStore, action: AbstractAction): ProfileStore {
@@ -85,26 +84,51 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
             return handleConsultantUpdate(action as ConsultantUpdateAction, store);
         }
         case ActionType.SelectProject: {
-            return handleSelectProject((action as SelectProjectAction).value, cancelEditMode(store));
+            const selectedIndex = (action as SelectProjectAction).value;
+            if (selectedIndex === store.selectedProjectIndex) {
+                // Index did not change, do nothing!
+                return store;
+            }
+            if (store.selectedProject && store.selectedProject.id === null) {
+                // New Project. Delete it
+                return cancelEditOnNewProject(store, selectedIndex - 1);
+            }
+            return handleSelectProject(selectedIndex, cancelEditMode(store));
         }
         case ActionType.SetEditingProject: {
             const editedProject = (action as SetEditingProjectAction).project;
-            return {...store, editedProject};
+            return {...store, selectedProject: editedProject};
         }
         case ActionType.EditSelectedProject: {
-            return {...store, ...{isProjectEditing: true}};
+            return handleSetEditMode(store, true);
         }
         case ActionType.CancelEditSelectedProject: {
-            return cancelEditMode(store);
+            if (store.selectedProject.id === null) {
+                return cancelEditOnNewProject(store);
+            }
+            else {
+                return cancelEditMode(store);
+            }
+        }
+        case ActionType.AddNewProject: {
+           return handleAddProject(store);
         }
     }
     return store;
 }
 
-const projectsByStartDate = ComparatorBuilder.comparing<Project>(t => t.startDate.getDate()).build();
 const skillByName = ComparatorBuilder.comparing<ProfileSkill>(t => t.name).build();
 const byName = ComparatorBuilder.comparing<ProfileEntry>(t => t.nameEntity.name).build();
 const byId = (id: number) => (other: ProfileEntry) => other.id !== id;
+
+function handleAddProject(store: ProfileStore): ProfileStore {
+    // 1. Add a new project
+    // 2. Select the new project
+    // 3. Enter edit mode
+    const withNewProject = addProject(store, emptyProject());
+    const withNewProjectSelected = handleSelectProject(0, withNewProject);
+    return handleSetEditMode(withNewProjectSelected, true)
+}
 
 function handleConsultantUpdate(action: ConsultantUpdateAction, store: ProfileStore): ProfileStore {
     return {...store, consultant: action.consultant};
@@ -134,10 +158,9 @@ function replaceSkills(action: SkillLoadAction, profile: Profile): Profile {
 }
 
 function replaceProjects(action: ProjectLoadAction, profile: Profile): Profile {
-    let newProjects: Array<Project> = [];
-    newProjects.push(...action.projects);
-    //newProjects.map(p => p.startDate = isNullOrUndefined(p.startDate) ? new Date() : p.startDate);
-    //newProjects.sort(projectsByStartDate);
+    let newProjects: Array<Project> = action
+        .projects
+        .sort(PROJECTS_BY_START_DATE);
     return {...profile, ...{projects: newProjects}};
 }
 
@@ -183,14 +206,20 @@ function handleUpdateProject(action: ProjectUpdateAction, profile: Profile, proj
 function handleDeleteProject(action: ProjectDeleteAction, profile: Profile): Profile {
     let project = profile.projects;
     let newProjects = project.filter(s => s.id !== action.id);
-    newProjects.sort(projectsByStartDate);
+    newProjects.sort(PROJECTS_BY_START_DATE);
     return {...profile, ...{projects: newProjects}};
+}
+
+function deleteProjectFromProfile(id: number, store: ProfileStore): ProfileStore {
+    let project = store.profile.projects;
+    let newProjects = project.filter(s => s.id !== id);
+    newProjects.sort(PROJECTS_BY_START_DATE);
+    return replaceProfile(store, {...store.profile, ...{projects: newProjects}});
 }
 
 function handleSelectProject(selectedProjectIndex: number, store: ProfileStore): ProfileStore {
     let editedProject = getProject(selectedProjectIndex, store);
-    // fix name entities
-    return {...store, selectedProjectIndex, editedProject};
+    return {...store, selectedProjectIndex, selectedProject: editedProject};
 }
 
 function getProject(index: number, store: ProfileStore): Project {
@@ -198,6 +227,28 @@ function getProject(index: number, store: ProfileStore): Project {
         throw new Error(`Not enough projects for index ${index} available. Got ${store.profile.projects.length} in profile id = ${store.profile.id}`);
     }
     return store.profile.projects[index];
+}
+
+function addProject(store: ProfileStore, project: Project): ProfileStore {
+    const projects = immutableUnshift(project, store.profile.projects);
+    const profile: Profile = {...store.profile, projects};
+    return {
+        ...store,
+        profile
+    };
+}
+
+function handleSetEditMode(store: ProfileStore, isEditing: boolean): ProfileStore {
+    return {...store, ...{isProjectEditing: true}};
+}
+
+function cancelEditOnNewProject(store: ProfileStore, indexToJumpTo = null): ProfileStore {
+    const withDeletedProject = deleteProjectFromProfile(store.selectedProject.id, store);
+    let editedProject = null;
+    if (indexToJumpTo != null) {
+        editedProject = getProject(indexToJumpTo, withDeletedProject);
+    }
+    return {...withDeletedProject, ...{isProjectEditing: false, selectedProjectIndex: indexToJumpTo, editedProject}};
 }
 
 function cancelEditMode(store: ProfileStore): ProfileStore {

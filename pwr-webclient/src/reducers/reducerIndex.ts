@@ -26,6 +26,9 @@ import {reduceProfile} from './profile-new/profile/ProfileReducer';
 import {reduceSuggestion} from './suggestions/SuggestionReducer';
 import {SuggestionStore} from './suggestions/SuggestionStore';
 import {composeWithDevTools} from 'redux-devtools-extension';
+import {DeferredStore} from './deferred/DeferredStore';
+import {reduceDeferredAction} from './deferred/DeferredActionReducer';
+import {deferredActionMiddleware} from './deferred/DeferredActionMiddleware';
 
 
 export interface ApplicationState {
@@ -41,6 +44,7 @@ export interface ApplicationState {
     templateSlice: TemplateStore;
     crossCutting: CrossCuttingStore;
     router: Reducer<RouterState>;
+    deferred: DeferredStore;
 }
 
 
@@ -56,6 +60,7 @@ const ApplicationStore: Reducer<ApplicationState> = combineReducers({
     viewProfileSlice: ViewProfileReducer.reduce,
     crossCutting: CrossCuttingReducer.reduce,
     templateSlice: TemplateReducer.reduce,
+    deferred: reduceDeferredAction
 });
 
 export const PWR_HISTORY = createHistory();
@@ -68,7 +73,8 @@ const composeEnhancers = composeWithDevTools({
 export const store: Store<ApplicationState> = createStore(
     ApplicationStore,
     composeEnhancers(applyMiddleware(
+        (deferredActionMiddleware as any),
         thunkMiddleware,
-        reactRouterMiddleware
+        reactRouterMiddleware,
     ))
 );

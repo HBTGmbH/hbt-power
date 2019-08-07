@@ -91,7 +91,6 @@ class ProfileDescription_module extends React.Component<ProfileDescriptionProps 
     };
 
     render() {
-        console.log('state: ' + this.state.text + 'props: ', this.props.description);
         return (
             <div>
                 <TextField

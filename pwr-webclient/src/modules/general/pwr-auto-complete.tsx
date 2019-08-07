@@ -106,6 +106,12 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         }
     };
 
+    handleKeyDownOnInput = (key: string, inputValue: string) => {
+      if (key === 'Enter' && this.props.onAdd) {
+          this.props.onAdd(inputValue);
+      }
+    };
+
     renderInputComponent = (inputProps) => {
         const {
             classes, inputRef = () => {
@@ -126,6 +132,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                     classes: {
                         input: classes.input,
                     },
+                    onKeyDown: event => this.handleKeyDownOnInput(event.key, inputProps.value)
                 }}
                 {...other}
             />

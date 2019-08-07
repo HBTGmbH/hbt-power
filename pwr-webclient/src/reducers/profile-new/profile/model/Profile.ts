@@ -22,3 +22,20 @@ export interface Profile {
     projects: Array<Project>;
     skills: Array<ProfileSkill>;
 }
+
+export const emptyProfile = (): Profile => {
+    return {
+        projects: [],
+        trainings: [],
+        careers: [],
+        specialFieldEntries: [],
+        languages: [],
+        qualification: [],
+        sectors: [],
+        description: '',
+        id: null,
+        education: [],
+        lastEdited: null,
+        skills: []
+    };
+};

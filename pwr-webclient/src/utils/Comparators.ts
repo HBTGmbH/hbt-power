@@ -3,9 +3,15 @@ import {SkillCategory} from '../model/skill/SkillCategory';
 import {Skill} from '../model/Skill';
 import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillNode, SkillTreeNode} from '../model/skill/SkillTreeNode';
-import {Project} from '../model/Project';
 import {BuildInfo} from '../model/metadata/BuildInfo';
 import {SkillServiceSkill} from '../model/skill/SkillServiceSkill';
+import {ComparatorBuilder, NullMode, nullSafe} from 'ts-comparator';
+import {Project} from '../reducers/profile-new/profile/model/Project';
+
+export const PROJECTS_BY_START_DATE = ComparatorBuilder
+    .comparing<Project>(nullSafe(t => t.startDate.getDate()))
+    .definingNullAs(NullMode.HIGHEST)
+    .build();
 
 export class Comparators {
 
@@ -71,10 +77,6 @@ export class Comparators {
 
     public static compareAdminNotification(a1: AdminNotification, a2: AdminNotification): number {
         return Comparators.compareDate(a1.occurrence(), a2.occurrence());
-    }
-
-    public static compareProjects(p1: Project, p2: Project): number {
-        return Comparators.compareDate(p1.startDate(), p2.startDate());
     }
 
     public static compareBuildInfo(b1: BuildInfo, b2: BuildInfo): number {

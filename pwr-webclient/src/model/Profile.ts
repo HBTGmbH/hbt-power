@@ -264,8 +264,6 @@ export class Profile {
     }
 
 
-    // FIXME do not require database anymore, or refactor database so it doesn't contain
-    // FIXME this profile anymore.
     public serializeToApiProfile(database: ProfileStore): APIProfile {
         // Maps all career elements into an API format
         let training: Array<APITrainingEntry> = [];

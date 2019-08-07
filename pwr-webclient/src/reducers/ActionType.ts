@@ -3,6 +3,9 @@
  */
 
 export enum ActionType {
+    DeferAction = "[Deferred] Defer Single Action",
+    ConfirmDeferredAction = "[Deferred] Confirm Action",
+    RejectDeferredAction = "[Deferred] Reject Action",
 
     SaveLanguageSkill = "SaveLanguageSkill",
     SetModifiedStatus = "SetModifiedStatus",
@@ -149,6 +152,7 @@ export enum ActionType {
     SetEditingProject = "[Profile][Project] SetEditingProject",
     EditSelectedProject = "[Profile][Project] EditSelectedProject",
     CancelEditSelectedProject = "[Profile][Project] CancelEditSelectedProject",
+    AddNewProject = "[Profile][Project] Add New Project to Profile",
 
     // == Consultant
     UpdateConsultantAction = "UpdateConsultantAction",

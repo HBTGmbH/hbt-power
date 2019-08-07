@@ -82,3 +82,5 @@ export function orDefault<V, R>(keyExtractor: (v:V) => R, def: R) {
         }
     }
 }
+
+export function noOp<ArgType>(arg1?: ArgType) {}

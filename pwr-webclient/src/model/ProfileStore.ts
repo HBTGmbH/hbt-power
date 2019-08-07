@@ -315,9 +315,6 @@ export class ProfileStore {
      * update command.
      */
     public serializeToAPI(): APIProfile {
-        // TODO this needs some refactoring:
-        // - Suggestions into an own 'database'
-        // - Profile has access to database
         return this.profile().serializeToApiProfile(this);
     }
 

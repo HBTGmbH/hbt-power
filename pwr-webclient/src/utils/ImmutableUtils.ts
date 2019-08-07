@@ -26,6 +26,10 @@ export function immutablePush<Entry>(entry: Entry, array: Array<Entry>): Array<E
     return [...array, entry];
 }
 
+export function immutableUnshift<Entry>(entry: Entry, array: Array<Entry>): Array<Entry> {
+    return [entry, ...array];
+}
+
 export function immutableRemove<Entry>(entry: Entry, array: Array<Entry>): Array<Entry> {
     return array.filter(element => element !== entry);
 }

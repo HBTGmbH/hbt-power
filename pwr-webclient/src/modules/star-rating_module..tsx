@@ -7,7 +7,6 @@ import StarIcon from '@material-ui/icons/Star';
 
 interface StarRatingProps {
     rating: number;
-
     onRatingChange(newRating: number): void;
 }
 

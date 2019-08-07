@@ -4,22 +4,21 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {ProfileStore} from '../../../../../model/ProfileStore';
-import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import * as redux from 'redux';
-import {isNullOrUndefined} from 'util';
-import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
 import {SelectedProject} from './single-project_module';
 import {StringUtils} from '../../../../../utils/StringUtil';
-import {List} from '@material-ui/core';
+import {Divider, List} from '@material-ui/core';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import {Add} from '@material-ui/icons';
-import {selectProject} from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
+import {selectProject, addNewProject} from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 
 interface ProjectsProps {
     projects: Array<Project>
+    selectedIndex: number;
+    canAddProject: boolean;
 }
 
 
@@ -33,6 +32,7 @@ interface ProjectsLocalState {
 
 interface ProjectsDispatch {
     selectProject(index: number): void;
+    addNewProject(): void;
 }
 
 class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
@@ -42,29 +42,40 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ProjectsProps): ProjectsProps {
-        const projects = !isNullOrUndefined(state.profileStore.profile) ? state.profileStore.profile.projects : [];
         return {
-            projects: projects
+            projects: state.profileStore.profile.projects,
+            selectedIndex: state.profileStore.selectedProjectIndex,
+            canAddProject: !state.profileStore.selectedProject || state.profileStore.selectedProject.id !== null
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ProfileStore>): ProjectsDispatch {
         return {
-            selectProject: index => dispatch(selectProject(index))
+            selectProject: index => dispatch(selectProject(index)),
+            addNewProject: () => dispatch(addNewProject())
         };
+    }
+
+
+
+
+    private addNewProject = () => {
+        this.props.addNewProject();
+    };
+
+    private chooseClassName(index): string {
+        if (this.props.selectedIndex === index) {
+            return 'pwr-selected-list-item'
+        }
+        return '';
     }
 
     private renderProjectListItem = (project: Project, index: number) => {
         const name = StringUtils.defaultString(project.name);
         const client =  StringUtils.defaultString(nameEntityName(project.client));
-        return <ListItem button key={project.id} onClick={event => this.props.selectProject(index)}>
+        return <ListItem className={this.chooseClassName(index)} button key={project.id} onClick={event => this.props.selectProject(index)}>
             <ListItemText primary={`${name} für ${client}`} />
         </ListItem>
-    };
-
-
-    private addNewProject = () => {
-        throw new Error("NOT IMPLEMENTED!");
     };
 
     render() {
@@ -73,13 +84,14 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         }
         return <div className="row">
             <div className="col-md-3">
-                <List>
+                <List component="nav">
                     {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
-                    <ListItem>
+                    <Divider/>
+                    <ListItem button onClick={() => this.addNewProject()} disabled={!this.props.canAddProject} >
                         <ListItemIcon>
                             <Add/>
                         </ListItemIcon>
-                        <ListItemText primary="Add Project" onClick={() => this.addNewProject()}/>
+                        <ListItemText primary="Add Project"/>
                     </ListItem>
                 </List>
             </div>

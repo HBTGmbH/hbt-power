@@ -16,7 +16,7 @@ export interface Project {
 
 export function emptyProject(): Project {
     return {
-        id: -1,
+        id: null,
         name: '',
         description: '',
         endDate: new Date(),

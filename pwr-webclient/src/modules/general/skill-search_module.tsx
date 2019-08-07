@@ -3,6 +3,7 @@ import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
 import {PwrAutoComplete} from './pwr-auto-complete';
+import {noOp} from '../../utils/ObjectUtil';
 
 
 interface SkillSearcherProps {
@@ -56,26 +57,19 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         label: '',
         maxResults: 10,
         maxHeight: null,
-        onNewRequest: request => {
-        },
-        onValueChange: val => {
-        },
+        onNewRequest: noOp,
+        onValueChange: noOp,
         resetOnRequest: true,
         disabled: false
     };
 
     private requestSkills = (searchText: string, navigation?: boolean) => {
-        console.log('Skill-Searcher requestSkills:  ' + navigation);
-        console.log('Skill-Searcher requestSkills:  ' + searchText);
         if (navigation) {
             this.setState({
                 searchText: searchText
             });
-            console.log('navigation');
-            console.log('Skill-Searcher skills:  ' + this.state.skills);
             return;
         } else {
-            console.log('NO navigation');
             this.props.onValueChange(searchText);
             this.setState({
                 searchText: searchText
@@ -118,8 +112,8 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
             id={this.props.id}
             data={this.state.skills}
             searchTerm={this.state.searchText}
+            onAdd={this.handleRequest}
             onSearchChange={this.requestSkills}
-           // disableFiltering
         />;
     }
 }

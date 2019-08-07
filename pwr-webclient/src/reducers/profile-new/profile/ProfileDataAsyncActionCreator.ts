@@ -311,7 +311,7 @@ export class ProfileDataAsyncActionCreator {
     // --------------------------- ---------------------- Projects ---------------------- ----------------------------//
     public static saveSelectedProject() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            const selectedProject = getState().profileStore.editedProject;
+            const selectedProject = getState().profileStore.selectedProject;
             const initials = getState().profileStore.consultant.initials;
             profileUpdateServiceClient.saveProject(initials, selectedProject)
                 .then(restoreProjectDates)

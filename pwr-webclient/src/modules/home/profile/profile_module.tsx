@@ -5,7 +5,6 @@ import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileStore} from '../../../model/ProfileStore';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
-import {SkillTree} from './elements/skills/skilltree-module';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../reducers/reducerIndex';
@@ -288,7 +287,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
                 {this.state.tabValue === 2 &&
                 <div className="mui-margin">
-                    <SkillTree/>
+                    <div>Here be skills</div>
                 </div>
                 }
             </div>

@@ -7,7 +7,6 @@ import {ApplicationState, PWR_HISTORY, store} from './reducers/reducerIndex';
 import {Provider} from 'react-redux';
 import {PowerClient} from './modules/home/power-client_module';
 import {PowerLocalize} from './localization/PowerLocalizer';
-import {PowerLogin} from './modules/power-login_module';
 import {AdminClient} from './modules/admin/admin-client_module';
 import {AdminLogin} from './modules/admin/admin-login_module';
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
@@ -20,8 +19,9 @@ import {ConnectedRouter} from 'react-router-redux';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
 import {ThemeOptions} from '@material-ui/core/styles/createMuiTheme';
 import {MuiPickersUtilsProvider} from 'material-ui-pickers';
-import MomentUtils from "@date-io/moment";
+import MomentUtils from '@date-io/moment';
 import {LoginModule} from './modules/login_module';
+import {PwrConfirmDeferredActionDialog} from './modules/general/pwr-confirm-deferred-action-dialog';
 
 const AlertContainer = require('react-alert').default;
 
@@ -127,11 +127,13 @@ let App = (
             <Provider store={store}>
                 <ConnectedRouter history={PWR_HISTORY}>
                     <div>
+
                         <Route exact path={Paths.APP_ROOT} component={LoginModule}/>
                         <Route exact path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
                         <Route path={Paths.USER_BASE} component={PowerClient}/>
                         <Route path={Paths.ADMIN_BASE} component={AdminClient}/>
                         <ConfirmNavDialog/>
+                        <PwrConfirmDeferredActionDialog/>
                         <AlertContainer
                             ref={(a: any) => NavigationActionCreator.setAlertContainer(a)}{...alertOptions}/>
                     </div>

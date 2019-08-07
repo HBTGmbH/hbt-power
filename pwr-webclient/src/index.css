@@ -11,20 +11,20 @@ body {
 }
 
 .build-info-highlight {
-    font-family: Roboto;
+    font-family: Roboto, serif;
     color: white;
     size: 14pt;
     text-transform: uppercase;
 }
 
 .build-info-normal {
-    font-family: Roboto;
+    font-family: Roboto, serif;
     color: white;
     size: 10pt;
 }
 
 .build-info-offline {
-    font-family: Roboto;
+    font-family: Roboto, serif;
     color: #db8388;
     size: 10pt;
 }
@@ -101,6 +101,13 @@ body {
     justify-content: center;
 }
 
+.Pwr-Containt-Container {
+    flex-wrap: wrap;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+
 .Aligner-item--top {
     align-self: flex-start;
 }
@@ -134,7 +141,7 @@ body {
 }
 
 .material-icons-custom {
-    font-family: 'Material Icons';
+    font-family: 'Material Icons', serif;
     font-weight: normal;
     font-style: normal;
     font-size: 24px; /* Preferred icon size */

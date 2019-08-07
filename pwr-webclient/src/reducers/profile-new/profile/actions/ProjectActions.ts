@@ -53,6 +53,12 @@ export function selectProject(index: number): SelectProjectAction {
     }
 }
 
+export function addNewProject(): AbstractAction {
+    return {
+        type: ActionType.AddNewProject
+    }
+}
+
 export function projectLoadAction(projects: Array<Project>): ProjectLoadAction {
     return {
         type: ActionType.LoadProjectsAction,

@@ -12,13 +12,19 @@ export class CrossCuttingStore {
         return doop<boolean, this>();
     }
 
+    @doop
+    public get isUnsavedChangesOpen() {
+        return doop<boolean, this>();
+    }
 
-    private constructor(requestPending: boolean, isBlocking: boolean) {
-        return this.requestPending(requestPending).isBlocking(isBlocking);
+    private constructor(requestPending: boolean, isBlocking: boolean, isUnsavedChangesOpen: boolean) {
+        return this.requestPending(requestPending)
+            .isBlocking(isBlocking)
+            .isUnsavedChangesOpen(isUnsavedChangesOpen);
     }
 
     public static empty(): CrossCuttingStore {
-        return new CrossCuttingStore(false, false);
+        return new CrossCuttingStore(false, false, false);
     }
 
 }
