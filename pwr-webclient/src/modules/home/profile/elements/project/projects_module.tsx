@@ -3,7 +3,6 @@ import {Project} from '../../../../../reducers/profile-new/profile/model/Project
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
-import {ProfileStore} from '../../../../../model/ProfileStore';
 import * as redux from 'redux';
 import {SelectedProject} from './single-project_module';
 import {StringUtils} from '../../../../../utils/StringUtil';
@@ -49,7 +48,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ProfileStore>): ProjectsDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProjectsDispatch {
         return {
             selectProject: index => dispatch(selectProject(index)),
             addNewProject: () => dispatch(addNewProject())

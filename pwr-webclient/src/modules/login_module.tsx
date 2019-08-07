@@ -6,15 +6,14 @@ import {Link} from 'react-router-dom';
 import {LoginStatus} from '../model/LoginStatus';
 import {connect} from 'react-redux';
 import * as React from 'react';
+import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducers/reducerIndex';
 import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
-import {ProfileActionCreator} from '../reducers/profile/ProfileActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import FormHelperText from '@material-ui/core/FormHelperText/FormHelperText';
 import TextField from '@material-ui/core/TextField/TextField';
 import FormControl from '@material-ui/core/FormControl/FormControl';
-import {KeyboardEvent} from 'react';
 
 interface LoginProps {
     loginStatus: LoginStatus;
@@ -48,8 +47,9 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
 
     static mapStateToProps(state: ApplicationState, localProps: LoginProps): LoginProps {
         return {
-            loginStatus: state.databaseReducer.loginStatus(),
-            initials: state.databaseReducer.loggedInUser().initials()
+            // loginStatus: state.databaseReducer.loginStatus(),
+            loginStatus: LoginStatus.INITIALS,
+            initials: state.profileStore.consultant.initials
         };
     }
 

@@ -7,6 +7,7 @@ import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
+import {storeHasUnsavedChanges} from '../../utils/PwrStoreUtils';
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;
@@ -82,9 +83,9 @@ export namespace NavigationActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state: ApplicationState = getState();
             let currentLocation = state.navigationSlice.currentLocation();
-            let changes = state.databaseReducer.profile().changesMade();
+            const hasChanges = storeHasUnsavedChanges(getState());
             if (target === Paths.USER_SPECIAL_LOGOUT) {
-                if (changes > 0) {
+                if (hasChanges) {
                     dispatch(SetNavigationTarget(target));
                 } else {
                     navigate(Paths.APP_ROOT, dispatch);
@@ -93,7 +94,7 @@ export namespace NavigationActionCreator {
                     dispatch(ViewProfileActionCreator.ResetViewState());
                 }
             }
-            if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && changes > 0) {
+            if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && hasChanges) {
                 dispatch(SetNavigationTarget(target));
             } else {
                 navigate(target, dispatch);

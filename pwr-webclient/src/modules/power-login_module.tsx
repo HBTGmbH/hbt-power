@@ -70,8 +70,9 @@ class PowerLoginModule extends React.Component<PowerLoginProps
 
     static mapStateToProps(state: ApplicationState, localProps: PowerLoginProps): PowerLoginProps {
         return {
-            loginStatus: state.databaseReducer.loginStatus(),
-            initials: state.databaseReducer.loggedInUser().initials()
+            // TODO loginStatus: state.databaseReducer.loginStatus(),
+            loginStatus: LoginStatus.INITIALS,
+            initials: state.profileStore.consultant.initials
         };
     }
 

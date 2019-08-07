@@ -4,33 +4,14 @@ import {ActionType} from '../ActionType';
 import {ProfileStore} from '../profile-new/ProfileStore';
 import {areEqualArrays, areEqualByName, areEqualSkillsByName} from '../../utils/PwrEqualUtils';
 import {deferAction} from './DeferredActions';
+import {selectedProjectHasChanged, selectIndexHasChanged} from '../../utils/PwrStoreUtils';
 
 interface DeferrableAction<AppState> {
     type: ActionType;
     condition?: (state: AppState, action: any) => boolean;
 }
 
-function selectIndexHasChanged(state: ProfileStore, index: number) {
-    return state.selectedProjectIndex !== index;
-}
 
-function selectedProjectHasChanged(state: ProfileStore): boolean {
-    const project = state.profile.projects[state.selectedProjectIndex];
-    const editingProject = state.selectedProject;
-    if (!editingProject || !project) {
-        return false;
-    }
-    return project.id == null
-        || project.name !== editingProject.name
-        || project.startDate !== editingProject.startDate
-        || project.endDate !== editingProject.endDate
-        || project.description !== editingProject.description
-        || !areEqualByName(project.client, editingProject.client)
-        || !areEqualByName(project.broker, editingProject.broker)
-        || !areEqualArrays(project.projectRoles, editingProject.projectRoles, areEqualByName)
-        || !areEqualArrays(project.skills, editingProject.skills, areEqualSkillsByName);
-
-}
 
 const deferredActions: DeferrableAction<ApplicationState>[] = [
     {

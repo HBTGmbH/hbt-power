@@ -29,7 +29,7 @@ interface ProfileDescriptionDispatch {
     saveProfile(initials: string, description: string): void;
 }
 
-class ProfileDescription_module extends React.Component<ProfileDescriptionProps & ProfileDescriptionLocalProps & ProfileDescriptionDispatch, ProfileDescriptionState> {
+class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps & ProfileDescriptionLocalProps & ProfileDescriptionDispatch, ProfileDescriptionState> {
 
     constructor(props) {
         super(props);
@@ -116,4 +116,4 @@ class ProfileDescription_module extends React.Component<ProfileDescriptionProps 
     }
 }
 
-export const ProfileDescription: React.ComponentClass<ProfileDescriptionLocalProps> = connect(ProfileDescription_module.mapStateToProps, ProfileDescription_module.mapDispatchToProps)(ProfileDescription_module);
+export const ProfileDescription: React.ComponentClass<ProfileDescriptionLocalProps> = connect(ProfileDescriptionModule.mapStateToProps, ProfileDescriptionModule.mapDispatchToProps)(ProfileDescriptionModule);

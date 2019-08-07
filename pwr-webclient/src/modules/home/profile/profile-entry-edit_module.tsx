@@ -55,7 +55,7 @@ export interface ProfileEntryDialogState {
     deleteConfirm: boolean;
 }
 
-class ProfileEntryDialog_module extends React.Component<ProfileEntryDialogProps & ProfileEntryDialogLocalProps & ProfileEntryDialogDispatch, ProfileEntryDialogState> {
+class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps & ProfileEntryDialogLocalProps & ProfileEntryDialogDispatch, ProfileEntryDialogState> {
 
 
     constructor(props) {
@@ -254,4 +254,4 @@ class ProfileEntryDialog_module extends React.Component<ProfileEntryDialogProps 
     }
 }
 
-export const ProfileEntryDialog: React.ComponentClass<ProfileEntryDialogLocalProps> = connect(ProfileEntryDialog_module.mapStateToProps, ProfileEntryDialog_module.mapDispatchToProps)(ProfileEntryDialog_module);
+export const ProfileEntryDialog: React.ComponentClass<ProfileEntryDialogLocalProps> = connect(ProfileEntryDialogModule.mapStateToProps, ProfileEntryDialogModule.mapDispatchToProps)(ProfileEntryDialogModule);

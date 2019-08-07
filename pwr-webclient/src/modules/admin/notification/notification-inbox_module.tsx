@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
+import * as Immutable from 'immutable';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {Button, Icon, Tab, Tabs, Theme, withTheme} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';

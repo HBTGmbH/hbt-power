@@ -56,7 +56,7 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
                 ...updatedStore,
                 ...{
                     isProjectEditing: false,
-                    editedProject: getProject(updatedStore.selectedProjectIndex, updatedStore)
+                    selectedProject: getProject(updatedStore.selectedProjectIndex, updatedStore)
                 }
             };
         }
@@ -244,11 +244,11 @@ function handleSetEditMode(store: ProfileStore, isEditing: boolean): ProfileStor
 
 function cancelEditOnNewProject(store: ProfileStore, indexToJumpTo = null): ProfileStore {
     const withDeletedProject = deleteProjectFromProfile(store.selectedProject.id, store);
-    let editedProject = null;
+    let selectedProject = null;
     if (indexToJumpTo != null) {
-        editedProject = getProject(indexToJumpTo, withDeletedProject);
+        selectedProject = getProject(indexToJumpTo, withDeletedProject);
     }
-    return {...withDeletedProject, ...{isProjectEditing: false, selectedProjectIndex: indexToJumpTo, editedProject}};
+    return {...withDeletedProject, ...{isProjectEditing: false, selectedProjectIndex: indexToJumpTo, selectedProject}};
 }
 
 function cancelEditMode(store: ProfileStore): ProfileStore {

@@ -1,5 +1,5 @@
 import {Promise} from 'es6-promise';
-import {APIConsultant, APIProfile} from '../model/APIProfile';
+import {APIConsultant} from '../model/APIProfile';
 import axios, {AxiosRequestConfig} from 'axios';
 import {NameEntity} from '../model/NameEntity';
 import {PowerHttpClient} from './PowerHttpClient';
@@ -38,17 +38,6 @@ export class ProfileServiceClient extends PowerHttpClient {
         return store.getState().adminReducer.adminAuthConfig();
     }
 
-    public getProfile = (initials: string): Promise<APIProfile> => {
-        const url = this.base() + '/profiles/' + initials;
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public saveProfile = (initials: string, profile: APIProfile): Promise<APIProfile> => {
-        const url = this.base() + '/profiles/' + initials;
-        this.beginRequest();
-        return this.preProcess(axios.put(url, profile));
-    };
 
     public getConsultant = (initials: string): Promise<APIConsultant> => {
         const url = this.base() + '/consultants/' + initials;

@@ -1,5 +1,5 @@
 import {emptyProfile, Profile} from './profile/model/Profile';
-import {Consultant} from './consultant/model/Consultant';
+import {Consultant, emptyConsultant} from './consultant/model/Consultant';
 import {Project} from './profile/model/Project';
 
 export interface ProfileStore {
@@ -12,7 +12,7 @@ export interface ProfileStore {
 
 export const emptyStore: ProfileStore = {
     profile: emptyProfile(),
-    consultant: null,
+    consultant: emptyConsultant(),
     selectedProject: null,
     selectedProjectIndex: -1,
     isProjectEditing: false

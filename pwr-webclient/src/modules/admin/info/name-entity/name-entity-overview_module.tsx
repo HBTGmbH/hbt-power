@@ -65,18 +65,32 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     };
 
     static mapStateToProps(state: ApplicationState, localProps: NameEntityOverviewLocalProps): NameEntityOverviewProps {
+        // return {
+        //     sectors: state.databaseReducer.sectors(),
+        //     keySkills: state.databaseReducer.keySkills(),
+        //     careers: state.databaseReducer.careers(),
+        //     educations: state.databaseReducer.educations(),
+        //     qualifications: state.databaseReducer.qualifications(),
+        //     trainings: state.databaseReducer.trainings(),
+        //     languages: state.databaseReducer.languages(),
+        //     projectRoles: state.databaseReducer.projectRoles(),
+        //     companies: state.databaseReducer.companies(),
+        //     nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo(),
+        //     currentlyUsedSkillNames: state.databaseReducer.currentlyUsedSkillNames()
+        // };
+        // TODO this needs to be refilled + reworked to the new suggestion store.
         return {
-            sectors: state.databaseReducer.sectors(),
-            keySkills: state.databaseReducer.keySkills(),
-            careers: state.databaseReducer.careers(),
-            educations: state.databaseReducer.educations(),
-            qualifications: state.databaseReducer.qualifications(),
-            trainings: state.databaseReducer.trainings(),
-            languages: state.databaseReducer.languages(),
-            projectRoles: state.databaseReducer.projectRoles(),
-            companies: state.databaseReducer.companies(),
-            nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo(),
-            currentlyUsedSkillNames: state.databaseReducer.currentlyUsedSkillNames()
+            sectors: Immutable.Map<string, NameEntity>(),
+            keySkills: Immutable.Map<string, NameEntity>(),
+            careers: Immutable.Map<string, NameEntity>(),
+            educations: Immutable.Map<string, NameEntity>(),
+            qualifications: Immutable.Map<string, NameEntity>(),
+            trainings: Immutable.Map<string, NameEntity>(),
+            languages: Immutable.Map<string, NameEntity>(),
+            projectRoles: Immutable.Map<string, NameEntity>(),
+            companies: Immutable.Map<string, NameEntity>(),
+            currentlyUsedSkillNames: Immutable.Set<string>(),
+            nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>(),
         };
     }
 

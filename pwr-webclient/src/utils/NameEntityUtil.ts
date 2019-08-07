@@ -2,6 +2,7 @@ import {NameEntity} from '../model/NameEntity';
 import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {ProfileElementType} from '../Store';
+import * as Immutable from 'immutable';
 
 export class NameEntityUtil {
 

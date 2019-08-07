@@ -1,6 +1,7 @@
 import {NameEntity} from '../model/NameEntity';
 import {SkillCategory} from '../model/skill/SkillCategory';
 import {Skill} from '../model/Skill';
+import * as Immutable from 'immutable';
 import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillNode, SkillTreeNode} from '../model/skill/SkillTreeNode';
 import {BuildInfo} from '../model/metadata/BuildInfo';

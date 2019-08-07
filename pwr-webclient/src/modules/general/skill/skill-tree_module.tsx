@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Immutable from 'immutable';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
 import {Icon, ListItemText} from '@material-ui/core';
 import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';

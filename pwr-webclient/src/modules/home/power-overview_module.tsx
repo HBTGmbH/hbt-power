@@ -3,9 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {Button, Icon, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
-import {Profile} from '../../model/Profile';
-import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ProfileStatistics} from './profile-statistics_module';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
@@ -30,7 +27,6 @@ import {isNullOrUndefined} from 'util';
  */
 interface PowerOverviewProps {
     loggedInUser: Consultant;
-    profile: Profile;
     viewProfiles: Array<ViewProfile>;
 }
 
@@ -80,7 +76,6 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
         return {
             loggedInUser: state.profileStore.consultant,
-            profile: state.databaseReducer.profile(),
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray()
         };
     }

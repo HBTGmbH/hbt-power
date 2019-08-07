@@ -6,15 +6,14 @@ import {isNullOrUndefined} from 'util';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
 import Button from '@material-ui/core/Button/Button';
-import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
 import {ProfileEntryType} from '../../../reducers/profile-new/profile/model/ProfileEntryType';
 import {ProfileTypeDataMapper} from '../../../reducers/profile-new/profile/ProfileTypeDataMapper';
 import {NameEntity} from '../../../reducers/profile-new/profile/model/NameEntity';
 import {PwrIconButton} from '../../general/pwr-icon-button';
 import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
-import {PwrAutoComplete} from '../../general/pwr-auto-complete';
 import Divider from '@material-ui/core/Divider/Divider';
 import {ProfileEntryDialog} from './profile-entry-edit_module';
+import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -44,7 +43,7 @@ interface ProfileEntryState {
     open: boolean;
 }
 
-class ProfileEntry_module extends React.Component<ProfileEntryProps & ProfileEntryLocalProps & ProfileEntryDispatch, ProfileEntryState> {
+class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntryLocalProps & ProfileEntryDispatch, ProfileEntryState> {
     constructor(props) {
         super(props);
         this.resetState();
@@ -197,4 +196,4 @@ class ProfileEntry_module extends React.Component<ProfileEntryProps & ProfileEnt
     }
 }
 
-export const ProfileEntryModule: React.ComponentClass<ProfileEntryLocalProps> = connect(ProfileEntry_module.mapStateToProps, ProfileEntry_module.mapDispatchToProps)(ProfileEntry_module);
+export const ProfileEntryElement: React.ComponentClass<ProfileEntryLocalProps> = connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule);

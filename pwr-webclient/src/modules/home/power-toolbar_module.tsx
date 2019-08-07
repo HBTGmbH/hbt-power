@@ -23,7 +23,7 @@ import Paper from '@material-ui/core/Paper/Paper';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 
 interface ToolbarProps {
-    loggedInUser: ConsultantInfo;
+    userInitials: string;
     loggedInAsAdmin: boolean;
     statisticsAvailable: boolean;
     viewProfiles: Array<ViewProfile>;
@@ -77,7 +77,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps): ToolbarProps {
         return {
-            loggedInUser: state.databaseReducer.loggedInUser(),
+            userInitials: state.profileStore.consultant.initials,
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available(),
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray()
@@ -115,7 +115,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         this.props.navigateTo(target);
     };
     private getInitials = () => {
-        return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials();
+        return this.props.userInitials;
     };
 
 
@@ -138,7 +138,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private loadConsultantClusterInfo = () => {
         // FIXME move this into the async action.
         this.handleMenuClose();
-        this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials());
+        this.props.loadConsultantClusterInfo(this.props.userInitials);
         this.props.navigateTo(Paths.USER_STATISTICS_CLUSTERINFO);
     };
 

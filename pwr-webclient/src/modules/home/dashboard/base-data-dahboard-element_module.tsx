@@ -17,7 +17,7 @@ interface BaseDataDashboardElementProps {
     initials: string;
     name: string;
     lastEdited: Date;
-    profile:Profile;
+    profile: Profile;
 }
 
 interface BaseDataDashboardElementLocalProps {
@@ -38,9 +38,9 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
 
     static mapStateToProps(state: ApplicationState, localProps: BaseDataDashboardElementLocalProps): BaseDataDashboardElementProps {
         return {
-            initials: state.databaseReducer.loggedInUser().initials(),
-            name: state.databaseReducer.loggedInUser().firstName(),
-            lastEdited: state.databaseReducer.profile().lastEdited(), // TODO changed
+            initials: state.profileStore.consultant.initials,
+            name: state.profileStore.consultant.firstName,
+            lastEdited: new Date(state.profileStore.profile.lastEdited),
             profile: state.profileStore.profile
         };
     }

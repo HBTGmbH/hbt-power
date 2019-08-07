@@ -10,6 +10,18 @@ export interface Consultant {
     active: boolean;
 }
 
+export function emptyConsultant(): Consultant {
+    return {
+        initials: null,
+        firstName: null,
+        lastName: null,
+        title: null,
+        profileId: null,
+        birthDate: null,
+        active: false
+    }
+}
+
 export function newConsultant(initials: string, firstName: string, lastName: string, title: string, profile: Profile, birthDate: Date, active: boolean): Consultant {
     return {
         initials: initials,

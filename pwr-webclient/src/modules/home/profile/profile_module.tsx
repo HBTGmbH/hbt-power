@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ProfileStore} from '../../../model/ProfileStore';
 import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
@@ -18,7 +17,7 @@ import {SuggestionStore} from '../../../reducers/suggestions/SuggestionStore';
 import {Paths} from '../../../Paths';
 import {COOKIE_INITIALS_NAME} from '../../../model/PwrConstants';
 import {Consultant} from '../../../reducers/profile-new/consultant/model/Consultant';
-import {ProfileEntryModule} from './profile-entry_module';
+import {ProfileEntryElement} from './profile-entry_module';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
 import {FurtherTraining} from '../../../reducers/profile-new/profile/model/FurtherTraining';
 import {Language} from '../../../reducers/profile-new/profile/model/Language';
@@ -32,7 +31,6 @@ import {Projects} from './elements/project/projects_module';
 
 
 interface ProfileProps {
-    database: ProfileStore;
     suggestions: SuggestionStore;
     loggedInUser: Consultant;
     profile: Profile;
@@ -77,7 +75,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps): ProfileProps {
         return {
             suggestions: state.suggestionStore,
-            database: state.databaseReducer,
             loggedInUser: state.profileStore.consultant,
             profile: state.profileStore.profile,
         };
@@ -249,30 +246,30 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
                     <Grid container spacing={16} className="mui-margin">
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryModule type={'LANGUAGE'}
+                            <ProfileEntryElement type={'LANGUAGE'}
                                                 renderSingleElementInfo={this.renderLanguageInfo}/>
                         </Grid>
                         < Grid item md={6} xs={12}>
-                            <ProfileEntryModule type={'TRAINING'}
+                            <ProfileEntryElement type={'TRAINING'}
                                                 renderSingleElementInfo={this.renderTrainingInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryModule type={'EDUCATION'}
+                            <ProfileEntryElement type={'EDUCATION'}
                                                 renderSingleElementInfo={this.renderEducationInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryModule type={'QUALIFICATION'}
+                            <ProfileEntryElement type={'QUALIFICATION'}
                                                 renderSingleElementInfo={this.renderQualificationInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryModule type={'SECTOR'} renderSingleElementInfo={this.renderSectorInfo}/>
+                            <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderSectorInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryModule type={'KEY_SKILL'}
+                            <ProfileEntryElement type={'KEY_SKILL'}
                                                 renderSingleElementInfo={this.renderKeySkillInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryModule type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>
+                            <ProfileEntryElement type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>
                         </Grid>
                     </Grid>
 

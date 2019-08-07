@@ -22,6 +22,7 @@ import {MuiPickersUtilsProvider} from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
 import {LoginModule} from './modules/login_module';
 import {PwrConfirmDeferredActionDialog} from './modules/general/pwr-confirm-deferred-action-dialog';
+import {storeHasUnsavedChanges} from './utils/PwrStoreUtils';
 
 const AlertContainer = require('react-alert').default;
 
@@ -35,9 +36,7 @@ store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
 // Prevents navigation
 const pageLeavePreventer = (ev: any) => {
     let state: ApplicationState = store.getState() as ApplicationState;
-    let changes = state.databaseReducer.profile().changesMade();
-    console.debug('Changes', changes);
-    return changes > 0 ? 'DoNotLeave' : null;
+    return storeHasUnsavedChanges(store.getState()) ? 'DoNotLeave' : null;
 };
 
 /**

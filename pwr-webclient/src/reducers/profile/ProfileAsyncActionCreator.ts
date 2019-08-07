@@ -1,10 +1,7 @@
 import * as redux from 'redux';
-import {APIProfile} from '../../model/APIProfile';
 import {ApplicationState} from '../reducerIndex';
 import {APIRequestType} from '../../Store';
 import {ProfileActionCreator} from './ProfileActionCreator';
-import {ActionType} from '../ActionType';
-import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
@@ -15,7 +12,6 @@ import {ProfileServiceError} from '../../model/ProfileServiceError';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {ProfileDataAsyncActionCreator} from '../profile-new/profile/ProfileDataAsyncActionCreator';
-import {ConsultantAsyncActionCreator} from '../profile-new/consultant/ConsultantAsyncActionCreator';
 import {ConsultantClient} from '../profile-new/consultant/ConsultantClient';
 import {consultantUpdateAction} from '../profile-new/consultant/actions/ConsultantUpdateAction';
 
@@ -53,35 +49,6 @@ export class ProfileAsyncActionCreator {
             dispatch(ProfileAsyncActionCreator.requestProjectRoles());
             dispatch(ProfileAsyncActionCreator.requestKeySkills());
             dispatch(ProfileAsyncActionCreator.requestCareers());
-        };
-    }
-
-    public static requestSingleProfile(initials: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.getProfile(initials)
-                .then(profile => dispatch(ProfileActionCreator.APIRequestSuccessful(profile, APIRequestType.RequestProfile)))
-                .catch(console.error);
-        };
-    }
-
-    public static saveFullProfile(initials: string, profile: APIProfile) {
-        console.log('Saving full profile ' + initials);
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileServiceClient.saveProfile(initials, profile).then(profile => {
-                NavigationActionCreator.showSuccess('Profile saved!');
-                dispatch(ProfileActionCreator.APIRequestSuccessful(profile, APIRequestType.SaveProfile));
-            }).catch(console.error);
-        };
-    }
-
-    public static saveCurrentProfile() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            const initials = getState().databaseReducer.loggedInUser().initials();
-            const profile = getState().databaseReducer.serializeToAPI();
-            profileServiceClient.saveProfile(initials, profile).then(profile => {
-                NavigationActionCreator.showSuccess('Profile saved!');
-                dispatch(ProfileActionCreator.APIRequestSuccessful(profile, APIRequestType.SaveProfile));
-            }).catch(console.error);
         };
     }
 
