@@ -7,11 +7,12 @@ import {getProfileImageLocation} from '../../../API_CONFIG';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
-import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {getRandomGreeting} from '../../../model/PwrConstants';
 import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
+import {PwrRaisedButton} from '../../general/pwr-raised-button';
+import {Edit} from '@material-ui/icons';
 
 interface BaseDataDashboardElementProps {
     initials: string;
@@ -48,7 +49,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BaseDataDashboardElementDispatch {
         return {
             requestSingleProfile: function (initials: string = 'ppp') {
-                console.log("initials: ",initials);
+                console.log('initials: ', initials);
                 //dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
@@ -80,15 +81,8 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                         {formatToFullLocalizedDateTime(this.props.lastEdited)}
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
-                        <Button
-                            variant={'contained'}
-                            style={{marginTop: '8px'}}
-                            color={'primary'}
-                            onClick={this.handleEditButtonClick}
-                        >
-                            <Icon className="material-icons">edit</Icon>
-                            {PowerLocalize.get('Action.Edit')}
-                        </Button>
+                        <PwrRaisedButton color={'primary'} icon={<Edit/>} text={PowerLocalize.get('Action.Edit')}
+                                         onClick={this.handleEditButtonClick}/>
                     </div>
                 </div>
             </Paper>);

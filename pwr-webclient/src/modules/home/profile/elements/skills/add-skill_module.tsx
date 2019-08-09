@@ -71,6 +71,11 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
     }
 
     private handleOnChange = (data: string) => {
+        if (this.state.skillName !== data) {
+            this.setState({
+                progressState: 0 // Back to the start
+            })
+        }
         this.setState({
             skillName: data,
             skillCategory: ''
@@ -205,6 +210,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
                     <SkillSearcher
                         id={'testName'}
                         label={'Skill'}
+                        resetOnRequest={false}
                         value={this.state.skillName}
                         onValueChange={this.handleOnChange}
                     />

@@ -10,6 +10,8 @@ import {NavigationActionCreator} from '../../../reducers/navigation/NavigationAc
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
 import {getImagePath} from '../../../API_CONFIG';
+import {PwrRaisedButton} from '../../general/pwr-raised-button';
+import {OpenInNew} from '@material-ui/icons';
 
 interface CommonSkillsDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -24,9 +26,7 @@ interface CommonSkillsDashboardElementLocalState {
 }
 
 interface CommonSkillsDashboardElementDispatch {
-    navigateTo(target: string): void;
-
-    loadSkillStatistics(): void;
+    navigateToStatistics(): void;
 }
 
 class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDashboardElementProps & CommonSkillsDashboardElementLocalProps & CommonSkillsDashboardElementDispatch, CommonSkillsDashboardElementLocalState> {
@@ -39,16 +39,9 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): CommonSkillsDashboardElementDispatch {
         return {
-            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
+            navigateToStatistics: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_STATISTICS_SKILLS)),
         };
     }
-
-    private loadSkillStatistics = () => {
-        // FIXME move this into the async action.
-        this.props.loadSkillStatistics();
-        this.props.navigateTo(Paths.USER_STATISTICS_SKILLS);
-    };
 
     private renderCommonSkills = () => {
         if (this.props.profileSkillMetrics.commonSkills().size == 0) {
@@ -77,15 +70,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                     Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}
                 </span>
                     <div className="col-md-3 col-sm-12">
-                        <Button
-                            variant={'contained'}
-                            style={{marginTop: '8px'}}
-                            color={'primary'}
-                            onClick={() => this.loadSkillStatistics()}
-                        >
-                            {PowerLocalize.get('Action.ShowMore')}
-                            <Icon className="material-icons">open_in_new</Icon>
-                        </Button>
+                        <PwrRaisedButton color={'primary'} icon={<OpenInNew/>} text= {PowerLocalize.get('Action.ShowMore')} onClick={this.props.navigateToStatistics}/>
                     </div>
                 </div>
             </Paper>);

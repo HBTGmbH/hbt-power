@@ -14,6 +14,9 @@ import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
 import Divider from '@material-ui/core/Divider/Divider';
 import {ProfileEntryDialog} from './profile-entry-edit_module';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
+import {PwrRaisedButton} from '../../general/pwr-raised-button';
+import {Add} from '@material-ui/icons';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -177,8 +180,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                         >{ProfileTypeDataMapper.getHeaderText(this.props.type).toUpperCase()}</Typography>
                     </Grid>
                     <Grid item md={3}>
-                        <Button variant={'outlined'}
-                                onClick={this.handleNewButton}>NEU</Button>
+                        <PwrRaisedButton onClick={this.handleNewButton} color={'primary'} icon={<Add/>} text={PowerLocalize.get('Action.Add')}/>
                     </Grid>
                     <Grid item md={12}>
                         <Divider style={{marginTop: '2px'}}/>

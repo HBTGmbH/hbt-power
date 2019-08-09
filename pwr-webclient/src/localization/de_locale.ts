@@ -278,6 +278,7 @@ export const de_locale: any = {
     'Action.Keep': 'Behalten',
     'Action.Edit': 'Bearbeiten',
     'Action.Save': 'Speichern',
+    'Action.Cancel': 'Abbrechen',
     'Action.Update': 'Aktualisieren',
     'Action.Undo': 'Zurücksetzen',
     'Action.Delete': 'Löschen',

@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button/Button';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Fab from '@material-ui/core/Fab/Fab';
+import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 
 const Recharts = require('recharts');
 
@@ -33,7 +34,7 @@ interface SkillStatisticsLocalState {
 }
 
 interface SkillStatisticsDispatch {
-
+    loadSkillStatistics(): void;
 }
 
 
@@ -48,6 +49,10 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
         };
     }
 
+    componentDidMount(): void {
+
+    }
+
     static mapStateToProps(state: ApplicationState, localProps: SkillStatisticsLocalProps): SkillStatisticsProps {
         return {
             usageMetrics: state.statisticsReducer.skillUsages(),
@@ -57,7 +62,9 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillStatisticsDispatch {
-        return {};
+        return {
+            loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
+        };
     }
 
     private renderTags = () => {

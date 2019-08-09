@@ -18,6 +18,8 @@ import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant
 import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
 import {isNullOrUndefined} from 'util';
+import {PwrRaisedButton} from '../general/pwr-raised-button';
+import {Add} from '@material-ui/icons';
 
 /**
  * Properties that are managed by react-redux.
@@ -160,15 +162,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     onSave={this.handleCreateViewProfile}
                                     type="new"
                                 />
-                                <Button
-                                    variant={'contained'}
-                                    color={'primary'}
-                                    className="mui-margin"
-                                    onClick={() => this.setViewDialogOpen(true)}
-                                >
-                                    <Icon className="material-icons">add</Icon>
-                                    {PowerLocalize.get('ViewProfile.Create')}
-                                </Button>
+                                <PwrRaisedButton color={'primary'} onClick={() => this.setViewDialogOpen(true)} icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {
                                         return <div className="col-md-12 fullWidth" style={{marginTop: '8px'}}

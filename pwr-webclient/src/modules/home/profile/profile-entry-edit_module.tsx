@@ -23,6 +23,8 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Button from '@material-ui/core/Button/Button';
 import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
+import {PwrButton} from '../../general/pwr-button';
+import {Cancel, Delete, Save} from '@material-ui/icons';
 
 interface ProfileEntryDialogProps {
     suggestions: Array<string>;
@@ -238,16 +240,10 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                       open={this.state.deleteConfirm}
                                       onConfirm={() => this.handleDelete()}/>
                     {isNullOrUndefined(this.props.entry) ? <></> :
-                        <Button variant={'text'} onClick={() => this.setState({deleteConfirm: true})}>
-                            Element Löschen
-                        </Button>
+                        <PwrButton icon={<Delete/>} color={'secondary'} text= {PowerLocalize.get('Action.Delete')} onClick={() => this.setState({deleteConfirm: true})}/>
                     }
-                    <Button variant={'outlined'} onClick={this.handleSave}>
-                        Speichern
-                    </Button>
-                    <Button variant={'outlined'} onClick={this.props.onClose}>
-                        Abbrechen
-                    </Button>
+                    <PwrButton icon={<Save/>} color={'primary'} text= {PowerLocalize.get('Action.Save')} onClick={this.handleSave}/>
+                    <PwrButton icon={<Cancel/>} color={'secondary'} text= {PowerLocalize.get('Action.Cancel')} onClick={this.props.onClose}/>
                 </DialogActions>
             </Dialog>
         );
