@@ -3,11 +3,12 @@ import {NavigationActionCreator} from '../../navigation/NavigationActionCreator'
 import {ConsultantClient} from './ConsultantClient';
 import {ApplicationState} from '../../reducerIndex';
 import {consultantUpdateAction} from './actions/ConsultantUpdateAction';
+import {Alerts} from '../../../utils/Alerts';
 
 const client = ConsultantClient.instance();
 
 const handleError = (error: any) => {
-    NavigationActionCreator.showError(error.status + ' -- ' + error.message);
+    Alerts.showError(error.status + ' -- ' + error.message);
     console.error(error);
 };
 

@@ -16,15 +16,12 @@ import {ConfirmNavDialog} from './modules/navigation/confirm-nav-dialog_module';
 import {Color} from './utils/ColorUtil';
 import {Route} from 'react-router-dom';
 import {ConnectedRouter} from 'react-router-redux';
-import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
 import {ThemeOptions} from '@material-ui/core/styles/createMuiTheme';
 import {MuiPickersUtilsProvider} from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
 import {LoginModule} from './modules/login_module';
 import {PwrConfirmDeferredActionDialog} from './modules/general/pwr-confirm-deferred-action-dialog';
 import {storeHasUnsavedChanges} from './utils/PwrStoreUtils';
-
-const AlertContainer = require('react-alert').default;
 
 const paths = new Paths();
 paths.restorePath();
@@ -45,7 +42,7 @@ const pageLeavePreventer = (ev: any) => {
 window.onbeforeunload = pageLeavePreventer;
 
 
-const newPowerTheme:ThemeOptions = {
+const newPowerTheme: ThemeOptions = {
     typography: {
         useNextVariants: true,
         fontSize: 24,
@@ -58,7 +55,7 @@ const newPowerTheme:ThemeOptions = {
             light: '#474b77',
             main: '#191E55',
             dark: '#11153b',
-            contrastText:'#fff',
+            contrastText: '#fff',
         },
         secondary: {
             light: '#6bebeb',
@@ -98,7 +95,7 @@ const newPowerTheme:ThemeOptions = {
             root: {
                 color: '#fff',
                 indicatorColor: '#46E6E6',
-                backgroundColor: "#191E55"
+                backgroundColor: '#191E55'
             }
         },
         MuiTab: {
@@ -111,36 +108,31 @@ const newPowerTheme:ThemeOptions = {
 
 export const POWER_MUI_THEME = createMuiTheme(newPowerTheme as any);
 
-const alertOptions = {
-    offset: 14,
-    position: 'bottom left',
-    theme: 'dark',
-    time: 0,
-    transition: 'scale'
-};
 
+class AppWrapper extends React.Component<{}, {}> {
+    render() {
+        return (
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+                <MuiThemeProvider theme={POWER_MUI_THEME}>
+                    <Provider store={store}>
+                        <ConnectedRouter history={PWR_HISTORY}>
+                            <div>
+                                <Route exact path={Paths.APP_ROOT} component={LoginModule}/>
+                                <Route exact path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
+                                <Route path={Paths.USER_BASE} component={PowerClient}/>
+                                <Route path={Paths.ADMIN_BASE} component={AdminClient}/>
+                                <ConfirmNavDialog/>
+                                <PwrConfirmDeferredActionDialog/>
+                            </div>
+                        </ConnectedRouter>
+                    </Provider>
+                </MuiThemeProvider>
+            </MuiPickersUtilsProvider>
+        );
+    }
+}
 
-let App = (
-    <MuiPickersUtilsProvider utils={MomentUtils}>
-        <MuiThemeProvider theme={POWER_MUI_THEME}>
-            <Provider store={store}>
-                <ConnectedRouter history={PWR_HISTORY}>
-                    <div>
-
-                        <Route exact path={Paths.APP_ROOT} component={LoginModule}/>
-                        <Route exact path={Paths.ADMIN_LOGIN} component={AdminLogin}/>
-                        <Route path={Paths.USER_BASE} component={PowerClient}/>
-                        <Route path={Paths.ADMIN_BASE} component={AdminClient}/>
-                        <ConfirmNavDialog/>
-                        <PwrConfirmDeferredActionDialog/>
-                        <AlertContainer
-                            ref={(a: any) => NavigationActionCreator.setAlertContainer(a)}{...alertOptions}/>
-                    </div>
-                </ConnectedRouter>
-            </Provider>
-        </MuiThemeProvider>
-    </MuiPickersUtilsProvider>
-);
+let App = (<AppWrapper/>);
 
 
 ReactDOM.render(

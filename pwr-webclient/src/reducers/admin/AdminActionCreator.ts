@@ -39,6 +39,7 @@ import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {PowerApiError} from '../../clients/PowerHttpClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
+import {Alerts} from '../../utils/Alerts';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = new SkillServiceClient();
@@ -221,7 +222,7 @@ export class AdminActionCreator {
             profileServiceClient.deleteTrashedNotifications()
                 .then(ignored => {
                     dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
-                    NavigationActionCreator.showSuccess('Notifications successfully deleted!');
+                    Alerts.showSuccess('Notifications successfully deleted!');
                 }).catch(console.error);
         };
     }
@@ -244,7 +245,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationDelete(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -253,7 +254,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationOK(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -262,7 +263,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationEdit(notification)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -272,7 +273,7 @@ export class AdminActionCreator {
             dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
             profileServiceClient.invokeNotificationEdit(getState().adminReducer.selectedSkillNotification())
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -353,7 +354,7 @@ export class AdminActionCreator {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.createConsultant(apiConsultant)
                 .then(value => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
-                .then(() => NavigationActionCreator.showSuccess('Created consultant ' + consultantInfo.initials()))
+                .then(() => Alerts.showSuccess('Created consultant ' + consultantInfo.initials()))
                 .catch(console.error);
         };
     }
@@ -363,7 +364,7 @@ export class AdminActionCreator {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.updateConsultant(apiConsultant)
                 .then(consultant => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(consultant))))
-                .then(ingored => NavigationActionCreator.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
+                .then(ingored => Alerts.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
                 .catch(console.error);
         };
     }
@@ -453,7 +454,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             profileServiceClient.renameSkill(oldName, newName)
                 .then(() => dispatch(ProfileAsyncActionCreator.getAllCurrentlyUsedSkills()))
-                .then(() => NavigationActionCreator.showSuccess('Renamed ' + oldName + ' to ' + newName))
+                .then(() => Alerts.showSuccess('Renamed ' + oldName + ' to ' + newName))
                 .catch(console.error);
         };
     }

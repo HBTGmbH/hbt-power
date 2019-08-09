@@ -8,6 +8,7 @@ import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import * as Cookies from 'js-cookie';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
 import {storeHasUnsavedChanges} from '../../utils/PwrStoreUtils';
+import {Alerts} from '../../utils/Alerts';
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;
@@ -17,27 +18,19 @@ export interface SetCurrentLocationAction extends AbstractAction {
     currentLocation: string;
 }
 
+
 export namespace NavigationActionCreator {
 
-    let alertContainer: any = null;
-
-    export function setAlertContainer(container: any) {
-        console.log('Init Container', container);
-        alertContainer = container;
-    }
-
-    export function showError(msg: string) {
-        alertContainer.show(msg, {
-            time: 0,
-            type: 'error',
-        });
-    }
 
     export function showSuccess(msg: string) {
-        alertContainer.show(msg, {
-            time: 10000,
-            type: 'success',
-        });
+        Alerts.showSuccess(msg);
+    }
+
+    export function success<T>(msg: string) {
+        return (response: T) => {
+            Alerts.showSuccess(msg);
+            return response;
+        }
     }
 
     /**

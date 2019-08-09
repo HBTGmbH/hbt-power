@@ -11,6 +11,7 @@ import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {string} from 'prop-types';
 import {Paths} from '../../Paths';
+import {Alerts} from '../../utils/Alerts';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -338,12 +339,12 @@ export namespace TemplateActionCreator {
                 .then((response: AxiosResponse) => {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
                     dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                    NavigationActionCreator.showSuccess('Template erfolgreich hochgeladen!');
+                    Alerts.showSuccess('Template erfolgreich hochgeladen!');
                     dispatch(AdminActionCreator.SetReportUploadProgress(0));
                 })
                 .catch(function (error: any) {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
-                    NavigationActionCreator.showError('Upload Fehlgeschlagen: ' + error.toString());
+                    Alerts.showError('Upload Fehlgeschlagen: ' + error.toString());
                     dispatch(AdminActionCreator.SetReportUploadProgress(0));
                 });
         };

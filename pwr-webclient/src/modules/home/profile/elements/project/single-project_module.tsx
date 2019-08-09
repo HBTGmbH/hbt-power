@@ -308,7 +308,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         onNewRequest={name => this.addSkill(name)}
                     />
                     <PwrFormSubCaption>Skills in this Project</PwrFormSubCaption>
-                    <div className="Pwr-Containt-Container">
+                    <div className="Pwr-Content-Container">
                         {this.project().skills.map(skill => this.toSkillChip(skill))}
                     </div>
 

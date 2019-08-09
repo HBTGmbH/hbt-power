@@ -185,7 +185,7 @@ function handleDeleteEntry(action: EntryDeleteAction, profile: Profile): Profile
 
 function handleUpdateSkill(action: SkillUpdateAction, profile: Profile): Profile {
     let skills = profile.skills;
-    let newSkills = skills.filter(s => s.id == action.skill.id);
+    let newSkills = skills.filter(s => s.id !== action.skill.id);
     newSkills.push(action.skill);
     newSkills.sort(skillByName);
     return {...profile, ...{skills: newSkills}};

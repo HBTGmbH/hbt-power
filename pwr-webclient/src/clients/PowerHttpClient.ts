@@ -3,6 +3,7 @@ import {store} from '../reducers/reducerIndex';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
 import {NavigationActionCreator} from '../reducers/navigation/NavigationActionCreator';
 import {Promise} from 'es6-promise';
+import {Alerts} from '../utils/Alerts';
 
 /**
  * A general API error. All services conform to this error.
@@ -68,7 +69,7 @@ export class PowerHttpClient {
     private handleError = (error: AxiosError): PowerApiError => {
         const apiError = this.determineError(error);
         const message = apiError.error + ": " + apiError.message;
-        NavigationActionCreator.showError(message);
+        Alerts.showError(message);
         return apiError;
     }
 }

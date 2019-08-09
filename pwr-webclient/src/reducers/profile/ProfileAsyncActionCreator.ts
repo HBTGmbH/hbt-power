@@ -14,6 +14,7 @@ import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {ProfileDataAsyncActionCreator} from '../profile-new/profile/ProfileDataAsyncActionCreator';
 import {ConsultantClient} from '../profile-new/consultant/ConsultantClient';
 import {consultantUpdateAction} from '../profile-new/consultant/actions/ConsultantUpdateAction';
+import {Alerts} from '../../utils/Alerts';
 
 const profileServiceClient = ProfileServiceClient.instance();
 
@@ -26,15 +27,15 @@ export class ProfileAsyncActionCreator {
     private static handleProfileServiceError(error: any, errorCause: string) {
         if (error.response) {
             let serviceError = error.response.data as ProfileServiceError;
-            NavigationActionCreator.showError(errorCause + ': ' + serviceError.message);
+            Alerts.showError(errorCause + ': ' + serviceError.message);
             console.error(error.response.data);
             console.error(error.response.status);
             console.error(error.response.headers);
         } else if (error.request) {
             console.error(error.request);
-            NavigationActionCreator.showError('An unknown error occurred.');
+            Alerts.showError('An unknown error occurred.');
         } else {
-            NavigationActionCreator.showError('An unknown error occurred.');
+            Alerts.showError('An unknown error occurred.');
         }
     }
 
@@ -134,7 +135,7 @@ export class ProfileAsyncActionCreator {
 
     public static logInUser(initials: string, navTarget?: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            if (initials.length <= 0) {
+            if (!initials || initials.length <= 0) {
                 dispatch(ProfileActionCreator.FailLogin());
             } else {
                 ConsultantClient.instance().getConsultant(initials).then(consultant => {

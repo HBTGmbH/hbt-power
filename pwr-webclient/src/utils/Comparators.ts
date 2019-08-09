@@ -8,10 +8,15 @@ import {BuildInfo} from '../model/metadata/BuildInfo';
 import {SkillServiceSkill} from '../model/skill/SkillServiceSkill';
 import {ComparatorBuilder, NullMode, nullSafe} from 'ts-comparator';
 import {Project} from '../reducers/profile-new/profile/model/Project';
+import {ProfileSkill} from '../reducers/profile-new/profile/model/ProfileSkill';
 
 export const PROJECTS_BY_START_DATE = ComparatorBuilder
     .comparing<Project>(nullSafe(t => t.startDate.getDate()))
     .definingNullAs(NullMode.HIGHEST)
+    .build();
+
+export const PROFILE_SKILLS_BY_NAME = ComparatorBuilder
+    .comparing<ProfileSkill>(skill => skill.name)
     .build();
 
 export class Comparators {

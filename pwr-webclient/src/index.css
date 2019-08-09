@@ -101,7 +101,7 @@ body {
     justify-content: center;
 }
 
-.Pwr-Containt-Container {
+.Pwr-Content-Container {
     flex-wrap: wrap;
     display: flex;
     align-items: start;

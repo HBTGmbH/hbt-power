@@ -4,9 +4,9 @@ export interface ProfileSkill {
     rating: number
 }
 
-export function newProfileSkill(id: number, name: string, rating: number): ProfileSkill {
+export function newProfileSkill(name: string, rating: number): ProfileSkill {
     return {
-        id: id,
+        id: null,
         name: name,
         rating: rating
     };

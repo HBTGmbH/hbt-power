@@ -28,6 +28,7 @@ import {SpecialField} from '../../../reducers/profile-new/profile/model/SpecialF
 import {Career} from '../../../reducers/profile-new/profile/model/Career';
 import {ProfileDescription} from './elements/profile-description_module';
 import {Projects} from './elements/project/projects_module';
+import {ProfileSkills} from './elements/skills/profile-skills_module';
 
 
 interface ProfileProps {
@@ -284,7 +285,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
                 {this.state.tabValue === 2 &&
                 <div className="mui-margin">
-                    <div>Here be skills</div>
+                    <ProfileSkills/>
                 </div>
                 }
             </div>

@@ -33,6 +33,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {SkillServiceError} from '../../model/skill/SkillServiceError';
 import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
+import {Alerts} from '../../utils/Alerts';
 
 
 export namespace SkillActionCreator {
@@ -231,11 +232,11 @@ export namespace SkillActionCreator {
         console.error(error);
         if (error.response && error.response.data) {
             let response: SkillServiceError = error.response.data;
-            NavigationActionCreator.showError(response.errorType + ': ' + response.message);
+            Alerts.showError(response.errorType + ': ' + response.message);
         } else if (error.response) {
-            NavigationActionCreator.showError('Generic Error ' + error.response.status);
+            Alerts.showError('Generic Error ' + error.response.status);
         } else {
-            NavigationActionCreator.showError('An unknown error occurred');
+            Alerts.showError('An unknown error occurred');
         }
     }
 
