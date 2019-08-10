@@ -1,6 +1,5 @@
 import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME, COOKIE_INITIALS_NAME} from './model/PwrConstants';
 import {isNullOrUndefined} from 'util';
-import * as Cookies from 'js-cookie';
 import {AdminActionCreator} from './reducers/admin/AdminActionCreator';
 import {store} from './reducers/reducerIndex';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
@@ -48,14 +47,14 @@ export class Paths {
     };
 
     private adminAvailableInCookies = () => {
-        return !isNullOrUndefined(Cookies.get(COOKIE_ADMIN_USERNAME)) && !isNullOrUndefined(Cookies.get(COOKIE_ADMIN_PASSWORD));
+        return !isNullOrUndefined(window.localStorage.getItem(COOKIE_ADMIN_USERNAME)) && !isNullOrUndefined(window.localStorage.getItem(COOKIE_ADMIN_PASSWORD));
     };
 
     public restorePath() {
         console.info('Current history location is ', location.pathname);
         if (this.adminAvailableInCookies()) {
             console.info('Admin is available; Performing admin login!');
-            store.dispatch(AdminActionCreator.AsyncRestoreFromCookies());
+            store.dispatch(AdminActionCreator.AsyncRestoreFromLocalStorage());
         } else if (this.userAvailableInCookies()) {
             console.info('User restored from local storage');
             const storedInitials = window.localStorage.getItem(COOKIE_INITIALS_NAME);

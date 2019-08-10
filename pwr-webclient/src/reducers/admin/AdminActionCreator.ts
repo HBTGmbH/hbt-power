@@ -280,10 +280,10 @@ export class AdminActionCreator {
     }
 
 
-    public static AsyncRestoreFromCookies() {
+    public static AsyncRestoreFromLocalStorage() {
         return function (dispatch: redux.Dispatch<AdminState>) {
-            const storedUsername = Cookies.get(COOKIE_ADMIN_USERNAME);
-            const storedPassword = Cookies.get(COOKIE_ADMIN_PASSWORD);
+            const storedUsername = window.localStorage.getItem(COOKIE_ADMIN_USERNAME);
+            const storedPassword = window.localStorage.getItem(COOKIE_ADMIN_PASSWORD);
             Promise.all([
                 dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
                 dispatch(AdminActionCreator.ChangePassword(storedPassword))]
@@ -305,8 +305,8 @@ export class AdminActionCreator {
             }
             profileServiceClient.authenticateAdmin().then(ignored => {
                 if (rememberLogin) {
-                    Cookies.set(COOKIE_ADMIN_USERNAME, username, COOKIE_ADMIN_EXPIRATION_TIME);
-                    Cookies.set(COOKIE_ADMIN_PASSWORD, password, COOKIE_ADMIN_EXPIRATION_TIME);
+                    localStorage.setItem(COOKIE_ADMIN_USERNAME, username);
+                    localStorage.setItem(COOKIE_ADMIN_PASSWORD, password);
                 }
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.INITIALS));
                 dispatch(AdminActionCreator.LogInAdmin());

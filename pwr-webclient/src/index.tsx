@@ -99,9 +99,12 @@ const newPowerTheme: ThemeOptions = {
             }
         },
         MuiTab: {
-            selected: {
-                color: '#46E6E6'
+            root: {
+                "&$selected": {
+                    color: '#46E6E6'
+                }
             }
+
         }
     }
 };
