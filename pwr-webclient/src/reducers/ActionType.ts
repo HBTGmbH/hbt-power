@@ -13,12 +13,10 @@ export enum ActionType {
 
     AddSkill = "AddSkill",
     RemoveSkillFromProject = "RemoveSkillFromProject",
-    UserLoginFailed = "UserLoginFailed",
     ReplaceExportDocuments = "ReplaceExportDocuments",
 
     SetUserInitials = "SetUserInitials",
 
-    LogOutUser = "LogOutUser",
     DeleteSkill = "DeleteSkill",
     UpdateSkillRating = "UpdateSkillRating",
     LogInUser = "LogInUser",
@@ -124,6 +122,8 @@ export enum ActionType {
 
     // == Cross Cutting
     SetRequestPending = "SetRequestPending",
+    SetLoginStatus = '[Cross Cutting] Set Login Status',
+    SetLoginError = '[Cross Cutting] Set Login Error',
 
     // == Templates
     SetTemplate = "SetTemplate",
@@ -153,6 +153,8 @@ export enum ActionType {
     EditSelectedProject = "[Profile][Project] EditSelectedProject",
     CancelEditSelectedProject = "[Profile][Project] CancelEditSelectedProject",
     AddNewProject = "[Profile][Project] Add New Project to Profile",
+
+    ResetProfileStore = "[Profile] Reset to Default",
 
     // == Consultant
     UpdateConsultantAction = "UpdateConsultantAction",

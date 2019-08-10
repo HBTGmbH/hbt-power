@@ -4,8 +4,6 @@ import * as redux from 'redux';
 import {AppBar, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
-import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {isNullOrUndefined} from 'util';
 import {LoginStatus} from '../../model/LoginStatus';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
@@ -21,6 +19,7 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import Paper from '@material-ui/core/Paper/Paper';
 import Avatar from '@material-ui/core/Avatar/Avatar';
+import {CrossCuttingAsyncActionCreator} from '../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 interface ToolbarProps {
     userInitials: string;
@@ -54,8 +53,6 @@ interface ToolbarLocalState {
 interface ToolbarDispatch {
     navigateTo(target: string): void;
 
-    logOutUser(): void;
-
     loadNetworkGraph(): void;
 
     loadConsultantClusterInfo(initials: string): void;
@@ -86,10 +83,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ToolbarDispatch {
         return {
-            logOutUser: function () {
-                dispatch(ProfileActionCreator.logOutUser());
-                dispatch(AdminActionCreator.AsyncLogOutAdmin());
-            },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),

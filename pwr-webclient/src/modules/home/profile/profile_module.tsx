@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../reducers/reducerIndex';
@@ -29,6 +28,8 @@ import {Career} from '../../../reducers/profile-new/profile/model/Career';
 import {ProfileDescription} from './elements/profile-description_module';
 import {Projects} from './elements/project/projects_module';
 import {ProfileSkills} from './elements/skills/profile-skills_module';
+import {CrossCuttingActionCreator} from '../../../reducers/crosscutting/CrossCuttingActionCreator';
+import {CrossCuttingAsyncActionCreator} from '../../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 
 interface ProfileProps {
@@ -83,7 +84,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileDispatch {
         return {
-            logInUser: (initials) => dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_PROFILE)),
+            logInUser: (initials) => dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_PROFILE)),
             loadFullProfile: (initials) => dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials)),
             preFetchSuggestions: () => dispatch(SuggestionAsyncActionCreator.requestAllNameEntities())
         };
@@ -248,26 +249,26 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     <Grid container spacing={16} className="mui-margin">
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'LANGUAGE'}
-                                                renderSingleElementInfo={this.renderLanguageInfo}/>
+                                                 renderSingleElementInfo={this.renderLanguageInfo}/>
                         </Grid>
                         < Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'TRAINING'}
-                                                renderSingleElementInfo={this.renderTrainingInfo}/>
+                                                 renderSingleElementInfo={this.renderTrainingInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'EDUCATION'}
-                                                renderSingleElementInfo={this.renderEducationInfo}/>
+                                                 renderSingleElementInfo={this.renderEducationInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'QUALIFICATION'}
-                                                renderSingleElementInfo={this.renderQualificationInfo}/>
+                                                 renderSingleElementInfo={this.renderQualificationInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderSectorInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'KEY_SKILL'}
-                                                renderSingleElementInfo={this.renderKeySkillInfo}/>
+                                                 renderSingleElementInfo={this.renderKeySkillInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>

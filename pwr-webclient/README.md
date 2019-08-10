@@ -34,6 +34,27 @@ with notifications
 * To get some testdata, simply go into the admin panel and create a new consultant. You can then begin to edit the profile.
 
 # Guidelines
+## Quick notes - dos and dont's
+* Do use the `PowerLocalizer` to render output text
+* Do use string values in enums, especially when they are used by redux. 
+## http clients
+### tl;dr usage
+To use the http clients, simply use the ``instance()`` function:
+
+```js
+ProfileServiceClient.instance()
+    .getBuildInfo()
+    .then(buildInfo => {/* do stuff*/})
+```
+### Info
+This webclient comes with a bunch of pre-built webclients that communicate with the backend APIs. Each of these clients takes
+care of cross cutting concerns:
+* If applicable, the `requestPending` value is set, indicting that a loading spinner is to be show
+* On request end, the `requestPending` value is set to `false`, removing the spinner
+* The client automatically extracts the payload, discarding meta-information of the response (which should not be needed.)
+* If an error occurs, the client will use the webclients `Alerts` to display an error to the user. 
+    * Errors are always re-thrown, so you can later catch them again to perform custom error logic.
+
 ## Framework-Agnostic Components
 * Try to use components from /modules/general as much as possible. These aim to streamline the visuals of power.
 ### Buttons

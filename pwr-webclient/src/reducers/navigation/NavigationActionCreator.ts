@@ -3,12 +3,9 @@ import {ActionType} from '../ActionType';
 import * as redux from 'redux';
 import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {Paths} from '../../Paths';
-import {ProfileActionCreator} from '../profile/ProfileActionCreator';
-import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
-import * as Cookies from 'js-cookie';
-import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
 import {storeHasUnsavedChanges} from '../../utils/PwrStoreUtils';
 import {Alerts} from '../../utils/Alerts';
+import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;
@@ -82,9 +79,7 @@ export namespace NavigationActionCreator {
                     dispatch(SetNavigationTarget(target));
                 } else {
                     navigate(Paths.APP_ROOT, dispatch);
-                    Cookies.remove(COOKIE_INITIALS_NAME);
-                    dispatch(ProfileActionCreator.logOutUser());
-                    dispatch(ViewProfileActionCreator.ResetViewState());
+                    dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
                 }
             }
             if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && hasChanges) {
@@ -101,9 +96,7 @@ export namespace NavigationActionCreator {
             switch (target) {
                 case Paths.USER_SPECIAL_LOGOUT: {
                     navigate(Paths.APP_ROOT, dispatch);
-                    Cookies.remove(COOKIE_INITIALS_NAME);
-                    dispatch(ProfileActionCreator.logOutUser());
-                    dispatch(ViewProfileActionCreator.ResetViewState());
+                    dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
                     break;
                 }
                 default:

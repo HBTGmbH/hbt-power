@@ -29,6 +29,9 @@ import {PROJECTS_BY_START_DATE} from '../../../utils/Comparators';
 
 export function reduceProfile(store: ProfileStore = emptyStore, action: AbstractAction): ProfileStore {
     switch (action.type) {
+        case ActionType.ResetProfileStore: {
+            return emptyStore;
+        }
         case ActionType.UpdateEntrySuccessful: {
             let profile = handleUpdateEntry(action as EntryUpdateAction, store.profile);
             return replaceProfile(store, profile);

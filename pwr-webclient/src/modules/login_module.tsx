@@ -1,7 +1,6 @@
 import {getImagePath} from '../API_CONFIG';
 import {Paths} from '../Paths';
 import {BottomBuildInfo} from './metadata/build-info_module';
-import Button from '@material-ui/core/Button/Button';
 import {Link} from 'react-router-dom';
 import {LoginStatus} from '../model/LoginStatus';
 import {connect} from 'react-redux';
@@ -9,15 +8,18 @@ import * as React from 'react';
 import {KeyboardEvent} from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducers/reducerIndex';
-import {ProfileAsyncActionCreator} from '../reducers/profile/ProfileAsyncActionCreator';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import FormHelperText from '@material-ui/core/FormHelperText/FormHelperText';
 import TextField from '@material-ui/core/TextField/TextField';
 import FormControl from '@material-ui/core/FormControl/FormControl';
+import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
+import {PwrRaisedButton} from './general/pwr-raised-button';
+import {ArrowRight, Person} from '@material-ui/icons';
+import {CrossCuttingAsyncActionCreator} from '../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 interface LoginProps {
     loginStatus: LoginStatus;
-    initials: string;
+    loginError: string;
 }
 
 
@@ -33,6 +35,7 @@ interface LoginLocalState {
 
 interface LoginDispatch {
     logInUser(initials: string): void;
+    clearLoginError(): void;
 }
 
 class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginDispatch, LoginLocalState> {
@@ -47,24 +50,23 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
 
     static mapStateToProps(state: ApplicationState, localProps: LoginProps): LoginProps {
         return {
-            // loginStatus: state.databaseReducer.loginStatus(),
-            loginStatus: LoginStatus.INITIALS,
-            initials: state.profileStore.consultant.initials
+            loginStatus: state.crossCutting.loginStatus,
+            loginError: state.crossCutting.loginError
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): LoginDispatch {
         return {
-            logInUser: (initials) => dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_HOME)),
+            logInUser: (initials) => dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_HOME)),
+            clearLoginError: () => {
+                dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.INITIALS));
+                dispatch(CrossCuttingActionCreator.SetLoginError(''));
+            }
         };
     }
 
-    componentDidMount() {
-        //TODO  get saved initials?
-    }
-
     private hasError = (): boolean => {
-        return this.props.loginStatus == LoginStatus.REJECTED || this.props.loginStatus == LoginStatus.INVALID_NAME;
+        return this.props.loginStatus == LoginStatus.REJECTED;
     };
 
     private handleTextChange = (value: string) => {
@@ -75,8 +77,15 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
         if (event.key == 'Enter' && !this.hasError()) {
-            this.props.logInUser(this.props.initials);
+            this.logInUser();
         }
+    };
+
+    private handleInitialsChange = (value: string) => {
+        this.setState({
+            initials: value
+        });
+      this.props.clearLoginError();
     };
 
     private logInUser = () => {
@@ -88,14 +97,11 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
             <TextField
                 label={PowerLocalize.get('Initials.Singular')}
                 value={this.state.initials}
-                onChange={(e) => this.handleTextChange(e.target.value)}
+                onChange={(e) => this.handleInitialsChange(e.target.value)}
                 onKeyPress={this.handleInputFieldKeyPress}
             />
-            {this.props.loginStatus === LoginStatus.REJECTED ?
-                <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.LoginFailed')}</FormHelperText> :
-                <></>}
-            {this.props.loginStatus === LoginStatus.INVALID_NAME ?
-                <FormHelperText id="login-error-text">{PowerLocalize.get('UserLogin.InvalidName')}</FormHelperText> :
+            {this.hasError() ?
+                <FormHelperText id="login-error-text">{this.props.loginError}</FormHelperText> :
                 <></>}
         </FormControl>;
     };
@@ -109,20 +115,21 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
                             <img className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
                         </div>
                         <div className="vertical-align">
-                            <h1>Profilauswahl HBT Power</h1>
+                            <h1>{PowerLocalize.get('Login.Title')}</h1>
                         </div>
-                        <div className="fittingContainer">
-                            <div className="vertical-align">
-                                {this.renderInputField()}
+                        <div className="vertical-align">
+                            <div className="fittingContainer">
+                                <div className="vertical-align">
+                                    {this.renderInputField()}
+                                </div>
+                                <br/>
+                                <PwrRaisedButton color='primary' icon={<ArrowRight/>} onClick={this.logInUser} text={PowerLocalize.get('Login.SelectProfile')}/>
+                                <br/>
+                                <br/>
+                                <Link to={Paths.ADMIN_LOGIN}>
+                                    <PwrRaisedButton color='primary' icon={<Person/>} text={PowerLocalize.get('Login.AdminSpace')}/>
+                                </Link>
                             </div>
-                            <br/>
-                            <Button variant={'contained'}
-                                    onClick={this.logInUser}
-                                    disabled={this.hasError()}
-                                    color={'primary'}>Weiter</Button>
-                            <br/>
-                            <br/>
-                            <Link to={Paths.ADMIN_LOGIN}><Button variant={'text'}>Admin</Button></Link>
                         </div>
                     </div>
                 </div>

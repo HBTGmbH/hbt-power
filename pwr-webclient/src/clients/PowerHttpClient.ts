@@ -1,7 +1,6 @@
 import {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
 import {store} from '../reducers/reducerIndex';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
-import {NavigationActionCreator} from '../reducers/navigation/NavigationActionCreator';
 import {Promise} from 'es6-promise';
 import {Alerts} from '../utils/Alerts';
 

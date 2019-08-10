@@ -40,6 +40,7 @@ import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {PowerApiError} from '../../clients/PowerHttpClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
 import {Alerts} from '../../utils/Alerts';
+import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = new SkillServiceClient();
@@ -337,7 +338,7 @@ export class AdminActionCreator {
 
     public static AsyncRedirectToUser(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_HOME));
+            dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_HOME));
         };
     }
 

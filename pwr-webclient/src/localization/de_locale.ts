@@ -107,7 +107,6 @@ export const de_locale: any = {
     'SkillNotificationDialog.Title': 'Skill Meldung Bearbeiten',
     'ConsultantTile.EditProfile': 'Profil bearbeiten',
     'ConsultantTile.EditConsultant': 'Berater bearbeiten',
-    'UserLogin.LoginFailed': 'Login fehlgeschlagen',
     'UserLogin.InvalidName': 'Ungültiges Kürzel',
     'SkillTree.SearchAndAddSkill': 'Skill suchen/hinzufügen',
     'AdminClient.Login.Remember': 'Login merken',
@@ -237,6 +236,10 @@ export const de_locale: any = {
     'Generator.Template.New': 'Neu',
     'Action.Generate.NewTemplate': 'Neues Template',
     'Generator.DescriptionPlaceholder': 'Wähle ein Template für den Export.',
+
+    'Login.Title': 'Profilauswahl HBT Power',
+    'Login.SelectProfile': 'Profil Öffnen',
+    'Login.AdminSpace': 'Admin-Bereich',
 
     // == Specific Specific Localizations == //
     'HBT.CompanyPosition': 'HBT Stellung',

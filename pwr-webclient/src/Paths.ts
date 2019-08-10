@@ -1,16 +1,11 @@
-import {
-    COOKIE_ADMIN_PASSWORD,
-    COOKIE_ADMIN_USERNAME,
-    COOKIE_INITIALS_EXPIRATION_TIME,
-    COOKIE_INITIALS_NAME
-} from './model/PwrConstants';
+import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME, COOKIE_INITIALS_NAME} from './model/PwrConstants';
 import {isNullOrUndefined} from 'util';
 import * as Cookies from 'js-cookie';
-import {ProfileAsyncActionCreator} from './reducers/profile/ProfileAsyncActionCreator';
 import {AdminActionCreator} from './reducers/admin/AdminActionCreator';
 import {store} from './reducers/reducerIndex';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
 import {CONFIG} from './Config';
+import {CrossCuttingAsyncActionCreator} from './reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 declare const POWER_APP_PATH: string;
 
@@ -64,7 +59,7 @@ export class Paths {
         } else if (this.userAvailableInCookies()) {
             console.info('User restored from local storage');
             const storedInitials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
-            store.dispatch(ProfileAsyncActionCreator.logInUser(storedInitials, location.pathname));
+            store.dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(storedInitials, location.pathname));
         } else {
             store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
         }

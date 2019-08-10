@@ -18,18 +18,6 @@ export class ProfileActionCreator {
         };
     }
 
-    public static logOutUser(): AbstractAction {
-        return {
-            type: ActionType.LogOutUser
-        };
-    }
-
-    public static FailLogin(): AbstractAction {
-        return {
-            type: ActionType.UserLoginFailed
-        };
-    }
-
     public static SetUserInitials(initials: string): ChangeStringValueAction {
         return {
             type: ActionType.SetUserInitials,

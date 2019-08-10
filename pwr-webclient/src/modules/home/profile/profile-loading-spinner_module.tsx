@@ -13,7 +13,7 @@ class LoadingSpinnerModule extends React.Component<ProfileSnackbarProps, {}> {
 
     static mapStateToProps(state: ApplicationState, localProps: {}): ProfileSnackbarProps {
         return {
-            requestPending: state.crossCutting.requestPending()
+            requestPending: state.crossCutting.requestPending
         };
     }
 
