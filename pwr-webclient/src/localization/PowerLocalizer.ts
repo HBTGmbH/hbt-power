@@ -5,6 +5,7 @@ import {isNullOrUndefined} from 'util';
 import {StringUtils} from '../utils/StringUtil';
 import formatString = StringUtils.formatString;
 import axios, {AxiosError} from 'axios';
+import {CONFIG} from '../Config';
 
 /**
  * Quick localizer that localizes localizations. For localizing locales.
@@ -43,7 +44,7 @@ export class PowerLocalize {
     }
 
     private static resolveLocale(locale: string) {
-        const basePath = POWER_LOCALE_PATH;
+        const basePath = CONFIG.LOCALE_PATH;
         axios.get(`${basePath}/${locale}.json`)
             .then(response => response.data)
             .then(localeData => PowerLocalize.localization = localeData)
