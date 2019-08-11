@@ -1,17 +1,15 @@
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
 import {Template, TemplateSlice} from '../../model/view/Template';
-import {AbstractAction} from '../profile/database-actions';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ReportService, TemplateService} from '../../API_CONFIG';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
-import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {string} from 'prop-types';
-import {Paths} from '../../Paths';
 import {Alerts} from '../../utils/Alerts';
+import {AbstractAction} from '../BaseActions';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -46,11 +44,6 @@ export namespace TemplateActionCreator {
         };
     }
 
-    /**
-     * loescht die gespeicherten templates - local
-     * @returns {AbstractAction}
-     * @constructor
-     */
     export function ClearTemplates(): AbstractAction {
         return {
             type: ActionType.ClearTemplates,

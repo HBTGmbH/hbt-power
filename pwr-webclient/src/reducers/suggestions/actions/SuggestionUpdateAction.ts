@@ -1,7 +1,7 @@
-import {AbstractAction} from '../../profile/database-actions';
 import {NameEntity} from '../../profile-new/profile/model/NameEntity';
 import {SuggestionField} from '../model/SuggestionField';
 import {ActionType} from '../../ActionType';
+import {AbstractAction} from '../../BaseActions';
 
 export interface SuggestionUpdateAction extends AbstractAction {
     field: SuggestionField,

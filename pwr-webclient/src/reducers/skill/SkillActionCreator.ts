@@ -23,17 +23,14 @@ import {
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
-import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../profile/database-actions';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {isNullOrUndefined} from 'util';
-import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {SkillServiceError} from '../../model/skill/SkillServiceError';
 import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
 import {Alerts} from '../../utils/Alerts';
+import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 
 
 export namespace SkillActionCreator {

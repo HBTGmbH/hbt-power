@@ -1,10 +1,4 @@
 import {AdminState} from '../../model/admin/AdminState';
-import {
-    AbstractAction,
-    ChangeBoolValueAction,
-    ChangeNumberValueAction,
-    ChangeStringValueAction
-} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeLoginStatusAction,
@@ -29,6 +23,7 @@ import {Comparators} from '../../utils/Comparators';
 import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
+import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 
 export class AdminReducer {
 

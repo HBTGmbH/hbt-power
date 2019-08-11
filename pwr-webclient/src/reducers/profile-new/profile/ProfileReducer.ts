@@ -1,18 +1,11 @@
 import {emptyStore, ProfileStore} from '../ProfileStore';
 import {ActionType} from '../../ActionType';
-import {EntryUpdateAction} from './actions/EntryUpdateAction';
 import {Profile} from './model/Profile';
-import {EntryDeleteAction} from './actions/EntryDeleteAction';
 import {ProfileEntry} from './model/ProfileEntry';
 import {ComparatorBuilder} from 'ts-comparator';
 import {ProfileEntryField} from './model/ProfileEntryField';
-import {SkillUpdateAction} from './actions/SkillUpdateAction';
 import {ProfileSkill} from './model/ProfileSkill';
-import {SkillDeleteAction} from './actions/SkillDeleteAction';
 import {emptyProject, Project} from './model/Project';
-import {EntryLoadAction} from './actions/EntryLoadAction';
-import {SkillLoadAction} from './actions/SkillLoadAction';
-import {BaseProfileLoadAction} from './actions/BaseProfileLoadAction';
 import {ConsultantUpdateAction} from '../consultant/actions/ConsultantUpdateAction';
 import {isNullOrUndefined} from 'util';
 import {
@@ -22,9 +15,18 @@ import {
     SelectProjectAction,
     SetEditingProjectAction
 } from './actions/ProjectActions';
-import {AbstractAction} from '../../profile/database-actions';
 import {immutableUnshift, replaceAtIndex} from '../../../utils/ImmutableUtils';
 import {PROJECTS_BY_START_DATE} from '../../../utils/Comparators';
+import {AbstractAction} from '../../BaseActions';
+import {
+    BaseProfileLoadAction,
+    EntryDeleteAction,
+    EntryLoadAction,
+    EntryUpdateAction,
+    SkillDeleteAction,
+    SkillLoadAction,
+    SkillUpdateAction
+} from './actions/ProfileActions';
 
 
 export function reduceProfile(store: ProfileStore = emptyStore, action: AbstractAction): ProfileStore {
@@ -108,13 +110,12 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
         case ActionType.CancelEditSelectedProject: {
             if (store.selectedProject.id === null) {
                 return cancelEditOnNewProject(store);
-            }
-            else {
+            } else {
                 return cancelEditMode(store);
             }
         }
         case ActionType.AddNewProject: {
-           return handleAddProject(store);
+            return handleAddProject(store);
         }
     }
     return store;
@@ -130,7 +131,7 @@ function handleAddProject(store: ProfileStore): ProfileStore {
     // 3. Enter edit mode
     const withNewProject = addProject(store, emptyProject());
     const withNewProjectSelected = handleSelectProject(0, withNewProject);
-    return handleSetEditMode(withNewProjectSelected, true)
+    return handleSetEditMode(withNewProjectSelected, true);
 }
 
 function handleConsultantUpdate(action: ConsultantUpdateAction, store: ProfileStore): ProfileStore {

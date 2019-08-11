@@ -6,3 +6,10 @@ export function nameEntityName(nameEntity: NameEntity) {
     }
     return nameEntity.name;
 }
+
+export function arrayDefault<T>(value: Array<T> | null | undefined): Array<T> {
+    if (!value) {
+        return [];
+    }
+    return value;
+}

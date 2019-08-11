@@ -1,5 +1,4 @@
 import * as redux from 'redux';
-import {NavigationActionCreator} from '../../navigation/NavigationActionCreator';
 import {ConsultantClient} from './ConsultantClient';
 import {ApplicationState} from '../../reducerIndex';
 import {consultantUpdateAction} from './actions/ConsultantUpdateAction';

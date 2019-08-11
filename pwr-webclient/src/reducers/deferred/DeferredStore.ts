@@ -1,4 +1,4 @@
-import {AbstractAction} from '../profile/database-actions';
+import {AbstractAction} from '../BaseActions';
 
 export interface DeferredStore {
     deferredAction: AbstractAction;

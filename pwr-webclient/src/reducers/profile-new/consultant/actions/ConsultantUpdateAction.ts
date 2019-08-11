@@ -1,6 +1,6 @@
-import {AbstractAction} from '../../../profile/database-actions';
 import {Consultant} from '../model/Consultant';
 import {ActionType} from '../../../ActionType';
+import {AbstractAction} from '../../../BaseActions';
 
 export interface ConsultantUpdateAction extends AbstractAction {
     consultant: Consultant;

@@ -15,7 +15,7 @@ import {newQualification} from './model/Qualification';
 import {newIndustrialSector} from './model/IndustrialSector';
 import {newTraining} from './model/FurtherTraining';
 import {Dispatch} from 'redux';
-import {AbstractAction} from '../../profile/database-actions';
+import {AbstractAction} from '../../BaseActions';
 
 export class ProfileTypeDataMapper {
 

@@ -1,8 +1,8 @@
 import {ViewProfileStore} from '../../model/view/ViewProfileStore';
-import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {ViewProfileActions} from './ViewProfileActions';
+import {AbstractAction} from '../BaseActions';
 
 export namespace ViewProfileReducer {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;

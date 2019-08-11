@@ -1,5 +1,5 @@
-import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
+import {AbstractAction} from '../BaseActions';
 
 export interface DeferActionAction {
     type: ActionType.DeferAction;

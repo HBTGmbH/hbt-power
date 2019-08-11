@@ -1,11 +1,11 @@
-import {AbstractAction} from '../../profile/database-actions';
 import {ActionType} from '../../ActionType';
+import {AbstractAction} from '../../BaseActions';
 
 export interface SkillSuggestionUpdateAction extends AbstractAction {
-    payload: Array<String>;
+    payload: Array<string>;
 }
 
-export function skillSuggestionUpdateAction(payload: Array<String>): SkillSuggestionUpdateAction {
+export function skillSuggestionUpdateAction(payload: Array<string>): SkillSuggestionUpdateAction {
     return {
         type: ActionType.UpdateSkillSuggestionField,
         payload: payload

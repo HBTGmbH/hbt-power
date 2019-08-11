@@ -1,6 +1,6 @@
-import {AbstractAction} from '../../../profile/database-actions';
 import {Project} from '../model/Project';
 import {ActionType} from '../../../ActionType';
+import {AbstractAction} from '../../../BaseActions';
 
 export interface ProjectUpdateAction extends AbstractAction {
     project: Project;

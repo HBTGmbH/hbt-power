@@ -1,9 +1,3 @@
-import {
-    AbstractAction,
-    ChangeBoolValueAction,
-    ChangeNumberValueAction,
-    ChangeStringValueAction
-} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import {APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
@@ -23,11 +17,9 @@ import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {ProfileAsyncActionCreator} from '../profile/ProfileAsyncActionCreator';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {isNullOrUndefined} from 'util';
-import {COOKIE_ADMIN_EXPIRATION_TIME, COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
-import * as Cookies from 'js-cookie';
+import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
 import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
@@ -41,6 +33,8 @@ import {PowerApiError} from '../../clients/PowerHttpClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
 import {Alerts} from '../../utils/Alerts';
 import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
+import {SuggestionAsyncActionCreator} from '../suggestions/SuggestionAsyncActionCreator';
+import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = new SkillServiceClient();
@@ -454,7 +448,7 @@ export class AdminActionCreator {
     public static AsyncChangeSkillName(oldName: string, newName: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             profileServiceClient.renameSkill(oldName, newName)
-                .then(() => dispatch(ProfileAsyncActionCreator.getAllCurrentlyUsedSkills()))
+                .then(() => dispatch(SuggestionAsyncActionCreator.requestAllSkills()))
                 .then(() => Alerts.showSuccess('Renamed ' + oldName + ' to ' + newName))
                 .catch(console.error);
         };

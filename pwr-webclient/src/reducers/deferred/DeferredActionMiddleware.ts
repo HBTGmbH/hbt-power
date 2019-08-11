@@ -1,8 +1,6 @@
 import {MiddlewareAPI} from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {ActionType} from '../ActionType';
-import {ProfileStore} from '../profile-new/ProfileStore';
-import {areEqualArrays, areEqualByName, areEqualSkillsByName} from '../../utils/PwrEqualUtils';
 import {deferAction} from './DeferredActions';
 import {selectedProjectHasChanged, selectIndexHasChanged} from '../../utils/PwrStoreUtils';
 
@@ -10,7 +8,6 @@ interface DeferrableAction<AppState> {
     type: ActionType;
     condition?: (state: AppState, action: any) => boolean;
 }
-
 
 
 const deferredActions: DeferrableAction<ApplicationState>[] = [

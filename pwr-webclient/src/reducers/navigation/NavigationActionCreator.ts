@@ -1,4 +1,3 @@
-import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
 import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
@@ -6,6 +5,7 @@ import {Paths} from '../../Paths';
 import {storeHasUnsavedChanges} from '../../utils/PwrStoreUtils';
 import {Alerts} from '../../utils/Alerts';
 import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
+import {AbstractAction} from '../BaseActions';
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;

@@ -1,7 +1,6 @@
 import {Promise} from 'es6-promise';
 import {APIConsultant} from '../model/APIProfile';
 import axios, {AxiosRequestConfig} from 'axios';
-import {NameEntity} from '../model/NameEntity';
 import {PowerHttpClient} from './PowerHttpClient';
 import {APIBuildInfo} from '../model/metadata/BuildInfo';
 import {APIAdminNotification} from '../model/admin/AdminNotification';
@@ -66,60 +65,6 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + '/consultants/' + consultant.initials;
         this.beginRequest();
         return this.preProcess(axios.patch(url, consultant));
-    };
-
-    public getQualificationSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/qualifications';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getLanguageSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/languages';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getEducationSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/educations';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getTrainingSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/trainings';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getSectorSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/sectors';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getKeySkillSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/keyskills';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getCareerSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/career';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getProjectRoleSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/projectroles';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
-    };
-
-    public getCompanySuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/companies';
-        this.beginRequest();
-        return this.preProcess(axios.get(url));
     };
 
     public getSkillSuggestions = (): Promise<Array<String>> => {

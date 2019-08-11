@@ -1,7 +1,7 @@
 import {CrossCuttingStore, empty} from '../../model/crosscutting/CrossCuttingStore';
 import {ActionType} from '../ActionType';
 import {SetLoginErrorAction, SetLoginStatusAction, SetRequestPendingAction} from './CrossCuttingActionCreator';
-import {AbstractAction} from '../profile/database-actions';
+import {AbstractAction} from '../BaseActions';
 
 
 export namespace CrossCuttingReducer {

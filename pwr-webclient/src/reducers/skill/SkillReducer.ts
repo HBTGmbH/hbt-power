@@ -1,10 +1,4 @@
 import {SkillStore} from '../../model/skill/SkillStore';
-import {
-    AbstractAction,
-    ChangeBoolValueAction,
-    ChangeNumberValueAction,
-    ChangeStringValueAction
-} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {SkillActions} from './SkillActions';
@@ -14,6 +8,7 @@ import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoi
 import {SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {SkillTreeNode} from '../../model/skill/SkillTreeNode';
 import {SkillTreeBuilder} from './SkillTreeBuilder';
+import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 
 export namespace SkillReducer {
     import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;

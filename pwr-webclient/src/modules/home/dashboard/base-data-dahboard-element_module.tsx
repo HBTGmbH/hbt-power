@@ -48,9 +48,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BaseDataDashboardElementDispatch {
         return {
-            requestSingleProfile: function (initials: string = 'ppp') {
-                console.log('initials: ', initials);
-                //dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+            requestSingleProfile: function (initials: string = 'n/a') {
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),

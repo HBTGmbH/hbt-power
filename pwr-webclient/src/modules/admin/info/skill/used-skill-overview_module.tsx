@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {List, ListItem, Paper, TextField} from '@material-ui/core';
-import {ProfileAsyncActionCreator} from '../../../../reducers/profile/ProfileAsyncActionCreator';
 import {Comparators} from '../../../../utils/Comparators';
 import {StatisticsActionCreator} from '../../../../reducers/statistics/StatisticsActionCreator';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
@@ -14,6 +13,7 @@ import {EditSkillDialog} from './edit-skill-dialog_module';
 import {StringUtils} from '../../../../utils/StringUtil';
 import {UsedSkillInfoBox} from './used-skill-info-box';
 import {toArray} from '../../../../utils/ImmutableUtils';
+import {SuggestionAsyncActionCreator} from '../../../../reducers/suggestions/SuggestionAsyncActionCreator';
 import filterFuzzy = StringUtils.filterFuzzy;
 
 
@@ -65,7 +65,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): UsedSkillOverviewDispatch {
         return {
-            loadAllUsedSkills: () => dispatch(ProfileAsyncActionCreator.getAllCurrentlyUsedSkills()),
+            loadAllUsedSkills: () => dispatch(SuggestionAsyncActionCreator.requestAllSkills()),
             getSkillUsageInfo: skillName => dispatch(StatisticsActionCreator.AsyncRequestSkillUsageInfo(skillName)),
             getSkillHierarchy: skillName => dispatch(SkillActionCreator.AsyncRequestSkillHierarchy(skillName))
         };

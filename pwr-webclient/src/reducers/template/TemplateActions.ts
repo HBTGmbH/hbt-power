@@ -1,5 +1,5 @@
-import {AbstractAction} from '../profile/database-actions';
 import {Template} from '../../model/view/Template';
+import {AbstractAction} from '../BaseActions';
 
 
 export namespace TemplateActions {

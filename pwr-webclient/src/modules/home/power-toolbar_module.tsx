@@ -3,9 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {AppBar, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
 import {LoginStatus} from '../../model/LoginStatus';
-import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
@@ -19,7 +17,6 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import Paper from '@material-ui/core/Paper/Paper';
 import Avatar from '@material-ui/core/Avatar/Avatar';
-import {CrossCuttingAsyncActionCreator} from '../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 interface ToolbarProps {
     userInitials: string;

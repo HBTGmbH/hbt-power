@@ -1,8 +1,8 @@
 import {NavigationStore} from '../../model/navigation/NavigationStore';
-import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {SetCurrentLocationAction, SetNavigationTargetAction} from './NavigationActionCreator';
+import {AbstractAction} from '../BaseActions';
 
 
 export namespace NavigationReducer {

@@ -78,7 +78,7 @@ export class SuggestionServiceClient extends PowerHttpClient {
         return this.preProcess(axios.get(url));
     };
 
-    public getSkillSuggestions = (): Promise<Array<String>> => {
+    public getSkillSuggestions = (): Promise<Array<string>> => {
         const url = this.base() + '/suggestions/skills';
         this.beginRequest();
         return this.preProcess(axios.get(url));

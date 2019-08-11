@@ -79,16 +79,6 @@ export class NameEntity {
         return this.id(id).name(name).isNew(isNew).type(type);
     }
 
-    /**
-     * Creates an {@link NameEntity} that can be considered as 'new'.
-     *
-     * A 'new' entity will be persisted as new entity during an API Save operation of a whole profile. To achieve this,
-     * the {@link NameEntity} will be translated to an {@link NameEntity} with the id field set to <code>null</code>.
-     * @param name of the new entity.
-     */
-    public static createNew(name: string): NameEntity {
-        return new NameEntity(NEW_ENTITY_PREFIX + String(NameEntity.CURRENT_LOCAL_ID++), name, true, null);
-    }
 
     /**
      * Creates an {@link APINameEntity} and returns it.

@@ -28,7 +28,6 @@ import {Career} from '../../../reducers/profile-new/profile/model/Career';
 import {ProfileDescription} from './elements/profile-description_module';
 import {Projects} from './elements/project/projects_module';
 import {ProfileSkills} from './elements/skills/profile-skills_module';
-import {CrossCuttingActionCreator} from '../../../reducers/crosscutting/CrossCuttingActionCreator';
 import {CrossCuttingAsyncActionCreator} from '../../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 
@@ -58,10 +57,7 @@ interface ProfileLocalState {
 }
 
 interface ProfileDispatch {
-    logInUser(initials: string): void;
-
     loadFullProfile(initials: string): void;
-
     preFetchSuggestions(): void;
 }
 
@@ -84,7 +80,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileDispatch {
         return {
-            logInUser: (initials) => dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_PROFILE)),
             loadFullProfile: (initials) => dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials)),
             preFetchSuggestions: () => dispatch(SuggestionAsyncActionCreator.requestAllNameEntities())
         };
@@ -94,11 +89,13 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials;
     };
 
-    componentDidMount() {
-        if ((isNullOrUndefined(this.props.loggedInUser) || isNullOrUndefined(this.props.profile))
-            && !isNullOrUndefined(window.localStorage.getItem(COOKIE_INITIALS_NAME))) {
-            this.props.logInUser(window.localStorage.getItem(COOKIE_INITIALS_NAME));
+    componentDidUpdate(prevProps: Readonly<ProfileProps & ProfileLocalProps & ProfileDispatch>, prevState: Readonly<ProfileLocalState>, snapshot?: any): void {
+        if (prevProps.loggedInUser.initials !== this.props.loggedInUser.initials) {
+            this.props.loadFullProfile(this.props.loggedInUser.initials);
         }
+    }
+
+    componentDidMount() {
         this.props.preFetchSuggestions();
     }
 

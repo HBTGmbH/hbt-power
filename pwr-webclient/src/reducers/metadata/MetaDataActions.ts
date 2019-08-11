@@ -1,5 +1,4 @@
 import {APIBuildInfo, BuildInfo} from '../../model/metadata/BuildInfo';
-import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import {ApplicationState} from '../reducerIndex';
 import * as redux from 'redux';
@@ -9,6 +8,7 @@ import {getReportBuildInfo, getSkillBuildInfo, getStatisticsBuildsInfo, ViewProf
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {ClientClient} from '../../clients/ClientClient';
+import {AbstractAction} from '../BaseActions';
 
 export interface AddOrReplaceBuildInfoAction extends AbstractAction {
     service: string;

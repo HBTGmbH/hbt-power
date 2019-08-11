@@ -1,5 +1,4 @@
 import {StatisticsStore} from '../../model/statistics/StatisticsStore';
-import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
     AddNameEntityUsageInfoAction,
@@ -14,6 +13,7 @@ import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import * as Immutable from 'immutable';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {AbstractAction} from '../BaseActions';
 
 
 export class StatisticsReducer {

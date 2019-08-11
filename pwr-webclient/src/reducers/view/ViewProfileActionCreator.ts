@@ -6,11 +6,10 @@ import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ViewProfileService} from '../../API_CONFIG';
 import {SortableEntryField, SortableEntryType} from '../../model/view/NameComparableType';
-import {AbstractAction} from '../profile/database-actions';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
-import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
-import { Alerts } from '../../utils/Alerts';
+import {Alerts} from '../../utils/Alerts';
+import {AbstractAction} from '../BaseActions';
 
 export namespace ViewProfileActionCreator {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;

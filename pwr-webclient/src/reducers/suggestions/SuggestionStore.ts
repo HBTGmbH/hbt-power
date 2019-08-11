@@ -10,7 +10,7 @@ export interface SuggestionStore {
     allCareers: Array<NameEntity>;
     allCompanies: Array<NameEntity>;
     allProjectRoles: Array<NameEntity>;
-    allSkills:Array<String>;
+    allSkills: Array<string>;
 }
 
 export const emptyStore: SuggestionStore = {
@@ -23,5 +23,5 @@ export const emptyStore: SuggestionStore = {
     allCareers: [],
     allCompanies: [],
     allProjectRoles: [],
-    allSkills:[]
+    allSkills: []
 };

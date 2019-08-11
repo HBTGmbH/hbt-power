@@ -1,13 +1,9 @@
 import * as redux from 'redux';
 import {ApplicationState} from '../../reducerIndex';
 import {NavigationActionCreator} from '../../navigation/NavigationActionCreator';
-import {entryUpdateAction} from './actions/EntryUpdateAction';
 import {Language} from './model/Language';
 import {Profile} from './model/Profile';
 import {ProfileEntry} from './model/ProfileEntry';
-import {entryDeleteAction} from './actions/EntryDeleteAction';
-import {skillDeleteAction} from './actions/SkillDeleteAction';
-import {skillUpdateAction} from './actions/SkillUpdateAction';
 import {Project} from './model/Project';
 import {ProfileSkill} from './model/ProfileSkill';
 import {Qualification} from './model/Qualification';
@@ -17,14 +13,18 @@ import {Career} from './model/Career';
 import {FurtherTraining} from './model/FurtherTraining';
 import {Education} from './model/Education';
 import {ProfileUpdateServiceClient} from './client/ProfileUpdateServiceClient';
-import {baseProfileLoadAction} from './actions/BaseProfileLoadAction';
-import {entryLoadAction} from './actions/EntryLoadAction';
-import {skillLoadAction} from './actions/SkillLoadAction';
 import {isNullOrUndefined} from 'util';
 import {projectDeleteAction, projectLoadAction, projectUpdateSuccessAction} from './actions/ProjectActions';
-import {AbstractAction} from '../../profile/database-actions';
 import success = NavigationActionCreator.success;
 import {Alerts} from '../../../utils/Alerts';
+import {
+    baseProfileLoadAction,
+    entryDeleteAction,
+    entryLoadAction,
+    entryUpdateAction, skillDeleteAction,
+    skillLoadAction, skillUpdateAction
+} from './actions/ProfileActions';
+import {AbstractAction} from '../../BaseActions';
 
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
 

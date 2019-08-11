@@ -12,6 +12,7 @@ import {Paths} from '../../Paths';
 import {CrossCuttingActionCreator} from './CrossCuttingActionCreator';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
 import {PowerApiError} from '../../clients/PowerHttpClient';
+import {ProfileDataAsyncActionCreator} from '../profile-new/profile/ProfileDataAsyncActionCreator';
 
 
 export namespace CrossCuttingAsyncActionCreator {
@@ -43,7 +44,6 @@ export namespace CrossCuttingAsyncActionCreator {
                         dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));
                     }
                 }).catch((error: PowerApiError) => {
-                    console.log('ApiError?', error);
                     let errorMessage = `Can't login as ${initials}`;
                     if (error.status === 404) {
                         errorMessage = `Profile for ${initials} does not exist.`;

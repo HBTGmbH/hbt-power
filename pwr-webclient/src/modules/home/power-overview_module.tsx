@@ -85,7 +85,6 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerOverviewDispatch {
         return {
             requestSingleProfile: function (initials: string) {
-                //dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),

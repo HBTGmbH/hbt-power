@@ -1,6 +1,6 @@
-import {AbstractAction} from '../profile/database-actions';
-import {ActionType} from '../ActionType';
 import {LoginStatus} from '../../model/LoginStatus';
+import {ActionType} from '../ActionType';
+import {AbstractAction} from '../BaseActions';
 
 export interface SetRequestPendingAction extends AbstractAction {
     type: ActionType.SetRequestPending;
