@@ -8,12 +8,12 @@ import * as redux from 'redux';
 import {isNullOrUndefined} from 'util';
 import {ProfileDataAsyncActionCreator} from '../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {PROFILE_DESCRIPTION_LENGTH} from '../../../../model/PwrConstants';
+import {setDescription} from '../../../../reducers/profile-new/profile/actions/ProfileActions';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 
 interface ProfileDescriptionProps {
     description: string;
     maxCharacters: number;
-    baseProfile: BaseProfile;
-    initials: string;
 }
 
 interface ProfileDescriptionLocalProps {
@@ -21,74 +21,65 @@ interface ProfileDescriptionLocalProps {
 }
 
 interface ProfileDescriptionState {
-    text: string;
-    edit: boolean;
+    dirty: boolean;
 }
 
 interface ProfileDescriptionDispatch {
-    saveProfile(initials: string, description: string): void;
+    saveDescription(description: string): void;
+    setDescription(description: string): void;
 }
 
 class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps & ProfileDescriptionLocalProps & ProfileDescriptionDispatch, ProfileDescriptionState> {
 
-    constructor(props) {
+    constructor(props: ProfileDescriptionProps & ProfileDescriptionLocalProps & ProfileDescriptionDispatch) {
         super(props);
         this.state = {
-            text: '',
-            edit: false
-        };
+            dirty: false
+        }
     }
 
     public static mapStateToProps(state: ApplicationState, localProps: ProfileDescriptionLocalProps): ProfileDescriptionProps {
-        const description = !isNullOrUndefined(state.profileStore.profile) ? state.profileStore.profile.description : 'Not Found';
-        let baseProfile: BaseProfile = null;
-        if (!isNullOrUndefined(state.profileStore.profile)) {
-            baseProfile = newBaseProfile(state.profileStore.profile.id, state.profileStore.profile.description, state.profileStore.profile.lastEdited);
-        }
-        const initials = !isNullOrUndefined(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
-
+        const description = "n/a" && state.profileStore.profile.description;
         return {
             description: description,
             maxCharacters: PROFILE_DESCRIPTION_LENGTH,
-            baseProfile: baseProfile,
-            initials: initials
         };
     }
 
     public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileDescriptionDispatch {
         return {
-            saveProfile: (initials, description) => dispatch(ProfileDataAsyncActionCreator.saveDescription(initials, description)) //TODO
+            saveDescription: description => dispatch(ProfileDataAsyncActionCreator.saveDescription(description)),
+            setDescription: description => dispatch(setDescription(description))
         };
     }
 
     private handleSave = () => {
-        this.props.saveProfile(this.props.initials, this.state.text);
+        if (this.state.dirty) {
+            this.props.saveDescription(this.props.description);
+            // We'll just assume that the save is always successful (for now).
+            this.setState({
+                dirty: false
+            })
+        }
     };
 
     private handleTextBlur = () => {
-        if (this.props.description != this.state.text) {
-            this.handleSave();
-        }
+        this.handleSave();
     };
 
     private handleTextChange = (event: React.FormEvent<HTMLSelectElement>) => {
         let charCount: number = event.currentTarget.value.length;
         let newString: string = event.currentTarget.value.substring(0, this.props.maxCharacters);
+        this.props.setDescription(newString);
         this.setState({
-            text: newString
-        });
+            dirty: true
+        })
     };
 
     private progressValue = () => {
-        return (this.state.text.length / this.props.maxCharacters) * 100;
+        return (this.props.description.length / this.props.maxCharacters) * 100;
     };
 
-    private handleOnClick = () => {
-        this.setState({
-            text: this.props.description,
-            edit: true
-        });
-    };
 
     render() {
         return (
@@ -100,17 +91,14 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
                     rows={10}
                     onBlur={this.handleTextBlur}
                     onChange={(e: any) => this.handleTextChange(e)}
-                    value={this.state.edit ? this.state.text : this.props.description}
-                    onClick={() => {
-                        this.handleOnClick();
-                    }}
+                    value={this.props.description}
                 />
                 <LinearProgress
                     value={this.progressValue()}
                     variant='determinate'
                     color='primary'
                 />
-                <div>Zeichen: {this.state.text.length}/{this.props.maxCharacters}</div>
+                <div>{PowerLocalize.getFormatted('Profile.Description.AllowedCharacterText', this.props.description.length, this.props.maxCharacters)}</div>
             </div>
         );
     }

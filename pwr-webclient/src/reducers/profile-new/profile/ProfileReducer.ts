@@ -22,7 +22,7 @@ import {
     BaseProfileLoadAction,
     EntryDeleteAction,
     EntryLoadAction,
-    EntryUpdateAction,
+    EntryUpdateAction, SetDescriptionAction,
     SkillDeleteAction,
     SkillLoadAction,
     SkillUpdateAction
@@ -116,6 +116,10 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
         }
         case ActionType.AddNewProject: {
             return handleAddProject(store);
+        }
+        case ActionType.SetDescription: {
+            let description = (action as SetDescriptionAction).description;
+            return replaceProfile(store, {...store.profile, description});
         }
     }
     return store;

@@ -155,34 +155,6 @@ export class ProfileTypeDataMapper {
         return null;
     }
 
-    public static getHeaderText(type: ProfileEntryType): string {
-        switch (type) {
-            case 'LANGUAGE': {
-                return 'Sprachen';
-            }
-            case 'EDUCATION': {
-                return 'Ausbildung';
-            }
-            case 'CAREER': {
-                return 'Werdegang';
-            }
-            case 'KEY_SKILL': {
-                return 'Spezialgebiet';
-            }
-            case 'QUALIFICATION': {
-                return 'Zusatzqualifikation';
-            }
-            case 'SECTOR': {
-                return 'Branchen';
-            }
-            case 'TRAINING': {
-                return 'Weiterbildung';
-            }
-        }
-        return null;
-    }
-
-
     public static makeEntry(type: ProfileEntryType, state: ProfileEntryDialogState, entry: ProfileEntry) {
         if (isNullOrUndefined(state.searchText)) return null;
         const isNew = isNullOrUndefined(entry);

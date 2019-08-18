@@ -3,6 +3,7 @@
  */
 
 export enum ActionType {
+
     DeferAction = "[Deferred] Defer Single Action",
     ConfirmDeferredAction = "[Deferred] Confirm Action",
     RejectDeferredAction = "[Deferred] Reject Action",
@@ -136,6 +137,7 @@ export enum ActionType {
     TemplateRequestFailed = "TemplateRequestFailed",
 
     // == Profile Actions
+    SetDescription = "[Profile] Set Description",
     UpdateEntrySuccessful = "[Profile] UpdateEntrySuccessful",
     DeleteEntrySuccessful = "[Profile] DeleteEntrySuccessful",
     UpdateProfileSkillSuccessful = "[Profile] UpdateProfileSkillSuccessful",

@@ -116,73 +116,45 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
             && p.skills;
     };
 
+    private renderInfo(value: string) {
+        return <Typography variant={'subtitle2'}>
+            {value}
+        </Typography>
+    }
+
     private renderLanguageInfo = (entry: ProfileEntry, id: number) => {
         const language: Language = entry as Language;
-        return (
-
-            <Typography variant={'body2'}>
-                {PowerLocalize.langLevelToLocalizedString(language.level)}
-            </Typography>
-
-        );
+        return this.renderInfo(PowerLocalize.langLevelToLocalizedString(language.level));
     };
+
     private renderTrainingInfo = (entry: ProfileEntry, id: number) => {
         const training: FurtherTraining = entry as FurtherTraining;
-        return (
-
-            <Typography variant={'body2'}>
-                {training.startDate} - {training.endDate}
-            </Typography>
-
-        );
+        return this.renderInfo(`${training.startDate} - ${training.endDate}`);
     };
+
     private renderEducationInfo = (entry: ProfileEntry, id: number) => {
         const education: Education = entry as Education;
-        return (
-
-            <Typography variant={'body2'}>
-                {education.startDate} - {education.endDate} | {education.degree}
-            </Typography>
-
-        );
+        return this.renderInfo(`${education.endDate} | ${education.degree}`);
     };
+
     private renderQualificationInfo = (entry: ProfileEntry, id: number) => {
         const qualification: Qualification = entry as Qualification;
-        return (
-            <Grid item>
-                <Typography variant={'body2'}>
-                    {qualification.date}
-                </Typography>
-            </Grid>
-        );
+        return this.renderInfo(qualification.date.toString());
     };
+
     private renderSectorInfo = (entry: ProfileEntry, id: number) => {
         const sector: IndustrialSector = entry as IndustrialSector;
-        return (
-            <Grid item>
-                <Typography variant={'body2'}>
-                </Typography>
-            </Grid>
-        );
+        return this.renderInfo("");
     };
+
     private renderKeySkillInfo = (entry: ProfileEntry, id: number) => {
         const specialField: SpecialField = entry as SpecialField;
-        return (
-            <Grid item>
-                <Typography variant={'body2'}>
-                </Typography>
-            </Grid>
-        );
+        return this.renderInfo("");
     };
+
     private renderCareerInfo = (entry: ProfileEntry, id: number) => {
-        const career: Career = entry as Career;                                   //TODO Daten Format ändern MM.YYYY
-        return (
-            <Grid item>
-                <Typography variant={'body2'}>
-                    {career.startDate} - {career.endDate}
-                </Typography>
-            </Grid>
-        );
+        const career: Career = entry as Career;
+        return this.renderInfo(`${career.startDate} - ${career.endDate}`);
     };
 
     render() {

@@ -21,7 +21,6 @@ import {DatePickerType} from '../../../model/DatePickerType';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import Button from '@material-ui/core/Button/Button';
 import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
 import {PwrButton} from '../../general/pwr-button';
 import {Cancel, Delete, Save} from '@material-ui/icons';
@@ -66,7 +65,11 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     }
 
     private resetState = (props) => {
-        this.state = {
+        this.state = this.defaultState(props);
+    };
+
+    private defaultState = (props) => {
+        return {
             searchText: !isNullOrUndefined(props.entry) ? props.entry.nameEntity.name : '',
             startDate: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['startDate']) ? props.entry['startDate'] : new Date(),
             endDate: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['endDate']) ? props.entry['endDate'] : new Date(),
@@ -99,10 +102,13 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         };
     }
 
-    public componentDidUpdate(newProps: ProfileEntryDialogLocalProps) {
-        if (this.props.entry != newProps.entry) {
+
+    public componentDidUpdate(oldProps: ProfileEntryDialogLocalProps) {
+        if (!!oldProps.entry && !this.props.entry) {
+            this.setState(this.defaultState({}));
+        } else if (this.props.entry != oldProps.entry) {
             let date: Date;
-            if (newProps.type == 'QUALIFICATION') {
+            if (oldProps.type == 'QUALIFICATION') {
                 date = !isNullOrUndefined(this.props.entry) && !isNullOrUndefined(this.props.entry['date']) ? this.props.entry['date'] : new Date();
             } else {
                 date = !isNullOrUndefined(this.props.entry) && !isNullOrUndefined(this.props.entry['startDate']) ? this.props.entry['startDate'] : new Date();
@@ -172,14 +178,14 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth>
                 <DialogTitle>
-                    {ProfileTypeDataMapper.getHeaderText(this.props.type)}
+                    {PowerLocalize.get(`ProfileEntryType.${this.props.type}.EditHeader`)}
                 </DialogTitle>
                 <DialogContent>
                     <Grid container spacing={8}>
                         <Grid item md={12} xs={12}>
                             <PwrAutoComplete
                                 fullWidth
-                                label={ProfileTypeDataMapper.getHeaderText(this.props.type)}
+                                label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
                                 id={'id'}
                                 data={this.props.suggestions}
                                 searchTerm={this.state.searchText}
@@ -239,11 +245,14 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                       header={'Löschen Bestätigen'}
                                       open={this.state.deleteConfirm}
                                       onConfirm={() => this.handleDelete()}/>
+                    <PwrButton icon={<Save/>} color={'primary'} text={PowerLocalize.get('Action.Save')}
+                               onClick={this.handleSave}/>
+                    <PwrButton icon={<Cancel/>} color={'default'} text={PowerLocalize.get('Action.Cancel')}
+                               onClick={this.props.onClose}/>
                     {isNullOrUndefined(this.props.entry) ? <></> :
-                        <PwrButton icon={<Delete/>} color={'secondary'} text= {PowerLocalize.get('Action.Delete')} onClick={() => this.setState({deleteConfirm: true})}/>
+                        <PwrButton icon={<Delete/>} color={'default'} text={PowerLocalize.get('Action.Delete')}
+                                   onClick={() => this.setState({deleteConfirm: true})}/>
                     }
-                    <PwrButton icon={<Save/>} color={'primary'} text= {PowerLocalize.get('Action.Save')} onClick={this.handleSave}/>
-                    <PwrButton icon={<Cancel/>} color={'secondary'} text= {PowerLocalize.get('Action.Cancel')} onClick={this.props.onClose}/>
                 </DialogActions>
             </Dialog>
         );

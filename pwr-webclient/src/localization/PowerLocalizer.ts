@@ -38,25 +38,26 @@ export class PowerLocalize {
      * Sets the locale for the localizer. If no localization was found, the {@link PowerLocalize.defaultLocale} will be used.
      * @param locale the new locale. Has to be a valid ISO language code (https://www.w3schools.com/tags/ref_language_codes.asp)
      */
-    public static setLocale(locale: string) {
-        this.resolveLocale(locale);
+    public static setLocale(locale: string): Promise<any> {
+        return this.resolveLocale(locale);
     }
 
-    private static resolveLocale(locale: string) {
+    private static resolveLocale(locale: string): Promise<any> {
         const basePath = POWER_LOCALE_PATH;
-        axios.get(`${basePath}/${locale}.json`)
+        return axios.get(`${basePath}/${locale}.json`)
             .then(response => response.data)
             .then(localeData => PowerLocalize.localization = localeData)
             .catch((error: AxiosError) => this.handleLocaleError(locale, error))
     }
 
-    private static handleLocaleError(locale: string, error: AxiosError) {
+    private static async handleLocaleError(locale: string, error: AxiosError) {
         if (error.code == '404' && locale !== this.defaultLocale) {
             console.log(`Locale ${locale} not found. Falling back to default ${PowerLocalize.defaultLocale}`);
-            PowerLocalize.resolveLocale(this.defaultLocale);
+            await PowerLocalize.resolveLocale(this.defaultLocale);
         } else {
             console.log(`Locale ${locale} cant be resolved: `, error);
         }
+        return null;
     }
 
     /**
@@ -72,7 +73,7 @@ export class PowerLocalize {
         return String(val);
     }
 
-    public static getFormatted(field: string, ...args: string[]): string {
+    public static getFormatted(field: string, ...args: any[]): string {
         let val = PowerLocalize.get(field);
         return formatString(val, ...args);
     }
