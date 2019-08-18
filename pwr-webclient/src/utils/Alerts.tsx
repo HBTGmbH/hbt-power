@@ -1,4 +1,5 @@
 import cogoToast, {Options} from 'cogo-toast';
+import {PowerLocalize} from '../localization/PowerLocalizer';
 
 export class Alerts {
 
@@ -18,6 +19,11 @@ export class Alerts {
 
     static showSuccess(message) {
         cogoToast.success(message, Alerts.options(10));
+    }
+
+    static showLocalizedSuccess(key: string, ...args: string[]) {
+        const msg = PowerLocalize.getFormatted(key, ...args);
+        this.showSuccess(msg);
     }
 
     static showError(message) {

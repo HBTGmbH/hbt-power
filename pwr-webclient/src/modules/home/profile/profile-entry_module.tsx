@@ -5,18 +5,15 @@ import * as React from 'react';
 import {isNullOrUndefined} from 'util';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
-import Button from '@material-ui/core/Button/Button';
 import {ProfileEntryType} from '../../../reducers/profile-new/profile/model/ProfileEntryType';
 import {ProfileTypeDataMapper} from '../../../reducers/profile-new/profile/ProfileTypeDataMapper';
 import {NameEntity} from '../../../reducers/profile-new/profile/model/NameEntity';
 import {PwrIconButton} from '../../general/pwr-icon-button';
-import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
 import Divider from '@material-ui/core/Divider/Divider';
 import {ProfileEntryDialog} from './profile-entry-edit_module';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
-import {PwrRaisedButton} from '../../general/pwr-raised-button';
-import {Add} from '@material-ui/icons';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {Theme, withTheme} from '@material-ui/core';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -26,7 +23,7 @@ interface ProfileEntryProps {
 
 interface ProfileEntryLocalProps {
     type: ProfileEntryType;
-
+    theme: Theme;
     renderSingleElementInfo(entry: ProfileEntry, id: number): JSX.Element;
 }
 
@@ -37,7 +34,6 @@ interface ProfileEntryDispatch {
 }
 
 interface ProfileEntryState {
-    selectId: number;
     editId: number;
     selectEntry: ProfileEntry;
     deleteConfirm: boolean;
@@ -55,7 +51,6 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     private resetState() {
 
         this.state = {
-            selectId: -1,
             editId: -1,
             selectEntry: null,
             deleteConfirm: false,
@@ -67,7 +62,6 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
 
     private setDefaultState = () => {
         this.setState({
-            selectId: -1,
             editId: -1,
             selectEntry: null,
             deleteConfirm: false,
@@ -113,7 +107,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.props.deleteEntry(initials, id);
     };
 
-    private handleEditButton = (entry: ProfileEntry, id: number) => {
+    private handleEditButton = (entry: ProfileEntry) => {
         this.setState({
             open: true,
             selectEntry: entry
@@ -124,41 +118,17 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.setDefaultState();
     };
 
-    private handleSingleOnClick = (entry: ProfileEntry, id: number) => {
-        this.setState({
-            selectEntry: entry,
-            selectId: id
-        });
-    };
 
     private renderSingleElement = (entry: ProfileEntry, id: number) => {
         return (
-            <Grid key={id} item container alignItems={'flex-end'} spacing={8}
-                  onClick={() => this.handleSingleOnClick(entry, id)}
-                  style={{minHeight: 48,cursor:'pointer'}}
+            <Grid key={id} item container alignItems={'flex-end'} spacing={8} className="cursor-pointer"
+                  style={{minHeight: 48, cursor: 'pointer'}}
+                  onClick={event => this.handleEditButton(entry)}
             >
-                <Grid item container md={2} spacing={0} style={{padding: 0}}>
-                    {
-                        this.state.selectId != id ? <></> :
-                            <Grid>
-                                <PwrIconButton iconName={'delete'} tooltip={'Löschen'}
-                                               onClick={() => this.setState({deleteConfirm: true})}/>
-
-                                <PwrDeleteConfirm onClose={() => this.setState({deleteConfirm: false})}
-                                                  infoText={'Willst du \'' + entry.nameEntity.name + '\' wirklich löschen?'}
-                                                  header={'Löschen Bestätigen'}
-                                                  open={this.state.deleteConfirm}
-                                                  onConfirm={() => this.handleDeleteButton(this.props.initials, this.state.selectEntry.id)}/>
-
-                                <PwrIconButton iconName={'create'} tooltip={'Bearbeiten'}
-                                               onClick={() => this.handleEditButton(entry, id)}/>
-                            </Grid>
-                    }
+                <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Typography className="pwr-profile-entry-name" variant={'subheading'}>{entry.nameEntity.name}</Typography>
                 </Grid>
-                <Grid item>
-                    <Typography variant={'h5'}> {entry.nameEntity.name}</Typography>
-                </Grid>
-                <Grid item>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     {
                         this.props.renderSingleElementInfo(entry, id)
                     }
@@ -169,27 +139,27 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
 
     render() {
         return (
-            <div>
+            <div className="pwr-profile-entry-container">
                 <ProfileEntryDialog open={this.state.open} onClose={this.handleDialogOnClose} type={this.props.type}
                                     entry={this.state.selectEntry}/>
-                <Grid container spacing={0} alignItems={'center'} style={{border: '1px', backgroundColor: '#efefef'}}>
+                <Grid container spacing={0} alignItems={'center'}>
                     <Grid item md={9}>
-                        <Typography
-                            variant={'h2'}
-                            style={{fontSize: '2em'}}
-                        >{ProfileTypeDataMapper.getHeaderText(this.props.type).toUpperCase()}</Typography>
+                        <Typography variant={'subtitle1'}>
+                            {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Header`)}
+                        </Typography>
                     </Grid>
                     <Grid item md={3}>
-                        <PwrRaisedButton onClick={this.handleNewButton} color={'primary'} icon={<Add/>} text={PowerLocalize.get('Action.Add')}/>
+                        <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}
+                                       onClick={this.handleNewButton}/>
                     </Grid>
-                    <Grid item md={12}>
-                        <Divider style={{marginTop: '2px'}}/>
+                    <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
+                        <Divider variant={'fullWidth'} style={{height: "2px", backgroundColor: this.props.theme.palette.primary.dark}}/>
                     </Grid>
-                    <Grid item container md={10}>
+                    <Grid item container  md={12} sm={12}>
                         {
                             !isNullOrUndefined(this.props.allEntries) && this.props.allEntries.length > 0 ?
                                 this.props.allEntries.map(this.renderSingleElement) :
-                                <Typography>Kein Eintrag Gefunden</Typography>
+                                <Typography>{PowerLocalize.get('Profile.Entries.NotAvailable')}</Typography>
                         }
                     </Grid>
                 </Grid>
@@ -198,4 +168,4 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     }
 }
 
-export const ProfileEntryElement: React.ComponentClass<ProfileEntryLocalProps> = connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule);
+export const ProfileEntryElement = withTheme() (connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule));

@@ -54,7 +54,12 @@ export class PowerHttpClient {
     private determineError = (error: AxiosError): PowerApiError  => {
         if (!error.response) {
             console.error("Intercepted client error", error);
-            return {status: -1, message: "Error in Power Client Library occurred. Please contact a developer", error: error.code}
+            if (error.message && error.message === 'Network Error') {
+                return {status: -1, message: "One or more services are not reachable!", error: error.message}
+            }
+            else {
+                return {status: -1, message: "Error in Power Client Library occurred. Please contact a developer", error: error.code}
+            }
         }
         if (!error.response.data) {
             console.error("Intercepted server error", error.response);

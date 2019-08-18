@@ -45,13 +45,13 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
-    public static saveDescription(initials: string, description: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
-            profileUpdateServiceClient.saveDescription(initials, description).then(profile => {
-                    dispatch(baseProfileLoadAction(profile));
-                Alerts.showSuccess('Beschreibung erfolgreich geändert!');
-                }
-            ).catch(handleError);
+    public static saveDescription(description: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            const initials = getState().profileStore.consultant.initials;
+            profileUpdateServiceClient.saveDescription(initials, description)
+                .then(profile => dispatch(baseProfileLoadAction(profile)))
+                .then(ignored => Alerts.showLocalizedSuccess('Action.SaveDescription.Success'))
+                .catch(handleError);
         };
     }
 

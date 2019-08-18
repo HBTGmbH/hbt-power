@@ -9,7 +9,6 @@ export interface BaseProfileLoadAction extends AbstractAction {
     baseProfile: BaseProfile;
 }
 
-
 export interface EntryLoadAction extends AbstractAction {
     entry: Array<ProfileEntry>,
     field: ProfileEntryField
@@ -40,6 +39,17 @@ export interface SkillUpdateAction extends AbstractAction {
     skill: ProfileSkill
 }
 
+export interface SetDescriptionAction extends AbstractAction {
+    type: ActionType.SetDescription;
+    description: string;
+}
+
+export function setDescription(description: string): SetDescriptionAction {
+    return {
+        description: description,
+        type: ActionType.SetDescription
+    }
+}
 
 export function skillUpdateAction(skill: ProfileSkill) {
     return {
