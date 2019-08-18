@@ -174,9 +174,18 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         this.props.onClose();
     };
 
+    private handleKeyDown = (key: string) => {
+        if (key === 'Enter') {
+            this.handleSave();
+        }
+        if (key == 'Escape') {
+            this.props.onClose();
+        }
+    };
+
     render() {
         return (
-            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth>
+            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth onKeyDown={event => this.handleKeyDown(event.key)}>
                 <DialogTitle>
                     {PowerLocalize.get(`ProfileEntryType.${this.props.type}.EditHeader`)}
                 </DialogTitle>
