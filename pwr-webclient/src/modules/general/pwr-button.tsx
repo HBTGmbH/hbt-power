@@ -8,6 +8,7 @@ export interface PwrButtonProps {
     color: PropTypes.Color;
     icon: JSX.Element;
     text: string;
+    disabled?: boolean;
     onClick?(): void;
 }
 
@@ -16,6 +17,7 @@ export const PwrButton = (props: PwrButtonProps) => {
     const handleSave = props.onClick ? props.onClick : noOp;
 
     return <Button
+        disabled={props.disabled}
         color={props.color}
         className="mui-margin"
         onClick={handleSave}

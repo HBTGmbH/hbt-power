@@ -1,10 +1,11 @@
 import Autosuggest from 'react-autosuggest'; // standard ' * as '
 import * as React from 'react';
-import {MenuItem, Paper, TextField, WithStyles, withStyles} from '@material-ui/core';
+import {FormControl, InputLabel, MenuItem, Paper, TextField, WithStyles, withStyles} from '@material-ui/core';
 import {StringUtils} from '../../utils/StringUtil';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import filterFuzzy = StringUtils.filterFuzzy;
+import {ValidationError, ValidatorFn} from '../../utils/ValidationUtils';
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 const ChipInput = require('material-ui-chip-input').default;
@@ -44,7 +45,7 @@ export interface PwrAutoCompleteProps {
     chips?: Array<string>;
     disabled?: boolean;
     label: string;
-
+    validationError?: ValidationError;
     disableFiltering?: boolean;
 
     onAdd?(item: string);
@@ -99,7 +100,6 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         this.props.onSearchChange(searchTerm, navigation);
     };
 
-
     handleClick = (item: string) => {
         if (this.props.onAdd) {
             this.props.onAdd(item);
@@ -118,10 +118,16 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
             }, ref, ...other
         } = inputProps;
 
+        let label = this.props.label;
+        if (this.props.validationError) {
+            label = this.props.validationError.msg;
+        }
+
         return (
             <TextField
+                error={!!this.props.validationError}
                 id={this.props.id + '_inputField'}
-                label={this.props.label}
+                label={label}
                 fullWidth={this.props.fullWidth}
                 disabled={this.props.disabled}
                 InputProps={{

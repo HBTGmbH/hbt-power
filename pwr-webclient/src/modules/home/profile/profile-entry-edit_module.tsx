@@ -24,6 +24,7 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
 import {PwrButton} from '../../general/pwr-button';
 import {Cancel, Delete, Save} from '@material-ui/icons';
+import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
 
 interface ProfileEntryDialogProps {
     suggestions: Array<string>;
@@ -202,6 +203,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     };
 
     render() {
+        let error = validateNonEmptyProfileEntry(this.state.searchText);
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth
                     onKeyDown={event => this.handleKeyDown(event)}>
@@ -212,6 +214,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                     <Grid container spacing={8}>
                         <Grid item md={12} xs={12}>
                             <PwrAutoComplete
+                                validationError={error}
                                 fullWidth
                                 label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
                                 id={'id'}
@@ -273,7 +276,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                       header={'Löschen Bestätigen'}
                                       open={this.state.deleteConfirm}
                                       onConfirm={() => this.handleDelete()}/>
-                    <PwrButton icon={<Save/>} color={'primary'} text={PowerLocalize.get('Action.Save')}
+                    <PwrButton icon={<Save/>} color={'primary'} disabled={!!error} text={PowerLocalize.get('Action.Save')}
                                onClick={this.handleSave}/>
                     <PwrButton icon={<Cancel/>} color={'default'} text={PowerLocalize.get('Action.Cancel')}
                                onClick={this.props.onClose}/>
