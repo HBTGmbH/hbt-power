@@ -52,7 +52,7 @@ export class PowerLocalize {
     }
 
     private static async handleLocaleError(locale: string, error: AxiosError) {
-        if (error.code == '404' && locale !== this.defaultLocale) {
+        if (locale !== this.defaultLocale) {
             console.log(`Locale ${locale} not found. Falling back to default ${PowerLocalize.defaultLocale}`);
             await PowerLocalize.resolveLocale(this.defaultLocale);
         } else {
