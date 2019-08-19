@@ -174,18 +174,37 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         this.props.onClose();
     };
 
-    private handleKeyDown = (key: string) => {
-        if (key === 'Enter') {
-            this.handleSave();
-        }
-        if (key == 'Escape') {
-            this.props.onClose();
+    private openDeleteConfirm = () => {
+        this.setState({deleteConfirm: true});
+    };
+
+    private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!event.isPropagationStopped()) {
+            let handled = false;
+            if (event.key === 'Enter') {
+                this.handleSave();
+                handled = true;
+            }
+            if (event.key === 'Delete' && !!this.props.entry.id) {
+                this.openDeleteConfirm();
+                handled = true;
+            }
+            if (event.key == 'Escape') {
+                this.props.onClose();
+                handled = true;
+            }
+            if (handled) {
+                // This way we prevent the event leaving the scope of the dialog (e.g. to any previously focused buttons)
+                event.stopPropagation();
+                event.preventDefault();
+            }
         }
     };
 
     render() {
         return (
-            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth onKeyDown={event => this.handleKeyDown(event.key)}>
+            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth
+                    onKeyDown={event => this.handleKeyDown(event)}>
                 <DialogTitle>
                     {PowerLocalize.get(`ProfileEntryType.${this.props.type}.EditHeader`)}
                 </DialogTitle>
@@ -260,7 +279,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                onClick={this.props.onClose}/>
                     {isNullOrUndefined(this.props.entry) ? <></> :
                         <PwrButton icon={<Delete/>} color={'default'} text={PowerLocalize.get('Action.Delete')}
-                                   onClick={() => this.setState({deleteConfirm: true})}/>
+                                   onClick={this.openDeleteConfirm}/>
                     }
                 </DialogActions>
             </Dialog>

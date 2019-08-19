@@ -29,6 +29,7 @@ import {ProfileDescription} from './elements/profile-description_module';
 import {Projects} from './elements/project/projects_module';
 import {ProfileSkills} from './elements/skills/profile-skills_module';
 import {CrossCuttingAsyncActionCreator} from '../../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
+import {formatFullLocalizedDate, formatToShortDisplay} from '../../../utils/DateUtil';
 
 
 interface ProfileProps {
@@ -117,9 +118,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     };
 
     private renderInfo(value: string) {
-        return <Typography variant={'subtitle2'}>
+        return <span>
             {value}
-        </Typography>
+        </span>
     }
 
     private renderLanguageInfo = (entry: ProfileEntry, id: number) => {
@@ -129,17 +130,17 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     private renderTrainingInfo = (entry: ProfileEntry, id: number) => {
         const training: FurtherTraining = entry as FurtherTraining;
-        return this.renderInfo(`${training.startDate} - ${training.endDate}`);
+        return this.renderInfo(`${formatToShortDisplay(training.startDate)} - ${formatToShortDisplay(training.endDate)}`);
     };
 
     private renderEducationInfo = (entry: ProfileEntry, id: number) => {
         const education: Education = entry as Education;
-        return this.renderInfo(`${education.endDate} | ${education.degree}`);
+        return this.renderInfo(`${formatToShortDisplay(education.endDate)} | ${education.degree}`);
     };
 
     private renderQualificationInfo = (entry: ProfileEntry, id: number) => {
         const qualification: Qualification = entry as Qualification;
-        return this.renderInfo(qualification.date.toString());
+        return this.renderInfo(formatToShortDisplay(qualification.date));
     };
 
     private renderSectorInfo = (entry: ProfileEntry, id: number) => {
@@ -154,7 +155,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     private renderCareerInfo = (entry: ProfileEntry, id: number) => {
         const career: Career = entry as Career;
-        return this.renderInfo(`${career.startDate} - ${career.endDate}`);
+        return this.renderInfo(`${formatToShortDisplay(career.startDate)} - ${formatToShortDisplay(career.endDate)}`);
     };
 
     render() {

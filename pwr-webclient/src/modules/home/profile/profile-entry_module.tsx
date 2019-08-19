@@ -118,11 +118,9 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.setDefaultState();
     };
 
-
     private renderSingleElement = (entry: ProfileEntry, id: number) => {
         return (
-            <Grid key={id} item container alignItems={'flex-end'} spacing={8} className="cursor-pointer"
-                  style={{minHeight: 48, cursor: 'pointer'}}
+            <Grid key={id} item container alignItems={'flex-end'} spacing={0} className="cursor-pointer"
                   onClick={event => this.handleEditButton(entry)}
             >
                 <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -135,6 +133,14 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                 </Grid>
             </Grid>
         );
+    };
+
+    private renderEmptyElement = () => {
+        return <Grid item container alignItems={'flex-end'} spacing={0}>
+            <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
+                <Typography className="pwr-profile-entry-name" variant={'subheading'}>{PowerLocalize.get('Profile.Entries.NotAvailable')}</Typography>
+            </Grid>
+        </Grid>
     };
 
     render() {
@@ -155,11 +161,11 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                     <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
                         <Divider variant={'fullWidth'} style={{height: "2px", backgroundColor: this.props.theme.palette.primary.dark}}/>
                     </Grid>
-                    <Grid item container  md={12} sm={12}>
+                    <Grid item container spacing={8}  md={12} sm={12}>
                         {
                             !isNullOrUndefined(this.props.allEntries) && this.props.allEntries.length > 0 ?
                                 this.props.allEntries.map(this.renderSingleElement) :
-                                <Typography>{PowerLocalize.get('Profile.Entries.NotAvailable')}</Typography>
+                                this.renderEmptyElement()
                         }
                     </Grid>
                 </Grid>
