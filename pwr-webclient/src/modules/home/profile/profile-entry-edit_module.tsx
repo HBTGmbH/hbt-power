@@ -24,6 +24,7 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
 import {PwrButton} from '../../general/pwr-button';
 import {Cancel, Delete, Save} from '@material-ui/icons';
+import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
 
 interface ProfileEntryDialogProps {
     suggestions: Array<string>;
@@ -174,18 +175,38 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         this.props.onClose();
     };
 
-    private handleKeyDown = (key: string) => {
-        if (key === 'Enter') {
-            this.handleSave();
-        }
-        if (key == 'Escape') {
-            this.props.onClose();
+    private openDeleteConfirm = () => {
+        this.setState({deleteConfirm: true});
+    };
+
+    private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!event.isPropagationStopped()) {
+            let handled = false;
+            if (event.key === 'Enter') {
+                this.handleSave();
+                handled = true;
+            }
+            if (event.key === 'Delete' && !!this.props.entry.id) {
+                this.openDeleteConfirm();
+                handled = true;
+            }
+            if (event.key == 'Escape') {
+                this.props.onClose();
+                handled = true;
+            }
+            if (handled) {
+                // This way we prevent the event leaving the scope of the dialog (e.g. to any previously focused buttons)
+                event.stopPropagation();
+                event.preventDefault();
+            }
         }
     };
 
     render() {
+        let error = validateNonEmptyProfileEntry(this.state.searchText);
         return (
-            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth onKeyDown={event => this.handleKeyDown(event.key)}>
+            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth
+                    onKeyDown={event => this.handleKeyDown(event)}>
                 <DialogTitle>
                     {PowerLocalize.get(`ProfileEntryType.${this.props.type}.EditHeader`)}
                 </DialogTitle>
@@ -193,6 +214,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                     <Grid container spacing={8}>
                         <Grid item md={12} xs={12}>
                             <PwrAutoComplete
+                                validationError={error}
                                 fullWidth
                                 label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
                                 id={'id'}
@@ -254,13 +276,13 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                       header={'Löschen Bestätigen'}
                                       open={this.state.deleteConfirm}
                                       onConfirm={() => this.handleDelete()}/>
-                    <PwrButton icon={<Save/>} color={'primary'} text={PowerLocalize.get('Action.Save')}
+                    <PwrButton icon={<Save/>} color={'primary'} disabled={!!error} text={PowerLocalize.get('Action.Save')}
                                onClick={this.handleSave}/>
                     <PwrButton icon={<Cancel/>} color={'default'} text={PowerLocalize.get('Action.Cancel')}
                                onClick={this.props.onClose}/>
                     {isNullOrUndefined(this.props.entry) ? <></> :
                         <PwrButton icon={<Delete/>} color={'default'} text={PowerLocalize.get('Action.Delete')}
-                                   onClick={() => this.setState({deleteConfirm: true})}/>
+                                   onClick={this.openDeleteConfirm}/>
                     }
                 </DialogActions>
             </Dialog>

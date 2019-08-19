@@ -31,6 +31,19 @@ export class PwrDeleteConfirm extends React.Component<PwrDeleteConfirmProps> {
         this.props.onClose();
     };
 
+    private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        // its important we surpress the enter key leaving this dialog.
+        // That would trigger a "add" action in the opening dialog
+        if (event.key === 'Enter') {
+            this.confirmAndClose();
+            event.stopPropagation();
+        }
+        else if (event.key === 'Escape') {
+            this.close();
+            event.stopPropagation();
+        }
+    };
+
     private close = () => {
         this.props.onClose();
     };
@@ -39,6 +52,7 @@ export class PwrDeleteConfirm extends React.Component<PwrDeleteConfirmProps> {
         return <Dialog
             open={this.props.open}
             onClose={this.props.onClose}
+            onKeyDown={event => this.handleKeyDown(event)}
             TransitionComponent={Transition}
         >
             <DialogTitle>

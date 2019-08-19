@@ -265,6 +265,3 @@ function cancelEditMode(store: ProfileStore): ProfileStore {
     // Now we can deactivate the edit mode
     return {...restored, ...{isProjectEditing: false}};
 }
-
-
-

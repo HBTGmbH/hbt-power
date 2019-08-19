@@ -348,5 +348,7 @@
     "ProjectRole": "Projektrolle",
     "PwrError.DATE_START_AFTER_END": "Das Startdatum darf nicht nach dem Enddatum liegen",
 
-    "Action.SaveDescription.Success": "Werbetext erfolgreich gespeichert"
+    "Action.SaveDescription.Success": "Werbetext erfolgreich gespeichert",
+
+    "Validation.NameRequired": "Pflichtfeld"
 }
