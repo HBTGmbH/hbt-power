@@ -72,7 +72,6 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
     }
 
     private handleClick = (projectIndex: number) => {
-        window.scrollTo(0, this.projectRef.current.offsetTop);
         this.props.selectProject(projectIndex);
     };
 
