@@ -130,7 +130,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                       onClick={event => this.handleEditButton(entry)}
                 >
                     <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Typography className="pwr-profile-entry-name" variant={'subheading'}>
+                        <Typography className="pwr-profile-entry-name" variant={'subtitle1'}>
                             {entry.nameEntity.name}
                         </Typography>
                     </Grid>
@@ -148,7 +148,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     private renderEmptyElement = () => {
         return <Grid item container alignItems={'flex-end'} spacing={0}>
             <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography className="pwr-profile-entry-name" variant={'subheading'}>{PowerLocalize.get('Profile.Entries.NotAvailable')}</Typography>
+                <Typography className="pwr-profile-entry-name" variant={'subtitle1'}>{PowerLocalize.get('Profile.Entries.NotAvailable')}</Typography>
             </Grid>
         </Grid>
     };

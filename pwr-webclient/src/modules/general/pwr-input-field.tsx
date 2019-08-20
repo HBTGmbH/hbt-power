@@ -18,7 +18,9 @@ export class PwrInputField extends React.PureComponent<PwrInputFieldProps & Text
     };
 
     render() {
-        const props = this.props;
+        const props = {...this.props};
+        // Delete custom props
+        delete props.onValueChange;
         let value = this.props.value;
         // Again. We need to make sure not to overwrite an undefined value with a defined one
         // material UI treats undefined value as control logic, which turns the component into an uncontrolled component

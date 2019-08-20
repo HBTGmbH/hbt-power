@@ -6,6 +6,9 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import filterFuzzy = StringUtils.filterFuzzy;
 import {ValidationError, ValidatorFn} from '../../utils/ValidationUtils';
+import {Simulate} from 'react-dom/test-utils';
+import input = Simulate.input;
+import {omitKeys} from '../../utils/ObjectUtil';
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 const ChipInput = require('material-ui-chip-input').default;
@@ -185,7 +188,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
 
 
     render() {
-        const {classes} = this.props;
+        const classes = this.props.classes;
 
         const autosuggestProps = {
             renderInputComponent: this.props.multi ? this.renderChipInput : this.renderInputComponent,
@@ -196,19 +199,35 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
             renderSuggestion: this.renderSuggestion,
         };
 
+        const onlyChipProps = {
+            onAdd: (chip) => this.props.onAdd(chip),
+            onDelete: (chip, index) => this.props.onRemove(chip),
+        };
+
+        const basicInputProps = {
+            classes,
+            placeholder: this.props.label,
+            value: this.props.searchTerm,
+            chips: this.props.chips,
+            onChange: (event, {newValue}) => this.handleChange(event, newValue),
+        };
+
+        let inputProps;
+        if (this.props.multi) {
+            inputProps = {
+                ...basicInputProps,
+                ...onlyChipProps
+            };
+        }
+        else {
+            inputProps = basicInputProps;
+        }
+
         return (
             <Autosuggest
                 id={this.props.id}
                 {...autosuggestProps}
-                inputProps={{
-                    classes,
-                    placeholder: this.props.label,
-                    value: this.props.searchTerm,
-                    chips: this.props.chips,
-                    onChange: (event, {newValue}) => this.handleChange(event, newValue),
-                    onAdd: (chip) => this.props.onAdd(chip),
-                    onDelete: (chip, index) => this.props.onRemove(chip),
-                }}
+                inputProps={inputProps}
                 theme={{
                     container: classes.container,
                     suggestionsContainerOpen: classes.suggestionsContainerOpen,
@@ -216,7 +235,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                     suggestion: classes.suggestion,
                 }}
                 renderSuggestionsContainer={options => (
-                    <Paper {...options.containerProps} square fullWidth>
+                    <Paper {...options.containerProps} square>
                         {options.children}
                     </Paper>
                 )}
