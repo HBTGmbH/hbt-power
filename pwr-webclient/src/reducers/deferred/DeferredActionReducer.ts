@@ -8,9 +8,17 @@ export function reduceDeferredAction(store = emptyDeferredStore, action: Deferre
     switch (action.type) {
         case ActionType.ConfirmDeferredAction:
         case ActionType.RejectDeferredAction:
-            return {...store, ...{deferredAction: null}};
+            return {...store, ...emptyDeferredStore};
         case ActionType.DeferAction: {
-            return {...store, ...{deferredAction: action.action}}
+            return {
+                ...store, ...{
+                    deferredAction: action.action,
+                    dialogActionNOK: action.actionNOK,
+                    dialogActionOK: action.actionOK,
+                    dialogContent: action.msg,
+                    dialogHeader: action.header
+                }
+            };
         }
     }
     return store;

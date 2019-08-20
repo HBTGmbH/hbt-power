@@ -164,4 +164,7 @@ export enum ActionType {
     // == SuggestionActions
     UpdateSuggestionField = "UpdateSuggestionField",
     UpdateSkillSuggestionField = "UpdateSkillSuggestionField",
+
+    // == Async, Deferrable Actions
+    AsyncDeleteEntry = "[Async] Delete Entry",
 }

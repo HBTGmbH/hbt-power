@@ -29,6 +29,7 @@ import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/Pr
 import {PwrFormCaption, PwrFormSubCaption, PwrFormSubtitle} from '../../../../general/pwr-typography';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {SkillChip} from '../skills/skill-chip_module';
+import {Power} from '@material-ui/icons';
 
 const chooseClientName = (project: Project) => {
     if (project.client) {
@@ -113,7 +114,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
 
     private title = () => {
         const name = StringUtils.defaultString(this.project().name);
-        return `${name} für ${this.client()}`;
+        return PowerLocalize.getFormatted("Profile.Project.List.Title", name, this.client());
     };
 
     private client = () => {
@@ -130,8 +131,8 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
             .join(', ');
 
         const start = !isNullOrUndefined(this.project().startDate) ? formatToYear(this.project().startDate) : '';
-        const end = !isNullOrUndefined(this.project().endDate) ? formatToYear(this.project().endDate) : 'Heute';
-        return `Tätig als ${roleNames} von ${start} bis ${end}`;
+        const end = !isNullOrUndefined(this.project().endDate) ? formatToYear(this.project().endDate) : PowerLocalize.get("Today");
+        return PowerLocalize.getFormatted("Profile.Project.List.SubTitle", roleNames, start, end);
     };
 
 
@@ -214,19 +215,19 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         this.props.updateEditingProject({...this.project(), skills});
     };
 
-    private removeSkill = (skillName) => {
-        const skills = this.project().skills.filter(skill => skill.name === skillName);
-        this.props.updateEditingProject({...this.project(), skills});
+    private removeSkill = (skillName: string) => {
+        const skills = this.project().skills.filter(skill => skill.name !== skillName);
+        this.props.updateEditingProject({...this.project(), ...{skills: skills}});
     };
 
     private toSkillChip(skill: ProfileSkill) {
-        return <SkillChip key={skill.name} className="margin-2px" disabled={this.isEditDisabled()} skill={skill} onDelete={name => this.removeSkill(name)}
+        return <SkillChip key={skill.name} className="margin-2px" disabled={this.isEditDisabled()} skill={skill} onDelete={skill => this.removeSkill(skill.name)}
                           canChangeRating={false}/>;
     }
 
     render() {
         if (!this.project()) {
-            return <span>No Project Selected</span>;
+            return <span>{PowerLocalize.get("Profile.Project.NoneSelected")}</span>;
         }
         return (
             <div>
@@ -235,12 +236,12 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <PwrFormSubtitle>{this.subtitle()}</PwrFormSubtitle>
                 </div>
                 <div>
-                    <PwrFormSubCaption>General Data</PwrFormSubCaption>
+                    <PwrFormSubCaption>{PowerLocalize.get("Profile.Project.GeneralData")}</PwrFormSubCaption>
                     <PwrSpacer/>
                     <PwrInputField
                         disabled={this.isEditDisabled()}
                         id="project-title"
-                        label="Project Name"
+                        label={PowerLocalize.get("Profile.Project.Name")}
                         onValueChange={this.setName}
                         value={this.project().name}
                     />
@@ -248,7 +249,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <PwrInputField
                         disabled={this.isEditDisabled()}
                         id="project-description"
-                        label="Project Description"
+                        label={PowerLocalize.get("Profile.Project.Description")}
                         value={this.project().description}
                         onValueChange={this.setDescription}
                         fullWidth
@@ -256,13 +257,13 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         rows={4}
                     />
                     <PwrSpacer/>
-                    <PwrDatePicker label="Project Start Date"
+                    <PwrDatePicker label={PowerLocalize.get("Profile.Project.StartDate")}
                                    disabled={this.isEditDisabled()}
                                    onChange={this.setStartDate}
                                    placeholderDate={this.project().startDate}
                                    type={DatePickerType.MONTH_YEAR}
                     />
-                    <PwrDatePicker label="Project End Date"
+                    <PwrDatePicker label={PowerLocalize.get("Profile.Project.EndDate")}
                                    disabled={this.isEditDisabled()}
                                    onChange={this.setEndDate}
                                    placeholderDate={this.project().endDate}
@@ -276,7 +277,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                                                 onChangeRole={role => this.setState({projectRoleSearchValue: role.name})}
                                                 onAddRole={role => this.addProjectRole(role)}
                                                 onRemoveRole={role => this.removeProjectRole(role)}
-                                                label="Project Roles"
+                                                label={PowerLocalize.get("Profile.Project.ProjectRoles")}
                                                 items={this.project().projectRoles}>
 
                     </PwrProjectRoleAutocomplete>
@@ -285,29 +286,31 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                 <div>
                     <PwrFormSubCaption>Client</PwrFormSubCaption>
                     <PwrSpacer/>
-                    <PwrCompanyAutocomplete fullWidth={true} label="Project Client"
+                    <PwrCompanyAutocomplete fullWidth={true}
+                                            label={PowerLocalize.get("Profile.Project.Client")}
                                             searchTerm={this.client()}
                                             disabled={this.isEditDisabled()}
                                             onSearchChange={this.setClientName}/>
                     <PwrSpacer/>
-                    <PwrCompanyAutocomplete fullWidth={true} label="Project Broker"
+                    <PwrCompanyAutocomplete fullWidth={true}
+                                            label={PowerLocalize.get("Profile.Project.Broker")}
                                             searchTerm={this.broker()}
                                             disabled={this.isEditDisabled()}
                                             onSearchChange={this.setBrokerName}/>
                 </div>
                 <PwrSpacer/>
                 <div>
-                    <PwrFormSubCaption>Skills</PwrFormSubCaption>
+                    <PwrFormSubCaption>{PowerLocalize.get("Profile.Project.Skills")}</PwrFormSubCaption>
                     <SkillSearcher
                         disabled={this.isEditDisabled()}
                         id="SelectedProject.SkillSearcher"
-                        label="Add Skill"
+                        label={PowerLocalize.get("Profile.Project.AddSkill")}
                         initialValue={this.state.skillSearchValue}
                         value={this.state.skillSearchValue}
                         onValueChange={skillSearchValue => this.setState({skillSearchValue})}
                         onNewRequest={name => this.addSkill(name)}
                     />
-                    <PwrFormSubCaption>Skills in this Project</PwrFormSubCaption>
+                    <PwrFormSubCaption>{PowerLocalize.get("Profile.Project.SkillsInProject")}</PwrFormSubCaption>
                     <div className="Pwr-Content-Container">
                         {this.project().skills.map(skill => this.toSkillChip(skill))}
                     </div>
@@ -317,7 +320,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     {this.isEditDisabled() && <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')} onClick={this.beginEdit}/>}
                     {this.isEditEnabled() && <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} onClick={this.save}/>}
                     {this.isEditEnabled() && <PwrIconButton iconName={'cancel'} tooltip={PowerLocalize.get('Action.Cancel')} onClick={this.cancelEdit}/>}
-                    {this.isDeleteEnabled() && <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} isDeleteButton  onClick={this.deleteButtonPress}/>}
+                    {this.isDeleteEnabled() && <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.deleteButtonPress}/>}
                 </div>
             </div>
         );

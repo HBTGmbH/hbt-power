@@ -81,6 +81,23 @@
     "ProfileEntryType.EDUCATION.Header": "Ausbildung",
     "ProfileEntryType.EDUCATION.AutoCompleteLabel": "Ausbildung",
     "ProfileEntryType.EDUCATION.EditHeader": "Ausbildung Bearbeiten",
+
+    "Profile.Project.AddProject": "Projekt Hinzufügen",
+    "Profile.Project.NoneSelected": "Kein Projekt Ausgewählt",
+    "Profile.Project.List.Title": "{0} für {1}",
+    "Profile.Project.List.SubTitle": "Tätig als {0} von {1} bis {2}",
+    "Profile.Project.GeneralData": "Projekt-Daten",
+    "Profile.Project.Name": "Titel/Name",
+    "Profile.Project.Description": "Beschreibung",
+    "Profile.Project.StartDate": "Start-Datum",
+    "Profile.Project.EndDate": "End-Datum",
+    "Profile.Project.ProjectRoles": "Projektrollen",
+    "Profile.Project.Client": "(End-)Kunde",
+    "Profile.Project.Broker": "Vermittel",
+    "Profile.Project.Skills": "Skills",
+    "Profile.Project.AddSkill": "Skill Hinzufügen",
+    "Profile.Project.SkillsInProject": "Skills dieses Projektes",
+
     "Overview.Base.BaseData": "Stammdaten",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",
@@ -350,5 +367,10 @@
 
     "Action.SaveDescription.Success": "Werbetext erfolgreich gespeichert",
 
-    "Validation.NameRequired": "Pflichtfeld"
+    "Validation.NameRequired": "Pflichtfeld",
+
+    "ConfirmDeleteEntry.Title": "Eintrag Löschen",
+    "ConfirmDeleteEntry.Content": "Willst du diesen Eintrag wirklich löschen?",
+    "ConfirmDeleteEntry.Action.CancelDelete": "Nein",
+    "ConfirmDeleteEntry.Action.ConfirmDelete": "Ja"
 }

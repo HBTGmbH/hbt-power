@@ -10,6 +10,7 @@ import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {string} from 'prop-types';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction} from '../BaseActions';
+import {DeferrableAsyncAction} from '../deferred/DeferrableAsyncAction';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -140,16 +141,19 @@ export namespace TemplateActionCreator {
     }
 
 
-    export function AsyncDeleteTemplate(id:string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            axios.delete(TemplateService.deleteTemplate(id))
-                .then((response: AxiosResponse) => {
-                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                })
-                .catch((error: AxiosError) => {
-                    dispatch(TemplateActionCreator.TemplateRequestFailed());
-                    console.error(error);
-                });
+    export function AsyncDeleteTemplate(id: string): DeferrableAsyncAction {
+        return {
+            asyncAction: () => (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) => {
+                axios.delete(TemplateService.deleteTemplate(id))
+                    .then((response: AxiosResponse) => {
+                        dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
+                    })
+                    .catch((error: AxiosError) => {
+                        dispatch(TemplateActionCreator.TemplateRequestFailed());
+                        console.error(error);
+                    });
+            },
+            type: ActionType.DeleteEntry
         };
     }
 
@@ -187,7 +191,7 @@ export namespace TemplateActionCreator {
         let url = window.URL.createObjectURL(blob);
         a.href = location;
 
-        let name:string = location.split('/')[location.split('/').length-1];
+        let name: string = location.split('/')[location.split('/').length - 1];
         console.log(name);
         name = name.split('.')[0];
         a.download = name;

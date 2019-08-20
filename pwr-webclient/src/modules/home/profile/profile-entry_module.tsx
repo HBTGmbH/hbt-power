@@ -14,6 +14,7 @@ import {ProfileEntryDialog} from './profile-entry-edit_module';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Theme, withTheme} from '@material-ui/core';
+import {PwrButton} from '../../general/pwr-button';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -103,8 +104,8 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.props.updateEntity(this.props.initials, null);
     };
 
-    private handleDeleteButton = (initials: string, id: number) => {
-        this.props.deleteEntry(initials, id);
+    private handleDeleteButton = (id: number) => {
+        this.props.deleteEntry(this.props.initials, id);
     };
 
     private handleEditButton = (entry: ProfileEntry) => {
@@ -118,18 +119,27 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.setDefaultState();
     };
 
-    private renderSingleElement = (entry: ProfileEntry, id: number) => {
+    private renderSingleElement = (entry: ProfileEntry, index: number) => {
         return (
-            <Grid key={id} item container alignItems={'flex-end'} spacing={0} className="cursor-pointer"
-                  onClick={event => this.handleEditButton(entry)}
-            >
-                <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <Typography className="pwr-profile-entry-name" variant={'subheading'}>{entry.nameEntity.name}</Typography>
+            <Grid key={entry.id} item container spacing={0}>
+                <Grid item xs={2} sm={2} md={1} lg={1} xl={1} >
+                    <PwrIconButton iconName='delete' tooltip={PowerLocalize.get('Action.Delete')}
+                                   onClick={() => this.handleDeleteButton(entry.id)}/>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    {
-                        this.props.renderSingleElementInfo(entry, id)
-                    }
+                <Grid xs={10} sm={10} md={11} lg={11} xl={11} key={entry.id} item container alignItems={'flex-end'} spacing={0} className="cursor-pointer"
+                      onClick={event => this.handleEditButton(entry)}
+                >
+                    <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Typography className="pwr-profile-entry-name" variant={'subheading'}>
+                            {entry.nameEntity.name}
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            this.props.renderSingleElementInfo(entry, entry.id)
+                        }
+                    </Grid>
                 </Grid>
             </Grid>
         );
