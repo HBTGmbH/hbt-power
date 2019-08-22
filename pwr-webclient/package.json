@@ -51,9 +51,11 @@
     "@types/vis": "4.18.2",
     "react-scripts-ts": "2.13.0",
     "redux-devtools-extension": "^2.13.8",
+    "source-map-explorer": "^2.0.1",
     "typescript": "^3.5.3"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
