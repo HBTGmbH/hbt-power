@@ -4,16 +4,25 @@ import * as redux from 'redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {newProfileSkill, ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 import {SkillChip} from './skill-chip_module';
-import {noOp} from '../../../../../utils/ObjectUtil';
 import {PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
 import {AddSkill} from './add-skill_module';
-import {Grid} from '@material-ui/core';
+import {Grid, Theme, withTheme} from '@material-ui/core';
 import {PwrFormSubCaption} from '../../../../general/pwr-typography';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import Typography from '@material-ui/core/Typography';
+import {StarRating} from '../../../../star-rating_module.';
+import {noOp} from '../../../../../utils/ObjectUtil';
+import Divider from '@material-ui/core/Divider';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
     initials: string;
+}
+
+interface ThemeProps {
+    theme: Theme;
 }
 
 interface ProfileSkillsLocalProps {
@@ -26,12 +35,13 @@ interface ProfileSkillsLocalState {
 
 interface ProfileSkillsDispatch {
     saveSkill(initials: string, skill: ProfileSkill);
+
     deleteSkill(initials: string, skill: ProfileSkill);
 }
 
-class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSkillsLocalProps & ProfileSkillsDispatch, ProfileSkillsLocalState> {
+class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProps & ProfileSkillsLocalProps & ProfileSkillsDispatch, ProfileSkillsLocalState> {
 
-    constructor(props: ProfileSkillsProps & ProfileSkillsLocalProps & ProfileSkillsDispatch) {
+    constructor(props: ProfileSkillsProps & ProfileSkillsLocalProps & ThemeProps & ProfileSkillsDispatch) {
         super(props);
     }
 
@@ -55,40 +65,60 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ProfileSk
     };
 
     private handleAddSkill = (name: string, rating: number) => {
-        this.props.saveSkill(this.props.initials, newProfileSkill(name, rating))
+        this.props.saveSkill(this.props.initials, newProfileSkill(name, rating));
     };
 
     private handleDeleteSkill = (skill: ProfileSkill) => {
         this.props.deleteSkill(this.props.initials, skill);
     };
 
-    private toSkillChip = (skill: ProfileSkill) => {
-        return  <SkillChip className="mui-margin"
-                           showRating={true}
-                           canChangeRating={true}
-                           onRatingChange={this.handleChangeRating}
-                           key={skill.id}
-                           skill={skill}
-                           onDelete={this.handleDeleteSkill}/>;
+    private toSkill = (skill: ProfileSkill) => {
+        return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} container item spacing={0}>
+            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} alignItems={'flex-start'} >
+                <PwrIconButton style={{paddingTop: "2px"}} iconName='delete' tooltip={PowerLocalize.get('Action.Delete')}
+                               onClick={() => this.handleDeleteSkill(skill)}/>
+            </Grid>
+            <Grid xs={10} sm={10} md={10} lg={10} xl={10} item container spacing={0}>
+                <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Typography className="pwr-profile-entry-name" variant={'subtitle1'}>
+                        {skill.name}
+                    </Typography>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <StarRating rating={skill.rating} onRatingChange={newRating => this.handleChangeRating(newRating, skill)}/>
+                </Grid>
+            </Grid>
+        </Grid>
     };
 
     render() {
-        return (<div>
-            <PwrFormSubCaption>Add A Skill</PwrFormSubCaption>
-            <div className="Pwr-Content-Container">
-                <AddSkill onAddSkill={this.handleAddSkill}/>
-            </div>
-            <PwrFormSubCaption>My Skills</PwrFormSubCaption>
-            <div className="Pwr-Content-Container">
-                {this.props.skills.map(skill => this.toSkillChip(skill))}
-            </div>
-        </div>);
+        return (<Grid container spacing={8}>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
+                <PwrFormSubCaption>{PowerLocalize.get('Profile.Skills.AddSkillCaption')}</PwrFormSubCaption>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
+                <Divider variant={'fullWidth'} style={{height: "2px", backgroundColor: this.props.theme.palette.primary.dark}}/>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
+                <div className="Pwr-Content-Container">
+                    <AddSkill onAddSkill={this.handleAddSkill}/>
+                </div>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
+                <PwrFormSubCaption>{PowerLocalize.get("Profile.Skills.MySkillsCaption")}</PwrFormSubCaption>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
+                <Divider variant={'fullWidth'} style={{height: "2px", backgroundColor: this.props.theme.palette.primary.dark}}/>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
+                <div className="Pwr-Content-Container">
+                    <Grid container spacing={16}>
+                        {this.props.skills.map(skill => this.toSkill(skill))}
+                    </Grid>
+                </div>
+            </Grid>
+        </Grid>);
     }
 }
 
-/**
- * @see ProfileSkillsModule
- * @author Niklas
- * @since 09.08.2019
- */
-export const ProfileSkills: React.ComponentClass<ProfileSkillsLocalProps> = connect(ProfileSkillsModule.mapStateToProps, ProfileSkillsModule.mapDispatchToProps)(ProfileSkillsModule);
+export const ProfileSkills = withTheme()(connect(ProfileSkillsModule.mapStateToProps, ProfileSkillsModule.mapDispatchToProps)(ProfileSkillsModule));

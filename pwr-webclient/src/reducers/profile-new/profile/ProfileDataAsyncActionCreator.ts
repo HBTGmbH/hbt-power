@@ -25,6 +25,9 @@ import {
     skillLoadAction, skillUpdateAction
 } from './actions/ProfileActions';
 import {AbstractAction} from '../../BaseActions';
+import {DeferrableAsyncAction} from '../../deferred/DeferrableAsyncAction';
+import {makeDeferrable} from '../../deferred/AsyncActionUnWrapper';
+import {ActionType} from '../../ActionType';
 
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
 
@@ -87,6 +90,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteLanguage(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<AbstractAction>) {
             profileUpdateServiceClient.deleteLanguage(initials, id).then(value => {
@@ -115,6 +119,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteQualification(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteQualification(initials, id).then(value => {
@@ -144,6 +149,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteSector(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteSector(initials, id).then(value => {
@@ -174,6 +180,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteKeySkill(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteKeySkill(initials, id).then(value => {
@@ -203,6 +210,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteCareer(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteCareer(initials, id).then(value => {
@@ -233,6 +241,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteTraining(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteTraining(initials, id).then(value => {
@@ -263,6 +272,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteEducation(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteEducation(initials, id).then(value => {
@@ -291,6 +301,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteProfileSkill(initials: string, skill: ProfileSkill) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteProfileSkill(initials, skill.id)
@@ -325,6 +336,7 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteProject(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.deleteProject(initials, id).then(value => {

@@ -6,7 +6,7 @@ export type action = 'Action.Save' | 'Action.Cancel';
 
 export interface PwrButtonProps {
     color: PropTypes.Color;
-    icon: JSX.Element;
+    icon?: JSX.Element;
     text: string;
     disabled?: boolean;
     onClick?(): void;
@@ -19,7 +19,6 @@ export const PwrButton = (props: PwrButtonProps) => {
     return <Button
         disabled={props.disabled}
         color={props.color}
-        className="mui-margin"
         onClick={handleSave}
     >
         {props.text}

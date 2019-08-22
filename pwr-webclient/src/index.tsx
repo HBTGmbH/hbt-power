@@ -8,6 +8,7 @@ import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCre
 import {Paths} from './Paths';
 import {AppWrapper} from './app-wrapper-module';
 import {storeHasUnsavedChanges} from './utils/PwrStoreUtils';
+import {ProfileDataAsyncActionCreator} from './reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 
 export function registerPageLeavePrevention() {
     // Prevents navigation
@@ -25,7 +26,6 @@ export function registerPageLeavePrevention() {
 registerPageLeavePrevention();
 new Paths().restorePath();
 store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-
 ReactDOM.render(
     (<AppWrapper/>),
     document.getElementById('root')

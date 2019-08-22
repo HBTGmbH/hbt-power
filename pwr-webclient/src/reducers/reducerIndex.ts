@@ -27,6 +27,7 @@ import {composeWithDevTools} from 'redux-devtools-extension';
 import {DeferredStore} from './deferred/DeferredStore';
 import {reduceDeferredAction} from './deferred/DeferredActionReducer';
 import {deferredActionMiddleware} from './deferred/DeferredActionMiddleware';
+import {asyncActionUnWrapper} from './deferred/AsyncActionUnWrapper';
 
 
 export interface ApplicationState {
@@ -69,7 +70,10 @@ const composeEnhancers = composeWithDevTools({
 export const store: Store<ApplicationState> = createStore(
     ApplicationStore,
     composeEnhancers(applyMiddleware(
+        // The order is important. Deferred is supposed to be first, because it might defer async action (that are wrapped)
+        // Async action un-wrapper MUST be before thunk, otherwise thunk won't realize its an async action
         (deferredActionMiddleware as any),
+        (asyncActionUnWrapper as any),
         thunkMiddleware,
         reactRouterMiddleware,
     ))

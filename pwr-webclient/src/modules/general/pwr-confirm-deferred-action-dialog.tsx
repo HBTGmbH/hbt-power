@@ -2,7 +2,6 @@ import * as React from 'react';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import * as redux from 'redux';
 import {Button, Dialog, DialogContentText, DialogTitle} from '@material-ui/core';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
 import DialogActions from '@material-ui/core/DialogActions';
 import {confirmDeferredAction, rejectDeferredAction} from '../../reducers/deferred/DeferredActions';
 import {connect} from 'react-redux';
@@ -10,6 +9,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 
 interface ConfirmDeferredProps {
     dialogOpen: boolean;
+    actionOK: string;
+    actionNOK: string;
+    content: string;
+    header: string;
 }
 
 interface ConfirmDeferredLocalProps {
@@ -34,7 +37,11 @@ class PwrConfirmDeferredActionDialogModule extends React.Component<ConfirmDeferr
 
     static mapStateToProps(state: ApplicationState, localProps: ConfirmDeferredLocalProps): ConfirmDeferredProps {
         return {
-            dialogOpen: state.deferred.deferredAction != null
+            dialogOpen: state.deferred.deferredAction != null,
+            actionNOK: state.deferred.dialogActionNOK,
+            actionOK: state.deferred.dialogActionOK,
+            content: state.deferred.dialogContent,
+            header: state.deferred.dialogHeader
         };
     }
 
@@ -60,19 +67,19 @@ class PwrConfirmDeferredActionDialogModule extends React.Component<ConfirmDeferr
             onKeyDown={(event) => this.handleKeyDown(event.key)}
         >
             <DialogTitle>
-                {PowerLocalize.get('ConfirmNavDialog.Title')}
+                {this.props.header}
             </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    {PowerLocalize.get('ConfirmNavDialog.Content')}
+                    {this.props.content}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button color='primary' onClick={this.props.confirmAction}>
-                    {PowerLocalize.get('ConfirmNavDialog.Action.NavigateAnyway')}
+                <Button color='primary' onClick={this.props.rejectAction}>
+                    {this.props.actionNOK}
                 </Button>
-                <Button color='secondary' onClick={this.props.rejectAction}>
-                    {PowerLocalize.get('ConfirmNavDialog.Action.CancelNavigation')}
+                <Button color='primary' onClick={this.props.confirmAction}>
+                    {this.props.actionOK}
                 </Button>
             </DialogActions>
         </Dialog>);

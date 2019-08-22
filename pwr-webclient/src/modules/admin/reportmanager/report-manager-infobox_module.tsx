@@ -251,7 +251,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                                        onClick={this.toggleEdit}/>
                         <PwrIconButton iconName={'save'} tooltip={'Bestätigen'}
                                        onClick={this.changeTemplateData}/>
-                        <PwrIconButton iconName={'delete'} tooltip={'Löschen'} isDeleteButton
+                        <PwrIconButton iconName={'delete'} tooltip={'Löschen'}
                                        onClick={this.deleteTemplate}/>
                     </ExpansionPanelActions>
                 </ExpansionPanel>

@@ -52,16 +52,16 @@ class ConfirmNavDialogModule extends React.Component<ConfirmNavDialogProps
                 <Button
                     variant={'text'}
                     color={'primary'}
-                    onClick={this.props.continueNavigation}
+                    onClick={this.props.dropNavigationTarget}
                 >
-                    {PowerLocalize.get('ConfirmNavDialog.Action.NavigateAnyway')}
+                    {PowerLocalize.get('ConfirmNavDialog.Action.CancelNavigation')}
                 </Button>
                 <Button
                     variant={'text'}
                     color={'primary'}
-                    onClick={this.props.dropNavigationTarget}
+                    onClick={this.props.continueNavigation}
                 >
-                    {PowerLocalize.get('ConfirmNavDialog.Action.CancelNavigation')}
+                    {PowerLocalize.get('ConfirmNavDialog.Action.NavigateAnyway')}
                 </Button>
             </DialogActions>
         </Dialog>);

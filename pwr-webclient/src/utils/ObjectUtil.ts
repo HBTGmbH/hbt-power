@@ -84,3 +84,10 @@ export function orDefault<V, R>(keyExtractor: (v:V) => R, def: R) {
 }
 
 export function noOp<ArgType>(arg1?: ArgType) {}
+
+
+export function omitKeys(object: Object, ...keys: string[]): Object {
+    const copy = {...object};
+    keys.forEach(key => delete copy[key]);
+    return copy;
+}

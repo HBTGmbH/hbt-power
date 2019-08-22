@@ -4,7 +4,6 @@ import {Chip} from '@material-ui/core';
 import {StarRating} from '../../../../star-rating_module.';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import Popover from '@material-ui/core/Popover/Popover';
-import {PwrDeleteConfirm} from '../../../../general/pwr-delete-confirm';
 import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 
 
@@ -25,7 +24,6 @@ interface SkillChipLocalProps {
 interface SkillChipLocalState {
     anchorEl: any,
     popoverOpen: boolean,
-    openDelete: boolean,
 }
 
 export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLocalState> {
@@ -34,8 +32,7 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         super(props);
         this.state = {
             anchorEl: null,
-            popoverOpen: false,
-            openDelete: false,
+            popoverOpen: false
         };
     };
 
@@ -66,23 +63,11 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         return <></>;
     };
 
-    private openDeleteConfirm = () => {
-        this.setState({
-            openDelete: true,
-        });
-    };
-
-    private closeConfirm = () => {
-        this.setState({
-            openDelete: false,
-        });
-    };
-
     private makeDeleteHandler = () => {
         if (this.props.disabled) {
             return undefined;
         }
-        return () => this.openDeleteConfirm();
+        return () => this.handleDelete();
     };
 
     private RatingChanger = () => {
@@ -105,13 +90,6 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
     render() {
         return (
             <div>
-                <PwrDeleteConfirm
-                    open={this.state.openDelete}
-                    onClose={this.closeConfirm}
-                    onConfirm={this.handleDelete}
-                    header={'Skill ' + this.skill().name + ' löschen'}
-                    infoText={'Willst du den Skill löschen?'}
-                />
                 <Chip
                     clickable={!this.props.disabled}
                     color={'primary'}

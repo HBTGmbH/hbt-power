@@ -21,10 +21,10 @@ import {DatePickerType} from '../../../model/DatePickerType';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import {PwrDeleteConfirm} from '../../general/pwr-delete-confirm';
 import {PwrButton} from '../../general/pwr-button';
-import {Cancel, Delete, Save} from '@material-ui/icons';
+import {Delete} from '@material-ui/icons';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
+import {isDesktop} from '../../../utils/PwrMobileUtils';
 
 interface ProfileEntryDialogProps {
     suggestions: Array<string>;
@@ -182,7 +182,8 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!event.isPropagationStopped()) {
             let handled = false;
-            if (event.key === 'Enter') {
+            // Only enabled on desktop devices because on mobile devices, the "Enter" action behaves strange
+            if (event.key === 'Enter' && isDesktop()) {
                 this.handleSave();
                 handled = true;
             }
@@ -206,6 +207,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         let error = validateNonEmptyProfileEntry(this.state.searchText);
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth
+                    scroll="paper"
                     onKeyDown={event => this.handleKeyDown(event)}>
                 <DialogTitle>
                     {PowerLocalize.get(`ProfileEntryType.${this.props.type}.EditHeader`)}
@@ -271,19 +273,10 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <PwrDeleteConfirm onClose={() => this.setState({deleteConfirm: false})}
-                                      infoText={isNullOrUndefined(this.props.entry) ? '' : 'Willst du \'' + this.props.entry.nameEntity.name + '\' wirklich löschen?'}
-                                      header={'Löschen Bestätigen'}
-                                      open={this.state.deleteConfirm}
-                                      onConfirm={() => this.handleDelete()}/>
-                    <PwrButton icon={<Save/>} color={'primary'} disabled={!!error} text={PowerLocalize.get('Action.Save')}
-                               onClick={this.handleSave}/>
-                    <PwrButton icon={<Cancel/>} color={'default'} text={PowerLocalize.get('Action.Cancel')}
+                    <PwrButton icon={null} color={'primary'} text={PowerLocalize.get('Action.Cancel')}
                                onClick={this.props.onClose}/>
-                    {isNullOrUndefined(this.props.entry) ? <></> :
-                        <PwrButton icon={<Delete/>} color={'default'} text={PowerLocalize.get('Action.Delete')}
-                                   onClick={this.openDeleteConfirm}/>
-                    }
+                    <PwrButton icon={null} color={'primary'} disabled={!!error} text={PowerLocalize.get('Action.Save')}
+                               onClick={this.handleSave}/>
                 </DialogActions>
             </Dialog>
         );

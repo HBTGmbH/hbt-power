@@ -12,7 +12,7 @@ export class PwrFormCaption extends React.PureComponent<{}> {
 
 export class PwrFormSubCaption extends React.PureComponent<{}> {
     render() {
-        return <Typography variant="h6">{this.props.children}</Typography>
+        return <Typography variant="subtitle1">{this.props.children}</Typography>
     }
 }
 
