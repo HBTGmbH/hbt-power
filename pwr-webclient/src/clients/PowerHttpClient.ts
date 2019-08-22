@@ -1,7 +1,6 @@
 import {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
 import {store} from '../reducers/reducerIndex';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
-import {Promise} from 'es6-promise';
 import {Alerts} from '../utils/Alerts';
 
 /**
@@ -45,7 +44,13 @@ export class PowerHttpClient {
         throw(this.handleError(error));
     };
 
-    preProcess = <T>(promise: AxiosPromise<T>): Promise<T> => {
+    /**
+     * Takes an axios promise (which represents a request) and executes it.
+     * If the request is successful, metadata is discarded and only the entity is returned
+     * If the request has an error, a default notification is posted to the user and the error is rethrown (allowing you to react to it if you wish to)
+     * @param promise
+     */
+    executeRequest = <T>(promise: AxiosPromise<T>): Promise<T> => {
         return promise
             .then(this.endRequest)
             .catch(this.errorRequest)

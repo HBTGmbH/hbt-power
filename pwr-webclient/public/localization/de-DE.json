@@ -98,6 +98,9 @@
     "Profile.Project.AddSkill": "Skill Hinzufügen",
     "Profile.Project.SkillsInProject": "Skills dieses Projektes",
 
+    "Profile.Skills.AddSkillCaption": "Skill Hinzufügen",
+    "Profile.Skills.MySkillsCaption": "Meine Skills",
+
     "Overview.Base.BaseData": "Stammdaten",
     "CareerModule.StartDate": "von",
     "CareerModule.EndDate": "bis",

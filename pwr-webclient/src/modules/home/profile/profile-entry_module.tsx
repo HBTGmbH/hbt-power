@@ -15,6 +15,7 @@ import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileE
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Theme, withTheme} from '@material-ui/core';
 import {PwrButton} from '../../general/pwr-button';
+import {PwrFormSubCaption} from '../../general/pwr-typography';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -160,9 +161,9 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                                     entry={this.state.selectEntry}/>
                 <Grid container spacing={0} alignItems={'center'}>
                     <Grid item md={9}>
-                        <Typography variant={'subtitle1'}>
+                        <PwrFormSubCaption>
                             {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Header`)}
-                        </Typography>
+                        </PwrFormSubCaption>
                     </Grid>
                     <Grid item md={3}>
                         <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}

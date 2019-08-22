@@ -1,6 +1,6 @@
 import {PowerHttpClient} from './PowerHttpClient';
 import {APISkillServiceSkill} from '../model/skill/SkillServiceSkill';
-import {Promise} from 'es6-promise';
+
 import axios, {AxiosRequestConfig} from 'axios';
 import {getSkillByName} from '../API_CONFIG';
 import {APISkillCategory} from '../model/skill/SkillCategory';
@@ -16,12 +16,12 @@ export class SkillServiceClient extends PowerHttpClient {
     public getSkillByName = (name: string): Promise<APISkillServiceSkill> => {
         const url = this.base() + "/skill/byName";
         const config: AxiosRequestConfig = {params: {qualifier: name}};
-        return this.preProcess(axios.get(getSkillByName(), config));
+        return this.executeRequest(axios.get(getSkillByName(), config));
     };
 
     public categorizeSkill = (name: string): Promise<APISkillCategory> => {
         const url = this.base() + "/skill";
         const config: AxiosRequestConfig = {params: {qualifier: name}};
-        return this.preProcess(axios.post(url, null, config));
+        return this.executeRequest(axios.post(url, null, config));
     };
 }
