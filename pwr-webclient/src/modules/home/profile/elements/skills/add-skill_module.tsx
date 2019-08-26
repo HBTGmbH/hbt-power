@@ -19,6 +19,7 @@ import Step from '@material-ui/core/Step/Step';
 import StepLabel from '@material-ui/core/StepLabel/StepLabel';
 import StepContent from '@material-ui/core/StepContent/StepContent';
 import HelpOutline from '@material-ui/icons/HelpOutline';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 
 interface AddSkill_ModuleProps {
     histories: Immutable.Map<string, string>;
@@ -36,7 +37,6 @@ interface AddSkill_ModuleState {
     skills: Array<string>
     skillRating: number;
     skillName: string;
-    skillCategory: string;
     progressState: number;
     showHelp: boolean;
 
@@ -51,7 +51,6 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             skills: [],
             skillRating: 1,
             skillName: '',
-            skillCategory: '',
             progressState: 0,
             showHelp: false,
         };
@@ -77,8 +76,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             })
         }
         this.setState({
-            skillName: data,
-            skillCategory: ''
+            skillName: data
         });
         if (!isNullOrUndefined(data) && data.trim().length > 0) {
             let reqParams = {
@@ -98,14 +96,13 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             }).catch((error: any) => {
                 console.error((error));
             });
-            this.requestSkillCategory();
+            this.requestSkillHierarchy(data);
         }
     };
 
 
-    private requestSkillCategory = () => {
-        this.state.skills.forEach(value => this.props.requestSkillHierarchy(value));
-        this.props.requestSkillHierarchy(this.state.skillName);
+    private requestSkillHierarchy = (skillName) => {
+        this.props.requestSkillHierarchy(skillName);
     };
 
     private handleRatingChange = (value: number) => {
@@ -119,7 +116,6 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         this.setState({
             skillRating: 1,
             skillName: '',
-            skillCategory: '',
             progressState: 0,
             showHelp: false,
         });
@@ -136,12 +132,8 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
 
     private handleKeyPress = (event: KeyboardEvent) => {
         if (this.state.progressState == 0 && event.key == 'Enter' && !isNullOrUndefined(this.state.skillName)) {
-            if (this.props.histories.has(this.state.skillName)) {
-                let history = this.props.histories.get(this.state.skillName);
-                this.setState({skillCategory: history});
-            } else {
-
-                this.requestSkillCategory();
+            if (!this.props.histories.has(this.state.skillName)) {
+                this.requestSkillHierarchy(this.state.skillName);
             }
             this.setState({progressState: 1});
             // TODO remove focus from Textfield
@@ -170,6 +162,13 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             showHelp: !this.state.showHelp,
         });
     };
+
+    private skillHierarchy(): string {
+        if (this.props.histories.has(this.state.skillName)) {
+            return PowerLocalize.getFormatted("Profile.Skills.CategoryTemplate", this.props.histories.get(this.state.skillName));
+        }
+        return PowerLocalize.get("Profile.Skills.CategoryNotFound");
+    }
 
     render() {
         return <div
@@ -227,7 +226,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             <div
                 className={'col-md-12'}
             >
-                <Typography>{this.state.skillCategory != '' ? 'Kategorie: ' + this.state.skillCategory : 'Keine Kategorie gefunden'}</Typography>
+                <Typography>{this.skillHierarchy()}</Typography>
             </div>
         </div>;
     }
