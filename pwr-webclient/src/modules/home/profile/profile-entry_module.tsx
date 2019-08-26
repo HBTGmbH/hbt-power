@@ -164,6 +164,9 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                         <PwrFormSubCaption>
                             {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Header`)}
                         </PwrFormSubCaption>
+                        <p>
+                            {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Info`)}
+                        </p>
                     </Grid>
                     <Grid item md={3}>
                         <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}
