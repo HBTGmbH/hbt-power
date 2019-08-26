@@ -86,7 +86,7 @@ spring:
         search:
           default:
             directory_provider: filesystem
-            indexBase: /target
+            indexBase: ./target
     hibernate:
       ddl-auto: create
 eureka:
