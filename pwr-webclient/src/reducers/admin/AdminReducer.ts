@@ -108,8 +108,8 @@ export class AdminReducer {
     }
 
     public static LogOutAdmin(state: AdminState): AdminState {
-        localStorage.remove(COOKIE_ADMIN_USERNAME);
-        localStorage.remove(COOKIE_ADMIN_PASSWORD);
+        window.localStorage.removeItem(COOKIE_ADMIN_USERNAME);
+        window.localStorage.removeItem(COOKIE_ADMIN_PASSWORD);
         return AdminState.createDefault();
     }
 
