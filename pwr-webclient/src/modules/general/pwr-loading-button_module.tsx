@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {CircularProgress, WithStyles, withStyles} from '@material-ui/core';
 import {green} from '@material-ui/core/colors';
-import {Loop} from '@material-ui/icons';
+import Loop from '@material-ui/icons/Loop';
 import Fab from '@material-ui/core/Fab/Fab';
 
 interface PwrLoadingButtonProps {

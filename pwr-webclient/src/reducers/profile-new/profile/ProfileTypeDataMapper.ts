@@ -169,19 +169,19 @@ export class ProfileTypeDataMapper {
                 break;
             }
             case 'EDUCATION': {
-                if (!isNullOrUndefined(state.degree) && !isNullOrUndefined(state.startDate) && !isNullOrUndefined(state.endDate)) {
+                if (!isNullOrUndefined(state.degree) && !isNullOrUndefined(state.startDate) && state.endDate != undefined) {
                     return newEducation(id, nameEntity, state.startDate, state.endDate, state.degree);
                 }
                 break;
             }
             case 'CAREER': {
-                if (!isNullOrUndefined(state.startDate) && !isNullOrUndefined(state.endDate)) {
+                if (!isNullOrUndefined(state.startDate) && state.endDate != undefined) {
                     return newCareer(id, nameEntity, state.startDate, state.endDate);
                 }
                 break;
             }
             case 'KEY_SKILL': {
-                    return newSpecialField(id, nameEntity);
+                return newSpecialField(id, nameEntity);
             }
             case 'QUALIFICATION': {
                 if (!isNullOrUndefined(state.startDate)) {
@@ -190,10 +190,12 @@ export class ProfileTypeDataMapper {
                 break;
             }
             case 'SECTOR': {
-                    return newIndustrialSector(id, nameEntity);
+                return newIndustrialSector(id, nameEntity);
             }
             case 'TRAINING': {
-                if (!isNullOrUndefined(state.startDate) && !isNullOrUndefined(state.endDate)) {
+                console.log(' Outer -- make Training Entry', state);
+                if (!isNullOrUndefined(state.startDate)) {
+                    console.log(' Inner -- make Training Entry');
                     return newTraining(id, nameEntity, state.startDate, state.endDate);
                 }
                 break;

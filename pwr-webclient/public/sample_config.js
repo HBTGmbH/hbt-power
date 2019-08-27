@@ -30,6 +30,7 @@ const POWER_API_META_INFO_REPORT = "https://power.hbt.de/" + POWER_API_PREFIX + 
 const POWER_IMAGE_PATH = POWER_API_PREFIX + "/img";
 
 const POWER_APP_PATH = "/power";
+const POWER_LOCALE_PATH = "http://power02.corp.hbt.de/localization";
 
 const GLOBAL_OPTIONS = {
     defaultCharsPerLine: 32,

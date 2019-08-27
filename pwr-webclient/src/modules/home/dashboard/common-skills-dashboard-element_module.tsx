@@ -11,7 +11,7 @@ import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsAc
 import {Paths} from '../../../Paths';
 import {getImagePath} from '../../../API_CONFIG';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
-import {OpenInNew} from '@material-ui/icons';
+import OpenInNew from '@material-ui/icons/OpenInNew';
 
 interface CommonSkillsDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;

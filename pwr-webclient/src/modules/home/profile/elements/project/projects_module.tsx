@@ -11,7 +11,7 @@ import {Divider, List} from '@material-ui/core';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import {Add} from '@material-ui/icons';
+import Add from '@material-ui/icons/Add';
 import {addNewProject, selectProject} from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';

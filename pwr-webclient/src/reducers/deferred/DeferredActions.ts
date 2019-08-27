@@ -1,7 +1,7 @@
 import {ActionType} from '../ActionType';
 import {AbstractAction} from '../BaseActions';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {Power} from '@material-ui/icons';
+import Power from '@material-ui/icons/Power';
 
 export interface DeferActionAction {
     type: ActionType.DeferAction;

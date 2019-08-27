@@ -22,7 +22,7 @@ import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrButton} from '../../general/pwr-button';
-import {Delete} from '@material-ui/icons';
+import Delete from '@material-ui/icons/Delete';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
 import {isDesktop} from '../../../utils/PwrMobileUtils';
 
@@ -231,7 +231,8 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 <Grid item md={6} xs={12}>
                                     <PwrDatePicker onChange={this.onStartDateChange}
                                                    placeholderDate={this.state.startDate}
-                                                   label={'Start'} type={DatePickerType.MONTH_YEAR}/>
+                                                   label={'Start'} type={DatePickerType.MONTH_YEAR}
+                                                   disableOpenEnd/>
                                 </Grid>
                         }
                         {

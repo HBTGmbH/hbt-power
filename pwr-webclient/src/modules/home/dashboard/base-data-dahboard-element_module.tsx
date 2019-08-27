@@ -12,7 +12,7 @@ import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
-import {Edit} from '@material-ui/icons';
+import Edit from '@material-ui/icons/Edit';
 
 interface BaseDataDashboardElementProps {
     initials: string;

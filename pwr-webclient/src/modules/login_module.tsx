@@ -14,7 +14,8 @@ import TextField from '@material-ui/core/TextField/TextField';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
 import {PwrRaisedButton} from './general/pwr-raised-button';
-import {ArrowRight, Person} from '@material-ui/icons';
+import ArrowRight from '@material-ui/icons/ArrowRight';
+import Person from '@material-ui/icons/Person';
 import {CrossCuttingAsyncActionCreator} from '../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 interface LoginProps {
@@ -35,6 +36,7 @@ interface LoginLocalState {
 
 interface LoginDispatch {
     logInUser(initials: string): void;
+
     clearLoginError(): void;
 }
 
@@ -85,7 +87,7 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
         this.setState({
             initials: value
         });
-      this.props.clearLoginError();
+        this.props.clearLoginError();
     };
 
     private logInUser = () => {
@@ -123,11 +125,13 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
                                     {this.renderInputField()}
                                 </div>
                                 <br/>
-                                <PwrRaisedButton color='primary' icon={<ArrowRight/>} onClick={this.logInUser} text={PowerLocalize.get('Login.SelectProfile')}/>
+                                <PwrRaisedButton color='primary' icon={<ArrowRight/>} onClick={this.logInUser}
+                                                 text={PowerLocalize.get('Login.SelectProfile')}/>
                                 <br/>
                                 <br/>
                                 <Link to={Paths.ADMIN_LOGIN}>
-                                    <PwrRaisedButton color='primary' icon={<Person/>} text={PowerLocalize.get('Login.AdminSpace')}/>
+                                    <PwrRaisedButton color='primary' icon={<Person/>}
+                                                     text={PowerLocalize.get('Login.AdminSpace')}/>
                                 </Link>
                             </div>
                         </div>

@@ -19,7 +19,7 @@ import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
 import {isNullOrUndefined} from 'util';
 import {PwrRaisedButton} from '../general/pwr-raised-button';
-import {Add} from '@material-ui/icons';
+import Add from '@material-ui/icons/Add';
 
 /**
  * Properties that are managed by react-redux.
