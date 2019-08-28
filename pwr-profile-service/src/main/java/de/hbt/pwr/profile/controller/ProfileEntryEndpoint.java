@@ -35,6 +35,10 @@ public class ProfileEntryEndpoint {
         this.profileRepository = profileRepository;
     }
 
+    @GetMapping("/fullProfile")
+    public Profile getFullProfile(@PathVariable("initials") String initials) {
+        return consultantService.getProfileByInitials(initials);
+    }
 
     @GetMapping("/baseProfile")
     public BaseProfile getBaseProfile(@PathVariable("initials") String initials) {
