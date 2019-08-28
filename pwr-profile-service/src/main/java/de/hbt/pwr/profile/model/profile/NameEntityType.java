@@ -76,15 +76,15 @@ public enum NameEntityType {
             return (Set<Entry>) profile.getCareerEntries();
         }
     },
-    KEY_SKILL() {
+    SPECIAL_FIELD() {
         @Override
         public Class<? extends ProfileEntry> getProfileEntryClass() {
-            return KeySkillEntry.class;
+            return SpecialFieldEntry.class;
         }
 
         @Override
         public <Entry extends ProfileEntry> Set<Entry> getEntryCollection(Profile profile) {
-            return (Set<Entry>) profile.getKeySkillEntries();
+            return (Set<Entry>) profile.getSpecialFieldEntries();
         }
     },
     COMPANY() {

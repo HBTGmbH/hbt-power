@@ -533,12 +533,12 @@ public class ProfileUpdateServiceITest {
         profile.getSectors().add(sectorEntry1);
         profile.getSectors().add(sectorEntry2);
 
-        KeySkillEntry keySkillEntry1 = new KeySkillEntry(new NameEntity("KeySkill1", NameEntityType.KEY_SKILL));
-        KeySkillEntry keySkillEntry2 = new KeySkillEntry(new NameEntity("KeySkill2", NameEntityType.KEY_SKILL));
-        KeySkillEntry keySkillEntry3 = new KeySkillEntry(new NameEntity("KeySkill3", NameEntityType.KEY_SKILL));
-        profile.getKeySkillEntries().add(keySkillEntry1);
-        profile.getKeySkillEntries().add(keySkillEntry2);
-        profile.getKeySkillEntries().add(keySkillEntry3);
+        SpecialFieldEntry specialFieldEntry1 = new SpecialFieldEntry(new NameEntity("KeySkill1", NameEntityType.SPECIAL_FIELD));
+        SpecialFieldEntry specialFieldEntry2 = new SpecialFieldEntry(new NameEntity("KeySkill2", NameEntityType.SPECIAL_FIELD));
+        SpecialFieldEntry specialFieldEntry3 = new SpecialFieldEntry(new NameEntity("KeySkill3", NameEntityType.SPECIAL_FIELD));
+        profile.getSpecialFieldEntries().add(specialFieldEntry1);
+        profile.getSpecialFieldEntries().add(specialFieldEntry2);
+        profile.getSpecialFieldEntries().add(specialFieldEntry3);
 
         CareerEntry careerEntry1 = new CareerEntry(new NameEntity("Carreer1", NameEntityType.CAREER), LocalDate.now(), null);
         CareerEntry careerEntry2 = new CareerEntry(new NameEntity("Carreer2", NameEntityType.CAREER), LocalDate.now(), null);
@@ -581,9 +581,9 @@ public class ProfileUpdateServiceITest {
         assertContainsEntryWithName(profile.getSectors(), sectorEntry1.getNameEntity());
         assertContainsEntryWithName(profile.getSectors(), sectorEntry2.getNameEntity());
 
-        assertContainsEntryWithName(profile.getKeySkillEntries(), keySkillEntry1.getNameEntity());
-        assertContainsEntryWithName(profile.getKeySkillEntries(), keySkillEntry2.getNameEntity());
-        assertContainsEntryWithName(profile.getKeySkillEntries(), keySkillEntry3.getNameEntity());
+        assertContainsEntryWithName(profile.getSpecialFieldEntries(), specialFieldEntry1.getNameEntity());
+        assertContainsEntryWithName(profile.getSpecialFieldEntries(), specialFieldEntry2.getNameEntity());
+        assertContainsEntryWithName(profile.getSpecialFieldEntries(), specialFieldEntry3.getNameEntity());
 
         assertContainsEntryWithName(profile.getCareerEntries(), careerEntry1.getNameEntity());
         assertContainsEntryWithName(profile.getCareerEntries(), careerEntry2.getNameEntity());
@@ -630,9 +630,9 @@ public class ProfileUpdateServiceITest {
         assertContains(profileEntryNotifications, sectorEntry1.getNameEntity());
         assertContains(profileEntryNotifications, sectorEntry2.getNameEntity());
 
-        assertContains(profileEntryNotifications, keySkillEntry1.getNameEntity());
-        assertContains(profileEntryNotifications, keySkillEntry2.getNameEntity());
-        assertContains(profileEntryNotifications, keySkillEntry3.getNameEntity());
+        assertContains(profileEntryNotifications, specialFieldEntry1.getNameEntity());
+        assertContains(profileEntryNotifications, specialFieldEntry2.getNameEntity());
+        assertContains(profileEntryNotifications, specialFieldEntry3.getNameEntity());
 
         assertContains(profileEntryNotifications, careerEntry1.getNameEntity());
         assertContains(profileEntryNotifications, careerEntry2.getNameEntity());

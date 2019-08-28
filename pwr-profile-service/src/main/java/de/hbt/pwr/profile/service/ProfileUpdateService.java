@@ -245,8 +245,8 @@ public class ProfileUpdateService {
             profile.setCareerEntries(persistEntries(profile.getCareerEntries(), profile, NameEntityType.CAREER, adminNotifications));
         }
 
-        if (profile.getKeySkillEntries().size() > 0) {
-            profile.setKeySkillEntries(persistEntries(profile.getKeySkillEntries(), profile, NameEntityType.KEY_SKILL, adminNotifications));
+        if (profile.getSpecialFieldEntries().size() > 0) {
+            profile.setSpecialFieldEntries(persistEntries(profile.getSpecialFieldEntries(), profile, NameEntityType.SPECIAL_FIELD, adminNotifications));
         }
     }
 
@@ -311,7 +311,7 @@ public class ProfileUpdateService {
         removeInvalidEntries(profile.getSectors());
         removeInvalidEntries(profile.getQualification());
         removeInvalidEntries(profile.getCareerEntries());
-        removeInvalidEntries(profile.getKeySkillEntries());
+        removeInvalidEntries(profile.getSpecialFieldEntries());
     }
 
     private void importProjects(Profile profile) {

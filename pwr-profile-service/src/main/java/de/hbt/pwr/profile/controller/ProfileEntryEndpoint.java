@@ -111,22 +111,22 @@ public class ProfileEntryEndpoint {
     }
 
     // --------------------------- ---------------------- KeySkills ---------------------- ---------------------------//
-    @GetMapping("/keyskill")
-    public Collection<KeySkillEntry> getKeySkillEntries(@PathVariable("initials") String initials) {
-        return consultantService.getProfileByInitials(initials).getKeySkillEntries();
+    @GetMapping("/specialfield")
+    public Collection<SpecialFieldEntry> getKeySkillEntries(@PathVariable("initials") String initials) {
+        return consultantService.getProfileByInitials(initials).getSpecialFieldEntries();
     }
 
-    @PutMapping("/keyskill")
-    public KeySkillEntry updateKeySkillEntry(@PathVariable("initials") String initials, @RequestBody KeySkillEntry keySkillEntry) {
+    @PutMapping("/specialfield")
+    public SpecialFieldEntry updateKeySkillEntry(@PathVariable("initials") String initials, @RequestBody SpecialFieldEntry specialFieldEntry) {
         Profile p = consultantService.getProfileByInitials(initials);
-        KeySkillEntry entry = profileEntryService.updateProfileEntry(keySkillEntry, p, NameEntityType.KEY_SKILL);
+        SpecialFieldEntry entry = profileEntryService.updateProfileEntry(specialFieldEntry, p, NameEntityType.SPECIAL_FIELD);
         return entry;
     }
 
-    @DeleteMapping("/keyskill/{id}")
+    @DeleteMapping("/specialfield/{id}")
     public void deleteKeySkillEntry(@PathVariable("initials") String initials, @PathVariable("id") Long id) {
         Profile p = consultantService.getProfileByInitials(initials);
-        profileEntryService.deleteEntryWithId(id, p, NameEntityType.KEY_SKILL);
+        profileEntryService.deleteEntryWithId(id, p, NameEntityType.SPECIAL_FIELD);
     }
 
     // -------------------------- ---------------------- CareerEntry ---------------------- --------------------------//

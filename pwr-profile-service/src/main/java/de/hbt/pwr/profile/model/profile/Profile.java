@@ -72,7 +72,7 @@ public class Profile {
     @Cascade(CascadeType.ALL)
     @JoinColumn(name = "PROFILE_ID")
     @Fetch(FetchMode.SUBSELECT)
-    private Set<KeySkillEntry> keySkillEntries = new HashSet<>();
+    private Set<SpecialFieldEntry> specialFieldEntries = new HashSet<>();
 
     /**
      * All projects associated with this profile.
@@ -123,7 +123,7 @@ public class Profile {
         res.setTrainingEntries(trainingEntries.stream().map(TrainingEntry::copyNullId).collect(Collectors.toSet()));
         res.setProjects(projects.stream().map(Project::copyNullId).collect(Collectors.toSet()));
         res.setCareerEntries(careerEntries.stream().map(CareerEntry::copyNullId).collect(Collectors.toSet()));
-        res.setKeySkillEntries(keySkillEntries.stream().map(KeySkillEntry::copyNullId).collect(Collectors.toSet()));
+        res.setSpecialFieldEntries(specialFieldEntries.stream().map(SpecialFieldEntry::copyNullId).collect(Collectors.toSet()));
         res.setSkills(skills.stream().map(Skill::copyNullId).collect(Collectors.toSet()));
         return res;
     }

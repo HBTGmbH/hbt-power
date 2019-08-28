@@ -99,13 +99,13 @@ public class SuggestionEndpoint {
         return getSuggestionResponse(NameEntityType.CAREER);
     }
 
-    @GetMapping("/keyskills")
+    @GetMapping("/specialfields")
     @ApiOperation(value = "Returns all currently known careers")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Entities in body", response = List.class)
     })
     public ResponseEntity<Collection<NameEntity>> getKeySkillSuggestions() {
-        return getSuggestionResponse(NameEntityType.KEY_SKILL);
+        return getSuggestionResponse(NameEntityType.SPECIAL_FIELD);
     }
 
     @GetMapping("/companies")
