@@ -107,8 +107,9 @@ export function formatToMailDisplay(date: Date) {
 }
 
 export function formatToYear(date: Date) {
+    const newDate = new Date(date);
     if (isNullOrUndefined(date)) return PowerLocalize.get('Today');
-    return formatOnlyYear.format(date);
+    return formatOnlyYear.format(newDate);
 }
 
 export namespace DateUtils {

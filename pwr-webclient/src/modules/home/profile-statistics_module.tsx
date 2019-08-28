@@ -48,13 +48,17 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
 
 
     private renderElementCounts = () => {
-        let langCount = this.props.profile.languages.length;
-        let secCount = this.props.profile.sectors.length;
-        let qualCount = this.props.profile.qualification.length;
-        let edCount = this.props.profile.education.length;
-        let trainCount = this.props.profile.trainings.length;
-        let careerCount = this.props.profile.careers.length;
-        let keySkillCount = this.props.profile.specialFieldEntries.length;
+        let langCount: number = 0, secCount: number = 0, qualCount: number = 0, edCount: number = 0,
+            trainCount: number = 0, careerCount: number = 0, keySkillCount: number = 0;
+        if (!!this.props.profile) {
+            langCount = !!this.props.profile.languages ? this.props.profile.languages.length : 0;
+            secCount = !!this.props.profile.sectors ? this.props.profile.sectors.length : 0;
+            qualCount = !!this.props.profile.qualification ? this.props.profile.qualification.length : 0;
+            edCount = !!this.props.profile.education ? this.props.profile.education.length : 0;
+            trainCount = !!this.props.profile.trainings ? this.props.profile.trainings.length : 0;
+            careerCount = !!this.props.profile.careers ? this.props.profile.careers.length : 0;
+            keySkillCount = !!this.props.profile.specialFieldEntries ? this.props.profile.specialFieldEntries.length : 0;
+        }
         const data = [
             {name: PowerLocalize.get('Language.Plural'), value: langCount},
             {name: PowerLocalize.get('Sector.Plural'), value: secCount},
@@ -62,7 +66,7 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
             {name: PowerLocalize.get('Education.Plural'), value: edCount},
             {name: PowerLocalize.get('Training.Plural'), value: trainCount},
             {name: PowerLocalize.get('Career.Plural'), value: careerCount},
-            {name: PowerLocalize.get('KeySkill.Plural'), value: keySkillCount},
+            {name: PowerLocalize.get('SpecialField.Plural'), value: keySkillCount},
         ];
         return (
             <Recharts.ResponsiveContainer minHeight={200} maxHeight={400}>

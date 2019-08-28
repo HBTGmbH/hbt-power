@@ -144,6 +144,7 @@ export enum ActionType {
     DeleteProfileSkillSuccessful = "[Profile] DeleteProfileSkillSuccessful",
     UpdateProjectSuccessful = "[Profile] UpdateProjectSuccessful",
     DeleteProjectSuccessful = "[Profile] DeleteProjectSuccessful",
+    LoadProfileAction = '[Profile] LoadProfileAction',
     LoadBaseProfileAction = "[Profile] LoadBaseProfileAction",
     LoadEntriesAction = "[Profile] LoadEntriesAction",
     LoadSkillsAction = "[Profile] LoadSkillsAction",

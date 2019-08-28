@@ -16,6 +16,7 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Theme, withTheme} from '@material-ui/core';
 import {PwrButton} from '../../general/pwr-button';
 import {PwrFormSubCaption} from '../../general/pwr-typography';
+import {type} from 'os';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -26,6 +27,7 @@ interface ProfileEntryProps {
 interface ProfileEntryLocalProps {
     type: ProfileEntryType;
     theme: Theme;
+
     renderSingleElementInfo(entry: ProfileEntry, id: number): JSX.Element;
 }
 
@@ -74,6 +76,8 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     };
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileEntryLocalProps): ProfileEntryProps {
+        console.log(state.profileStore.profile);
+
         const profileField = ProfileTypeDataMapper.getProfileField(localProps.type);
         const entries = (!isNullOrUndefined(profileField) && !isNullOrUndefined(state.profileStore.profile)) ? state.profileStore.profile[profileField] : [];
         const suggestionField = ProfileTypeDataMapper.getSuggestionField(localProps.type);
@@ -123,11 +127,12 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     private renderSingleElement = (entry: ProfileEntry, index: number) => {
         return (
             <Grid key={entry.id} item container spacing={0}>
-                <Grid item xs={2} sm={2} md={1} lg={1} xl={1} >
+                <Grid item xs={2} sm={2} md={1} lg={1} xl={1}>
                     <PwrIconButton iconName='delete' tooltip={PowerLocalize.get('Action.Delete')}
                                    onClick={() => this.handleDeleteButton(entry.id)}/>
                 </Grid>
-                <Grid xs={10} sm={10} md={11} lg={11} xl={11} key={entry.id} item container alignItems={'flex-end'} spacing={0} className="cursor-pointer"
+                <Grid xs={10} sm={10} md={11} lg={11} xl={11} key={entry.id} item container alignItems={'flex-end'}
+                      spacing={0} className="cursor-pointer"
                       onClick={event => this.handleEditButton(entry)}
                 >
                     <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -149,12 +154,18 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     private renderEmptyElement = () => {
         return <Grid item container alignItems={'flex-end'} spacing={0}>
             <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography className="pwr-profile-entry-name" variant={'subtitle1'}>{PowerLocalize.get('Profile.Entries.NotAvailable')}</Typography>
+                <Typography className="pwr-profile-entry-name"
+                            variant={'subtitle1'}>{PowerLocalize.get('Profile.Entries.NotAvailable')}</Typography>
             </Grid>
-        </Grid>
+        </Grid>;
     };
 
     render() {
+        if (isNullOrUndefined(this.props.allEntries)) {
+
+            console.log(this.props.type, this.props.allEntries);
+        }
+
         return (
             <div className="pwr-profile-entry-container">
                 <ProfileEntryDialog open={this.state.open} onClose={this.handleDialogOnClose} type={this.props.type}
@@ -172,10 +183,11 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                         <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}
                                        onClick={this.handleNewButton}/>
                     </Grid>
-                    <Grid item md={12} sm={12} xs={12} lg={12} xl={12} >
-                        <Divider variant={'fullWidth'} style={{height: "2px", backgroundColor: this.props.theme.palette.primary.dark}}/>
+                    <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
+                        <Divider variant={'fullWidth'}
+                                 style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
                     </Grid>
-                    <Grid item container spacing={8}  md={12} sm={12}>
+                    <Grid item container spacing={8} md={12} sm={12}>
                         {
                             !isNullOrUndefined(this.props.allEntries) && this.props.allEntries.length > 0 ?
                                 this.props.allEntries.map(this.renderSingleElement) :
@@ -188,4 +200,4 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     }
 }
 
-export const ProfileEntryElement = withTheme() (connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule));
+export const ProfileEntryElement = withTheme()(connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule));

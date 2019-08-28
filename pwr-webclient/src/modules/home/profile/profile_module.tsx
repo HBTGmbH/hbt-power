@@ -237,7 +237,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderSectorInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'KEY_SKILL'}
+                            <ProfileEntryElement type={'SPECIAL_FIELD'}
                                                  renderSingleElementInfo={this.renderKeySkillInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>

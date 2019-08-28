@@ -1,4 +1,4 @@
-import {ProfileEntryType} from './model/ProfileEntryType';
+import {ProfileEntryType, ProfileEntryTypeName} from './model/ProfileEntryType';
 import {SuggestionField} from '../../suggestions/model/SuggestionField';
 import {ProfileEntryField} from './model/ProfileEntryField';
 import {ProfileDataAsyncActionCreator} from './ProfileDataAsyncActionCreator';
@@ -30,7 +30,7 @@ export class ProfileTypeDataMapper {
             case 'CAREER': {
                 return 'allCareers' as SuggestionField;
             }
-            case 'KEY_SKILL': {
+            case 'SPECIAL_FIELD': {
                 return 'allSpecialFields' as SuggestionField;
             }
             case 'QUALIFICATION': {
@@ -49,25 +49,25 @@ export class ProfileTypeDataMapper {
     public static getProfileField(type: ProfileEntryType): ProfileEntryField {
         switch (type) {
             case 'LANGUAGE': {
-                return 'languages' as ProfileEntryField;
+                return ProfileEntryTypeName.LANGUAGE as ProfileEntryField;
             }
             case 'EDUCATION': {
-                return 'education' as ProfileEntryField;
+                return ProfileEntryTypeName.EDUCATION as ProfileEntryField;
             }
             case 'CAREER': {
-                return 'career' as ProfileEntryField;
+                return ProfileEntryTypeName.CAREER as ProfileEntryField;
             }
-            case 'KEY_SKILL': {
-                return 'specialFieldEntries' as ProfileEntryField;
+            case 'SPECIAL_FIELD': {
+                return ProfileEntryTypeName.SPECIAL_FIELD as ProfileEntryField;
             }
             case 'QUALIFICATION': {
-                return 'qualification' as ProfileEntryField;
+                return ProfileEntryTypeName.QUALIFICATION as ProfileEntryField;
             }
             case 'SECTOR': {
-                return 'sectors' as ProfileEntryField;
+                return ProfileEntryTypeName.SECTOR as ProfileEntryField;
             }
             case 'TRAINING': {
-                return 'training' as ProfileEntryField;
+                return ProfileEntryTypeName.TRAINING as ProfileEntryField;
             }
         }
         return null;
@@ -90,7 +90,7 @@ export class ProfileTypeDataMapper {
                     dispatch(ProfileDataAsyncActionCreator.saveCareer(initials, entry));
                 };
             }
-            case 'KEY_SKILL': {
+            case 'SPECIAL_FIELD': {
                 return (initials, entry) => {
                     dispatch(ProfileDataAsyncActionCreator.saveKeySkill(initials, entry));
                 };
@@ -131,7 +131,7 @@ export class ProfileTypeDataMapper {
                     dispatch(ProfileDataAsyncActionCreator.deleteCareer(initials, id));
                 };
             }
-            case 'KEY_SKILL': {
+            case 'SPECIAL_FIELD': {
                 return (initials, id) => {
                     dispatch(ProfileDataAsyncActionCreator.deleteKeySkill(initials, id));
                 };
@@ -160,7 +160,7 @@ export class ProfileTypeDataMapper {
         const isNew = isNullOrUndefined(entry);
         const id = isNew ? -1 : entry.id;
         const nameId = isNew ? -1 : entry.nameEntity.id;
-        let nameEntity: NameEntity = newNameEntity(nameId, state.searchText, type);
+        let nameEntity: NameEntity = newNameEntity(nameId, state.searchText,type);
         switch (type) {
             case 'LANGUAGE': {
                 if (!isNullOrUndefined(state.langLevel)) {
@@ -169,18 +169,18 @@ export class ProfileTypeDataMapper {
                 break;
             }
             case 'EDUCATION': {
-                if (!isNullOrUndefined(state.degree) && !isNullOrUndefined(state.startDate) && state.endDate != undefined) {
+                if (!isNullOrUndefined(state.degree) && !isNullOrUndefined(state.startDate)) {
                     return newEducation(id, nameEntity, state.startDate, state.endDate, state.degree);
                 }
                 break;
             }
             case 'CAREER': {
-                if (!isNullOrUndefined(state.startDate) && state.endDate != undefined) {
+                if (!isNullOrUndefined(state.startDate)) {
                     return newCareer(id, nameEntity, state.startDate, state.endDate);
                 }
                 break;
             }
-            case 'KEY_SKILL': {
+            case 'SPECIAL_FIELD': {
                 return newSpecialField(id, nameEntity);
             }
             case 'QUALIFICATION': {
@@ -193,9 +193,7 @@ export class ProfileTypeDataMapper {
                 return newIndustrialSector(id, nameEntity);
             }
             case 'TRAINING': {
-                console.log(' Outer -- make Training Entry', state);
                 if (!isNullOrUndefined(state.startDate)) {
-                    console.log(' Inner -- make Training Entry');
                     return newTraining(id, nameEntity, state.startDate, state.endDate);
                 }
                 break;

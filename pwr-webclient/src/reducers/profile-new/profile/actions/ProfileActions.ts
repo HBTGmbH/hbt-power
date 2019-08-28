@@ -4,6 +4,18 @@ import {ProfileEntryField} from '../model/ProfileEntryField';
 import {AbstractAction} from '../../../BaseActions';
 import {ProfileEntry} from '../model/ProfileEntry';
 import {ProfileSkill} from '../model/ProfileSkill';
+import {Profile} from '../model/Profile';
+
+
+export interface ProfileLoadAction extends AbstractAction{
+    profile:Profile;
+}
+export function profileLoadAction(profile: Profile): ProfileLoadAction {
+    return {
+        type: ActionType.LoadProfileAction,
+        profile: profile
+    };
+}
 
 export interface BaseProfileLoadAction extends AbstractAction {
     baseProfile: BaseProfile;

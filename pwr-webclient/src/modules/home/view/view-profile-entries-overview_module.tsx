@@ -128,7 +128,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntrie
                 <div className="col-md-6 fullWidth">
 
                     <ViewProfileEntries
-                        title={PowerLocalize.get('KeySkill.Plural')}
+                        title={PowerLocalize.get('SpecialField.Plural')}
                         movableEntryType="KEY_SKILL"
                         toggleableEntryType="KEY_SKILL"
                         renderEntry={EntryRenderers.renderKeySkill}

@@ -55,7 +55,7 @@ export class SuggestionServiceClient extends PowerHttpClient {
     };
 
     public getKeySkillSuggestions = (): Promise<Array<NameEntity>> => {
-        const url = this.base() + '/suggestions/keyskills';
+        const url = this.base() + '/suggestions/specialfields';
         this.beginRequest();
         return this.executeRequest(axios.get(url));
     };

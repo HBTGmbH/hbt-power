@@ -99,7 +99,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         switch (selectedField) {
             case ProfileElementType.SectorEntry:
                 return this.props.sectors;
-            case ProfileElementType.KeySkill:
+            case ProfileElementType.SpecialField:
                 return this.props.keySkills;
             case ProfileElementType.CareerEntry:
                 return this.props.careers;

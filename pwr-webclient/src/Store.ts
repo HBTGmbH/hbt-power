@@ -15,7 +15,7 @@ export enum ProfileElementType {
     EducationEntry = 'EDUCATION',
     QualificationEntry = 'QUALIFICATION',
     LanguageEntry = 'LANGUAGE',
-    KeySkill = 'KEY_SKILL',
+    SpecialField = 'SPECIAL_FIELD',
     CareerEntry = 'CAREER',
     Company = 'COMPANY',
     ProjectRole = 'PROJECT_ROLE'

@@ -4,6 +4,8 @@ import {DatePickerType} from '../../model/DatePickerType';
 import {DatePicker} from 'material-ui-pickers';
 import Grid from '@material-ui/core/Grid/Grid';
 import {PwrIconButton} from './pwr-icon-button';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {isNullOrUndefined} from 'util';
 
 interface PwrDatePickerProps {
     onChange(date: Date): void;
@@ -13,6 +15,7 @@ interface PwrDatePickerProps {
     type: DatePickerType;
     disabled?: boolean;
     disableOpenEnd?: boolean;
+    error?: boolean;
 }
 
 interface PwrDatePickerState {
@@ -73,15 +76,15 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
     };
 
     render() {
-        console.log('Disable Open End ', this.props.disableOpenEnd);
         return <Grid container item direction={'row'} justify={'flex-start'} alignItems={'flex-end'} spacing={8}>
             <Grid item md>
                 <DatePicker
+                    error={!isNullOrUndefined(this.props.error) ? this.props.error : false}
                     autoOk
                     disabled={this.props.disabled}
                     views={this.getViews()}
-                    label={this.props.label}
-                    placeholder={this.props.label}
+                    label={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
+                    placeholder={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
                     value={this.props.placeholderDate}
                     onChange={this.props.onChange}
                     format={this.getFormat()}

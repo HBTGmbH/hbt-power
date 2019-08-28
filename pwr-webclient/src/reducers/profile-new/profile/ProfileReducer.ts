@@ -22,7 +22,7 @@ import {
     BaseProfileLoadAction,
     EntryDeleteAction,
     EntryLoadAction,
-    EntryUpdateAction, SetDescriptionAction,
+    EntryUpdateAction, ProfileLoadAction, SetDescriptionAction,
     SkillDeleteAction,
     SkillLoadAction,
     SkillUpdateAction
@@ -33,6 +33,10 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
     switch (action.type) {
         case ActionType.ResetProfileStore: {
             return emptyStore;
+        }
+        case ActionType.LoadProfileAction: {
+            const act = action as ProfileLoadAction;
+            return replaceProfile(store,act.profile);
         }
         case ActionType.UpdateEntrySuccessful: {
             let profile = handleUpdateEntry(action as EntryUpdateAction, store.profile);

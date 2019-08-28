@@ -229,18 +229,24 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                             //startDate
                             !(this.props.type == 'CAREER' || this.props.type == 'EDUCATION' || this.props.type == 'TRAINING' || this.props.type == 'QUALIFICATION') ? <></> :
                                 <Grid item md={6} xs={12}>
-                                    <PwrDatePicker onChange={this.onStartDateChange}
-                                                   placeholderDate={this.state.startDate}
-                                                   label={'Start'} type={DatePickerType.MONTH_YEAR}
-                                                   disableOpenEnd/>
+                                    <PwrDatePicker
+                                        onChange={this.onStartDateChange}
+                                        placeholderDate={this.state.startDate}
+                                        label={'Start'}
+                                        type={DatePickerType.MONTH_YEAR}
+                                        disableOpenEnd
+                                    />
                                 </Grid>
                         }
                         {
                             //endDate
                             !(this.props.type == 'CAREER' || this.props.type == 'EDUCATION' || this.props.type == 'TRAINING') ? <></> :
                                 <Grid item md={6} xs={12}>
-                                    <PwrDatePicker onChange={this.onEndDateChange} placeholderDate={this.state.endDate}
-                                                   label={'Ende'} type={DatePickerType.MONTH_YEAR}/>
+                                    <PwrDatePicker
+                                        onChange={this.onEndDateChange}
+                                        placeholderDate={this.state.endDate}
+                                        label={'Ende'}
+                                        type={DatePickerType.MONTH_YEAR}/>
                                 </Grid>
                         }
                         {

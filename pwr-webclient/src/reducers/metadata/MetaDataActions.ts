@@ -81,7 +81,7 @@ export namespace MetaDataActionCreator {
             dispatch(FetchBuildInfo(MetaDataStore.KEY_STATISTICS, getStatisticsBuildsInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_SKILL, getSkillBuildInfo()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_REPORT, getReportBuildInfo()));
-            dispatch(FetchBuildInfo(MetaDataStore.KEY_VIEW_PROFIE, ViewProfileService.getBuildInfo()));
+            dispatch(FetchBuildInfo(MetaDataStore.KEY_VIEW_PROFILE, ViewProfileService.getBuildInfo()));
             dispatch(FetchClientBuildInfo());
         };
     }
