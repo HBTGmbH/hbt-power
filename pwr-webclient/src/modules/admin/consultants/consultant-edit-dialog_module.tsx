@@ -56,13 +56,12 @@ interface ConsultantEditDialogDispatch {
 
     updateConsultant(info: ConsultantInfo): void;
 
-    deleteConsultant(initials:string):void;
+    deleteConsultant(initials: string): void;
 }
 
 class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogProps
     & ConsultantEditDialogLocalProps
     & ConsultantEditDialogDispatch, ConsultantEditDialogLocalState> {
-
 
 
     constructor(props: ConsultantEditDialogProps & ConsultantEditDialogLocalProps & ConsultantEditDialogDispatch) {
@@ -140,17 +139,21 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
         this.props.updateConsultant(this.state.consultantInfo);
     };
 
-    private deleteConsultant: () => {
-
+    private deleteConsultant = () => {
+        this.props.deleteConsultant(this.state.consultantInfo.initials());
+        this.closeDialog();
     };
 
 
-
     private readonly dialogActions = [
-        <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')} onClick={this.deleteConsultant}/>,
-        <PwrIconButton key="save" iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} onClick={this.saveAndClose}/>,
-        <PwrIconButton key="edit" iconName={'edit'} tooltip={PowerLocalize.get('ConsultantTile.EditProfile')} onClick={() => this.props.redirectToUser(this.props.initials)}/>,
-        <PwrIconButton key="close" iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')} onClick={this.resetAndClose}/>,
+        <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                       onClick={this.deleteConsultant}/>,
+        <PwrIconButton key="save" iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
+                       onClick={this.saveAndClose}/>,
+        <PwrIconButton key="edit" iconName={'edit'} tooltip={PowerLocalize.get('ConsultantTile.EditProfile')}
+                       onClick={() => this.props.redirectToUser(this.props.initials)}/>,
+        <PwrIconButton key="close" iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
+                       onClick={this.resetAndClose}/>,
     ];
 
     render() {
@@ -162,7 +165,8 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
                 onClose={this.closeDialog}
                 fullWidth={true}
             >
-                <DialogTitle id="ConsultantTile.EditConsultant.Dialog.Title">{PowerLocalize.get('ConsultantTile.EditConsultant')}</DialogTitle>
+                <DialogTitle
+                    id="ConsultantTile.EditConsultant.Dialog.Title">{PowerLocalize.get('ConsultantTile.EditConsultant')}</DialogTitle>
                 <DialogContent>
                     <ConsultantEditFields
                         firstName={this.state.consultantInfo.firstName()}

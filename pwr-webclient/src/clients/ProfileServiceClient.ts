@@ -144,7 +144,7 @@ export class ProfileServiceClient extends PowerHttpClient {
 
 
     public deleteConsultant = (initials: string): Promise<void> => {
-        const url = this.base() + `/consultant/${initials}/delete`;
+        const url = this.base() + `/consultants/${initials}/delete`;
         const config = this.credentialsConfig();
         this.beginRequest();
         return this.executeRequest(axios.delete(url));
