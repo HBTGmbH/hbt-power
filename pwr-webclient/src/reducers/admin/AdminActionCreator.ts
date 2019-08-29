@@ -35,11 +35,13 @@ import {Alerts} from '../../utils/Alerts';
 import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
 import {SuggestionAsyncActionCreator} from '../suggestions/SuggestionAsyncActionCreator';
 import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
+import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = new SkillServiceClient();
 
 export class AdminActionCreator {
+
     public static ReceiveNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveNotifications,
@@ -174,14 +176,14 @@ export class AdminActionCreator {
         return {
             type: ActionType.SetReportUploadPending,
             value: pending
-        }
+        };
     }
 
     public static SetReportUploadProgress(progress: number): ChangeNumberValueAction {
         return {
             type: ActionType.SetReportUploadProgress,
             value: progress
-        }
+        };
     }
 
 
@@ -307,7 +309,7 @@ export class AdminActionCreator {
                 if (!restoreRoute) {
                     PWR_HISTORY.push(Paths.ADMIN_INBOX);
                 }
-                if (window.location.pathname.startsWith("/app/home")) {
+                if (window.location.pathname.startsWith('/app/home')) {
                     PWR_HISTORY.push(Paths.ADMIN_INBOX);
                 }
             }).catch((error: PowerApiError) => {
@@ -452,5 +454,16 @@ export class AdminActionCreator {
                 .then(() => Alerts.showSuccess('Renamed ' + oldName + ' to ' + newName))
                 .catch(console.error);
         };
+    }
+
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
+    public static AsyncDeleteConsultant(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            profileServiceClient.deleteConsultant(initials)
+                .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))
+                .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))
+                .catch((error) => Alerts.showError(error));
+        };
+
     }
 }

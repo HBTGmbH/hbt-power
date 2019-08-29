@@ -90,7 +90,10 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
                     format={this.getFormat()}
                     openToYearSelection
                     keyboard
-                    keyboardIcon={<Icon className={'material-icons'}>date_range</Icon>}
+                    keyboardIcon={<div><Icon className={'material-icons'}>date_range</Icon><Icon
+                        className={'material-icons'} onClick={() => {
+                        console.log('test');
+                    }}>today</Icon></div>}
                     disableOpenOnEnter
                 />
             </Grid>

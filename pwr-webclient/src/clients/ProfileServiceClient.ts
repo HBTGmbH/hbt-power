@@ -15,6 +15,7 @@ declare const POWER_PROFILE_SERVICE_URL: string;
  */
 export class ProfileServiceClient extends PowerHttpClient {
 
+
     private static _instance: ProfileServiceClient;
 
     private constructor() {
@@ -141,4 +142,11 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.executeRequest(axios.patch(url, notification.toAPI(), config));
     };
 
+
+    public deleteConsultant = (initials: string): Promise<void> => {
+        const url = this.base() + `/consultant/${initials}/delete`;
+        const config = this.credentialsConfig();
+        this.beginRequest();
+        return this.executeRequest(axios.delete(url));
+    };
 }
