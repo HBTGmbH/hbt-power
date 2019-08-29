@@ -91,19 +91,15 @@ public class ConsultantService {
     }
 
     @Transactional
-    public boolean deleteConsultant(String initials){
-        if (!consultantRepository.existsByInitials(initials)) {
-            throw new WebApplicationException(HttpStatus.NOT_FOUND, "Consultant with initials = " + initials + " was not found!");
-        }
+    public void deleteConsultant(String initials) {
+
         Consultant toDelete = consultantRepository.findByInitials(initials)
-                .orElseThrow(() -> new WebApplicationException(NOT_FOUND, "No profile for consultant '" + initials + "' found."));
-        if (toDelete.getActive()){
+                .orElseThrow(() -> new WebApplicationException(NOT_FOUND, "No consultant with initials '" + initials + "' found."));
+        if (toDelete.getActive()) {
             throw new WebApplicationException(HttpStatus.LOCKED, "Only Inactive Consultants can be deleted!");
-        }else{
+        } else {
             consultantRepository.delete(toDelete);
-            // TODO überlegen ob löschen das richtige ist, sonst unkenntlich machen(Daten von Namen trennen)
         }
-        return true;
     }
 
     private Profile toProfile(Consultant consultant) {

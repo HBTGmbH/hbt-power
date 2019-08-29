@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -46,9 +45,7 @@ public class ConsultantsEndpoint {
     @ApiOperation(value = "Get a list of all consultants", response = List.class)
     @ApiResponse(code = 200, message = "found 0 or more consultants")
     public List<Consultant> listAll() {
-        return consultantRepository.findAll().stream()
-                .filter(Consultant::getActive)
-                .collect(Collectors.toList());
+        return consultantRepository.findAll();
     }
 
     @GetMapping("{initials}")
@@ -109,10 +106,8 @@ public class ConsultantsEndpoint {
             @ApiResponse(code = 423, message = "Consultant exists but is active")
     })
     public ResponseEntity delete(@PathVariable("initials") String initials) {
-        boolean isDeleted = consultantService.deleteConsultant(initials);
-        if (isDeleted)
-            return ResponseEntity.ok().build();
-        else
-            return ResponseEntity.notFound().build();
+        consultantService.deleteConsultant(initials);
+        return ResponseEntity.ok().build();
+
     }
 }
