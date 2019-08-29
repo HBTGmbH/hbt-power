@@ -1,8 +1,11 @@
 package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.data.ConsultantRepository;
+import de.hbt.pwr.profile.data.ProjectRepository;
+import de.hbt.pwr.profile.data.SkillRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
+import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
@@ -22,10 +29,16 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 public class ConsultantService {
     private final ConsultantRepository consultantRepository;
+    private final SkillRepository skillRepository;
+    private final ProjectRepository projectRepository;
 
     @Autowired
-    public ConsultantService(ConsultantRepository consultantRepository) {
+    public ConsultantService(ConsultantRepository consultantRepository,
+                             SkillRepository skillRepository,
+                             ProjectRepository projectRepository) {
         this.consultantRepository = consultantRepository;
+        this.skillRepository = skillRepository;
+        this.projectRepository = projectRepository;
     }
 
     /**
@@ -98,6 +111,21 @@ public class ConsultantService {
         if (toDelete.getActive()) {
             throw new WebApplicationException(HttpStatus.LOCKED, "Only Inactive Consultants can be deleted!");
         } else {
+
+            // View Profile Service bescheid sagen
+
+            Stream<Skill> profileSkills = toDelete.getProfile().getSkills().stream();
+            Stream<Skill> projectSkills = toDelete.getProfile().getProjects().stream().flatMap(project -> project.getSkills().stream());
+            Set<Skill> skillSet = Stream.of(profileSkills, projectSkills).flatMap(Function.identity()).collect(Collectors.toSet());
+
+            toDelete.getProfile().getProjects().forEach(project -> project.getSkills().clear());
+            consultantRepository.flush();
+            toDelete.getProfile().getSkills().clear();
+            consultantRepository.flush();
+            toDelete.getProfile().getProjects().forEach(projectRepository::delete);
+            consultantRepository.flush();
+            skillSet.forEach(skillRepository::delete);
+            consultantRepository.flush();
             consultantRepository.delete(toDelete);
         }
     }
