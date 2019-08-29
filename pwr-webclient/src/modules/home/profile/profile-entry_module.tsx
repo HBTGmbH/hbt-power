@@ -76,8 +76,6 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     };
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileEntryLocalProps): ProfileEntryProps {
-        console.log(state.profileStore.profile);
-
         const profileField = ProfileTypeDataMapper.getProfileField(localProps.type);
         const entries = (!isNullOrUndefined(profileField) && !isNullOrUndefined(state.profileStore.profile)) ? state.profileStore.profile[profileField] : [];
         const suggestionField = ProfileTypeDataMapper.getSuggestionField(localProps.type);
@@ -161,11 +159,6 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
     };
 
     render() {
-        if (isNullOrUndefined(this.props.allEntries)) {
-
-            console.log(this.props.type, this.props.allEntries);
-        }
-
         return (
             <div className="pwr-profile-entry-container">
                 <ProfileEntryDialog open={this.state.open} onClose={this.handleDialogOnClose} type={this.props.type}
