@@ -156,7 +156,7 @@ public class ViewProfileImporterEntryTest {
             ProfileEntry profileEntry = new ProfileEntry();
             profileEntry.setId(idCounter.getAndIncrement());
             profileEntry.setNameEntity(NameEntity.builder().name(entryName).build());
-            profileToReturn.getKeySkillEntries().add(profileEntry);
+            profileToReturn.getSpecialFieldEntries().add(profileEntry);
         }
     }
 

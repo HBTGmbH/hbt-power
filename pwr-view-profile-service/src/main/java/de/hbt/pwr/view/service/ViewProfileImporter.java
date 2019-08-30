@@ -302,7 +302,7 @@ public class ViewProfileImporter {
         result.setEducations(mapEducations(profile.getEducation()));
         result.setSectors(mapSectors(profile.getSectors()));
         result.setCareers(mapCareers(profile.getCareerEntries()));
-        result.setKeySkills(mapKeySkills(profile.getKeySkillEntries()));
+        result.setKeySkills(mapKeySkills(profile.getSpecialFieldEntries()));
         result.setProjects(mapProjects(profile.getProjects()));
 
         result.setProjectRoles(collectProjectRoles(profile.getProjects()));
