@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.client.ViewProfileClient;
 import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.data.ProjectRepository;
 import de.hbt.pwr.profile.data.SkillRepository;
@@ -7,12 +8,15 @@ import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,19 +30,22 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 /**
  * Provides business level methods to maintain the {@link Consultant} resource.
  */
+@Slf4j
 @Service
 public class ConsultantService {
     private final ConsultantRepository consultantRepository;
     private final SkillRepository skillRepository;
     private final ProjectRepository projectRepository;
+    private final ViewProfileClient viewProfileClient;
 
     @Autowired
     public ConsultantService(ConsultantRepository consultantRepository,
                              SkillRepository skillRepository,
-                             ProjectRepository projectRepository) {
+                             ProjectRepository projectRepository, ViewProfileClient viewProfileClient) {
         this.consultantRepository = consultantRepository;
         this.skillRepository = skillRepository;
         this.projectRepository = projectRepository;
+        this.viewProfileClient = viewProfileClient;
     }
 
     /**
@@ -62,7 +69,9 @@ public class ConsultantService {
         Consultant toUpdate = consultantRepository.findByInitials(initials)
                 .orElseThrow(() -> new WebApplicationException(NOT_FOUND, "No consultant found with initials: " + initials));
         if (!toUpdate.getActive()) {
-            throw new WebApplicationException(LOCKED, "Consultant " + initials + " is not active!");
+            if (!updateFrom.getActive()) {
+                throw new WebApplicationException(LOCKED, "Consultant " + initials + " is not active!");
+            }
         }
 
         if (updateFrom.getBirthDate() != null) {
@@ -111,8 +120,18 @@ public class ConsultantService {
         if (toDelete.getActive()) {
             throw new WebApplicationException(HttpStatus.LOCKED, "Only Inactive Consultants can be deleted!");
         } else {
-
+            //TODO im View Profile Service auch die Delete Logik anpassen
+            // TODO zum Löschen eines Beraters müssen alle einträge seiner Id in Tabellen gelöscht sein
             // View Profile Service bescheid sagen
+
+            ResponseEntity<List<String>> response = viewProfileClient.getAllViewProfiles(toDelete.getInitials());
+            log.debug("Response: " + response.toString());
+            List<String> viewIds = response.getBody();
+            if (viewIds != null) {
+                log.debug("ViewIds for " + initials + ":  " + viewIds.toString());
+                viewIds.forEach((id) -> viewProfileClient.deleteViewProfile(toDelete.getInitials(), id));
+            }
+
 
             Stream<Skill> profileSkills = toDelete.getProfile().getSkills().stream();
             Stream<Skill> projectSkills = toDelete.getProfile().getProjects().stream().flatMap(project -> project.getSkills().stream());
