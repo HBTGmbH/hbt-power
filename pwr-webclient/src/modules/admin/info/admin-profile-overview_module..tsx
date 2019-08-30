@@ -31,7 +31,7 @@ class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewPro
         return (
             <div>
                 <div style={{paddingTop: '8px'}}>
-                    <Tabs fullWidth
+                    <Tabs variant='fullWidth'
                           centered
                           value={this.state.index}
                           onChange={this.setIndex}

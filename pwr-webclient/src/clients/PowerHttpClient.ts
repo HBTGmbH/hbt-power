@@ -1,8 +1,7 @@
 import {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
 import {store} from '../reducers/reducerIndex';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
-import {NavigationActionCreator} from '../reducers/navigation/NavigationActionCreator';
-import {Promise} from 'es6-promise';
+import {Alerts} from '../utils/Alerts';
 
 /**
  * A general API error. All services conform to this error.
@@ -45,7 +44,13 @@ export class PowerHttpClient {
         throw(this.handleError(error));
     };
 
-    preProcess = <T>(promise: AxiosPromise<T>): Promise<T> => {
+    /**
+     * Takes an axios promise (which represents a request) and executes it.
+     * If the request is successful, metadata is discarded and only the entity is returned
+     * If the request has an error, a default notification is posted to the user and the error is rethrown (allowing you to react to it if you wish to)
+     * @param promise
+     */
+    executeRequest = <T>(promise: AxiosPromise<T>): Promise<T> => {
         return promise
             .then(this.endRequest)
             .catch(this.errorRequest)
@@ -54,7 +59,12 @@ export class PowerHttpClient {
     private determineError = (error: AxiosError): PowerApiError  => {
         if (!error.response) {
             console.error("Intercepted client error", error);
-            return {status: -1, message: "Error in Power Client Library occurred. Please contact a developer", error: error.code}
+            if (error.message && error.message === 'Network Error') {
+                return {status: -1, message: "One or more services are not reachable!", error: error.message}
+            }
+            else {
+                return {status: -1, message: "Error in Power Client Library occurred. Please contact a developer", error: error.code}
+            }
         }
         if (!error.response.data) {
             console.error("Intercepted server error", error.response);
@@ -68,7 +78,7 @@ export class PowerHttpClient {
     private handleError = (error: AxiosError): PowerApiError => {
         const apiError = this.determineError(error);
         const message = apiError.error + ": " + apiError.message;
-        NavigationActionCreator.showError(message);
+        Alerts.showError(message);
         return apiError;
     }
 }

@@ -1,16 +1,16 @@
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
 import {Template, TemplateSlice} from '../../model/view/Template';
-import {AbstractAction} from '../profile/database-actions';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ReportService, TemplateService} from '../../API_CONFIG';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
-import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {string} from 'prop-types';
-import {Paths} from '../../Paths';
+import {Alerts} from '../../utils/Alerts';
+import {AbstractAction} from '../BaseActions';
+import {DeferrableAsyncAction} from '../deferred/DeferrableAsyncAction';
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -45,11 +45,6 @@ export namespace TemplateActionCreator {
         };
     }
 
-    /**
-     * loescht die gespeicherten templates - local
-     * @returns {AbstractAction}
-     * @constructor
-     */
     export function ClearTemplates(): AbstractAction {
         return {
             type: ActionType.ClearTemplates,
@@ -146,16 +141,19 @@ export namespace TemplateActionCreator {
     }
 
 
-    export function AsyncDeleteTemplate(id:string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            axios.delete(TemplateService.deleteTemplate(id))
-                .then((response: AxiosResponse) => {
-                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                })
-                .catch((error: AxiosError) => {
-                    dispatch(TemplateActionCreator.TemplateRequestFailed());
-                    console.error(error);
-                });
+    export function AsyncDeleteTemplate(id: string): DeferrableAsyncAction {
+        return {
+            asyncAction: () => (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) => {
+                axios.delete(TemplateService.deleteTemplate(id))
+                    .then((response: AxiosResponse) => {
+                        dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
+                    })
+                    .catch((error: AxiosError) => {
+                        dispatch(TemplateActionCreator.TemplateRequestFailed());
+                        console.error(error);
+                    });
+            },
+            type: ActionType.DeleteEntry
         };
     }
 
@@ -193,7 +191,7 @@ export namespace TemplateActionCreator {
         let url = window.URL.createObjectURL(blob);
         a.href = location;
 
-        let name:string = location.split('/')[location.split('/').length-1];
+        let name: string = location.split('/')[location.split('/').length - 1];
         console.log(name);
         name = name.split('.')[0];
         a.download = name;
@@ -338,12 +336,12 @@ export namespace TemplateActionCreator {
                 .then((response: AxiosResponse) => {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
                     dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                    NavigationActionCreator.showSuccess('Template erfolgreich hochgeladen!');
+                    Alerts.showSuccess('Template erfolgreich hochgeladen!');
                     dispatch(AdminActionCreator.SetReportUploadProgress(0));
                 })
                 .catch(function (error: any) {
                     dispatch(AdminActionCreator.SetReportUploadPending(false));
-                    NavigationActionCreator.showError('Upload Fehlgeschlagen: ' + error.toString());
+                    Alerts.showError('Upload Fehlgeschlagen: ' + error.toString());
                     dispatch(AdminActionCreator.SetReportUploadProgress(0));
                 });
         };

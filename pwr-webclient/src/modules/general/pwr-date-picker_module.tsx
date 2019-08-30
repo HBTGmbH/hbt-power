@@ -1,13 +1,11 @@
 import * as React from 'react';
 import Icon from '@material-ui/core/Icon/Icon';
-import {StringUtils} from '../../utils/StringUtil';
-import dateToString = StringUtils.dateToString;
 import {DatePickerType} from '../../model/DatePickerType';
 import {DatePicker} from 'material-ui-pickers';
-import {isNullOrUndefined} from 'util';
-import Button from '@material-ui/core/es/Button/Button';
-import {PwrIconButton} from './pwr-icon-button';
 import Grid from '@material-ui/core/Grid/Grid';
+import {PwrIconButton} from './pwr-icon-button';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {isNullOrUndefined} from 'util';
 
 interface PwrDatePickerProps {
     onChange(date: Date): void;
@@ -15,12 +13,13 @@ interface PwrDatePickerProps {
     placeholderDate: Date;
     label: string;
     type: DatePickerType;
-    today?: boolean;
+    disabled?: boolean;
+    disableOpenEnd?: boolean;
+    error?: boolean;
 }
 
 interface PwrDatePickerState {
-    selectedDate: Date,
-    isOpenEnd: boolean,
+    selectedDate: Date
 }
 
 export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePickerState> {
@@ -28,8 +27,7 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
     constructor(props: PwrDatePickerProps) {
         super(props);
         this.state = {
-            selectedDate: props.placeholderDate,
-            isOpenEnd: false,
+            selectedDate: props.placeholderDate
         };
     }
 
@@ -50,8 +48,6 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
             case DatePickerType.YEAR:
                 return 'YYYY';
         }
-
-
     };
 
     private getViews = () => {
@@ -79,19 +75,16 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
         return views;
     };
 
-    private handleOpenEnd = () => {
-        this.setState({isOpenEnd: !this.state.isOpenEnd});
-        this.props.onChange(null);
-    };
-
     render() {
-        return <Grid item container spacing={8} alignItems={'flex-start'} direction={'row'}>
-            <Grid item>
+        return <Grid container item direction={'row'} justify={'flex-start'} alignItems={'flex-end'} spacing={8}>
+            <Grid item md>
                 <DatePicker
+                    error={!isNullOrUndefined(this.props.error) ? this.props.error : false}
                     autoOk
+                    disabled={this.props.disabled}
                     views={this.getViews()}
-                    label={this.state.isOpenEnd ? 'Heute' : this.props.label}
-                    placeholder={'Heute'}
+                    label={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
+                    placeholder={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
                     value={this.props.placeholderDate}
                     onChange={this.props.onChange}
                     format={this.getFormat()}
@@ -99,20 +92,22 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
                     keyboard
                     keyboardIcon={<Icon className={'material-icons'}>date_range</Icon>}
                     disableOpenOnEnter
-                    disabled={this.state.isOpenEnd}
                 />
             </Grid>
-            {
-                this.props.today == true ?
-                    <Grid item>
-                        <PwrIconButton
-                            iconName={this.state.isOpenEnd ? 'today' : 'send'}
-                            tooltip={this.state.isOpenEnd ? 'Datum eingeben' : 'Noch kein Ende'}
-                            onClick={this.handleOpenEnd}
-                        />
-                    </Grid>
-                    : <></>
-            }
+            {this.props.disableOpenEnd ? <></> :
+                <Grid item md={2}>
+                    <PwrIconButton
+                        iconName={'send'}
+                        tooltip={'Open End'}
+                        style={{fontSize: '1em', marginRight: 0}}
+                        onClick={() => {
+                            this.props.onChange(null);
+                        }}>
+                        Open End
+                    </PwrIconButton>
+                </Grid>}
         </Grid>;
     }
 }
+
+

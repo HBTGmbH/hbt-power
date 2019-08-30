@@ -3,11 +3,7 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {AppBar, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileActionCreator} from '../../reducers/profile/ProfileActionCreator';
-import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {isNullOrUndefined} from 'util';
 import {LoginStatus} from '../../model/LoginStatus';
-import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
@@ -23,7 +19,7 @@ import Paper from '@material-ui/core/Paper/Paper';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 
 interface ToolbarProps {
-    loggedInUser: ConsultantInfo;
+    userInitials: string;
     loggedInAsAdmin: boolean;
     statisticsAvailable: boolean;
     viewProfiles: Array<ViewProfile>;
@@ -54,8 +50,6 @@ interface ToolbarLocalState {
 interface ToolbarDispatch {
     navigateTo(target: string): void;
 
-    logOutUser(): void;
-
     loadNetworkGraph(): void;
 
     loadConsultantClusterInfo(initials: string): void;
@@ -77,7 +71,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps): ToolbarProps {
         return {
-            loggedInUser: state.databaseReducer.loggedInUser(),
+            userInitials: state.profileStore.consultant.initials,
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available(),
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray()
@@ -86,10 +80,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ToolbarDispatch {
         return {
-            logOutUser: function () {
-                dispatch(ProfileActionCreator.logOutUser());
-                dispatch(AdminActionCreator.AsyncLogOutAdmin());
-            },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
@@ -115,7 +105,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         this.props.navigateTo(target);
     };
     private getInitials = () => {
-        return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials();
+        return this.props.userInitials;
     };
 
 
@@ -138,7 +128,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private loadConsultantClusterInfo = () => {
         // FIXME move this into the async action.
         this.handleMenuClose();
-        this.props.loadConsultantClusterInfo(this.props.loggedInUser.initials());
+        this.props.loadConsultantClusterInfo(this.props.userInitials);
         this.props.navigateTo(Paths.USER_STATISTICS_CLUSTERINFO);
     };
 

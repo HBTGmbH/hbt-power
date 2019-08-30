@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Immutable from 'immutable';
 import {Table, TableBody, TableCell, TableHead, TableRow} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';

@@ -4,15 +4,17 @@ import IconButton from '@material-ui/core/Button';
 
 import {Color} from '../utils/ColorUtil';
 import StarIcon from '@material-ui/icons/Star';
+import {StyledComponentProps, withStyles} from '@material-ui/core';
+import {IconButtonClassKey} from '@material-ui/core/IconButton';
 
 interface StarRatingProps {
     rating: number;
-
     onRatingChange(newRating: number): void;
 }
 
-interface StarRatingState {
-
+interface SingleButtonProps  extends StyledComponentProps<IconButtonClassKey> {
+    starRatingProps: StarRatingProps;
+    position: number;
 }
 
 const styleYellow: CSSProperties = {
@@ -31,16 +33,26 @@ const getStyle = (starPosition: number, rating: number) => {
     }
 };
 
+const styles = theme => ({
+    root: {
+        minWidth: "0px"
+    }
+});
 
-export const StarRating: React.SFC<StarRatingProps> = (props: StarRatingProps) => (<span>
-            <IconButton onClick={() => props.onRatingChange(1)}
-                        style={getStyle(1, props.rating)}><StarIcon/></IconButton>
-            <IconButton onClick={() => props.onRatingChange(2)}
-                        style={getStyle(2, props.rating)}><StarIcon/></IconButton>
-            <IconButton onClick={() => props.onRatingChange(3)}
-                        style={getStyle(3, props.rating)}><StarIcon/></IconButton>
-            <IconButton onClick={() => props.onRatingChange(4)}
-                        style={getStyle(4, props.rating)}><StarIcon/></IconButton>
-            <IconButton onClick={() => props.onRatingChange(5)}
-                        style={getStyle(5, props.rating)}><StarIcon/></IconButton>
+const SingleButtonBase = (props: SingleButtonProps) => {
+    const { classes } = props;
+    return <IconButton classes={{root: classes.root}} mini={true} onClick={() => props.starRatingProps.onRatingChange(props.position)}
+                       style={getStyle(props.position, props.starRatingProps.rating)}><StarIcon/></IconButton>
+};
+
+const SingleButton =  withStyles(styles)(SingleButtonBase);
+
+export const StarRating: React.FunctionComponent<StarRatingProps> = (props: StarRatingProps) => {
+    return (<span>
+            <SingleButton starRatingProps={props} position={1}/>
+            <SingleButton starRatingProps={props} position={2}/>
+            <SingleButton starRatingProps={props} position={3}/>
+            <SingleButton starRatingProps={props} position={4}/>
+            <SingleButton starRatingProps={props} position={5}/>
         </span>);
+};

@@ -1,7 +1,4 @@
 export enum AdminNotificationReason {
-    /**
-     * A {@link Profile} has been updated.
-     */
     PROFILE_UPDATED,
     /**
      * A new {@link NameEntity} that previously was unknown

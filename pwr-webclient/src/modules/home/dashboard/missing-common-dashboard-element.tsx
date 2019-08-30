@@ -10,6 +10,8 @@ import {NavigationActionCreator} from '../../../reducers/navigation/NavigationAc
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
 import {getImagePath} from '../../../API_CONFIG';
+import {PwrRaisedButton} from '../../general/pwr-raised-button';
+import OpenInNew from '@material-ui/icons/OpenInNew';
 
 interface MissingCommonDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -78,15 +80,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                         Standard-Skills, die diesem Profil fehlen: {this.renderMissingSkills()}
                     </span>
                     <div className="col-md-3 col-sm-12">
-                        <Button
-                            variant={'contained'}
-                            style={{marginTop: '8px'}}
-                            color={'primary'}
-                            onClick={() => this.loadSkillStatistics()}
-                        >
-                            {PowerLocalize.get('Action.ShowMore')}
-                            <Icon className="material-icons">open_in_new</Icon>
-                        </Button>
+                        <PwrRaisedButton color={'primary'} icon={<OpenInNew/>} text={PowerLocalize.get('Action.ShowMore')} onClick={() => this.loadSkillStatistics()}/>
                     </div>
                 </div>
             </Paper>);

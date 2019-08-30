@@ -22,6 +22,7 @@ export const DESCRIPTION_CHARS_PER_LINE_UPPER = 200;
 
 export const PROFILE_DESCRIPTION_LENGTH = 4000;
 
+
 export function getRandomGreeting() {
     return GLOBAL_OPTIONS.greetings[Math.floor(Math.random() * GLOBAL_OPTIONS.greetings.length)];
 }

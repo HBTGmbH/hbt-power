@@ -11,6 +11,7 @@ import {postCategorizeSkill} from '../../../../API_CONFIG';
 import {APISkillCategory} from '../../../../model/skill/SkillCategory';
 import {SkillReducer} from '../../../../reducers/skill/SkillReducer';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import * as Immutable from 'immutable';
 
 interface EditSkillDialogProps {
 }

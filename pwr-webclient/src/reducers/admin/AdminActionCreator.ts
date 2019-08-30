@@ -1,9 +1,3 @@
-import {
-    AbstractAction,
-    ChangeBoolValueAction,
-    ChangeNumberValueAction,
-    ChangeStringValueAction
-} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import {APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
@@ -23,11 +17,9 @@ import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {ProfileAsyncActionCreator} from '../profile/ProfileAsyncActionCreator';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {isNullOrUndefined} from 'util';
-import {COOKIE_ADMIN_EXPIRATION_TIME, COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
-import * as Cookies from 'js-cookie';
+import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
 import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
@@ -39,11 +31,17 @@ import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {PowerApiError} from '../../clients/PowerHttpClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
+import {Alerts} from '../../utils/Alerts';
+import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
+import {SuggestionAsyncActionCreator} from '../suggestions/SuggestionAsyncActionCreator';
+import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
+import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = new SkillServiceClient();
 
 export class AdminActionCreator {
+
     public static ReceiveNotifications(notifications: Array<APIAdminNotification>): ReceiveNotificationsAction {
         return {
             type: ActionType.ReceiveNotifications,
@@ -178,14 +176,14 @@ export class AdminActionCreator {
         return {
             type: ActionType.SetReportUploadPending,
             value: pending
-        }
+        };
     }
 
     public static SetReportUploadProgress(progress: number): ChangeNumberValueAction {
         return {
             type: ActionType.SetReportUploadProgress,
             value: progress
-        }
+        };
     }
 
 
@@ -221,7 +219,7 @@ export class AdminActionCreator {
             profileServiceClient.deleteTrashedNotifications()
                 .then(ignored => {
                     dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
-                    NavigationActionCreator.showSuccess('Notifications successfully deleted!');
+                    Alerts.showSuccess('Notifications successfully deleted!');
                 }).catch(console.error);
         };
     }
@@ -244,7 +242,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationDelete(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -253,7 +251,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationOK(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -262,7 +260,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationEdit(notification)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
@@ -272,16 +270,16 @@ export class AdminActionCreator {
             dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
             profileServiceClient.invokeNotificationEdit(getState().adminReducer.selectedSkillNotification())
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => NavigationActionCreator.showSuccess('Success'))
+                .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
         };
     }
 
 
-    public static AsyncRestoreFromCookies() {
+    public static AsyncRestoreFromLocalStorage() {
         return function (dispatch: redux.Dispatch<AdminState>) {
-            const storedUsername = Cookies.get(COOKIE_ADMIN_USERNAME);
-            const storedPassword = Cookies.get(COOKIE_ADMIN_PASSWORD);
+            const storedUsername = window.localStorage.getItem(COOKIE_ADMIN_USERNAME);
+            const storedPassword = window.localStorage.getItem(COOKIE_ADMIN_PASSWORD);
             Promise.all([
                 dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
                 dispatch(AdminActionCreator.ChangePassword(storedPassword))]
@@ -303,15 +301,15 @@ export class AdminActionCreator {
             }
             profileServiceClient.authenticateAdmin().then(ignored => {
                 if (rememberLogin) {
-                    Cookies.set(COOKIE_ADMIN_USERNAME, username, COOKIE_ADMIN_EXPIRATION_TIME);
-                    Cookies.set(COOKIE_ADMIN_PASSWORD, password, COOKIE_ADMIN_EXPIRATION_TIME);
+                    localStorage.setItem(COOKIE_ADMIN_USERNAME, username);
+                    localStorage.setItem(COOKIE_ADMIN_PASSWORD, password);
                 }
                 dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.INITIALS));
                 dispatch(AdminActionCreator.LogInAdmin());
                 if (!restoreRoute) {
                     PWR_HISTORY.push(Paths.ADMIN_INBOX);
                 }
-                if (window.location.pathname.startsWith("/app/home")) {
+                if (window.location.pathname.startsWith('/app/home')) {
                     PWR_HISTORY.push(Paths.ADMIN_INBOX);
                 }
             }).catch((error: PowerApiError) => {
@@ -336,7 +334,7 @@ export class AdminActionCreator {
 
     public static AsyncRedirectToUser(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            dispatch(ProfileAsyncActionCreator.logInUser(initials, Paths.USER_HOME));
+            dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_HOME));
         };
     }
 
@@ -353,7 +351,7 @@ export class AdminActionCreator {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.createConsultant(apiConsultant)
                 .then(value => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
-                .then(() => NavigationActionCreator.showSuccess('Created consultant ' + consultantInfo.initials()))
+                .then(() => Alerts.showSuccess('Created consultant ' + consultantInfo.initials()))
                 .catch(console.error);
         };
     }
@@ -363,7 +361,7 @@ export class AdminActionCreator {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.updateConsultant(apiConsultant)
                 .then(consultant => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(consultant))))
-                .then(ingored => NavigationActionCreator.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
+                .then(ingored => Alerts.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
                 .catch(console.error);
         };
     }
@@ -371,8 +369,8 @@ export class AdminActionCreator {
     public static AsyncOpenSkillNotificationDialog(notificationId: number) {
         return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.OpenSkillNotificationDialog(notificationId));
-            let notification = getState().adminReducer.findSkillNotification(notificationId);
-            skillServiceClient.getSkillByName("testertest")//notification.skill().name())
+            let notification = getState().adminReducer.skillNotifications().find(value => value.adminNotification().id() == notificationId);
+            skillServiceClient.getSkillByName(notification.skill().name())
                 .then(skill => {
                     if (isNullOrUndefined(skill.category)) {
                         dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY));
@@ -452,9 +450,20 @@ export class AdminActionCreator {
     public static AsyncChangeSkillName(oldName: string, newName: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             profileServiceClient.renameSkill(oldName, newName)
-                .then(() => dispatch(ProfileAsyncActionCreator.getAllCurrentlyUsedSkills()))
-                .then(() => NavigationActionCreator.showSuccess('Renamed ' + oldName + ' to ' + newName))
+                .then(() => dispatch(SuggestionAsyncActionCreator.requestAllSkills()))
+                .then(() => Alerts.showSuccess('Renamed ' + oldName + ' to ' + newName))
                 .catch(console.error);
         };
+    }
+
+    @makeDeferrable(ActionType.AsyncDeleteEntry)
+    public static AsyncDeleteConsultant(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            profileServiceClient.deleteConsultant(initials)
+                .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))
+                .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))
+                .catch((error) => Alerts.showError(error));
+        };
+
     }
 }

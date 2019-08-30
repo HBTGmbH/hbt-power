@@ -1,10 +1,4 @@
 import {AdminState} from '../../model/admin/AdminState';
-import {
-    AbstractAction,
-    ChangeBoolValueAction,
-    ChangeNumberValueAction,
-    ChangeStringValueAction
-} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeLoginStatusAction,
@@ -24,12 +18,12 @@ import * as Immutable from 'immutable';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {LoginStatus} from '../../model/LoginStatus';
 import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
-import * as Cookies from 'js-cookie';
 import {APIProfileEntryNotification, ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {Comparators} from '../../utils/Comparators';
 import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
+import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 
 export class AdminReducer {
 
@@ -114,8 +108,8 @@ export class AdminReducer {
     }
 
     public static LogOutAdmin(state: AdminState): AdminState {
-        Cookies.remove(COOKIE_ADMIN_USERNAME);
-        Cookies.remove(COOKIE_ADMIN_PASSWORD);
+        window.localStorage.removeItem(COOKIE_ADMIN_USERNAME);
+        window.localStorage.removeItem(COOKIE_ADMIN_PASSWORD);
         return AdminState.createDefault();
     }
 
@@ -187,7 +181,6 @@ export class AdminReducer {
                 return AdminReducer.SetSkillNotification(state, action as SetSkillNotificationActionAction);
             case ActionType.SetNewSkillName: {
                 let act = action as SetNewSkillNameAction;
-                // TODO change the other notification, too
                 return state.selectedSkillNotification(state.selectedSkillNotification().newName(act.name));
             }
             case ActionType.SetReportUploadProgress: {

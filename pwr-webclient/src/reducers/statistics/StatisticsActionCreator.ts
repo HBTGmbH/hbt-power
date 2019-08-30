@@ -27,12 +27,13 @@ import {
 import {ActionType} from '../ActionType';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {Network} from '../../model/statistics/Network';
-import {AbstractAction} from '../profile/database-actions';
 import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
 import {APIScatterSkill, ScatterSkill} from '../../model/statistics/ScatterSkill';
 import {APIConsultant} from '../../model/APIProfile';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
-import {NameEntity} from '../../model/NameEntity';
+import {NameEntity} from '../profile-new/profile/model/NameEntity';
+import {ProfileElementType} from '../../Store';
+import {AbstractAction} from '../BaseActions';
 
 export class StatisticsActionCreator {
 
@@ -203,13 +204,13 @@ export class StatisticsActionCreator {
      * @returns {(dispatch:redux.Dispatch<ApplicationState>, getState:()=>ApplicationState)=>undefined}
      * @constructor
      */
-    public static AsyncRequestNameEntityUsageInfo(nameEntity: NameEntity, type: string) {
+    public static AsyncRequestNameEntityUsageInfo(nameEntity: NameEntity, type: ProfileElementType) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state = getState();
             if (!state.statisticsReducer.nameEntityUsageInfo().has(nameEntity)) {
                 let config: AxiosRequestConfig = {
                     params: {
-                        'name-entity': nameEntity.name(),
+                        'name-entity': nameEntity.name,
                         'type': type
                     }
                 };

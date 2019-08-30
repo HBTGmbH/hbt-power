@@ -1,11 +1,12 @@
 import * as React from 'react';
+import * as Immutable from 'immutable';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
 import {Icon, ListItemText} from '@material-ui/core';
 import {SkillServiceSkill} from '../../../model/skill/SkillServiceSkill';
 import {SkillNode, SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import {PwrTree, PwrTreeNode} from '../tree/pwr-tree';
-import {Label} from '@material-ui/icons';
+import Label from '@material-ui/icons/Label';
 
 interface SkillTreeProps {
     root: SkillTreeNode;

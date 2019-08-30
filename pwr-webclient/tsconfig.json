@@ -15,6 +15,7 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "suppressImplicitAnyIndexErrors": true,
+    "skipLibCheck": true,
     "noUnusedLocals": false,
     "experimentalDecorators": true,
     "typeRoots": ["./node_modules/@types"],

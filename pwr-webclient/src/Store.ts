@@ -6,35 +6,17 @@ export enum RequestStatus {
 }
 
 export enum APIRequestType {
-    /**
-     * Request requested all skill names.
-     */
-    RequestSkillNames,
-    RequestCareers,
-    RequestKeySkills,
-    RequestProjectRoles,
-    RequestCompanies,
-    RequestSectors,
-    RequestTrainings,
-    RequestQualifications,
-    RequestEducations,
-    RequestProfile,
-    RequestCreateViewProfile,
-    SaveProfile,
-    RequestLanguages,
-    RequestExportDocs
+    RequestSkillNames
 }
 
 export enum ProfileElementType {
-    SkillEntry,
-    SectorEntry,
-    TrainingEntry,
-    EducationEntry,
-    QualificationEntry,
-    LanguageEntry,
-    KeySkill,
-    Project,
-    CareerEntry,
-    Company,
-    ProjectRole
+    SectorEntry = 'SECTOR',
+    TrainingEntry= 'TRAINING',
+    EducationEntry = 'EDUCATION',
+    QualificationEntry = 'QUALIFICATION',
+    LanguageEntry = 'LANGUAGE',
+    SpecialField = 'SPECIAL_FIELD',
+    CareerEntry = 'CAREER',
+    Company = 'COMPANY',
+    ProjectRole = 'PROJECT_ROLE'
 }

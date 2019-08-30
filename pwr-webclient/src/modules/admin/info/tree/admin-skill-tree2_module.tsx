@@ -17,7 +17,8 @@ import {SetValueDialog} from '../../../general/set-value-dialog_module';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {SkillStore} from '../../../../model/skill/SkillStore';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
-import {Add, Delete} from '@material-ui/icons';
+import Add from '@material-ui/icons/Add';
+import Delete from '@material-ui/icons/Delete';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;

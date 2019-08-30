@@ -5,8 +5,8 @@ import {ProfileSkillMetrics} from './ProfileSkillMetrics';
 import {Network} from './Network';
 import {ConsultantClusterInfo} from './ConsultantClusterInfo';
 import {ScatterSkill} from './ScatterSkill';
-import {NameEntity} from '../NameEntity';
 import {ConsultantInfo} from '../ConsultantInfo';
+import {NameEntity} from '../../reducers/profile-new/profile/model/NameEntity';
 
 @doop
 export class StatisticsStore {

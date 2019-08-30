@@ -1,12 +1,13 @@
-import {AbstractAction} from '../profile/database-actions';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {Network} from '../../model/statistics/Network';
 import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
 import {ScatterSkill} from '../../model/statistics/ScatterSkill';
 import {ActionType} from '../ActionType';
-import {NameEntity} from '../../model/NameEntity';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import * as Immutable from 'immutable';
+import {NameEntity} from '../profile-new/profile/model/NameEntity';
+import {AbstractAction} from '../BaseActions';
 
 export interface ReceiveSkillUsageMetricsAction extends AbstractAction {
     metrics: Array<SkillUsageMetric>;

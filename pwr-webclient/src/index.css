@@ -11,20 +11,20 @@ body {
 }
 
 .build-info-highlight {
-    font-family: Roboto;
+    font-family: Roboto, serif;
     color: white;
     size: 14pt;
     text-transform: uppercase;
 }
 
 .build-info-normal {
-    font-family: Roboto;
+    font-family: Roboto, serif;
     color: white;
     size: 10pt;
 }
 
 .build-info-offline {
-    font-family: Roboto;
+    font-family: Roboto, serif;
     color: #db8388;
     size: 10pt;
 }
@@ -101,6 +101,13 @@ body {
     justify-content: center;
 }
 
+.Pwr-Content-Container {
+    flex-wrap: wrap;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+
 .Aligner-item--top {
     align-self: flex-start;
 }
@@ -134,7 +141,7 @@ body {
 }
 
 .material-icons-custom {
-    font-family: 'Material Icons';
+    font-family: 'Material Icons', serif;
     font-weight: normal;
     font-style: normal;
     font-size: 24px; /* Preferred icon size */
@@ -227,10 +234,6 @@ body {
     height: 80px;
 }
 
-.entry-dlg-content {
-    margin-right: 24px;
-}
-
 .refresh-indicator {
     position: fixed;
     top: 50%;
@@ -267,6 +270,17 @@ body {
     width: 100%;
 }
 
+.pwr-profile-entry-container {
+    padding-left: 8px;
+    padding-bottom: 8px;
+}
+
+.pwr-profile-entry-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /*[class*="MuiInputAdornment-root"] {*/
-    /*height: auto !important;*/
+/*height: auto !important;*/
 /*}*/

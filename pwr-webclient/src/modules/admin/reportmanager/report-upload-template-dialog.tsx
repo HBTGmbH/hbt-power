@@ -15,7 +15,7 @@ import TextField from '@material-ui/core/TextField/TextField';
 import {ReportPreview} from './report-preview_module';
 import Dropzone from 'react-dropzone';
 import {isNullOrUndefined} from 'util';
-import {CloudUpload} from '@material-ui/icons';
+import CloudUpload from '@material-ui/icons/CloudUpload';
 import {LinearProgress} from '@material-ui/core';
 
 

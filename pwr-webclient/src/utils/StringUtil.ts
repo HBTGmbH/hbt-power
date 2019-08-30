@@ -1,5 +1,5 @@
 export namespace StringUtils {
-    export function formatString(val: string, ...args: string[]): string {
+    export function formatString(val: string, ...args: any[]): string {
         return val.replace(/{(\d+)}/g, function (match, number) {
             return typeof args[number] != 'undefined'
                 ? args[number]
@@ -31,6 +31,13 @@ export namespace StringUtils {
 
     export function noOpFilter(searchText: string, key: string): boolean {
         return true;
+    }
+
+    export function defaultString(value?: string) {
+        if (value) {
+            return value;
+        }
+        return "";
     }
 
     export function dateToString(date: Date) {

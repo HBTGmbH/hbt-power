@@ -1,12 +1,11 @@
-import {AbstractAction} from '../profile/database-actions';
 import {ActionType} from '../ActionType';
 import * as redux from 'redux';
 import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {Paths} from '../../Paths';
-import {ProfileActionCreator} from '../profile/ProfileActionCreator';
-import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
-import * as Cookies from 'js-cookie';
-import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
+import {storeHasUnsavedChanges} from '../../utils/PwrStoreUtils';
+import {Alerts} from '../../utils/Alerts';
+import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
+import {AbstractAction} from '../BaseActions';
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;
@@ -16,27 +15,19 @@ export interface SetCurrentLocationAction extends AbstractAction {
     currentLocation: string;
 }
 
+
 export namespace NavigationActionCreator {
 
-    let alertContainer: any = null;
-
-    export function setAlertContainer(container: any) {
-        console.log('Init Container', container);
-        alertContainer = container;
-    }
-
-    export function showError(msg: string) {
-        alertContainer.show(msg, {
-            time: 0,
-            type: 'error',
-        });
-    }
 
     export function showSuccess(msg: string) {
-        alertContainer.show(msg, {
-            time: 10000,
-            type: 'success',
-        });
+        Alerts.showSuccess(msg);
+    }
+
+    export function success<T>(msg: string) {
+        return (response: T) => {
+            Alerts.showSuccess(msg);
+            return response;
+        }
     }
 
     /**
@@ -82,18 +73,16 @@ export namespace NavigationActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state: ApplicationState = getState();
             let currentLocation = state.navigationSlice.currentLocation();
-            let changes = state.databaseReducer.profile().changesMade();
+            const hasChanges = storeHasUnsavedChanges(getState());
             if (target === Paths.USER_SPECIAL_LOGOUT) {
-                if (changes > 0) {
+                if (hasChanges) {
                     dispatch(SetNavigationTarget(target));
                 } else {
                     navigate(Paths.APP_ROOT, dispatch);
-                    Cookies.remove(COOKIE_INITIALS_NAME);
-                    dispatch(ProfileActionCreator.logOutUser());
-                    dispatch(ViewProfileActionCreator.ResetViewState());
+                    dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
                 }
             }
-            if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && changes > 0) {
+            if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && hasChanges) {
                 dispatch(SetNavigationTarget(target));
             } else {
                 navigate(target, dispatch);
@@ -107,9 +96,7 @@ export namespace NavigationActionCreator {
             switch (target) {
                 case Paths.USER_SPECIAL_LOGOUT: {
                     navigate(Paths.APP_ROOT, dispatch);
-                    Cookies.remove(COOKIE_INITIALS_NAME);
-                    dispatch(ProfileActionCreator.logOutUser());
-                    dispatch(ViewProfileActionCreator.ResetViewState());
+                    dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
                     break;
                 }
                 default:

@@ -1,6 +1,5 @@
 import {applyMiddleware, combineReducers, createStore, Reducer, Store} from 'redux';
 import {AdminReducer} from './admin/AdminReducer';
-import {DatabaseReducer} from './profile/DatabaseReducer';
 import {StatisticsReducer} from './statistics/StatisticsReducer';
 
 import thunkMiddleware from 'redux-thunk';
@@ -8,7 +7,7 @@ import {SkillReducer} from './skill/SkillReducer';
 import {MetaDataReducer} from './metadata/MetaDataReducer';
 import {NavigationReducer} from './navigation/NavigationReducer';
 import {ViewProfileReducer} from './view/ViewProfileReducer';
-import {ProfileStore} from '../model/ProfileStore';
+import {ProfileStore} from './profile-new/ProfileStore';
 import {AdminState} from '../model/admin/AdminState';
 import {StatisticsStore} from '../model/statistics/StatisticsStore';
 import {SkillStore} from '../model/skill/SkillStore';
@@ -21,10 +20,19 @@ import {CrossCuttingReducer} from './crosscutting/CrossCuttingReducer';
 import {CrossCuttingStore} from '../model/crosscutting/CrossCuttingStore';
 import {TemplateStore} from '../model/view/TemplateStore';
 import {TemplateReducer} from './template/TemplateReducer';
+import {reduceProfile} from './profile-new/profile/ProfileReducer';
+import {reduceSuggestion} from './suggestions/SuggestionReducer';
+import {SuggestionStore} from './suggestions/SuggestionStore';
+import {composeWithDevTools} from 'redux-devtools-extension';
+import {DeferredStore} from './deferred/DeferredStore';
+import {reduceDeferredAction} from './deferred/DeferredActionReducer';
+import {deferredActionMiddleware} from './deferred/DeferredActionMiddleware';
+import {asyncActionUnWrapper} from './deferred/AsyncActionUnWrapper';
 
 
 export interface ApplicationState {
-    databaseReducer: ProfileStore;
+    profileStore: ProfileStore;
+    suggestionStore: SuggestionStore;
     adminReducer: AdminState;
     statisticsReducer: StatisticsStore;
     skillReducer: SkillStore;
@@ -34,11 +42,13 @@ export interface ApplicationState {
     templateSlice: TemplateStore;
     crossCutting: CrossCuttingStore;
     router: Reducer<RouterState>;
+    deferred: DeferredStore;
 }
 
 
 const ApplicationStore: Reducer<ApplicationState> = combineReducers({
-    databaseReducer: DatabaseReducer.Reduce,
+    profileStore: reduceProfile,
+    suggestionStore: reduceSuggestion,
     adminReducer: AdminReducer.reduce,
     statisticsReducer: StatisticsReducer.reduce,
     skillReducer: SkillReducer.reduce,
@@ -47,15 +57,24 @@ const ApplicationStore: Reducer<ApplicationState> = combineReducers({
     viewProfileSlice: ViewProfileReducer.reduce,
     crossCutting: CrossCuttingReducer.reduce,
     templateSlice: TemplateReducer.reduce,
+    deferred: reduceDeferredAction
 });
 
 export const PWR_HISTORY = createHistory();
 const reactRouterMiddleware = routerMiddleware(PWR_HISTORY);
 
+const composeEnhancers = composeWithDevTools({
+    // Specify name here, actionsBlacklist, actionsCreators and other options if needed
+});
+
 export const store: Store<ApplicationState> = createStore(
     ApplicationStore,
-    applyMiddleware(
+    composeEnhancers(applyMiddleware(
+        // The order is important. Deferred is supposed to be first, because it might defer async action (that are wrapped)
+        // Async action un-wrapper MUST be before thunk, otherwise thunk won't realize its an async action
+        (deferredActionMiddleware as any),
+        (asyncActionUnWrapper as any),
         thunkMiddleware,
-        reactRouterMiddleware
-    )
+        reactRouterMiddleware,
+    ))
 );

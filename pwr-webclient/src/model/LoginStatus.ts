@@ -1,8 +1,6 @@
 export enum LoginStatus {
-    INITIALS,
-    INVALID_NAME,
-    PASSWORD,
-    SUCCESS,
-    REJECTED,
-    UNAVAILABLE
+    INITIALS = '[Login Status] Entering Initials',
+    SUCCESS = '[Login Status] Login successful',
+    REJECTED = '[Login Status] Login rejected',
+    UNAVAILABLE = '[Login Status] Login unavailable',
 }

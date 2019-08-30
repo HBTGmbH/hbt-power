@@ -23,16 +23,14 @@ import {
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
-import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../profile/database-actions';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {isNullOrUndefined} from 'util';
-import {ProfileActionCreator} from '../profile/ProfileActionCreator';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {SkillServiceError} from '../../model/skill/SkillServiceError';
 import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
+import {Alerts} from '../../utils/Alerts';
+import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 
 
 export namespace SkillActionCreator {
@@ -231,11 +229,11 @@ export namespace SkillActionCreator {
         console.error(error);
         if (error.response && error.response.data) {
             let response: SkillServiceError = error.response.data;
-            NavigationActionCreator.showError(response.errorType + ': ' + response.message);
+            Alerts.showError(response.errorType + ': ' + response.message);
         } else if (error.response) {
-            NavigationActionCreator.showError('Generic Error ' + error.response.status);
+            Alerts.showError('Generic Error ' + error.response.status);
         } else {
-            NavigationActionCreator.showError('An unknown error occurred');
+            Alerts.showError('An unknown error occurred');
         }
     }
 
@@ -627,98 +625,7 @@ export namespace SkillActionCreator {
     }
 
 
-    export function AsyncProgressAddSkill() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let state = getState().skillReducer;
-            let step = state.currentAddSkillStep();
-            // Simple state machine that defines how to progress from one state into another.
-            // State progression is rather simple, for more, see AddSkillStep enum
-            if (step === AddSkillStep.NONE) {
-                dispatch(SetAddSkillStep(AddSkillStep.SKILL_INFO));
-            } else if (step === AddSkillStep.SKILL_INFO) {
-                let skillName = state.currentSkillName();
-                let skill = getState().databaseReducer.profile().getSkillByName(skillName);
-                if (!isNullOrUndefined(skill)) {
-                    dispatch(SetAddSkillStep(AddSkillStep.DONE));
-                    dispatch(SetDoneMessage('SKILL_EXISTS'));
-                } else {
-                    let hierarchy = state.categorieHierarchiesBySkillName().get(state.currentSkillName());
-                    if (!isNullOrUndefined(hierarchy)) {
-                        dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
-                    } else {
-                        dispatch(SetAddSkillStep(AddSkillStep.CATEGORY_REQUEST_PENDING));
-                        let config: AxiosRequestConfig = {params: {qualifier: skillName}};
-                        axios.get(getSkillByName(), config).then((response: AxiosResponse) => {
-                            if (response.status === 200) {
-                                if (response.data.category != null) {
-                                    dispatch(ReadSkillHierarchy(response.data));
-                                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_CATEGORY));
-                                } else {
-                                    dispatch(SetNoCategoryReason('NO_CATEGORY_AVAILABLE'));
-                                    dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
-                                }
-                            } else if (response.status === 204) {
-                                dispatch(SetNoCategoryReason('NO_CATEGORY_AVAILABLE'));
-                                dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
-                            } else {
-                                dispatch(SetNoCategoryReason('SERVER_ERROR'));
-                                dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
-                            }
-                        }).catch(function (error: AxiosError) {
-                            console.error(error);
-                            if (!isNullOrUndefined(error.response) && (error.response.status === 400 || error.response.status === 404)) {
-                                dispatch(SetNoCategoryReason('SERVICE_NOT_AVAILABLE'));
-                            } else {
-                                dispatch(SetNoCategoryReason('UNKNOWN'));
-                            }
-                            dispatch(SetAddSkillStep(AddSkillStep.SHOW_EDITING_OPTIONS));
-                        });
-                    }
-                }
-            } else if (step === AddSkillStep.SHOW_CATEGORY) {
-                dispatch(SetAddSkillStep(AddSkillStep.DONE));
-            } else if (step === AddSkillStep.SHOW_EDITING_OPTIONS) {
-                if (state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT && state.skillComment().trim() !== '') {
-                    dispatch(SetAddSkillStep(AddSkillStep.DONE));
-                } else if (state.currentChoice() === UnCategorizedSkillChoice.PROCEED_WITH_COMMENT) {
-                    dispatch(SetAddSkillError(PowerLocalize.get('AddSkillDialog.Comment.ErrorEmpty')));
-                } else {
-                    dispatch(SetAddSkillStep(AddSkillStep.DONE));
-                }
-            } else if (step === AddSkillStep.DONE) {
-                if (state.addToProjectId().length > 0) {
-                    dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment(), state.addToProjectId()));
-                } else if (state.doneState() !== 'SKILL_EXISTS') {
-                    dispatch(ProfileActionCreator.AddSkill(state.currentSkillName(), state.currentSkillRating(), state.skillComment()));
-                }
-                dispatch(ResetAddSkillDialog());
-            }
-        };
 
-    }
-
-    function GetHierarchyForSkillName(skillName:string)
-    {
-
-    }
-
-
-     export function AsyncAddSkill(skillName:string) {
-         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-             let state = getState().skillReducer;
-
-             let skill = getState().databaseReducer.profile().getSkillByName(skillName);
-             if(!isNullOrUndefined(skill))// ist schon im profil enthalten
-             {
-                 // dispatch message
-             }
-             else
-             {
-                 let hierarchy = state.categorieHierarchiesBySkillName().get(state.currentSkillName());
-             }
-
-         };
-     }
 
 
 }

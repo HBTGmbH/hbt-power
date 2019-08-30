@@ -6,10 +6,10 @@ import {ApplicationState} from '../reducerIndex';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ViewProfileService} from '../../API_CONFIG';
 import {SortableEntryField, SortableEntryType} from '../../model/view/NameComparableType';
-import {AbstractAction} from '../profile/database-actions';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
-import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
+import {Alerts} from '../../utils/Alerts';
+import {AbstractAction} from '../BaseActions';
 
 export namespace ViewProfileActionCreator {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
@@ -72,16 +72,16 @@ export namespace ViewProfileActionCreator {
     export function AsyncCreateViewProfile(name: string, description: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             let body = {
                 name: name,
                 viewDescription: description
             };
             axios.post(ViewProfileService.postViewProfile(initials), body).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
-                NavigationActionCreator.showSuccess('View Profile created.');
+                Alerts.showSuccess('View Profile created.');
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not create view profile!');
+                Alerts.showError('Could not create view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
@@ -90,14 +90,14 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncMoveEntry(id: string, movableEntry: string, sourceIndex: number, targetIndex: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(SetSortInProgress(true));
             axios.patch(patchMoveEntry(initials, id, movableEntry, sourceIndex, targetIndex)).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
                 dispatch(SetSortInProgress(false));
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not move entry');
+                Alerts.showError('Could not move entry');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 dispatch(SetSortInProgress(false));
                 console.error(error);
@@ -108,14 +108,14 @@ export namespace ViewProfileActionCreator {
     export function AsyncMoveNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number,
                                          movableEntry: string, sourceIndex: number, targetIndex: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(SetSortInProgress(true));
             axios.patch(patchMoveNestedEntry(initials, id, container, containerIndex, movableEntry, sourceIndex, targetIndex)).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
                 dispatch(SetSortInProgress(false));
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not move entries!');
+                Alerts.showError('Could not move entries!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 dispatch(SetSortInProgress(false));
                 console.error(error);
@@ -127,11 +127,11 @@ export namespace ViewProfileActionCreator {
                                            toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             axios.patch(patchToggleNestedEntry(initials, id, container, containerIndex, toggleableEntry, index, isEnabled)).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not toggle tnry!');
+                Alerts.showError('Could not toggle tnry!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
@@ -141,11 +141,11 @@ export namespace ViewProfileActionCreator {
     export function AsyncToggleEntry(id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             axios.patch(patchToggleEntry(initials, id, toggleableEntry, index, isEnabled)).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not toggle entry!');
+                Alerts.showError('Could not toggle entry!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
@@ -155,12 +155,12 @@ export namespace ViewProfileActionCreator {
     export function AsyncAutoSortEntry(id: string, entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
             axios.patch(patchSortEntry(initials, id, entryType, field), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not sorty entry!');
+                Alerts.showError('Could not sorty entry!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
@@ -170,12 +170,12 @@ export namespace ViewProfileActionCreator {
     export function AsyncToggleSkill(viewProfileId: string, skillName: string, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'skill-name': skillName}};
             axios.patch(patchToggleSkill(initials, viewProfileId, isEnabled), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not toggle skill!');
+                Alerts.showError('Could not toggle skill!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
@@ -185,7 +185,7 @@ export namespace ViewProfileActionCreator {
     export function AsyncSetDisplayCategory(viewProfileId: string, skillName: string, newDisplayCategoryName: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {
                 params: {
                     'skill-name': skillName,
@@ -195,7 +195,7 @@ export namespace ViewProfileActionCreator {
             axios.patch(patchSetDisplayCategory(initials, viewProfileId), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not set display category!');
+                Alerts.showError('Could not set display category!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
@@ -206,12 +206,12 @@ export namespace ViewProfileActionCreator {
                                              entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
             axios.patch(patchSortNestedEntry(initials, id, container, containerIndex, entryType, field), null, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not sort view profile!');
+                Alerts.showError('Could not sort view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
             });
@@ -222,14 +222,14 @@ export namespace ViewProfileActionCreator {
     export function AsyncDeleteViewProfile(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             axios.delete(ViewProfileService.deleteViewProfile(initials, id)).then(response => {
                 dispatch(RemoveViewProfile(id));
-                NavigationActionCreator.showSuccess('View profile deleted!');
+                Alerts.showSuccess('View profile deleted!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch((error: AxiosError) => {
                 console.error(error);
-                NavigationActionCreator.showError('Could not delete view profile!');
+                Alerts.showError('Could not delete view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
         };
@@ -237,12 +237,12 @@ export namespace ViewProfileActionCreator {
 
     function AsyncLoadViewProfile(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             axios.get(ViewProfileService.getViewProfile(initials, id)).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch((error: AxiosError) => {
                 console.error(error);
-                NavigationActionCreator.showError('Could not load view profile!');
+                Alerts.showError('Could not load view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
         };
@@ -250,7 +250,7 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncGenerateDocX(viewProfileId: string, templateId: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.post(ViewProfileService.postReport(initials, viewProfileId, templateId)).then((response: AxiosResponse) => {
                 let location = response.data;
@@ -259,7 +259,7 @@ export namespace ViewProfileActionCreator {
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch(function (error: any) {
                 console.error(error);
-                NavigationActionCreator.showError('Could not generate document!');
+                Alerts.showError('Could not generate document!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
         };
@@ -267,7 +267,7 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncUpdateViewProfile(viewProfileId: string, description: string, name: string, charsPerLine: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             let data = {
                 viewDescription: description,
                 name: name,
@@ -276,10 +276,10 @@ export namespace ViewProfileActionCreator {
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.patch(ViewProfileService.patchPartialUpdate(initials, viewProfileId), data).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
-                NavigationActionCreator.showSuccess('View Profile Updated.');
+                Alerts.showSuccess('View Profile Updated.');
             }).catch(function (error: any) {
                 console.error(error);
-                NavigationActionCreator.showError('Could not update view profiles!');
+                Alerts.showError('Could not update view profiles!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
         };
@@ -290,14 +290,14 @@ export namespace ViewProfileActionCreator {
      */
     export function AsyncLoadAllViewProfiles() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             dispatch(ClearViewProfiles());
             dispatch(CrossCuttingActionCreator.startRequest());
             axios.get(ViewProfileService.getViewProfileIds(initials)).then((response: AxiosResponse) => {
                 let ids: Array<string> = response.data;
                 ids.forEach(id => dispatch(AsyncLoadViewProfile(id)));
             }).catch((error: AxiosError) => {
-                NavigationActionCreator.showError('Could not load view profiles!');
+                Alerts.showError('Could not load view profiles!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
         };
@@ -305,14 +305,14 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncSetDescription(description: string, viewProfileId: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let initials = getState().databaseReducer.loggedInUser().initials();
+            let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             let config: AxiosRequestConfig = {headers: {'Content-Type': 'text/plain'}};
             axios.patch(ViewProfileService.patchDescription(initials, viewProfileId), description, config).then((response: AxiosResponse) => {
                 succeedAndRead(response, dispatch);
             }).catch(function (error: any) {
                 console.error(error);
-                NavigationActionCreator.showError('Could not set description!');
+                Alerts.showError('Could not set description!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
         };

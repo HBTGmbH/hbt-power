@@ -1,17 +1,20 @@
-import {CrossCuttingStore} from '../../model/crosscutting/CrossCuttingStore';
-import {AbstractAction} from '../profile/database-actions';
+import {CrossCuttingStore, empty} from '../../model/crosscutting/CrossCuttingStore';
 import {ActionType} from '../ActionType';
-import {SetRequestPendingAction} from './CrossCuttingActionCreator';
+import {SetLoginErrorAction, SetLoginStatusAction, SetRequestPendingAction} from './CrossCuttingActionCreator';
+import {AbstractAction} from '../BaseActions';
+
 
 export namespace CrossCuttingReducer {
 
-    export function reduce(store: CrossCuttingStore, action: AbstractAction): CrossCuttingStore {
-        if (!store) {
-            return CrossCuttingStore.empty();
+    export function reduce(store = empty, action: AbstractAction): CrossCuttingStore {
+        if (action.type === ActionType.SetLoginError) {
+            return {...store, ...{loginError: (action as SetLoginErrorAction).error}};
+        }
+        if (action.type === ActionType.SetLoginStatus) {
+            return {...store, ...{loginStatus: (action as SetLoginStatusAction).loginStatus}};
         }
         if (action.type === ActionType.SetRequestPending) {
-            let act: SetRequestPendingAction = action as SetRequestPendingAction;
-            return store.requestPending(act.requestPending);
+            return {...store, ...{requestPending: (action as SetRequestPendingAction).requestPending}};
         }
         return store;
     }

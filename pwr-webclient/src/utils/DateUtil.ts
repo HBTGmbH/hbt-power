@@ -46,6 +46,16 @@ const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, op
 const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDate);
 const formatFullDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDateTime);
 
+function verifyDataType(date: Date | string): Date {
+    if (!date) {
+        return null;
+    }
+    if (typeof date === 'string') {
+        return new Date(date);
+    }
+    return date;
+}
+
 /**
  * Formats a date to a 'short' display.
  *
@@ -53,13 +63,19 @@ const formatFullDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language
  * @param date to be formatted
  * @return formatted date or PowerLocalize.get("Today") if the date is null.
  */
-export function formatToShortDisplay(date: Date): string {
-    if (isNullOrUndefined(date)) return PowerLocalize.get('Today');
+export function formatToShortDisplay(date: Date | string): string {
+    date = verifyDataType(date);
+    if (!date) {
+        return PowerLocalize.get('Today');
+    }
     return format.format(date);
 }
 
 export function formatToFullLocalizedDateTime(date: Date): string {
-    if (isNullOrUndefined(date)) return '???';
+    date = verifyDataType(date);
+    if (isNullOrUndefined(date)) {
+        return '???';
+    }
     return formatFullDateTime.format(date);
 }
 
@@ -71,7 +87,10 @@ export function formatToFullLocalizedDateTime(date: Date): string {
  * @return formatted date or "???" if the date is null
  */
 export function formatFullLocalizedDate(date: Date): string {
-    if (isNullOrUndefined(date)) return '???';
+    date = verifyDataType(date);
+    if (isNullOrUndefined(date)) {
+        return '???';
+    }
     return formatFullDate.format(date);
 }
 
@@ -88,8 +107,9 @@ export function formatToMailDisplay(date: Date) {
 }
 
 export function formatToYear(date: Date) {
+    const newDate = new Date(date);
     if (isNullOrUndefined(date)) return PowerLocalize.get('Today');
-    return formatOnlyYear.format(date);
+    return formatOnlyYear.format(newDate);
 }
 
 export namespace DateUtils {

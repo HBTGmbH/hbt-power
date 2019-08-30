@@ -3,10 +3,12 @@ import axios, {AxiosResponse} from 'axios';
 import {getSearchSkill} from '../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
 import {PwrAutoComplete} from './pwr-auto-complete';
+import {noOp} from '../../utils/ObjectUtil';
 
 
 interface SkillSearcherProps {
     label?: string;
+    disabled?: boolean;
     maxResults?: number;
     maxHeight?: number | string;
     id: string;
@@ -55,36 +57,42 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
         label: '',
         maxResults: 10,
         maxHeight: null,
-        onNewRequest: request => {
-        },
-        onValueChange: val => {
-        },
-        resetOnRequest: true
+        onNewRequest: noOp,
+        onValueChange: noOp,
+        resetOnRequest: true,
+        disabled: false
     };
 
-    private requestSkills = (searchText: string) => {
-        this.props.onValueChange(searchText);
-        this.setState({
-            searchText: searchText
-        });
-        if (!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
-            let reqParams = {
-                maxResults: this.props.maxResults,
-                searchterm: searchText
-            };
-            axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
-                if (response.status === 200) {
-                    this.setState({
-                        skills: response.data
-                    });
-                } else if (response.status === 204) {
-                    this.setState({
-                        skills: []
-                    });
-                }
-            }).catch((error: any) => {
-                console.error((error));
+    private requestSkills = (searchText: string, navigation?: boolean) => {
+        if (navigation) {
+            this.setState({
+                searchText: searchText
             });
+            return;
+        } else {
+            this.props.onValueChange(searchText);
+            this.setState({
+                searchText: searchText
+            });
+            if (!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
+                let reqParams = {
+                    maxResults: this.props.maxResults,
+                    searchterm: searchText
+                };
+                axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
+                    if (response.status === 200) {
+                        this.setState({
+                            skills: response.data
+                        });
+                    } else if (response.status === 204) {
+                        this.setState({
+                            skills: []
+                        });
+                    }
+                }).catch((error: any) => {
+                    console.error((error));
+                });
+            }
         }
     };
 
@@ -98,11 +106,13 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
 
     render() {
         return <PwrAutoComplete
+            disabled={this.props.disabled}
             fullWidth={this.props.fullWidth}
             label={this.props.label}
             id={this.props.id}
             data={this.state.skills}
             searchTerm={this.state.searchText}
+            onAdd={this.handleRequest}
             onSearchChange={this.requestSkills}
         />;
     }

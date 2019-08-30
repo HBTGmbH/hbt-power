@@ -1,21 +1,29 @@
-import {NameEntity} from '../model/NameEntity';
 import {SkillCategory} from '../model/skill/SkillCategory';
 import {Skill} from '../model/Skill';
+import * as Immutable from 'immutable';
 import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillNode, SkillTreeNode} from '../model/skill/SkillTreeNode';
-import {Project} from '../model/Project';
 import {BuildInfo} from '../model/metadata/BuildInfo';
 import {SkillServiceSkill} from '../model/skill/SkillServiceSkill';
+import {ComparatorBuilder, NullMode, nullSafe} from 'ts-comparator';
+import {Project} from '../reducers/profile-new/profile/model/Project';
+import {ProfileSkill} from '../reducers/profile-new/profile/model/ProfileSkill';
+import {NameEntity} from '../reducers/profile-new/profile/model/NameEntity';
+
+export const PROJECTS_BY_START_DATE = ComparatorBuilder
+    .comparing<Project>(nullSafe(t => t.startDate.getDate()))
+    .definingNullAs(NullMode.HIGHEST)
+    .build();
+
+export const PROFILE_SKILLS_BY_NAME = ComparatorBuilder
+    .comparing<ProfileSkill>(skill => skill.name)
+    .build();
+
+export const NAME_ENTITY_BY_NAME = ComparatorBuilder
+    .comparing<NameEntity>(n => n.name)
+    .build();
 
 export class Comparators {
-
-    public static getNameEntityComparator(asc: boolean) {
-        if (asc) {
-            return (n1: NameEntity, n2: NameEntity) => Comparators.compareNameEntity(n2, n1);
-        } else {
-            return (n1: NameEntity, n2: NameEntity) => Comparators.compareNameEntity(n1, n2);
-        }
-    }
 
     public static getStringComparator(asc: boolean) {
         if (asc) {
@@ -33,9 +41,6 @@ export class Comparators {
         }
     }
 
-    public static compareNameEntity(n1: NameEntity, n2: NameEntity) {
-        return Comparators.compareString(n1.name(), n2.name());
-    }
 
     public static compareString(s1: string, s2: string) {
         if (s1 > s2) return -1;
@@ -71,10 +76,6 @@ export class Comparators {
 
     public static compareAdminNotification(a1: AdminNotification, a2: AdminNotification): number {
         return Comparators.compareDate(a1.occurrence(), a2.occurrence());
-    }
-
-    public static compareProjects(p1: Project, p2: Project): number {
-        return Comparators.compareDate(p1.startDate(), p2.startDate());
     }
 
     public static compareBuildInfo(b1: BuildInfo, b2: BuildInfo): number {

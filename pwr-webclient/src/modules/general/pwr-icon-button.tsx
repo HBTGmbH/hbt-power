@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {Icon, IconButton, Tooltip} from '@material-ui/core';
-import {PwrDeleteConfirm} from './pwr-delete-confirm';
 import {IconButtonProps} from '@material-ui/core/IconButton/IconButton';
-import {deleteBlacklistCategory} from '../../API_CONFIG';
 
 
 interface PwrIconButtonProps {
@@ -11,8 +9,6 @@ interface PwrIconButtonProps {
     tooltip: string;
 
     onClick(): void;
-
-    isDeleteButton?: boolean;
     style?: any;
     autoFocus?: boolean;
     iconButtonProps?:IconButtonProps;
@@ -33,11 +29,7 @@ export class PwrIconButton extends React.Component<PwrIconButtonProps, PwrIconBu
     }
 
     private getClick = () => {
-        if (this.props.isDeleteButton) {
-            this.setState({confirmDialogOpen: true});
-        } else {
-            this.props.onClick();
-        }
+        this.props.onClick();
     };
 
     private buttonId(): string | undefined {
@@ -49,14 +41,10 @@ export class PwrIconButton extends React.Component<PwrIconButtonProps, PwrIconBu
 
     render() {
         return <div style={{float: 'left'}} id={this.props.id}>
-            <PwrDeleteConfirm open={this.state.confirmDialogOpen}
-                              onClose={() => this.setState({confirmDialogOpen: false})}
-                              onConfirm={this.props.onClick}
-            />
             <Tooltip title={this.props.tooltip}>
                 <IconButton {...this.props.iconButtonProps} id={this.buttonId()} autoFocus={this.props.autoFocus}
                             aria-label={this.props.tooltip}
-                            onClick={this.getClick} style={this.props.style}
+                            onClick={this.props.onClick} style={this.props.style}
                 >
                     <Icon>{this.props.iconName}</Icon>
                 </IconButton>

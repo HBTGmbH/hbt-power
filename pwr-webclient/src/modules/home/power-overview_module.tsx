@@ -3,9 +3,6 @@ import * as React from 'react';
 import * as redux from 'redux';
 import {Button, Icon, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {ProfileAsyncActionCreator} from '../../reducers/profile/ProfileAsyncActionCreator';
-import {Profile} from '../../model/Profile';
-import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ProfileStatistics} from './profile-statistics_module';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
@@ -16,6 +13,13 @@ import {ViewProfileDialog} from './view/view-profile-dialog_module';
 import {BaseDataDashboardElement} from './dashboard/base-data-dahboard-element_module';
 import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-element_module';
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
+import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
+import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
+import {Paths} from '../../Paths';
+import {isNullOrUndefined} from 'util';
+import {PwrRaisedButton} from '../general/pwr-raised-button';
+import Add from '@material-ui/icons/Add';
 
 /**
  * Properties that are managed by react-redux.
@@ -24,8 +28,7 @@ import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboar
  * otherwise the component will not render and update correctly.
  */
 interface PowerOverviewProps {
-    loggedInUser: ConsultantInfo;
-    profile: Profile;
+    loggedInUser: Consultant;
     viewProfiles: Array<ViewProfile>;
 }
 
@@ -74,8 +77,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
 
     static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
         return {
-            loggedInUser: state.databaseReducer.loggedInUser(),
-            profile: state.databaseReducer.profile(),
+            loggedInUser: state.profileStore.consultant,
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray()
         };
     }
@@ -83,11 +85,23 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerOverviewDispatch {
         return {
             requestSingleProfile: function (initials: string) {
-                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+                dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             createViewProfile: (description, name) => dispatch(ViewProfileActionCreator.AsyncCreateViewProfile(description, name)),
         };
+    }
+
+    componentWillMount() {
+        console.log("Overview WillMount!");
+        if (!this.props.loggedInUser) {
+            const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
+            if (!isNullOrUndefined(initials)) {
+                this.props.navigateTo(Paths.APP_ROOT);
+            } else {
+                this.props.requestSingleProfile(initials);
+            }
+        }
     }
 
     private setViewDialogOpen(isOpen: boolean) {
@@ -147,15 +161,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     onSave={this.handleCreateViewProfile}
                                     type="new"
                                 />
-                                <Button
-                                    variant={'contained'}
-                                    color={'primary'}
-                                    className="mui-margin"
-                                    onClick={() => this.setViewDialogOpen(true)}
-                                >
-                                    <Icon className="material-icons">add</Icon>
-                                    {PowerLocalize.get('ViewProfile.Create')}
-                                </Button>
+                                <PwrRaisedButton color={'primary'} onClick={() => this.setViewDialogOpen(true)} icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {
                                         return <div className="col-md-12 fullWidth" style={{marginTop: '8px'}}

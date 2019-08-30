@@ -1,4 +1,3 @@
-import {AbstractAction} from '../profile/database-actions';
 import {AdminNotification, APIAdminNotification} from '../../model/admin/AdminNotification';
 import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
@@ -6,6 +5,7 @@ import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {ActionType} from '../ActionType';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
+import {AbstractAction} from '../BaseActions';
 
 /**
  * Represents an action where an array of {@link APIAdminNotification} is received from an external source and parsed.

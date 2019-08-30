@@ -7,14 +7,18 @@ import {getProfileImageLocation} from '../../../API_CONFIG';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
-import {ProfileAsyncActionCreator} from '../../../reducers/profile/ProfileAsyncActionCreator';
 import {getRandomGreeting} from '../../../model/PwrConstants';
 import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
+import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
+import {PwrRaisedButton} from '../../general/pwr-raised-button';
+import Edit from '@material-ui/icons/Edit';
 
 interface BaseDataDashboardElementProps {
     initials: string;
     name: string;
     lastEdited: Date;
+    profile: Profile;
 }
 
 interface BaseDataDashboardElementLocalProps {
@@ -35,16 +39,17 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
 
     static mapStateToProps(state: ApplicationState, localProps: BaseDataDashboardElementLocalProps): BaseDataDashboardElementProps {
         return {
-            initials: state.databaseReducer.loggedInUser().initials(),
-            name: state.databaseReducer.loggedInUser().firstName(),
-            lastEdited: state.databaseReducer.profile().lastEdited()
+            initials: state.profileStore.consultant.initials,
+            name: state.profileStore.consultant.firstName,
+            lastEdited: new Date(state.profileStore.profile.lastEdited),
+            profile: state.profileStore.profile
         };
     }
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BaseDataDashboardElementDispatch {
         return {
-            requestSingleProfile: function (initials: string) {
-                dispatch(ProfileAsyncActionCreator.requestSingleProfile(initials));
+            requestSingleProfile: function (initials: string = 'n/a') {
+                dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
         };
@@ -74,15 +79,8 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                         {formatToFullLocalizedDateTime(this.props.lastEdited)}
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
-                        <Button
-                            variant={'contained'}
-                            style={{marginTop: '8px'}}
-                            color={'primary'}
-                            onClick={this.handleEditButtonClick}
-                        >
-                            <Icon className="material-icons">edit</Icon>
-                            {PowerLocalize.get('Action.Edit')}
-                        </Button>
+                        <PwrRaisedButton color={'primary'} icon={<Edit/>} text={PowerLocalize.get('Action.Edit')}
+                                         onClick={this.handleEditButtonClick}/>
                     </div>
                 </div>
             </Paper>);

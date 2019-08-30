@@ -175,7 +175,12 @@ class AdminLoginModule extends React.Component<AdminLoginProps
                                  style={{marginTop: '5px', marginBottom: '15px', height: '30px'}}>
                                 {
                                     this.state.rememberLogin ?
-                                        <span className="warning-note">Credentials will be stored in a cookie!</span> :
+                                        <div>
+                                            <span className="warning-note">Remember Login is a development feature only!</span><br/>
+                                            <span className="warning-note">Your Credentials will be stored in local storage!</span><br/>
+                                            <span className="warning-note">Your Credentials will be vulnerable to cross site attacks!</span>
+                                        </div>
+                                         :
                                         <span> </span>
                                 }
                             </div>

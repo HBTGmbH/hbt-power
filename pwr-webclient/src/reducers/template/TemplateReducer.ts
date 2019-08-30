@@ -1,9 +1,9 @@
 import {TemplateStore} from '../../model/view/TemplateStore';
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
-import {AbstractAction} from '../profile/database-actions';
 import {isNullOrUndefined} from 'util';
 import {ReportPreviewFile} from '../../model/view/ReportPreviewFile';
+import {AbstractAction} from '../BaseActions';
 
 
 export namespace TemplateReducer {

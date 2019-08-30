@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
+import * as Immutable from 'immutable';
 import {Button, Icon, Tab, Table, TableBody, TableCell, TableRow, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
@@ -131,7 +132,7 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
                     </div>
                 </div>
                 <div>
-                    <Tabs value={0} centered fullWidth >
+                    <Tabs value={0} centered variant={'fullWidth'} >
                         <Tab
                             icon={<Icon className="material-icons">delete</Icon>}
                             label={PowerLocalize.get('NotificationInbox.TrashedMessages')}

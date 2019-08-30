@@ -1,10 +1,14 @@
 import Autosuggest from 'react-autosuggest'; // standard ' * as '
 import * as React from 'react';
-import {MenuItem, Paper, TextField, WithStyles, withStyles} from '@material-ui/core';
+import {FormControl, InputLabel, MenuItem, Paper, TextField, WithStyles, withStyles} from '@material-ui/core';
 import {StringUtils} from '../../utils/StringUtil';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import filterFuzzy = StringUtils.filterFuzzy;
+import {ValidationError, ValidatorFn} from '../../utils/ValidationUtils';
+import {Simulate} from 'react-dom/test-utils';
+import input = Simulate.input;
+import {omitKeys} from '../../utils/ObjectUtil';
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 const ChipInput = require('material-ui-chip-input').default;
@@ -42,15 +46,16 @@ export interface PwrAutoCompleteProps {
     searchTerm?: string;
     data: Array<string>;
     chips?: Array<string>;
+    disabled?: boolean;
     label: string;
-
+    validationError?: ValidationError;
     disableFiltering?: boolean;
 
     onAdd?(item: string);
 
     onRemove?(item: string);
 
-    onSearchChange(selectedItem: string): void;
+    onSearchChange(selectedItem: string, navigation?: boolean): void;
 }
 
 type Styles =
@@ -59,7 +64,7 @@ type Styles =
     & WithStyles<'suggestion'>
     & WithStyles<'suggestionsList'>;
 
-class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Styles, {}> {
+export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Styles, {}> {
     state = {
         suggestions: [],
     };
@@ -84,10 +89,18 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         });
     };
 
-    handleChange = name => (event, {newValue}) => {
-        this.setState({
-            [name]: newValue,
-        });
+    handleChange = (event: any, newValue: string) => {
+
+        let searchTerm:string=newValue;
+
+        let navigation: boolean = false;
+        if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
+
+            navigation = true;
+            searchTerm=this.props.searchTerm;
+        }
+
+        this.props.onSearchChange(searchTerm, navigation);
     };
 
     handleClick = (item: string) => {
@@ -96,17 +109,30 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         }
     };
 
+    handleKeyDownOnInput = (key: string, inputValue: string) => {
+      if (key === 'Enter' && this.props.onAdd) {
+          this.props.onAdd(inputValue);
+      }
+    };
+
     renderInputComponent = (inputProps) => {
         const {
             classes, inputRef = () => {
             }, ref, ...other
         } = inputProps;
 
+        let label = this.props.label;
+        if (this.props.validationError) {
+            label = this.props.validationError.msg;
+        }
+
         return (
             <TextField
+                error={!!this.props.validationError}
                 id={this.props.id + '_inputField'}
-                label={this.props.label}
+                label={label}
                 fullWidth={this.props.fullWidth}
+                disabled={this.props.disabled}
                 InputProps={{
                     inputRef: node => {
                         ref(node);
@@ -115,6 +141,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
                     classes: {
                         input: classes.input,
                     },
+                    onKeyDown: event => this.handleKeyDownOnInput(event.key, inputProps.value)
                 }}
                 {...other}
             />
@@ -125,6 +152,7 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         const {classes, autoFocus, value, onChange, onAdd, onDelete, chips, ref, ...other} = inputProps;
         return (
             <ChipInput
+                disabled={this.props.disabled}
                 label={this.props.label}
                 fullWidth={true}
                 clearInputValueOnChange
@@ -158,19 +186,9 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
         );
     };
 
-// TODO use event.code == 'Enter' -- deprecated , but was undefined in development ,mp
-    private handleOnKeyDown(event:KeyboardEvent){
-        if(this.props.onAdd != null && event.keyCode == 13){
-            event.preventDefault();
-            event.stopPropagation();
-            this.props.onAdd(this.state.suggestions[0]);
-        }
-
-    }
-
 
     render() {
-        const {classes} = this.props;
+        const classes = this.props.classes;
 
         const autosuggestProps = {
             renderInputComponent: this.props.multi ? this.renderChipInput : this.renderInputComponent,
@@ -181,20 +199,35 @@ class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Style
             renderSuggestion: this.renderSuggestion,
         };
 
+        const onlyChipProps = {
+            onAdd: (chip) => this.props.onAdd(chip),
+            onDelete: (chip, index) => this.props.onRemove(chip),
+        };
+
+        const basicInputProps = {
+            classes,
+            placeholder: this.props.label,
+            value: this.props.searchTerm,
+            chips: this.props.chips,
+            onChange: (event, {newValue}) => this.handleChange(event, newValue),
+        };
+
+        let inputProps;
+        if (this.props.multi) {
+            inputProps = {
+                ...basicInputProps,
+                ...onlyChipProps
+            };
+        }
+        else {
+            inputProps = basicInputProps;
+        }
+
         return (
             <Autosuggest
                 id={this.props.id}
                 {...autosuggestProps}
-                inputProps={{
-                    classes,
-                    placeholder: this.props.label,
-                    value: this.props.searchTerm,
-                    chips: this.props.chips,
-                    onChange: (event, {newValue}) => this.props.onSearchChange(newValue),
-                    onAdd: (chip) => this.props.onAdd(chip),
-                    onDelete: (chip, index) => this.props.onRemove(chip),
-                    onKeyDown: (event) => this.handleOnKeyDown(event),
-                }}
+                inputProps={inputProps}
                 theme={{
                     container: classes.container,
                     suggestionsContainerOpen: classes.suggestionsContainerOpen,

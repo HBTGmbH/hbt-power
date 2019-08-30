@@ -1,9 +1,9 @@
-import {AbstractAction} from '../profile/database-actions';
 import {SkillCategory} from '../../model/skill/SkillCategory';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
+import {AbstractAction} from '../BaseActions';
 
 export namespace SkillActions {
     export interface AddCategoryToTreeAction extends AbstractAction {
