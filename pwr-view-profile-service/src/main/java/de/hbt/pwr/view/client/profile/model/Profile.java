@@ -29,7 +29,7 @@ public class Profile {
 
     private Set<StepEntry> careerEntries = new HashSet<>();
 
-    private Set<ProfileEntry> keySkillEntries = new HashSet<>();
+    private Set<ProfileEntry> specialFieldEntries = new HashSet<>();
 
     private Set<ProfileProject> projects = new HashSet<>();
 
