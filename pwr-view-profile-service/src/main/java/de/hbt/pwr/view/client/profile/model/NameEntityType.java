@@ -7,7 +7,7 @@ public enum NameEntityType {
     SECTOR,
     TRAINING,
     CAREER,
-    KEY_SKILL,
+    SPECIAL_FIELD,
     COMPANY,
     PROJECT_ROLE
 }
