@@ -106,29 +106,6 @@ public class ReportTemplateController {
         return ResponseEntity.ok("Success");
     }
 
-    /*
-    @PostMapping("{id}")
-    public ResponseEntity updateTemplate(
-            @PathVariable("id") String id,
-            @RequestParam("templateSlice") String templateString) {
-
-
-        ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
-
-        ReportTemplate newTemplate = new ReportTemplate();
-        ReportTemplate oldTemplate = reportTemplateService.getTemplate(id);
-
-        newTemplate.setName(templateSlice.name);
-        newTemplate.setDescription(templateSlice.description);
-        newTemplate.setFileId(oldTemplate.getFileId());
-        newTemplate.setCreateUser(oldTemplate.getCreateUser());
-        newTemplate.setCreatedDate(oldTemplate.getCreatedDate());
-        newTemplate.setPreviewId(oldTemplate.getPreviewId());
-        ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
-        return ResponseEntity.ok(template);
-    }
-    // */
-
     @PostMapping("{id}")
     public ResponseEntity updateTemplate(
             @PathVariable("id") String id,
