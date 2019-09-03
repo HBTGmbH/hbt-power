@@ -121,42 +121,24 @@ public class ConsultantService {
         if (toDelete.getActive()) {
             throw new WebApplicationException(HttpStatus.LOCKED, "Only Inactive Consultants can be deleted!");
         } else {
-            //TODO im View Profile Service auch die Delete Logik anpassen
-            // TODO zum Löschen eines Beraters müssen alle einträge seiner Id in Tabellen gelöscht sein
-            // View Profile Service bescheid sagen
 
+            // View Profile Service bescheid sagen
             ResponseEntity<List<String>> response = viewProfileClient.getAllViewProfiles(toDelete.getInitials());
-            log.debug("Response: " + response.toString());
             List<String> viewIds = response.getBody();
             if (viewIds != null) {
-                log.debug("ViewIds for " + initials + ":  " + viewIds.toString());
                 viewIds.forEach((id) -> viewProfileClient.deleteViewProfile(toDelete.getInitials(), id));
             }
-
 
             adminNotificationRepository.deleteAdminNotificationsByProfileId(toDelete.getProfile().getId());
 
             Stream<Skill> profileSkills = toDelete.getProfile().getSkills().stream();
             Stream<Skill> projectSkills = toDelete.getProfile().getProjects().stream().flatMap(project -> project.getSkills().stream());
-            //Set<Skill> skillSet = Stream.of(profileSkills, projectSkills).flatMap(Function.identity()).collect(Collectors.toSet());
 
             toDelete.getProfile().getProjects().forEach(project -> project.getSkills().clear());
-            consultantRepository.flush();
             projectSkills.forEach(skillRepository::delete);
-            consultantRepository.flush();
             profileSkills.forEach(skillRepository::delete);
-            consultantRepository.flush();
-            //toDelete.getProfile().getProjects().forEach(project -> log.debug("Projects after clearing id: " + project.getId() + "    |  " + project.getSkills().toString()));
-
             toDelete.getProfile().getSkills().clear();
-            consultantRepository.flush();
-
             toDelete.getProfile().getProjects().forEach(projectRepository::delete);
-            consultantRepository.flush();
-
-            //skillSet.forEach(skillRepository::delete);
-            consultantRepository.flush();
-
             consultantRepository.delete(toDelete);
         }
     }
