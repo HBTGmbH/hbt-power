@@ -93,14 +93,11 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     }
 
     componentWillMount() {
-        console.log("Overview WillMount!");
-        if (!this.props.loggedInUser) {
-            const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
-            if (!isNullOrUndefined(initials)) {
-                this.props.navigateTo(Paths.APP_ROOT);
-            } else {
-                this.props.requestSingleProfile(initials);
-            }
+        const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
+        if (!this.props.loggedInUser || !initials) {
+            this.props.navigateTo(Paths.APP_ROOT);
+        } else {
+            this.props.requestSingleProfile(initials);
         }
     }
 
@@ -161,7 +158,8 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     onSave={this.handleCreateViewProfile}
                                     type="new"
                                 />
-                                <PwrRaisedButton color={'primary'} onClick={() => this.setViewDialogOpen(true)} icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
+                                <PwrRaisedButton color={'primary'} onClick={() => this.setViewDialogOpen(true)}
+                                                 icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {
                                         return <div className="col-md-12 fullWidth" style={{marginTop: '8px'}}
