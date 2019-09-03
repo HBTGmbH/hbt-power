@@ -14,6 +14,9 @@ public interface AdminNotificationRepository extends JpaRepository<AdminNotifica
     @Query("delete from SkillNotification s where s.skill.name = :skillName")
     void deleteBySkillName(@Param("skillName") String skillName);
 
+
+    void deleteAdminNotificationsByProfileId(Long id);
+
     void deleteByAdminNotificationStatus(AdminNotificationStatus status);
 
     Collection<AdminNotification> findAllByAdminNotificationStatus(AdminNotificationStatus status);
