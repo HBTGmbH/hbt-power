@@ -95,10 +95,8 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     componentWillMount() {
         const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
         if (!this.props.loggedInUser || !initials) {
-            console.log('navigate!!!!!!!!!!!!');
             this.props.navigateTo(Paths.APP_ROOT);
         } else {
-            console.log('request!!!!!!!!!!!!');
             this.props.requestSingleProfile(initials);
         }
     }
