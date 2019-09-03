@@ -56,7 +56,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
     }
 
     private handleEditButtonClick = () => {
-        this.props.requestSingleProfile(this.props.initials);
+        //this.props.requestSingleProfile(this.props.initials);
         this.props.navigateTo(Paths.USER_PROFILE);
     };
 
