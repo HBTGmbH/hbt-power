@@ -59,6 +59,7 @@ interface ProfileLocalState {
 
 interface ProfileDispatch {
     loadFullProfile(initials: string): void;
+
     preFetchSuggestions(): void;
 }
 
@@ -98,6 +99,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     componentDidMount() {
         this.props.preFetchSuggestions();
+        if (this.props.profile.id == null) {
+            this.props.loadFullProfile(this.props.loggedInUser.initials);
+        }
     }
 
     private checkProfile = () => {
@@ -120,7 +124,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     private renderInfo(value: string) {
         return <span>
             {value}
-        </span>
+        </span>;
     }
 
     private renderLanguageInfo = (entry: ProfileEntry, id: number) => {
@@ -145,12 +149,12 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     private renderSectorInfo = (entry: ProfileEntry, id: number) => {
         const sector: IndustrialSector = entry as IndustrialSector;
-        return this.renderInfo("");
+        return this.renderInfo('');
     };
 
     private renderKeySkillInfo = (entry: ProfileEntry, id: number) => {
         const specialField: SpecialField = entry as SpecialField;
-        return this.renderInfo("");
+        return this.renderInfo('');
     };
 
     private renderCareerInfo = (entry: ProfileEntry, id: number) => {
