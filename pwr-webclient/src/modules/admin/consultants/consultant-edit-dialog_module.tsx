@@ -146,8 +146,9 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
 
 
     private readonly dialogActions = [
-        <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
-                       onClick={this.deleteConsultant}/>,
+        !this.props.consultantInfo.active() ?
+            <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
+                           onClick={this.deleteConsultant}/> : <></>,
         <PwrIconButton key="save" iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
                        onClick={this.saveAndClose}/>,
         <PwrIconButton key="edit" iconName={'edit'} tooltip={PowerLocalize.get('ConsultantTile.EditProfile')}
