@@ -31,6 +31,7 @@ import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {SkillChip} from '../skills/skill-chip_module';
 import Power from '@material-ui/icons/Power';
 import Grid from '@material-ui/core/Grid/Grid';
+import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-skills';
 
 const chooseClientName = (project: Project) => {
     if (project.client) {
@@ -324,7 +325,10 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <div className="Pwr-Content-Container">
                         {this.project().skills.map(skill => this.toSkillChip(skill))}
                     </div>
-
+                </div>
+                <div>
+                    <PwrFormCaption>Suggest Skills</PwrFormCaption>
+                    <SuggestProjectSkills project={this.project()} onAcceptSkill={acceptedSkill => this.addSkill(acceptedSkill)}/>
                 </div>
                 <div>
                     {this.isEditDisabled() &&

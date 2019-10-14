@@ -2,6 +2,8 @@ import {PowerHttpClient} from '../../../clients/PowerHttpClient';
 import axios from 'axios';
 
 import {NameEntity} from '../../profile-new/profile/model/NameEntity';
+import {Project} from '../../profile-new/profile/model/Project';
+import {ProfileSkill} from '../../profile-new/profile/model/ProfileSkill';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -82,6 +84,12 @@ export class SuggestionServiceClient extends PowerHttpClient {
         const url = this.base() + '/suggestions/skills';
         this.beginRequest();
         return this.executeRequest(axios.get(url));
+    };
+
+    public getSkillsRecommendation = (project: Project): Promise<Array<ProfileSkill>> => {
+        const url = this.base() + '/suggestions/skillRecommendation';
+        this.beginRequest();
+        return this.executeRequest(axios.post(url, project));
     };
 
 }
