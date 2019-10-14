@@ -76,7 +76,7 @@ public class SkillRecommendationServiceTest {
 
         assertThat(recommendedSkills)
                 .extracting(Skill::getName)
-                .containsExactly("Java", "JBoss");
+                .containsExactlyInAnyOrder("Java", "JBoss");
     }
 
     @Test
