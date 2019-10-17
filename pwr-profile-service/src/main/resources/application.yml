@@ -34,10 +34,16 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     username: pwr-profile-service
     password: superSecret
-    url: jdbc:mysql://localhost:3306/profile
+    url: jdbc:mysql://localhost:3306/profile?serverTimezone=Europe/Berlin
+  jpa:
+    hibernate:
+      ddl-auto: create
 jpa:
   hibernate:
     ddl-auto: create
+eureka:
+  client:
+    enabled: false
 ---
 spring:
   profiles: localDev
