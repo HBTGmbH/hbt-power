@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dialog} from '@material-ui/core';
+import {Checkbox, Dialog, ListItemSecondaryAction} from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -12,14 +12,13 @@ import {SuggestionServiceClient} from '../../../reducers/suggestions/client/Sugg
 
 interface SuggestProjectSkillsProps {
     project: Project;
-    onAcceptSkill?(acceptedSkill: string): void;
+    onAcceptSkills?(acceptedSkills: string[]): void;
 }
 
 interface SuggestProjectSkillsState {
     dialogOpen: boolean;
     suggestedSkills: string[];
-
-
+    selectedSkills: string[];
 }
 
 export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsProps, SuggestProjectSkillsState> {
@@ -27,7 +26,8 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
         super(props);
         this.state = {
             dialogOpen: false,
-            suggestedSkills: []
+            suggestedSkills: [],
+            selectedSkills: []
         };
     }
 
@@ -47,35 +47,60 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
     getRecommendedSkills = () => {
         SuggestionServiceClient.instance().getSkillsRecommendation(this.props.project).then((skill)=> {
             const skillNames = skill.map(s => s.name);
-            this.setState({suggestedSkills: skillNames})
+            this.setState({suggestedSkills: skillNames, selectedSkills: []})
         });
     };
 
 
-    handleSelectSkill = (skillName) => {
-        if (this.props.onAcceptSkill) {
-            this.props.onAcceptSkill(skillName);
-            this.closeDialog();
+    acceptSkills = () => {
+        this.props.onAcceptSkills([...this.state.selectedSkills]);
+        this.closeDialog();
+    }
+
+    isSelected(skill: string) {
+        return this.state.selectedSkills.find(value => value === skill);
+    }
+
+
+    private handleSkillToggle = (skill: string, isChecked: boolean) => {
+        if (isChecked) {
+            const selectedSkills = [...this.state.selectedSkills, skill];
+            this.setState({selectedSkills});
+        }
+        else {
+            const selectedSkills = this.state.selectedSkills.filter(value => value !== skill);
+            this.setState({selectedSkills});
         }
     };
 
     render() {
         return (<div>
             <Button variant="contained" color="primary" onClick={this.openDialog}>
-                Show Suggestions
+                anzeigen
             </Button>
             <Dialog open={this.state.dialogOpen} onClose={this.closeDialog}>
                 <DialogTitle>Skill Suggestion</DialogTitle>
                 <DialogContent>
                     <List>{
                         this.state.suggestedSkills.map(skill => <>
-                            <ListItem onClick={ignored => this.handleSelectSkill(skill)}>  {skill} </ListItem><Divider/>
+                            <ListItem>
+                                <ListItemSecondaryAction>
+                                    <Checkbox checked={this.isSelected(skill)}
+                                              onChange={(ignored, isChecked) => this.handleSkillToggle(skill, isChecked)}
+                                    />
+                                </ListItemSecondaryAction>
+                                {skill}
+                            </ListItem>
+                            <Divider/>
                             </>)
                     }</List>
                 </DialogContent>
                 <DialogActions>
-                <Button variant="contained" color="primary" onClick={this.closeDialog}>
-                    Close
+                <Button variant="contained" onClick={this.closeDialog}>
+                    Schließen
+                </Button>
+                <Button variant="contained" color="primary" onClick={this.acceptSkills}>
+                    Übernehmen
                 </Button>
                 </DialogActions>
             </Dialog>
