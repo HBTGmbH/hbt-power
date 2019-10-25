@@ -51,7 +51,7 @@ public class ViewProfileImporter {
 
     @Autowired
     public ViewProfileImporter(ProfileServiceClient profileServiceClient,
-                               @Qualifier(value = "skillServiceClient") SkillServiceClient skillServiceClient,
+                               SkillServiceClient skillServiceClient,
                                SkillServiceFallback skillServiceFallback,
                                ViewProfileRepository viewProfileRepository,
                                ViewProfileSortService viewProfileSortService) {

@@ -49,7 +49,7 @@ public class ViewProfileIntegrationTests {
     @Autowired
     private ViewProfileService viewProfileService;
 
-    @MockBean(name = "skillServiceClient")
+    @MockBean
     private SkillServiceClient skillServiceClient;
 
     @MockBean

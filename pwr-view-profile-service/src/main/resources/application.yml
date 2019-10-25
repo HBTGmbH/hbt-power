@@ -8,6 +8,8 @@ spring:
     multipart:
       max-file-size: 128MB
       max-request-size: 128MB
+  main:
+    allow-bean-definition-overriding: true # We need to enable this for openfeign fallbacks
 server:
   port: 9008
 eureka:
