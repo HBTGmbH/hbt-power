@@ -1,8 +1,12 @@
 package de.hbt.pwr.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.discovery.converters.Auto;
+
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.Profile;
+import de.hbt.pwr.view.client.skill.SkillServiceClient;
+import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.service.ViewProfileImporter;
 import de.hbt.pwr.view.service.ViewProfileService;
@@ -20,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -42,6 +48,9 @@ public class ViewProfileIntegrationTests {
 
     @Autowired
     private ViewProfileService viewProfileService;
+
+    @MockBean(name = "skillServiceClient")
+    private SkillServiceClient skillServiceClient;
 
     @MockBean
     private ProfileServiceClient profileServiceClient;
@@ -77,11 +86,16 @@ public class ViewProfileIntegrationTests {
         InputStream profileAsInputStream = this.getClass().getClassLoader().getResourceAsStream("test_profile_1.json");
         Profile profile = objectMapper.readValue(profileAsInputStream, Profile.class);
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
+        when(skillServiceClient.getSkillByName(any(String.class)))
+                .thenAnswer(invocation -> {
+                    String name = invocation.getArgument(0);
+                    return new SkillServiceSkill(name);
+                });
         viewProfile = viewProfileImporter.importViewProfile(initials);
+
     }
 
     @Test
-    @Ignore
     public void profileIsImportedAndSavedWithoutException() throws IOException {
         addTestData();
         ViewProfile retrieved = viewProfileService.getByIdAndCheckOwner(viewProfile.getId(), initials);

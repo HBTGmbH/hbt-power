@@ -1,5 +1,7 @@
 package de.hbt.pwr.view.service;
 
+import com.netflix.discovery.converters.Auto;
+
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.*;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
@@ -18,6 +20,7 @@ import de.hbt.pwr.view.util.ModelConvertUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +50,11 @@ public class ViewProfileImporter {
 
 
     @Autowired
-    public ViewProfileImporter(ProfileServiceClient profileServiceClient, SkillServiceClient skillServiceClient, SkillServiceFallback skillServiceFallback, ViewProfileRepository viewProfileRepository, ViewProfileSortService viewProfileSortService) {
+    public ViewProfileImporter(ProfileServiceClient profileServiceClient,
+                               @Qualifier(value = "skillServiceClient") SkillServiceClient skillServiceClient,
+                               SkillServiceFallback skillServiceFallback,
+                               ViewProfileRepository viewProfileRepository,
+                               ViewProfileSortService viewProfileSortService) {
         this.profileServiceClient = profileServiceClient;
         this.skillServiceClient = skillServiceClient;
         this.skillServiceFallback = skillServiceFallback;

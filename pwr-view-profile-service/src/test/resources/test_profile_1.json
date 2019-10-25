@@ -1,0 +1,295 @@
+{
+  "id": 20,
+  "description": "",
+  "lastEdited": "2017-09-07T16:08:58",
+  "languages": [
+    {
+      "id": 348,
+      "nameEntity": {
+        "id": 17,
+        "name": "Spanisch",
+        "type": "LANGUAGE"
+      },
+      "level": "BASIC"
+    },
+    {
+      "id": 95,
+      "nameEntity": {
+        "id": 6,
+        "name": "Englisch",
+        "type": "LANGUAGE"
+      },
+      "level": "ADVANCED"
+    },
+    {
+      "id": 96,
+      "nameEntity": {
+        "id": 7,
+        "name": "Deutsch",
+        "type": "LANGUAGE"
+      },
+      "level": "NATIVE"
+    }
+  ],
+  "qualification": [
+    {
+      "id": 94,
+      "nameEntity": {
+        "id": 45,
+        "name": "Certified ITIL vs.3 Foundation Level",
+        "type": "QUALIFICATION"
+      },
+      "date": "2014-06-26"
+    },
+    {
+      "id": 92,
+      "nameEntity": {
+        "id": 44,
+        "name": "Oracle Certified Associate; Java SE 8 Programmer",
+        "type": "QUALIFICATION"
+      },
+      "date": "2016-06-26"
+    },
+    {
+      "id": 93,
+      "nameEntity": {
+        "id": 40,
+        "name": "Certified ScrumMaster",
+        "type": "QUALIFICATION"
+      },
+      "date": "2009-06-26"
+    }
+  ],
+  "trainingEntries": [
+    {
+      "id": 977,
+      "nameEntity": {
+        "id": 103,
+        "name": "Oracle Guru",
+        "type": "TRAINING"
+      },
+      "startDate": "2017-09-07",
+      "endDate": "2017-09-07"
+    },
+    {
+      "id": 105,
+      "nameEntity": {
+        "id": 49,
+        "name": "Agiles Software-Projektmanagement",
+        "type": "TRAINING"
+      },
+      "startDate": "2009-06-26",
+      "endDate": "2009-06-26"
+    },
+    {
+      "id": 978,
+      "nameEntity": {
+        "id": 99,
+        "name": "TEST12",
+        "type": "TRAINING"
+      },
+      "startDate": "2009-09-07",
+      "endDate": "2009-09-07"
+    }
+  ],
+  "education": [
+    {
+      "id": 976,
+      "nameEntity": {
+        "id": 29,
+        "name": "Technischer Assistent für Informatik",
+        "type": "EDUCATION"
+      },
+      "startDate": "2017-05-17",
+      "endDate": "2017-09-07",
+      "degree": "Master"
+    },
+    {
+      "id": 91,
+      "nameEntity": {
+        "id": 25,
+        "name": "Ingineur (techn. Informatik)",
+        "type": "EDUCATION"
+      },
+      "startDate": "1990-06-26",
+      "endDate": "1996-06-29",
+      "degree": "Diplom"
+    }
+  ],
+  "sectors": [
+    {
+      "id": 99,
+      "nameEntity": {
+        "id": 13,
+        "name": "ÖPNV",
+        "type": "SECTOR"
+      }
+    },
+    {
+      "id": 102,
+      "nameEntity": {
+        "id": 48,
+        "name": "Mess- und Regeltechnik",
+        "type": "SECTOR"
+      }
+    },
+    {
+      "id": 104,
+      "nameEntity": {
+        "id": 41,
+        "name": "Logistik",
+        "type": "SECTOR"
+      }
+    },
+    {
+      "id": 97,
+      "nameEntity": {
+        "id": 42,
+        "name": "Finanzdienstleister",
+        "type": "SECTOR"
+      }
+    },
+    {
+      "id": 100,
+      "nameEntity": {
+        "id": 46,
+        "name": "Chemie und Rohstoffe",
+        "type": "SECTOR"
+      }
+    },
+    {
+      "id": 101,
+      "nameEntity": {
+        "id": 47,
+        "name": "Unternehmensberatung",
+        "type": "SECTOR"
+      }
+    },
+    {
+      "id": 103,
+      "nameEntity": {
+        "id": 4,
+        "name": "Autovermietung",
+        "type": "SECTOR"
+      }
+    },
+    {
+      "id": 98,
+      "nameEntity": {
+        "id": 5,
+        "name": "IT Dienstleistung",
+        "type": "SECTOR"
+      }
+    }
+  ],
+  "careerEntries": [
+    {
+      "id": 109,
+      "nameEntity": {
+        "id": 53,
+        "name": "Käse GmbH: Käse Leiter",
+        "type": "CAREER"
+      },
+      "startDate": "2004-06-26",
+      "endDate": "2010-06-26"
+    }
+  ],
+  "specialFieldEntries": [
+    {
+      "id": 979,
+      "nameEntity": {
+        "id": 116,
+        "name": "Autodings",
+        "type": "SPECIAL_FIELD"
+      }
+    },
+    {
+      "id": 981,
+      "nameEntity": {
+        "id": 118,
+        "name": "Flugdings",
+        "type": "SPECIAL_FIELD"
+      }
+    },
+    {
+      "id": 980,
+      "nameEntity": {
+        "id": 117,
+        "name": "Schiffdings",
+        "type": "SPECIAL_FIELD"
+      }
+    }
+  ],
+  "projects": [
+    {
+      "name": "",
+      "client": {
+        "id": 55,
+        "name": "Käse Company",
+        "type": "COMPANY"
+      },
+      "broker": {
+        "id": 8,
+        "name": "",
+        "type": "COMPANY"
+      },
+      "projectRoles": [
+        {
+          "id": 10,
+          "name": "Softwareentwickler",
+          "type": "PROJECT_ROLE"
+        }
+      ],
+      "skills": [],
+      "startDate": "1995-08-31",
+      "endDate": null,
+      "description": "Erstellung und Wartung von MS-Access Datenbanken",
+      "id": 16
+    },
+    {
+      "name": "",
+      "client": {
+        "id": 57,
+        "name": "Käse GmbH",
+        "type": "COMPANY"
+      },
+      "broker": {
+        "id": 8,
+        "name": "",
+        "type": "COMPANY"
+      },
+      "projectRoles": [
+        {
+          "id": 10,
+          "name": "Softwareentwickler",
+          "type": "PROJECT_ROLE"
+        }
+      ],
+      "skills": [],
+      "startDate": "1996-09-30",
+      "endDate": "1998-09-29",
+      "description": "Entwicklung",
+      "id": 33
+    }
+  ],
+  "skills": [
+    {
+      "id": 433,
+      "name": "EJB",
+      "rating": 1,
+      "comment": null
+    },
+    {
+      "id": 377,
+      "name": "Oracle",
+      "rating": 5,
+      "comment": null
+    },
+    {
+      "id": 359,
+      "name": "HTML",
+      "rating": 5,
+      "comment": null
+    }
+  ]
+}
