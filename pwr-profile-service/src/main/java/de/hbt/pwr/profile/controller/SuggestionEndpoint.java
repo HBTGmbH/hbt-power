@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * </p>
  */
 @Controller
-@RequestMapping(value = "/suggestions")
+@RequestMapping(value = "/suggestions", produces = "application/json")
 public class SuggestionEndpoint {
 
 

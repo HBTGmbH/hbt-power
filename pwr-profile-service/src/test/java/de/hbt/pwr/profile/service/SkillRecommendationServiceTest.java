@@ -1,5 +1,9 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.data.ProjectRepository;
+import de.hbt.pwr.profile.model.Skill;
+import de.hbt.pwr.profile.model.profile.entries.NameEntity;
+import de.hbt.pwr.profile.model.profile.entries.Project;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -9,11 +13,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import de.hbt.pwr.profile.data.ProjectRepository;
-import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.profile.entries.NameEntity;
-import de.hbt.pwr.profile.model.profile.entries.Project;
 
 import static de.hbt.pwr.profile.model.profile.NameEntityType.COMPANY;
 import static de.hbt.pwr.profile.model.profile.NameEntityType.PROJECT_ROLE;
@@ -36,7 +35,7 @@ public class SkillRecommendationServiceTest {
     private SkillRecommendationService skillRecommendationService;
 
     private Project sampleProject;
-    private String[] defaultRoles = {"Programmer", "QATester"};
+    private Collection<String> defaultRoles = new ArrayList<>(Arrays.asList("Programmer", "QATester"));
 
     @Before
     public void setUp() throws Exception {
@@ -49,9 +48,10 @@ public class SkillRecommendationServiceTest {
     }
 
     private void addDefaultRolesToProject(Project project) {
-        project.setProjectRoles(
-                Stream.of(defaultRoles).map(r -> NameEntity.builder().name(r).type(PROJECT_ROLE).build())
-                        .collect(Collectors.toSet()));
+        Set<NameEntity> roles = defaultRoles.stream()
+                .map(r -> NameEntity.builder().name(r).type(PROJECT_ROLE).build())
+                .collect(Collectors.toSet());
+        project.setProjectRoles(roles);
     }
 
     private Project withExistingSkillsForCustomer(String customer, String...skills) {
@@ -116,10 +116,12 @@ public class SkillRecommendationServiceTest {
     }
 
     @Test
-    public void withExistingProject_NewProjectHasSubsetOfSkills_shouldIgnoreSkillsOfNewProject() {
-        String[] oldSkills = {"blow stuff up", "kessel run"};
+    public void shouldNotSuggestSkills_thatAreAlreadyPresent() {
+        String blowingUp = "blow stuff up";
+        String kesselRun = "kessel run";
+
         String newSkill = "lose limbs";
-        Project existingProject = withExistingSkillsForCustomer("Starfleet", oldSkills[0], oldSkills[1], newSkill);
+        withExistingSkillsForCustomer("Starfleet", blowingUp, kesselRun, newSkill);
         Set<Skill> sampleSkills = sampleProject.getSkills();
         sampleSkills.add(Skill.builder().name(newSkill).build());
         sampleProject.setSkills(sampleSkills);
@@ -127,7 +129,7 @@ public class SkillRecommendationServiceTest {
 
         assertThat(recommendedSkills)
                 .extracting(Skill::getName)
-                .containsExactlyInAnyOrder(oldSkills[0], oldSkills[1]);
+                .containsExactlyInAnyOrder(blowingUp, kesselRun);
     }
 
     @Test
@@ -144,8 +146,11 @@ public class SkillRecommendationServiceTest {
 
     @Test
     public void withExistingProject_SameClientDifferentRoles_shouldIgnore() {
+        NameEntity roleTester = NameEntity.builder().name("Tester").type(PROJECT_ROLE).build();
+        defaultRoles.clear();
+        defaultRoles.add("Developer");
         Project existingProject = withExistingSkillsForCustomer("Starfleet", "Java", "JBoss");
-        existingProject.setProjectRoles(new HashSet<>());
+        existingProject.setProjectRoles(new HashSet<>(Arrays.asList(roleTester)));
         Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
 
         assertThat(recommendedSkills).isEmpty();

@@ -16,6 +16,7 @@ import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
 import de.hbt.pwr.profile.model.profile.entries.Project;
 
+import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
 
 @Service
@@ -41,11 +42,13 @@ public class SkillRecommendationService {
         LocalDate projectDate = ofNullable(project.getStartDate())
                 .orElse(LocalDate.now());
         Set<NameEntity> projectRoles = ofNullable(project.getProjectRoles())
-                .orElse(new HashSet<>());
+                .orElse(emptySet());
+        Predicate<Project> relevantProject = projectHasClient()
+                .and(onlyProjectsWithClient(clientName).and(onlyProjectsWithSimilarRoles(projectRoles)))
+                .or(onlyProjectsWithName(projectName));
         return projectRepository.findAll()
                 .stream()
-                .filter(projectHasClient().and(onlyProjectsWithClient(clientName).and(onlyProjectsWithSimilarRoles(projectRoles)))
-                        .or(onlyProjectsWithName(projectName)))
+                .filter(relevantProject)
                 .filter(onlyRecentProjects(projectDate))
                 .map(Project::getSkills)
                 .flatMap(Collection::stream)
@@ -60,8 +63,8 @@ public class SkillRecommendationService {
 
     private Predicate<Project> onlyProjectsWithSimilarRoles(Collection<NameEntity> projectRoles) {
         return project -> {
-            Collection<NameEntity> otherRoles = ofNullable(project.getProjectRoles()).orElse(new HashSet<>())
-                , intersection = new HashSet<>(projectRoles);
+            Collection<NameEntity> intersection = new HashSet<>(projectRoles);
+            Collection<NameEntity> otherRoles = ofNullable(project.getProjectRoles()).orElse(emptySet());
             intersection.retainAll(otherRoles);
             return !intersection.isEmpty();
         };
@@ -72,14 +75,18 @@ public class SkillRecommendationService {
     }
 
     private Predicate<Project> onlyProjectsWithName(String projectName) {
-        return project -> projectName.equals(project.getName());
+        return project -> {
+            return ofNullable(project.getName())
+                    .map(s -> s.toUpperCase())
+                    .map(s -> projectName.toUpperCase().equals(s))
+                    .orElse(false);
+        };
     }
 
     private Predicate<Project> onlyRecentProjects(LocalDate projectDate) {
-        return project -> YEARS_UNTIL_OUTDATED >
-                            Period.between(
-                            ofNullable(project.getEndDate()).orElse(LocalDate.now())
-                            , projectDate)
-                            .getYears();
+        return project -> {
+            LocalDate endDate = ofNullable(project.getEndDate()).orElse(LocalDate.now());
+            return YEARS_UNTIL_OUTDATED > Period.between(endDate, projectDate).getYears();
+        };
     }
 }
