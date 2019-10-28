@@ -17,6 +17,8 @@ spring:
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  main:
+    allow-bean-definition-overriding: true
 export:
   designFile: src\main\resources\templates\HBTShortProfil_Word.rptdesign
   xmlFilePath: src\target\datasource.xml
