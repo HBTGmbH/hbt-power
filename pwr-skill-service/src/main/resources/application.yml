@@ -81,6 +81,12 @@ spring:
     url: jdbc:h2:mem:datajpa
     username: sa
   jpa:
+    properties:
+      hibernate:
+        search:
+          default:
+            directory_provider: filesystem
+            indexBase: ./target
     hibernate:
       ddl-auto: create
 eureka:
