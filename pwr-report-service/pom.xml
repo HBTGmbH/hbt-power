@@ -103,6 +103,17 @@
             </exclusions>
         </dependency>
 
+        <!--
+         BIRT engine needs this during report generation. No idea why it doesn't bring that
+         thing itself. Has to be available in classpath during runtime.
+         -->
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>59.1</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
