@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * </p>
  */
 @Controller
-@RequestMapping(value = "/suggestions", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/suggestions", produces = "application/json")
 public class SuggestionEndpoint {
 
 
@@ -160,7 +160,7 @@ public class SuggestionEndpoint {
         return ResponseEntity.ok(results);
     }
 
-    @PostMapping("/skillRecommendation")
+    @PostMapping(value = "/skillRecommendation", consumes = "application/json")
     public ResponseEntity<Collection<Skill>> getSkillRecommendations(@RequestBody Project project) {
         return ResponseEntity.ok(skillRecommendationService.getRecommendedSkills(project));
     }
