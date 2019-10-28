@@ -56,7 +56,7 @@ public class ReportController {
         TODO Datei in einer DB speichern und auf anfrage ausgeben
     */
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public ResponseEntity<DBFile> generate(@RequestBody ReportInfo reportInfo,
+    public ResponseEntity<String> generate(@RequestBody ReportInfo reportInfo,
                                            @RequestParam("type") String type,
                                            @RequestParam(value = "charsperline", required = false) String charsPerLine) throws Exception {
         File xmlFile = null;
@@ -89,7 +89,7 @@ public class ReportController {
             }
             stopWatch.stop();
             LOG.info(stopWatch.prettyPrint());
-            return ResponseEntity.ok(dbFile);
+            return ResponseEntity.ok(dbFile.getFilename());
         } finally {
             if (xmlFile != null) {
                 xmlFile.delete();

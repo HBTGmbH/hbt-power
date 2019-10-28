@@ -210,7 +210,7 @@ public class ProfileReportService {
 
     private DBFile saveFileAsBlob(String filePath) throws IOException{
         File file  = new File(filePath);
-        DBFile dbFile = storageService.storeFile("filePath","docx",FileUtils.readFileToByteArray(file));
+        DBFile dbFile = storageService.storeFile(filePath,"docx",FileUtils.readFileToByteArray(file));
         return dbFile;
     }
 
