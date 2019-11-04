@@ -5,7 +5,8 @@ import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
-import de.hbt.pwr.view.service.ViewProfileService;
+import de.hbt.pwr.view.model.skill.Category;
+import de.hbt.pwr.view.service.ViewProfileOperationService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,13 +17,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * For documentation, launch the service and go to <a href="http://localhost:9008/swagger-ui.html"> the swagger UI documentation</a>
  * <p>
- *     Persistent operations that affect a {@link ViewProfile} belong here.
+ * Persistent operations that affect a {@link ViewProfile} belong here.
  * </p>
- * @see  <a href="http://localhost:9008/swagger-ui.html">Swagger UI doc</a>
+ *
  * @author nt (nt@hbt.de)
+ * @see <a href="http://localhost:9008/swagger-ui.html">Swagger UI doc</a>
  */
 @Api(
         basePath = "/{initials}/view/{viewProfileId}",
@@ -37,10 +42,10 @@ public class ViewProfileOperationsController {
 
     private final ViewProfileSortService viewProfileSortService;
 
-    private final ViewProfileService viewProfileService;
+    private final ViewProfileOperationService viewProfileService;
 
     @Autowired
-    public ViewProfileOperationsController(ViewProfileSortService viewProfileSortService, ViewProfileService viewProfileService) {
+    public ViewProfileOperationsController(ViewProfileSortService viewProfileSortService, ViewProfileOperationService viewProfileService) {
         this.viewProfileSortService = viewProfileSortService;
         this.viewProfileService = viewProfileService;
     }
@@ -53,7 +58,7 @@ public class ViewProfileOperationsController {
             tags = {"toggling", "entry"},
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response"),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -75,7 +80,7 @@ public class ViewProfileOperationsController {
             tags = {"toggling", "skill"},
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = Void.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -86,7 +91,7 @@ public class ViewProfileOperationsController {
                                                       @RequestParam(value = "skill-name", required = false) String skillName,
                                                       @PathVariable("isEnabled") Boolean isEnabled) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        if(skillName == null) {
+        if (skillName == null) {
             viewProfileService.setIsEnabledForAllSkills(viewProfile, isEnabled);
         } else {
             viewProfileService.setIsEnabledForSkill(viewProfile, skillName, isEnabled);
@@ -101,7 +106,7 @@ public class ViewProfileOperationsController {
             tags = {"toggling", "entry"},
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -123,7 +128,7 @@ public class ViewProfileOperationsController {
             tags = {"toggling", "skill"},
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -146,7 +151,7 @@ public class ViewProfileOperationsController {
             tags = {"toggling", "skill"},
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -169,7 +174,7 @@ public class ViewProfileOperationsController {
             tags = {"toggling", "role"},
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -192,16 +197,16 @@ public class ViewProfileOperationsController {
             tags = {"toggling", "role"},
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
     @PatchMapping("/PROJECT/{projectIndex}/ROLE/all/visibility/{isEnabled}")
     ResponseEntity<ViewProfile> setVisibilityForAllRolesInProject(@PathVariable("initials") String initials,
-                                                                 @PathVariable("viewProfileId") String viewProfileId,
-                                                                 @PathVariable("projectIndex") int projectIndex,
-                                                                 @PathVariable("isEnabled") boolean isEnabled) {
+                                                                  @PathVariable("viewProfileId") String viewProfileId,
+                                                                  @PathVariable("projectIndex") int projectIndex,
+                                                                  @PathVariable("isEnabled") boolean isEnabled) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileService.setIsEnabledForAllRolesInProject(viewProfile, projectIndex, isEnabled);
         return ResponseEntity.ok(viewProfile);
@@ -214,7 +219,7 @@ public class ViewProfileOperationsController {
             response = ViewProfile.class,
             httpMethod = "PATCH",
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 400, message = "The category was not direct or indirect parent to the skill", response = ServiceError.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
@@ -226,8 +231,7 @@ public class ViewProfileOperationsController {
                                                    @RequestParam("skill-name") String skillName,
                                                    @RequestParam("display-category") String newDisplayCategoryName) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileService.setDisplayCategory(viewProfile, skillName, newDisplayCategoryName);
-        return ResponseEntity.ok(viewProfile);
+        return ResponseEntity.ok(viewProfileService.setDisplayCategory(viewProfile, skillName, newDisplayCategoryName));
     }
 
 
@@ -239,12 +243,12 @@ public class ViewProfileOperationsController {
             httpMethod = "PATCH",
             produces = "application/json")
 
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
-    @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/name/order")
+    @PatchMapping("/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/name/order")
     ResponseEntity<ViewProfile> sortSkillsByNameInDisplayCategory(@PathVariable("initials") String initials,
                                                                   @PathVariable("viewProfileId") String viewProfileId,
                                                                   @PathVariable("displayCategoryIndex") int displayCategoryIndex,
@@ -261,12 +265,12 @@ public class ViewProfileOperationsController {
             httpMethod = "PATCH",
             tags = {"sorting", "skill"},
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
-    @PatchMapping( "/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/rating/order")
+    @PatchMapping("/DISPLAY_CATEGORY/{displayCategoryIndex}/SKILL/rating/order")
     ResponseEntity<ViewProfile> sortSkillsByRatingInDisplayCategory(@PathVariable("initials") String initials,
                                                                     @PathVariable("viewProfileId") String viewProfileId,
                                                                     @PathVariable("displayCategoryIndex") int displayCategoryIndex,
@@ -288,9 +292,9 @@ public class ViewProfileOperationsController {
 
     @PatchMapping("/PROJECT/{projectIndex}/SKILL/rating/order")
     ResponseEntity<ViewProfile> sortSkillsByRatingInProject(@PathVariable("initials") String initials,
-                                                          @PathVariable("viewProfileId") String viewProfileId,
-                                                          @PathVariable("projectIndex") int projectIndex,
-                                                          @RequestParam("do-ascending") boolean doAscending) {
+                                                            @PathVariable("viewProfileId") String viewProfileId,
+                                                            @PathVariable("projectIndex") int projectIndex,
+                                                            @RequestParam("do-ascending") boolean doAscending) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileSortService.sortSkillsInProjectByRating(viewProfile, projectIndex, doAscending);
         return ResponseEntity.ok(viewProfile);
@@ -302,7 +306,7 @@ public class ViewProfileOperationsController {
             httpMethod = "PATCH",
             tags = {"moving", "skill"},
             produces = "application/json")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -337,7 +341,7 @@ public class ViewProfileOperationsController {
             tags = {"moving", "entry"},
             produces = "application/json",
             httpMethod = "PATCH")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -359,7 +363,7 @@ public class ViewProfileOperationsController {
             tags = {"sorting", "entry"},
             produces = "application/json",
             httpMethod = "PATCH")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -376,13 +380,13 @@ public class ViewProfileOperationsController {
 
 
     @ApiOperation(value = "Sorts entries by start date",
-                notes = "Sorts all entries of a given type by their start date, where the lowest start date is furthest " +
-                        "in the past",
-                tags = {"sorting", "entry"},
-                produces = "application/json",
-                httpMethod = "PATCH")
+            notes = "Sorts all entries of a given type by their start date, where the lowest start date is furthest " +
+                    "in the past",
+            tags = {"sorting", "entry"},
+            produces = "application/json",
+            httpMethod = "PATCH")
     @PatchMapping("/{entryType}/start-date/order")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -398,11 +402,11 @@ public class ViewProfileOperationsController {
 
     @ApiOperation(value = "Sorts entries by end date",
             notes = "Sorts all entries of a given type by their end date, where the lowest end date is furthest " +
-            "in the past",
+                    "in the past",
             tags = {"sorting", "entry"},
             produces = "application/json",
             httpMethod = "PATCH")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -421,7 +425,7 @@ public class ViewProfileOperationsController {
             notes = "Changes the description of a view profile",
             produces = "application/json",
             httpMethod = "PATCH")
-    @ApiResponses(value ={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
@@ -435,51 +439,20 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
-    @ApiOperation(value = "Creates a new category",
-            notes = "Creates a new category as child to the provide category. This operation only affects the view profile.",
+
+    @ApiOperation(value = "Returns the parents of the skill",
+            notes = "Creates a map with the parents of the skill by numbers. the index 0 is for the direct parent of the skill, 1 for its parents...",
             tags = {"category"},
             produces = "application/json",
-            httpMethod = "POST")
-    @ApiResponses(value ={
-            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class),
-            @ApiResponse(code = 400, message = "Either the provided parent-name did not match an existing category or the" +
-                    " provided category-name is not unique (a category with the same name alredy exists).",
-                    response = ServiceError.class)
+            httpMethod = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The map containing the parents", response = Map.class),
+            @ApiResponse(code = 403, message = "", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "", response = ServiceError.class),
+            @ApiResponse(code = 400, message = "", response = ServiceError.class)
     })
-    @RequestMapping(value = "/CATEGORY", method = RequestMethod.POST)
-    ResponseEntity<ViewProfile> addCategory(@PathVariable("initials") String initials,
-                                            @PathVariable("viewProfileId") String viewProfileId,
-                                            @RequestParam("parent-name") String parentName,
-                                            @RequestParam("category-name") String newCategoryName) {
-        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileService.addNewCategory(viewProfile, parentName, newCategoryName);
-        return ResponseEntity.ok(viewProfile);
-    }
-
-
-
-    @ApiOperation(value = "Moves a skill to a new category",
-            notes = "Moves a skill from one category to another category if the new category exists. Also recalculates " +
-                    "the display category. This operation should only be used if the resulting problem can't be solved " +
-                    "by changing the display category, e.g. when the skill is in a different category branch.",
-            tags = {"skill"},
-            produces = "application/json",
-            httpMethod = "PATCH")
-    @ApiResponses(value ={
-            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
-            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
-            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class),
-            @ApiResponse(code = 400, message = "No category for the given category-name found.", response = ServiceError.class)
-    })
-    @PatchMapping("/SKILL/CATEGORY")
-    ResponseEntity<ViewProfile> moveSkill(@PathVariable("initials") String initials,
-                                          @PathVariable("viewProfileId") String viewProfileId,
-                                          @RequestParam("skill-name") String skillName,
-                                          @RequestParam("category-name") String categoryName) {
-        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileService.moveSkill(viewProfile, skillName, categoryName);
-        return ResponseEntity.ok(viewProfile);
+    @GetMapping("/parent/{skillName}")
+    public ResponseEntity<Map<Integer, Category>> getParentsForSkill(@PathVariable("skillName") String skillName) {
+        return ResponseEntity.ok(viewProfileService.getParentsForSkill(skillName));
     }
 }

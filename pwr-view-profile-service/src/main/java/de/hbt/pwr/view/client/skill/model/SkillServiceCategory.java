@@ -24,6 +24,11 @@ public class SkillServiceCategory {
         this.qualifier = qualifier;
     }
 
+    public SkillServiceCategory(Integer id, String qualifier) {
+        this.id = id;
+        this.qualifier = qualifier;
+    }
+
     public SkillServiceCategory(String qualifier, SkillServiceCategory category) {
         this.qualifier = qualifier;
         this.category = category;

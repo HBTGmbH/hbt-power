@@ -12,84 +12,52 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ *
  */
 @Aspect
 @Component
 public class ViewProfileRestoreAspect {
 
-    private static final Logger LOG  = LogManager.getLogger(ViewProfileRestoreAspect.class);
-
-    private void gatherSkills(Category category, Map<String, Skill> skills) {
-        category.getSkills().forEach(skill -> skills.put(skill.getName(), skill));
-        category.getDisplaySkills().forEach(skill -> skills.put(skill.getName(), skill));
-        category.getChildren().forEach(child -> gatherSkills(child, skills));
-    }
-
-
-    private void restoreReferences(Category category, Map<String, Skill> skills, Map<String, Category> displayCategories) {
-        List<Skill> originalSkills = category.getSkills();
-        category.setSkills(new ArrayList<>());
-        for (Skill originalSkill : originalSkills) {
-            Skill skill = skills.get(originalSkill.getName());
-            skill.setCategory(category);
-        }
-
-        if(!category.getDisplaySkills().isEmpty()) {
-            List<Skill> originalDisplaySkills = category.getDisplaySkills();
-            category.setDisplaySkills(new ArrayList<>());
-            for (Skill originalSkill : originalDisplaySkills) {
-                Skill skill = skills.get(originalSkill.getName());
-                skill.setDisplayCategory(category);
-            }
-            displayCategories.put(category.getName(), category);
-        }
-
-        category.getChildren().forEach(child -> {
-            child.setParent(category);
-            restoreReferences(child, skills, displayCategories);
-        });
-
-        /*category.getSkills().forEach(skill -> skill.setCategory(category));
-        category.getDisplaySkills().forEach(skill -> skill.setDisplayCategory(category));*/
-
-    }
+    private static final Logger LOG = LogManager.getLogger(ViewProfileRestoreAspect.class);
 
     private void restore(ViewProfile viewProfile) {
-        Map<String, Skill> skills = new HashMap<>();
-        Map<String, Category> displayCategories = new HashMap<>();
-        gatherSkills(viewProfile.getRootCategory(), skills);
-        restoreReferences(viewProfile.getRootCategory(), skills, displayCategories);
 
-        List<Category> newDisplayCategories = viewProfile.getDisplayCategories()
-                .stream()
-                .map(category -> displayCategories.get(category.getName())).
-                collect(Collectors.toList());
-        viewProfile.setDisplayCategories(newDisplayCategories);
+        viewProfile.getDisplayCategories().forEach(category -> {
+            category.getDisplaySkills().forEach(skill -> skill.setDisplayCategory(category));
+        });
+        // merge duplicates categories
+        viewProfile.setDisplayCategories(mergeDuplicates(viewProfile.getDisplayCategories()));
+        // delete empty categories
+        viewProfile.setDisplayCategories(viewProfile.getDisplayCategories().stream()
+                .filter(category -> category.getDisplaySkills().size() > 0)
+                .collect(Collectors.toList()));
+    }
 
+    private Category mergeChildren(Category c1, Category c2) {
+        c1.getDisplaySkills().addAll(c2.getDisplaySkills());
+        return c1;
+    }
 
-
-
-       /* // TODO include display category and make field transient
-        category.getSkills().forEach(skill -> skill.setCategory(category));
-        category.getDisplaySkills().forEach(skill -> skill.setDisplayCategory(category));
-        category.getChildren().forEach(child -> {
-            child.setParent(category);
-            restore(child);
-        });*/
+    private List<Category> mergeDuplicates(Collection<Category> displayCategories) {
+        return new ArrayList<>(displayCategories.stream()
+                .collect(Collectors.toMap(Category::getId, Function.identity(), this::mergeChildren))
+                .values());
     }
 
     @SuppressWarnings("unused")
     @Pointcut("this(de.hbt.pwr.view.repo.ViewProfileRepository)")
-    private void isCrudRepo() {} //NOSONAR
+    private void isCrudRepo() {
+    } //NOSONAR
 
     @AfterReturning(value = "isCrudRepo()", returning = "viewProfile", argNames = "joinPoint,viewProfile")
     private void anyViewProfileRestorable(JoinPoint joinPoint, Optional<?> viewProfile) { //NOSONAR
         LOG.debug(ViewProfileRestoreAspect.class + " invoked after returning from "
                 + joinPoint.getSignature().toString() + ". Performing bi reference restoring...");
-        if(viewProfile.isPresent()) {
+        if (viewProfile.isPresent()) {
             Object mayBeViewProfile = viewProfile.get();
             if (mayBeViewProfile instanceof ViewProfile) {
                 LOG.debug("... done");

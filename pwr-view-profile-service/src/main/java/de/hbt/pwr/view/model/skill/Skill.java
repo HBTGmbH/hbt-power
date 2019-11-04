@@ -9,16 +9,13 @@ import org.springframework.data.annotation.Transient;
 @Data
 @Builder
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"rating", "enabled", "category", "displayCategory"})
-@ToString(exclude = {"category", "displayCategory"})
+@EqualsAndHashCode(exclude = {"rating", "enabled","displayCategory"})
+@ToString(exclude = {"displayCategory"})
 public class Skill implements ToggleableEntry, NameComparable {
+    private Long id;
     private String name;
     private Integer rating;
     private Boolean enabled;
-
-    @JsonBackReference(value = "refSkills")
-    @Transient
-    private Category category;
 
     @Transient
     @JsonBackReference(value = "refDisplaySkills")
@@ -28,24 +25,19 @@ public class Skill implements ToggleableEntry, NameComparable {
         this.name = name;
     }
 
-    public Skill(String name, Integer rating, Boolean enabled, Category category, Category displayCategory) {
+    public Skill(Long id, String name, Integer rating, Boolean enabled, Category displayCategory) {
+        this.id = id;
         this.name = name;
         this.rating = rating;
         this.enabled = enabled;
-        this.setCategory(category);
         this.setDisplayCategory(displayCategory);
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-        if(this.category != null && !this.category.getSkills().contains(this)) {
-            this.category.getSkills().add(this);
-        }
-    }
+
 
     public void setDisplayCategory(Category displayCategory) {
         this.displayCategory = displayCategory;
-        if(this.displayCategory != null && !this.displayCategory.getDisplaySkills().contains(this)) {
+        if (this.displayCategory != null && !this.displayCategory.getDisplaySkills().contains(this)) {
             this.displayCategory.getDisplaySkills().add(this);
         }
     }

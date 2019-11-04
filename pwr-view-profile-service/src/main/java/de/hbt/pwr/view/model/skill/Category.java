@@ -4,22 +4,21 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.model.entries.sort.NameComparable;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Data
+@Builder
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"isDisplay", "parent", "skills", "children", "displaySkills"})
-@ToString(exclude = {"parent", "skills", "children"})
+@EqualsAndHashCode(exclude = {"isDisplay", "displaySkills"})
 public class Category implements ToggleableEntry, NameComparable {
-
+    private Long id;
     private String name;
 
     /**
@@ -29,40 +28,28 @@ public class Category implements ToggleableEntry, NameComparable {
      */
     private Boolean isDisplay = false;
 
-    @JsonBackReference
-    @Transient
-    private Category parent;
-
     private Boolean enabled;
-
-    @JsonManagedReference(value = "refSkills")
-    private List<Skill> skills = new ArrayList<>();
 
     @JsonManagedReference(value = "refDisplaySkills")
     private List<Skill> displaySkills = new ArrayList<>();
 
-    @JsonManagedReference
-    private List<Category> children = new ArrayList<>();
-
-
-
-    public Category(String name, Category parent) {
-        this.name = name;
-        this.setParent(parent);
-    }
-
-    public Category(String name, Boolean isDisplay, Category parent, Boolean enabled) {
+    public Category(Long id, String name, Boolean isDisplay, Boolean enabled) {
+        this.id = id;
         this.name = name;
         this.isDisplay = isDisplay;
-        this.parent = parent;
+        this.enabled = enabled;
+    }
+
+    public Category(String name, Boolean isDisplay, Boolean enabled) {
+        this.name = name;
+        this.isDisplay = isDisplay;
         this.enabled = enabled;
     }
 
     public Category() {
+        id = -1L;
         isDisplay = false;
-        children = new ArrayList<>();
         displaySkills = new ArrayList<>();
-        skills = new ArrayList<>();
     }
 
     public Category(Boolean enabled) {
@@ -73,31 +60,14 @@ public class Category implements ToggleableEntry, NameComparable {
         this.name = name;
     }
 
-    public void setParent(Category parent) {
-        this.parent = parent;
-        if(this.parent != null && !this.parent.getChildren().contains(this)) {
-            this.parent.getChildren().add(this);
-        }
-    }
-
-    public void setSkills(List<Skill> skills) {
-        this.skills = skills;
-        this.skills.forEach(skill -> skill.setCategory(this));
-    }
-
+    /**
+     * Sets the displaySkills of this category and sets the displayCategory for the skills
+     *
+     * @param displaySkills the new list of displaySkills for this category
+     */
     public void setDisplaySkills(List<Skill> displaySkills) {
         this.displaySkills = displaySkills;
         this.displaySkills.forEach(skill -> skill.setDisplayCategory(this));
-    }
-
-    public void setChildren(List<Category> children) {
-        this.children = children;
-        this.children.forEach(category -> category.setParent(category));
-    }
-
-    public boolean containsCategoryWithName(@NotNull String nameToFind) {
-        return nameToFind.equals(name)
-                || children.stream().anyMatch(category -> category.containsCategoryWithName(nameToFind));
     }
 
     @Override

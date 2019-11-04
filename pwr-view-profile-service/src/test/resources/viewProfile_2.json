@@ -1,0 +1,301 @@
+{
+  "id": "fd7303f3-476e-428f-b47a-866ab04c1eb6",
+  "locale": null,
+  "description": "das ist ein test test test Test\nTestsfgse gsfdgsdfgwret dgsdfgwe fdgwertg dfge sdgwertg fdaaapjgjgjgjl\nttggttgttg",
+  "viewProfileInfo": {
+    "viewDescription": "testerDescripton",
+    "owner": "tst",
+    "consultantName": "Dr. Max Mustermann",
+    "consultantBirthDate": "1973-04-23",
+    "name": "der coole dude 1433",
+    "creationDate": "2019-09-11",
+    "charsPerLine": 45
+  },
+  "careers": [
+    {
+      "name": "Europcar GmbH: Projektleiter",
+      "startDate": "2020-01-01",
+      "endDate": "2022-12-12",
+      "enabled": true
+    },
+    {
+      "name": "HBT: Senior IT-Berater",
+      "startDate": "2015-01-31",
+      "endDate": "2019-05-31",
+      "enabled": true
+    }
+  ],
+  "educations": [
+    {
+      "name": "Medieninformatik",
+      "startDate": "2019-08-28",
+      "endDate": "2019-08-28",
+      "degree": "Master",
+      "enabled": true
+    }
+  ],
+  "keySkills": [
+    {
+      "name": "Software-Integration",
+      "enabled": true
+    },
+    {
+      "name": "OpenStreetMap",
+      "enabled": true
+    },
+    {
+      "name": "Performance-Optimierung",
+      "enabled": true
+    }
+  ],
+  "languages": [
+    {
+      "name": "Latein",
+      "level": "NATIVE",
+      "enabled": true
+    },
+    {
+      "name": "Englisch",
+      "level": "BUSINESS_FLUENT",
+      "enabled": false
+    }
+  ],
+  "qualifications": [
+    {
+      "name": "Oracle Certified Associate; Java SE 8 Programmer",
+      "date": "2018-01-01",
+      "enabled": true
+    }
+  ],
+  "sectors": [
+    {
+      "name": "Finanzdienstleister",
+      "enabled": true
+    },
+    {
+      "name": "Chemie und Rohstoffe",
+      "enabled": true
+    },
+    {
+      "name": "Automotive",
+      "enabled": true
+    }
+  ],
+  "trainings": [
+    {
+      "name": "Getting Things Done",
+      "startDate": "2017-05-10",
+      "endDate": null,
+      "enabled": true
+    },
+    {
+      "name": "Agiles Software-Projektmanagement",
+      "startDate": "2019-08-28",
+      "endDate": "2023-01-27",
+      "enabled": true
+    },
+    {
+      "name": "Lebendige Softwarearchitektur",
+      "startDate": "2018-09-27",
+      "endDate": "2021-06-26",
+      "enabled": true
+    },
+    {
+      "name": "JAX Konferenz",
+      "startDate": "2019-08-10",
+      "endDate": null,
+      "enabled": true
+    }
+  ],
+  "projectRoles": [
+    {
+      "name": "testabc",
+      "enabled": true
+    },
+    {
+      "name": "Software-Tester",
+      "enabled": true
+    }
+  ],
+  "projects": [
+    {
+      "id": 323,
+      "name": "Müllabführ spielen",
+      "description": "Guten Tag",
+      "client": "Universität Osnabrück",
+      "broker": "Fachhochschule Wedel",
+      "startDate": "2015-05-01",
+      "endDate": null,
+      "projectRoles": [
+        {
+          "name": "testabc",
+          "enabled": true
+        },
+        {
+          "name": "Software-Tester",
+          "enabled": true
+        }
+      ],
+      "skills": [
+        {
+          "id": null,
+          "name": "Skill1",
+          "rating": 3,
+          "enabled": true
+        }
+      ],
+      "enabled": true
+    }
+  ],
+  "displayCategories": [
+    {
+      "id": 307,
+      "name": "Technology",
+      "isDisplay": true,
+      "enabled": true,
+      "skills": [],
+      "displaySkills": [
+        {
+          "id": 24549,
+          "name": "Hibernate",
+          "rating": 3,
+          "enabled": true
+        },
+        {
+          "id": 35598,
+          "name": "MySQL",
+          "rating": 3,
+          "enabled": true
+        },
+        {
+          "id": 29620,
+          "name": "Kubernetes",
+          "rating": 4,
+          "enabled": true
+        },
+        {
+          "id": 45006,
+          "name": "React.js",
+          "rating": 5,
+          "enabled": true
+        },
+        {
+          "id": 15753,
+          "name": "Docker",
+          "rating": 3,
+          "enabled": true
+        },
+        {
+          "id": 57494,
+          "name": "Unity",
+          "rating": 4,
+          "enabled": true
+        },
+        {
+          "id": 574942,
+          "name": "Unity2",
+          "rating": 4,
+          "enabled": true
+        },
+        {
+          "id": 574943,
+          "name": "Unity3",
+          "rating": 5,
+          "enabled": true
+        }
+      ],
+      "children": [
+        {
+          "id": 238,
+          "name": "ORM",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 77,
+          "name": "Databases",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 76,
+          "name": "Database Development / Administration",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 182,
+          "name": "DevOps Tools",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 136,
+          "name": "Cloud, Devops",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 62,
+          "name": "Frontend Development/Scripting",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 182,
+          "name": "DevOps Tools",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 136,
+          "name": "Cloud, Devops",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 84,
+          "name": "Game Engine",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        },
+        {
+          "id": 83,
+          "name": "Game / Multimedia Development",
+          "isDisplay": false,
+          "enabled": true,
+          "skills": [],
+          "displaySkills": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}
