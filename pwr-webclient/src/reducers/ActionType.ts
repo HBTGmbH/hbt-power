@@ -120,6 +120,8 @@ export enum ActionType {
     SetSortInProgress = "SetSortInProgress",
     ResetViewState = "ResetViewState",
     ClearViewProfiles = "ClearViewProfiles",
+    SetParentCategories = "SetParentCategories",
+    ClearParentCategories = "ClearParentCategories",
 
     // == Cross Cutting
     SetRequestPending = "SetRequestPending",

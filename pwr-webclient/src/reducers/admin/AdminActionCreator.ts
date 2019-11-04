@@ -11,7 +11,6 @@ import {
     SetSkillNotificationActionAction,
     SetSkillNotificationEditStatusAction
 } from './admin-actions';
-import {AdminState} from '../../model/admin/AdminState';
 import * as redux from 'redux';
 import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
@@ -188,7 +187,7 @@ export class AdminActionCreator {
 
 
     public static AsyncRequestNotifications() {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.getAdminNotifications()
                 .then(notifications => dispatch(AdminActionCreator.ReceiveNotifications(notifications)))
                 .catch(console.error);
@@ -196,7 +195,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncRequestTrashedNotifications(username: string, password: string) {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.getTrashedAdminNotifications()
                 .then(notifications => dispatch(AdminActionCreator.ReceiveTrashedNotifications(notifications)))
                 .catch(console.error);
@@ -204,7 +203,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncTrashNotifications(ids: Array<number>) {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.trashNotifications(ids)
                 .then(() => {
                     dispatch(AdminActionCreator.AsyncRequestNotifications());
@@ -215,7 +214,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncDeleteTrashed(username: string, password: string) {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.deleteTrashedNotifications()
                 .then(ignored => {
                     dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
@@ -239,7 +238,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncNotificationInvokeDelete(notificationId: number) {
-        return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationDelete(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
                 .then(() => Alerts.showSuccess('Success'))
@@ -248,7 +247,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncNotificationInvokeOK(notificationId: number) {
-        return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationOK(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
                 .then(() => Alerts.showSuccess('Success'))
@@ -257,7 +256,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncNotificationInvokeEdit(notification: ProfileEntryNotification) {
-        return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             profileServiceClient.invokeNotificationEdit(notification)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
                 .then(() => Alerts.showSuccess('Success'))
@@ -266,7 +265,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncNotificationInvokeSkillEdit() {
-        return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
             profileServiceClient.invokeNotificationEdit(getState().adminReducer.selectedSkillNotification())
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
@@ -277,7 +276,7 @@ export class AdminActionCreator {
 
 
     public static AsyncRestoreFromLocalStorage() {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             const storedUsername = window.localStorage.getItem(COOKIE_ADMIN_USERNAME);
             const storedPassword = window.localStorage.getItem(COOKIE_ADMIN_PASSWORD);
             Promise.all([
@@ -288,14 +287,14 @@ export class AdminActionCreator {
     }
 
     public static AsyncLogOutAdmin() {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             PWR_HISTORY.push(Paths.APP_ROOT);
             dispatch(AdminActionCreator.LogOutAdmin());
         };
     }
 
     public static AsyncValidateAuthentication(username: string, password: string, rememberLogin?: boolean, restoreRoute?: boolean) {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             if (isNullOrUndefined(rememberLogin)) {
                 rememberLogin = false;
             }
@@ -324,7 +323,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncGetAllConsultants() {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.getConsultants()
                 .then(apiConsultants => apiConsultants.map((value, index, array) => ConsultantInfo.fromAPI(value)))
                 .then(consultants => dispatch(AdminActionCreator.ReceiveAllConsultants(consultants)))
@@ -339,7 +338,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncLoadConsultant(initials: string) {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileServiceClient.getConsultant(initials)
                 .then(res => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(res))))
                 .catch(console.error);
@@ -347,7 +346,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncCreateConsultant(consultantInfo: ConsultantInfo) {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.createConsultant(apiConsultant)
                 .then(value => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
@@ -357,7 +356,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
-        return function (dispatch: redux.Dispatch<AdminState>) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.updateConsultant(apiConsultant)
                 .then(consultant => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(consultant))))
@@ -367,7 +366,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncOpenSkillNotificationDialog(notificationId: number) {
-        return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.OpenSkillNotificationDialog(notificationId));
             let notification = getState().adminReducer.skillNotifications().find(value => value.adminNotification().id() == notificationId);
             skillServiceClient.getSkillByName(notification.skill().name())
@@ -396,10 +395,10 @@ export class AdminActionCreator {
      * @returns a thunk for thunk middleware
      */
     public static AsyncCategorizeSkill(skillName: string) {
-        return function (dispatch: redux.Dispatch<AdminState>, getState: () => ApplicationState) {
-            let adminState = getState().adminReducer;
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let ApplicationState = getState().adminReducer;
             let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY, SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG];
-            if (allowedStates.indexOf(adminState.skillNotificationEditStatus()) === -1) {
+            if (allowedStates.indexOf(ApplicationState.skillNotificationEditStatus()) === -1) {
                 throw new RangeError('Invalid status for AsyncCategorizeSkill. Expected one of ' + allowedStates);
             } else {
                 skillServiceClient.categorizeSkill(skillName)
@@ -425,23 +424,23 @@ export class AdminActionCreator {
      */
     public static AsyncProgressFromActionSelection() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            let adminState = getState().adminReducer;
+            let ApplicationState = getState().adminReducer;
             let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY,
                 SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR,
                 SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY];
-            if (allowedStates.indexOf(adminState.skillNotificationEditStatus()) === -1) {
+            if (allowedStates.indexOf(ApplicationState.skillNotificationEditStatus()) === -1) {
                 throw new RangeError('Invalid status for AsyncProgressFromActionSelection. Expected one of ' + allowedStates);
             } else {
-                if (adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_OK) {
-                    dispatch(AdminActionCreator.AsyncNotificationInvokeOK(adminState.selectedSkillNotification().adminNotification().id()));
+                if (ApplicationState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_OK) {
+                    dispatch(AdminActionCreator.AsyncNotificationInvokeOK(ApplicationState.selectedSkillNotification().adminNotification().id()));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
-                } else if (adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_DELETE) {
-                    dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(adminState.selectedSkillNotification().adminNotification().id()));
+                } else if (ApplicationState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_DELETE) {
+                    dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(ApplicationState.selectedSkillNotification().adminNotification().id()));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
-                } else if (adminState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_EDIT) {
+                } else if (ApplicationState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_EDIT) {
                     dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG));
                 } else {
-                    throw new RangeError('Invalid value for skillNotificationSelectedAction. Was:' + SkillNotificationEditStatus[adminState.skillNotificationSelectedAction()]);
+                    throw new RangeError('Invalid value for skillNotificationSelectedAction. Was:' + SkillNotificationEditStatus[ApplicationState.skillNotificationSelectedAction()]);
                 }
             }
         };

@@ -1,9 +1,8 @@
 import {ViewSkill} from './ViewSkill';
 
 export interface ViewCategory {
+    id: number;
     name: string;
     enabled: boolean;
-    skills: Array<ViewSkill>;
     displaySkills: Array<ViewSkill>;
-    children: Array<ViewCategory>;
 }

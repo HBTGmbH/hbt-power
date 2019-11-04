@@ -10,6 +10,8 @@ import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreat
 import {TemplateActionCreator} from '../template/TemplateActionCreator';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction} from '../BaseActions';
+import {ViewSkill} from '../../model/view/ViewSkill';
+import {ViewCategory} from '../../model/view/ViewCategory';
 
 export namespace ViewProfileActionCreator {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
@@ -23,6 +25,7 @@ export namespace ViewProfileActionCreator {
     import patchSortNestedEntry = ViewProfileService.patchSortNestedEntry;
     import patchToggleSkill = ViewProfileService.patchToggleSkill;
     import patchSetDisplayCategory = ViewProfileService.patchSetDisplayCategory;
+    import SetParentCategoryAction = ViewProfileActions.SetParentCategoryAction;
 
     /**
      * Constructs an action that sets a view profile into the store. If a view profile with the same ID exists, the
@@ -63,6 +66,13 @@ export namespace ViewProfileActionCreator {
         };
     }
 
+    export function SetParentForSkill(categoryMap: Map<number, ViewCategory>): SetParentCategoryAction {
+        return {
+            type: ActionType.SetParentCategories,
+            categoryMap: categoryMap
+        };
+    }
+
     function succeedAndRead(response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
         let viewProfile: ViewProfile = new ViewProfile(response.data);
         dispatch(SetViewProfile(viewProfile));
@@ -81,6 +91,26 @@ export namespace ViewProfileActionCreator {
                 succeedAndRead(response, dispatch);
                 Alerts.showSuccess('View Profile created.');
             }).catch((error: AxiosError) => {
+                Alerts.showError('Could not create view profile!');
+                dispatch(CrossCuttingActionCreator.endRequest());
+                console.error(error);
+            });
+        };
+    }
+
+    export function AsyncCreateChangedViewProfile(initials: string, oldId: string, newName: string, newDescription: string, keepOld: boolean) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            dispatch(CrossCuttingActionCreator.startRequest());
+            let body = {
+                name: newName,
+                viewDescription: newDescription,
+                keepOld: keepOld
+            };
+            axios.post(ViewProfileService.createChangedViewProfile(initials, oldId), body).then(response => {
+                    succeedAndRead(response, dispatch);
+                    Alerts.showSuccess('View Profile created.');
+                }
+            ).catch((error: AxiosError) => {
                 Alerts.showError('Could not create view profile!');
                 dispatch(CrossCuttingActionCreator.endRequest());
                 console.error(error);
@@ -318,5 +348,17 @@ export namespace ViewProfileActionCreator {
         };
     }
 
-
+    export function AsyncGetParentCategories(skill: ViewSkill) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            console.log('GetParentCategories', skill.name);
+            axios.get(ViewProfileService.getParentCategories(skill.name)).then((response: AxiosResponse) => {
+                console.log(response);
+                dispatch(SetParentForSkill(response.data));
+            }).catch(function (error: any) {
+                console.error(error);
+                Alerts.showError('Could not get parents for skill: ' + skill.name + '!');
+                dispatch(CrossCuttingActionCreator.endRequest());
+            });
+        };
+    }
 }

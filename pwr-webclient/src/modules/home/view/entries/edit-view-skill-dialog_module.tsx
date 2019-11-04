@@ -6,53 +6,81 @@ import {ViewProfile} from '../../../../model/view/ViewProfile';
 import {ViewCategory} from '../../../../model/view/ViewCategory';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
+import {ApplicationState} from '../../../../reducers/reducerIndex';
+import * as redux from 'redux';
+import {ViewProfileActionCreator} from '../../../../reducers/view/ViewProfileActionCreator';
+import {connect} from 'react-redux';
 
 interface EditViewSkillDialogProps {
+    parents: Array<ViewCategory>;
+}
+
+interface EditViewSkillDialogLocalProps {
     open: boolean;
     viewProfile: ViewProfile;
     skill: ViewSkill;
 
     onClose(): void;
+}
 
-    onSetDisplayCategory(skillName: string, newDisplayCategoryName: string): void;
+interface EditViewSkillDialogDispatch {
+    setDisplayCategory(id: string, skillName: string, newDisplayCategoryName: string): void;
+
+    getParentCategories(skill: ViewSkill): void;
 }
 
 interface EditViewSkillDialogState {
-    parents: Array<ViewCategory>;
+
 }
 
-export class EditViewSkillDialog extends React.Component<EditViewSkillDialogProps, EditViewSkillDialogState> {
+export class EditViewSkillDialogModule extends React.Component<EditViewSkillDialogProps & EditViewSkillDialogLocalProps & EditViewSkillDialogDispatch, EditViewSkillDialogState> {
 
-    constructor(props: EditViewSkillDialogProps) {
+    constructor(props) {
         super(props);
-        this.state = {
-            parents: EditViewSkillDialog.getParents(this.props.viewProfile, this.props.skill.name)
+        this.state = {};
+    }
+
+    static mapStateToProps(state: ApplicationState, localProps: EditViewSkillDialogLocalProps): EditViewSkillDialogProps {
+        let parentMap = state.viewProfileSlice.parentsForSkill();
+        let array: ViewCategory[] = [];
+        if (parentMap != null) {
+            parentMap.forEach((value, key) => array[key] = value);
+        }
+        return {
+            parents: array,
         };
     }
 
-    private static getParents = (viewProfile: ViewProfile, skillName: string) => {
-        let res: Array<ViewCategory> = [];
-        let currentCategory = viewProfile.getCategoryForSkill(skillName);
-        while (!isNullOrUndefined(currentCategory)) {
-            res.push(currentCategory);
-            currentCategory = viewProfile.getCategoryForCategory(currentCategory.name);
-        }
-        res.pop(); // Remove the root
-        return res;
-    };
+    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EditViewSkillDialogDispatch {
+        return {
+            setDisplayCategory: (id, skillName, newDisplayCategoryName) => dispatch(ViewProfileActionCreator.AsyncSetDisplayCategory(id, skillName, newDisplayCategoryName)),
+            getParentCategories: (skill) => dispatch(ViewProfileActionCreator.AsyncGetParentCategories(skill)),
+        };
+    }
 
     private isDisplayCategoryOf = (categoryName: string) => {
-        return this.props.viewProfile.getDisplayForSkill(this.props.skill.name).name === categoryName;
+        let cat: ViewCategory = this.props.viewProfile.getDisplayForSkill(this.props.skill.name);
+        return !!cat && cat.name === categoryName;
+    };
+
+    componentDidMount(): void {
+        // get Parents
+        this.props.getParentCategories(this.props.skill);
+    }
+
+    private setDisplayCategory = (parent: ViewCategory) => {
+        this.props.setDisplayCategory(this.props.viewProfile.id, this.props.skill.name, parent.name);
+        this.props.onClose();
     };
 
     private renderParents = () => {
-        return this.state.parents.map(parent =>
+        return this.props.parents.map(parent =>
             <div key={parent.name}>
                 <span className="bold-mui" style={{marginLeft: '40px'}}>|</span><br/>
                 <FormControlLabel label={parent.name} control={<Checkbox
                     color={'primary'}
                     checked={this.isDisplayCategoryOf(parent.name)}
-                    onChange={() => this.props.onSetDisplayCategory(this.props.skill.name, parent.name)}
+                    onChange={() => this.setDisplayCategory(parent)}
                 />}/>
             </div>);
     };
@@ -74,6 +102,7 @@ export class EditViewSkillDialog extends React.Component<EditViewSkillDialogProp
         } else {
             return null;
         }
-
     }
 }
+
+export const EditViewSkillDialog: React.ComponentClass<EditViewSkillDialogLocalProps> = connect(EditViewSkillDialogModule.mapStateToProps, EditViewSkillDialogModule.mapDispatchToProps)(EditViewSkillDialogModule);

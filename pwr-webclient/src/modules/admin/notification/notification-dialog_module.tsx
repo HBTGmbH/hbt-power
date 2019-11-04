@@ -101,7 +101,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationDialogDispatch {
         return {
-            executeDeleteAction: (id) => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id)),
+            executeDeleteAction: (id: number) => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id)),
             executePatchAction: (notification) => dispatch(AdminActionCreator.AsyncNotificationInvokeEdit(notification)),
             executeOkAction: (id) => dispatch(AdminActionCreator.AsyncNotificationInvokeOK(id))
         };

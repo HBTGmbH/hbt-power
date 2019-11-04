@@ -1,4 +1,5 @@
 import {SortableEntryField, SortableEntryType} from './model/view/NameComparableType';
+import {EntryRenderers} from './modules/home/view/entries/EntryRenderers';
 
 declare const POWER_API_HOST_STATISTICS: string;
 
@@ -153,8 +154,9 @@ export function deleteCustomSkill(skillId: number) {
 export function deleteCategory(parentId: number) {
     return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/category/' + parentId;
 }
+
 export function patchMoveCategory(newParentId: number, toMoveId: number) {
-    return POWER_API_HOST_SKILL + ":" + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + "/category/" + toMoveId + "/category/" + newParentId;
+    return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/category/' + toMoveId + '/category/' + newParentId;
 }
 
 export function patchMoveSkill(skillId: number, newCategoryId: number) {
@@ -164,8 +166,19 @@ export function patchMoveSkill(skillId: number, newCategoryId: number) {
 
 export namespace ViewProfileService {
 
+    import renderTraining = EntryRenderers.renderTraining;
+
     function base() {
         return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
+        //return 'http://localhost:9008';
+    }
+
+    export function getParentCategories(skillName: string) {
+        return base() + '/tst/view/0/parent/' + skillName;
+    }
+
+    export function createChangedViewProfile(initials: string, oldId: string) {
+        return base() + '/view/update/' + initials + '/' + oldId;
     }
 
     export function getViewProfile(initials: string, id: string) {
@@ -209,11 +222,11 @@ export namespace ViewProfileService {
     }
 
     export function patchToggleSkill(initials: string, id: string, isEnabled: boolean) {
-        return patchBase(initials, id) + '/SKILL/visibility/' + isEnabled;
+        return patchBase(initials, id) + 'SKILL/visibility/' + isEnabled;
     }
 
     export function patchSetDisplayCategory(initials: string, id: string) {
-        return patchBase(initials, id) + '/SKILL/display-category';
+        return patchBase(initials, id) + 'SKILL/display-category';
     }
 
     export function patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number, entryType: SortableEntryType, field: SortableEntryField) {
@@ -251,8 +264,8 @@ export namespace TemplateService {
         return base() + '/template/';
     }
 
-    export function deleteTemplate(id:string) {
-        return base() + '/template/'+id;
+    export function deleteTemplate(id: string) {
+        return base() + '/template/' + id;
     }
 
     export function getTemplateById(id: string) {
@@ -268,25 +281,21 @@ export namespace TemplateService {
     }
 
     export function getAllPreviews() {
-        return base() + "/template" + "/preview";
-    }
-
-    export function getPreviewFromReport(filename:string){
-        return "http://localhost:9005/file/"+filename; // TODO vernünftig machen
+        return base() + '/template' + '/preview';
     }
 
     export function getAllFiles() {
-        return base() + "/file";
+        return base() + '/file';
     }
 
 }
 
 export namespace ReportService {
-    function base(){
-        return POWER_API_HOST + ":" + POWER_API_PORT_REPORT + POWER_API_SUFFIX_REPORT;
+    function base() {
+        return POWER_API_HOST + ':' + POWER_API_PORT_REPORT + POWER_API_SUFFIX_REPORT;
     }
 
-    export function getFileById(id:string){
-        return base() + "/file/"+id;
+    export function getFileById(id: string) {
+        return base() + '/file/' + id;
     }
 }
