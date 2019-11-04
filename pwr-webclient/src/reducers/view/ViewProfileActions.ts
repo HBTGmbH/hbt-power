@@ -1,5 +1,6 @@
 import {ViewProfile} from '../../model/view/ViewProfile';
 import {AbstractAction} from '../BaseActions';
+import {ViewCategory} from '../../model/view/ViewCategory';
 
 export namespace ViewProfileActions {
     export interface SetViewProfileAction extends AbstractAction {
@@ -12,5 +13,9 @@ export namespace ViewProfileActions {
 
     export interface SetSortInProgressAction extends AbstractAction {
         inProgress: boolean;
+    }
+
+    export interface SetParentCategoryAction extends AbstractAction {
+        categoryMap: Map<number,ViewCategory>;
     }
 }

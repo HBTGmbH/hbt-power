@@ -107,7 +107,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         return {
             closeAndReset: () => dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg()),
             setSkillNotificationAction: action => dispatch(AdminActionCreator.SetSkillNotificationAction(action)),
-            categorizeSkill: skillName => dispatch(AdminActionCreator.AsyncCategorizeSkill(skillName)),
+            categorizeSkill: (skillName: string) => dispatch(AdminActionCreator.AsyncCategorizeSkill(skillName)),
             progressFromActionSelection: () => dispatch(AdminActionCreator.AsyncProgressFromActionSelection()),
             changeNewSkillName: (name) => dispatch(AdminActionCreator.SetNewSkillName(name)),
             invokeSkillNotificationEditAction: () => dispatch(AdminActionCreator.AsyncNotificationInvokeSkillEdit())
@@ -157,7 +157,6 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         </div>;
     };
 
-    // TODO Radio Button prüfen
     private NotificationActions = () => {
         return <div>
             <FormControl>

@@ -120,7 +120,7 @@ export class ProfileUpdateServiceClient extends PowerHttpClient {
     }
 
     public getSpecialFields(initials: string): Promise<Array<SpecialField>> {
-        const url = this.getSpecialFieldsUrl(initials); // TODO im backend neuen namen anpassen?
+        const url = this.getSpecialFieldsUrl(initials);
         this.beginRequest();
         return this.executeRequest(axios.get(url));
     }

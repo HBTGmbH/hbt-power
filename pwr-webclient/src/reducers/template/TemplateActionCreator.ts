@@ -265,24 +265,6 @@ export namespace TemplateActionCreator {
     }
 
 
-    export function AsyncLoadPreviewFromReport(filename: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            if (filename != '') {
-                // dispatch(CrossCuttingActionCreator.startRequest());
-                axios.get(TemplateService.getPreviewFromReport(filename))// url address
-                    .then((response: AxiosResponse) => {
-                        console.log(response);
-                        PreviewReceived(filename, response.data, dispatch);      // in den state laden
-                        //       dispatch(CrossCuttingActionCreator.endRequest());
-                    })
-                    .catch(function (error: any) {
-                        console.error(error);
-                        //     dispatch(CrossCuttingActionCreator.endRequest());
-                    });
-            }
-        };
-    }
-
     export function AsyncLoadAllPreviews() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
