@@ -1,7 +1,7 @@
 import {doop} from 'doop';
 import * as Immutable from 'immutable';
-import {Template} from './Template';
-import {ReportPreviewFile} from './ReportPreviewFile';
+import {Template} from '../../model/view/Template';
+import {ReportPreviewFile} from '../../model/view/ReportPreviewFile';
 
 
 @doop

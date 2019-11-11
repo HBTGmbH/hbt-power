@@ -170,4 +170,8 @@ export enum ActionType {
 
     // == Async, Deferrable Actions
     AsyncDeleteEntry = "[Async] Delete Entry",
+
+    ResetReportStore = "[Report] resets the state",
+    LoadReportsAction = "[Report] loads all Reports for a Consultant"
+
 }

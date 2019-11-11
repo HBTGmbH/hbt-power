@@ -1,4 +1,4 @@
-import {TemplateStore} from '../../model/view/TemplateStore';
+import {TemplateStore} from './TemplateStore';
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
 import {isNullOrUndefined} from 'util';

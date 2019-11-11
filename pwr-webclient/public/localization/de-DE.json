@@ -356,5 +356,8 @@
     "ConfirmDeleteEntry.Title": "Eintrag Löschen",
     "ConfirmDeleteEntry.Content": "Willst du diesen Eintrag wirklich löschen?",
     "ConfirmDeleteEntry.Action.CancelDelete": "Nein",
-    "ConfirmDeleteEntry.Action.ConfirmDelete": "Ja"
+    "ConfirmDeleteEntry.Action.ConfirmDelete": "Ja",
+
+
+    "Report.History": "Bisher generierte Profile"
 }

@@ -10,6 +10,7 @@ import {ProfileNetworkGraph} from '../general/statistics/profile-network_module'
 import {ConsultantProfile} from './profile/profile_module';
 import {PowerOverview} from './power-overview_module';
 import {Paths} from '../../Paths';
+import {ReportHistory} from './reportHistory/report_history-module';
 
 
 export class PowerClient extends React.Component<{}, {}> {
@@ -24,6 +25,7 @@ export class PowerClient extends React.Component<{}, {}> {
                 <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
                 <Route path={Paths.USER_SEARCH} component={ConsultantSkillSearch}/>
                 <Route path={Paths.USER_VIEW_PROFILE} component={ViewProfileOverview}/>
+                <Route path={Paths.USER_REPORTS} component={ReportHistory} />
             </div>
             <ProfileLoadingSpinner/>
         </div>;
