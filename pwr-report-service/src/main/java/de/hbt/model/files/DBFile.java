@@ -14,14 +14,14 @@ public class DBFile {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
+    protected String id;
 
-    private String filename;
+    protected String filename;
 
-    private String filetype;
+    protected String filetype;
 
     @Lob
-    private byte[] data;
+    protected byte[] data;
 
     public DBFile() {
 
@@ -31,5 +31,10 @@ public class DBFile {
         this.filename = filename;
         this.filetype = filetype;
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "" + filename + " (" + id + ") -- length: " + (data != null ? data.length : 0) + "  type: " + filetype;
     }
 }

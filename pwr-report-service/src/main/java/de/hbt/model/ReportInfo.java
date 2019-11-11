@@ -11,5 +11,4 @@ public class ReportInfo {
     public String name;
     public LocalDate birthDate;
     public ReportTemplate reportTemplate;
-    public String fileType;
 }
