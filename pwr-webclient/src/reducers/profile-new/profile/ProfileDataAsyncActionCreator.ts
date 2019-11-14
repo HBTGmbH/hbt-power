@@ -15,21 +15,22 @@ import {Education} from './model/Education';
 import {ProfileUpdateServiceClient} from './client/ProfileUpdateServiceClient';
 import {isNullOrUndefined} from 'util';
 import {projectDeleteAction, projectLoadAction, projectUpdateSuccessAction} from './actions/ProjectActions';
-import success = NavigationActionCreator.success;
 import {Alerts} from '../../../utils/Alerts';
-import axios from 'axios';
 import {
     baseProfileLoadAction,
     entryDeleteAction,
     entryLoadAction,
-    entryUpdateAction, profileLoadAction, skillDeleteAction,
-    skillLoadAction, skillUpdateAction
+    entryUpdateAction,
+    profileLoadAction,
+    skillDeleteAction,
+    skillLoadAction,
+    skillUpdateAction
 } from './actions/ProfileActions';
 import {AbstractAction} from '../../BaseActions';
-import {DeferrableAsyncAction} from '../../deferred/DeferrableAsyncAction';
 import {makeDeferrable} from '../../deferred/AsyncActionUnWrapper';
 import {ActionType} from '../../ActionType';
 import {ProfileEntryTypeName} from './model/ProfileEntryType';
+import success = NavigationActionCreator.success;
 
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
 
@@ -80,14 +81,14 @@ export class ProfileDataAsyncActionCreator {
         };
     }
 
-    public static loadFullProfile(initials:string) {
-        return function (dispatch:redux.Dispatch<ApplicationState>) {
-            if (!!initials && initials.length > 0){
+    public static loadFullProfile(initials: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            if (!!initials && initials.length > 0) {
                 profileUpdateServiceClient.getFullProfile(initials).then(value => {
                     dispatch(profileLoadAction(value));
-                })
+                });
             }
-        }
+        };
     }
 
 
@@ -95,7 +96,7 @@ export class ProfileDataAsyncActionCreator {
     public static saveLanguage(initials: string, entity: Language) {
         return (dispatch: redux.Dispatch<AbstractAction>) => {
             profileUpdateServiceClient.saveLanguage(initials, entity).then(value => {
-                Alerts.showSuccess('Sprache: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    Alerts.showSuccess('Sprache: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.LANGUAGE as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -124,7 +125,7 @@ export class ProfileDataAsyncActionCreator {
     public static saveQualification(initials: string, entity: Qualification) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.saveQualification(initials, entity).then(value => {
-                Alerts.showSuccess('Qualifikation: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    Alerts.showSuccess('Qualifikation: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.QUALIFICATION as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -154,7 +155,7 @@ export class ProfileDataAsyncActionCreator {
     public static saveSector(initials: string, entity: IndustrialSector) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.saveSector(initials, entity).then(value => {
-                Alerts.showSuccess('Branche: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    Alerts.showSuccess('Branche: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.SECTOR as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -185,7 +186,7 @@ export class ProfileDataAsyncActionCreator {
     public static saveKeySkill(initials: string, entity: SpecialField) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.saveSpecialField(initials, entity).then(value => {
-                Alerts.showSuccess('Spezialgebiet: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    Alerts.showSuccess('Spezialgebiet: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.SPECIAL_FIELD as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -215,7 +216,7 @@ export class ProfileDataAsyncActionCreator {
     public static saveCareer(initials: string, entity: Career) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.saveCareer(initials, entity).then(value => {
-                Alerts.showSuccess('Werdegang: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    Alerts.showSuccess('Werdegang: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.CAREER as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -246,7 +247,7 @@ export class ProfileDataAsyncActionCreator {
     public static saveTraining(initials: string, entity: FurtherTraining) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.saveTraining(initials, entity).then(value => {
-                Alerts.showSuccess('Weiterbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    Alerts.showSuccess('Weiterbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.TRAINING as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -277,7 +278,7 @@ export class ProfileDataAsyncActionCreator {
     public static saveEducation(initials: string, entity: Education) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             profileUpdateServiceClient.saveEducation(initials, entity).then(value => {
-                Alerts.showSuccess('Ausbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
+                    Alerts.showSuccess('Ausbildung: ' + value.nameEntity.name + ' erfolgreich hinzugefügt!');
                     dispatch(entryUpdateAction(value, ProfileEntryTypeName.EDUCATION as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));

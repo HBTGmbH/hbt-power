@@ -16,6 +16,7 @@ import {ReportPreview} from '../../admin/reportmanager/report-preview_module';
 import {PwrSelectableList} from '../../general/Pwr-selecable-list';
 import AppBar from '@material-ui/core/AppBar/AppBar';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
+import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 
 
 interface ViewProfileGeneratorProps {
@@ -39,6 +40,8 @@ interface ViewProfileGeneratorState {
 
 interface ViewProfileGeneratorDispatch {
     generate(viewProfileId: string, templateId: string): void;
+
+    loadAllTemplates(): void;
 }
 
 class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
@@ -56,6 +59,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileGeneratorDispatch {
         return {
             generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
+            loadAllTemplates: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates())
         };
     }
 
@@ -64,6 +68,14 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         & ViewProfileGeneratorDispatch) {
         super(props);
         this.resetState(props);
+    }
+
+    componentDidUpdate(prevProps: Readonly<ViewProfileGeneratorProps
+        & ViewProfileGeneratorLocalProps
+        & ViewProfileGeneratorDispatch>): void {
+        if (this.props.open && !prevProps.open){
+            this.props.loadAllTemplates();
+        }
     }
 
     private resetState(props: ViewProfileGeneratorProps
@@ -136,7 +148,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                         <Toolbar>
                             <Button
                                 color={'secondary'}
-                                variant={"outlined"}
+                                variant={'outlined'}
                                 className="mui-margin"
                                 disabled={this.state.activeTemplateId == ''}
                                 onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}

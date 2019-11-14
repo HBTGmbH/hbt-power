@@ -50,7 +50,6 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
     private renderElementCounts = () => {
         let langCount: number = 0, secCount: number = 0, qualCount: number = 0, edCount: number = 0,
             trainCount: number = 0, careerCount: number = 0, keySkillCount: number = 0;
-        console.log('statistik', this.props.profile);
         if (!!this.props.profile) {
             langCount = !!this.props.profile.languages ? this.props.profile.languages.length : 0;
             secCount = !!this.props.profile.sectors ? this.props.profile.sectors.length : 0;
