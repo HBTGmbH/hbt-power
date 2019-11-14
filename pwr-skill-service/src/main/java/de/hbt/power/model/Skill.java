@@ -44,6 +44,9 @@ public class Skill {
     private boolean custom = false;
 
 
+    @ElementCollection
+    private Set<String> versions = new HashSet<>();
+
     public Skill(String qualifier, Set<LocalizedQualifier> qualifiers, SkillCategory category) {
         this.qualifier = qualifier;
         this.category = category;

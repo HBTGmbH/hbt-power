@@ -115,8 +115,16 @@ public class SkillController {
     @GetMapping("/byName")
     public ResponseEntity<Skill> findSkillByQualifier(@RequestParam("qualifier") String qualifier) {
         return skillRepository.findOneByQualifier(qualifier)
+                .map((skill) -> {
+                    // Trick/Hack: ensure parent categories are loaded by hibernate (lazy) - kr
+                    SkillCategory cat = skill.getCategory();
+                    while(cat != null && cat.getCategory() != null) {
+                        cat = cat.getCategory();
+                    }
+                    return skill;
+                })
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.noContent().build());
+                .orElseGet(() -> ResponseEntity.noContent().build()); // TODO find by localized qualifieres
     }
 
 

@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface SkillRepository extends JpaRepository<Skill, Integer>, CrudRepository<Skill, Integer> {
     Optional<Skill> findOneByQualifier(String qualifier);
 
+    Optional<Skill> getByQualifiersContaining(String localizedQualifiers);
+
     List<Skill> findAllByCategory_Id(Integer categoryId);
 
     List<Skill> findAllByCategory(SkillCategory category);
