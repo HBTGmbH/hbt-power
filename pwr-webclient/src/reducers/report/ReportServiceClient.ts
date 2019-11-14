@@ -26,8 +26,14 @@ export class ReportServiceClient  extends PowerHttpClient{
 
     public getReportDataForUser(initials: string): Promise<ReportData[]> {
         const url = this.base() + "/report/" + initials;
+        console.log(url)
         this.beginRequest();
         return this.executeRequest(axios.get(url));
+    }
+
+    public getReport(id): Promise<unknown> {
+        this.beginRequest();
+        return this.executeRequest(axios.get(POWER_REPORT_SERVICE_URL + "/file/" + id));
     }
 
 }

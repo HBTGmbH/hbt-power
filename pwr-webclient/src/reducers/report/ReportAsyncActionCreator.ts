@@ -16,4 +16,10 @@ export class ReportAsyncActionCreator {
             ).catch(error => console.error(error));
         };
     }
+
+    public static getReportFile(id: number) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            console.log("calle client");
+            reportServiceClient.getReport(id).then(() => console.log("downloaded"))};
+    }
 }
