@@ -1,5 +1,6 @@
 package de.hbt.power.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,6 +15,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+// Because we are using Entities as DTOs, we need to exclude these
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class SkillCategory {
 
     @Id

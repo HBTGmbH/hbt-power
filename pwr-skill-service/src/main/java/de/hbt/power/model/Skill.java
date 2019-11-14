@@ -1,6 +1,7 @@
 package de.hbt.power.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.*;
@@ -18,6 +19,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Indexed
+// Because we are using Entities as DTOs, we need to exclude these
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Skill {
 
 
