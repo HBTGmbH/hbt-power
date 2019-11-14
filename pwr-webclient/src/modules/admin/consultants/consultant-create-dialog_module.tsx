@@ -8,6 +8,8 @@ import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 /**
  * Properties that are managed by react-redux.
@@ -79,6 +81,9 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
 
     private saveAndReset = () => {
         this.props.createConsultant(this.state.consultantInfo);
+        this.setState({
+            consultantInfo: ConsultantInfo.empty()
+        });
         this.props.onClose();
     };
 
@@ -147,26 +152,31 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                 open={this.props.show}
                 onClose={this.closeAndReset}
             >
-                <ConsultantEditFields
-                    firstName={this.state.consultantInfo.firstName()}
-                    lastName={this.state.consultantInfo.lastName()}
-                    title={this.state.consultantInfo.title()}
-                    birthDate={this.state.consultantInfo.birthDate()}
-                    active={this.state.consultantInfo.active()}
-                    onFirstNameChange={this.setFirstName}
-                    onLastNameChange={this.setLastName}
-                    onTitleChange={this.setTitle}
-                    onBirthDateChange={this.setBirthDate}
-                    onActiveChange={this.setActive}
-                >
-                    <LimitedTextField
-                        maxCharacters={100}
-                        value={this.state.consultantInfo.initials()}
-                        label={PowerLocalize.get('Initials.Singular')}
-                        onChange={(e, v) => this.setInitials(v)}
-                    />
+                <DialogTitle>
+                    {PowerLocalize.get('ConsultantTile.CreateConsultant')}
+                </DialogTitle>
+                <DialogContent>
+                    <ConsultantEditFields
+                        firstName={this.state.consultantInfo.firstName()}
+                        lastName={this.state.consultantInfo.lastName()}
+                        title={this.state.consultantInfo.title()}
+                        birthDate={this.state.consultantInfo.birthDate()}
+                        active={this.state.consultantInfo.active()}
+                        onFirstNameChange={this.setFirstName}
+                        onLastNameChange={this.setLastName}
+                        onTitleChange={this.setTitle}
+                        onBirthDateChange={this.setBirthDate}
+                        onActiveChange={this.setActive}
+                    >
+                        <LimitedTextField
+                            maxCharacters={100}
+                            value={this.state.consultantInfo.initials()}
+                            label={PowerLocalize.get('Initials.Singular')}
+                            onChange={(e, v) => this.setInitials(v)}
+                        />
 
-                </ConsultantEditFields>
+                    </ConsultantEditFields>
+                </DialogContent>
                 <DialogActions>
                     {this.dialogActions}
                 </DialogActions>

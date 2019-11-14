@@ -132,6 +132,7 @@
     "SkillNotificationDialog.Title": "Skill Meldung Bearbeiten",
     "ConsultantTile.EditProfile": "Profil bearbeiten",
     "ConsultantTile.EditConsultant": "Berater bearbeiten",
+    "ConsultantTile.CreateConsultant": "Neuer Berater",
     "UserLogin.InvalidName": "Ungültiges Kürzel",
     "SkillTree.SearchAndAddSkill": "Skill suchen/hinzufügen",
     "AdminClient.Login.Remember": "Login merken",
