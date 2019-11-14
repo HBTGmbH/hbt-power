@@ -332,10 +332,14 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         {this.project().skills.map(skill => this.toSkillChip(skill))}
                     </div>
                 </div>
-                <div>
-                    <PwrFormCaption>Skillvorschläge</PwrFormCaption>
-                    <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
-                </div>
+                {
+                    this.isEditEnabled() &&
+                    <div>
+                        <PwrFormCaption>Skillvorschläge</PwrFormCaption>
+                        <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
+                    </div>
+                }
+
                 <div>
                     {this.isEditDisabled() &&
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
