@@ -4,7 +4,7 @@ import * as redux from 'redux';
 import {connect} from 'react-redux';
 import {ReportData} from '../../../model/view/ReportData';
 import {ReportAsyncActionCreator} from '../../../reducers/report/ReportAsyncActionCreator';
-import {Icon, Paper, Table} from '@material-ui/core';
+import {Paper, Table} from '@material-ui/core';
 
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -14,15 +14,15 @@ import Button from '@material-ui/core/Button';
 import {Build, ErrorOutline} from '@material-ui/icons';
 import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
-import axios from 'axios';
-import {ReportServiceClient} from '../../../reducers/report/ReportServiceClient';
+
 
 interface ReportHistoryLocalProps {
 }
 
 interface ReportHistoryDispatch {
     loadAllReportData(initials: string): void,
-    loadAllTemplateData() : void
+    loadAllTemplateData() : void,
+    getReportFile(id): void
 }
 
 interface ReportHistoryProps {
@@ -60,11 +60,14 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportHistoryDispatch {
         return {
             loadAllReportData: (initials: string) => dispatch(ReportAsyncActionCreator.loadAllReportData(initials)),
-            loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllFiles)
+            loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllFiles),
+            getReportFile: (id) => dispatch(ReportAsyncActionCreator.getReportFile(id))
         };
     }
 
     componentWillMount() {
+        console.log("Possibly want to load Reports");
+        console.log("But reports are " + this.props.reports + " and this big " + this.props.reports.length + "");
         if (this.props.reports == null || this.props.reports.length == 0) {
             this.loadAllReportData();
         }
@@ -74,26 +77,28 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
             console.log("Want to load templates");
             this.loadAllTemplateData();
         }
-    }
+    };
 
 
     private loadAllReportData = () => {
+        console.log("Trying to load all report data")
         if (this.props.initials != null && this.props.initials != "") { // TODO reload initials
             this.props.loadAllReportData(this.props.initials);
-            console.log("load All Report Data")
+            console.log("load All Report Data");
         }
     };
 
     private loadAllTemplateData = () => {
         this.props.loadAllTemplateData();
         console.log("load All Template Data");
-    }
+    };
 
-    private StatusDisplay = (props, id) => {
+    private StatusDisplay = (props) => {
         const status = props.status;
+        const id = props.id;
         switch(status) {
             case "DONE":
-                return <Button variant="contained" color="primary" onClick={this.downloadReport(id)}>Heruterladen</Button>;
+                return <Button variant="contained" color="primary" onMouseDown={() => { this.downloadReport(id); }}>Heruterladen</Button>;
             case "ERROR":
                 return <ErrorOutline color="secondary"></ErrorOutline>;
             case "RUNNING":
@@ -103,10 +108,12 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         }
     };
 
-    downloadReport = (id) => {
-        ReportAsyncActionCreator.getReportFile(id);
-        return null; //TODO
-    }
+    downloadReport = (id: Number) => {
+        console.log("downloadReport");
+        console.log(id);
+        return this.props.getReportFile(id.toString());
+        //TODO
+    };
 
     render() {
         return (

@@ -166,8 +166,6 @@ export function patchMoveSkill(skillId: number, newCategoryId: number) {
 
 export namespace ViewProfileService {
 
-    import renderTraining = EntryRenderers.renderTraining;
-
     function base() {
         return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
         //return 'http://localhost:9008';
@@ -292,7 +290,7 @@ export namespace TemplateService {
 
 export namespace ReportService {
     function base() {
-        return POWER_API_HOST + ':' + POWER_API_PORT_REPORT + POWER_API_SUFFIX_REPORT;
+        return POWER_API_HOST_REPORT + ':' + POWER_API_PORT_REPORT + POWER_API_SUFFIX_REPORT;
     }
 
     export function getFileById(id: string) {

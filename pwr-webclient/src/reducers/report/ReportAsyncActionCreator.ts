@@ -2,6 +2,7 @@ import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {ReportServiceClient} from './ReportServiceClient';
 import {reportLoadAction} from './ReportActions';
+import {TemplateActionCreator} from '../template/TemplateActionCreator';
 
 const reportServiceClient = ReportServiceClient.instance();
 
@@ -20,6 +21,10 @@ export class ReportAsyncActionCreator {
     public static getReportFile(id: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             console.log("calle client");
-            reportServiceClient.getReport(id).then(() => console.log("downloaded"))};
+            reportServiceClient.getReport(id).then((response : Blob) => {
+                console.log(response);
+                TemplateActionCreator.DownloadReportFile(response.type)
+            }).catch(error => console.error(error));
+        };
     }
 }
