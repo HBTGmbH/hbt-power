@@ -62,9 +62,17 @@ public class ReportController {
 
     @GetMapping(value = "/file/{reportId}", produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     public ResponseEntity getReportFile(@PathVariable("reportId") Long reportId) {
+        LOG.info("getReportFile: " + reportId);
         ReportData reportData = reportDataService.getReportDataById(reportId);
         return ResponseEntity.ok()
                 .body(new ByteArrayResource(reportData.getData()));
+    }
+
+    @DeleteMapping(value = "/delete/{reportId}")
+    public ResponseEntity DeleteReportFile(@PathVariable("reportId") Long reportId) {
+        LOG.info("deleteReportFile: " + reportId);
+        reportDataService.deleteReportDataById(reportId);
+        return ResponseEntity.ok("Deleted Report File");
     }
 
     /*
@@ -75,7 +83,7 @@ public class ReportController {
                                            @RequestParam("type") String type,
                                            @RequestParam(value = "charsperline", required = false) String charsPerLine) throws Exception {
         File xmlFile = null;
-
+        System.out.println("Generating new report!");
         ReportData reportData = new ReportData(
                 reportInfo.initials,
                 reportInfo.viewProfile.getViewProfileInfo().getName(),
