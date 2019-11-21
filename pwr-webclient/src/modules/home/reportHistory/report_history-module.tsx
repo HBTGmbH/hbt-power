@@ -80,10 +80,9 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         }
 
         console.log("Possibly want to load Reports");
-        console.log("But reports are " + this.props.reports + " and this big " + this.props.reports.length + "");
-        if (this.props.reports == null || this.props.reports.length == 0) {
-            this.loadAllReportData();
-        }
+        console.log("Reports are " + this.props.reports + " and this big " + this.props.reports.length + "");
+        this.loadAllReportData();
+
     }
 
 
