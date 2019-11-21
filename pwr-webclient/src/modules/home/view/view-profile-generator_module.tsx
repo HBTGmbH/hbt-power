@@ -7,7 +7,6 @@ import {Button, Dialog, Icon, List, ListItem,} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {Template} from '../../../model/view/Template';
-import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
@@ -16,6 +15,8 @@ import {ReportPreview} from '../../admin/reportmanager/report-preview_module';
 import {PwrSelectableList} from '../../general/Pwr-selecable-list';
 import AppBar from '@material-ui/core/AppBar/AppBar';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
+import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
+import {Paths} from '../../../Paths';
 
 
 interface ViewProfileGeneratorProps {
@@ -39,6 +40,8 @@ interface ViewProfileGeneratorState {
 
 interface ViewProfileGeneratorDispatch {
     generate(viewProfileId: string, templateId: string): void;
+
+    navigateTo(target: string): void;
 }
 
 class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
@@ -55,6 +58,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileGeneratorDispatch {
         return {
+            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
         };
     }
@@ -118,6 +122,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         }
 
         this.props.generate(viewID, tempID);
+        this.props.navigateTo(Paths.USER_REPORTS);
     };
 
 

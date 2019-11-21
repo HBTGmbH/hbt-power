@@ -7,7 +7,6 @@ import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ViewProfileService} from '../../API_CONFIG';
 import {SortableEntryField, SortableEntryType} from '../../model/view/NameComparableType';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
-import {TemplateActionCreator} from '../template/TemplateActionCreator';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction} from '../BaseActions';
 import {ViewSkill} from '../../model/view/ViewSkill';
@@ -285,7 +284,6 @@ export namespace ViewProfileActionCreator {
             axios.post(ViewProfileService.postReport(initials, viewProfileId, templateId)).then((response: AxiosResponse) => {
                 let location = response.data;
                 console.info('Received Export: ', location);
-                TemplateActionCreator.DownloadReportFile(location);
                 dispatch(CrossCuttingActionCreator.endRequest());
             }).catch(function (error: any) {
                 console.error(error);

@@ -1,6 +1,7 @@
 import {PowerHttpClient} from '../../clients/PowerHttpClient';
 import axios from 'axios';
 import {ReportData} from '../../model/view/ReportData';
+import {TemplateActionCreator} from '../template/TemplateActionCreator';
 
 declare const POWER_REPORT_SERVICE_URL: string;
 
@@ -31,25 +32,15 @@ export class ReportServiceClient  extends PowerHttpClient{
         return this.executeRequest(axios.get(url));
     }
 
-    public getReport(id): Promise<unknown> {
+    public getReport(id): void {
         const url = this.base() + "/report/file/" + id;
-        console.log(url);
-        this.beginRequest();
-        return this.executeRequest(axios.get(url, {responseType: 'blob'}));
+        TemplateActionCreator.DownloadReportFile(url);
+    }
 
-        //TODO das hier unten funktioniert prinzipiell ist aber unsauber
-        /*axios({
-            url: url,
-            method: 'GET',
-            responseType: 'blob', // important
-        }).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'file.docx');
-            document.body.appendChild(link);
-            link.click();
-        });*/
+    public deleteReport(id): Promise<unknown> {
+        const url = this.base() + "/report/delete/" + id;
+        //TemplateActionCreator.DeleteReportFile(url);
+        return this.executeRequest(axios.delete(url));
     }
 
 }

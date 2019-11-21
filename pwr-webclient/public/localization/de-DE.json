@@ -335,6 +335,7 @@
     "Action.No": "Nein",
     "Action.Create": "Erstellen",
     "Action.ShowMore": "Mehr",
+    "Action.Download": "Herunterladen",
 
     "SkillEntry": "Skill",
     "SectorEntry": "Branche",
@@ -358,6 +359,8 @@
     "ConfirmDeleteEntry.Action.CancelDelete": "Nein",
     "ConfirmDeleteEntry.Action.ConfirmDelete": "Ja",
 
-
-    "Report.History": "Bisher generierte Profile"
+    "Report.History": "Bisher generierte Profile",
+    "Report.Template": "Template",
+    "Report.Status": "Status",
+    "Report.CreateDate": "Erstellungsdatum"
 }
