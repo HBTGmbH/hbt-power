@@ -12,6 +12,7 @@ export interface APISkillServiceSkill {
     qualifier: string;
     qualifiers?: Array<APILocalizedQualifier>;
     custom?: boolean;
+    versions: string[];
 }
 
 @doop
@@ -51,8 +52,8 @@ export class SkillServiceSkill {
 
     public static fromAPI(api: APISkillServiceSkill) {
         let categoryId = !isNullOrUndefined(api.category) ? api.category.id : null;
-        let qualifiers:Array<LocalizedQualifier> = [];
-        if(api.qualifiers != null) {
+        let qualifiers: Array<LocalizedQualifier> = [];
+        if (api.qualifiers != null) {
             qualifiers = api.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
         }
         return new SkillServiceSkill(api.id,

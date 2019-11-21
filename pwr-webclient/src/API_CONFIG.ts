@@ -139,6 +139,11 @@ export function skillLocale(categoryId: number, language: string) {
     return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/' + categoryId + '/locale/' + language;
 }
 
+export function skillVersion(skillId: number, newVersion: string) {
+    return 'http://localhost:9003/skill/' + skillId + '/version/' + newVersion;
+    //return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/' + skillId + '/version/' + newVersion;
+}
+
 export function postNewCategory(parentId: number) {
     return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/category/' + parentId;
 }

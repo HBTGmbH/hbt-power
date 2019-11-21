@@ -174,7 +174,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         return <div
             onKeyDown={this.handleKeyPress}
             id={'addSkillMain'}
-            className={'col-md-7 row'}
+            className={'col-md-12 row'}
         >
             <div
                 id={'helpStepper'}
