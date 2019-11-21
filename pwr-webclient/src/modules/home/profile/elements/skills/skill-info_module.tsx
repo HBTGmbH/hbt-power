@@ -15,6 +15,7 @@ import Popover from '@material-ui/core/Popover';
 import TextField from '@material-ui/core/TextField';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
+import {PwrSkillVersionInfo} from '../../../../general/pwr-skill-version-info_module';
 
 
 interface SkillInfoProps {
@@ -101,11 +102,7 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
         this.props.saveSkill(this.props.initials, skillToSave);
     };
 
-    private handleNewVersionClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        this.setState({
-            anchorEl: event.currentTarget
-        });
-    };
+
 
     private handleAddNewVersion = () => {
         if (this.state.newVersionText) {
@@ -120,41 +117,16 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
         }
     };
 
-    private mapVersions = () => {
-        let result: JSX.Element[] =
-            this.state.allVersions.sort((a, b) => a.localeCompare(b))
-                .map((value, index) =>
-                    <Chip key={index}
-                          color={this.props.selectedSkill.versions.indexOf(value) >= 0 ?
-                              'primary' : 'secondary'} label={value}
-                          onClick={() => this.handleVersionToggle(value)}
-                    />);
-        result.push(<Chip key={'newVersion'} icon={<AddIcon/>} label={'Neu'} onClick={this.handleNewVersionClick}/>);
-        return result;
-    };
-
     render() {
         return (
             <Grid container spacing={16}>
-                <Popover
-                    anchorEl={this.state.anchorEl}
-                    open={Boolean(this.state.anchorEl)}
-                    anchorOrigin={{vertical: 'top', horizontal: 'center',}}
-                    transformOrigin={{vertical: 'bottom', horizontal: 'center',}}
-                    onClose={() => this.setState({anchorEl: null})}
-                >
-                    <div style={{margin: '5px'}}>
-                        <TextField label={'New Version'} placeholder={'New Version'} value={this.state.newVersionText}
-                                   onChange={event => this.setState({newVersionText: event.target.value})}/>
-                        <PwrIconButton iconName={'add'} tooltip={'Submit'} onClick={() => {
-                            this.handleAddNewVersion();
-                        }}/>
-                    </div>
-                </Popover>
+
                 {this.props.selectedSkill == null ? <></> :
                     <Grid item md={12}>
+
                         <Typography variant={'body1'}>{this.props.selectedSkill.name}</Typography>
-                        <div>Versions: {this.state.allVersions ? this.mapVersions() : ''}</div>
+                        <PwrSkillVersionInfo skillId={this.props.selectedSkill.id}/>
+
                         <StarRating rating={this.props.selectedSkill.rating}
                                     onRatingChange={newRating => this.props.handleChangeRating(newRating, this.props.selectedSkill)}/>
                     </Grid>

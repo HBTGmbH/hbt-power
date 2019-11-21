@@ -92,10 +92,12 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     componentDidUpdate(prevProps: Readonly<ProfileSkillsProps & ThemeProps & ProfileSkillsLocalProps & ProfileSkillsDispatch>,
                        prevState: Readonly<ProfileSkillsLocalState>): void {
         if (prevProps.skills != this.props.skills) {
-            const newSkill: ProfileSkill = this.props.skills.filter(skill => prevState.selectedSkill.name == skill.name)[0];
-            this.setState({
-                selectedSkill: newSkill
-            });
+            if (prevState.selectedSkill != null) {
+                const newSkill: ProfileSkill = this.props.skills.filter(skill => prevState.selectedSkill.name == skill.name)[0];
+                this.setState({
+                    selectedSkill: newSkill
+                });
+            }
         }
     }
 
@@ -103,7 +105,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
         return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} container item spacing={0}
                      alignItems={'center'}>
             <Grid item container xs={2} sm={2} md={2} lg={2} xl={2} justify={'flex-end'}>
-                <PwrIconButton style={{right:0}} iconName='delete'
+                <PwrIconButton style={{right: 0}} iconName='delete'
                                tooltip={PowerLocalize.get('Action.Delete')}
                                onClick={() => this.handleDeleteSkill(skill)}/>
             </Grid>

@@ -42,12 +42,17 @@ export class SkillServiceSkill {
         return doop<Immutable.List<LocalizedQualifier>, this>();
     };
 
-    constructor(id: number, qualifier: string, categoryId: number, isCustom: boolean, qualifiers: Immutable.List<LocalizedQualifier>) {
-        return this.id(id).qualifier(qualifier).categoryId(categoryId).isCustom(isCustom).qualifiers(qualifiers);
+    @doop
+    public get versions() {
+        return doop<Immutable.List<string>, this>();
+    };
+
+    constructor(id: number, qualifier: string, categoryId: number, isCustom: boolean, qualifiers: Immutable.List<LocalizedQualifier>, versions: Immutable.List<string>) {
+        return this.id(id).qualifier(qualifier).categoryId(categoryId).isCustom(isCustom).qualifiers(qualifiers).versions(versions);
     }
 
     public static forQualifier(qualifier: string) {
-        return new SkillServiceSkill(-1, qualifier, null, false, Immutable.List<LocalizedQualifier>());
+        return new SkillServiceSkill(-1, qualifier, null, false, Immutable.List<LocalizedQualifier>(), Immutable.List<string>());
     }
 
     public static fromAPI(api: APISkillServiceSkill) {
@@ -56,20 +61,25 @@ export class SkillServiceSkill {
         if (api.qualifiers != null) {
             qualifiers = api.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
         }
+        console.log('fromApi - versions', api.versions);
+
         return new SkillServiceSkill(api.id,
             api.qualifier,
             categoryId,
             api.custom,
-            Immutable.List<LocalizedQualifier>(qualifiers));
+            Immutable.List<LocalizedQualifier>(qualifiers),
+            Immutable.List<string>(api.versions));
     }
 
     public static fromTSkillNode(node: TSkillNode, categoryId: number) {
         let qualifiers = node.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
+        console.log('fromTSkillNode', node.versions);
         return new SkillServiceSkill(node.id,
             node.qualifier,
             categoryId,
             node.custom,
-            Immutable.List<LocalizedQualifier>(qualifiers));
+            Immutable.List<LocalizedQualifier>(qualifiers),
+            Immutable.List<string>(node.versions));
     }
 
     public anyFuzzyMatch(searchTerm: string) {

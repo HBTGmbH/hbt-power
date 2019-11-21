@@ -111,7 +111,8 @@ export function postCategorizeSkill() {
 }
 
 export function getFullTree() {
-    return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/tree';
+    return 'http://localhost:9003/skill/tree/debug';
+    //return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/tree';
 }
 
 /**
