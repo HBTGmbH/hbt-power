@@ -8,10 +8,8 @@ import de.hbt.power.repo.SkillCategoryRepository;
 import de.hbt.power.repo.SkillRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +29,11 @@ public class SkillTreeMappingService {
     }
 
     public TCategoryNode buildSkillTree() {
-        return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findAll());
+        return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findForTree());
     }
 
     public TCategoryNode buildSkillTreeDebug() {
-        return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findFirst50ByOrderById());
+        return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findAll());
     }
 
     public TCategoryNode buildSkillTree(List<SkillCategory> categories, List<Skill> skills) {

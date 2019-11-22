@@ -4,6 +4,7 @@ import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,5 +24,9 @@ public interface SkillRepository extends JpaRepository<Skill, Integer>, CrudRepo
     void deleteAllByCategory(SkillCategory category);
 
     List<Skill> findTop100ById(Integer id);
+
     List<Skill> findFirst50ByOrderById();
+
+    @Query("select s from Skill s WHERE not s.category is null")
+    List<Skill> findForTree();
 }
