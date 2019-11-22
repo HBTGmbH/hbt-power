@@ -170,4 +170,11 @@ export enum ActionType {
 
     // == Async, Deferrable Actions
     AsyncDeleteEntry = "[Async] Delete Entry",
+
+
+    LoadVersionsForSkill = "[SkillVersions] LoadVersionsForSkill",
+    ClearVersions = "[SkillVersions] ClearVersions",
+    DeleteVersionFromSkill = "[SkillVersions] DeleteVersionFromSkill",
+
+    AsyncDeleteVersion = "[Async] DeleteVersionFromSkill",
 }

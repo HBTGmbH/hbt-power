@@ -32,6 +32,7 @@ import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
+import {newSkillVersionDeleteAction, newSkillVersionsLoadAction} from '../profile-skill/SkillVersionActions';
 
 
 export namespace SkillActionCreator {
@@ -591,17 +592,6 @@ export namespace SkillActionCreator {
             };
         }
 
-        export function AsyncAddVersion(skillId: number, newVersion: string) {
-            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-                beginAPICall(dispatch);
-                axios.post(skillVersion(skillId, newVersion)).then(value => {
-                    succeedAPICall(dispatch);
-                }).catch((error: AxiosError) => {
-                    failAPICall(dispatch);
-                    handleSkillServiceError(error);
-                });
-            };
-        }
 
         /**
          * Invokes a DELETE call to the skill locale endpoint, persistently deleting the locale

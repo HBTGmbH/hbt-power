@@ -36,4 +36,14 @@ export class SkillServiceClient extends PowerHttpClient {
         const config: AxiosRequestConfig = {params: {qualifier: name}};
         return this.executeRequest(axios.post(url, null, config));
     };
+
+    public addSkillVersion = (skillId: number, version: string): Promise<string[]> => {
+        const url = this.base() + '/skill/' + skillId + '/version/' + version;
+        return this.executeRequest(axios.post(url));
+    };
+
+    public deleteSkillVersion = (skillId: number, version: string) => {
+        const url = this.base() + '/skill/' + skillId + '/version/' + version;
+        return this.executeRequest(axios.delete(url));
+    };
 }

@@ -28,6 +28,8 @@ import {DeferredStore} from './deferred/DeferredStore';
 import {reduceDeferredAction} from './deferred/DeferredActionReducer';
 import {deferredActionMiddleware} from './deferred/DeferredActionMiddleware';
 import {asyncActionUnWrapper} from './deferred/AsyncActionUnWrapper';
+import {SkillVersionStore} from './profile-skill/SkillVersionStore';
+import {reduceSkillVersions} from './profile-skill/SkillVersionReducer';
 
 
 export interface ApplicationState {
@@ -36,6 +38,7 @@ export interface ApplicationState {
     adminReducer: AdminState;
     statisticsReducer: StatisticsStore;
     skillReducer: SkillStore;
+    skillVersionStore: SkillVersionStore;
     metaDataReducer: MetaDataStore;
     navigationSlice: NavigationStore;
     viewProfileSlice: ViewProfileStore;
@@ -52,6 +55,7 @@ const ApplicationStore: Reducer<ApplicationState> = combineReducers({
     adminReducer: AdminReducer.reduce,
     statisticsReducer: StatisticsReducer.reduce,
     skillReducer: SkillReducer.reduce,
+    skillVersionStore: reduceSkillVersions,
     metaDataReducer: MetaDataReducer.reduce,
     navigationSlice: NavigationReducer.reduce,
     viewProfileSlice: ViewProfileReducer.reduce,

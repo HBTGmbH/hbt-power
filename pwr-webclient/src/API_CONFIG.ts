@@ -111,8 +111,8 @@ export function postCategorizeSkill() {
 }
 
 export function getFullTree() {
-    return 'http://localhost:9003/skill/tree/debug';
-    //return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/tree';
+    //return 'http://localhost:9003/skill/tree/debug';
+    return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/tree';
 }
 
 /**
@@ -141,8 +141,7 @@ export function skillLocale(categoryId: number, language: string) {
 }
 
 export function skillVersion(skillId: number, newVersion: string) {
-    return 'http://localhost:9003/skill/' + skillId + '/version/' + newVersion;
-    //return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/' + skillId + '/version/' + newVersion;
+    return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/' + skillId + '/version/' + newVersion;
 }
 
 export function postNewCategory(parentId: number) {

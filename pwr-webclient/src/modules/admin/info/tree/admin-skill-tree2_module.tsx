@@ -19,9 +19,6 @@ import {SkillStore} from '../../../../model/skill/SkillStore';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
-import Chip from '@material-ui/core/Chip';
-import {PwrIconButton} from '../../../general/pwr-icon-button';
-import Popover from '@material-ui/core/Popover';
 import {PwrSkillVersionInfo} from '../../../general/pwr-skill-version-info_module';
 
 interface AdminSkillTree2Props {
@@ -83,8 +80,6 @@ interface AdminSkillTree2Dispatch {
     filter(searchTerm: string): void;
 
     changeFilterNonCustomSkills(doFiltering: boolean): void;
-
-    addNewVersion(skillId: number, newVersion: string): void;
 }
 
 
@@ -137,7 +132,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
             changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering))),
-            addNewVersion: (skillId: number, newVersion: string) => dispatch(SkillActionCreator.Skill.AsyncAddVersion(skillId, newVersion)),
         };
     };
 
@@ -293,12 +287,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
         return <div>
 
             <ListSubheader>Versionen</ListSubheader>
-            {console.log('selectedSkill', selectedSkill)}
-            {selectedSkill.versions().map((value, key) =>
-                <Chip key={key} label={value} style={{right: '2px'}}/>
-            )}
-            <PwrSkillVersionInfo skillId={selectedSkill.id()}/>
-
+            <PwrSkillVersionInfo skillName={selectedSkill.qualifier()}/>
             <ListSubheader>{selectedSkill.qualifier()}</ListSubheader>
             <LocalizationTable
                 localizations={selectedSkill.qualifiers()}

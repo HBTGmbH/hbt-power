@@ -8,12 +8,7 @@ import {SkillServiceClient} from '../../../../../clients/SkillServiceClient';
 import {AxiosError} from 'axios';
 import {Grid} from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import Chip from '@material-ui/core/Chip';
 import {StarRating} from '../../../../star-rating_module.';
-import AddIcon from '@material-ui/icons/Add';
-import Popover from '@material-ui/core/Popover';
-import TextField from '@material-ui/core/TextField';
-import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {PwrSkillVersionInfo} from '../../../../general/pwr-skill-version-info_module';
 
@@ -33,7 +28,6 @@ interface SkillInfoLocalProps {
 interface SkillInfoDispatch {
     saveSkill(initials: string, skill: ProfileSkill): void;
 
-    addNewVersion(skillId: number, newVersion: string): void;
 }
 
 interface SkillInfoState {
@@ -64,7 +58,6 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillInfoDispatch {
         return {
             saveSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.saveProfileSkill(initials, skill)),
-            addNewVersion: (skillId: number, newVersion: string) => dispatch(SkillActionCreator.Skill.AsyncAddVersion(skillId, newVersion))
         };
     }
 
@@ -103,30 +96,16 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
     };
 
 
-
-    private handleAddNewVersion = () => {
-        if (this.state.newVersionText) {
-            let newVersions = this.props.selectedSkill.versions;
-            newVersions.push(this.state.newVersionText);
-            const skill: ProfileSkill = {...this.props.selectedSkill, ...{versions: newVersions}};
-            this.props.addNewVersion(this.state.skillServiceId, this.state.newVersionText);
-            this.props.saveSkill(this.props.initials, skill);
-            this.setState({
-                anchorEl: null
-            });
-        }
-    };
-
     render() {
         return (
             <Grid container spacing={16}>
 
                 {this.props.selectedSkill == null ? <></> :
                     <Grid item md={12}>
-
                         <Typography variant={'body1'}>{this.props.selectedSkill.name}</Typography>
-                        <PwrSkillVersionInfo skillId={this.props.selectedSkill.id}/>
-
+                        <PwrSkillVersionInfo skillName={this.props.selectedSkill.name}
+                                             handleVersionToggle={this.handleVersionToggle}
+                                             profileVersions={this.props.selectedSkill.versions}/>
                         <StarRating rating={this.props.selectedSkill.rating}
                                     onRatingChange={newRating => this.props.handleChangeRating(newRating, this.props.selectedSkill)}/>
                     </Grid>

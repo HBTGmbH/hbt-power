@@ -28,6 +28,11 @@ const deferredActions: DeferrableAction<ApplicationState>[] = [
         type: ActionType.AsyncDeleteEntry,
         condition: unconditional,
         makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteVersion,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
     }
 ];
 
