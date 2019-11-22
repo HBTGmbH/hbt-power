@@ -31,10 +31,12 @@ import static de.hbt.power.util.SkillServiceUtil.peek;
  */
 @RestController()
 @RequestMapping("/skill")
+/*
 @CrossOrigin(origins = "*",
         methods = {RequestMethod.PUT, RequestMethod.GET, RequestMethod.PATCH, RequestMethod.POST, RequestMethod.DELETE},
         allowedHeaders = {"origin", "content-type", "accept", "authorization", "X-Requested-With"},
-        allowCredentials = "true")
+        allowCredentials = "true")*/
+@CrossOrigin
 @Log4j2
 public class SkillController {
 
