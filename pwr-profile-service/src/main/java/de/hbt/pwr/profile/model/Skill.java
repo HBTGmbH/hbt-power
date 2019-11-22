@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 
 @Entity
@@ -23,6 +24,9 @@ public class Skill {
 
     @Column(name = "rating")
     private Integer rating;
+
+    @ElementCollection
+    private Set<String> versions;
 
     public Skill(String name, Integer rating) {
         this.name = name;

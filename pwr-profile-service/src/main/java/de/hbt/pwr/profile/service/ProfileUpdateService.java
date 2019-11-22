@@ -142,8 +142,6 @@ public class ProfileUpdateService {
         if (concurrent == null) {
             if (skill.getId() == null) {
                 newSkillCreated = true;
-            } else {
-                res = skill;
             }
             // persist in any case, Skill might be detached and then a merge occurs (update)
             res = skillRepository.saveAndFlush(skill);
