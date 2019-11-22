@@ -1,6 +1,7 @@
 package de.hbt.power.repo;
 
 import de.hbt.power.model.SkillCategory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,7 @@ public interface SkillCategoryRepository extends JpaRepository<SkillCategory, In
     List<SkillCategory> findAllByCategory(SkillCategory skillCategory);
 
     List<SkillCategory> findAllByBlacklistedTrue();
+    List<SkillCategory> findTop10ById(Integer id);
+    List<SkillCategory> findFirst10ByOrderById();
+
 }

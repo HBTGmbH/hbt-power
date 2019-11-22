@@ -17,5 +17,6 @@ public class TSkillNode {
     private Integer id;
     private String qualifier;
     private Set<LocalizedQualifier> qualifiers = new HashSet<>();
+    private Set<String> versions = new HashSet<>();
     private boolean custom = false;
 }

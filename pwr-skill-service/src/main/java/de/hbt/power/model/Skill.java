@@ -3,6 +3,7 @@ package de.hbt.power.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.*;
 
@@ -46,9 +47,9 @@ public class Skill {
     @Column(name = "is_custom")
     private boolean custom = false;
 
-
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> versions = new HashSet<>();
+
 
     public Skill(String qualifier, Set<LocalizedQualifier> qualifiers, SkillCategory category) {
         this.qualifier = qualifier;

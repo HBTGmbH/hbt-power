@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static de.hbt.power.exception.SkillServiceException.categoryNotFound;
 import static de.hbt.power.exception.SkillServiceException.skillNotFound;
@@ -118,7 +119,7 @@ public class SkillController {
                 .map((skill) -> {
                     // Trick/Hack: ensure parent categories are loaded by hibernate (lazy) - kr
                     SkillCategory cat = skill.getCategory();
-                    while(cat != null && cat.getCategory() != null) {
+                    while (cat != null && cat.getCategory() != null) {
                         cat = cat.getCategory();
                     }
                     return skill;
@@ -217,9 +218,35 @@ public class SkillController {
         return ResponseEntity.ok(skill);
     }
 
+    @ApiOperation(value = "Adds a version to a skill")
+    @PostMapping("{id}/version/{version}")
+    public ResponseEntity<Set<String>> addVersion(@PathVariable("id") Integer skillId, @PathVariable("version") String version) {
+        Skill skill = requireSkill(skillId);
+        skillService.addVersion(skill, version);
+        return ResponseEntity.ok(skill.getVersions());
+    }
+
+    @ApiOperation(value = "Deletes a version from a skill")
+    @DeleteMapping("{id}/version/{version}")
+    public ResponseEntity deleteVersion(@PathVariable("id") Integer skillId, @PathVariable("version") String version) {
+        Skill skill = requireSkill(skillId);
+        skillService.deleteVersion(skill, version);
+        return ResponseEntity.ok().build();
+    }
+
     @ApiOperation(value = "Returns a model of the skill tree. Returned value is the root node.", response = TCategoryNode.class)
+    @CrossOrigin
     @GetMapping("/tree")
     public ResponseEntity<TCategoryNode> getTree() {
+        log.debug("tree requested");
         return ResponseEntity.ok(skillTreeMappingService.buildSkillTree());
+    }
+
+    @ApiOperation(value = "Returns a model of the skill tree. Returned value is the root node.", response = TCategoryNode.class)
+    @CrossOrigin
+    @GetMapping("/tree/debug")
+    public ResponseEntity<TCategoryNode> getTreeDebug() {
+        log.debug("tree requested");
+        return ResponseEntity.ok(skillTreeMappingService.buildSkillTreeDebug());
     }
 }

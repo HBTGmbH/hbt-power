@@ -2,6 +2,7 @@ package de.hbt.power.repo;
 
 import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,7 @@ public interface SkillRepository extends JpaRepository<Skill, Integer>, CrudRepo
     List<Skill> findAllByCategory(SkillCategory category);
 
     void deleteAllByCategory(SkillCategory category);
+
+    List<Skill> findTop100ById(Integer id);
+    List<Skill> findFirst50ByOrderById();
 }
