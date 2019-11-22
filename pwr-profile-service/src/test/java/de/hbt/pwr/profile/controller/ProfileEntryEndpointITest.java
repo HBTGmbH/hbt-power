@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,7 +73,7 @@ public class ProfileEntryEndpointITest {
 
     @Test
     public void saveSkillInProfile() {
-        Skill s = Skill.builder().id(null).name("skilli").rating(3).build();
+        Skill s = Skill.builder().id(null).name("skilli").rating(3).versions(new HashSet<>()).build();
 
         s = endpoint.updateSkill("abc", s);
         Profile p = consultantService.getProfileByInitials("abc");
