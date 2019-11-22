@@ -237,18 +237,14 @@ public class SkillController {
     }
 
     @ApiOperation(value = "Returns a model of the skill tree. Returned value is the root node.", response = TCategoryNode.class)
-    @CrossOrigin
     @GetMapping("/tree")
     public ResponseEntity<TCategoryNode> getTree() {
-        log.debug("tree requested");
         return ResponseEntity.ok(skillTreeMappingService.buildSkillTree());
     }
 
     @ApiOperation(value = "Returns a model of the skill tree. Returned value is the root node.", response = TCategoryNode.class)
-    @CrossOrigin
     @GetMapping("/tree/debug")
     public ResponseEntity<TCategoryNode> getTreeDebug() {
-        log.debug("tree requested");
         return ResponseEntity.ok(skillTreeMappingService.buildSkillTreeDebug());
     }
 }
