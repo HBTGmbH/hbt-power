@@ -73,7 +73,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
 
     componentDidUpdate(prevProps: Readonly<PwrSkillVersionInfoProps & PwrSkillVersionInfoLocalProps & PwrSkillVersionInfoDispatch>,
                        prevState: Readonly<PwrSkillVersionInfoState>, snapshot?: any): void {
-        if (this.props != prevProps) {
+        if (this.props.skillName != prevProps.skillName || this.props.profileVersions != prevProps.profileVersions) {
             this.loadSkillData();
         }
     }
