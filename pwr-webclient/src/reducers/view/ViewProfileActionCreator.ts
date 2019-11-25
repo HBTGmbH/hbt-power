@@ -11,6 +11,8 @@ import {Alerts} from '../../utils/Alerts';
 import {AbstractAction} from '../BaseActions';
 import {ViewSkill} from '../../model/view/ViewSkill';
 import {ViewCategory} from '../../model/view/ViewCategory';
+import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import {Paths} from '../../Paths';
 
 export namespace ViewProfileActionCreator {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
@@ -285,6 +287,7 @@ export namespace ViewProfileActionCreator {
                 let location = response.data;
                 console.info('Received Export: ', location);
                 dispatch(CrossCuttingActionCreator.endRequest());
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_REPORTS));
             }).catch(function (error: any) {
                 console.error(error);
                 Alerts.showError('Could not generate document!');

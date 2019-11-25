@@ -27,7 +27,6 @@ export class ReportServiceClient  extends PowerHttpClient{
 
     public getReportDataForUser(initials: string): Promise<ReportData[]> {
         const url = this.base() + "/report/" + initials;
-        console.log(url);
         this.beginRequest();
         return this.executeRequest(axios.get(url));
     }
@@ -39,7 +38,6 @@ export class ReportServiceClient  extends PowerHttpClient{
 
     public deleteReport(id): Promise<unknown> {
         const url = this.base() + "/report/delete/" + id;
-        //TemplateActionCreator.DeleteReportFile(url);
         return this.executeRequest(axios.delete(url));
     }
 

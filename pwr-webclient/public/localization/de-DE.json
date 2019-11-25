@@ -361,6 +361,7 @@
 
     "Report.History": "Bisher generierte Profile",
     "Report.Template": "Template",
+    "Report.UnknownTemplate": "Unbekanntes Template",
     "Report.Status": "Status",
     "Report.CreateDate": "Erstellungsdatum"
 }

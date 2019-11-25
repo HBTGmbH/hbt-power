@@ -16,8 +16,6 @@ import {PwrSelectableList} from '../../general/Pwr-selecable-list';
 import AppBar from '@material-ui/core/AppBar/AppBar';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
-import {Paths} from '../../../Paths';
-
 
 interface ViewProfileGeneratorProps {
     viewProfile?: ViewProfile;
@@ -122,7 +120,6 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         }
 
         this.props.generate(viewID, tempID);
-        this.props.navigateTo(Paths.USER_REPORTS);
     };
 
 

@@ -23,9 +23,9 @@ export class ReportAsyncActionCreator {
         };
     }
 
-    public static deleteReportFile(id: number) {
+    public static deleteReportFile(id: number, cb: () => void){
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            reportServiceClient.deleteReport(id).then( res => console.log("Deleted report: " + id));
+            reportServiceClient.deleteReport(id).then( res => {cb();});
         };
     }
 }
