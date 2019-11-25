@@ -6,8 +6,13 @@ import de.hbt.pwr.view.exception.ServiceError;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.ViewProfileInfo;
-import de.hbt.pwr.view.service.*;
+import de.hbt.pwr.view.service.ReportTemplateService;
+import de.hbt.pwr.view.service.ViewProfileCreatorService;
+import de.hbt.pwr.view.service.ViewProfileMergeService;
+import de.hbt.pwr.view.service.ViewProfileOperationService;
 import io.swagger.annotations.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -49,6 +54,9 @@ import static java.util.Optional.ofNullable;
 @RequestMapping("/view")
 @Controller
 public class ViewProfileController {
+
+    private static final Logger LOG = LogManager.getLogger(ViewProfile.class);
+
 
     // private final ViewProfileImporter viewProfileImporter;
 
@@ -136,6 +144,23 @@ public class ViewProfileController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @PatchMapping(path = "/{initials}/view/{viewProfileId}/info")
+    public ResponseEntity<ViewProfile> partiallyUpdateInfo(
+            @RequestBody ViewProfileInfo viewProfileInfo, @PathVariable("initials") String initials,
+            @PathVariable("viewProfileId") String viewProfileId) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.updateInfo(viewProfile, viewProfileInfo);
+        return ResponseEntity.ok(viewProfile);
+    }
+
+    @PostMapping("/dataConversion")
+    public ResponseEntity convertDataModelVersion() {
+
+        viewProfileService.migrateViewProfiles();
+        return ResponseEntity.ok().build();
+    }
+
     //---------------
     // Report
     //---------------
@@ -157,21 +182,4 @@ public class ViewProfileController {
                         .orElse(URI.create(""));
         return ResponseEntity.created(location).body(location.toString());
     }
-
-    @PatchMapping(path = "/{initials}/view/{viewProfileId}/info")
-    public ResponseEntity<ViewProfile> partiallyUpdateInfo(
-            @RequestBody ViewProfileInfo viewProfileInfo, @PathVariable("initials") String initials,
-            @PathVariable("viewProfileId") String viewProfileId) {
-        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
-        viewProfileService.updateInfo(viewProfile, viewProfileInfo);
-        return ResponseEntity.ok(viewProfile);
-    }
-
-    @PostMapping("/dataConversion")
-    public ResponseEntity convertDataModelVersion() {
-
-        viewProfileService.migrateViewProfiles();
-        return ResponseEntity.ok().build();
-    }
-
 }
