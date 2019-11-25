@@ -17,15 +17,11 @@ public class ReportDataService {
     }
 
     public List<ReportData> getAllReportDataForUser(String initials) {
-        System.out.println("All Data:");
-        System.out.println(reportDataRepository.findAll());
         return reportDataRepository.findAllByInitials(initials);
     }
 
     public ReportData getReportDataById(Long id) {
-        ReportData temp = reportDataRepository.findById(id).orElseThrow(() -> new ReportDataException("ReportData with id: " + id + " does not exist!"));
-        System.out.println(temp);
-        return temp;
+        return reportDataRepository.findById(id).orElseThrow(() -> new ReportDataException("ReportData with id: " + id + " does not exist!"));
     }
 
     public void deleteReportDataById(Long id) {

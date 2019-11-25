@@ -49,11 +49,13 @@ public class ReportController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/refs/{initials}")
     public ResponseEntity<List<ReportFileRef>> getAllRefs(@PathVariable("initials") String initials) {
+        LOG.info("getAllRefs: " + initials);
         return ResponseEntity.ok(profileReportService.getAllRefs(initials));
     }
 
     @GetMapping("{initials}")
     public ResponseEntity<List<ReportData.ReportDataSlice>> getAllReportDataForConsultant(@PathVariable("initials") String initials) {
+        LOG.info("getAllReportData: " + initials);
         List<ReportData> allReportDataForUser = reportDataService.getAllReportDataForUser(initials);
         List<ReportData.ReportDataSlice> reportDataSlices = allReportDataForUser.stream()
                 .map(ReportData.ReportDataSlice::toReportDataSlice).collect(Collectors.toList());
@@ -75,15 +77,12 @@ public class ReportController {
         return ResponseEntity.ok("Deleted Report File");
     }
 
-    /*
-        TODO xml datei ändern für angefragte rolle!!
-    */
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> generate(@RequestBody ReportInfo reportInfo,
                                            @RequestParam("type") String type,
                                            @RequestParam(value = "charsperline", required = false) String charsPerLine) throws Exception {
         File xmlFile = null;
-        System.out.println("Generating new report!");
+        LOG.info("Generating new report!");
         ReportData reportData = new ReportData(
                 reportInfo.initials,
                 reportInfo.viewProfile.getViewProfileInfo().getName(),
