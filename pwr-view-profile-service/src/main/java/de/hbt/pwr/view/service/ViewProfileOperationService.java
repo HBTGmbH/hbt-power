@@ -162,8 +162,15 @@ public class ViewProfileOperationService {
         });
     }
 
+
     private void setIsEnabledForAllSkills(Category category, boolean isEnabled) {
         category.getDisplaySkills().forEach(skill -> skill.setEnabled(isEnabled));
+    }
+
+
+    public void setIsEnabledForVersionOfSkill(ViewProfile viewProfile, String skillName, String versionName, boolean isEnabled) {
+        Skill skill = viewProfile.findSkillByName(skillName).orElseThrow(RuntimeException::new);
+        skill.setEnabledForVersion(versionName, isEnabled);
     }
 
     /**

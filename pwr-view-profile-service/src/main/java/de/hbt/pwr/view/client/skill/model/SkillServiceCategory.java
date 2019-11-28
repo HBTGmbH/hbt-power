@@ -41,7 +41,7 @@ public class SkillServiceCategory {
     }
 
     public String getLocalizedQualifier(String locale) {
-        if(locale == null) {
+        if (locale == null || this.qualifiers == null) {
             return qualifier;
         }
         Optional<String> name = qualifiers.stream()

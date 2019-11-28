@@ -99,6 +99,19 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+
+    @PatchMapping("/SKILL/visibility/version/{isEnabled}")
+    ResponseEntity<ViewProfile> setVisibilityForVersionOfSkill(@PathVariable("initials") String initials,
+                                                               @PathVariable("viewProfileId") String viewProfileId,
+                                                               @RequestParam(value = "skill-name") String skillName,
+                                                               @RequestParam(value = "version-name") String version,
+                                                               @PathVariable("isEnabled") Boolean isEnabled) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.setIsEnabledForVersionOfSkill(viewProfile,skillName,version,isEnabled);
+
+        return ResponseEntity.ok(viewProfile);
+    }
+
     @ApiOperation(value = "Sets the visibility for all entries",
             notes = "Sets the visibility for all entries of the given type in the defined view profile. " +
                     "This operation is persistent.",

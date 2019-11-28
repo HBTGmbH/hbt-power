@@ -2,6 +2,9 @@ package de.hbt.pwr.view.client.profile.model;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class ProfileSkill {
     private Long id = null;
@@ -11,6 +14,8 @@ public class ProfileSkill {
     private Integer rating;
 
     private String comment;
+
+    private List<String> versions = new ArrayList<>();
 
     public ProfileSkill() {
         // Default empty constructor for jackson

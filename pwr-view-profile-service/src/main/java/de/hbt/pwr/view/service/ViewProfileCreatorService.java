@@ -196,7 +196,6 @@ public class ViewProfileCreatorService {
     }
 
     private void getDisplayCategoryForProfileSkill(ProfileSkill profileSkill, List<Category> displayCategories) {
-        LOG.debug("getDisplayCategory for: " + profileSkill.getName());
         SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(profileSkill.getName());
         if (serviceSkill == null) {
             serviceSkill = skillServiceFallback.getSkillByName(profileSkill.getName());
@@ -208,6 +207,7 @@ public class ViewProfileCreatorService {
                 true,
                 null
         );
+        skill.setVersions(profileSkill.getVersions());
 
         if (serviceSkill.getCategory() == null) {
             throw new CategoryNotFoundException("null from Skill: " + serviceSkill.getQualifier());
