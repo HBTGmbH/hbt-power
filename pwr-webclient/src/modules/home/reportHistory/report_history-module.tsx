@@ -80,12 +80,6 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
 
     }
 
-    /*private initInitials = () => {
-        if (this.props.initials == null || this.props.initials == "") {
-            this.props.initials = store.initials;
-        }
-    }*/
-
     private loadAllReportData = () => {
         if (this.props.initials != null && this.props.initials != "") { // TODO reload initials
             this.props.loadAllReportData(this.props.initials);
