@@ -47,7 +47,7 @@ export interface ApplicationState {
     crossCutting: CrossCuttingStore;
     router: Reducer<RouterState>;
     deferred: DeferredStore;
-    reportStore:ReportStore;
+    reportStore: ReportStore;
     skillVersionStore: SkillVersionStore;
 }
 
@@ -64,6 +64,7 @@ const ApplicationStore: Reducer<ApplicationState> = combineReducers({
     crossCutting: CrossCuttingReducer.reduce,
     templateSlice: TemplateReducer.reduce,
     deferred: reduceDeferredAction,
+    skillVersionStore: reduceSkillVersions,
     reportStore: reduceReports
 });
 

@@ -50,7 +50,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
 
     static mapStateToProps(state: ApplicationState, localProps: PwrSkillVersionInfoLocalProps): PwrSkillVersionInfoProps {
         const initials = state.profileStore.consultant != null ? state.profileStore.consultant.initials : 'error';
-        const versions = state.skillVersionStore.currentVersions;
+        const versions = state.skillVersionStore.currentVersions ? state.skillVersionStore.currentVersions : [];
         const skillId = state.skillVersionStore.serviceSkillId;
         return {
             initials: initials,
