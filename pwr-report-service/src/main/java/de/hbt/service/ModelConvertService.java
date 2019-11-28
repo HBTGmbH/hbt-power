@@ -9,24 +9,17 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Converts the new view profile model into the old power model.
  */
-@Service
-@Component
-public class ModelConvertService {
+@Service @Component public class ModelConvertService {
 
-    @Value("${export.imgLocation}")
-    private String imgLocation;
+    @Value("${export.imgLocation}") private String imgLocation;
 
-    @Value("${export.defaultCategoryIndex}")
-    private int defaultCategoryIndex;
+    @Value("${export.defaultCategoryIndex}") private int defaultCategoryIndex;
 
     private static Synonym toSynonym(String name) {
         Synonym res = new Synonym();
@@ -57,7 +50,6 @@ public class ModelConvertService {
         result.setBis(toDatum(to));
         return result;
     }
-
 
     private static Personalie toPersonalie(LocalDate birthDate) {
         Personalie personalie = new Personalie();
@@ -167,7 +159,8 @@ public class ModelConvertService {
     }
 
     private static List<ProjektRolle> extractProjektRolles(ViewProject project) {
-        return project.getProjectRoles().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::mapRolle).collect(Collectors.toList());
+        return project.getProjectRoles().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::mapRolle).collect(Collectors.toList());
     }
 
     private static Projekt toProjekt(ViewProject viewProject) {
@@ -186,33 +179,42 @@ public class ModelConvertService {
     }
 
     private static List<Qualification> extractQualifications(ViewProfile viewProfile) {
-        return viewProfile.getQualifications().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::toQualification).collect(Collectors.toList());
+        return viewProfile.getQualifications().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::toQualification).collect(Collectors.toList());
     }
 
     private static List<Branche> extractSectors(ViewProfile viewProfile) {
-        return viewProfile.getSectors().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::toBranche).collect(Collectors.toList());
+        return viewProfile.getSectors().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::toBranche).collect(Collectors.toList());
     }
 
     private static List<Sprache> extractLanguages(ViewProfile viewProfile) {
-        return viewProfile.getLanguages().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::toSprache).collect(Collectors.toList());
+        return viewProfile.getLanguages().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::toSprache).collect(Collectors.toList());
     }
 
-
     private static List<Werdegang> extractCareer(ViewProfile viewProfile) {
-        List<Werdegang> education = viewProfile.getEducations().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::toWerdegang).collect(Collectors.toList());
-        List<Werdegang> trainings = viewProfile.getTrainings().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::toWerdegang).collect(Collectors.toList());
-        List<Werdegang> career = viewProfile.getCareers().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::toWerdegang).collect(Collectors.toList());
+        List<Werdegang> education =
+                viewProfile.getEducations().stream().filter(ViewEntry::getEnabled)
+                        .map(ModelConvertService::toWerdegang).collect(Collectors.toList());
+        List<Werdegang> trainings =
+                viewProfile.getTrainings().stream().filter(ViewEntry::getEnabled)
+                        .map(ModelConvertService::toWerdegang).collect(Collectors.toList());
+        List<Werdegang> career = viewProfile.getCareers().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::toWerdegang).collect(Collectors.toList());
         education.addAll(trainings);
         education.addAll(career);
         return education;
     }
 
     private static List<Projekt> extractProjects(ViewProfile viewProfile) {
-        return viewProfile.getProjects().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::toProjekt).collect(Collectors.toList());
+        return viewProfile.getProjects().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::toProjekt).collect(Collectors.toList());
     }
 
     private static List<ProjektRolle> extractProjectRoles(ViewProfile viewProfile) {
-        return viewProfile.getProjectRoles().stream().filter(ViewEntry::getEnabled).map(ModelConvertService::mapRolle).collect(Collectors.toList());
+        return viewProfile.getProjectRoles().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::mapRolle).collect(Collectors.toList());
     }
 
     private static List<Skill> extractSkills(ViewProfile viewProfile) {
@@ -233,15 +235,18 @@ public class ModelConvertService {
             sExport.setGruppe(displayCategoryNamesBySkill.get(viewSkill.getName()));
             sExport.setLevel(toSkillLevel(viewSkill.getRating()));
             sExport.setGroupIndex(groupIndexBySkillName.get(viewSkill.getName()));
+            String collect = viewSkill.getVersions().stream().filter(ViewSkillVersion::isEnabled)
+                    .map(ViewSkillVersion::getName).collect(Collectors.joining(", "));
+            if (!collect.equals("")) {
+                sExport.setVersions(Collections.singletonList(collect));
+            }
             return sExport;
         }).collect(Collectors.toList());
     }
 
     private static List<Spezialgebiet> extractKeySkills(ViewProfile viewProfile) {
-        return viewProfile.getKeySkills().stream()
-                .filter(ViewEntry::getEnabled)
-                .map(ModelConvertService::toSpezialgebiet)
-                .collect(Collectors.toList());
+        return viewProfile.getKeySkills().stream().filter(ViewEntry::getEnabled)
+                .map(ModelConvertService::toSpezialgebiet).collect(Collectors.toList());
     }
 
     /**
