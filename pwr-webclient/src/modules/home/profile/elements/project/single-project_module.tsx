@@ -335,7 +335,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                 {
                     this.isEditEnabled() &&
                     <div>
-                        <PwrFormCaption>Skillvorschläge</PwrFormCaption>
+                        <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillSugestions')}</PwrFormSubCaption>
                         <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
                     </div>
                 }

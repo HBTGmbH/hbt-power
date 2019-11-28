@@ -9,6 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import {Project} from '../../../reducers/profile-new/profile/model/Project';
 import {SuggestionServiceClient} from '../../../reducers/suggestions/client/SuggestionServiceClient';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface SuggestProjectSkillsProps {
     project: Project;
@@ -63,44 +64,47 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
     }
 
 
-    private handleSkillToggle = (skill: string, isChecked: boolean) => {
-        if (isChecked) {
+    private handleSkillToggle = (event, skill: string/*, isChecked: boolean*/) => {
+        let selectedBeforeHandling = this.isSelected(skill)
+;        if (!selectedBeforeHandling) {
             const selectedSkills = [...this.state.selectedSkills, skill];
             this.setState({selectedSkills});
         } else {
             const selectedSkills = this.state.selectedSkills.filter(value => value !== skill);
             this.setState({selectedSkills});
         }
+
+        event.target.checked = !selectedBeforeHandling;
     };
 
     render() {
         return (<div>
             <Button variant="contained" color="primary" onClick={this.openDialog}>
-                anzeigen
+                {PowerLocalize.get('Action.Show')}
             </Button>
             <Dialog open={this.state.dialogOpen} onClose={this.closeDialog}>
-                <DialogTitle>Skill Suggestion</DialogTitle>
+                <DialogTitle>{PowerLocalize.get('Profile.Project.SkillSugestions')}</DialogTitle>
                 <DialogContent>
                     <List>{
-                        this.state.suggestedSkills.map(skill => <>
+                        this.state.suggestedSkills.map((skill, index) => <div key={index}>
                             <ListItem>
+                                {skill}
                                 <ListItemSecondaryAction>
-                                    <Checkbox checked={this.isSelected(skill)}
-                                              onChange={(ignored, isChecked) => this.handleSkillToggle(skill, isChecked)}
+                                    <Checkbox
+                                              onChange={(ignored, isIgnored) => this.handleSkillToggle(ignored, skill/*, isChecked*/)}
                                     />
                                 </ListItemSecondaryAction>
-                                {skill}
                             </ListItem>
                             <Divider/>
-                        </>)
+                        </div>)
                     }</List>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={this.closeDialog}>
-                        Schließen
+                        {PowerLocalize.get('Action.Close')}
                     </Button>
                     <Button variant="contained" color="primary" onClick={this.acceptSkills}>
-                        Übernehmen
+                        {PowerLocalize.get('Action.Save')}
                     </Button>
                 </DialogActions>
             </Dialog>
