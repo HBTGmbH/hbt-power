@@ -61,7 +61,6 @@ export class SkillServiceSkill {
         if (api.qualifiers != null) {
             qualifiers = api.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
         }
-        console.log('fromApi - versions', api.versions);
 
         return new SkillServiceSkill(api.id,
             api.qualifier,
@@ -73,7 +72,6 @@ export class SkillServiceSkill {
 
     public static fromTSkillNode(node: TSkillNode, categoryId: number) {
         let qualifiers = node.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
-        console.log('fromTSkillNode', node.versions);
         return new SkillServiceSkill(node.id,
             node.qualifier,
             categoryId,

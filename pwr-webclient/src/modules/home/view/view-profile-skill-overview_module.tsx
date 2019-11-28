@@ -17,6 +17,8 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/Expan
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
 import Icon from '@material-ui/core/Icon/Icon';
 import Typography from '@material-ui/core/Typography/Typography';
+import {Chip} from '@material-ui/core';
+import Checkbox from '@material-ui/core/Checkbox';
 
 interface ViewProfileSkillOverviewProps {
     viewProfile: ViewProfile;
@@ -35,6 +37,8 @@ interface ViewProfileSkillOverviewDispatch {
     moveEntry(id: string, type: string, sourceIndex: number, targetIndex: number): void;
 
     toggleEntry(id: string, type: string, index: number, isEnabled: boolean): void;
+
+    toggleVersion(id: string, skillName: string, versionName: string, isEnabled: boolean): void;
 
     toggleSkill(id: string, skillName: string, isEnabled: boolean): void;
 
@@ -69,6 +73,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             toggleEntry: (id, type, index, isEnabled) => {
                 dispatch(ViewProfileActionCreator.AsyncToggleEntry(id, type, index, isEnabled));
             },
+            toggleVersion: (id: string, skillName: string, versionName: string, isEnabled: boolean) => dispatch(ViewProfileActionCreator.AsyncToggleVersion(id, skillName, versionName, isEnabled)),
             moveNestedEntry: (id, container, containerIndex, type, sourceIndex, targetIndex) => {
                 dispatch(ViewProfileActionCreator.AsyncMoveNestedEntry(id, container, containerIndex, type, sourceIndex, targetIndex));
             },
@@ -114,6 +119,10 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
         this.props.toggleEntry(this.props.viewProfileId, type, index, isEnabled);
     };
 
+    private handleVersionToggle = (skillName: string, versionName: string, isEnabled: boolean) => {
+        this.props.toggleVersion(this.props.viewProfileId, skillName, versionName, isEnabled);
+    };
+
     private renderSkill = (entry: ViewSkill) => {
         let res: Array<JSX.Element> = [];
         res.push(
@@ -124,6 +133,15 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                 {entry.name}
             </td>);
         res.push(<td key={'ViewSkill_' + entry.name + '_rating'}>{entry.rating}</td>);
+        entry.versions ?
+            res.push(
+                <td>{entry.versions.map(version =>
+                    <div><Chip key={version.name} label={version.name}/><Checkbox
+                        checked={version.enabled}
+                        onChange={() => this.handleVersionToggle(entry.name, version.name, !version.enabled)}/>
+                    </div>)}
+                </td>)
+            : res.push(<td key={'no version'}>-</td>);
         return res;
     };
 
@@ -155,6 +173,14 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                                     sortableEntryField="rating"
                                     viewProfileId={this.props.viewProfileId}
                                     label="Rating"
+                                    containerIndex={entryIndex}
+                                />,
+                                <ComparableNestedEntryButton
+                                    container="DISPLAY_CATEGORY"
+                                    sortableEntryType={SortableEntryType.SKILL}
+                                    sortableEntryField="name"
+                                    viewProfileId={this.props.viewProfileId}
+                                    label="Versionen"
                                     containerIndex={entryIndex}
                                 />
                             ]}
