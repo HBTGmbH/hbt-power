@@ -48,6 +48,7 @@ export interface ApplicationState {
     router: Reducer<RouterState>;
     deferred: DeferredStore;
     reportStore:ReportStore;
+    skillVersionStore: SkillVersionStore;
 }
 
 
