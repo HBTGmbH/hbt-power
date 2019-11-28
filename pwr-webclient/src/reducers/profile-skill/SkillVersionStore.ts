@@ -1,6 +1,6 @@
 export interface SkillVersionStore {
 
-    serviceSkillId:number;
+    serviceSkillId: number;
     currentVersions: string[];
 }
 
