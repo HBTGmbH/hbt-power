@@ -351,7 +351,6 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncGetParentCategories(skill: ViewSkill) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            console.log('GetParentCategories', skill.name);
             axios.get(ViewProfileService.getParentCategories(skill.name)).then((response: AxiosResponse) => {
                 console.log(response);
                 dispatch(SetParentForSkill(response.data));
@@ -360,6 +359,20 @@ export namespace ViewProfileActionCreator {
                 Alerts.showError('Could not get parents for skill: ' + skill.name + '!');
                 dispatch(CrossCuttingActionCreator.endRequest());
             });
+        };
+    }
+
+    export function AsyncToggleVersion(id: string, skillName: string, versionName: string, isEnabled: boolean) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            let initials = getState().profileStore.consultant.initials;
+            let config: AxiosRequestConfig = {params: {'skill-name': skillName, 'version-name': versionName}};
+            axios.patch(ViewProfileService.patchToggleVersion(initials, id, skillName, versionName, isEnabled), null, config)
+                .then((response: AxiosResponse) => succeedAndRead(response, dispatch))
+                .catch(function (error: any) {
+                    console.error(error);
+                    Alerts.showError('Could not change enable!');
+                    dispatch(CrossCuttingActionCreator.endRequest());
+                });
         };
     }
 }
