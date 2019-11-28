@@ -172,8 +172,7 @@ export function patchMoveSkill(skillId: number, newCategoryId: number) {
 export namespace ViewProfileService {
 
     function base() {
-        //return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
-        return 'http://localhost:9008';
+        return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
     }
 
     export function getParentCategories(skillName: string) {
