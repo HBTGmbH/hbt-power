@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -225,10 +226,10 @@ public class ViewProfileImporterSkillTest {
         ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
         Category displayCategory = viewProfile.getDisplayCategories().get(0);
         assertThat(displayCategory.getDisplaySkills()).containsExactlyInAnyOrder(
-                Skill.builder().id(-1L).name(testSkill1.getQualifier()).build(),
-                Skill.builder().id(-1L).name(testSkill2.getQualifier()).build(),
-                Skill.builder().id(-1L).name(testSkill3.getQualifier()).build(),
-                Skill.builder().id(-1L).name(testSkill4.getQualifier()).build()
+                Skill.builder().id(-1L).name(testSkill1.getQualifier()).versions(new ArrayList<>()).build(),
+                Skill.builder().id(-1L).name(testSkill2.getQualifier()).versions(new ArrayList<>()).build(),
+                Skill.builder().id(-1L).name(testSkill3.getQualifier()).versions(new ArrayList<>()).build(),
+                Skill.builder().id(-1L).name(testSkill4.getQualifier()).versions(new ArrayList<>()).build()
         );
     }
 
