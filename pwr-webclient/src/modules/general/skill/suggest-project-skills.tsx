@@ -64,7 +64,7 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
     }
 
 
-    private handleSkillToggle = (event, skill: string/*, isChecked: boolean*/) => {
+    private handleSkillToggle = (event, skill: string) => {
         let selectedBeforeHandling = this.isSelected(skill)
 ;        if (!selectedBeforeHandling) {
             const selectedSkills = [...this.state.selectedSkills, skill];
@@ -91,7 +91,7 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
                                 {skill}
                                 <ListItemSecondaryAction>
                                     <Checkbox
-                                              onChange={(ignored, isIgnored) => this.handleSkillToggle(ignored, skill/*, isChecked*/)}
+                                              onChange={(event, ignored) => this.handleSkillToggle(event, skill)}
                                     />
                                 </ListItemSecondaryAction>
                             </ListItem>
