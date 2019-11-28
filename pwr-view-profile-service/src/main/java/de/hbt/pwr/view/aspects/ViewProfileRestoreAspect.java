@@ -18,16 +18,19 @@ import java.util.stream.Collectors;
 /**
  *
  */
-@Aspect
-@Component
-public class ViewProfileRestoreAspect {
+@Aspect @Component public class ViewProfileRestoreAspect {
 
     private static final Logger LOG = LogManager.getLogger(ViewProfileRestoreAspect.class);
 
     private void restore(ViewProfile viewProfile) {
 
         viewProfile.getDisplayCategories().forEach(category -> {
-            category.getDisplaySkills().forEach(skill -> skill.setDisplayCategory(category));
+            category.getDisplaySkills().forEach(skill -> {
+                skill.setDisplayCategory(category);
+                if (skill.getVersions() == null) {
+                    skill.setVersions(new ArrayList<>());
+                }
+            });
         });
         // merge duplicates categories
         viewProfile.setDisplayCategories(mergeDuplicates(viewProfile.getDisplayCategories()));
@@ -35,6 +38,7 @@ public class ViewProfileRestoreAspect {
         viewProfile.setDisplayCategories(viewProfile.getDisplayCategories().stream()
                 .filter(category -> category.getDisplaySkills().size() > 0)
                 .collect(Collectors.toList()));
+
     }
 
     private Category mergeChildren(Category c1, Category c2) {
@@ -43,20 +47,19 @@ public class ViewProfileRestoreAspect {
     }
 
     private List<Category> mergeDuplicates(Collection<Category> displayCategories) {
-        return new ArrayList<>(displayCategories.stream()
-                .collect(Collectors.toMap(Category::getId, Function.identity(), this::mergeChildren))
+        return new ArrayList<>(displayCategories.stream().collect(
+                Collectors.toMap(Category::getId, Function.identity(), this::mergeChildren))
                 .values());
     }
 
-    @SuppressWarnings("unused")
-    @Pointcut("this(de.hbt.pwr.view.repo.ViewProfileRepository)")
+    @SuppressWarnings("unused") @Pointcut("this(de.hbt.pwr.view.repo.ViewProfileRepository)")
     private void isCrudRepo() {
     } //NOSONAR
 
     @AfterReturning(value = "isCrudRepo()", returning = "viewProfile", argNames = "joinPoint,viewProfile")
     private void anyViewProfileRestorable(JoinPoint joinPoint, Optional<?> viewProfile) { //NOSONAR
-        LOG.debug(ViewProfileRestoreAspect.class + " invoked after returning from "
-                + joinPoint.getSignature().toString() + ". Performing bi reference restoring...");
+        LOG.debug(ViewProfileRestoreAspect.class + " invoked after returning from " + joinPoint
+                .getSignature().toString() + ". Performing bi reference restoring...");
         if (viewProfile.isPresent()) {
             Object mayBeViewProfile = viewProfile.get();
             if (mayBeViewProfile instanceof ViewProfile) {

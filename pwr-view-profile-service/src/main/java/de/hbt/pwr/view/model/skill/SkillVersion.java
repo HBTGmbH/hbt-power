@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"enabled"})
 @ToString
-
 public class SkillVersion implements ToggleableEntry, NameComparable {
     private String name;
     private Boolean enabled;
