@@ -12,6 +12,7 @@ import {SuggestionServiceClient} from '../../../reducers/suggestions/client/Sugg
 
 interface SuggestProjectSkillsProps {
     project: Project;
+
     onAcceptSkills?(acceptedSkills: string[]): void;
 }
 
@@ -22,7 +23,7 @@ interface SuggestProjectSkillsState {
 }
 
 export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsProps, SuggestProjectSkillsState> {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             dialogOpen: false,
@@ -34,20 +35,20 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
     openDialog = () => {
         this.setState({
             dialogOpen: true
-        })
+        });
         this.getRecommendedSkills();
-    }
+    };
 
     closeDialog = () => {
         this.setState({
             dialogOpen: false
-        })
-    }
+        });
+    };
 
     getRecommendedSkills = () => {
-        SuggestionServiceClient.instance().getSkillsRecommendation(this.props.project).then((skill)=> {
+        SuggestionServiceClient.instance().getSkillsRecommendation(this.props.project).then((skill) => {
             const skillNames = skill.map(s => s.name);
-            this.setState({suggestedSkills: skillNames, selectedSkills: []})
+            this.setState({suggestedSkills: skillNames, selectedSkills: []});
         });
     };
 
@@ -55,7 +56,7 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
     acceptSkills = () => {
         this.props.onAcceptSkills([...this.state.selectedSkills]);
         this.closeDialog();
-    }
+    };
 
     isSelected(skill: string) {
         return this.state.selectedSkills.find(value => value === skill);
@@ -66,8 +67,7 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
         if (isChecked) {
             const selectedSkills = [...this.state.selectedSkills, skill];
             this.setState({selectedSkills});
-        }
-        else {
+        } else {
             const selectedSkills = this.state.selectedSkills.filter(value => value !== skill);
             this.setState({selectedSkills});
         }
@@ -92,16 +92,16 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
                                 {skill}
                             </ListItem>
                             <Divider/>
-                            </>)
+                        </>)
                     }</List>
                 </DialogContent>
                 <DialogActions>
-                <Button variant="contained" onClick={this.closeDialog}>
-                    Schließen
-                </Button>
-                <Button variant="contained" color="primary" onClick={this.acceptSkills}>
-                    Übernehmen
-                </Button>
+                    <Button variant="contained" onClick={this.closeDialog}>
+                        Schließen
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={this.acceptSkills}>
+                        Übernehmen
+                    </Button>
                 </DialogActions>
             </Dialog>
         </div>);

@@ -19,7 +19,7 @@ import {
     postLocaleToCategory,
     postNewCategory,
     postNewSkill,
-    skillLocale
+    skillLocale, skillVersion
 } from '../../API_CONFIG';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
@@ -31,6 +31,8 @@ import {SkillServiceError} from '../../model/skill/SkillServiceError';
 import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
+import {SkillServiceClient} from '../../clients/SkillServiceClient';
+import {newSkillVersionDeleteAction, newSkillVersionsLoadAction} from '../profile-skill/SkillVersionActions';
 
 
 export namespace SkillActionCreator {
@@ -56,7 +58,6 @@ export namespace SkillActionCreator {
             toAdd: category
         };
     }
-
 
 
     export function AddSkillToTree(categoryId: number, skill: SkillServiceSkill): AddSkillToTreeAction {
@@ -177,12 +178,12 @@ export namespace SkillActionCreator {
         };
     }
 
-    function MoveCategory(newParentId:number, toMoveId:number) {
+    function MoveCategory(newParentId: number, toMoveId: number) {
         return {
-            type:ActionType.MoveCategory,
-            newParentId:newParentId,
+            type: ActionType.MoveCategory,
+            newParentId: newParentId,
             toMoveId: toMoveId,
-        }
+        };
     }
 
     function MoveSkill(originCategoryId: number, targetCategoryId: number, skillId: number): MoveSkillAction {
@@ -297,16 +298,16 @@ export namespace SkillActionCreator {
         };
     }
 
-    export function AsyncMoveCategory(newParentId:number, toMoveId: number){
+    export function AsyncMoveCategory(newParentId: number, toMoveId: number) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.patch(patchMoveCategory(newParentId,toMoveId)).then((response: AxiosResponse) => {
+            axios.patch(patchMoveCategory(newParentId, toMoveId)).then((response: AxiosResponse) => {
                 dispatch(MoveCategory(newParentId, toMoveId));
 
                 // reload tree
                 //dispatch(AsyncLoadTree());
                 succeedAPICall(dispatch);
             }).catch(handleSkillServiceError);
-        }
+        };
     }
 
 
@@ -591,6 +592,7 @@ export namespace SkillActionCreator {
             };
         }
 
+
         /**
          * Invokes a DELETE call to the skill locale endpoint, persistently deleting the locale
          * from the skill.
@@ -623,9 +625,5 @@ export namespace SkillActionCreator {
             });
         };
     }
-
-
-
-
 
 }

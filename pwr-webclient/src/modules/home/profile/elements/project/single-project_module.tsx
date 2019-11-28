@@ -212,7 +212,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     };
 
     private addSkill = (skillName) => {
-        const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0};
+        const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0, versions:[]};
         const skills = immutablePush(newSkill, this.project().skills);
         this.props.updateEditingProject({...this.project(), skills});
     };
@@ -229,7 +229,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     }
 
     private handleAddSkills = (skills: string[]) => {
-        const mappedSkills = skills.map(s => ({id: null, name: s, rating: 0}));
+        const mappedSkills = skills.map(s => ({id: null, name: s, rating: 0, versions:[]}));
         const projectSkills = [...this.project().skills, ...mappedSkills];
         this.props.updateEditingProject({...this.project(), ...{skills: projectSkills}});
     };
@@ -332,10 +332,14 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         {this.project().skills.map(skill => this.toSkillChip(skill))}
                     </div>
                 </div>
-                <div>
-                    <PwrFormCaption>Skillvorschläge</PwrFormCaption>
-                    <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
-                </div>
+                {
+                    this.isEditEnabled() &&
+                    <div>
+                        <PwrFormCaption>Skillvorschläge</PwrFormCaption>
+                        <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
+                    </div>
+                }
+
                 <div>
                     {this.isEditDisabled() &&
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}

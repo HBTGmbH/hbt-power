@@ -37,7 +37,7 @@ import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeSt
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 
 const profileServiceClient = ProfileServiceClient.instance();
-const skillServiceClient = new SkillServiceClient();
+const skillServiceClient = SkillServiceClient.instance();
 
 export class AdminActionCreator {
 
@@ -386,7 +386,7 @@ export class AdminActionCreator {
     };
 
     private static skillAround = (category: APISkillCategory, skillName: string): APISkillServiceSkill => {
-        return {'id': -1, 'category': category, 'qualifier': skillName};
+        return {'id': -1, 'category': category, 'qualifier': skillName,versions:[]};
     };
 
     /**

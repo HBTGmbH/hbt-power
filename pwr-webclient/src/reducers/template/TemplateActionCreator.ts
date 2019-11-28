@@ -126,8 +126,6 @@ export namespace TemplateActionCreator {
     }
 
     export function AsyncChangeTemplate(template: Template) {
-
-
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             axios.post(TemplateService.changeTemplate(template.id), template)
                 .then((response: AxiosResponse) => {

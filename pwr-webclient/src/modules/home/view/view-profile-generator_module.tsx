@@ -7,6 +7,7 @@ import {Button, Dialog, Icon, List, ListItem,} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {Template} from '../../../model/view/Template';
+import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
@@ -16,6 +17,8 @@ import {PwrSelectableList} from '../../general/Pwr-selecable-list';
 import AppBar from '@material-ui/core/AppBar/AppBar';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
+import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
+
 
 interface ViewProfileGeneratorProps {
     viewProfile?: ViewProfile;
@@ -40,6 +43,8 @@ interface ViewProfileGeneratorDispatch {
     generate(viewProfileId: string, templateId: string): void;
 
     navigateTo(target: string): void;
+
+    loadAllTemplates(): void;
 }
 
 class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
@@ -58,6 +63,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         return {
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
+            loadAllTemplates: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates())
         };
     }
 
@@ -66,6 +72,14 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         & ViewProfileGeneratorDispatch) {
         super(props);
         this.resetState(props);
+    }
+
+    componentDidUpdate(prevProps: Readonly<ViewProfileGeneratorProps
+        & ViewProfileGeneratorLocalProps
+        & ViewProfileGeneratorDispatch>): void {
+        if (this.props.open && !prevProps.open){
+            this.props.loadAllTemplates();
+        }
     }
 
     private resetState(props: ViewProfileGeneratorProps
@@ -138,7 +152,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                         <Toolbar>
                             <Button
                                 color={'secondary'}
-                                variant={"outlined"}
+                                variant={'outlined'}
                                 className="mui-margin"
                                 disabled={this.state.activeTemplateId == ''}
                                 onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}

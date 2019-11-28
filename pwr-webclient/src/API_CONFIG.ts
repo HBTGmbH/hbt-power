@@ -111,6 +111,7 @@ export function postCategorizeSkill() {
 }
 
 export function getFullTree() {
+    //return 'http://localhost:9003/skill/tree/debug';
     return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/tree';
 }
 
@@ -137,6 +138,10 @@ export function deleteLocaleFromCategory(categoryId: number, locale: string) {
 
 export function skillLocale(categoryId: number, language: string) {
     return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/' + categoryId + '/locale/' + language;
+}
+
+export function skillVersion(skillId: number, newVersion: string) {
+    return POWER_API_HOST_SKILL + ':' + POWER_API_PORT_SKILL + POWER_API_SUFFIX_SKILL + '/skill/' + skillId + '/version/' + newVersion;
 }
 
 export function postNewCategory(parentId: number) {

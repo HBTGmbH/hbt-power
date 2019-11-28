@@ -18,7 +18,6 @@ import {routerMiddleware, RouterState} from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
 import {CrossCuttingReducer} from './crosscutting/CrossCuttingReducer';
 import {CrossCuttingStore} from '../model/crosscutting/CrossCuttingStore';
-import {TemplateStore} from './template/TemplateStore';
 import {TemplateReducer} from './template/TemplateReducer';
 import {reduceProfile} from './profile-new/profile/ProfileReducer';
 import {reduceSuggestion} from './suggestions/SuggestionReducer';
@@ -30,6 +29,9 @@ import {deferredActionMiddleware} from './deferred/DeferredActionMiddleware';
 import {asyncActionUnWrapper} from './deferred/AsyncActionUnWrapper';
 import {ReportStore} from './report/ReportStore';
 import {reduceReports} from './report/ReportReducer';
+import {SkillVersionStore} from './profile-skill/SkillVersionStore';
+import {reduceSkillVersions} from './profile-skill/SkillVersionReducer';
+import {TemplateStore} from './template/TemplateStore';
 
 
 export interface ApplicationState {
@@ -42,10 +44,10 @@ export interface ApplicationState {
     navigationSlice: NavigationStore;
     viewProfileSlice: ViewProfileStore;
     templateSlice: TemplateStore;
-    reportStore: ReportStore;
     crossCutting: CrossCuttingStore;
     router: Reducer<RouterState>;
     deferred: DeferredStore;
+    reportStore:ReportStore;
 }
 
 
@@ -58,10 +60,10 @@ const ApplicationStore: Reducer<ApplicationState> = combineReducers({
     metaDataReducer: MetaDataReducer.reduce,
     navigationSlice: NavigationReducer.reduce,
     viewProfileSlice: ViewProfileReducer.reduce,
-    reportStore: reduceReports,
     crossCutting: CrossCuttingReducer.reduce,
     templateSlice: TemplateReducer.reduce,
-    deferred: reduceDeferredAction
+    deferred: reduceDeferredAction,
+    reportStore: reduceReports
 });
 
 export const PWR_HISTORY = createHistory();

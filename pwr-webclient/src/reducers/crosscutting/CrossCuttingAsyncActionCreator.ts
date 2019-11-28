@@ -38,7 +38,6 @@ export namespace CrossCuttingAsyncActionCreator {
                     dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                     dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                     dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
-                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
                     window.localStorage.setItem(COOKIE_INITIALS_NAME, initials);
                     if (navTarget) {
                         dispatch(NavigationActionCreator.AsyncNavigateTo(navTarget));

@@ -19,6 +19,7 @@ import {SkillStore} from '../../../../model/skill/SkillStore';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
+import {PwrSkillVersionInfo} from '../../../general/pwr-skill-version-info_module';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
@@ -40,6 +41,8 @@ interface AdminSkillTree2LocalState {
     deleteConfirmationOpen: boolean;
     categorySearcherOpen: boolean;
     moveCategorySearcher: boolean;
+
+    newVersionText: string;
 
 }
 
@@ -96,6 +99,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             categorySearcherOpen: false,
             skillNameOpen: false,
             moveCategorySearcher: false,
+            newVersionText: '',
         };
     }
 
@@ -127,7 +131,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
-            changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering)))
+            changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering))),
         };
     };
 
@@ -237,7 +241,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
 
     private invokeMoveSelectedCategory = (newCategoryId: number) => {
         let selectedCategory = this.getSelectedCategory();
-        // console.log("NewCategoryId", newCategoryId);
         this.props.moveCategory(newCategoryId, selectedCategory.id());
         this.closeCategorySearcher();
     };
@@ -275,7 +278,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
 
     private invokeMoveSelectedSkill = (newCategoryId: number) => {
         let selectedSkill = this.getSelectedSkill();
-        //console.log('NewCategoryId', newCategoryId);
         this.props.moveSkill(newCategoryId, selectedSkill.categoryId(), selectedSkill.id());
         this.closeCategorySearcher();
     };
@@ -283,6 +285,9 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
     private SkillInfo = () => {
         let selectedSkill = this.getSelectedSkill();
         return <div>
+
+            <ListSubheader>Versionen</ListSubheader>
+            <PwrSkillVersionInfo skillName={selectedSkill.qualifier()}/>
             <ListSubheader>{selectedSkill.qualifier()}</ListSubheader>
             <LocalizationTable
                 localizations={selectedSkill.qualifiers()}
@@ -538,3 +543,4 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
  * @since 17.07.2017
  */
 export const AdminSkillTree2: React.ComponentClass<AdminSkillTree2LocalProps> = connect(AdminSkillTree2Module.mapStateToProps, AdminSkillTree2Module.mapDispatchToProps)(AdminSkillTree2Module);
+;

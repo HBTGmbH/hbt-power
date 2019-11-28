@@ -172,6 +172,13 @@ export enum ActionType {
     AsyncDeleteEntry = "[Async] Delete Entry",
 
     ResetReportStore = "[Report] resets the state",
-    LoadReportsAction = "[Report] loads all Reports for a Consultant"
+    LoadReportsAction = "[Report] loads all Reports for a Consultant",
 
+
+
+    LoadVersionsForSkill = "[SkillVersions] LoadVersionsForSkill",
+    ClearVersions = "[SkillVersions] ClearVersions",
+    DeleteVersionFromSkill = "[SkillVersions] DeleteVersionFromSkill",
+
+    AsyncDeleteVersion = "[Async] DeleteVersionFromSkill",
 }
