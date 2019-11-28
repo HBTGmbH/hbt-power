@@ -174,8 +174,8 @@ export namespace ViewProfileService {
     import renderTraining = EntryRenderers.renderTraining;
 
     function base() {
-        return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
-        //return 'http://localhost:9008';
+        //return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
+        return 'http://localhost:9008';
     }
 
     export function getParentCategories(skillName: string) {
@@ -236,6 +236,10 @@ export namespace ViewProfileService {
 
     export function patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number, entryType: SortableEntryType, field: SortableEntryField) {
         return patchBase(initials, id) + container + '/' + containerIndex + '/' + SortableEntryType[entryType] + '/' + field + '/order';
+    }
+
+    export function patchToggleVersion(initials: string, id: string, skillName: string, versionName: string, isEnabled: boolean) {
+        return patchBase(initials, id) + 'SKILL/visibility/version/' + isEnabled;
     }
 
     export function postReport(initials: string, viewProfileId: string, templateId: string) {
