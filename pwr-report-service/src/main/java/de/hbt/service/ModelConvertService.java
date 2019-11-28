@@ -235,10 +235,12 @@ import java.util.stream.Collectors;
             sExport.setGruppe(displayCategoryNamesBySkill.get(viewSkill.getName()));
             sExport.setLevel(toSkillLevel(viewSkill.getRating()));
             sExport.setGroupIndex(groupIndexBySkillName.get(viewSkill.getName()));
-            String collect = viewSkill.getVersions().stream().filter(ViewSkillVersion::isEnabled)
-                    .map(ViewSkillVersion::getName).collect(Collectors.joining(", "));
+            String collect = viewSkill.getVersions().stream()
+                    .filter(ViewSkillVersion::isEnabled)
+                    .map(ViewSkillVersion::getName)
+                    .collect(Collectors.joining(", "));
             if (!collect.equals("")) {
-                sExport.setVersions(Collections.singletonList(collect));
+                sExport.setVersions(collect);
             }
             return sExport;
         }).collect(Collectors.toList());

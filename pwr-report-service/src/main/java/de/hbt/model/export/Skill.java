@@ -52,7 +52,7 @@ public class Skill implements Serializable {
 
 
     @XmlElement(name="version")
-    private List<String> versions;
+    private String versions;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -98,7 +98,7 @@ public class Skill implements Serializable {
         this.groupIndex = groupIndex;
     }
 
-    public List<String> getVersions() { return versions; }
+    public String getVersions() { return versions; }
 
-    public void setVersions(List<String> versions) { this.versions = versions; }
+    public void setVersions(String versions) { this.versions = versions; }
 }

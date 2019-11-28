@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,7 +14,7 @@ public class ViewSkill implements ViewEntry {
     private Integer rating;
     private Boolean enabled;
 
-    private List<ViewSkillVersion> versions;
+    private List<ViewSkillVersion> versions = new ArrayList<>();
 
     @JsonBackReference(value = "refSkills")
     private ViewCategory category;
