@@ -90,24 +90,24 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         this.props.loadAllTemplateData();
     };
 
-    private ReportDeleteButton = (props) => {
+    private ReportDeleteButton = (id:number) => {
         return <Button
             style={{marginLeft: '8px', marginTop: '5px', backgroundColor: '#ff8e01'}}
             variant={'contained'}
             className="mui-margin pwr-btn-error"
-            onMouseDown={() => { this.deleteReport(props.id); }}
+            onMouseDown={() => { this.deleteReport(id); }}
         >
             <Icon className="material-icons">delete</Icon>
             {PowerLocalize.get('Action.Delete')}
         </Button>
     };
 
-    private StatusDisplay = (props) => {
-        const status = props.status;
-        const id = props.id;
+    private StatusDisplay = (status:string, id:number) => {
+        let body : JSX.Element;
+
         switch(status) {
             case "DONE":
-                return <div>
+                body =
                     <Button
                         variant="contained"
                         color="primary" style={{marginLeft: '8px', marginTop: '5px'}}
@@ -115,16 +115,22 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                     >
                         <Icon className="material-icons">get_app</Icon>
                         {PowerLocalize.get('Action.Download')}
-                    </Button>
-                    <this.ReportDeleteButton/>
-                </div>;
+                    </Button>;
+                break;
             case "ERROR":
-                return <ErrorOutline color="secondary"/>;
+                body = <ErrorOutline color="secondary"/>;
+                break;
             case "RUNNING":
-                return <Build color="secondary"/>;
+                body = <Build color="secondary"/>;
+                break;
             default:
-                return status;
+                body = <span>{status}</span>;
+                break;
         }
+        return <div>
+            {body}
+            {this.ReportDeleteButton(id)}
+        </div>;
     };
 
     downloadReport = (id: Number) => {
@@ -174,7 +180,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                         <TableCell>{value.viewProfileName}</TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
                                         <TableCell align="left">{value.createDate}</TableCell>
-                                        <TableCell align="left"><this.StatusDisplay status={value.reportStatus} id={value.id}/></TableCell>
+                                        <TableCell align="left">{this.StatusDisplay(value.reportStatus, value.id)}</TableCell>
                                     </TableRow>)
                             }
                         </TableBody>
