@@ -1,5 +1,5 @@
 export interface ReportData {
-    id: string;
+    id: number;
     initials: string;
     viewProfileName: string;
     reportStatus: string;
