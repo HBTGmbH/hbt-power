@@ -3,14 +3,15 @@ import {TemplateActions} from './TemplateActions';
 import {Template, TemplateSlice} from '../../model/view/Template';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
-import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import {ReportService, TemplateService} from '../../API_CONFIG';
+import {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {CrossCuttingActionCreator} from '../crosscutting/CrossCuttingActionCreator';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
-import {string} from 'prop-types';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction} from '../BaseActions';
-import {DeferrableAsyncAction} from '../deferred/DeferrableAsyncAction';
+import {TemplateClient} from '../../clients/TemplateClient';
+import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
+
+const templateClient = TemplateClient.instance();
 
 export namespace TemplateActionCreator {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
@@ -78,10 +79,10 @@ export namespace TemplateActionCreator {
     }
 
 
-    export function SetPreview(tempalteId: string, filename: string, content: string, file: File): SetPreviewAction {
+    export function SetPreview(templateId: string, filename: string, content: string, file: File): SetPreviewAction {
         return {
             type: ActionType.SetPreview,
-            templateId: tempalteId,
+            templateId: templateId,
             filename: filename,
             content: content,
             file: file,
@@ -94,17 +95,16 @@ export namespace TemplateActionCreator {
     /**
      * Fuegt ein vom view-service empfangenes Template dem TemplateState hinzu
      *
-     * @param {AxiosResponse} response : die Response des view-service
+     * @param templateResponse
      * @param {Dispatch<ApplicationState>} dispatch
      * @constructor
      */
-    function TemplateReceived(response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
-        let template: Template = new Template(response.data);
+    function TemplateReceived(templateResponse: Template, dispatch: redux.Dispatch<ApplicationState>) {
+        let template: Template = new Template(templateResponse);
         dispatch(SetTemplate(template));
     }
 
     function PreviewReceived(id: string, response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
-        console.log('Preview Received ', response);
         dispatch(SetPreview(id, 'hardcoded filename', 'hardcoded content', response.data));
     }
 
@@ -127,56 +127,24 @@ export namespace TemplateActionCreator {
 
     export function AsyncChangeTemplate(template: Template) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-            axios.post(TemplateService.changeTemplate(template.id), template)
-                .then((response: AxiosResponse) => {
-                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                })
-                .catch((error: AxiosError) => {
-                    dispatch(TemplateActionCreator.TemplateRequestFailed());
-                    console.error(error);
-                });
+            templateClient.changeTemplate(template.id, template)
+                .then((response) => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
+
+                .catch(() => dispatch(TemplateActionCreator.TemplateRequestFailed()))
+                .catch((error: AxiosError) => console.error(error));
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteTemplate)
+    export function AsyncDeleteTemplate(id: string) {
+        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+            templateClient.deleteTemplate(id)
+                .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
 
-    export function AsyncDeleteTemplate(id: string): DeferrableAsyncAction {
-        return {
-            asyncAction: () => (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) => {
-                axios.delete(TemplateService.deleteTemplate(id))
-                    .then((response: AxiosResponse) => {
-                        dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                    })
-                    .catch((error: AxiosError) => {
-                        dispatch(TemplateActionCreator.TemplateRequestFailed());
-                        console.error(error);
-                    });
-            },
-            type: ActionType.DeleteEntry
+                .catch(() => dispatch(TemplateActionCreator.TemplateRequestFailed()))
+                .catch((error: AxiosError) => console.error(error));
         };
     }
-
-    /*
-        export function AsyncCreateTemplate(name: string, description: string, initials: string, path: string) {
-            return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
-                dispatch(CrossCuttingActionCreator.startRequest());
-                axios.post(TemplateService.CreateTemplate(), {
-                    description: description,
-                    path: path,
-                    createUser: initials,
-                })
-                    .then((response: AxiosResponse) => {
-                        TemplateReceived(response, dispatch);
-                        dispatch(CrossCuttingActionCreator.endRequest());
-                    })
-                    .catch((error: AxiosError) => {
-                        dispatch(CrossCuttingActionCreator.endRequest());
-                        dispatch(TemplateActionCreator.TemplateRequestFailed());
-                        console.error(error);
-                    });
-            };
-        }
-    */
-
 
     export function DownloadReportFile(location: string) {
         console.log('File received');
@@ -202,14 +170,12 @@ export namespace TemplateActionCreator {
     export function AsyncDownloadFile(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.get(ReportService.getFileById(id)).then((response: AxiosResponse) => {
+            templateClient.getFileById(id)
+                .then((response: AxiosResponse) => DownloadFile(response))
+                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
 
-                DownloadFile(response);
-                dispatch(CrossCuttingActionCreator.endRequest());
-            }).catch((error: AxiosError) => {
-                dispatch(CrossCuttingActionCreator.endRequest());
-                console.error('AsyncDownloadFile', error);
-            });
+                .catch((error: AxiosError) => console.error('AsyncDownloadFile', error))
+                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
         };
     }
 
@@ -217,14 +183,14 @@ export namespace TemplateActionCreator {
     function AsyncLoadTemplate(id: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.get(TemplateService.getTemplateById(id)).then((response: AxiosResponse) => {
-                //console.log('AsyncLoadTemplate resonse:', response.data);
-                TemplateReceived(response, dispatch);
-                dispatch(CrossCuttingActionCreator.endRequest());
-            }).catch((error: AxiosError) => {
-                dispatch(CrossCuttingActionCreator.endRequest());
-                console.error('AsyncLoadTemplate', error);
-            });
+            templateClient.getTemplateById(id)
+                .then((template) => TemplateReceived(template, dispatch))
+                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
+
+                .catch((error: AxiosError) => console.error('AsyncLoadTemplate', error))
+                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
+
+
         };
     }
 
@@ -232,14 +198,12 @@ export namespace TemplateActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(ClearTemplates());
-            axios.get(TemplateService.getAllTemplates()).then((response: AxiosResponse) => {
-                let ids: Array<string> = response.data;
-                ids.forEach(id => dispatch(AsyncLoadTemplate(id)));
-                dispatch(CrossCuttingActionCreator.endRequest());
-            }).catch(function (error: any) {
-                console.error(error);
-                dispatch(CrossCuttingActionCreator.endRequest());
-            });
+            templateClient.getAllTemplates()
+                .then((response) => response.forEach(id => dispatch(AsyncLoadTemplate(id))))
+                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
+
+                .catch((error) => console.error(error))
+                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
         };
     }
 
@@ -248,16 +212,12 @@ export namespace TemplateActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             if (id != '') {
                 dispatch(CrossCuttingActionCreator.startRequest());
-                axios.get(TemplateService.getPreview(id), {})// url address
-                    .then((response: AxiosResponse) => {
-                        console.log(response);
-                        PreviewReceived(id, response.data, dispatch);      // in den state laden
-                        dispatch(CrossCuttingActionCreator.endRequest());
-                    })
-                    .catch(function (error: any) {
-                        console.error(error);
-                        dispatch(CrossCuttingActionCreator.endRequest());
-                    });
+                templateClient.getPreview(id)
+                    .then((response: AxiosResponse) => PreviewReceived(id, response.data, dispatch))
+                    .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
+
+                    .catch((error) => console.error(error))
+                    .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
             }
         };
     }
@@ -266,31 +226,22 @@ export namespace TemplateActionCreator {
     export function AsyncLoadAllPreviews() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.get(TemplateService.getAllPreviews())
-                .then((response: AxiosResponse) => {
-                        console.log('All Preview Files', response.data);
-                        dispatch(CrossCuttingActionCreator.endRequest());
-                    }
-                )
-                .catch(function (error: any) {
-                    console.error(error);
-                    dispatch(CrossCuttingActionCreator.endRequest());
-                });
+            templateClient.getAllPreviews()
+                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
+
+                .catch((error) => console.error(error))
+                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
         };
     }
 
     export function AsyncLoadAllFiles() {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
-            axios.get(TemplateService.getAllFiles())
-                .then((response: AxiosResponse) => {
-                    console.log('All Files ', response.data);
-                    dispatch(CrossCuttingActionCreator.endRequest());
-                })
-                .catch(function (error: any) {
-                    console.error(error);
-                    dispatch(CrossCuttingActionCreator.endRequest());
-                });
+            templateClient.getAllFiles()
+                .then((response) => dispatch(CrossCuttingActionCreator.endRequest()))
+
+                .catch((error) => console.error(error))
+                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
         };
     }
 
@@ -310,20 +261,16 @@ export namespace TemplateActionCreator {
                     dispatch(AdminActionCreator.SetReportUploadProgress(percentProgress));
                 }
             };
-            // TODO mp move this into client
             dispatch(AdminActionCreator.SetReportUploadPending(true));
-            axios.post(TemplateService.uploadAsTemplate(), formData, config)
-                .then((response: AxiosResponse) => {
-                    dispatch(AdminActionCreator.SetReportUploadPending(false));
-                    dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                    Alerts.showSuccess('Template erfolgreich hochgeladen!');
-                    dispatch(AdminActionCreator.SetReportUploadProgress(0));
-                })
-                .catch(function (error: any) {
-                    dispatch(AdminActionCreator.SetReportUploadPending(false));
-                    Alerts.showError('Upload Fehlgeschlagen: ' + error.toString());
-                    dispatch(AdminActionCreator.SetReportUploadProgress(0));
-                });
+            templateClient.uploadAsTemplate(formData, config)
+                .then(() => dispatch(AdminActionCreator.SetReportUploadPending(false)))
+                .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
+                .then(() => Alerts.showSuccess('Template erfolgreich hochgeladen!'))
+                .then(() => dispatch(AdminActionCreator.SetReportUploadProgress(0)))
+
+                .catch((error) => Alerts.showError('Upload Fehlgeschlagen: ' + error.toString()))
+                .catch((error) => dispatch(AdminActionCreator.SetReportUploadPending(false)))
+                .catch((error) => dispatch(AdminActionCreator.SetReportUploadProgress(0)));
         };
     }
 }
