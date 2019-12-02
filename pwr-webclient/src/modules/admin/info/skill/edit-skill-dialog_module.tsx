@@ -6,12 +6,10 @@ import {Button, Dialog, DialogContent, DialogTitle, Step, StepLabel, Stepper} fr
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {SkillSearcher} from '../../../general/skill-search_module';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
-import {postCategorizeSkill} from '../../../../API_CONFIG';
-import {APISkillCategory} from '../../../../model/skill/SkillCategory';
 import {SkillReducer} from '../../../../reducers/skill/SkillReducer';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
+import {SkillServiceClient} from '../../../../clients/SkillServiceClient';
 
 interface EditSkillDialogProps {
 }
@@ -97,17 +95,11 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
         });
     };
     private loadSkillHierarchy = () => {
-        let config: AxiosRequestConfig = {params: {qualifier: this.state.newSkillName}};
-        axios.post(postCategorizeSkill(), null, config).then((response: AxiosResponse) => {
-            let apiCategory: APISkillCategory = response.data;
-            let hierarchy = SkillReducer.buildHierarchy(apiCategory);
-            hierarchy = this.state.newSkillName + ' => ' + hierarchy;
-            this.setState({skillHierarchy: hierarchy});
-        }).catch(error => {
-            console.error(error);
-            //console.log(error.response);
-            this.setState({skillHierarchy: 'Not available.'});
-        });
+
+        SkillServiceClient.instance().postCategorizeSkill(this.state.newSkillName)
+            .then(category => this.setState({skillHierarchy: this.state.newSkillName + ' => ' + SkillReducer.buildHierarchy(category)}))
+            .catch(error => console.error(error))
+            .catch(() => this.setState({skillHierarchy: 'Not available.'}));
     };
 
     private getStepContent = (index: number) => {

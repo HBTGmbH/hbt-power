@@ -31,7 +31,7 @@ export class TemplateClient extends PowerHttpClient {
         return this.executeRequest(axios.get(url));
     }
 
-    public uploadAsTemplate(formData:any, config: AxiosRequestConfig): Promise<Template> {
+    public uploadAsTemplate(formData: any, config: AxiosRequestConfig): Promise<Template> {
         const url = this.base() + '/template/';
         this.beginRequest();
         return this.executeRequest(axios.post(url, formData, config));
@@ -55,10 +55,15 @@ export class TemplateClient extends PowerHttpClient {
         return this.executeRequest(axios.get(url));
     }
 
-    public getPreview(id: string): Promise {
+    public getPreview(id: string) {
         const url = this.base() + '/template' + '/preview' + '/' + id;
         this.beginRequest();
         return this.executeRequest(axios.get(url));
+    }
+
+    public getPreviewURL(id: string): string {
+        return this.base() + '/template' + '/preview' + '/' + id;
+
     }
 
     public getAllPreviews(): Promise<Array<string>> {
@@ -78,7 +83,7 @@ export class TemplateClient extends PowerHttpClient {
         return POWER_API_HOST_REPORT + ':' + POWER_API_PORT_REPORT + POWER_API_SUFFIX_REPORT;
     }
 
-    public getFileById(id: string): Promise {
+    public getFileById(id: string) {
         const url = this.baseReport() + '/file/' + id;
         this.beginRequest();
         return this.executeRequest(axios.get(url));
