@@ -221,16 +221,16 @@ public class SkillController {
     }
 
     @ApiOperation(value = "Adds a version to a skill")
-    @PostMapping("{id}/version/{version}")
-    public ResponseEntity<Set<String>> addVersion(@PathVariable("id") Integer skillId, @PathVariable("version") String version) {
+    @PostMapping("{id}/version")
+    public ResponseEntity<Set<String>> addVersion(@PathVariable("id") Integer skillId, @RequestBody String version) {
         Skill skill = requireSkill(skillId);
         skillService.addVersion(skill, version);
         return ResponseEntity.ok(skill.getVersions());
     }
 
     @ApiOperation(value = "Deletes a version from a skill")
-    @DeleteMapping("{id}/version/{version}")
-    public ResponseEntity deleteVersion(@PathVariable("id") Integer skillId, @PathVariable("version") String version) {
+    @DeleteMapping("{id}/version")
+    public ResponseEntity deleteVersion(@PathVariable("id") Integer skillId, @RequestBody String version) {
         Skill skill = requireSkill(skillId);
         skillService.deleteVersion(skill, version);
         return ResponseEntity.ok().build();
