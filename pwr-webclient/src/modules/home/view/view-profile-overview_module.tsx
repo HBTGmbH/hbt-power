@@ -16,6 +16,7 @@ import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 import Grid from '@material-ui/core/Grid';
 import ReplayIcon from '@material-ui/icons/Replay';
 import {ViewProfileUpdateDialog} from './view-profile-update-dialog_module';
+import TextField from '@material-ui/core/TextField';
 
 
 interface ViewProfileOverviewProps {
