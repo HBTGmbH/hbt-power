@@ -41,15 +41,18 @@ export class SkillServiceClient extends PowerHttpClient {
     };
 
     public addSkillVersion = (skillId: number, version: string): Promise<string[]> => {
-        const url = this.base() + '/skill/' + skillId + '/version/' + version;
+        const url = this.base() + '/skill/' + skillId + '/version';
         this.beginRequest();
-        return this.executeRequest(axios.post(url));
+        return this.executeRequest(axios.post(url, version));
     };
 
     public deleteSkillVersion = (skillId: number, version: string) => {
-        const url = this.base() + '/skill/' + skillId + '/version/' + version;
+        const url = this.base() + '/skill/' + skillId + '/version';
+        const config: AxiosRequestConfig = {
+            data: version
+        };
         this.beginRequest();
-        return this.executeRequest(axios.delete(url));
+        return this.executeRequest(axios.delete(url, config));
     };
 
     public getSearchSkill = (config: AxiosRequestConfig) => {
@@ -94,7 +97,7 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.executeRequest(axios.post(url, config));
     };
 
-    public getFullTree = ():Promise<TCategoryNode> => {
+    public getFullTree = (): Promise<TCategoryNode> => {
         const url = this.base() + '/skill/tree';
         this.beginRequest();
         return this.executeRequest(axios.get(url));
