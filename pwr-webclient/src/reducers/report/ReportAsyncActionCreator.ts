@@ -1,6 +1,6 @@
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
-import {ReportServiceClient} from './ReportServiceClient';
+import {ReportServiceClient} from '../../clients/ReportServiceClient';
 import {reportLoadAction} from './ReportActions';
 
 const reportServiceClient = ReportServiceClient.instance();

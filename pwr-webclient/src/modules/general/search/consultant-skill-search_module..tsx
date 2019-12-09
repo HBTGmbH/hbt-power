@@ -1,10 +1,11 @@
 import * as React from 'react';
-import axios, {AxiosResponse} from 'axios';
+import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import * as Immutable from 'immutable';
 import {List, ListItem, Paper} from '@material-ui/core';
-import {getSearchSkill, postFindConsultantBySkills} from '../../../API_CONFIG';
 import {APISkill} from '../../../model/APIProfile';
 import {PwrAutoComplete} from '../pwr-auto-complete';
+import {StatisticsServiceClient} from '../../../clients/StatisticsServiceClient';
+import {SkillServiceClient} from '../../../clients/SkillServiceClient';
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 const ChipInput = require('material-ui-chip-input').default;
 
@@ -48,32 +49,26 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     }
 
     private executeSearch = () => {
-        axios.post(postFindConsultantBySkills(), this.state.currentSearchSkills.toArray()).then((response: AxiosResponse) => {
-            this.setState({
-                foundConsultants: Immutable.List<ConsultantSkillInfo>(response.data)
-            });
-        }).catch((error: any) => {
-            this.setState({
-                foundConsultants: Immutable.List<ConsultantSkillInfo>()
-            });
-        });
+        StatisticsServiceClient.instance().postFindConsultantBySkills(this.state.currentSearchSkills.toArray())
+            .then((response: AxiosResponse) =>
+                this.setState({foundConsultants: Immutable.List<ConsultantSkillInfo>(response.data)}))
+            .catch((error: any) =>
+                this.setState({foundConsultants: Immutable.List<ConsultantSkillInfo>()}));
     };
 
     public componentDidUpdate(prevProps: ConsultantSkillSearchProps, prevState: ConsultantSkillSearchState) {
-        if (this.state.currentSearchSkills != prevState.currentSearchSkills){
+        if (this.state.currentSearchSkills != prevState.currentSearchSkills) {
             this.executeSearch();
         }
     };
 
     private handleAddSkill = (skill: string) => {
-        //console.log('Add skill', skill);
         this.setState({
             currentSearchSkills: this.state.currentSearchSkills.push(skill)
         });
     };
 
     private handleRemoveSkill = (skill: string) => {
-        //console.log('Remove skill', skill);
         this.setState({
             currentSearchSkills: Immutable.List<string>(this.state.currentSearchSkills.filter(s => s != skill))
         });
@@ -83,20 +78,19 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     private handleUpdateInput = (value: string) => {
         if (value.trim().length > 0) {
             let prev = this.state.currentSuggestSkills;
-            let reqParams = {
-                maxResults: this.MAX_RESULTS,
-                searchterm: value
+            let config: AxiosRequestConfig = {
+                params: {
+                    maxResults: this.MAX_RESULTS,
+                    searchterm: value
+                }
             };
             this.setState({
                 searchTerm: value
             });
-            axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
-                this.setState({
-                    currentSuggestSkills: response.data
-                });
-            }).catch((error: any) => {
-                console.error((error));
-            });
+            const url = SkillServiceClient.instance().getSearchSkillURL();
+            axios.get(url, config)
+                .then((response: AxiosResponse) => this.setState({currentSuggestSkills: response.data}))
+                .catch((error: any) => console.error((error)));
         }
     };
 

@@ -123,11 +123,11 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             createCategory: (parentId, qualifier) => dispatch(SkillActionCreator.AsyncCreateCategory(qualifier, parentId)),
             deleteCategory: categoryId => dispatch(SkillActionCreator.AsyncDeleteCategory(categoryId)),
             moveCategory: (newCategoryId, selectedCategoryId) => dispatch(SkillActionCreator.AsyncMoveCategory(newCategoryId, selectedCategoryId)),
-            moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.Skill.AsyncMoveSkill(skillId, newCategory, oldCategory)),
-            createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.Skill.AsyncCreateSkill(qualifier, categoryId)),
-            deleteSkill: skillId => dispatch(SkillActionCreator.Skill.AsyncDeleteSkill(skillId)),
-            addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.Skill.AsyncAddSkillLocale(skillId, language, qualifier)),
-            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.Skill.AsyncDeleteSkillLocale(skillId, language)),
+            moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.AsyncMoveSkill(skillId, newCategory, oldCategory)),
+            createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.AsyncCreateSkill(qualifier, categoryId)),
+            deleteSkill: skillId => dispatch(SkillActionCreator.AsyncDeleteSkill(skillId)),
+            addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddSkillLocale(skillId, language, qualifier)),
+            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.AsyncDeleteSkillLocale(skillId, language)),
             setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
@@ -543,4 +543,3 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
  * @since 17.07.2017
  */
 export const AdminSkillTree2: React.ComponentClass<AdminSkillTree2LocalProps> = connect(AdminSkillTree2Module.mapStateToProps, AdminSkillTree2Module.mapDispatchToProps)(AdminSkillTree2Module);
-;

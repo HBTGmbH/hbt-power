@@ -137,6 +137,7 @@ export enum ActionType {
     ChangeTemplate = "ChangeTemplate",
     SetPreview = "SetPreview",
     TemplateRequestFailed = "TemplateRequestFailed",
+    AsyncDeleteTemplate = "[Async] DeleteTemplate",
 
     // == Profile Actions
     SetDescription = "[Profile] Set Description",
@@ -175,7 +176,7 @@ export enum ActionType {
     LoadReportsAction = "[Report] loads all Reports for a Consultant",
 
 
-
+    // == Skill Versions
     LoadVersionsForSkill = "[SkillVersions] LoadVersionsForSkill",
     ClearVersions = "[SkillVersions] ClearVersions",
     DeleteVersionFromSkill = "[SkillVersions] DeleteVersionFromSkill",

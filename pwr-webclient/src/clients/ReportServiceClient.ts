@@ -1,7 +1,7 @@
-import {PowerHttpClient} from '../../clients/PowerHttpClient';
+import {PowerHttpClient} from './PowerHttpClient';
 import axios from 'axios';
-import {ReportData} from '../../model/view/ReportData';
-import {TemplateActionCreator} from '../template/TemplateActionCreator';
+import {ReportData} from '../model/view/ReportData';
+import {TemplateActionCreator} from '../reducers/template/TemplateActionCreator';
 
 declare const POWER_REPORT_SERVICE_URL: string;
 
@@ -39,6 +39,12 @@ export class ReportServiceClient  extends PowerHttpClient{
     public deleteReport(id): Promise<unknown> {
         const url = this.base() + "/report/delete/" + id;
         return this.executeRequest(axios.delete(url));
+    }
+
+    public getFileById(id: string) {
+        const url = this.base() + '/file/' + id;
+        this.beginRequest();
+        return this.executeRequest(axios.get(url));
     }
 
 }

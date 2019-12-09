@@ -16,7 +16,7 @@ const unconditional = () => true;
 const deferredActions: DeferrableAction<ApplicationState>[] = [
     {
         type: ActionType.SelectProject,
-        condition: (state, action) => selectedProjectHasChanged(state.profileStore)  && selectIndexHasChanged(state.profileStore, action.value),
+        condition: (state, action) => selectedProjectHasChanged(state.profileStore) && selectIndexHasChanged(state.profileStore, action.value),
         makeAction: action => deferUnsavedChanges(action)
     },
     {
@@ -31,6 +31,11 @@ const deferredActions: DeferrableAction<ApplicationState>[] = [
     },
     {
         type: ActionType.AsyncDeleteVersion,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteTemplate,
         condition: unconditional,
         makeAction: action => deferDeleteEntry(action)
     }
