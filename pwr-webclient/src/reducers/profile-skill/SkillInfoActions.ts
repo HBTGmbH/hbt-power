@@ -1,5 +1,6 @@
 import {AbstractAction} from '../BaseActions';
 import {ActionType} from '../ActionType';
+import {ProfileSkill} from '../profile-new/profile/model/ProfileSkill';
 
 export interface SkillVersionsLoadAction extends AbstractAction {
     versions: string[];
@@ -23,5 +24,16 @@ export function newSkillVersionDeleteAction(versionToDelete: string): SkillVersi
     return {
         type: ActionType.DeleteVersionFromSkill,
         versionToDelete: versionToDelete
+    };
+}
+
+export interface SkillInfoLoadAction extends AbstractAction {
+    skill: ProfileSkill;
+}
+
+export function newSkillInfoLoadAction(skill: ProfileSkill): SkillInfoLoadAction {
+    return {
+        type: ActionType.DeleteVersionFromSkill,
+        skill: skill
     };
 }

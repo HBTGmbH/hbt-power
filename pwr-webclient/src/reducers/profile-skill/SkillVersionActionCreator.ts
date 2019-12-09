@@ -1,7 +1,7 @@
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
-import {newSkillVersionDeleteAction, newSkillVersionsLoadAction} from './SkillVersionActions';
+import {newSkillVersionDeleteAction, newSkillVersionsLoadAction} from './SkillInfoActions';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 import {ActionType} from '../ActionType';
 

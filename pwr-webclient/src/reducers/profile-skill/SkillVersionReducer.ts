@@ -1,9 +1,9 @@
 import {AbstractAction} from '../BaseActions';
-import {emptySkillVersionStore, SkillVersionStore} from './SkillVersionStore';
+import {emptySkillInfoStore, SkillInfoStore} from './SkillInfoStore';
 import {ActionType} from '../ActionType';
-import {SkillVersionDeleteAction, SkillVersionsLoadAction} from './SkillVersionActions';
+import {SkillInfoLoadAction, SkillVersionDeleteAction, SkillVersionsLoadAction} from './SkillInfoActions';
 
-export function reduceSkillVersions(store: SkillVersionStore = emptySkillVersionStore, action: AbstractAction): SkillVersionStore {
+export function reduceSkillVersions(store: SkillInfoStore = emptySkillInfoStore, action: AbstractAction): SkillInfoStore {
     switch (action.type) {
         case ActionType.LoadVersionsForSkill: {
             const act = action as SkillVersionsLoadAction;

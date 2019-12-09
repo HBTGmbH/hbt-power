@@ -177,9 +177,10 @@ export enum ActionType {
 
 
     // == Skill Versions
-    LoadVersionsForSkill = '[SkillVersions] LoadVersionsForSkill',
-    ClearVersions = '[SkillVersions] ClearVersions',
-    DeleteVersionFromSkill = '[SkillVersions] DeleteVersionFromSkill',
+    LoadVersionsForSkill = '[SkillInfo] LoadVersionsForSkill',
+    ClearVersions = '[SkillInfo] ClearVersions',
+    DeleteVersionFromSkill = '[SkillInfo] DeleteVersionFromSkill',
+    LoadSkillInfo = '[SkillInfo] LoadSkillInfo',
 
     AsyncDeleteVersion = '[Async] DeleteVersionFromSkill',
 }

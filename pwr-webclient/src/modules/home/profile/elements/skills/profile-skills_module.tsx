@@ -43,7 +43,6 @@ interface ProfileSkillsDispatch {
 class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProps & ProfileSkillsLocalProps & ProfileSkillsDispatch, ProfileSkillsLocalState> {
 
 
-    // TODO selected skill nach änderung neu setzten um alte referenz zu löschen
 
     constructor(props: ProfileSkillsProps & ProfileSkillsLocalProps & ThemeProps & ProfileSkillsDispatch) {
         super(props);

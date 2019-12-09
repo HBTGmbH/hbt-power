@@ -29,7 +29,7 @@ import {deferredActionMiddleware} from './deferred/DeferredActionMiddleware';
 import {asyncActionUnWrapper} from './deferred/AsyncActionUnWrapper';
 import {ReportStore} from './report/ReportStore';
 import {reduceReports} from './report/ReportReducer';
-import {SkillVersionStore} from './profile-skill/SkillVersionStore';
+import {SkillInfoStore} from './profile-skill/SkillInfoStore';
 import {reduceSkillVersions} from './profile-skill/SkillVersionReducer';
 import {TemplateStore} from './template/TemplateStore';
 
@@ -48,7 +48,7 @@ export interface ApplicationState {
     router: Reducer<RouterState>;
     deferred: DeferredStore;
     reportStore: ReportStore;
-    skillVersionStore: SkillVersionStore;
+    skillVersionStore: SkillInfoStore;
 }
 
 

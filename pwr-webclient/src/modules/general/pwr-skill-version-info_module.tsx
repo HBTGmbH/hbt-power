@@ -11,9 +11,9 @@ import AddIcon from '@material-ui/icons/Add';
 import {SkillVersionActionCreator} from '../../reducers/profile-skill/SkillVersionActionCreator';
 import {KeyboardEvent} from 'react';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {NON_PERSISTENT_ID} from '../../model/PwrConstants';
 
 interface PwrSkillVersionInfoProps {
-    initials: string;
     serviceSkillId: number;
     allVersions: string[];
 }
@@ -50,11 +50,9 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
     }
 
     static mapStateToProps(state: ApplicationState, localProps: PwrSkillVersionInfoLocalProps): PwrSkillVersionInfoProps {
-        const initials = state.profileStore.consultant != null ? state.profileStore.consultant.initials : 'error';
         const versions = state.skillVersionStore.currentVersions ? state.skillVersionStore.currentVersions : [];
         const skillId = state.skillVersionStore.serviceSkillId;
         return {
-            initials: initials,
             allVersions: versions,
             serviceSkillId: skillId,
         };
@@ -85,7 +83,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
 
 
     private handleAddNewVersion = () => {
-        if (this.props.serviceSkillId >= 0 && this.state.newVersionText) {
+        if (this.props.serviceSkillId != NON_PERSISTENT_ID && this.state.newVersionText) {
             this.props.addNewVersion(this.props.serviceSkillId, this.state.newVersionText);
             this.setState({
                 anchorEl: null,
