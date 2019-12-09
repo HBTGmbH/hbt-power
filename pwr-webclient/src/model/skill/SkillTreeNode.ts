@@ -76,8 +76,9 @@ export class SkillTreeNode {
     }
 
     public removeCategoryFromTree(categoryId: number): SkillTreeNode {
-        let index =this.getChildIndex(categoryId);
-        if(index !== -1) {let category = this.childNodes[index];
+        let index = this.getChildIndex(categoryId);
+        if (index !== -1) {
+            let category = this.childNodes[index];
             this.removeCategoryFromChildren(categoryId);
             return category;
         } else if (this.childNodes.length > 0) {
@@ -103,11 +104,11 @@ export class SkillTreeNode {
         }
     }
 
-    public setVisibility(nodeId: number, status:boolean){
-        if(this.skillCategoryId === nodeId){
+    public setVisibility(nodeId: number, status: boolean) {
+        if (this.skillCategoryId === nodeId) {
             this.open = status;
         }
-        this.childNodes.forEach(childNode => childNode.setVisibility(nodeId,true));
+        this.childNodes.forEach(childNode => childNode.setVisibility(nodeId, true));
     }
 
     public filter(onlyCustomSkills: boolean, searchTerm: string, skillsById: Immutable.Map<number, SkillServiceSkill>, skillCategoriesById: Immutable.Map<number, SkillCategory>) {
@@ -170,7 +171,7 @@ export class SkillTreeNode {
         if (this.skillCategoryId === parentNodeId) {
             this.childNodes.push(categoryNod);
         } else {
-            this.childNodes.forEach(childNode => childNode.addNodeToTree(categoryNod, parentNodeId))
+            this.childNodes.forEach(childNode => childNode.addNodeToTree(categoryNod, parentNodeId));
         }
     }
 }

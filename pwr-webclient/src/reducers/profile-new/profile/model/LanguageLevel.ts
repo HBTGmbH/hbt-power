@@ -22,12 +22,16 @@ export function toLanguageLevel(name: string): LanguageLevel {
 
 export function translationToLevel(translation: string): LanguageLevel {
 
-    console.log("TransLevel:",translation);
+    console.log('TransLevel:', translation);
     switch (translation) {
-        case'Anfänger': return LanguageLevel.BASIC;
-        case 'Fortgeschrtten'  : return LanguageLevel.ADVANCED;
-        case 'Verhandlungssicher':return LanguageLevel.BUSINESS_FLUENT;
-        case 'Muttersprache' : return LanguageLevel.NATIVE;
+        case'Anfänger':
+            return LanguageLevel.BASIC;
+        case 'Fortgeschrtten'  :
+            return LanguageLevel.ADVANCED;
+        case 'Verhandlungssicher':
+            return LanguageLevel.BUSINESS_FLUENT;
+        case 'Muttersprache' :
+            return LanguageLevel.NATIVE;
     }
     return null;
 }

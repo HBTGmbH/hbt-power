@@ -1,4 +1,4 @@
-import {TemplateStore} from '../../model/view/TemplateStore';
+import {TemplateStore} from './TemplateStore';
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
 import {isNullOrUndefined} from 'util';
@@ -35,7 +35,6 @@ export namespace TemplateReducer {
             }
             case ActionType.TemplateRequestFailed: {
                 console.error('TemplateRequestFailed');
-                console.log('Template Store: ', store.templates());
                 return store.templates();
             }
             case ActionType.SetPreview : {

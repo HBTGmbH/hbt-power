@@ -54,7 +54,7 @@ class PwrConfirmDeferredActionDialogModule extends React.Component<ConfirmDeferr
 
     handleKeyDown = (key: string) => {
         if (key === 'Enter') {
-            this.props.confirmAction()
+            this.props.confirmAction();
         }
         if (key === 'Escape') {
             this.props.rejectAction();

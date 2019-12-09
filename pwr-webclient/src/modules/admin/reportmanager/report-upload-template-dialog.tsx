@@ -12,7 +12,6 @@ import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Icon from '@material-ui/core/Icon/Icon';
 import Paper from '@material-ui/core/Paper/Paper';
 import TextField from '@material-ui/core/TextField/TextField';
-import {ReportPreview} from './report-preview_module';
 import Dropzone from 'react-dropzone';
 import {isNullOrUndefined} from 'util';
 import CloudUpload from '@material-ui/icons/CloudUpload';
@@ -32,7 +31,6 @@ interface ReportUploadTemplateProps {
 }
 
 interface ReportUploadTemplateDispatch {
-    loadPreview(id: string): void;
 
     saveTemplate(file: File, name: string, desc: string, createUser: string): void;
 
@@ -60,7 +58,6 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
 
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportUploadTemplateDispatch {
         return {
-            loadPreview: (id: string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
             saveTemplate: (file: any, name: string, desc: string, createUser: string) => dispatch(TemplateActionCreator.AsyncUploadFileAsTemplate(file, name, desc, createUser)),
         };
     }
@@ -132,7 +129,8 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
         }
     };
 
-    private Progress = () => this.props.pending ? <LinearProgress variant="determinate" value={this.props.progressPercent} /> : <></>;
+    private Progress = () => this.props.pending ?
+        <LinearProgress variant="determinate" value={this.props.progressPercent}/> : <></>;
 
     private renderUpload = () => {
         return <div style={{padding: '2em'}} className={'Report-Uploader'}>

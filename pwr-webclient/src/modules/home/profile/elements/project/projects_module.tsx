@@ -101,7 +101,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
                     </ListItem>
                 </List>
             </div>
-            <div className="col-md-9" id="selected-project" >
+            <div className="col-md-9" id="selected-project">
                 <SelectedProject/>
             </div>
         </div>;

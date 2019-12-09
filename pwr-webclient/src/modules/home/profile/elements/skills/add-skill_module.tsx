@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios, {AxiosRequestConfig} from 'axios';
 import {KeyboardEvent} from 'react';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
@@ -6,8 +7,7 @@ import * as redux from 'redux';
 import {StarRating} from '../../../../star-rating_module.';
 import Button from '@material-ui/core/Button/Button';
 import Typography from '@material-ui/core/Typography/Typography';
-import {getSearchSkill} from '../../../../../API_CONFIG';
-import axios, {AxiosResponse} from 'axios';
+import {AxiosResponse} from 'axios';
 import {isNullOrUndefined} from 'util';
 import * as Immutable from 'immutable';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
@@ -20,6 +20,7 @@ import StepLabel from '@material-ui/core/StepLabel/StepLabel';
 import StepContent from '@material-ui/core/StepContent/StepContent';
 import HelpOutline from '@material-ui/icons/HelpOutline';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {SkillServiceClient} from '../../../../../clients/SkillServiceClient';
 
 interface AddSkill_ModuleProps {
     histories: Immutable.Map<string, string>;
@@ -73,29 +74,31 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         if (this.state.skillName !== data) {
             this.setState({
                 progressState: 0 // Back to the start
-            })
+            });
         }
         this.setState({
             skillName: data
         });
         if (!isNullOrUndefined(data) && data.trim().length > 0) {
-            let reqParams = {
-                maxResults: 10,
-                searchterm: data
-            };
-            axios.get(getSearchSkill(), {params: reqParams}).then((response: AxiosResponse) => {
-                if (response.status === 200) {
-                    this.setState({
-                        skills: response.data
-                    });
-                } else if (response.status === 204) {
-                    this.setState({
-                        skills: []
-                    });
+            let config: AxiosRequestConfig = {
+                params: {
+                    maxResults: 10,
+                    searchterm: data
                 }
-            }).catch((error: any) => {
-                console.error((error));
-            });
+            };
+            const url = SkillServiceClient.instance().getSearchSkillURL();
+            axios.get(url, config)
+                .then((response: AxiosResponse) => {
+                    if (response.status === 200) {
+                        this.setState({
+                            skills: response.data
+                        });
+                    } else if (response.status === 204) {
+                        this.setState({
+                            skills: []
+                        });
+                    }
+                }).catch((error: any) => console.error((error)));
             this.requestSkillHierarchy(data);
         }
     };
@@ -138,8 +141,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             this.setState({progressState: 1});
             // TODO remove focus from Textfield
             document.getElementById('addSkillMain').focus();
-        }
-        else if (this.state.progressState == 1) {
+        } else if (this.state.progressState == 1) {
             if (event.keyCode == 37) {
                 let val: number = this.state.skillRating == 1 ? 1 : (this.state.skillRating - 1);
                 this.handleRatingChange(val);
@@ -165,16 +167,16 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
 
     private skillHierarchy(): string {
         if (this.props.histories.has(this.state.skillName)) {
-            return PowerLocalize.getFormatted("Profile.Skills.CategoryTemplate", this.props.histories.get(this.state.skillName));
+            return PowerLocalize.getFormatted('Profile.Skills.CategoryTemplate', this.props.histories.get(this.state.skillName));
         }
-        return PowerLocalize.get("Profile.Skills.CategoryNotFound");
+        return PowerLocalize.get('Profile.Skills.CategoryNotFound');
     }
 
     render() {
         return <div
             onKeyDown={this.handleKeyPress}
             id={'addSkillMain'}
-            className={'col-md-7 row'}
+            className={'col-md-12 row'}
         >
             <div
                 id={'helpStepper'}

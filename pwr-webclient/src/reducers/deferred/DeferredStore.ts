@@ -10,8 +10,8 @@ export interface DeferredStore {
 
 export const emptyDeferredStore: DeferredStore = {
     deferredAction: null,
-    dialogHeader: "",
-    dialogContent: "",
-    dialogActionNOK: "",
-    dialogActionOK: ""
+    dialogHeader: '',
+    dialogContent: '',
+    dialogActionNOK: '',
+    dialogActionOK: ''
 };

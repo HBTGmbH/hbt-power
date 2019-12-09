@@ -158,8 +158,15 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     onSave={this.handleCreateViewProfile}
                                     type="new"
                                 />
-                                <PwrRaisedButton color={'primary'} onClick={() => this.setViewDialogOpen(true)}
-                                                 icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
+                                <div className={'col-md-6'}>
+                                    <PwrRaisedButton color={'primary'} onClick={() => this.setViewDialogOpen(true)}
+                                                     icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
+                                </div>
+                                <div className={'col-md-6'}>
+                                    <PwrRaisedButton color={'primary'}
+                                                     onClick={() => this.props.navigateTo(Paths.USER_REPORTS)}
+                                                     icon={<></>} text={PowerLocalize.get('Report.History')}/>
+                                </div>
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {
                                         return <div className="col-md-12 fullWidth" style={{marginTop: '8px'}}

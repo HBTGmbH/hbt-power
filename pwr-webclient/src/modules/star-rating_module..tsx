@@ -9,10 +9,11 @@ import {IconButtonClassKey} from '@material-ui/core/IconButton';
 
 interface StarRatingProps {
     rating: number;
+
     onRatingChange(newRating: number): void;
 }
 
-interface SingleButtonProps  extends StyledComponentProps<IconButtonClassKey> {
+interface SingleButtonProps extends StyledComponentProps<IconButtonClassKey> {
     starRatingProps: StarRatingProps;
     position: number;
 }
@@ -35,17 +36,18 @@ const getStyle = (starPosition: number, rating: number) => {
 
 const styles = theme => ({
     root: {
-        minWidth: "0px"
+        minWidth: '0px'
     }
 });
 
 const SingleButtonBase = (props: SingleButtonProps) => {
-    const { classes } = props;
-    return <IconButton classes={{root: classes.root}} mini={true} onClick={() => props.starRatingProps.onRatingChange(props.position)}
-                       style={getStyle(props.position, props.starRatingProps.rating)}><StarIcon/></IconButton>
+    const {classes} = props;
+    return <IconButton classes={{root: classes.root}} mini={true}
+                       onClick={() => props.starRatingProps.onRatingChange(props.position)}
+                       style={getStyle(props.position, props.starRatingProps.rating)}><StarIcon/></IconButton>;
 };
 
-const SingleButton =  withStyles(styles)(SingleButtonBase);
+const SingleButton = withStyles(styles)(SingleButtonBase);
 
 export const StarRating: React.FunctionComponent<StarRatingProps> = (props: StarRatingProps) => {
     return (<span>

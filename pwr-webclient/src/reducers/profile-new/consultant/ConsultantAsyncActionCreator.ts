@@ -14,13 +14,13 @@ const handleError = (error: any) => {
 export class ConsultantAsyncActionCreator {
 
 
-    public static getConsultant(initials:string) {
+    public static getConsultant(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             client.getConsultant(initials)
                 .then(value => {
                     dispatch(consultantUpdateAction(value));
                 })
-                .catch(handleError)
-        }
+                .catch(handleError);
+        };
     }
 }

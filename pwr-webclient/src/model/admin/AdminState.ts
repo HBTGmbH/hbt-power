@@ -157,5 +157,5 @@ export class AdminState {
 
     public findSkillNotification = (notificationId: number): SkillNotification => {
         return this.skillNotifications().find(notification => notification.adminNotification().id() === notificationId);
-    }
+    };
 }

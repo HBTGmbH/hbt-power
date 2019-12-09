@@ -251,11 +251,19 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     }
                     <MenuItem
                         key={'6'}
+                        onClick={() => this.handleMenuNavigate(Paths.USER_REPORTS)}
+                    >
+                        <Icon className="material-icons">folder</Icon>
+                        <ListItemText>
+                            {PowerLocalize.get('Menu.Reports')}
+                        </ListItemText>
+
+                    </MenuItem>
+                    <MenuItem
+                        key={'7'}
                         onClick={() => this.handleMenuNavigate(Paths.USER_SEARCH)}
                     >
-                        <ListItemIcon>
-                            <Icon className="material-icons">search</Icon>
-                        </ListItemIcon>
+                        <Icon className="material-icons">search</Icon>
                         <ListItemText>
                             {PowerLocalize.get('Menu.Search')}
                         </ListItemText>

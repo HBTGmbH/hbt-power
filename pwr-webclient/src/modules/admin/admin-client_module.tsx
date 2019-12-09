@@ -137,7 +137,7 @@ class AdminClientModule extends React.Component<AdminClientProps
     render() {
         return (
             <div>
-                <div className="row vertical-align" >
+                <div className="row vertical-align">
                     <Paper elevation={3}>
                         <AppBar>
                             <Toolbar>
@@ -153,7 +153,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                     </Paper>
                 </div>
 
-                <div className="row" style={{width:'100%'}}>
+                <div className="row" style={{width: '100%'}}>
                     <div className="col-md-2">
                         <Paper style={{marginTop: '70px'}}>
                             <List>
@@ -265,7 +265,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                         <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2}/>
                         <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={AdminProfileOverview}/>
                     </div>
-                   <ProfileLoadingSpinner />
+                    <ProfileLoadingSpinner/>
                 </div>
             </div>);
     }

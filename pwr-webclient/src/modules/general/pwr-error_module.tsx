@@ -12,7 +12,7 @@ interface PwrErrorProps {
 
 const NoError = () => <React.Fragment/>;
 
-const Error = (props: {pwrError: PwrErrorType}) => <span style={{color: 'red'}}>
+const Error = (props: { pwrError: PwrErrorType }) => <span style={{color: 'red'}}>
     {PowerLocalize.get('PwrError.' + props.pwrError)};
 </span>;
 

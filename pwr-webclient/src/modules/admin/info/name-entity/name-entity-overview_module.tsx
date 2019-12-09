@@ -18,8 +18,8 @@ import {NameEntity} from '../../../../reducers/profile-new/profile/model/NameEnt
 
 interface NameEntityOverviewProps {
     sectors: Array<NameEntity>;
-    keySkills:Array<NameEntity>;
-    careers:Array<NameEntity>;
+    keySkills: Array<NameEntity>;
+    careers: Array<NameEntity>;
     educations: Array<NameEntity>;
     qualifications: Array<NameEntity>;
     trainings: Array<NameEntity>;
@@ -67,14 +67,14 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     static mapStateToProps(state: ApplicationState, localProps: NameEntityOverviewLocalProps): NameEntityOverviewProps {
         return {
             sectors: state.suggestionStore.allIndustrialSectors.sort(NAME_ENTITY_BY_NAME),
-            keySkills:state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
+            keySkills: state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
             careers: state.suggestionStore.allCareers.sort(NAME_ENTITY_BY_NAME),
             educations: state.suggestionStore.allEducations.sort(NAME_ENTITY_BY_NAME),
             qualifications: state.suggestionStore.allQualifications.sort(NAME_ENTITY_BY_NAME),
             trainings: state.suggestionStore.allTrainings.sort(NAME_ENTITY_BY_NAME),
             languages: state.suggestionStore.allLanguages.sort(NAME_ENTITY_BY_NAME),
             projectRoles: state.suggestionStore.allProjectRoles.sort(NAME_ENTITY_BY_NAME),
-            companies:state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
+            companies: state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
             currentlyUsedSkillNames: state.suggestionStore.allSkills,
             nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo(),
         };

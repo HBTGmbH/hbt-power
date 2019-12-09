@@ -9,7 +9,7 @@ export class ClientClient extends PowerHttpClient {
 
     public getClientBuildInfo = (): Promise<ClientBuildInfo> => {
         return axios.get<ClientBuildInfo>(CLIENT_BUILD_INFO_LOCATION)
-            .then(response => response.data)
-    }
+            .then(response => response.data);
+    };
 
 }

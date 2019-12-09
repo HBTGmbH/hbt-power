@@ -37,12 +37,12 @@ export namespace StringUtils {
         if (value) {
             return value;
         }
-        return "";
+        return '';
     }
 
     export function dateToString(date: Date) {
         if (date == null) {
-            return "";
+            return '';
         }
         return date.toString();
     }

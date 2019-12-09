@@ -50,9 +50,9 @@ class PwrCompanyAutocompleteModule extends React.Component<PwrCompanyAutocomplet
         return {};
     }
 
-    render()  {
+    render() {
         const props = this.props;
-        return <PwrAutoComplete data={this.props.companies} {...props}/>
+        return <PwrAutoComplete data={this.props.companies} {...props}/>;
     }
 }
 

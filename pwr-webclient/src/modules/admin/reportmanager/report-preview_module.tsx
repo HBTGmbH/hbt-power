@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Iframe from 'react-iframe';
-import {TemplateService} from '../../../API_CONFIG';
+import {TemplateClient} from '../../../clients/TemplateClient';
 
 
 interface ReportPreviewLocalProps {
@@ -13,7 +13,7 @@ export const ReportPreview = (props: ReportPreviewLocalProps) => {
     return <div style={{height: '100%'}}>
         {
             (props.templateId != '') ?
-                <Iframe url={TemplateService.getPreview(props.templateId)} width={'100%'} height={'100%'}/>
+                <Iframe url={TemplateClient.instance().getPreviewURL(props.templateId)} width={'100%'} height={'100%'}/>
                 : <>Template auswählen</>
         }
     </div>;

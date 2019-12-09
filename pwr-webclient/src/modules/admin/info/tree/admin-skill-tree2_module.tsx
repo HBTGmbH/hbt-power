@@ -19,6 +19,7 @@ import {SkillStore} from '../../../../model/skill/SkillStore';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
+import {PwrSkillVersionInfo} from '../../../general/pwr-skill-version-info_module';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
@@ -40,6 +41,8 @@ interface AdminSkillTree2LocalState {
     deleteConfirmationOpen: boolean;
     categorySearcherOpen: boolean;
     moveCategorySearcher: boolean;
+
+    newVersionText: string;
 
 }
 
@@ -96,6 +99,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             categorySearcherOpen: false,
             skillNameOpen: false,
             moveCategorySearcher: false,
+            newVersionText: '',
         };
     }
 
@@ -119,15 +123,15 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
             createCategory: (parentId, qualifier) => dispatch(SkillActionCreator.AsyncCreateCategory(qualifier, parentId)),
             deleteCategory: categoryId => dispatch(SkillActionCreator.AsyncDeleteCategory(categoryId)),
             moveCategory: (newCategoryId, selectedCategoryId) => dispatch(SkillActionCreator.AsyncMoveCategory(newCategoryId, selectedCategoryId)),
-            moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.Skill.AsyncMoveSkill(skillId, newCategory, oldCategory)),
-            createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.Skill.AsyncCreateSkill(qualifier, categoryId)),
-            deleteSkill: skillId => dispatch(SkillActionCreator.Skill.AsyncDeleteSkill(skillId)),
-            addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.Skill.AsyncAddSkillLocale(skillId, language, qualifier)),
-            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.Skill.AsyncDeleteSkillLocale(skillId, language)),
+            moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.AsyncMoveSkill(skillId, newCategory, oldCategory)),
+            createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.AsyncCreateSkill(qualifier, categoryId)),
+            deleteSkill: skillId => dispatch(SkillActionCreator.AsyncDeleteSkill(skillId)),
+            addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddSkillLocale(skillId, language, qualifier)),
+            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.AsyncDeleteSkillLocale(skillId, language)),
             setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
-            changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering)))
+            changeFilterNonCustomSkills: (doFiltering => dispatch(AdminActionCreator.SetFilterNonCustomSkills(doFiltering))),
         };
     };
 
@@ -237,7 +241,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
 
     private invokeMoveSelectedCategory = (newCategoryId: number) => {
         let selectedCategory = this.getSelectedCategory();
-        // console.log("NewCategoryId", newCategoryId);
         this.props.moveCategory(newCategoryId, selectedCategory.id());
         this.closeCategorySearcher();
     };
@@ -275,7 +278,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
 
     private invokeMoveSelectedSkill = (newCategoryId: number) => {
         let selectedSkill = this.getSelectedSkill();
-        //console.log('NewCategoryId', newCategoryId);
         this.props.moveSkill(newCategoryId, selectedSkill.categoryId(), selectedSkill.id());
         this.closeCategorySearcher();
     };
@@ -283,6 +285,9 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
     private SkillInfo = () => {
         let selectedSkill = this.getSelectedSkill();
         return <div>
+
+            <ListSubheader>Versionen</ListSubheader>
+            <PwrSkillVersionInfo skillName={selectedSkill.qualifier()}/>
             <ListSubheader>{selectedSkill.qualifier()}</ListSubheader>
             <LocalizationTable
                 localizations={selectedSkill.qualifiers()}

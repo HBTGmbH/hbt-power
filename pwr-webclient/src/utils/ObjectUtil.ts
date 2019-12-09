@@ -49,8 +49,7 @@ export function levenshtein(a: string, b: string): number {
         for (let j = 1; j <= an; ++j) {
             if (b.charAt(i - 1) === a.charAt(j - 1)) {
                 matrix[i][j] = matrix[i - 1][j - 1];
-            }
-            else {
+            } else {
                 matrix[i][j] = Math.min(
                     matrix[i - 1][j - 1], // substitution
                     matrix[i][j - 1], // insertion
@@ -69,7 +68,7 @@ export function compareNumbers(n1: number, n2: number) {
     return 1;
 }
 
-export function orDefault<V, R>(keyExtractor: (v:V) => R, def: R) {
+export function orDefault<V, R>(keyExtractor: (v: V) => R, def: R) {
     return (value: V) => {
         try {
             return keyExtractor(value);
@@ -80,10 +79,11 @@ export function orDefault<V, R>(keyExtractor: (v:V) => R, def: R) {
                 throw error;
             }
         }
-    }
+    };
 }
 
-export function noOp<ArgType>(arg1?: ArgType) {}
+export function noOp<ArgType>(arg1?: ArgType) {
+}
 
 
 export function omitKeys(object: Object, ...keys: string[]): Object {

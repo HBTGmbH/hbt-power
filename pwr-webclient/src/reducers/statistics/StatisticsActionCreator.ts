@@ -1,19 +1,7 @@
 import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ApplicationState} from '../reducerIndex';
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
-import {
-    getConsultantClusterInfo,
-    getKMedProfileNetwork,
-    getNameEntityUsageInfo,
-    getProfileStatistics,
-    getScatterSkills,
-    getSkillUsageInfo,
-    getSkillUsageRelative,
-    getSkillUsagesAbsolute,
-    headStatisticsServiceAvailable
-} from '../../API_CONFIG';
-import {APINetwork, APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
+import {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {
     AddNameEntityUsageInfoAction,
@@ -28,12 +16,14 @@ import {ActionType} from '../ActionType';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {Network} from '../../model/statistics/Network';
 import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
-import {APIScatterSkill, ScatterSkill} from '../../model/statistics/ScatterSkill';
-import {APIConsultant} from '../../model/APIProfile';
+import {ScatterSkill} from '../../model/statistics/ScatterSkill';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {NameEntity} from '../profile-new/profile/model/NameEntity';
 import {ProfileElementType} from '../../Store';
 import {AbstractAction} from '../BaseActions';
+import {StatisticsServiceClient} from '../../clients/StatisticsServiceClient';
+
+const statisticsClient = StatisticsServiceClient.instance();
 
 export class StatisticsActionCreator {
 
@@ -102,43 +92,27 @@ export class StatisticsActionCreator {
 
     public static AsyncCheckAvailability() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.head(headStatisticsServiceAvailable()).then((response: AxiosResponse) => {
-                dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(error => {
-                dispatch(StatisticsActionCreator.StatisticsNotAvailable());
-            });
+            statisticsClient.headStatisticsServiceAvailable()
+                .then((response: AxiosResponse) => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+                .catch(error => dispatch(StatisticsActionCreator.StatisticsNotAvailable()));
         };
     }
 
     public static AsyncRequestSkillUsages() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            let config: AxiosRequestConfig = {
-                params: {
-                    max: 500
-                }
-            };
-            axios.get(getSkillUsagesAbsolute(), config).then(function (response: AxiosResponse) {
-                let data: Array<APISkillUsageMetric> = response.data;
-                let res: Array<SkillUsageMetric> = data.map(value => SkillUsageMetric.fromAPI(value));
-                dispatch(StatisticsActionCreator.ReceiveSkillUsageMetrics(res));
-                dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function (error: any) {
-                console.error(error);
-                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-            });
+            statisticsClient.getSkillUsagesAbsolute()
+                .then(metrics => dispatch(StatisticsActionCreator.ReceiveSkillUsageMetrics(metrics.map(value => SkillUsageMetric.fromAPI(value)))))
+                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
 
-            config.params = {
-                max: 500
-            };
-            axios.get(getSkillUsageRelative(), config).then(function (response: AxiosResponse) {
-                let data: Array<APISkillUsageMetric> = response.data;
-                let res: Array<SkillUsageMetric> = data.map(value => SkillUsageMetric.fromAPI(value));
-                dispatch(StatisticsActionCreator.ReceiveRelativeSkillUsageMetrics(res));
-                dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function (error: any) {
-                console.error(error);
-                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-            });
+                .catch((error: any) => console.error(error))
+                .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
+
+            statisticsClient.getSkillUsageRelative()
+                .then(metrics => dispatch(StatisticsActionCreator.ReceiveRelativeSkillUsageMetrics(metrics.map(value => SkillUsageMetric.fromAPI(value)))))
+                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+
+                .catch((error: any) => console.error(error))
+                .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
 
             dispatch(StatisticsActionCreator.AsyncRequestScatterSkills());
         };
@@ -146,54 +120,42 @@ export class StatisticsActionCreator {
 
     public static AsyncGetProfileStatistics(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getProfileStatistics(initials)).then(function (response: AxiosResponse) {
-                //console.log("statistics data", response.data);
-                dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(response.data)));
-                dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function (error: any) {
-                console.error(error);
-                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-            });
+            statisticsClient.getProfileStatistics(initials)
+                .then((metrics) => dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(metrics))))
+                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+                .catch((error: AxiosError) => console.error(error))
+                .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
         };
     }
 
     public static AsyncRequestNetwork() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getKMedProfileNetwork()).then((response: AxiosResponse) => {
-                let network: Network = Network.fromAPI(response.data as APINetwork);
-                dispatch(StatisticsActionCreator.ReceiveNetwork(network));
-                dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function (error: any) {
-                console.error(error);
-                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-            });
+            statisticsClient.getKMedProfileNetwork()
+                .then((network) => dispatch(StatisticsActionCreator.ReceiveNetwork(Network.fromAPI(network))))
+                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+                .catch((error: any) => console.error(error))
+                .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
         };
     }
 
     public static AsyncRequestConsultantClusterInfo(initials: string) {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getConsultantClusterInfo(initials)).then((response: AxiosResponse) => {
-                let info: ConsultantClusterInfo = ConsultantClusterInfo.fromAPI(response.data);
-                dispatch(StatisticsActionCreator.ReceiveConsultantClusterInfo(info));
-                dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function (error: any) {
-                console.error(error);
-                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-            });
+            statisticsClient.getConsultantClusterInfo(initials)
+                .then((info) =>
+                    dispatch(StatisticsActionCreator.ReceiveConsultantClusterInfo(ConsultantClusterInfo.fromAPI(info))))
+                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+                .catch((error: any) => console.error(error))
+                .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
         };
     }
 
     public static AsyncRequestScatterSkills() {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
-            axios.get(getScatterSkills()).then((response: AxiosResponse) => {
-                let data: Array<APIScatterSkill> = response.data;
-                let list = Immutable.List<ScatterSkill>(data.map(value => ScatterSkill.fromAPI(value)));
-                dispatch(StatisticsActionCreator.ReceiveScatterSkills(list));
-                dispatch(StatisticsActionCreator.StatisticsAvailable());
-            }).catch(function (error: any) {
-                console.error(error);
-                dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-            });
+            statisticsClient.getScatterSkills()
+                .then((skills) => dispatch(StatisticsActionCreator.ReceiveScatterSkills(Immutable.List<ScatterSkill>(skills.map(value => ScatterSkill.fromAPI(value))))))
+                .then((skills) => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+                .catch((error: any) => console.error(error))
+                .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
         };
     }
 
@@ -214,14 +176,12 @@ export class StatisticsActionCreator {
                         'type': type
                     }
                 };
-                axios.get(getNameEntityUsageInfo(), config).then((response: AxiosResponse) => {
-                    let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
-                    let list = data.map(value => ConsultantInfo.fromAPI(value));
-                    dispatch(Object.assign({}, new AddNameEntityUsageInfoAction(ActionType.AddNameEntityUsageInfo, nameEntity, list)));
-                }).catch(function (error: any) {
-                    console.error(error);
-                    dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-                });
+                statisticsClient.getNameEntityUsageInfo(config)
+                    .then((data) => dispatch(Object.assign({},
+                        new AddNameEntityUsageInfoAction(ActionType.AddNameEntityUsageInfo, nameEntity,
+                            data.map(value => ConsultantInfo.fromAPI(value))))))
+                    .catch((error: any) => console.error(error))
+                    .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
             }
         };
     }
@@ -230,17 +190,11 @@ export class StatisticsActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
             let state = getState();
             if (!state.statisticsReducer.skillUsageInfo().has(skillName)) {
-                let config: AxiosRequestConfig = {
-                    params: {'skill': skillName}
-                };
-                axios.get(getSkillUsageInfo(), config).then((response: AxiosResponse) => {
-                    let data: Array<APIConsultant> = response.data; // Misses view and profile data; Parse to consultant info
-                    let list = data.map(value => ConsultantInfo.fromAPI(value));
-                    dispatch(StatisticsActionCreator.AddSkillUsageInfo(skillName, list));
-                }).catch(function (error: any) {
-                    console.error(error);
-                    dispatch(StatisticsActionCreator.AsyncCheckAvailability());
-                });
+                statisticsClient.getSkillUsageInfo(skillName)
+                    .then((infos) => dispatch(StatisticsActionCreator.AddSkillUsageInfo(skillName,
+                        infos.map(value => ConsultantInfo.fromAPI(value)))))
+                    .catch((error: any) => console.error(error))
+                    .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
             }
         };
     }

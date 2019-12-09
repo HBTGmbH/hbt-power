@@ -53,32 +53,39 @@ export class PowerHttpClient {
     executeRequest = <T>(promise: AxiosPromise<T>): Promise<T> => {
         return promise
             .then(this.endRequest)
-            .catch(this.errorRequest)
+            .catch(this.errorRequest);
     };
 
-    private determineError = (error: AxiosError): PowerApiError  => {
+    private determineError = (error: AxiosError): PowerApiError => {
         if (!error.response) {
-            console.error("Intercepted client error", error);
+            console.error('Intercepted client error', error);
             if (error.message && error.message === 'Network Error') {
-                return {status: -1, message: "One or more services are not reachable!", error: error.message}
-            }
-            else {
-                return {status: -1, message: "Error in Power Client Library occurred. Please contact a developer", error: error.code}
+                return {status: -1, message: 'One or more services are not reachable!', error: error.message};
+            } else {
+                return {
+                    status: -1,
+                    message: 'Error in Power Client Library occurred. Please contact a developer',
+                    error: error.code
+                };
             }
         }
         if (!error.response.data) {
-            console.error("Intercepted server error", error.response);
-            return {status: error.response.status, message: "An unknown server error occurred", error: error.response.statusText}
+            console.error('Intercepted server error', error.response);
+            return {
+                status: error.response.status,
+                message: 'An unknown server error occurred',
+                error: error.response.statusText
+            };
         }
-        console.error("Intercepted api error", error.response.data, error.response);
+        console.error('Intercepted api error', error.response.data, error.response);
         return this.extractApiError(error);
     };
 
 
     private handleError = (error: AxiosError): PowerApiError => {
         const apiError = this.determineError(error);
-        const message = apiError.error + ": " + apiError.message;
+        const message = apiError.error + ': ' + apiError.message;
         Alerts.showError(message);
         return apiError;
-    }
+    };
 }

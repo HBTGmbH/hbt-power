@@ -5,7 +5,6 @@ import {ProfileElementType} from '../Store';
 export class NameEntityUtil {
 
 
-
     public static typeToLocalizedType(nameEntity: NameEntity): string {
         return PowerLocalize.get('NameEntityType.' + nameEntity.type());
     }

@@ -31,8 +31,7 @@ export namespace SkillReducer {
         if (!isNullOrUndefined(category)) {
             if (!isNullOrUndefined(category.category)) {
                 return category.qualifier + ' => ' + buildHierarchy(category.category);
-            }
-            else {
+            } else {
                 return category.qualifier;
             }
         }
@@ -112,7 +111,7 @@ export namespace SkillReducer {
                 root = SkillTreeNode.shallowCopy(root);
                 return addOrUpdateSkill(skillStore, act.toAdd).skillTreeRoot(root);
             }
-            case ActionType.MoveCategory:{
+            case ActionType.MoveCategory: {
                 let act = action as MoveCategoryAction;
 
                 let root = skillStore.skillTreeRoot();
@@ -120,7 +119,7 @@ export namespace SkillReducer {
                 let removedNode = root.removeCategoryFromTree(act.toMoveId);
                 root.addNodeToTree(removedNode, act.newParentId);
                 root.sort(skillStore.categoriesById(), skillStore.skillsById());
-                root.setVisibility(removedNode.skillCategoryId,true);
+                root.setVisibility(removedNode.skillCategoryId, true);
                 let newMap = skillStore.parentCategoryIdById().set(removedNode.skillCategoryId, act.newParentId);
                 return skillStore.skillTreeRoot(SkillTreeNode.shallowCopy(root)).parentCategoryIdById(newMap);
 

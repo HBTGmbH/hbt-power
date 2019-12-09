@@ -6,7 +6,7 @@ import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {Paper} from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import {Color} from '../../utils/ColorUtil';
 import {Profile} from '../../reducers/profile-new/profile/model/Profile';
 
@@ -55,8 +55,8 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
             secCount = !!this.props.profile.sectors ? this.props.profile.sectors.length : 0;
             qualCount = !!this.props.profile.qualification ? this.props.profile.qualification.length : 0;
             edCount = !!this.props.profile.education ? this.props.profile.education.length : 0;
-            trainCount = !!this.props.profile.trainings ? this.props.profile.trainings.length : 0;
-            careerCount = !!this.props.profile.careers ? this.props.profile.careers.length : 0;
+            trainCount = !!this.props.profile['trainingEntries'] ? this.props.profile['trainingEntries'].length : 0; // TODO wrong variable Name
+            careerCount = !!this.props.profile['careerEntries'] ? this.props.profile['careerEntries'].length : 0; // TODO wrong variable Name
             keySkillCount = !!this.props.profile.specialFieldEntries ? this.props.profile.specialFieldEntries.length : 0;
         }
         const data = [

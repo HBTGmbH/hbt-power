@@ -13,6 +13,10 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
+import Grid from '@material-ui/core/Grid';
+import ReplayIcon from '@material-ui/icons/Replay';
+import {ViewProfileUpdateDialog} from './view-profile-update-dialog_module';
+import TextField from '@material-ui/core/TextField';
 
 
 interface ViewProfileOverviewProps {
@@ -29,6 +33,7 @@ interface ViewProfileOverviewLocalState {
     currentDescription: string;
     descriptionDisabled: boolean;
     generatorOpen: boolean;
+    updateDialogOpen: boolean;
     tabValue: number;
 }
 
@@ -62,6 +67,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             currentDescription: !isNullOrUndefined(props.viewProfile) ? props.viewProfile.description : '',
             descriptionDisabled: true,
             generatorOpen: false,
+            updateDialogOpen: false,
             tabValue: 0,
         };
     }
@@ -90,6 +96,12 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
         });
     }
 
+    private toggleUpdateDialog() {
+        this.setState({
+            updateDialogOpen: !this.state.updateDialogOpen
+        });
+    }
+
     render() {
         if (isNullOrUndefined(this.props.viewProfile)) {
             return <div>Does not exist</div>;
@@ -105,6 +117,11 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                 <ProfileGenerator
                     open={this.state.generatorOpen}
                     onClose={() => this.setGeneratorOpen(false)}
+                    viewProfileId={this.props.viewProfile.id}
+                />
+                <ViewProfileUpdateDialog
+                    open={this.state.updateDialogOpen}
+                    onClose={() => this.toggleUpdateDialog()}
                     viewProfileId={this.props.viewProfile.id}
                 />
 
@@ -126,14 +143,30 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                         />
                     </div>
                     <div className="col-md-6">
-                        <Button
-                            variant={'contained'}
-                            className="mui-margin float-right"
-                            color={'primary'}
-                            onClick={() => this.setGeneratorOpen(true)}
-                        >
-                            <Icon className="material-icons">open_in_new</Icon>
-                            {PowerLocalize.get('Action.Generate.Word')}</Button>
+                        <Grid container direction={'column'} spacing={16}>
+                            <Grid item>
+                                <Button
+                                    variant={'contained'}
+                                    className="mui-margin float-right"
+                                    color={'primary'}
+                                    onClick={() => this.setGeneratorOpen(true)}
+                                >
+                                    <Icon className="material-icons">open_in_new</Icon>
+                                    {PowerLocalize.get('Action.Generate.Word')}
+                                </Button>
+                            </Grid>
+                            <Grid item>
+                                <Button
+                                    variant={'contained'}
+                                    className="mui-margin float-right"
+                                    color={'primary'}
+                                    onClick={() => this.toggleUpdateDialog()}
+                                >
+                                    <ReplayIcon/>
+                                    Aktualisieren
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </div>
                 </Paper>
 

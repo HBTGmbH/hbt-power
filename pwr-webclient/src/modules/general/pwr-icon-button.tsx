@@ -9,9 +9,10 @@ interface PwrIconButtonProps {
     tooltip: string;
 
     onClick(): void;
+
     style?: any;
     autoFocus?: boolean;
-    iconButtonProps?:IconButtonProps;
+    iconButtonProps?: IconButtonProps;
 }
 
 interface PwrIconButtonState {

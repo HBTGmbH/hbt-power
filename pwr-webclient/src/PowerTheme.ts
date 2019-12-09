@@ -60,7 +60,7 @@ const newPowerTheme: ThemeOptions = {
         },
         MuiTab: {
             root: {
-                "&$selected": {
+                '&$selected': {
                     color: '#46E6E6'
                 }
             }

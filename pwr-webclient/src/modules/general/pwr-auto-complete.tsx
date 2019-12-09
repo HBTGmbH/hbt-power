@@ -91,13 +91,13 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
 
     handleChange = (event: any, newValue: string) => {
 
-        let searchTerm:string=newValue;
+        let searchTerm: string = newValue;
 
         let navigation: boolean = false;
         if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
 
             navigation = true;
-            searchTerm=this.props.searchTerm;
+            searchTerm = this.props.searchTerm;
         }
 
         this.props.onSearchChange(searchTerm, navigation);
@@ -110,9 +110,9 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
     };
 
     handleKeyDownOnInput = (key: string, inputValue: string) => {
-      if (key === 'Enter' && this.props.onAdd) {
-          this.props.onAdd(inputValue);
-      }
+        if (key === 'Enter' && this.props.onAdd) {
+            this.props.onAdd(inputValue);
+        }
     };
 
     renderInputComponent = (inputProps) => {
@@ -218,8 +218,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                 ...basicInputProps,
                 ...onlyChipProps
             };
-        }
-        else {
+        } else {
             inputProps = basicInputProps;
         }
 

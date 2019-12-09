@@ -30,10 +30,7 @@ export class ViewProfile {
     projectRoles: Array<ViewProjectRole>;
     projects: Array<ViewProject>;
     displayCategories: Array<ViewCategory>;
-    rootCategory: ViewCategory;
 
-    private categoryParents: Map<string, ViewCategory>;
-    private skillParents: Map<string, ViewCategory>;
     private skillDisplayCategories: Map<string, ViewCategory>;
 
     constructor(viewProfile: ViewProfile) {
@@ -51,32 +48,17 @@ export class ViewProfile {
         this.projectRoles = viewProfile.projectRoles;
         this.projects = viewProfile.projects.map(ViewProject.of);
         this.displayCategories = viewProfile.displayCategories;
-        this.rootCategory = viewProfile.rootCategory;
-        this.categoryParents = new Map();
-        this.skillParents = new Map();
+
         this.skillDisplayCategories = new Map();
-        this.gatherParents(this.rootCategory);
+        this.gatherParents();
     }
 
-    private gatherParents(category: ViewCategory) {
-        category.skills.forEach(skill => {
-            this.skillParents.set(skill.name, category);
+    private gatherParents() {
+        this.displayCategories.forEach(cat => {
+            cat.displaySkills.forEach(skill => {
+                this.skillDisplayCategories.set(skill.name, cat);
+            });
         });
-        category.displaySkills.forEach(skill => {
-            this.skillDisplayCategories.set(skill.name, category);
-        });
-        category.children.forEach(child => {
-            this.categoryParents.set(child.name, category);
-            this.gatherParents(child);
-        });
-    }
-
-    public getCategoryForSkill(skillName: string): ViewCategory {
-        return this.skillParents.get(skillName);
-    }
-
-    public getCategoryForCategory(categoryName: string): ViewCategory {
-        return this.categoryParents.get(categoryName);
     }
 
     public getDisplayForSkill(skillName: string): ViewCategory {
