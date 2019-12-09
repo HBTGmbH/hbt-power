@@ -44,8 +44,8 @@ export interface ThemeProps {
     theme: Theme;
 }
 
-export function provideValueTo(handler: (v: string) => void):  React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> {
+export function provideValueTo(handler: (v: string) => void): React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> {
     return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         handler(e.target.value);
-    }
+    };
 }

@@ -7,9 +7,10 @@ import {ProfileSkill} from '../model/ProfileSkill';
 import {Profile} from '../model/Profile';
 
 
-export interface ProfileLoadAction extends AbstractAction{
-    profile:Profile;
+export interface ProfileLoadAction extends AbstractAction {
+    profile: Profile;
 }
+
 export function profileLoadAction(profile: Profile): ProfileLoadAction {
     return {
         type: ActionType.LoadProfileAction,
@@ -60,14 +61,14 @@ export function setDescription(description: string): SetDescriptionAction {
     return {
         description: description,
         type: ActionType.SetDescription
-    }
+    };
 }
 
 export function skillUpdateAction(skill: ProfileSkill) {
     return {
-        type:ActionType.UpdateProfileSkillSuccessful,
-        skill:skill
-    }
+        type: ActionType.UpdateProfileSkillSuccessful,
+        skill: skill
+    };
 }
 
 export interface SkillDeleteAction extends AbstractAction {

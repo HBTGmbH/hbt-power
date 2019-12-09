@@ -386,7 +386,7 @@ export class AdminActionCreator {
     };
 
     private static skillAround = (category: APISkillCategory, skillName: string): APISkillServiceSkill => {
-        return {'id': -1, 'category': category, 'qualifier': skillName,versions:[]};
+        return {'id': -1, 'category': category, 'qualifier': skillName, versions: []};
     };
 
     /**

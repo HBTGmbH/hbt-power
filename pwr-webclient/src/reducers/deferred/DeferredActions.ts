@@ -23,13 +23,13 @@ export interface RejectDeferredActionAction {
 export function rejectDeferredAction(): RejectDeferredActionAction {
     return {
         type: ActionType.RejectDeferredAction
-    }
+    };
 }
 
 export function confirmDeferredAction(): ConfirmDeferredActionAction {
     return {
         type: ActionType.ConfirmDeferredAction
-    }
+    };
 }
 
 export function deferUnsavedChanges(action: AbstractAction): DeferActionAction {
@@ -40,7 +40,7 @@ export function deferUnsavedChanges(action: AbstractAction): DeferActionAction {
         actionNOK: PowerLocalize.get('ConfirmNavDialog.Action.CancelNavigation'),
         actionOK: PowerLocalize.get('ConfirmNavDialog.Action.NavigateAnyway'),
         type: ActionType.DeferAction
-    }
+    };
 }
 
 export function deferDeleteEntry(action: AbstractAction): DeferActionAction {
@@ -51,5 +51,5 @@ export function deferDeleteEntry(action: AbstractAction): DeferActionAction {
         actionNOK: PowerLocalize.get('ConfirmDeleteEntry.Action.CancelDelete'),
         actionOK: PowerLocalize.get('ConfirmDeleteEntry.Action.ConfirmDelete'),
         type: ActionType.DeferAction
-    }
+    };
 }

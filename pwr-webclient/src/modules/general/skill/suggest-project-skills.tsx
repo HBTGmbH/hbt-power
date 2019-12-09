@@ -66,7 +66,8 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
 
     private handleSkillToggle = (event, skill: string) => {
         let selectedBeforeHandling = this.isSelected(skill)
-;        if (!selectedBeforeHandling) {
+        ;
+        if (!selectedBeforeHandling) {
             const selectedSkills = [...this.state.selectedSkills, skill];
             this.setState({selectedSkills});
         } else {
@@ -91,7 +92,7 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
                                 {skill}
                                 <ListItemSecondaryAction>
                                     <Checkbox
-                                              onChange={(event, ignored) => this.handleSkillToggle(event, skill)}
+                                        onChange={(event, ignored) => this.handleSkillToggle(event, skill)}
                                     />
                                 </ListItemSecondaryAction>
                             </ListItem>

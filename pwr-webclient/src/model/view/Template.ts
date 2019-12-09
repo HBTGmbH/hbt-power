@@ -2,10 +2,10 @@ export class Template {
     id: string;
     name: string;
     description: string;
-    fileId:string;
+    fileId: string;
     createUser: string;
     createdDate: string;
-    previewId:string;
+    previewId: string;
 
     constructor(template: Template) {
         this.id = template.id;
@@ -17,8 +17,16 @@ export class Template {
         this.previewId = template.previewId;
     }
 
-    public static empty():Template{
-        return new Template({id:"",name:"",description:"",fileId:"",createUser:"",createdDate:"",previewId:""});
+    public static empty(): Template {
+        return new Template({
+            id: '',
+            name: '',
+            description: '',
+            fileId: '',
+            createUser: '',
+            createdDate: '',
+            previewId: ''
+        });
     }
 }
 

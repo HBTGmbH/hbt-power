@@ -8,6 +8,7 @@ export interface PwrButtonProps {
     color: PropTypes.Color;
     icon: JSX.Element;
     text: string;
+
     onClick?(): void;
 }
 
@@ -22,7 +23,7 @@ export const PwrRaisedButton = (props: PwrButtonProps) => {
         onClick={handleSave}
     >
         {props.text}
-        <div style={{marginRight: "2px"}}/>
+        <div style={{marginRight: '2px'}}/>
         {props.icon}
-    </Button>
+    </Button>;
 };

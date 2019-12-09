@@ -90,7 +90,6 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
 
 
     render() {
-        console.log('updateState', this.state);
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose}>
                 <DialogTitle>

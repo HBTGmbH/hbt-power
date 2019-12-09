@@ -10,7 +10,7 @@ export class Alerts {
             onClick: (hide: any) => {
                 hide();
             },
-        }
+        };
     }
 
     static showInfo(message) {

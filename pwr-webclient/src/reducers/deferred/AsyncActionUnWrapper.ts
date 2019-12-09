@@ -1,4 +1,3 @@
-
 import {ApplicationState} from '../reducerIndex';
 import {MiddlewareAPI} from 'redux';
 import {ActionType} from '../ActionType';
@@ -28,13 +27,13 @@ export const asyncActionUnWrapper = (api: MiddlewareAPI<ApplicationState>) => (n
 export function makeDeferrable(type: ActionType) {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         const originalMethod = descriptor.value;
-        descriptor.value = function(...args: any[]) {
+        descriptor.value = function (...args: any[]) {
             const originalThunkAction = originalMethod.apply(this, args);
             return {
                 type: type,
                 asyncAction: originalThunkAction
-            }
+            };
         };
         return descriptor;
-    }
+    };
 }

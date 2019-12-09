@@ -5,7 +5,7 @@ import {TemplateActionCreator} from '../reducers/template/TemplateActionCreator'
 
 declare const POWER_REPORT_SERVICE_URL: string;
 
-export class ReportServiceClient  extends PowerHttpClient{
+export class ReportServiceClient extends PowerHttpClient {
 
     private static _instance: ReportServiceClient;
 
@@ -26,18 +26,18 @@ export class ReportServiceClient  extends PowerHttpClient{
 
 
     public getReportDataForUser(initials: string): Promise<ReportData[]> {
-        const url = this.base() + "/report/" + initials;
+        const url = this.base() + '/report/' + initials;
         this.beginRequest();
         return this.executeRequest(axios.get(url));
     }
 
     public getReport(id): void {
-        const url = this.base() + "/report/file/" + id;
+        const url = this.base() + '/report/file/' + id;
         TemplateActionCreator.DownloadReportFile(url);
     }
 
     public deleteReport(id): Promise<unknown> {
-        const url = this.base() + "/report/delete/" + id;
+        const url = this.base() + '/report/delete/' + id;
         return this.executeRequest(axios.delete(url));
     }
 

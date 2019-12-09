@@ -6,24 +6,24 @@ import {PwrInputFieldProps} from './pwr-input-field';
 
 export class PwrFormCaption extends React.PureComponent<{}> {
     render() {
-        return <Typography variant="h5">{this.props.children}</Typography>
+        return <Typography variant="h5">{this.props.children}</Typography>;
     }
 }
 
 export class PwrFormSubCaption extends React.PureComponent<{}> {
     render() {
-        return <Typography variant="subtitle1">{this.props.children}</Typography>
+        return <Typography variant="subtitle1">{this.props.children}</Typography>;
     }
 }
 
 export class PwrFormSubtitle extends React.PureComponent<{}> {
     render() {
-        return <Typography variant="caption">{this.props.children}</Typography>
+        return <Typography variant="caption">{this.props.children}</Typography>;
     }
 }
 
 export class PwrBody extends React.PureComponent<{}> {
     render() {
-        return <Typography variant="body2">{this.props.children}</Typography>
+        return <Typography variant="body2">{this.props.children}</Typography>;
     }
 }

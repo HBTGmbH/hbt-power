@@ -50,13 +50,13 @@ export function selectProject(index: number): SelectProjectAction {
     return {
         type: ActionType.SelectProject,
         value: index
-    }
+    };
 }
 
 export function addNewProject(): AbstractAction {
     return {
         type: ActionType.AddNewProject
-    }
+    };
 }
 
 export function projectLoadAction(projects: Array<Project>): ProjectLoadAction {
@@ -69,18 +69,18 @@ export function projectLoadAction(projects: Array<Project>): ProjectLoadAction {
 export function setEditingProjectAction(project: Project): SetEditingProjectAction {
     return {
         project: project,
-        type:ActionType.SetEditingProject
-    }
+        type: ActionType.SetEditingProject
+    };
 }
 
 export function editSelectedProjectAction(): EditSelectedProjectAction {
-    return  {
+    return {
         type: ActionType.EditSelectedProject
-    }
+    };
 }
 
 export function cancelEditSelectedProjectAction(): CancelEditSelectedProjectAction {
     return {
         type: ActionType.CancelEditSelectedProject
-    }
+    };
 }

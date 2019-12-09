@@ -36,7 +36,7 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
         }
         case ActionType.LoadProfileAction: {
             const act = action as ProfileLoadAction;
-            return replaceProfile(store,act.profile);
+            return replaceProfile(store, act.profile);
         }
         case ActionType.UpdateEntrySuccessful: {
             let profile = handleUpdateEntry(action as EntryUpdateAction, store.profile);

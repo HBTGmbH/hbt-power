@@ -35,7 +35,6 @@ export namespace TemplateReducer {
             }
             case ActionType.TemplateRequestFailed: {
                 console.error('TemplateRequestFailed');
-                console.log('Template Store: ', store.templates());
                 return store.templates();
             }
             case ActionType.SetPreview : {

@@ -18,6 +18,7 @@ import {connect} from 'react-redux';
 interface ReportManagerInfoLocalProps {
     selectedTemplate: Template;
 }
+
 interface ReportManagerInfoProps {
     currentUser: string;
 }
@@ -71,7 +72,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
     };
 
     private changeTemplateData = () => {
-        if(this.templateChanged){
+        if (this.templateChanged) {
             this.setState({
                 edit: false,
             });
@@ -261,4 +262,4 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
 }
 
 
-export const ReportManagerInfoBox: React.ComponentClass<ReportManagerInfoLocalProps> = connect(ReportManagerInfoBox_Module.mapStateToProps,ReportManagerInfoBox_Module.mapDispatchToProps)(ReportManagerInfoBox_Module);
+export const ReportManagerInfoBox: React.ComponentClass<ReportManagerInfoLocalProps> = connect(ReportManagerInfoBox_Module.mapStateToProps, ReportManagerInfoBox_Module.mapDispatchToProps)(ReportManagerInfoBox_Module);

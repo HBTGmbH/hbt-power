@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
-    import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
+import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {Card, CardHeader, Icon} from '@material-ui/core';
 import {IViewEntry} from '../../../../model/view/IViewEntry';
 import {isNullOrUndefined} from 'util';

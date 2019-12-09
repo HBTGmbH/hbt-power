@@ -25,7 +25,8 @@ interface ReportManagerLocalProps {
 interface ReportManagerDispatch {
 
     loadPreview(id: string): void;
-    loadAllTemplates():void;
+
+    loadAllTemplates(): void;
 }
 
 interface ReportManagerState {
@@ -57,18 +58,18 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         };
     }
 
-    public componentWillMount(){
-        if(this.props.allTemplates.length == 0){
+    public componentWillMount() {
+        if (this.props.allTemplates.length == 0) {
             this.props.loadAllTemplates();
         }
     }
 
-    public componentDidMount(){
+    public componentDidMount() {
         //console.log(this.props.allTemplates);
 
     }
 
-    public componentDidUpdate(){
+    public componentDidUpdate() {
 
     }
 
@@ -96,7 +97,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         this.props.allTemplates.map((value, key) => {
             items.push(<ListItem key={key} button onClick={() => this.selectTemplate(value)}>
                 <ListItemText
-                    style={{fontSize:"1rem"}}
+                    style={{fontSize: '1rem'}}
                     primary={value.name}
                     secondary={value.createdDate + '  |  ' + value.createUser}/>
             </ListItem>);
@@ -123,7 +124,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                         </ListItem>
                     </List>
                     <Divider/>
-                    <List style={{height: 'calc(100vh - 88px)', overflowY:'auto'}}>
+                    <List style={{height: 'calc(100vh - 88px)', overflowY: 'auto'}}>
                         {
                             this.renderListItems()
                         }
@@ -140,7 +141,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                 </Paper>
             </div>
 
-            <div className={'col-md-3'} style={{marginLeft:'10px'}}>
+            <div className={'col-md-3'} style={{marginLeft: '10px'}}>
                 <Paper>
                     {
                         this.state.selectedTemplate == null ? <></> :

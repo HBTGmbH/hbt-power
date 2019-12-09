@@ -85,8 +85,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     };
 
     private interceptOnChange = (e: any) => {
-            let newString: string = e.target.value.substring(0, this.props.maxCharacters);
-            this.props.onChange(e, newString);
+        let newString: string = e.target.value.substring(0, this.props.maxCharacters);
+        this.props.onChange(e, newString);
     };
 
 

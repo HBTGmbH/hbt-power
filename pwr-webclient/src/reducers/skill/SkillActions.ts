@@ -49,7 +49,7 @@ export namespace SkillActions {
         id: number;
     }
 
-    export interface MoveCategoryAction extends AbstractAction{
+    export interface MoveCategoryAction extends AbstractAction {
         newParentId: number;
         toMoveId: number;
     }

@@ -14,7 +14,7 @@ export function toArray<T>(list?: Immutable.List<T>) {
  */
 export function replaceAtIndex<Entry>(entry: Entry, array: Array<Entry>, index: number): Array<Entry> {
     if (array.length === 0) {
-        throw new Error("Cannot replace an item in an empty array");
+        throw new Error('Cannot replace an item in an empty array');
     }
     if (array.length === 1) {
         return [entry];

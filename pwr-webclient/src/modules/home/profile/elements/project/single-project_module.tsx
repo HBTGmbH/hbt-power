@@ -212,7 +212,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     };
 
     private addSkill = (skillName) => {
-        const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0, versions:[]};
+        const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0, versions: []};
         const skills = immutablePush(newSkill, this.project().skills);
         this.props.updateEditingProject({...this.project(), skills});
     };
@@ -229,7 +229,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     }
 
     private handleAddSkills = (skills: string[]) => {
-        const mappedSkills = skills.map(s => ({id: null, name: s, rating: 0, versions:[]}));
+        const mappedSkills = skills.map(s => ({id: null, name: s, rating: 0, versions: []}));
         const projectSkills = [...this.project().skills, ...mappedSkills];
         this.props.updateEditingProject({...this.project(), ...{skills: projectSkills}});
     };

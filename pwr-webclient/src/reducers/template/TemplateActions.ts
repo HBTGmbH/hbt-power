@@ -28,10 +28,10 @@ export namespace TemplateActions {
     }
 
     export interface SetPreviewAction extends AbstractAction {
-        templateId:string,
-        filename:string,
-        content:string,
-        file:File,
+        templateId: string,
+        filename: string,
+        content: string,
+        file: File,
     }
 
 

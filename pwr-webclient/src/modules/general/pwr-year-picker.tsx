@@ -3,46 +3,47 @@ import Icon from '@material-ui/core/Icon/Icon';
 import {StringUtils} from '../../utils/StringUtil';
 import dateToString = StringUtils.dateToString;
 
-const DatePicker = require("material-ui-pickers").DatePicker;
+const DatePicker = require('material-ui-pickers').DatePicker;
 
 
-interface PwrYearPickerProps{
-    onChange(date:Date):void;
-    placeholderDate:Date;
-    label:string;
+interface PwrYearPickerProps {
+    onChange(date: Date): void;
+
+    placeholderDate: Date;
+    label: string;
 }
 
-interface PwrYearPickerState{
-    selectedDate:Date
+interface PwrYearPickerState {
+    selectedDate: Date
 }
 
-export class PwrYearPicker extends React.Component<PwrYearPickerProps,PwrYearPickerState>{
+export class PwrYearPicker extends React.Component<PwrYearPickerProps, PwrYearPickerState> {
 
-    constructor(props:PwrYearPickerProps){
+    constructor(props: PwrYearPickerProps) {
         super(props);
         this.state = {
-            selectedDate : props.placeholderDate
-        }
+            selectedDate: props.placeholderDate
+        };
     }
 
-    private onChangeDate = (date:Date) => {
-        date.setFullYear(date.getFullYear(),1,1);
+    private onChangeDate = (date: Date) => {
+        date.setFullYear(date.getFullYear(), 1, 1);
 
-          this.props.onChange(date);
+        this.props.onChange(date);
     };
 
-    render(){
+    render() {
         return <DatePicker
-                autoOk
-                label={this.props.label}
-                placeholder={"Year"}
-                value={this.props.placeholderDate}
-                onChange={this.props.onChange}
-                format="YYYY"
-                openToYearSelection
-                keyboard
-                keyboardIcon={<Icon className={"material-icons"}>date_range</Icon>}
-                disableOpenOnEnter
-            />
+            autoOk
+            label={this.props.label}
+            placeholder={'Year'}
+            value={this.props.placeholderDate}
+            onChange={this.props.onChange}
+            format="YYYY"
+            openToYearSelection
+            keyboard
+            keyboardIcon={<Icon className={'material-icons'}>date_range</Icon>}
+            disableOpenOnEnter
+        />;
     }
 }

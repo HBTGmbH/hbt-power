@@ -38,13 +38,13 @@ export namespace CrossCuttingActionCreator {
         return {
             type: ActionType.SetLoginStatus,
             loginStatus
-        }
+        };
     }
 
     export function SetLoginError(error: string): SetLoginErrorAction {
         return {
             type: ActionType.SetLoginError,
             error
-        }
+        };
     }
 }

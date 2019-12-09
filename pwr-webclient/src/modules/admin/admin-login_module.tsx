@@ -176,11 +176,12 @@ class AdminLoginModule extends React.Component<AdminLoginProps
                                 {
                                     this.state.rememberLogin ?
                                         <div>
-                                            <span className="warning-note">Remember Login is a development feature only!</span><br/>
+                                            <span
+                                                className="warning-note">Remember Login is a development feature only!</span><br/>
                                             <span className="warning-note">Your Credentials will be stored in local storage!</span><br/>
                                             <span className="warning-note">Your Credentials will be vulnerable to cross site attacks!</span>
                                         </div>
-                                         :
+                                        :
                                         <span> </span>
                                 }
                             </div>

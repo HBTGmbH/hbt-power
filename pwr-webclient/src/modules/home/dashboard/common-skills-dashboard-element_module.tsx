@@ -70,7 +70,9 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                     Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}
                 </span>
                     <div className="col-md-3 col-sm-12">
-                        <PwrRaisedButton color={'primary'} icon={<OpenInNew/>} text= {PowerLocalize.get('Action.ShowMore')} onClick={this.props.navigateToStatistics}/>
+                        <PwrRaisedButton color={'primary'} icon={<OpenInNew/>}
+                                         text={PowerLocalize.get('Action.ShowMore')}
+                                         onClick={this.props.navigateToStatistics}/>
                     </div>
                 </div>
             </Paper>);

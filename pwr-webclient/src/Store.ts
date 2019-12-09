@@ -11,7 +11,7 @@ export enum APIRequestType {
 
 export enum ProfileElementType {
     SectorEntry = 'SECTOR',
-    TrainingEntry= 'TRAINING',
+    TrainingEntry = 'TRAINING',
     EducationEntry = 'EDUCATION',
     QualificationEntry = 'QUALIFICATION',
     LanguageEntry = 'LANGUAGE',

@@ -3,7 +3,7 @@ export class ReportPreviewFile {
     templateId: string;
     filename: string;
     content: string;
-    file:any;
+    file: any;
 
 
     constructor(reportPreview: ReportPreviewFile) {
@@ -11,7 +11,7 @@ export class ReportPreviewFile {
         this.templateId = reportPreview.templateId;
         this.filename = reportPreview.filename;
         this.content = reportPreview.content;
-        this.file =reportPreview.file;
+        this.file = reportPreview.file;
 
     }
 }

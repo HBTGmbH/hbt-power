@@ -10,6 +10,7 @@ import Chip from '@material-ui/core/Chip';
 import AddIcon from '@material-ui/icons/Add';
 import {SkillVersionActionCreator} from '../../reducers/profile-skill/SkillVersionActionCreator';
 import {KeyboardEvent} from 'react';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 
 interface PwrSkillVersionInfoProps {
     initials: string;
@@ -127,7 +128,8 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
                 .map((value, index) => <Chip key={index} label={value} onDelete={() => this.handleDelete(value)}/>);
         }
 
-        result.push(<Chip key={'newVersion'} icon={<AddIcon/>} label={'Neu'} color={'secondary'}
+        result.push(<Chip key={'newVersion'} icon={<AddIcon/>} label={PowerLocalize.get('Action.New')}
+                          color={'secondary'}
                           onClick={this.handleNewVersionClick}/>);
         return result;
     };
@@ -142,11 +144,12 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
                 onClose={() => this.setState({anchorEl: null})}
             >
                 <div style={{margin: '5px'}} onKeyDown={this.handleEnterButton}>
-                    <TextField label={'New Version'} placeholder={'New Version'} value={this.state.newVersionText}
+                    <TextField label={PowerLocalize.get('Version.New')} placeholder={PowerLocalize.get('Version.New')}
+                               value={this.state.newVersionText}
                                onChange={event => this.setState({newVersionText: event.target.value})}
 
                     />
-                    <PwrIconButton iconName={'add'} tooltip={'Submit'} onClick={() => {
+                    <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')} onClick={() => {
                         this.handleAddNewVersion();
                     }}/>
                 </div>

@@ -48,7 +48,7 @@ export class PowerLocalize {
         return axios.get(`${basePath}/${locale}.json`)
             .then(response => response.data)
             .then(localeData => PowerLocalize.localization = localeData)
-            .catch((error: AxiosError) => this.handleLocaleError(locale, error))
+            .catch((error: AxiosError) => this.handleLocaleError(locale, error));
     }
 
     private static async handleLocaleError(locale: string, error: AxiosError) {

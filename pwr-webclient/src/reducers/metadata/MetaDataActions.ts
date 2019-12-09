@@ -21,7 +21,6 @@ export interface AddOrReplaceClientInfoAction extends AbstractAction {
 }
 
 
-
 export namespace MetaDataActionCreator {
 
     const profileServiceClient = ProfileServiceClient.instance();
@@ -56,7 +55,7 @@ export namespace MetaDataActionCreator {
     }
 
     const available = (service: string, dispatch: redux.Dispatch<ApplicationState>) => {
-        return buildInfo => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(buildInfo)))
+        return buildInfo => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(buildInfo)));
     };
 
     const notAvailable = (service: string, dispatch: redux.Dispatch<ApplicationState>) => {
@@ -69,7 +68,7 @@ export namespace MetaDataActionCreator {
                 .then(value => dispatch(AddOrReplaceClientInfo(value)))
                 .catch(error => {
                     console.error(error);
-                    dispatch(AddOrReplaceClientInfo(null))
+                    dispatch(AddOrReplaceClientInfo(null));
                 });
         };
     }

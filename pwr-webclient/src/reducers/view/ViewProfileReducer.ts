@@ -43,9 +43,7 @@ export namespace ViewProfileReducer {
                 let map = store.parentsForSkill();
                 Object.keys(act.categoryMap).forEach(value => {
                     map = map.set(Number(value), act.categoryMap[value]);
-                    console.log(map);
                 });
-                console.log(store.parentsForSkill());
                 return store.parentsForSkill(map);
             }
             case ActionType.ClearParentCategories: {

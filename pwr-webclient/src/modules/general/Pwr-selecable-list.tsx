@@ -6,16 +6,16 @@ interface PwrSelectableListProps {
 }
 
 interface PwrSelectableListState {
-    selectedIndex:number;
+    selectedIndex: number;
 }
 
 export class PwrSelectableList extends React.Component<PwrSelectableListProps, PwrSelectableListState> {
 
-    constructor(props:PwrSelectableListProps){
+    constructor(props: PwrSelectableListProps) {
         super(props);
         this.state = {
-            selectedIndex:-1,
-        }
+            selectedIndex: -1,
+        };
     }
 
     handleClick = (index, event, child) => {
@@ -24,7 +24,7 @@ export class PwrSelectableList extends React.Component<PwrSelectableListProps, P
         }
         this.setState({
             selectedIndex: index
-        })
+        });
     };
 
     isSelected = (index: number) => {
@@ -47,6 +47,6 @@ export class PwrSelectableList extends React.Component<PwrSelectableListProps, P
     render() {
         return <React.Fragment>
             {Children.map(this.props.children, this.mapChild)}
-        </React.Fragment>
+        </React.Fragment>;
     }
 }

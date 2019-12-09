@@ -25,6 +25,7 @@ interface ProfileDescriptionState {
 
 interface ProfileDescriptionDispatch {
     saveDescription(description: string): void;
+
     setDescription(description: string): void;
 }
 
@@ -34,11 +35,11 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
         super(props);
         this.state = {
             dirty: false
-        }
+        };
     }
 
     public static mapStateToProps(state: ApplicationState, localProps: ProfileDescriptionLocalProps): ProfileDescriptionProps {
-        const description = "n/a" && state.profileStore.profile.description;
+        const description = 'n/a' && state.profileStore.profile.description;
         return {
             description: description,
             maxCharacters: PROFILE_DESCRIPTION_LENGTH,
@@ -58,7 +59,7 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
             // We'll just assume that the save is always successful (for now).
             this.setState({
                 dirty: false
-            })
+            });
         }
     };
 
@@ -70,7 +71,7 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
         this.props.setDescription(value);
         this.setState({
             dirty: true
-        })
+        });
     };
 
     private progressValue = () => {

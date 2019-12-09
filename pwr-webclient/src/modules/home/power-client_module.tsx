@@ -25,7 +25,7 @@ export class PowerClient extends React.Component<{}, {}> {
                 <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
                 <Route path={Paths.USER_SEARCH} component={ConsultantSkillSearch}/>
                 <Route path={Paths.USER_VIEW_PROFILE} component={ViewProfileOverview}/>
-                <Route path={Paths.USER_REPORTS} component={ReportHistory} />
+                <Route path={Paths.USER_REPORTS} component={ReportHistory}/>
             </div>
             <ProfileLoadingSpinner/>
         </div>;

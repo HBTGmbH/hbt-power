@@ -1,9 +1,9 @@
 import {ReportData} from '../../model/view/ReportData';
 
 export interface ReportStore {
-    reports : ReportData[]
+    reports: ReportData[]
 }
 
 export const emptyStore: ReportStore = {
-    reports : []
+    reports: []
 };

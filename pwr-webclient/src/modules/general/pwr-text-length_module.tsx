@@ -5,35 +5,36 @@ import dateToString = StringUtils.dateToString;
 import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
 
 interface PwrTextLengthProps {
-    value:string;
+    value: string;
     maxChars: number;
-    OnError(amt:number):void;
+
+    OnError(amt: number): void;
 }
 
 interface PwrTextLengthState {
-    textCounter:number;
+    textCounter: number;
 }
 
-export class PwrTextLength extends React.Component<PwrTextLengthProps,PwrTextLengthState>{
+export class PwrTextLength extends React.Component<PwrTextLengthProps, PwrTextLengthState> {
 
-    constructor(props:PwrTextLengthProps){
+    constructor(props: PwrTextLengthProps) {
         super(props);
         this.state = {
             textCounter: 0,
-        }
+        };
     }
 
 
     private progressValue = () => {
-        let value:number = (this.props.value.length / this.props.maxChars) * 100;
-        if(this.props.value.length > this.props.maxChars){
+        let value: number = (this.props.value.length / this.props.maxChars) * 100;
+        if (this.props.value.length > this.props.maxChars) {
             this.props.OnError(this.props.value.length - this.props.maxChars);
         }
         return (this.props.value.length / this.props.maxChars) * 100;
     };
 
 
-    render(){
+    render() {
         return <div>
 
             <LinearProgress
@@ -43,6 +44,6 @@ export class PwrTextLength extends React.Component<PwrTextLengthProps,PwrTextLen
             />
             <div>Zeichen: {this.props.value.length}/{this.props.maxChars}</div>
 
-        </div>
+        </div>;
     }
 }

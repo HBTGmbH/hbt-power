@@ -34,7 +34,7 @@ export class TemplateActionCreator {
     }
 
     private static DownloadFile(response: AxiosResponse) {
-        console.log('File received');
+        console.info('File received');
         let blob: Blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
         let a: any = document.createElement('a');
         a.style = 'display: none';
@@ -83,7 +83,6 @@ export class TemplateActionCreator {
         a.href = location;
 
         let name: string = location.split('/')[location.split('/').length - 1];
-        console.log(name);
         name = name.split('.')[0];
         a.download = name;
         //programatically click the link to trigger the download

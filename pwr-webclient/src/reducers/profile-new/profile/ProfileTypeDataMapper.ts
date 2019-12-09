@@ -160,7 +160,7 @@ export class ProfileTypeDataMapper {
         const isNew = isNullOrUndefined(entry);
         const id = isNew ? -1 : entry.id;
         const nameId = isNew ? -1 : entry.nameEntity.id;
-        let nameEntity: NameEntity = newNameEntity(nameId, state.searchText,type);
+        let nameEntity: NameEntity = newNameEntity(nameId, state.searchText, type);
         switch (type) {
             case 'LANGUAGE': {
                 if (!isNullOrUndefined(state.langLevel)) {

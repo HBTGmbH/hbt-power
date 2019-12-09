@@ -27,7 +27,7 @@ export namespace NavigationActionCreator {
         return (response: T) => {
             Alerts.showSuccess(msg);
             return response;
-        }
+        };
     }
 
     /**

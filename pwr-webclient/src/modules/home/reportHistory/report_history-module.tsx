@@ -22,8 +22,11 @@ interface ReportHistoryLocalProps {
 
 interface ReportHistoryDispatch {
     loadAllReportData(initials: string): void,
-    loadAllTemplateData() : void,
+
+    loadAllTemplateData(): void,
+
     getReportFile(id): void,
+
     deleteReportFile(id, cb): void
 }
 
@@ -69,7 +72,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     }
 
     componentWillMount() {
-       this.loadAllData();
+        this.loadAllData();
     };
 
     private loadAllData() {
@@ -81,7 +84,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     }
 
     private loadAllReportData = () => {
-        if (this.props.initials != null && this.props.initials != "") { // TODO reload initials
+        if (this.props.initials != null && this.props.initials != '') { // TODO reload initials
             this.props.loadAllReportData(this.props.initials);
         }
     };
@@ -90,37 +93,41 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         this.props.loadAllTemplateData();
     };
 
-    private ReportDeleteButton = (id:number) => {
+    private ReportDeleteButton = (id: number) => {
         return <Button
             style={{marginLeft: '8px', marginTop: '5px', backgroundColor: '#ff8e01'}}
             variant={'contained'}
             className="mui-margin pwr-btn-error"
-            onMouseDown={() => { this.deleteReport(id); }}
+            onMouseDown={() => {
+                this.deleteReport(id);
+            }}
         >
             <Icon className="material-icons">delete</Icon>
             {PowerLocalize.get('Action.Delete')}
-        </Button>
+        </Button>;
     };
 
-    private StatusDisplay = (status:string, id:number) => {
-        let body : JSX.Element;
+    private StatusDisplay = (status: string, id: number) => {
+        let body: JSX.Element;
 
-        switch(status) {
-            case "DONE":
+        switch (status) {
+            case 'DONE':
                 body =
                     <Button
                         variant="contained"
                         color="primary" style={{marginLeft: '8px', marginTop: '5px'}}
-                        onMouseDown={() => { this.downloadReport(id); }}
+                        onMouseDown={() => {
+                            this.downloadReport(id);
+                        }}
                     >
                         <Icon className="material-icons">get_app</Icon>
                         {PowerLocalize.get('Action.Download')}
                     </Button>;
                 break;
-            case "ERROR":
+            case 'ERROR':
                 body = <ErrorOutline color="secondary"/>;
                 break;
-            case "RUNNING":
+            case 'RUNNING':
                 body = <Build color="secondary"/>;
                 break;
             default:
@@ -141,7 +148,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         this.props.deleteReportFile(id.toString(), this.loadAllReportData);
     };
 
-    getTemplateName = (idx: string) : string  => {
+    getTemplateName = (idx: string): string => {
         const templates = this.props.templates;
         if (!isNullOrUndefined(templates)) {
             const template = templates.get(idx);
@@ -159,7 +166,9 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                     <Button
                         variant="contained"
                         color="secondary" style={{marginLeft: '8px', marginTop: '5px'}}
-                        onMouseDown={() => { this.loadAllData();}}
+                        onMouseDown={() => {
+                            this.loadAllData();
+                        }}
                     >
                         <Icon className="material-icons">autorenew</Icon>
                         {PowerLocalize.get('Action.Update')}
@@ -180,7 +189,8 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                         <TableCell>{value.viewProfileName}</TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
                                         <TableCell align="left">{value.createDate}</TableCell>
-                                        <TableCell align="left">{this.StatusDisplay(value.reportStatus, value.id)}</TableCell>
+                                        <TableCell
+                                            align="left">{this.StatusDisplay(value.reportStatus, value.id)}</TableCell>
                                     </TableRow>)
                             }
                         </TableBody>

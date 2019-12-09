@@ -16,6 +16,6 @@ export namespace ViewProfileActions {
     }
 
     export interface SetParentCategoryAction extends AbstractAction {
-        categoryMap: Map<number,ViewCategory>;
+        categoryMap: Map<number, ViewCategory>;
     }
 }

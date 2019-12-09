@@ -21,6 +21,6 @@ export class TemplateStore {
     }
 
     public static empty(): TemplateStore {
-        return new TemplateStore().templates(Immutable.Map<string, Template>()).previews(Immutable.Map<string,ReportPreviewFile>());
+        return new TemplateStore().templates(Immutable.Map<string, Template>()).previews(Immutable.Map<string, ReportPreviewFile>());
     }
 }

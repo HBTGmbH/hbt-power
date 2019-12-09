@@ -26,6 +26,7 @@ export class SuggestionServiceClient extends PowerHttpClient {
     private base(): string {
         return POWER_PROFILE_SERVICE_URL;
     }
+
     public getQualificationSuggestions = (): Promise<Array<NameEntity>> => {
         const url = this.base() + '/suggestions/qualifications';
         this.beginRequest();

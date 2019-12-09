@@ -20,10 +20,13 @@ interface PwrProjectRoleAutocompletePropsLocalProps {
     label: string;
     disabled?: boolean;
     disableFiltering?: boolean;
+
     onAddRole?(role: NameEntity);
+
     onRemoveRole?(role: NameEntity);
 
     searchTerm?: string;
+
     onChangeRole(role: NameEntity);
 }
 
@@ -82,19 +85,19 @@ class PwrProjectRoleAutocompleteModule extends React.Component<PwrProjectRoleAut
         if (this.props.onRemoveRole) {
             const toRemove = this.findRoleInInput(value);
             if (!toRemove) {
-                throw new Error("Cannot find role with name " + value + ", but removal for this role was called. This is most likely due to a mutating edit of props.item!");
+                throw new Error('Cannot find role with name ' + value + ', but removal for this role was called. This is most likely due to a mutating edit of props.item!');
             }
             this.props.onRemoveRole(toRemove);
         }
     };
 
-    render()  {
+    render() {
         const props = this.props;
         return <PwrAutoComplete chips={this.items()}
                                 onSearchChange={this.handleChange}
                                 onRemove={this.handleRemove}
                                 onAdd={this.handleAdd} data={this.props.projectRoleNames}
-                                {...props}/>
+                                {...props}/>;
     }
 }
 

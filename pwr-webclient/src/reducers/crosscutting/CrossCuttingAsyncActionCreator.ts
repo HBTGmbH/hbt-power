@@ -23,7 +23,7 @@ export namespace CrossCuttingAsyncActionCreator {
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.INITIALS));
             dispatch(resetProfileStore());
             dispatch(ViewProfileActionCreator.ResetViewState());
-        }
+        };
     }
 
     export function AsyncLogInUser(initials: string, navTarget?: string) {

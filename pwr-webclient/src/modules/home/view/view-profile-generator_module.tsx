@@ -74,13 +74,6 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         this.resetState(props);
     }
 
-    componentDidUpdate(prevProps: Readonly<ViewProfileGeneratorProps
-        & ViewProfileGeneratorLocalProps
-        & ViewProfileGeneratorDispatch>): void {
-        if (this.props.open && !prevProps.open){
-            this.props.loadAllTemplates();
-        }
-    }
 
     private resetState(props: ViewProfileGeneratorProps
         & ViewProfileGeneratorLocalProps

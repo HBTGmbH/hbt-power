@@ -9,6 +9,7 @@ export interface PwrButtonProps {
     icon?: JSX.Element;
     text: string;
     disabled?: boolean;
+
     onClick?(): void;
 }
 
@@ -23,5 +24,5 @@ export const PwrButton = (props: PwrButtonProps) => {
     >
         {props.text}
         {props.icon}
-    </Button>
-}
+    </Button>;
+};
