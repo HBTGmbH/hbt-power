@@ -88,6 +88,8 @@ public class SkillControllerTest {
             skillRepository.save(s);
             MockHttpServletRequestBuilder builder = get("/skill/byName");
             builder.param("qualifier", skillName);
+            System.out.println("mock: " + mockMvc.toString());
+            System.out.println("builder: " + builder.toString());
             mockMvc.perform(builder).andExpect(status().isOk());
         }
     }

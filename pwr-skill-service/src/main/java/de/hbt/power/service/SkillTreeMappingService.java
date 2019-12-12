@@ -6,6 +6,7 @@ import de.hbt.power.model.dto.TCategoryNode;
 import de.hbt.power.model.dto.TSkillNode;
 import de.hbt.power.repo.SkillCategoryRepository;
 import de.hbt.power.repo.SkillRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class SkillTreeMappingService {
 
@@ -27,10 +29,15 @@ public class SkillTreeMappingService {
     }
 
     public TCategoryNode buildSkillTree() {
+        return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findForTree());
+    }
+
+    public TCategoryNode buildSkillTreeDebug() {
         return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findAll());
     }
 
     public TCategoryNode buildSkillTree(List<SkillCategory> categories, List<Skill> skills) {
+        log.info("categories: " + categories.size() + "        skills: " + skills.size());
         return new SkillTreeMapper(categories, skills).map();
     }
 
@@ -80,6 +87,7 @@ public class SkillTreeMappingService {
             skillNode.setQualifier(skill.getQualifier());
             skillNode.setId(skill.getId());
             skillNode.setCustom(skill.isCustom());
+            skillNode.setVersions(skill.getVersions());
             // As this step is happening after all categories are mapped, we can safely add the skill now
             if (skill.getCategory() != null) {
                 // If this throws an exception, something is very wrong.

@@ -16,7 +16,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static de.hbt.power.exception.SkillServiceException.categoryAlreadyExists;
 import static de.hbt.power.model.SkillCategory.custom;
 import static de.hbt.power.util.SkillServiceUtil.peek;
@@ -65,10 +64,11 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory(SkillCategory toDelete) {
-        checkNotNull(toDelete);
-        skillCategoryRepository.findAllByCategory(toDelete).forEach(this::deleteCategory);
-        skillRepository.deleteAllByCategory(toDelete);
-        skillCategoryRepository.delete(toDelete);
+        if(toDelete != null){
+            skillCategoryRepository.findAllByCategory(toDelete).forEach(this::deleteCategory);
+            skillRepository.deleteAllByCategory(toDelete);
+            skillCategoryRepository.delete(toDelete);
+        }
 
     }
 

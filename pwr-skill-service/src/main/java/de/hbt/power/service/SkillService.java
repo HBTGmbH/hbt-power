@@ -58,4 +58,13 @@ public class SkillService {
         skill.removeLocale(getLocale(language));
     }
 
+    @Transactional
+    public void addVersion(Skill skill, String version) {
+        skill.getVersions().add(version);
+    }
+
+    @Transactional
+    public void deleteVersion(Skill skill, String version){
+        skill.getVersions().remove(version);
+    }
 }
