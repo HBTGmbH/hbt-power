@@ -4,7 +4,7 @@ import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
-import de.hbt.pwr.view.service.ViewProfileService;
+import de.hbt.pwr.view.service.ViewProfileOperationService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class ViewProfileOperationsControllerTest {
      * refer to {@link de.hbt.pwr.view.service.ViewProfileVisibilityTests}
      */
     @MockBean
-    private ViewProfileService viewProfileService;
+    private ViewProfileOperationService viewProfileService;
 
     @MockBean
     private ViewProfileSortService viewProfileSortService;
@@ -284,31 +284,6 @@ public class ViewProfileOperationsControllerTest {
         mockMvc.perform(patch(url).content(newDescription).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         assertOwnerCheckAndRetrieval();
         then(viewProfileService).should(times(1)).setDescription(viewProfileReturned, newDescription);
-    }
-
-    @Test
-    public void createsCategoryAndReturns200() throws Exception {
-        String url = urlBasePath() + "/CATEGORY";
-        String parentName = "Smithing";
-        String newCategoryName = "Goldsmithing";
-        mockMvc.perform(post(url).param("parent-name", parentName).param("category-name", newCategoryName))
-                .andExpect(status().isOk());
-        assertOwnerCheckAndRetrieval();
-        then(viewProfileService)
-                .should(times(1))
-                .addNewCategory(viewProfileReturned, parentName, newCategoryName);
-    }
-
-    @Test
-    public void shouldMoveSkillAndReturn200() throws Exception {
-        String url = urlBasePath() + "/SKILL/CATEGORY";
-        String skillName = "TestSkill";
-        String categoryName = "123123";
-        mockMvc.perform(patch(url).param("skill-name", skillName).param("category-name", categoryName)).andExpect(status().isOk());
-        assertOwnerCheckAndRetrieval();
-        then(viewProfileService)
-                .should(times(1))
-                .moveSkill(viewProfileReturned, skillName, categoryName);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.exception.CategoryNotFoundException;
 import de.hbt.pwr.view.exception.CategoryNotUniqueException;
 import de.hbt.pwr.view.exception.InvalidOwnerException;
@@ -7,10 +8,10 @@ import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.model.skill.Category;
-import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.PwrListUtil;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,15 +27,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 
 /**
- * Tests that validate general behaviour of the {@link ViewProfileService}
+ * Tests that validate general behaviour of the {@link ViewProfileOperationService}
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ViewProfileServiceTest {
 
-    private ViewProfileService viewProfileService;
+    private ViewProfileOperationService viewProfileService;
 
     @MockBean
     private ViewProfileRepository viewProfileRepository;
+    @MockBean
+    private SkillServiceClient skillServiceClient;
 
     private final String testUserInitials = "tst";
 
@@ -57,7 +60,7 @@ public class ViewProfileServiceTest {
         given(viewProfileRepository.findAll()).willReturn(PwrListUtil.union(testViewProfileListOfTestUser, testViewProfilesOfOtherUser));
         testViewProfileListOfTestUser.forEach(viewProfile -> given(viewProfileRepository.findById(viewProfile.getId())).willReturn(of(viewProfile)));
         testViewProfilesOfOtherUser.forEach(viewProfile -> given(viewProfileRepository.findById(viewProfile.getId())).willReturn(of(viewProfile)));
-        viewProfileService = new ViewProfileService(viewProfileRepository);
+        viewProfileService = new ViewProfileOperationService(viewProfileRepository, skillServiceClient);
     }
 
     @Test
@@ -108,96 +111,6 @@ public class ViewProfileServiceTest {
         viewProfile.setDescription(oldDescription);
         viewProfileService.setDescription(viewProfile, newDescription);
         assertThat(viewProfile.getDescription()).isEqualTo(newDescription);
-    }
-
-    @Test
-    public void shouldHaveAddedNewCategory() {
-        Category category = new Category("Category1");//Category.builder().name("Category1").build();
-        Category newCategoryParent = new Category("Category2");
-        String newCategoryName = "Category3";
-        newCategoryParent.setParent(category);
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(category);
-
-        viewProfileService.addNewCategory(viewProfile, newCategoryParent.getName(), newCategoryName);
-
-        Category newCategory = viewProfile.getRootCategory().getChildren().get(0).getChildren().get(0);
-        assertThat(newCategory.getName()).isEqualTo(newCategoryName);
-        assertThat(newCategory.getParent()).isEqualTo(newCategoryParent);
-    }
-
-    @Test(expected = CategoryNotUniqueException.class)
-    public void shouldThrowBecauseNameAlreadyExist() {
-        final String category1Name = "Category1";
-        final String category2Name = "Category2";
-        final Category category1 = new Category(category1Name);
-        final Category category2 = new Category(category2Name);
-        final Category root = new Category("root");
-        category1.setParent(root);
-        category2.setParent(root);
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(root);
-
-        viewProfileService.addNewCategory(viewProfile, category1Name, category2Name);
-    }
-
-    @Test(expected = CategoryNotFoundException.class)
-    public void shouldThrowBecauseParentDoesNotExist() {
-        final String category1Name = "Category1";
-        final String category2Name = "Category2";
-        final Category category1 = new Category(category1Name);
-        final Category category2 = new Category(category2Name);
-        final Category root = new Category("root");
-        category1.setParent(root);
-        category2.setParent(root);
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(root);
-        viewProfileService.addNewCategory(viewProfile, "düpämölv", "afsada");
-    }
-
-    @Test
-    public void shouldMoveSkill() {
-        Category root = new Category("root");
-        Category oldCategory = new Category("old", root);
-        Category newCategory = new Category("new", root);
-        Skill skill = Skill.builder().name("skill").category(oldCategory).build();
-
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(root);
-
-        viewProfileService.moveSkill(viewProfile, skill.getName(), newCategory.getName());
-
-        assertThat(oldCategory.getSkills()).isEmpty();
-        assertThat(newCategory.getSkills()).containsExactly(skill);
-    }
-
-    @Test
-    public void shouldSetDisplayCategoryForMovedSkill() {
-        Category root = new Category(ViewProfileImporter.PWR_ROOT_NAME);
-        Category oldCategory = new Category("old", root);
-        Category newCategory = new Category("new", root);
-        Skill skill = Skill.builder().name("skill").category(oldCategory).displayCategory(oldCategory).build();
-
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(root);
-
-        viewProfileService.moveSkill(viewProfile, skill.getName(), newCategory.getName());
-
-        assertThat(skill.getDisplayCategory()).isEqualTo(newCategory);
-        assertThat(newCategory.getDisplaySkills()).containsExactly(skill);
-        assertThat(newCategory.getSkills()).containsExactly(skill);
-        assertThat(oldCategory.getDisplaySkills()).doesNotContain(skill);
-        assertThat(oldCategory.getSkills()).doesNotContain(skill);
-    }
-
-    @Test(expected = CategoryNotFoundException.class)
-    public void shouldThrowNotFoundForUnknownCategory() {
-        Category root = new Category(ViewProfileImporter.PWR_ROOT_NAME);
-        Skill skill = Skill.builder().name("skill").category(root).displayCategory(root).build();
-
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(root);
-        viewProfileService.moveSkill(viewProfile, skill.getName(), "asdasfjdapofj");
     }
 
     @Test

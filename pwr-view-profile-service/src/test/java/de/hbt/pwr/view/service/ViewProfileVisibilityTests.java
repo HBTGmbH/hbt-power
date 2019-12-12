@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
@@ -25,10 +26,12 @@ import static org.assertj.core.api.Assertions.fail;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ViewProfileVisibilityTests {
 
-    private ViewProfileService viewProfileService;
+    private ViewProfileOperationService viewProfileService;
 
     @MockBean
     private ViewProfileRepository viewProfileRepository;
+    @MockBean
+    private SkillServiceClient skillServiceClient;
 
     private ViewProfile profileToTest;
 
@@ -42,7 +45,7 @@ public class ViewProfileVisibilityTests {
     @Before
     public void setUp() {
         profileToTest = new ViewProfile();
-        viewProfileService = new ViewProfileService(viewProfileRepository);
+        viewProfileService = new ViewProfileOperationService(viewProfileRepository, skillServiceClient);
     }
 
     private void addEntry(ProfileEntryType profileEntryType, boolean enabled) {
@@ -285,55 +288,6 @@ public class ViewProfileVisibilityTests {
     public void TrainingIsDisabledAfterDisabling() {
         testDisableEntry(ProfileEntryType.TRAINING);
     }
-
-    @Test
-    public void SkillInProfileIsEnabledAfterEnabling() {
-        Category category = new Category("root");
-        Skill skill = Skill.builder().name("skill").category(category).build();
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(category);
-
-        viewProfileService.setIsEnabledForSkill(viewProfile, skill.getName(), true);
-        assertThat(viewProfile.findSkillByName(skill.getName()).get().getEnabled()).isTrue();
-    }
-
-    @Test
-    public void SkillInProfileIsDisabledAfterDisabling() {
-        Category category = new Category("root");
-        Category category2 = new Category("root");
-        Skill skill = Skill.builder().name("skill").category(category).build();
-        Skill skill2 = Skill.builder().name("skill").category(category2).build();
-        ViewProfile viewProfile = new ViewProfile();
-        // This strange construct may happen due to deserialization from redis
-        viewProfile.setRootCategory(category);
-        viewProfile.setDisplayCategories(Collections.singletonList(category2));
-
-        viewProfileService.setIsEnabledForSkill(viewProfile, skill.getName(), false);
-        assertThat(viewProfile.findSkillByName(skill.getName()).get().getEnabled()).isFalse();
-        // make sure this also works for skills in display categories
-        Skill skillFromDisplay = viewProfile.getDisplayCategories().stream()
-                .map(Category::getSkills)
-                .flatMap(skills -> skills.stream())
-                .filter(s -> s.getName().equals(skill.getName()))
-                .findFirst()
-                .orElse(null);
-        assertThat(skillFromDisplay).isNotNull();
-        assertThat(skillFromDisplay.getEnabled()).isFalse();
-    }
-
-    @Test
-    public void AllSkillsInProfileAreEnabledAfterEnabling() {
-        Category category = new Category("root");
-        Skill skill1 = Skill.builder().name("skill").category(category).enabled(false).build();
-        Skill skill2 = Skill.builder().name("skil2").category(category).enabled(false).build();
-        ViewProfile viewProfile = new ViewProfile();
-        viewProfile.setRootCategory(category);
-
-        viewProfileService.setIsEnabledForAllSkills(viewProfile, true);
-        assertThat(viewProfile.findSkillByName(skill1.getName()).get().getEnabled()).isTrue();
-        assertThat(viewProfile.findSkillByName(skill2.getName()).get().getEnabled()).isTrue();
-    }
-
 
     private void addRoleProjectToProfile(String name, Boolean enabled) {
         ProjectRole role = new ProjectRole(name, enabled);

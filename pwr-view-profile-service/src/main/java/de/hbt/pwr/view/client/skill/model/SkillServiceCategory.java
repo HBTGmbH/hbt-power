@@ -24,6 +24,11 @@ public class SkillServiceCategory {
         this.qualifier = qualifier;
     }
 
+    public SkillServiceCategory(Integer id, String qualifier) {
+        this.id = id;
+        this.qualifier = qualifier;
+    }
+
     public SkillServiceCategory(String qualifier, SkillServiceCategory category) {
         this.qualifier = qualifier;
         this.category = category;
@@ -36,7 +41,7 @@ public class SkillServiceCategory {
     }
 
     public String getLocalizedQualifier(String locale) {
-        if(locale == null) {
+        if (locale == null || this.qualifiers == null) {
             return qualifier;
         }
         Optional<String> name = qualifiers.stream()

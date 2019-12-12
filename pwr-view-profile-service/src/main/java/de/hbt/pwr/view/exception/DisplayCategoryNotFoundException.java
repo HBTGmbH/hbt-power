@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Indicates that a {@link de.hbt.pwr.view.model.skill.Category} is neither a direct nor indirect parent
- * to a {@link de.hbt.pwr.view.model.skill.Skill}, meaning that recursive calls to {@link Skill#getCategory()}
- * and {@link Category#getParent()} did not find the {@link DisplayCategoryNotFoundException#wantedCategory}
+ * to a {@link de.hbt.pwr.view.model.skill.Skill}
  */
 public class DisplayCategoryNotFoundException extends RuntimeException {
 

@@ -7,12 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.redis.core.RedisHash;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 @Builder
@@ -20,6 +19,8 @@ import java.util.Optional;
 @AllArgsConstructor
 @RedisHash("viewProfile")
 public class ViewProfile {
+
+    private static final Logger LOG = LogManager.getLogger(ViewProfile.class);
 
     private String id;
 
@@ -49,34 +50,24 @@ public class ViewProfile {
 
     private List<Category> displayCategories = new ArrayList<>();
 
-
-    /**
-     */
-    private Category rootCategory;
-
-    private Optional<Skill> findSkillByName(Category category, String name) {
-        Optional<Skill> skill = category.getSkills().stream().filter(skill1 -> name.equals(skill1.getName())).findAny();
-        if(skill.isPresent()) {
-            return skill;
-        } else {
-            Optional<Skill> tmp = Optional.empty();
-            for (Category child : category.getChildren()) {
-                tmp = findSkillByName(child, name);
-                if (tmp.isPresent()) {
-                    return tmp;
-                }
-            }
-            return tmp;
-        }
-    }
-
     public Optional<Skill> findSkillByName(String name) {
-        return findSkillByName(rootCategory, name);
+        return this.displayCategories.stream()
+                .map(category -> category.getDisplaySkills().stream()
+                        .filter(skill -> skill.getName().equals(name))
+                        .findFirst().orElse(null)
+                ).filter(Objects::nonNull)
+                .findFirst();
     }
 
     public static class ViewProfileStub {
         public String viewDescription;
         public String name;
         public String locale;
+    }
+
+    public static class ViewProfileMergeOptions {
+        public String viewDescription;
+        public String name;
+        public boolean keepOld;
     }
 }

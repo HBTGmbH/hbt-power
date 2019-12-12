@@ -14,17 +14,20 @@ import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 
@@ -49,8 +52,8 @@ public class ViewProfileImporterSkillTest {
     @MockBean
     private ViewProfileSortService viewProfileSortService;
 
+    private ViewProfileCreatorService viewProfileCreatorService;
 
-    private ViewProfileImporter viewProfileImporter;
 
     private final String initials = "tst";
     private SkillServiceCategory categoryA;
@@ -59,7 +62,6 @@ public class ViewProfileImporterSkillTest {
     private SkillServiceCategory categoryB;
     private SkillServiceCategory categoryB1;
     private SkillServiceCategory categoryB2;
-    private Category root;
     private Skill resSkillA1a;
     private Skill resSkillA1b;
     private Skill resSkillA2a;
@@ -77,7 +79,7 @@ public class ViewProfileImporterSkillTest {
     public void setUp() {
         profile = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
-        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, skillServiceFallback, viewProfileRepository, viewProfileSortService);
+        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, null, viewProfileRepository, viewProfileSortService);
     }
 
     @After
@@ -86,17 +88,24 @@ public class ViewProfileImporterSkillTest {
         reset(profileServiceClient);
     }
 
+    private ViewProfile makeViewProfile(String initials, String name, String description, String locale) {
+        given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
+        given(viewProfileRepository.save(any())).will(invocationOnMock -> invocationOnMock.getArgument(0));
+        return viewProfileCreatorService.createViewProfile(initials, name, description, locale);
+    }
+
     private Skill makeSkill(String name) {
         Skill skill = new Skill();
         skill.setName(name);
         skill.setEnabled(true);
         skill.setRating(SKILL_RATING);
+        skill.setId(1L);
         return skill;
     }
 
     private Category getCategoryOrFail(List<Category> categoryList, String nameToFind) {
         Optional<Category> optional = categoryList.stream().filter(category -> category.getName().equals(nameToFind)).findAny();
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             return optional.get();
         } else {
             fail("Expected " + categoryList.toString() + " to contain a category with the name '" + nameToFind + "'");
@@ -104,14 +113,18 @@ public class ViewProfileImporterSkillTest {
             throw new RuntimeException();
         }
     }
-    
+
     private void initData() {
-        categoryA = new SkillServiceCategory("categoryA");
+        categoryA = new SkillServiceCategory(1, "categoryA");
         categoryA1 = new SkillServiceCategory("categoryA1", categoryA);
+        categoryA1.setId(2);
         categoryA2 = new SkillServiceCategory("categoryA2", categoryA);
-        categoryB = new SkillServiceCategory("categoryB");
+        categoryA2.setId(3);
+        categoryB = new SkillServiceCategory(4, "categoryB");
         categoryB1 = new SkillServiceCategory("categoryB1", categoryB);
+        categoryB1.setId(5);
         categoryB2 = new SkillServiceCategory("categoryB2", categoryB);
+        categoryB2.setId(6);
 
         SkillServiceSkill skillA1a = new SkillServiceSkill("SkillA1a", categoryA1);
         SkillServiceSkill skillA1b = new SkillServiceSkill("SkillA1b", categoryA1);
@@ -130,8 +143,8 @@ public class ViewProfileImporterSkillTest {
             profile.getSkills().add(new ProfileSkill(skill.getQualifier(), SKILL_RATING));
         }
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
+        given(viewProfileRepository.save(any())).will(invocationOnMock -> invocationOnMock.getArgument(0));
 
-        root = new Category("root");
 
         resSkillA1a = makeSkill(skillA1a.getQualifier());
         resSkillA1b = makeSkill(skillA1b.getQualifier());
@@ -144,28 +157,9 @@ public class ViewProfileImporterSkillTest {
     }
 
     @Test
-    public void shouldImportAsSkillTree() {
-        initData();
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
-        assertThat(viewProfile.getRootCategory()).isEqualTo(root);
-        assertThat(viewProfile.getRootCategory().getSkills()).isEmpty();
-        Category resA = getCategoryOrFail(viewProfile.getRootCategory().getChildren(), categoryA.getQualifier());
-        Category resB = getCategoryOrFail(viewProfile.getRootCategory().getChildren(), categoryB.getQualifier());
-        Category resA1 = getCategoryOrFail(resA.getChildren(), categoryA1.getQualifier());
-        Category resA2 = getCategoryOrFail(resA.getChildren(), categoryA2.getQualifier());
-        Category resB1 = getCategoryOrFail(resB.getChildren(), categoryB1.getQualifier());
-        Category resB2 = getCategoryOrFail(resB.getChildren(), categoryB2.getQualifier());
-
-        assertThat(resA1.getSkills()).containsExactlyInAnyOrder(resSkillA1a, resSkillA1b);
-        assertThat(resA2.getSkills()).containsExactlyInAnyOrder(resSkillA2a, resSkillA2b);
-        assertThat(resB1.getSkills()).containsExactlyInAnyOrder(resSkillB1a, resSkillB1b);
-        assertThat(resB2.getSkills()).containsExactlyInAnyOrder(resSkillB2a, resSkillB2b);
-    }
-
-    @Test
     public void allSkillsShouldBeAvailable() {
         initData();
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
         assertThat(viewProfile.findSkillByName(resSkillA1a.getName()).isPresent()).isTrue();
         assertThat(viewProfile.findSkillByName(resSkillA1b.getName()).isPresent()).isTrue();
         assertThat(viewProfile.findSkillByName(resSkillA2a.getName()).isPresent()).isTrue();
@@ -194,9 +188,9 @@ public class ViewProfileImporterSkillTest {
         profile.getSkills().add(new ProfileSkill("TestSkill"));
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
 
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
 
-        Category category = new Category(secondHighest.getQualifier(), true, null, true);
+        Category category = new Category(-1L,secondHighest.getQualifier(), true,  true);
 
         assertThat(viewProfile.getDisplayCategories()).containsExactlyInAnyOrder(category);
     }
@@ -210,9 +204,13 @@ public class ViewProfileImporterSkillTest {
         SkillServiceCategory lowest2 = new SkillServiceCategory("Lowest2", center);
 
         SkillServiceSkill testSkill1 = new SkillServiceSkill("Fizzing", lowest);
+        testSkill1.setId(-1);
         SkillServiceSkill testSkill2 = new SkillServiceSkill("Buzzing", center);
+        testSkill2.setId(-1);
         SkillServiceSkill testSkill3 = new SkillServiceSkill("Fooing", secondHighest);
+        testSkill3.setId(-1);
         SkillServiceSkill testSkill4 = new SkillServiceSkill("Baring", lowest2);
+        testSkill4.setId(-1);
 
         profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
         profile.getSkills().add(new ProfileSkill(testSkill2.getQualifier()));
@@ -225,45 +223,21 @@ public class ViewProfileImporterSkillTest {
         given(skillServiceClient.getSkillByName(testSkill3.getQualifier())).willReturn(testSkill3);
         given(skillServiceClient.getSkillByName(testSkill4.getQualifier())).willReturn(testSkill4);
 
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
         Category displayCategory = viewProfile.getDisplayCategories().get(0);
         assertThat(displayCategory.getDisplaySkills()).containsExactlyInAnyOrder(
-                Skill.builder().name(testSkill1.getQualifier()).build(),
-                Skill.builder().name(testSkill2.getQualifier()).build(),
-                Skill.builder().name(testSkill3.getQualifier()).build(),
-                Skill.builder().name(testSkill4.getQualifier()).build()
+                Skill.builder().id(-1L).name(testSkill1.getQualifier()).versions(new ArrayList<>()).build(),
+                Skill.builder().id(-1L).name(testSkill2.getQualifier()).versions(new ArrayList<>()).build(),
+                Skill.builder().id(-1L).name(testSkill3.getQualifier()).versions(new ArrayList<>()).build(),
+                Skill.builder().id(-1L).name(testSkill4.getQualifier()).versions(new ArrayList<>()).build()
         );
     }
 
-    /**
-     * Problem:
-     * - root
-     *   - tier0 category
-     *    - skill // <- this skill has no display category but needs one
-     *    - display
-     *     - skill // <- this skill is happy because it has one.
-     */
-    @Test
-    public void shouldSetDisplayForAllSkillsAboveDefaultDisplayToTheirParent() {
-        SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
-        SkillServiceCategory secondHighest = new SkillServiceCategory("SecondHighest", highest);
-        SkillServiceCategory center = new SkillServiceCategory("Center", secondHighest);
-        new SkillServiceCategory("Lowest", center);
-        SkillServiceSkill testSkill1 = new SkillServiceSkill("Fizzing", highest);
 
-        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
-        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
-
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
-        Category categoryWithOrphan = viewProfile.getRootCategory().getChildren().get(0);
-        assertThat(categoryWithOrphan.getName()).isEqualTo(highest.getQualifier());
-        assertThat(categoryWithOrphan.getDisplaySkills()).containsExactlyInAnyOrder(Skill.builder().name(testSkill1.getQualifier()).build());
-    }
 
     /**
      * Sometimes, the skill service will provide a display category.
      * Makes sure that this is used.
-     *
      */
     @Test
     public void shouldUseDisplayCategoryOverride() {
@@ -273,7 +247,7 @@ public class ViewProfileImporterSkillTest {
         SkillServiceSkill testSkill1 = new SkillServiceSkill("adada", lowest);
         profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
         given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
 
         Optional<Skill> skillOptional = viewProfile.findSkillByName(testSkill1.getQualifier());
         assertThat(skillOptional.isPresent()).isTrue();
@@ -281,42 +255,23 @@ public class ViewProfileImporterSkillTest {
         assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(lowest.getQualifier());
     }
 
-    /**
-     * Override has to override any default behavior. 2nd highest is default.
-     */
-    @Test
-    public void shouldUseDisplayCategoryOverrideAboveDefault() {
-        SkillServiceCategory highest = new SkillServiceCategory("Highest", null,  true);
-        SkillServiceCategory center = new SkillServiceCategory("Center", highest);
-        SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center);
-        SkillServiceSkill testSkill1 = new SkillServiceSkill("adada", lowest);
-        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
-        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
-
-        Optional<Skill> skillOptional = viewProfile.findSkillByName(testSkill1.getQualifier());
-        assertThat(skillOptional.isPresent()).isTrue();
-        //noinspection ConstantConditions
-        assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(highest.getQualifier());
-    }
-
     @Test
     public void shouldHaveViewDescriptionSet() {
         String description = "MyFooBarDescription";
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, "", description, "deu");
+        ViewProfile viewProfile = makeViewProfile(initials, "name", description, "");
         assertThat(viewProfile.getViewProfileInfo().getViewDescription()).isEqualTo(description);
     }
 
     @Test
     public void shouldHaveNameSet() {
         String name = "MyName";
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, name, "FooBarDadasda", "deu");
+        ViewProfile viewProfile = makeViewProfile(initials, name, "descr", "");
         assertThat(viewProfile.getViewProfileInfo().getName()).isEqualTo(name);
     }
 
     @Test
     public void creationDateShouldNotBeNull() {
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials);
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
         assertThat(viewProfile.getViewProfileInfo().getCreationDate()).isNotNull();
     }
 
@@ -334,11 +289,10 @@ public class ViewProfileImporterSkillTest {
 
         profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
         given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
-        ViewProfile viewProfile = viewProfileImporter.importViewProfile(initials, "", "", "deu");
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "deu");
 
         Optional<Skill> skillOptional = viewProfile.findSkillByName(localizedQualifier.getQualifier());
         assertThat(skillOptional.isPresent()).isTrue();
         assertThat(skillOptional.get().getName()).isEqualTo(localizedQualifier.getQualifier());
-        assertThat(skillOptional.get().getCategory().getName()).isEqualTo(localizedQualifierCategory.getQualifier());
     }
 }

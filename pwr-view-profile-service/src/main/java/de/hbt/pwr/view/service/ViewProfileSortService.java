@@ -11,17 +11,21 @@ import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.util.PwrListUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 
 /**
  * Contains sort operations for a {@link ViewProfile}.
+ *
  * @author nt / nt@hbt.de
  */
 @Service
 @ViewProfileAutoSave
 public class ViewProfileSortService {
+    private static final Logger LOG = LogManager.getLogger(ViewProfileSortService.class);
 
     private static final Comparator<Skill> SkillByRatingAsc = Comparator.comparing(Skill::getRating);
     private static final Comparator<Skill> SkillByRatingDesc = Comparator.comparing(Skill::getRating).reversed();
@@ -30,7 +34,7 @@ public class ViewProfileSortService {
     private static final Comparator<StartEndDateComparable> StartDateDesc = Comparator.comparing(StartEndDateComparable::getStartDate).reversed();
 
     private static final Comparator<StartEndDateComparable> EndDateAsc = (o1, o2) -> {
-        if(o1.getEndDate() == null || o2.getEndDate() == null) {
+        if (o1.getEndDate() == null || o2.getEndDate() == null) {
             return StartDateAsc.compare(o1, o2);
         }
         return Comparator.comparing(StartEndDateComparable::getEndDate).compare(o1, o2);
@@ -42,7 +46,8 @@ public class ViewProfileSortService {
     private static final Comparator<NameComparable> ByNameDesc = Comparator.comparing(NameComparable::getName).reversed();
 
     /**
-     * Returns a comparator that compares {@link Skill} by {@link Skill#name}
+     * Returns a comparator that compares {@link Skill} by {@link Skill#getName()}
+     *
      * @param sortAscending asc or desc sorting
      * @return the comparator
      */
@@ -51,7 +56,8 @@ public class ViewProfileSortService {
     }
 
     /**
-     * Returns a comparator that compares {@link Skill} by {@link Skill#rating}
+     * Returns a comparator that compares {@link Skill} by {@link Skill#getName()}
+     *
      * @param sortAscending asc or desc sorting
      * @return the comparator
      */
@@ -73,9 +79,6 @@ public class ViewProfileSortService {
         Comparator<StartEndDateComparable> comparator = sortAscending ? EndDateAsc : EndDateDesc;
         entryType.getComparable(viewProfile).sort(comparator);
     }
-
-
-
 
 
     public void sortSkillsInDisplayByName(ViewProfile viewProfile, int displayCategoryIndex, boolean sortAscending) {
@@ -114,6 +117,4 @@ public class ViewProfileSortService {
         Project project = viewProfile.getProjects().get(projectIndex);
         PwrListUtil.move(project.getSkills(), sourceIndex, targetIndex);
     }
-
-
 }

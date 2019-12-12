@@ -9,14 +9,17 @@ import de.hbt.pwr.view.model.skill.Skill;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static de.hbt.pwr.view.service.ViewProfileImporter.PWR_ROOT_NAME;
+import static de.hbt.pwr.view.service.ViewProfileCreatorService.PWR_ROOT_NAME;
 
 
 /**
  * Utility methods to convert between the various data models this service consumes.
+ *
  * @author nt (nt@hbt.de) on 30.08.2017.
  */
 public class ModelConvertUtil {
@@ -84,12 +87,10 @@ public class ModelConvertUtil {
     @NotNull
     private static Category mapCategory(SkillServiceCategory skillServiceCategory, String locale) {
         Category category = new Category();
+        category.setId(skillServiceCategory.getId() != null ? skillServiceCategory.getId().longValue() : -1);
         category.setName(skillServiceCategory.getLocalizedQualifier(locale));
         category.setIsDisplay(skillServiceCategory.getDisplay());
         category.setEnabled(true);
-        if(skillServiceCategory.getCategory() != null) {
-            category.setParent(mapCategory(skillServiceCategory.getCategory(), locale));
-        }
         return category;
     }
 
@@ -99,45 +100,13 @@ public class ModelConvertUtil {
     @NotNull
     public static Skill mapSkill(SkillServiceSkill skillServiceSkill, ProfileSkill profileSkill, String locale) {
         Skill skill = new Skill();
+        skill.setId(skillServiceSkill.getId() != null ? skillServiceSkill.getId().longValue() : -1);
         skill.setEnabled(true);
-        skill.setName(skillServiceSkill.getLocalizedQualifier(locale));
+        skill.setName(skillServiceSkill.getQualifier());
         skill.setRating(profileSkill.getRating());
-        if(skillServiceSkill.getCategory() != null) {
-            Category category = mapCategory(skillServiceSkill.getCategory(), locale);
-            skill.setCategory(category);
-        }
         return skill;
     }
 
 
-
-    private static boolean isTier0Category(Category category) {
-        return category.getParent() != null && category.getParent().getName().equals(PWR_ROOT_NAME);
-    }
-
-    private static boolean isTier1Category(Category category) {
-        return category.getParent() != null && isTier0Category(category.getParent()) && !category.getParent().getIsDisplay();
-    }
-
-    private static void setDisplayCategory(Skill skill, Category currentLookup, Map<String, Category> displayCategoriesByName) {
-        // Default is second level categories are display
-        if (currentLookup.getIsDisplay() || isTier1Category(currentLookup) || isTier0Category(currentLookup)) {
-            skill.setDisplayCategory(currentLookup);
-            displayCategoriesByName.put(currentLookup.getName(), currentLookup);
-        }  else {
-            setDisplayCategory(skill, currentLookup.getParent(), displayCategoriesByName);
-        }
-    }
-
-    public static void setDisplayCategory(Skill skill) {
-        setDisplayCategory(skill, new HashMap<>());
-    }
-
-    public static void setDisplayCategory(Skill skill, Map<String, Category> displayCategoriesByName) {
-        if(skill.getDisplayCategory() != null) {
-            skill.getDisplayCategory().getDisplaySkills().remove(skill);
-        }
-        setDisplayCategory(skill, skill.getCategory(),displayCategoriesByName);
-    }
 
 }

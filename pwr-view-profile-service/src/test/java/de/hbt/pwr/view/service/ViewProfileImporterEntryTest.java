@@ -12,6 +12,8 @@ import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +41,12 @@ import static org.mockito.Mockito.times;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ViewProfileImporterEntryTest {
 
-    private ViewProfileImporter viewProfileImporter;
+    private static final Logger LOG = LogManager.getLogger(ViewProfileImporterEntryTest.class);
+
+
+    @MockBean
+    private ViewProfileCreatorService viewProfileCreatorService;
+
 
     @MockBean
     private ProfileServiceClient profileServiceClient;
@@ -52,6 +59,7 @@ public class ViewProfileImporterEntryTest {
 
     @MockBean
     private ViewProfileSortService viewProfileSortService;
+
 
     private final String initials = "eu";
 
@@ -74,8 +82,8 @@ public class ViewProfileImporterEntryTest {
         viewProfile = new ViewProfile();
         profileToReturn = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profileToReturn);
-        viewProfileImporter = new ViewProfileImporter(profileServiceClient, skillServiceClient, null,
-                viewProfileRepository, viewProfileSortService);
+        given(viewProfileRepository.save(any())).will(invocationOnMock -> invocationOnMock.getArgument(0));
+        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, null, viewProfileRepository, viewProfileSortService);
     }
 
     @After
@@ -88,14 +96,14 @@ public class ViewProfileImporterEntryTest {
     private void addTestLanguageSkills() {
         for (String entryName : entryNames) {
             LanguageSkill languageSkill =
-                    new LanguageSkill(idCounter.getAndIncrement(), NameEntity.builder().name(entryName).build() , LanguageLevel.ADVANCED);
+                    new LanguageSkill(idCounter.getAndIncrement(), NameEntity.builder().name(entryName).build(), LanguageLevel.ADVANCED);
             profileToReturn.getLanguages().add(languageSkill);
         }
 
     }
 
     private void invokeImport() {
-        viewProfile = viewProfileImporter.importViewProfile(initials);
+        viewProfile = viewProfileCreatorService.createViewProfile(initials, "name", "description", "deu");
     }
 
     private void addTestQualificationEntries() {
@@ -120,7 +128,7 @@ public class ViewProfileImporterEntryTest {
     }
 
     private void addTestEducationEntries() {
-        for (String entryName: entryNames) {
+        for (String entryName : entryNames) {
             EducationEntry educationEntry = new EducationEntry();
             educationEntry.setDegree(defaultDegree);
             educationEntry.setId(idCounter.getAndIncrement());
@@ -132,7 +140,7 @@ public class ViewProfileImporterEntryTest {
     }
 
     private void addTestSectorEntries() {
-        for (String entryName: entryNames) {
+        for (String entryName : entryNames) {
             ProfileEntry profileEntry = new ProfileEntry();
             profileEntry.setId(idCounter.getAndIncrement());
             profileEntry.setNameEntity(NameEntity.builder().name(entryName).build());
@@ -141,7 +149,7 @@ public class ViewProfileImporterEntryTest {
     }
 
     private void addTestCareerEntries() {
-        for (String entryName: entryNames) {
+        for (String entryName : entryNames) {
             StepEntry stepEntry = new StepEntry();
             stepEntry.setNameEntity(NameEntity.builder().name(entryName).build());
             stepEntry.setId(idCounter.getAndIncrement());
@@ -152,7 +160,7 @@ public class ViewProfileImporterEntryTest {
     }
 
     private void addTestKeySkillEntries() {
-        for (String entryName: entryNames) {
+        for (String entryName : entryNames) {
             ProfileEntry profileEntry = new ProfileEntry();
             profileEntry.setId(idCounter.getAndIncrement());
             profileEntry.setNameEntity(NameEntity.builder().name(entryName).build());
@@ -304,7 +312,7 @@ public class ViewProfileImporterEntryTest {
         invokeImport();
         then(viewProfileSortService)
                 .should(times(1))
-                .sortEntryByStartDate(viewProfile,type, true);
+                .sortEntryByStartDate(viewProfile, type, true);
     }
 
     /**
@@ -354,11 +362,11 @@ public class ViewProfileImporterEntryTest {
     }
 
     @Test
-    public void shouldSortProejctByEndDateDesc() {
+    public void shouldSortProjectByEndDateDesc() {
         invokeImport();
         then(viewProfileSortService)
                 .should(times(1))
-                .sortEntryByEndDate(viewProfile,StartEndDateComparableEntryType.PROJECT, false);
+                .sortEntryByEndDate(viewProfile, StartEndDateComparableEntryType.PROJECT, false);
     }
 
     @Test

@@ -31,15 +31,15 @@ pwr-report-service:
     ReadTimeout: 20000
     ConnectTimeout: 10000
 hystrix:
- command:
-   default:
-     execution:
-       timeout:
-         enabled: "false"
-       isolation:
-         strategy: "THREAD"
-         thread:
-           timeoutInMilliseconds: "20000"
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: "false"
+        isolation:
+          strategy: "THREAD"
+          thread:
+            timeoutInMilliseconds: "20000"
 ---
 spring:
   profiles: localDev
@@ -49,13 +49,15 @@ spring:
     database: 6
 logging:
   level:
-    de.hbt.pwr.view.aspects: DEBUG
+    root: info
+    de.hbt.pwr.view: debug
+
 debug: false
 eureka:
   client:
     enabled: true
     service-url:
-       defaultZone: http://power02.corp.hbt.de:8761/eureka
+      defaultZone: http://power02.corp.hbt.de:8761/eureka
 ---
 spring:
   profiles: test

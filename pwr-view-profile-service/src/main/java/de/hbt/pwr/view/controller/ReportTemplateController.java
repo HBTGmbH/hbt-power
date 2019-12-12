@@ -6,6 +6,7 @@ import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.UploadFileResponse;
 import de.hbt.pwr.view.service.ReportTemplateService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+@Slf4j
 @CrossOrigin
 @RequestMapping("/template")
 @Controller
@@ -36,13 +38,11 @@ public class ReportTemplateController {
 
     @Autowired
     public ReportTemplateController(ReportTemplateService reportTemplateService,
-                                    FileUploadClient fileUploadClient,
-                                    ReportServiceClient reportServiceClient) {
+                                    FileUploadClient fileUploadClient, ReportServiceClient reportServiceClient) {
         this.reportTemplateService = reportTemplateService;
         this.fileUploadClient = fileUploadClient;
         this.reportServiceClient = reportServiceClient;
     }
-
 
     //---------------
     // Templates
@@ -60,46 +60,49 @@ public class ReportTemplateController {
     }
 
     @PostMapping
-    public ResponseEntity<ReportTemplate> uploadTemplate(@RequestParam("file") MultipartFile file, @RequestParam("templateSlice") String templateString) {
-
+    public ResponseEntity<ReportTemplate> uploadTemplate(@RequestParam("file") MultipartFile file,
+                                                         @RequestParam("templateSlice") String templateString) {
         ReportTemplate newTemplate = new ReportTemplate();
-        ReportTemplate.ReportTemplateSlice templateSlice = ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
-        ResponseEntity<UploadFileResponse> designFileResponseEntity = fileUploadClient.uploadFile(file);
+        ReportTemplate.ReportTemplateSlice templateSlice =
+                ReportTemplate.ReportTemplateSlice.fromJSON(templateString);
+        ResponseEntity<UploadFileResponse> designFileResponseEntity =
+                fileUploadClient.uploadFile(file);
 
         if (designFileResponseEntity.getStatusCode() == HttpStatus.OK) {
-            LOG.debug(designFileResponseEntity.getBody());
             UploadFileResponse designFileResponse = designFileResponseEntity.getBody();
-            ResponseEntity<UploadFileResponse> previewFileResponseEntity = reportServiceClient.generatePdf(designFileResponse.getFileId());
+            //ResponseEntity<UploadFileResponse> previewFileResponseEntity =
+            //      reportServiceClient.generatePdf(designFileResponse.getFileId());
 
-            if (previewFileResponseEntity.getStatusCode() == HttpStatus.OK) {
-                UploadFileResponse previewFileResponse = previewFileResponseEntity.getBody();
-                newTemplate.setName(templateSlice.name);
-                newTemplate.setDescription(templateSlice.description);
-                newTemplate.setCreatedDate(LocalDate.now());
-                newTemplate.setFileId(designFileResponse.getFileId());
-                newTemplate.setCreateUser(templateSlice.createUser);
-                newTemplate.setPreviewId(previewFileResponse.getFileId());
-                ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
-                return ResponseEntity.ok(template);
-            } else {
-                fileUploadClient.deleteFile(designFileResponse.getFileId());
-                throw new RuntimeException("Could not store preview for template " + designFileResponse.getFileId() + " - Status: " + previewFileResponseEntity.getStatusCode().value());
-            }
-
+            //UploadFileResponse previewFileResponse = previewFileResponseEntity.getBody();
+            newTemplate.setName(templateSlice.name);
+            newTemplate.setDescription(templateSlice.description);
+            newTemplate.setCreatedDate(LocalDate.now());
+            newTemplate.setFileId(designFileResponse.getFileId());
+            newTemplate.setCreateUser(templateSlice.createUser);
+            //if (previewFileResponseEntity.getStatusCode() == HttpStatus.OK) {
+            //    newTemplate.setPreviewId(previewFileResponse.getFileId());
+            //} else {
+            newTemplate.setPreviewId("");
+            // }
+            ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
+            return ResponseEntity.ok(template);
         } else {
-            throw new RuntimeException("Could not store template - Status: " + designFileResponseEntity.getStatusCode().value());
+            throw new RuntimeException(
+                    "Could not store template - Status: " + designFileResponseEntity.getStatusCode()
+                            .value());
         }
 
     }
 
-
     @DeleteMapping("{id}")
     public ResponseEntity deleteTemplate(@PathVariable String id) {
-        if (!reportTemplateService.getTemplate(id).getPreviewId().equals("") && reportTemplateService.getTemplate(id).getPreviewId() != null) {
+        if (!reportTemplateService.getTemplate(id).getPreviewId().equals("")
+                && reportTemplateService.getTemplate(id).getPreviewId() != null) {
 
             fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getPreviewId());
         }
-        if (!reportTemplateService.getTemplate(id).getFileId().equals("") && reportTemplateService.getTemplate(id).getFileId() != null) {
+        if (!reportTemplateService.getTemplate(id).getFileId().equals("")
+                && reportTemplateService.getTemplate(id).getFileId() != null) {
             fileUploadClient.deleteFile(reportTemplateService.getTemplate(id).getFileId());
         }
         reportTemplateService.deleteTemplate(id);
@@ -107,20 +110,26 @@ public class ReportTemplateController {
     }
 
     @PostMapping("{id}")
-    public ResponseEntity updateTemplate(
-            @PathVariable("id") String id,
-            @RequestBody ReportTemplate newTemplate) {
-
+    public ResponseEntity updateTemplate(@PathVariable("id") String id,
+                                         @RequestBody ReportTemplate newTemplate) {
 
         ReportTemplate oldTemplate = reportTemplateService.getTemplate(id);
 
-        newTemplate.setName(isNotBlank(newTemplate.getName()) ? newTemplate.getName() : oldTemplate.getName());
-        newTemplate.setDescription(isNotBlank(newTemplate.getDescription()) ? newTemplate.getDescription() : oldTemplate.getDescription());
-        newTemplate.setFileId(isNotBlank(newTemplate.getFileId()) ? newTemplate.getFileId() : oldTemplate.getFileId());
-        newTemplate.setCreateUser(isNotBlank(newTemplate.getCreateUser()) ? newTemplate.getCreateUser() : oldTemplate.getCreateUser());
+        newTemplate.setName(
+                isNotBlank(newTemplate.getName()) ? newTemplate.getName() : oldTemplate.getName());
+        newTemplate.setDescription(isNotBlank(newTemplate.getDescription()) ?
+                newTemplate.getDescription() :
+                oldTemplate.getDescription());
+        newTemplate.setFileId(isNotBlank(newTemplate.getFileId()) ?
+                newTemplate.getFileId() :
+                oldTemplate.getFileId());
+        newTemplate.setCreateUser(isNotBlank(newTemplate.getCreateUser()) ?
+                newTemplate.getCreateUser() :
+                oldTemplate.getCreateUser());
         newTemplate.setCreatedDate(oldTemplate.getCreatedDate());
-        newTemplate.setPreviewId(isNotBlank(newTemplate.getPreviewId()) ? newTemplate.getPreviewId() : oldTemplate.getPreviewId());
-
+        newTemplate.setPreviewId(isNotBlank(newTemplate.getPreviewId()) ?
+                newTemplate.getPreviewId() :
+                oldTemplate.getPreviewId());
 
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
         return ResponseEntity.ok(template);

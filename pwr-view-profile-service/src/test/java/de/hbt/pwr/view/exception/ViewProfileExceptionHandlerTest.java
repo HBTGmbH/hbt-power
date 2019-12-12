@@ -1,10 +1,13 @@
 package de.hbt.pwr.view.exception;
 
+import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.report.ReportServiceClient;
+import de.hbt.pwr.view.client.skill.SkillServiceClient;
+import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.controller.ViewProfileController;
-import de.hbt.pwr.view.service.ReportTemplateService;
-import de.hbt.pwr.view.service.ViewProfileImporter;
-import de.hbt.pwr.view.service.ViewProfileService;
+import de.hbt.pwr.view.repo.ViewProfileRepository;
+import de.hbt.pwr.view.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests that the exception mapper does correct mapping and is actually invoked correctly.
  */
+@Slf4j
 @RunWith(SpringRunner.class)
 @WebMvcTest(ViewProfileController.class)
 @ActiveProfiles("test")
@@ -41,20 +45,36 @@ public class ViewProfileExceptionHandlerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ViewProfileService viewProfileService;
+    private ViewProfileOperationService viewProfileService;
 
-    @SuppressWarnings("unused")
-    @MockBean
-    private ViewProfileImporter viewProfileImporter;
+
 
     @MockBean
     private ReportTemplateService reportTemplateService;
+
+    @MockBean
+    private SkillServiceClient skillServiceClient;
+
+    @MockBean
+    private SkillServiceFallback skillServiceFallback;
+    @MockBean
+    private ProfileServiceClient profileServiceClient;
+
+    @MockBean
+    private ViewProfileRepository viewProfileRepository;
+
+    @MockBean
+    private ViewProfileCreatorService viewProfileCreatorService;
+
+    @MockBean
+    private ViewProfileMergeService viewProfileMergeService;
 
 
     @Test
     public void shouldReturnForbidden403() throws Exception {
         given(viewProfileService.getViewProfileIdsForInitials("fooBar")).willThrow(new InvalidOwnerException("12", "fooBar"));
         String url = "/view/fooBar";
+
         mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
     }
 
