@@ -79,6 +79,7 @@ public class ProfileEntryService {
 
     private Skill updateSkill(Skill concurrent, Skill base) {
         concurrent.setRating(base.getRating());
+        concurrent.setVersions(base.getVersions());
         return concurrent;
     }
 

@@ -516,9 +516,9 @@ public class ProfileUpdateServiceITest {
         Profile profile = new Profile();
         profile = profileRepository.saveAndFlush(profile);
 
-        Skill skill1 = new Skill("Skill1", 4);
-        Skill skill2 = new Skill("Skill2", 2);
-        Skill skill3 = new Skill("Skill3", 2);
+        Skill skill1 = Skill.builder().name("Skill1").rating(4).versions(new HashSet<>()).build();
+        Skill skill2 = Skill.builder().name("Skill2").rating(2).versions(new HashSet<>()).build();
+        Skill skill3 = Skill.builder().name("Skill3").rating(2).versions(new HashSet<>()).build();
         profile.getSkills().add(skill1);
         profile.getSkills().add(skill2);
         profile.getSkills().add(skill3);
