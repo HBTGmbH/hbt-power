@@ -74,6 +74,10 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         this.resetState(props);
     }
 
+    componentDidMount(): void {
+        this.props.loadAllTemplates();
+    }
+
 
     private resetState(props: ViewProfileGeneratorProps
         & ViewProfileGeneratorLocalProps
