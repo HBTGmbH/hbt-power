@@ -1,12 +1,15 @@
 package de.hbt.model.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Data
 public class ViewProfile {
 
     private String id;
@@ -16,7 +19,7 @@ public class ViewProfile {
     @JsonProperty("owner")
     private String ownerInitials;
 
-    private String name = "";
+    private ViewProfileInfo viewProfileInfo = new ViewProfileInfo();
 
     private String description = "";
 
@@ -66,14 +69,6 @@ public class ViewProfile {
 
     public void setOwnerInitials(String ownerInitials) {
         this.ownerInitials = ownerInitials;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
@@ -179,4 +174,5 @@ public class ViewProfile {
     public void setDisplayCategories(List<ViewCategory> displayCategories) {
         this.displayCategories = displayCategories;
     }
+
 }

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 
 @Data
-public class ReportTemplate {
+public class  ReportTemplate {
 
 
     private String id = null;

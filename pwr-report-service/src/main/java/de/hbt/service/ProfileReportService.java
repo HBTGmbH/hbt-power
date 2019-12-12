@@ -4,11 +4,13 @@ import de.hbt.data.ReportFileRepository;
 import de.hbt.exceptions.StorageFileException;
 import de.hbt.model.ReportFileRef;
 import de.hbt.model.ReportInfo;
+import de.hbt.model.ReportStatus;
 import de.hbt.model.export.Profil;
 import de.hbt.model.export.birt.DocBirtExportHandler;
 import de.hbt.model.export.birt.HtmlBirtExportHandler;
 import de.hbt.model.export.birt.PdfBirtExportHandler;
 import de.hbt.model.files.DBFile;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.FileUtils;
@@ -18,6 +20,7 @@ import org.eclipse.birt.report.model.api.activity.SemanticException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.StreamUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,17 +30,20 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 //import org.apache.log4j.Logger;
 
-
+@Slf4j
 @Service
 public class ProfileReportService {
 
@@ -67,6 +73,7 @@ public class ProfileReportService {
     private DBFileStorageService storageService;
     private final HtmlBirtExportHandler htmlBirtExportHandler;
     private final PdfBirtExportHandler pdfBirtExportHandler;
+    private final ReportDataService reportDataService;
 
     private static final DateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 
@@ -78,13 +85,14 @@ public class ProfileReportService {
                                 ReportFileRepository reportFileRepository,
                                 DBFileStorageService storageService,
                                 HtmlBirtExportHandler htmlBirtExportHandler,
-                                PdfBirtExportHandler pdfBirtExportHandler) {
+                                PdfBirtExportHandler pdfBirtExportHandler, ReportDataService reportDataService) {
         this.docBirtExportHandler = docBirtExportHandler;
         this.reportFileRepository = reportFileRepository;
         this.storageService = storageService;
         this.htmlBirtExportHandler = htmlBirtExportHandler;
         this.pdfBirtExportHandler = pdfBirtExportHandler;
 
+        this.reportDataService = reportDataService;
     }
 
 
@@ -198,19 +206,36 @@ public class ProfileReportService {
         }
     }
 
+    @Async
+    public void generateDocXExport(File xmlFile, ReportInfo reportInfo, Long reportDataId) throws EngineException, RuntimeException, IOException, SemanticException {
+        String fullFilePath = "";
+        try {
+            InputStream designFileStream = new ByteArrayInputStream(storageService.getFile(reportInfo.reportTemplate.fileId).getData());
 
-    public DBFile generateDocXExport(File xmlFile, ReportInfo reportInfo) throws EngineException, RuntimeException, IOException, SemanticException {
-        InputStream designFileStream = new ByteArrayInputStream(storageService.getFile(reportInfo.reportTemplate.fileId).getData());
+            String outputFileName = reportInfo.initials + "_export_" + df.format(new Date()) + ".docx";
+            fullFilePath = docBirtExportHandler.exportProfile(reportInfo.initials, outputFileName, xmlFile.getAbsolutePath(), designFileStream, "docx");
+            saveAsReportData(fullFilePath, reportDataId);
+        } catch (Exception e) {
+            setReportDataError(reportDataId);
+            e.printStackTrace();
+        } finally {
+            Files.deleteIfExists(Paths.get(fullFilePath));
+        }
 
-        String outputFileName = reportInfo.initials + "_export_" + df.format(new Date()) + ".docx";
-        String fullFilePath = docBirtExportHandler.exportProfile(reportInfo.initials, outputFileName, xmlFile.getAbsolutePath(), designFileStream, "docx");
-        saveAndCreateRef(fullFilePath, reportInfo.initials);
-        return saveFileAsBlob(fullFilePath);
     }
 
-    private DBFile saveFileAsBlob(String filePath) throws IOException{
-        File file  = new File(filePath);
-        DBFile dbFile = storageService.storeFile("filePath","docx",FileUtils.readFileToByteArray(file));
+    private void setReportDataError(Long reportDataId) {
+        reportDataService.updateReportData(reportDataId, ReportStatus.ERROR);
+    }
+
+    private void saveAsReportData(String fullFilePath, Long reportDataId) throws IOException {
+        File file = new File(fullFilePath);
+        reportDataService.updateReportData(reportDataId, FileUtils.readFileToByteArray(file));
+    }
+
+    private DBFile saveFileAsBlob(String filePath) throws IOException {
+        File file = new File(filePath);
+        DBFile dbFile = storageService.storeFile(filePath, "docx", FileUtils.readFileToByteArray(file));
         return dbFile;
     }
 
@@ -219,7 +244,7 @@ public class ProfileReportService {
         InputStream designFileStream = new ByteArrayInputStream(file.getData());
         String fullFilePath = htmlBirtExportHandler.exportProfile(designFileStream);
 
-        return saveFileInDB(fullFilePath,"text/html").getId();
+        return saveFileInDB(fullFilePath, "text/html").getId();
     }
 
     public String generatePDFFile(String designId) throws SemanticException, EngineException, IOException {
@@ -227,7 +252,7 @@ public class ProfileReportService {
         InputStream designFileStream = new ByteArrayInputStream(file.getData());
         String fullFilePath = pdfBirtExportHandler.exportProfile(designFileStream);
 
-        return saveFileInDB(fullFilePath,"application/pdf").getId();
+        return saveFileInDB(fullFilePath, "application/pdf").getId();
     }
 
     private DBFile saveFileInDB(String filePath, String fileType) throws IOException {

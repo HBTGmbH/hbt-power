@@ -2,6 +2,7 @@ package de.hbt.model.export;
 
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -32,6 +33,7 @@ import java.io.Serializable;
         "seit",
         "gruppe",
         "groupIndex",
+        "versions"
 })
 public class Skill implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -46,7 +48,11 @@ public class Skill implements Serializable {
     @XmlAttribute
     protected Integer id;
 
-    private Integer groupIndex; // index of the group for the exprot
+    private Integer groupIndex; // index of the group for the export
+
+
+    @XmlElement(name="version")
+    private String versions;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -91,4 +97,8 @@ public class Skill implements Serializable {
     public void setGroupIndex(Integer groupIndex) {
         this.groupIndex = groupIndex;
     }
+
+    public String getVersions() { return versions; }
+
+    public void setVersions(String versions) { this.versions = versions; }
 }

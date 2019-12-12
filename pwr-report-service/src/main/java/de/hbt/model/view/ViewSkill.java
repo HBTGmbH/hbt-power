@@ -1,11 +1,20 @@
 package de.hbt.model.view;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
 public class ViewSkill implements ViewEntry {
     private String name;
     private Integer rating;
     private Boolean enabled;
+
+    private List<ViewSkillVersion> versions = new ArrayList<>();
 
     @JsonBackReference(value = "refSkills")
     private ViewCategory category;
@@ -25,37 +34,5 @@ public class ViewSkill implements ViewEntry {
         if (this.displayCategory != null && !this.displayCategory.getDisplaySkills().contains(this)) {
             this.displayCategory.getDisplaySkills().add(this);
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public ViewCategory getCategory() {
-        return category;
-    }
-
-    public ViewCategory getDisplayCategory() {
-        return displayCategory;
     }
 }
