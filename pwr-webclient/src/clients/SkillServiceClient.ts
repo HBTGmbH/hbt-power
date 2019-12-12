@@ -42,14 +42,20 @@ export class SkillServiceClient extends PowerHttpClient {
 
     public addSkillVersion = (skillId: number, version: string): Promise<string[]> => {
         const url = this.base() + '/skill/' + skillId + '/version';
+        const config: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        };
         this.beginRequest();
-        return this.executeRequest(axios.post(url, version));
+        return this.executeRequest(axios.post(url, version, config));
     };
 
     public deleteSkillVersion = (skillId: number, version: string) => {
         const url = this.base() + '/skill/' + skillId + '/version';
         const config: AxiosRequestConfig = {
-            data: version
+            data: version,
+            headers: {'Content-Type': 'text/plain'}
         };
         this.beginRequest();
         return this.executeRequest(axios.delete(url, config));
