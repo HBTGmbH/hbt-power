@@ -12,11 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,15 +66,15 @@ public class ReportController {
 
     @GetMapping(value = "/file/{reportId}", produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     public ResponseEntity getReportFile(@PathVariable("reportId") Long reportId) {
-        LOG.info("getReportFile: " + reportId);
         ReportData reportData = reportDataService.getReportDataById(reportId);
         return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=" + reportData.getInitials() + "_" + LocalDate.now() + ".docx")
                 .body(new ByteArrayResource(reportData.getData()));
     }
 
     @DeleteMapping(value = "/delete/{reportId}")
     public ResponseEntity DeleteReportFile(@PathVariable("reportId") Long reportId) {
-        LOG.info("deleteReportFile: " + reportId);
         reportDataService.deleteReportDataById(reportId);
         return ResponseEntity.ok("Deleted Report File");
     }
