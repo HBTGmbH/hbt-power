@@ -9,9 +9,7 @@ import {
 import {APIScatterSkill} from '../model/statistics/ScatterSkill';
 import {APIConsultant} from '../model/APIProfile';
 
-declare const POWER_API_HOST_STATISTICS: string;
-declare const POWER_API_PORT_STATISTICS: string;
-declare const POWER_API_SUFFIX_STATISTICS: string;
+declare const POWER_STATISTICS_SERVICE_URL: string;
 
 /**
  * Singleton for configuration purposes? I don't know, doesn't matter for now. Maybe if the whole URL-Configuration
@@ -34,7 +32,11 @@ export class StatisticsServiceClient extends PowerHttpClient {
     }
 
     private base(): string {
-        return POWER_API_HOST_STATISTICS + ':' + POWER_API_PORT_STATISTICS + POWER_API_SUFFIX_STATISTICS;
+        return POWER_STATISTICS_SERVICE_URL;
+    }
+
+    public getBuildInfoURL() {
+        return this.base() + '/meta/info';
     }
 
 

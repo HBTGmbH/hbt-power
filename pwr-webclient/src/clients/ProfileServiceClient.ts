@@ -33,6 +33,10 @@ export class ProfileServiceClient extends PowerHttpClient {
         return POWER_PROFILE_SERVICE_URL;
     }
 
+    public getBuildInfoURL() {
+        return this.base() + '/actuator/info';
+    }
+
     private credentialsConfig(): AxiosRequestConfig {
         return store.getState().adminReducer.adminAuthConfig();
     }

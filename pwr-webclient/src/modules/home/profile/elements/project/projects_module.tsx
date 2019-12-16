@@ -91,7 +91,11 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         return <div className="row" style={{scrollBehavior: 'smooth'}}>
             <div className="col-md-3" ref={this.projectRef}>
                 <List component="nav">
-                    {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
+                    {this.props.projects.sort((a, b) => {
+                        if (a.startDate > b.startDate) return -1;
+                        if (a.startDate < b.startDate) return 1;
+                        return 0;
+                    }).map((project, index) => this.renderProjectListItem(project, index))}
                     <Divider/>
                     <ListItem button onClick={() => this.addNewProject()} disabled={!this.props.canAddProject}>
                         <ListItemIcon>

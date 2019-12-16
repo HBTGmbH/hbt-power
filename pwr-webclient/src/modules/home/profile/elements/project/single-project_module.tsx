@@ -29,7 +29,6 @@ import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/Pr
 import {PwrFormCaption, PwrFormSubCaption, PwrFormSubtitle} from '../../../../general/pwr-typography';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {SkillChip} from '../skills/skill-chip_module';
-import Power from '@material-ui/icons/Power';
 import Grid from '@material-ui/core/Grid/Grid';
 import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-skills';
 
@@ -296,7 +295,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                                                 onRemoveRole={role => this.removeProjectRole(role)}
                                                 label={PowerLocalize.get('Profile.Project.ProjectRoles')}
                                                 items={this.project().projectRoles}>
-
                     </PwrProjectRoleAutocomplete>
                 </div>
                 <PwrSpacer/>

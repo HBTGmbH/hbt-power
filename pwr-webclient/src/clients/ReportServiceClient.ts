@@ -1,7 +1,6 @@
 import {PowerHttpClient} from './PowerHttpClient';
 import axios from 'axios';
 import {ReportData} from '../model/view/ReportData';
-import {TemplateActionCreator} from '../reducers/template/TemplateActionCreator';
 
 declare const POWER_REPORT_SERVICE_URL: string;
 
@@ -24,6 +23,13 @@ export class ReportServiceClient extends PowerHttpClient {
         return POWER_REPORT_SERVICE_URL;
     }
 
+    public getBuildInfoURL() {
+        return this.base() + '/meta/actuator/info';
+    }
+
+    public getReportURL(id: number): string {
+        return this.base() + '/report/file/' + id;
+    }
 
     public getReportDataForUser(initials: string): Promise<ReportData[]> {
         const url = this.base() + '/report/' + initials;
@@ -31,9 +37,10 @@ export class ReportServiceClient extends PowerHttpClient {
         return this.executeRequest(axios.get(url));
     }
 
-    public getReport(id): void {
+    public getReport(id): Promise<any> {
         const url = this.base() + '/report/file/' + id;
-        TemplateActionCreator.DownloadReportFile(url);
+        this.beginRequest();
+        return this.executeRequest(axios.get(url));
     }
 
     public deleteReport(id): Promise<unknown> {

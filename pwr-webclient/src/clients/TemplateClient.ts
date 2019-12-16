@@ -2,9 +2,7 @@ import {PowerHttpClient} from './PowerHttpClient';
 import axios, {AxiosRequestConfig} from 'axios';
 import {Template} from '../model/view/Template';
 
-declare const POWER_API_HOST_VIEW;
-declare const POWER_API_PORT_VIEW;
-declare const POWER_API_SUFFIX_VIEW;
+declare const POWER_VIEW_PROFILE_SERVICE_URL: string;
 
 export class TemplateClient extends PowerHttpClient {
 
@@ -22,7 +20,7 @@ export class TemplateClient extends PowerHttpClient {
     }
 
     private base() {
-        return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
+        return POWER_VIEW_PROFILE_SERVICE_URL;
     }
 
     public getAllTemplates(): Promise<Array<string>> {
@@ -77,16 +75,4 @@ export class TemplateClient extends PowerHttpClient {
         this.beginRequest();
         return this.executeRequest(axios.get(url));
     }
-
-
-    private baseReport() {
-        return POWER_API_HOST_REPORT + ':' + POWER_API_PORT_REPORT + POWER_API_SUFFIX_REPORT;
-    }
-
-    public getFileById(id: string) {
-        const url = this.baseReport() + '/file/' + id;
-        this.beginRequest();
-        return this.executeRequest(axios.get(url));
-    }
-
 }
