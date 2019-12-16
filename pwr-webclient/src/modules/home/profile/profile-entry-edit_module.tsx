@@ -24,7 +24,6 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrButton} from '../../general/pwr-button';
 import Delete from '@material-ui/icons/Delete';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
-import {isDesktop} from '../../../utils/PwrMobileUtils';
 
 interface ProfileEntryDialogProps {
     suggestions: Array<string>;
@@ -160,6 +159,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
             endDate: date
         });
     };
+
     private handleSave = () => {
         const entry = ProfileTypeDataMapper.makeEntry(this.props.type, this.state, this.props.entry);
         if (!isNullOrUndefined(entry)) {
@@ -182,11 +182,14 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!event.isPropagationStopped()) {
             let handled = false;
+            //Completely disabled because Autocomplete already implements a handler for entity selection
+            /*
             // Only enabled on desktop devices because on mobile devices, the "Enter" action behaves strange
             if (event.key === 'Enter' && isDesktop()) {
                 this.handleSave();
                 handled = true;
             }
+            */
             if (event.key === 'Delete' && !!this.props.entry.id) {
                 this.openDeleteConfirm();
                 handled = true;
@@ -283,7 +286,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                     <PwrButton icon={null} color={'primary'} text={PowerLocalize.get('Action.Cancel')}
                                onClick={this.props.onClose}/>
                     <PwrButton icon={null} color={'primary'} disabled={!!error} text={PowerLocalize.get('Action.Save')}
-                               onClick={this.handleSave}/>
+                               onClick={()=>this.handleSave()}/>
                 </DialogActions>
             </Dialog>
         );

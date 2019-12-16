@@ -1,14 +1,12 @@
 import Autosuggest from 'react-autosuggest'; // standard ' * as '
 import * as React from 'react';
-import {FormControl, InputLabel, MenuItem, Paper, TextField, WithStyles, withStyles} from '@material-ui/core';
+import {MenuItem, Paper, TextField, WithStyles, withStyles} from '@material-ui/core';
 import {StringUtils} from '../../utils/StringUtil';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import filterFuzzy = StringUtils.filterFuzzy;
-import {ValidationError, ValidatorFn} from '../../utils/ValidationUtils';
+import {ValidationError} from '../../utils/ValidationUtils';
 import {Simulate} from 'react-dom/test-utils';
-import input = Simulate.input;
-import {omitKeys} from '../../utils/ObjectUtil';
+import filterFuzzy = StringUtils.filterFuzzy;
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 const ChipInput = require('material-ui-chip-input').default;
@@ -92,27 +90,13 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
     handleChange = (event: any, newValue: string) => {
 
         let searchTerm: string = newValue;
-
         let navigation: boolean = false;
         if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
-
             navigation = true;
             searchTerm = this.props.searchTerm;
         }
 
         this.props.onSearchChange(searchTerm, navigation);
-    };
-
-    handleClick = (item: string) => {
-        if (this.props.onAdd) {
-            this.props.onAdd(item);
-        }
-    };
-
-    handleKeyDownOnInput = (key: string, inputValue: string) => {
-        if (key === 'Enter' && this.props.onAdd) {
-            this.props.onAdd(inputValue);
-        }
     };
 
     renderInputComponent = (inputProps) => {
@@ -141,7 +125,6 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                     classes: {
                         input: classes.input,
                     },
-                    onKeyDown: event => this.handleKeyDownOnInput(event.key, inputProps.value)
                 }}
                 {...other}
             />
@@ -157,7 +140,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                 fullWidth={true}
                 clearInputValueOnChange
                 onUpdateInput={onChange}
-                onAdd={onAdd}
+                //onAdd={onAdd}
                 onDelete={onDelete}
                 value={chips}
                 inputRef={ref}
@@ -170,7 +153,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         const matches = match(suggestion, query);
         const parts = parse(suggestion, matches);
         return (
-            <MenuItem selected={isHighlighted} component="div" onClick={() => this.handleClick(suggestion)}>
+            <MenuItem selected={isHighlighted} component="div">
                 <div>
                     {parts.map((part, index) => {
                         return part.highlight ? (
@@ -186,21 +169,29 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         );
     };
 
+    handleSuggestionSelected = (event, {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}) => {
+        if (this.props.onAdd) {
+            this.props.onAdd(suggestionValue);
+        }
+    };
+
+
 
     render() {
         const classes = this.props.classes;
 
         const autosuggestProps = {
             renderInputComponent: this.props.multi ? this.renderChipInput : this.renderInputComponent,
-            suggestions: this.dataFilteredBy(this.props.searchTerm),
+            suggestions: [this.props.searchTerm, ...this.dataFilteredBy(this.props.searchTerm)],
             onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
             onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
+            onSuggestionSelected: this.handleSuggestionSelected,
             getSuggestionValue: (v) => v,
             renderSuggestion: this.renderSuggestion,
         };
 
         const onlyChipProps = {
-            onAdd: (chip) => this.props.onAdd(chip),
+            //onAdd: (chip) => this.props.onAdd(chip),
             onDelete: (chip, index) => this.props.onRemove(chip),
         };
 
