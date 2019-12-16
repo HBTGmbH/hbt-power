@@ -171,7 +171,7 @@ export class ProfileUpdateServiceClient extends PowerHttpClient {
         return this.executeRequest(axios.put(url, entry));
     };
     public deleteLanguage = (initials: string, id: number) => {
-        const url = this.getLanguagesUrl(initials);
+        const url = this.getLanguagesUrl(initials) + '/' + id;
         this.beginRequest();
         return this.executeRequest(axios.delete(url));
     };

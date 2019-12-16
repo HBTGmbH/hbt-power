@@ -16,6 +16,7 @@ import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
+import {ReportServiceClient} from '../../../clients/ReportServiceClient';
 
 interface ReportHistoryLocalProps {
 }
@@ -25,7 +26,7 @@ interface ReportHistoryDispatch {
 
     loadAllTemplateData(): void,
 
-    getReportFile(id): void,
+    getReportFile(reportData: ReportData): void,
 
     deleteReportFile(id, cb): void
 }
@@ -66,7 +67,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         return {
             loadAllReportData: (initials: string) => dispatch(ReportAsyncActionCreator.loadAllReportData(initials)),
             loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllFiles),
-            getReportFile: (id) => dispatch(ReportAsyncActionCreator.getReportFile(id)),
+            getReportFile: (reportData: ReportData) => dispatch(ReportAsyncActionCreator.getReportFile(reportData)),
             deleteReportFile: (id, cb) => dispatch(ReportAsyncActionCreator.deleteReportFile(id, cb))
         };
     }
@@ -107,8 +108,10 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         </Button>;
     };
 
-    private StatusDisplay = (status: string, id: number) => {
+    private StatusDisplay = (reportData: ReportData) => {
         let body: JSX.Element;
+        const status = reportData.reportStatus;
+        const id = reportData.id;
 
         switch (status) {
             case 'DONE':
@@ -116,9 +119,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                     <Button
                         variant="contained"
                         color="primary" style={{marginLeft: '8px', marginTop: '5px'}}
-                        onMouseDown={() => {
-                            this.downloadReport(id);
-                        }}
+                        onClick={() => this.downloadReport(reportData)}
                     >
                         <Icon className="material-icons">get_app</Icon>
                         {PowerLocalize.get('Action.Download')}
@@ -140,11 +141,15 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         </div>;
     };
 
-    downloadReport = (id: Number) => {
-        return this.props.getReportFile(id.toString());
+    downloadReport = (reportData: ReportData) => {
+        return this.props.getReportFile(reportData);
     };
 
-    deleteReport = (id: Number) => {
+    downloadReportURL = (reportData: ReportData) => {
+        return this.props.getReportFile(reportData);
+    };
+
+    deleteReport = (id: number) => {
         this.props.deleteReportFile(id.toString(), this.loadAllReportData);
     };
 
@@ -190,7 +195,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
                                         <TableCell align="left">{value.createDate}</TableCell>
                                         <TableCell
-                                            align="left">{this.StatusDisplay(value.reportStatus, value.id)}</TableCell>
+                                            align="left">{this.StatusDisplay(value)}</TableCell>
                                     </TableRow>)
                             }
                         </TableBody>

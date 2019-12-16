@@ -4,9 +4,7 @@ import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ViewProfile} from '../model/view/ViewProfile';
 import {ViewCategory} from '../model/view/ViewCategory';
 
-declare const POWER_API_HOST_VIEW;
-declare const POWER_API_PORT_VIEW;
-declare const POWER_API_SUFFIX_VIEW;
+declare const POWER_VIEW_PROFILE_SERVICE_URL;
 
 export class ViewProfileServiceClient extends PowerHttpClient {
 
@@ -24,7 +22,11 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     }
 
     private base(): string {
-        return POWER_API_HOST_VIEW + ':' + POWER_API_PORT_VIEW + POWER_API_SUFFIX_VIEW;
+        return POWER_VIEW_PROFILE_SERVICE_URL;
+    }
+
+    public getBuildInfoURL() {
+        return this.base() + '/actuator/info';
     }
 
     /*
@@ -150,8 +152,5 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.executeRequest(axios.patch(url, description, config));
     }
 
-    public getBuildInfoURL() {
-        return this.base() + '/actuator/info';
-    }
 
 }

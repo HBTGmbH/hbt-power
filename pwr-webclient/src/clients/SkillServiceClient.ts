@@ -26,6 +26,10 @@ export class SkillServiceClient extends PowerHttpClient {
         return POWER_SKILL_SERVICE_URL;
     };
 
+    public getBuildInfoURL() {
+        return this.base() + '/meta/info';
+    }
+
     public getSkillByName = (name: string): Promise<APISkillServiceSkill> => {
         const url = this.base() + '/skill/byName';
         const config: AxiosRequestConfig = {params: {qualifier: name}};
