@@ -77,7 +77,9 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     };
 
     private handleAddSkill = (name: string, rating: number) => {
-        this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
+        if (!this.props.skills.some(skill => skill.name === name)) {
+            this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
+        }
     };
 
     private handleDeleteSkill = (skill: ProfileSkill) => {

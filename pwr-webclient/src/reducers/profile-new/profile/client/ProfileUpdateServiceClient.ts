@@ -249,7 +249,6 @@ export class ProfileUpdateServiceClient extends PowerHttpClient {
         return this.executeRequest(axios.delete(url));
     };
 
-
     public saveProfileSkill = (initials: string, entry: ProfileSkill): Promise<ProfileSkill> => {
         const url = this.getSkillsUrl(initials);
         this.beginRequest();
