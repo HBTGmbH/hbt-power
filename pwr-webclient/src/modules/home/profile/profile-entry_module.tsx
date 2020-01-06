@@ -14,9 +14,12 @@ import {ProfileEntryDialog} from './profile-entry-edit_module';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Theme, withTheme} from '@material-ui/core';
-import {PwrButton} from '../../general/pwr-button';
 import {PwrFormSubCaption} from '../../general/pwr-typography';
-import {type} from 'os';
+import {Comparators} from '../../../utils/Comparators';
+import {Education} from '../../../reducers/profile-new/profile/model/Education';
+import {FurtherTraining} from '../../../reducers/profile-new/profile/model/FurtherTraining';
+import {Qualification} from '../../../reducers/profile-new/profile/model/Qualification';
+import {Career} from '../../../reducers/profile-new/profile/model/Career';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -122,6 +125,50 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.setDefaultState();
     };
 
+    private compareEntries = (entry1: ProfileEntry, entry2: ProfileEntry) => {
+        let date1: Date = null;
+        let date2: Date = null;
+        switch (this.props.type) {
+            case 'LANGUAGE':
+                break;
+            case 'SECTOR':
+                break;
+            case 'SPECIAL_FIELD':
+                break;
+            case 'TRAINING':
+                const training1: FurtherTraining = entry1 as FurtherTraining;
+                const training2: FurtherTraining = entry2 as FurtherTraining;
+                date1 = new Date(training1.endDate);
+                date2 = new Date(training2.endDate);
+                break;
+            case 'CAREER':
+                const career1: Career = entry2 as Career;
+                const career2: Career = entry2 as Career;
+                date1 = new Date(career1.endDate);
+                date2 = new Date(career2.endDate);
+                break;
+            case 'QUALIFICATION':
+                //TODO doesn't properly sort these dates
+                const qualification1: Qualification = entry2 as Qualification;
+                const qualification2: Qualification = entry2 as Qualification;
+                date1 = qualification1.date;
+                date2 = qualification2.date;
+                console.log(date1);
+                console.log(date2);
+                break;
+            case 'EDUCATION':
+                const education1: Education = entry1 as Education;
+                const education2: Education = entry2 as Education;
+                date1 = new Date(education1.endDate);
+                date2 = new Date(education2.endDate);
+                break;
+        }
+        if (date1 && date2) {
+            return Comparators.compareDate(date1, date2);
+        }
+        return 0;
+    }
+
     private renderSingleElement = (entry: ProfileEntry, index: number) => {
         return (
             <Grid key={entry.id} item container spacing={0}>
@@ -183,7 +230,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                     <Grid item container spacing={8} md={12} sm={12}>
                         {
                             !isNullOrUndefined(this.props.allEntries) && this.props.allEntries.length > 0 ?
-                                this.props.allEntries.map(this.renderSingleElement) :
+                                this.props.allEntries.sort(this.compareEntries).map(this.renderSingleElement) :
                                 this.renderEmptyElement()
                         }
                     </Grid>
@@ -191,6 +238,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
             </div>
         );
     }
+
 }
 
 export const ProfileEntryElement = withTheme()(connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule));

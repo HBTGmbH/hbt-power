@@ -2,7 +2,6 @@ import * as React from 'react';
 import {FormEvent} from 'react';
 import {Icon, IconButton, LinearProgress, TextField} from '@material-ui/core';
 import {isNullOrUndefined} from 'util';
-import {PROFILE_DESCRIPTION_LENGTH} from '../../model/PwrConstants';
 
 interface LimitedTextFieldProps {
     maxCharacters: number;
@@ -141,7 +140,6 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                         {this.props.value.length + '/' + this.props.maxCharacters}
                     </div>
                 </div>
-
             </div>
         );
     }
