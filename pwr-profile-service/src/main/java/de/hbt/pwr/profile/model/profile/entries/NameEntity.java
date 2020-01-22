@@ -25,6 +25,7 @@ public class NameEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(name = "type", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private NameEntityType type;
 

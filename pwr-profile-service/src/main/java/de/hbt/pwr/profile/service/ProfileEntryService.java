@@ -132,16 +132,12 @@ public class ProfileEntryService {
         if (nameEntity == null) {
             return null;
         }
-        NameEntity res = nameEntity;
         NameEntity concurrent = nameEntityRepository.findByNameAndType(nameEntity.getName(), type);
         if (concurrent != null) {
-            res = concurrent;
+            return concurrent;
         } else {
-            res.setType(type);
-            res = nameEntityRepository.save(res);
-            // Notification
+            return nameEntityRepository.save(NameEntity.builder().name(nameEntity.getName()).type(type).build());
         }
-        return res;
     }
 
     public Project updateProject(Project project, Profile profile) {
