@@ -2058,7 +2058,7 @@
         </style>
     </styles>
     <page-setup>
-        <simple-master-page name="Weitere Seiten" id="2">
+        <simple-master-page name="Master Page - First page" id="2">
             <property name="type">a4</property>
             <property name="topMargin">0.38in</property>
             <property name="leftMargin">0.5in</property>
@@ -2069,13 +2069,13 @@
             <page-header>
                 <grid id="160866806">
                     <property name="marginLeft">0pt</property>
-                    <property name="height">1.0104166666666667in</property>
+                    <property name="height">0.96875in</property>
                     <property name="width">7.25in</property>
                     <column id="160866807">
                         <property name="width">0.25in</property>
                     </column>
                     <column id="160867106145">
-                        <property name="width">1.266in</property>
+                        <property name="width">3.863cm</property>
                     </column>
                     <column id="160866808">
                         <property name="width">1.9in</property>
@@ -2084,8 +2084,7 @@
                         <property name="width">3.6in</property>
                     </column>
                     <row id="160866816">
-                        <property name="verticalAlign">bottom</property>
-                        <property name="height">0.6979166666666666in</property>
+                        <property name="height">1.74625cm</property>
                         <cell id="160866817">
                             <property name="colSpan">1</property>
                             <property name="rowSpan">1</property>
@@ -2099,14 +2098,15 @@
                         <cell id="160867106146">
                             <property name="paddingTop">0pt</property>
                             <property name="paddingLeft">0pt</property>
-                            <property name="paddingBottom">16px</property>
+                            <property name="paddingBottom">0px</property>
                             <property name="paddingRight">0pt</property>
                             <property name="textAlign">left</property>
                             <property name="verticalAlign">bottom</property>
                             <image id="160867118048">
                                 <property name="marginBottom">0px</property>
-                                <property name="height">0.4270833333333333in</property>
-                                <property name="width">1.0729166666666667in</property>
+                                <property name="display">block</property>
+                                <property name="height">1.2964583333333333cm</property>
+                                <property name="width">3.2014583333333335cm</property>
                                 <property name="source">embed</property>
                                 <property name="imageName">HBT002_Logo_pos.jpg</property>
                             </image>
@@ -2120,12 +2120,20 @@
                         <cell id="160866821">
                             <property name="paddingTop">0pt</property>
                             <property name="paddingBottom">0pt</property>
+                            <property name="paddingRight">0.73cm</property>
+                            <property name="textAlign">right</property>
                             <property name="verticalAlign">bottom</property>
+                            <image id="160867118236">
+                                <property name="display">inline</property>
+                                <property name="height">0.396875cm</property>
+                                <property name="width">4.418541666666666cm</property>
+                                <property name="source">embed</property>
+                                <property name="imageName">HBT002_Claim.png</property>
+                            </image>
                         </cell>
                     </row>
                     <row id="160866830">
                         <property name="backgroundColor">#FFFFFF</property>
-                        <property name="height">0.2708333333333333in</property>
                         <cell id="160866831"/>
                         <cell id="160867106144"/>
                         <cell id="160866832">
@@ -2210,7 +2218,7 @@
                             <label id="160867118105">
                                 <property name="fontFamily">"Simplon Norm"</property>
                                 <property name="fontSize">6.5pt</property>
-                                <text-property name="text">HBT Hamburger Berater Team</text-property>
+                                <text-property name="text">HBT Hamburger Berater Team GmbH</text-property>
                             </label>
                             <label id="160867118106">
                                 <property name="fontFamily">"Simplon Norm"</property>
@@ -2284,10 +2292,10 @@
                                 <property name="fontSize">6.5pt</property>
                                 <text-property name="text">Arne Habermann</text-property>
                             </label>
-                            <label id="160867118117">
+                            <label id="160867118255">
                                 <property name="fontFamily">"Simplon Norm"</property>
                                 <property name="fontSize">6.5pt</property>
-                                <text-property name="text">Daniel Hoffmann</text-property>
+                                <text-property name="text">Klaus Richarz</text-property>
                             </label>
                         </cell>
                         <cell id="160867118069">
@@ -2330,769 +2338,140 @@
                 </grid>
             </page-footer>
         </simple-master-page>
-        <simple-master-page name="Erste Seite" id="1224">
+        <simple-master-page name="Master Page - Other Pages" id="160867118136">
             <property name="type">a4</property>
-            <property name="topMargin">0.25in</property>
-            <property name="leftMargin">0.25in</property>
-            <property name="bottomMargin">0.25in</property>
-            <property name="rightMargin">0.25in</property>
-            <property name="headerHeight">1in</property>
-            <property name="footerHeight">1in</property>
+            <property name="topMargin">0.38in</property>
+            <property name="leftMargin">0.5in</property>
+            <property name="bottomMargin">0.1cm</property>
+            <property name="rightMargin">0.5in</property>
+            <property name="showHeaderOnFirst">true</property>
+            <property name="showFooterOnLast">true</property>
+            <property name="headerHeight">0.95in</property>
+            <property name="footerHeight">3cm</property>
             <page-header>
-                <grid id="1237">
-                    <property name="marginBottom">0pt</property>
-                    <property name="height">0.9270833333333334in</property>
-                    <property name="width">7.65625in</property>
-                    <column id="160867106179">
-                        <property name="width">0.521in</property>
+                <grid id="160867118237">
+                    <property name="marginLeft">0pt</property>
+                    <property name="height">0.95in</property>
+                    <property name="width">7.25in</property>
+                    <column id="160867118238">
+                        <property name="width">0.25in</property>
                     </column>
-                    <column id="1239">
-                        <property name="width">0.562in</property>
+                    <column id="160867118239">
+                        <property name="width">3.863cm</property>
                     </column>
-                    <column id="1240">
-                        <property name="width">2.604in</property>
+                    <column id="160867118240">
+                        <property name="width">1.9in</property>
                     </column>
-                    <column id="1241">
+                    <column id="160867118241">
                         <property name="width">3.6in</property>
                     </column>
-                    <column id="1338">
-                        <property name="width">0.5in</property>
-                    </column>
-                    <row id="160867106181">
-                        <property name="verticalAlign">bottom</property>
-                        <property name="height">0.083in</property>
-                        <cell id="160867106182">
-                            <property name="paddingTop">10pt</property>
-                            <property name="paddingLeft">17pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <property name="paddingRight">0pt</property>
-                            <property name="textAlign">left</property>
-                            <property name="verticalAlign">bottom</property>
-                        </cell>
-                        <cell id="160867106183">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="paddingRight">0pt</property>
-                            <property name="textAlign">left</property>
-                            <property name="verticalAlign">bottom</property>
-                        </cell>
-                        <cell id="160867106184">
-                            <property name="backgroundAttachment">scroll</property>
-                            <property name="backgroundImageType">url</property>
-                            <property name="backgroundPositionX">0%</property>
-                            <property name="backgroundPositionY">0%</property>
-                            <property name="backgroundRepeat">repeat</property>
-                            <property name="backgroundSizeHeight">auto</property>
-                            <property name="backgroundSizeWidth">auto</property>
-                            <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">normal</property>
-                            <property name="fontStyle">normal</property>
-                            <property name="fontVariant">normal</property>
-                            <property name="color">black</property>
-                            <property name="textLineThrough">none</property>
-                            <property name="textOverline">none</property>
-                            <property name="textUnderline">none</property>
-                            <property name="borderBottomColor">black</property>
-                            <property name="borderBottomStyle">none</property>
-                            <property name="borderBottomWidth">medium</property>
-                            <property name="borderLeftColor">black</property>
-                            <property name="borderLeftStyle">none</property>
-                            <property name="borderLeftWidth">medium</property>
-                            <property name="borderRightColor">black</property>
-                            <property name="borderRightStyle">none</property>
-                            <property name="borderRightWidth">medium</property>
-                            <property name="borderTopColor">black</property>
-                            <property name="borderTopStyle">none</property>
-                            <property name="borderTopWidth">medium</property>
-                            <property name="marginTop">0pt</property>
-                            <property name="marginLeft">0pt</property>
-                            <property name="marginBottom">0pt</property>
-                            <property name="marginRight">0pt</property>
-                            <property name="paddingTop">10pt</property>
-                            <property name="paddingLeft">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="paddingRight">0pt</property>
-                            <property name="textAlign">left</property>
-                            <property name="textIndent">0em</property>
-                            <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
-                            <property name="orphans">2</property>
-                            <property name="textTransform">none</property>
-                            <property name="verticalAlign">bottom</property>
-                            <property name="whiteSpace">normal</property>
-                            <property name="widows">2</property>
-                            <property name="wordSpacing">normal</property>
-                            <property name="display">block</property>
-                            <property name="pageBreakAfter">auto</property>
-                            <property name="pageBreakBefore">auto</property>
-                            <property name="pageBreakInside">auto</property>
-                            <property name="showIfBlank">false</property>
-                            <property name="canShrink">false</property>
-                            <property name="overflow">hidden</property>
-                        </cell>
-                        <cell id="160867106185">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">bottom</property>
-                        </cell>
-                        <cell id="160867106186">
-                            <property name="verticalAlign">bottom</property>
-                        </cell>
-                    </row>
-                    <row id="1242">
-                        <property name="verticalAlign">bottom</property>
-                        <property name="height">0.5in</property>
-                        <cell id="160867106175">
-                            <property name="paddingTop">10pt</property>
-                            <property name="paddingLeft">17pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <property name="paddingRight">0pt</property>
-                            <property name="textAlign">left</property>
-                            <property name="verticalAlign">bottom</property>
-                        </cell>
-                        <cell id="1244">
+                    <row id="160867118242">
+                        <property name="height">1.7cm</property>
+                        <cell id="160867118243">
                             <property name="colSpan">1</property>
                             <property name="rowSpan">1</property>
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">0pt</property>
-                            <property name="paddingBottom">0pt</property>
+                            <property name="paddingTop">10pt</property>
+                            <property name="paddingLeft">17pt</property>
+                            <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">0pt</property>
                             <property name="textAlign">left</property>
                             <property name="verticalAlign">bottom</property>
-                            <image id="1245">
-                                <property name="marginBottom">1pt</property>
-                                <property name="verticalAlign">bottom</property>
-                                <property name="height">35px</property>
-                                <property name="width">52px</property>
+                        </cell>
+                        <cell id="160867118244">
+                            <property name="paddingTop">0pt</property>
+                            <property name="paddingLeft">0pt</property>
+                            <property name="paddingBottom">0px</property>
+                            <property name="paddingRight">0pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="verticalAlign">bottom</property>
+                            <image id="160867118245">
+                                <property name="marginBottom">0px</property>
+                                <property name="display">inline</property>
+                                <property name="height">1.2964583333333333cm</property>
+                                <property name="width">3.2014583333333335cm</property>
                                 <property name="source">embed</property>
-                                <property name="imageName">HBT_Poller_Blau.png</property>
+                                <property name="imageName">HBT002_Logo_pos.jpg</property>
                             </image>
                         </cell>
-                        <cell id="160867106174">
-                            <property name="backgroundAttachment">scroll</property>
-                            <property name="backgroundImageType">url</property>
-                            <property name="backgroundPositionX">0%</property>
-                            <property name="backgroundPositionY">0%</property>
-                            <property name="backgroundRepeat">repeat</property>
-                            <property name="backgroundSizeHeight">auto</property>
-                            <property name="backgroundSizeWidth">auto</property>
-                            <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">normal</property>
-                            <property name="fontStyle">normal</property>
-                            <property name="fontVariant">normal</property>
-                            <property name="color">black</property>
-                            <property name="textLineThrough">none</property>
-                            <property name="textOverline">none</property>
-                            <property name="textUnderline">none</property>
-                            <property name="borderBottomColor">black</property>
-                            <property name="borderBottomStyle">none</property>
-                            <property name="borderBottomWidth">medium</property>
-                            <property name="borderLeftColor">black</property>
-                            <property name="borderLeftStyle">none</property>
-                            <property name="borderLeftWidth">medium</property>
-                            <property name="borderRightColor">black</property>
-                            <property name="borderRightStyle">none</property>
-                            <property name="borderRightWidth">medium</property>
-                            <property name="borderTopColor">black</property>
-                            <property name="borderTopStyle">none</property>
-                            <property name="borderTopWidth">medium</property>
-                            <property name="marginTop">0pt</property>
-                            <property name="marginLeft">0pt</property>
-                            <property name="marginBottom">0pt</property>
-                            <property name="marginRight">0pt</property>
-                            <property name="paddingTop">10pt</property>
+                        <cell id="160867118246">
                             <property name="paddingLeft">0pt</property>
-                            <property name="paddingBottom">0pt</property>
+                            <property name="paddingBottom">0px</property>
                             <property name="paddingRight">0pt</property>
                             <property name="textAlign">left</property>
-                            <property name="textIndent">0em</property>
-                            <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
-                            <property name="orphans">2</property>
-                            <property name="textTransform">none</property>
-                            <property name="verticalAlign">bottom</property>
-                            <property name="whiteSpace">normal</property>
-                            <property name="widows">2</property>
-                            <property name="wordSpacing">normal</property>
-                            <property name="display">block</property>
-                            <property name="pageBreakAfter">auto</property>
-                            <property name="pageBreakBefore">auto</property>
-                            <property name="pageBreakInside">auto</property>
-                            <property name="showIfBlank">false</property>
-                            <property name="canShrink">false</property>
-                            <property name="overflow">hidden</property>
-                            <label id="160867106180">
-                                <property name="backgroundAttachment">scroll</property>
-                                <property name="backgroundPositionX">0%</property>
-                                <property name="backgroundPositionY">0%</property>
-                                <property name="backgroundRepeat">repeat</property>
-                                <property name="fontFamily">"Arial Black"</property>
-                                <property name="fontSize">16pt</property>
-                                <property name="fontWeight">normal</property>
-                                <property name="fontStyle">normal</property>
-                                <property name="fontVariant">normal</property>
-                                <property name="color">#006498</property>
-                                <property name="textLineThrough">none</property>
-                                <property name="textOverline">none</property>
-                                <property name="textUnderline">none</property>
-                                <property name="borderBottomColor">black</property>
-                                <property name="borderBottomStyle">none</property>
-                                <property name="borderBottomWidth">medium</property>
-                                <property name="borderLeftColor">black</property>
-                                <property name="borderLeftStyle">none</property>
-                                <property name="borderLeftWidth">medium</property>
-                                <property name="borderRightColor">black</property>
-                                <property name="borderRightStyle">none</property>
-                                <property name="borderRightWidth">medium</property>
-                                <property name="borderTopColor">black</property>
-                                <property name="borderTopStyle">none</property>
-                                <property name="borderTopWidth">medium</property>
-                                <property name="marginTop">0pt</property>
-                                <property name="marginLeft">-1pt</property>
-                                <property name="marginBottom">0pt</property>
-                                <property name="marginRight">0pt</property>
-                                <property name="paddingTop">5pt</property>
-                                <property name="paddingLeft">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="paddingRight">0pt</property>
-                                <property name="textAlign">left</property>
-                                <property name="letterSpacing">normal</property>
-                                <property name="lineHeight">normal</property>
-                                <property name="orphans">2</property>
-                                <property name="textTransform">none</property>
-                                <property name="whiteSpace">normal</property>
-                                <property name="widows">2</property>
-                                <property name="wordSpacing">normal</property>
-                                <property name="display">block</property>
-                                <property name="pageBreakAfter">auto</property>
-                                <property name="pageBreakBefore">auto</property>
-                                <property name="pageBreakInside">auto</property>
-                                <property name="showIfBlank">false</property>
-                                <property name="canShrink">false</property>
-                                <property name="overflow">hidden</property>
-                                <text-property name="text">HBT</text-property>
-                            </label>
                         </cell>
-                        <cell id="1248">
+                        <cell id="160867118247">
                             <property name="paddingTop">0pt</property>
                             <property name="paddingBottom">0pt</property>
+                            <property name="paddingRight">0.73cm</property>
+                            <property name="textAlign">right</property>
                             <property name="verticalAlign">bottom</property>
-                            <label id="1606">
-                                <property name="fontWeight">bold</property>
-                                <property name="marginBottom">-1pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="textAlign">right</property>
-                                <text-property name="text">Beraterprofil</text-property>
-                            </label>
-                        </cell>
-                        <cell id="1335">
-                            <property name="verticalAlign">bottom</property>
+                            <text-data id="160867118254">
+                                <property name="fontFamily">"Simplon Norm Medium"</property>
+                                <property name="fontSize">14px</property>
+                                <property name="color">#191E55</property>
+                                <property name="dataSet">Metadata Data Set</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">Name</property>
+                                        <text-property name="displayName">Name</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["Name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <expression name="valueExpr">row["Name"]</expression>
+                                <property name="contentType">html</property>
+                            </text-data>
                         </cell>
                     </row>
-                    <row id="1250">
-                        <property name="backgroundColor">#006498</property>
-                        <property name="height">2px</property>
-                        <cell id="160867106176"/>
-                        <cell id="1252"/>
-                        <cell id="1253"/>
-                        <cell id="1254"/>
-                        <cell id="1336"/>
-                    </row>
-                    <row id="160866942">
-                        <property name="height">1px</property>
-                        <cell id="160867106177"/>
-                        <cell id="160866943"/>
-                        <cell id="160866944">
+                    <row id="160867118249">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <cell id="160867118250"/>
+                        <cell id="160867118251"/>
+                        <cell id="160867118252">
                             <property name="paddingTop">0pt</property>
                             <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">0pt</property>
                             <property name="paddingRight">0pt</property>
                         </cell>
-                        <cell id="160866945"/>
-                        <cell id="160866946"/>
-                    </row>
-                    <row id="1255">
-                        <property name="height">0.2708333333333333in</property>
-                        <cell id="160867106178"/>
-                        <cell id="1257"/>
-                        <cell id="1258">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">0pt</property>
-                            <property name="paddingRight">0pt</property>
-                            <label id="1259">
-                                <property name="fontSize">10pt</property>
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#006498</property>
-                                <text-property name="text">Hamburger Berater Team GmbH</text-property>
-                            </label>
-                        </cell>
-                        <cell id="1260"/>
-                        <cell id="1337"/>
+                        <cell id="160867118253"/>
                     </row>
                 </grid>
             </page-header>
             <page-footer>
-                <grid id="1261">
-                    <property name="fontSize">6pt</property>
-                    <property name="height">1.1041666666666667in</property>
-                    <property name="width">7.67in</property>
-                    <column id="1262">
-                        <property name="width">2.3cm</property>
+                <grid id="160867118229">
+                    <property name="width">7.135416666666667in</property>
+                    <column id="160867118230">
+                        <property name="width">6.645833333333333in</property>
                     </column>
-                    <column id="1263">
-                        <property name="width">2.6cm</property>
-                    </column>
-                    <column id="1264">
-                        <property name="width">2.6cm</property>
-                    </column>
-                    <column id="1265">
-                        <property name="width">3.3cm</property>
-                    </column>
-                    <column id="1334">
-                        <property name="width">0.46875in</property>
-                    </column>
-                    <row id="1266">
-                        <property name="color">gray</property>
-                        <property name="borderBottomColor">#006498</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">1px</property>
-                        <property name="height">0.20833333333333334in</property>
-                        <cell id="1267">
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">3pt</property>
-                            <property name="verticalAlign">bottom</property>
-                            <data id="1320">
-                                <property name="dataSet">Metadata Data Set</property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">Stand</property>
-                                        <text-property name="displayName">Stand</text-property>
-                                        <expression name="expression">dataSetRow["Stand"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                </list-property>
-                                <property name="resultSetColumn">Stand</property>
-                            </data>
-                        </cell>
-                        <cell id="1268"/>
-                        <cell id="1269"/>
-                        <cell id="1328"/>
-                        <cell id="1270">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="paddingRight">0.5cm</property>
-                            <property name="textAlign">right</property>
-                            <property name="verticalAlign">bottom</property>
-                            <grid id="160867106098">
-                                <column id="160867106099">
-                                    <property name="width">0.5cm</property>
-                                </column>
-                                <column id="160867106100"/>
-                                <column id="160867106101">
-                                    <property name="width">0.35cm</property>
-                                </column>
-                                <column id="160867106102"/>
-                                <row id="160867106103">
-                                    <cell id="160867106104">
-                                        <text id="160867106105">
-                                            <property name="textAlign">right</property>
-                                            <property name="contentType">plain</property>
-                                            <text-property name="content"><![CDATA[Seite]]></text-property>
-                                        </text>
-                                    </cell>
-                                    <cell id="160867106106">
-                                        <auto-text id="160867106107">
-                                            <property name="textAlign">center</property>
-                                            <property name="canShrink">true</property>
+                    <column id="160867118231"/>
+                    <row id="160867118232">
+                        <cell id="160867118233"/>
+                        <cell id="160867118234">
+                            <grid id="160867118218">
+                                <property name="marginTop">1cm</property>
+                                <property name="width">3cm</property>
+                                <column id="160867118219"/>
+                                <column id="160867118220"/>
+                                <column id="160867118221"/>
+                                <row id="160867118222">
+                                    <cell id="160867118223">
+                                        <auto-text id="160867118224">
                                             <property name="type">page-number</property>
                                         </auto-text>
                                     </cell>
-                                    <cell id="160867106108">
-                                        <text id="160867106109">
-                                            <property name="textAlign">center</property>
-                                            <property name="canShrink">true</property>
+                                    <cell id="160867118225">
+                                        <text id="160867118226">
                                             <property name="contentType">plain</property>
-                                            <text-property name="content"><![CDATA[von]]></text-property>
+                                            <text-property name="content"><![CDATA[/]]></text-property>
                                         </text>
                                     </cell>
-                                    <cell id="160867106110">
-                                        <auto-text id="160867106111">
-                                            <property name="paddingRight">0.5cm</property>
-                                            <property name="textAlign">center</property>
-                                            <property name="canShrink">true</property>
+                                    <cell id="160867118227">
+                                        <auto-text id="160867118228">
                                             <property name="type">total-page</property>
                                         </auto-text>
                                     </cell>
                                 </row>
                             </grid>
-                        </cell>
-                    </row>
-                    <row id="1410">
-                        <property name="backgroundColor">blue</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">1px</property>
-                        <cell id="1412">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="1413">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="1414">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="1415">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="1416">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                    </row>
-                    <row id="160866836">
-                        <property name="color">gray</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">7px</property>
-                        <cell id="160866837">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="160866838">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="160866839">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="160866840">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="160866841">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                    </row>
-                    <row id="12717777">
-                        <property name="color">gray</property>
-                        <property name="paddingTop">0px</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">0.125in</property>
-                        <cell id="12727777">
-                            <property name="colSpan">4</property>
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="160867105">
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[<B>HBT&amp;nbsp;Hamburger&amp;nbsp;Berater&amp;nbsp;Team&amp;nbsp;GmbH</B>&amp;nbsp;&amp;nbsp;&amp;nbsp;Stadthausbrücke&amp;nbsp;3&amp;nbsp;&amp;nbsp;&amp;nbsp;20355&amp;nbsp;Hamburg&amp;nbsp;&amp;nbsp;&amp;nbsp;T:+49&amp;nbsp;40&amp;nbsp;369779-0&amp;nbsp;&amp;nbsp;&amp;nbsp;F:+49&amp;nbsp;40&amp;nbsp;369779-99&amp;nbsp;&amp;nbsp;&amp;nbsp;info@hbt.de&amp;nbsp;&amp;nbsp;&amp;nbsp;www.hbt.de]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1329">
-                            <property name="rowSpan">7</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="paddingRight">1.03cm</property>
-                            <property name="verticalAlign">top</property>
-                            <image id="160867106">
-                                <property name="height">1.4cm</property>
-                                <property name="width">1.4cm</property>
-                                <property name="source">embed</property>
-                                <property name="imageName">isoStamp.jpg</property>
-                            </image>
-                        </cell>
-                    </row>
-                    <row id="1271">
-                        <property name="color">gray</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">0in</property>
-                        <cell id="1272">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1296">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1273">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1301">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1274">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1306">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1275">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1311">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                    </row>
-                    <row id="1276">
-                        <property name="color">gray</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">0.125in</property>
-                        <cell id="1277">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1297">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[<b>Geschäftsführer</b>]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1278">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1302">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[<b>Amtsgericht&amp;nbsp;Hamburg</b>&amp;nbsp;HRB&amp;nbsp;31629]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1279">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1307">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[<b>Hamburger&amp;nbsp;Sparkasse</b>]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1280">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1312">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[<b>GLS&amp;nbsp;Gemeinschaftsbank&amp;nbsp;eG]]></text-property>
-                            </text>
-                        </cell>
-                    </row>
-                    <row id="1281">
-                        <property name="color">gray</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">0.125in</property>
-                        <cell id="1282">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1298">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[Arne Habermann]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1283">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1303">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[Steuer-Nr. 48/728/01524]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1284">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1308">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[IBAN: DE27|2005|0550|1002|2101|42]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1285">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1313">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[IBAN: DE29|4306|0967|2042|3772|00]]></text-property>
-                            </text>
-                        </cell>
-                    </row>
-                    <row id="1286">
-                        <property name="color">gray</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">0.125in</property>
-                        <cell id="1287">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingLeft">1.03cm</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1299">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[Daniel Hoffmann]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1288">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1304">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[Ust-IdNr. DE118562664]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1289">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1309">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[BIC: HASPDEHHXXX]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1290">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1314">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[BIC: GENODEM1GLS]]></text-property>
-                            </text>
-                        </cell>
-                    </row>
-                    <row id="1291">
-                        <property name="color">gray</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">0.13541666666666666in</property>
-                        <cell id="1292">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1300">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1293">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1305">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1294">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1310">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                        <cell id="1295">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                            <text id="1315">
-                                <property name="paddingTop">0pt</property>
-                                <property name="paddingBottom">0pt</property>
-                                <property name="contentType">auto</property>
-                                <text-property name="content"><![CDATA[]]></text-property>
-                            </text>
-                        </cell>
-                    </row>
-                    <row id="1417">
-                        <property name="color">gray</property>
-                        <property name="verticalAlign">top</property>
-                        <property name="height">0.10416666666666667in</property>
-                        <cell id="1419">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="1420">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="1421">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
-                        </cell>
-                        <cell id="1422">
-                            <property name="paddingTop">0pt</property>
-                            <property name="paddingBottom">0pt</property>
-                            <property name="verticalAlign">top</property>
                         </cell>
                     </row>
                 </grid>
@@ -3147,13 +2526,15 @@
                             <property name="canShrink">false</property>
                             <property name="height">9.32in</property>
                             <cell id="160867117733">
-                                <property name="backgroundColor">#191E55</property>
+                                <property name="backgroundColor">#FFFFFF</property>
                                 <property name="paddingTop">0in</property>
-                                <property name="paddingLeft">0.27in</property>
+                                <property name="paddingLeft">0.5cm</property>
                                 <property name="paddingBottom">0pt</property>
-                                <property name="paddingRight">0pt</property>
+                                <property name="paddingRight">0.5cm</property>
                                 <grid id="160867117885">
-                                    <column id="160867117886"/>
+                                    <column id="160867117886">
+                                        <property name="width">100%</property>
+                                    </column>
                                     <row id="160867117889">
                                         <cell id="160867117890">
                                             <property name="paddingTop">0.05in</property>
@@ -3175,14 +2556,18 @@
                                     </row>
                                     <row id="160867118134">
                                         <cell id="160867118135">
+                                            <property name="backgroundColor">#FFFFFF</property>
                                             <property name="paddingTop">0.07in</property>
+                                            <property name="paddingLeft">0cm</property>
                                             <property name="paddingBottom">0.07in</property>
-                                            <property name="paddingRight">0.17in</property>
+                                            <property name="paddingRight">0cm</property>
                                             <data id="160867117940">
-                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                 <property name="fontSize">16pt</property>
                                                 <property name="fontWeight">normal</property>
-                                                <property name="color">#FFFFFF</property>
+                                                <property name="color">#5F6EF0</property>
+                                                <property name="paddingLeft">0pt</property>
+                                                <property name="paddingRight">0pt</property>
                                                 <property name="lineHeight">23pt</property>
                                                 <property name="dataSet">Data Set</property>
                                                 <list-property name="boundDataColumns">
@@ -3205,13 +2590,16 @@
                                     </row>
                                     <row id="160867117891">
                                         <cell id="160867117892">
+                                            <property name="backgroundColor">#FFFFFF</property>
+                                            <property name="color">#3C3C6E</property>
                                             <property name="paddingTop">0.07in</property>
-                                            <property name="paddingBottom">0.07in</property>
-                                            <property name="paddingRight">0.17in</property>
+                                            <property name="paddingLeft">0cm</property>
+                                            <property name="paddingBottom">1cm</property>
+                                            <property name="paddingRight">0cm</property>
                                             <data id="160867117827">
-                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                 <property name="fontSize">11pt</property>
-                                                <property name="color">#FFFFFF</property>
+                                                <property name="color">#000000</property>
                                                 <property name="marginTop">0in</property>
                                                 <property name="marginBottom">0in</property>
                                                 <property name="marginRight">0in</property>
@@ -3219,7 +2607,6 @@
                                                 <property name="paddingBottom">0in</property>
                                                 <property name="textAlign">justify</property>
                                                 <property name="lineHeight">normal</property>
-                                                <property name="whiteSpace">pre</property>
                                                 <property name="dataSet">Data Set</property>
                                                 <list-property name="boundDataColumns">
                                                     <structure>
@@ -3254,10 +2641,10 @@
                                                 <row id="160867117831">
                                                     <cell id="160867117832">
                                                         <label id="160867117834">
-                                                            <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                            <property name="fontFamily">"Simplon Norm Medium"</property>
                                                             <property name="fontSize">11pt</property>
                                                             <property name="fontWeight">normal</property>
-                                                            <property name="color">#46E6E6</property>
+                                                            <property name="color">#5F6EF0</property>
                                                             <property name="paddingRight">0pt</property>
                                                             <text-property name="text">Jahrgang: </text-property>
                                                         </label>
@@ -3266,7 +2653,7 @@
                                                         <text-data id="160867117744">
                                                             <property name="fontFamily">"Simplon Norm"</property>
                                                             <property name="fontSize">11pt</property>
-                                                            <property name="color">#FFFFFF</property>
+                                                            <property name="color">#000000</property>
                                                             <property name="marginTop">0in</property>
                                                             <property name="marginLeft">0in</property>
                                                             <property name="marginBottom">0in</property>
@@ -3314,10 +2701,10 @@
                                                         <cell id="160867117901">
                                                             <property name="paddingTop">0.1in</property>
                                                             <label id="160867117747">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#46E6E6</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginTop">0in</property>
                                                                 <property name="marginBottom">0in</property>
                                                                 <property name="textAlign">left</property>
@@ -3332,9 +2719,9 @@
                                                             <property name="paddingTop">0.025in</property>
                                                             <property name="paddingBottom">0.05in</property>
                                                             <data id="160867117825">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
-                                                                <property name="color">#FFFFFF</property>
+                                                                <property name="color">#000000</property>
                                                                 <property name="marginBottom">0in</property>
                                                                 <property name="lineHeight">normal</property>
                                                                 <property name="dataSet">HBT Ausbildung Data Set</property>
@@ -3402,10 +2789,10 @@
                                                     <row id="160867117908">
                                                         <cell id="160867117909">
                                                             <label id="160867117748">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#46E6E6</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginTop">0.1in</property>
                                                                 <property name="marginBottom">0in</property>
                                                                 <property name="textAlign">left</property>
@@ -3418,9 +2805,9 @@
                                                     <row id="160867117910">
                                                         <cell id="160867117911">
                                                             <data id="160867117845">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
-                                                                <property name="color">#FFFFFF</property>
+                                                                <property name="color">#000000</property>
                                                                 <property name="lineHeight">14pt</property>
                                                                 <property name="dataSet">HBT Werdegang Data Set</property>
                                                                 <list-property name="boundDataColumns">
@@ -3547,18 +2934,15 @@
                                                             <property name="paddingLeft">0.16in</property>
                                                             <property name="paddingBottom">0.2cm</property>
                                                             <label id="160867117757">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#191E55</property>
-                                                                <property name="borderBottomColor">#191E55</property>
-                                                                <property name="borderBottomStyle">solid</property>
-                                                                <property name="borderBottomWidth">thin</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="marginBottom">0in</property>
-                                                                <property name="paddingBottom">0.25cm</property>
+                                                                <property name="paddingBottom">1pt</property>
                                                                 <property name="textAlign">left</property>
-                                                                <text-property name="text">Schwerpunkte</text-property>
+                                                                <text-property name="text">— Schwerpunkte</text-property>
                                                             </label>
                                                         </cell>
                                                     </row>
@@ -3566,9 +2950,9 @@
                                                 <detail>
                                                     <row id="160867117752">
                                                         <cell id="160867117753">
-                                                            <property name="paddingLeft">0.16in</property>
+                                                            <property name="paddingLeft">0.31in</property>
                                                             <data id="160867117760">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="marginTop">0in</property>
                                                                 <property name="marginLeft">0in</property>
@@ -3643,20 +3027,17 @@
                                                             <property name="paddingLeft">0.16in</property>
                                                             <property name="paddingBottom">0.2cm</property>
                                                             <label id="160867118010">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#191E55</property>
-                                                                <property name="borderBottomColor">#191E55</property>
-                                                                <property name="borderBottomStyle">solid</property>
-                                                                <property name="borderBottomWidth">thin</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="marginBottom">0cm</property>
                                                                 <property name="paddingTop">0in</property>
                                                                 <property name="paddingLeft">0in</property>
-                                                                <property name="paddingBottom">0.25cm</property>
+                                                                <property name="paddingBottom">0cm</property>
                                                                 <property name="textAlign">left</property>
-                                                                <text-property name="text">Zusatzqualifikation</text-property>
+                                                                <text-property name="text">— Zusatzqualifikation</text-property>
                                                             </label>
                                                         </cell>
                                                     </row>
@@ -3665,10 +3046,10 @@
                                                     <row id="160867118014">
                                                         <cell id="160867118015">
                                                             <property name="paddingTop">0in</property>
-                                                            <property name="paddingLeft">0.16in</property>
+                                                            <property name="paddingLeft">0.31in</property>
                                                             <property name="paddingBottom">0in</property>
                                                             <data id="160867118016">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="paddingTop">0.1in</property>
@@ -3750,19 +3131,16 @@
                                                             <property name="paddingLeft">0.16in</property>
                                                             <property name="paddingBottom">0.2cm</property>
                                                             <label id="160867117784">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#191E55</property>
-                                                                <property name="borderBottomColor">#191E55</property>
-                                                                <property name="borderBottomStyle">solid</property>
-                                                                <property name="borderBottomWidth">thin</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="paddingTop">0in</property>
                                                                 <property name="paddingLeft">0in</property>
-                                                                <property name="paddingBottom">0.25cm</property>
+                                                                <property name="paddingBottom">0cm</property>
                                                                 <property name="textAlign">left</property>
-                                                                <text-property name="text">Weiterbildung</text-property>
+                                                                <text-property name="text">— Weiterbildung</text-property>
                                                             </label>
                                                         </cell>
                                                     </row>
@@ -3771,10 +3149,10 @@
                                                     <row id="160867117785">
                                                         <cell id="160867117786">
                                                             <property name="paddingTop">0in</property>
-                                                            <property name="paddingLeft">0.16in</property>
+                                                            <property name="paddingLeft">0.31in</property>
                                                             <property name="paddingBottom">0in</property>
                                                             <data id="160867117787">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="paddingTop">0.1in</property>
@@ -3832,19 +3210,16 @@
                                                             <property name="paddingLeft">0.16in</property>
                                                             <property name="paddingBottom">0.2cm</property>
                                                             <label id="160867117774">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#191E55</property>
-                                                                <property name="borderBottomColor">#191E55</property>
-                                                                <property name="borderBottomStyle">solid</property>
-                                                                <property name="borderBottomWidth">thin</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="marginBottom">0in</property>
                                                                 <property name="paddingTop">0in</property>
-                                                                <property name="paddingBottom">0.25cm</property>
+                                                                <property name="paddingBottom">0cm</property>
                                                                 <property name="textAlign">left</property>
-                                                                <text-property name="text">Branchen</text-property>
+                                                                <text-property name="text">— Branchen</text-property>
                                                             </label>
                                                         </cell>
                                                     </row>
@@ -3853,10 +3228,10 @@
                                                     <row id="160867117775">
                                                         <cell id="160867117776">
                                                             <property name="paddingTop">0in</property>
-                                                            <property name="paddingLeft">0.16in</property>
+                                                            <property name="paddingLeft">0.31in</property>
                                                             <property name="paddingBottom">0in</property>
                                                             <data id="160867117777">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="paddingTop">0.1in</property>
@@ -3914,18 +3289,16 @@
                                                             <property name="paddingLeft">0.16in</property>
                                                             <property name="paddingBottom">0.2cm</property>
                                                             <label id="160867117764">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#191E55</property>
-                                                                <property name="borderBottomStyle">solid</property>
-                                                                <property name="borderBottomWidth">thin</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="paddingTop">0in</property>
                                                                 <property name="paddingLeft">0in</property>
-                                                                <property name="paddingBottom">0.04in</property>
+                                                                <property name="paddingBottom">0in</property>
                                                                 <property name="textAlign">left</property>
-                                                                <text-property name="text">Rollen</text-property>
+                                                                <text-property name="text">— Rollen</text-property>
                                                             </label>
                                                         </cell>
                                                     </row>
@@ -3934,10 +3307,10 @@
                                                     <row id="160867117765">
                                                         <cell id="160867117766">
                                                             <property name="paddingTop">0in</property>
-                                                            <property name="paddingLeft">0.16in</property>
+                                                            <property name="paddingLeft">0.31in</property>
                                                             <property name="paddingBottom">0in</property>
                                                             <data id="160867117767">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="marginBottom">0in</property>
@@ -3995,18 +3368,16 @@
                                                             <property name="paddingLeft">0.16in</property>
                                                             <property name="paddingBottom">0.2cm</property>
                                                             <label id="160867118037">
-                                                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="fontWeight">normal</property>
-                                                                <property name="color">#191E55</property>
-                                                                <property name="borderBottomStyle">solid</property>
-                                                                <property name="borderBottomWidth">thin</property>
+                                                                <property name="color">#5F6EF0</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="paddingTop">0in</property>
                                                                 <property name="paddingLeft">0in</property>
-                                                                <property name="paddingBottom">0.04in</property>
+                                                                <property name="paddingBottom">0in</property>
                                                                 <property name="textAlign">left</property>
-                                                                <text-property name="text">Sprachen</text-property>
+                                                                <text-property name="text">— Sprachen</text-property>
                                                             </label>
                                                         </cell>
                                                     </row>
@@ -4015,10 +3386,10 @@
                                                     <row id="160867118041">
                                                         <cell id="160867118042">
                                                             <property name="paddingTop">0in</property>
-                                                            <property name="paddingLeft">0.16in</property>
+                                                            <property name="paddingLeft">0.31in</property>
                                                             <property name="paddingBottom">0in</property>
                                                             <data id="160867118043">
-                                                                <property name="fontFamily">"Simplon Norm"</property>
+                                                                <property name="fontFamily">"Simplon Norm Light"</property>
                                                                 <property name="fontSize">11pt</property>
                                                                 <property name="marginLeft">0in</property>
                                                                 <property name="marginBottom">0in</property>
@@ -4052,16 +3423,10 @@
         </grid>
         <table id="160866790">
             <property name="marginBottom">1.2px</property>
-            <property name="masterPage">Weitere Seiten</property>
+            <property name="masterPage">Master Page - Other Pages</property>
             <property name="pageBreakInside">auto</property>
             <property name="width">7.25in</property>
             <property name="dataSet">HBT Projektreferenzen Data Set</property>
-            <list-property name="visibility">
-                <structure>
-                    <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">row["Titel"] == null || row["Titel"] == '' || row["Titel"] == ' '</expression>
-                </structure>
-            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">Titel</property>
@@ -4169,7 +3534,8 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                 <structure>
                     <property name="name">Kunde</property>
                     <text-property name="displayName">Kunde</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Kunde"] + " - " + dataSetRow["Titel"]</expression>
+                    <expression name="expression" type="javascript">if(dataSetRow["Titel"] != "" &amp;&amp; dataSetRow["Titel"] != null){"— " + dataSetRow["Kunde"] + " - " +dataSetRow["Titel"];}&#13;
+else{ "— " + dataSetRow["Kunde"] ;}</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -4189,18 +3555,17 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
             <column id="160866805"/>
             <header>
                 <row id="160866791">
-                    <property name="backgroundColor">#191E55</property>
+                    <property name="backgroundColor">white</property>
                     <cell id="160867106227">
-                        <property name="backgroundColor">#8C8CAA</property>
                         <property name="color">#505AC8</property>
-                        <property name="paddingTop">10pt</property>
+                        <property name="paddingTop">0pt</property>
                         <property name="paddingLeft">1pt</property>
-                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingBottom">0pt</property>
                     </cell>
                     <cell id="160866792">
-                        <property name="paddingTop">10pt</property>
-                        <property name="paddingLeft">0.5cm</property>
-                        <property name="paddingBottom">10pt</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0cm</property>
+                        <property name="paddingBottom">1cm</property>
                         <label id="160866793">
                             <property name="backgroundAttachment">scroll</property>
                             <property name="backgroundPositionX">0%</property>
@@ -4211,7 +3576,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">#5F6EF0</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -4232,7 +3597,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">5pt</property>
-                            <property name="paddingLeft">0.5cm</property>
+                            <property name="paddingLeft">0cm</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="paddingRight">1pt</property>
                             <property name="textAlign">left</property>
@@ -4306,15 +3671,15 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                                 <property name="backgroundPositionX">0%</property>
                                 <property name="backgroundPositionY">0%</property>
                                 <property name="backgroundRepeat">repeat</property>
-                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                 <property name="fontSize">10pt</property>
                                 <property name="fontWeight">normal</property>
                                 <property name="fontStyle">normal</property>
                                 <property name="fontVariant">normal</property>
-                                <property name="color">#191E55</property>
+                                <property name="color">#5F6EF0</property>
                                 <property name="textLineThrough">none</property>
                                 <property name="textOverline">none</property>
-                                <property name="textUnderline">underline</property>
+                                <property name="textUnderline">none</property>
                                 <property name="marginTop">0pt</property>
                                 <property name="marginLeft">0pt</property>
                                 <property name="marginBottom">0pt</property>
@@ -4358,7 +3723,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                                 <property name="backgroundPositionX">0%</property>
                                 <property name="backgroundPositionY">0%</property>
                                 <property name="backgroundRepeat">repeat</property>
-                                <property name="fontFamily">"Simplon Norm"</property>
+                                <property name="fontFamily">"Simplon Norm Light"</property>
                                 <property name="fontSize">10pt</property>
                                 <property name="fontWeight">normal</property>
                                 <property name="fontStyle">normal</property>
@@ -4473,7 +3838,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="canShrink">false</property>
                             <property name="overflow">hidden</property>
                             <data id="160867106122">
-                                <property name="fontFamily">"Simplon Norm"</property>
+                                <property name="fontFamily">"Simplon Norm Light"</property>
                                 <property name="fontSize">10pt</property>
                                 <property name="color">black</property>
                                 <property name="marginTop">1pt</property>
@@ -4586,7 +3951,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                                                     <property name="backgroundPositionX">0%</property>
                                                     <property name="backgroundPositionY">0%</property>
                                                     <property name="backgroundRepeat">repeat</property>
-                                                    <property name="fontFamily">"Simplon Norm"</property>
+                                                    <property name="fontFamily">"Simplon Norm Light"</property>
                                                     <property name="fontSize">10pt</property>
                                                     <property name="fontWeight">normal</property>
                                                     <property name="fontStyle">normal</property>
@@ -4594,7 +3959,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                                                     <property name="color">black</property>
                                                     <property name="textLineThrough">none</property>
                                                     <property name="textOverline">none</property>
-                                                    <property name="textUnderline">underline</property>
+                                                    <property name="textUnderline">none</property>
                                                     <property name="borderBottomColor">black</property>
                                                     <property name="borderBottomStyle">none</property>
                                                     <property name="borderBottomWidth">medium</property>
@@ -4633,7 +3998,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                                                     <text-property name="content"><![CDATA[Projektumgebung:]]></text-property>
                                                 </text>
                                                 <data id="160867106560">
-                                                    <property name="fontFamily">"Simplon Norm"</property>
+                                                    <property name="fontFamily">"Simplon Norm Light"</property>
                                                     <property name="color">black</property>
                                                     <property name="resultSetColumn">SortedSkills</property>
                                                 </data>
@@ -4914,7 +4279,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
         </grid>
         <table id="160867054">
             <property name="textAlign">left</property>
-            <property name="masterPage">Weitere Seiten</property>
+            <property name="masterPage">Master Page - Other Pages</property>
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">auto</property>
             <property name="width">7.1875in</property>
@@ -4928,7 +4293,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">Gruppenname</property>
-                    <expression name="expression" type="javascript">dataSetRow["Gruppenname"]</expression>
+                    <expression name="expression" type="javascript">"— " + dataSetRow["Gruppenname"]</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -4999,14 +4364,13 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
             </column>
             <header>
                 <row id="160867055">
-                    <property name="backgroundColor">#191E55</property>
+                    <property name="backgroundColor">#FFFFFF</property>
                     <property name="borderBottomStyle">none</property>
                     <property name="borderLeftStyle">none</property>
                     <property name="borderRightStyle">none</property>
                     <property name="borderTopStyle">none</property>
                     <cell id="160867106200">
                         <property name="backgroundAttachment">scroll</property>
-                        <property name="backgroundColor">#8C8CAA</property>
                         <property name="backgroundImageType">url</property>
                         <property name="backgroundPositionX">0%</property>
                         <property name="backgroundPositionY">0%</property>
@@ -5038,9 +4402,9 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="marginLeft">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <property name="marginRight">0pt</property>
-                        <property name="paddingTop">1pt</property>
+                        <property name="paddingTop">0pt</property>
                         <property name="paddingLeft">1pt</property>
-                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingBottom">0pt</property>
                         <property name="paddingRight">1pt</property>
                         <property name="textAlign">left</property>
                         <property name="textIndent">0em</property>
@@ -5092,9 +4456,9 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="marginLeft">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <property name="marginRight">0pt</property>
-                        <property name="paddingTop">10pt</property>
-                        <property name="paddingLeft">0.5cm</property>
-                        <property name="paddingBottom">10pt</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0cm</property>
+                        <property name="paddingBottom">1cm</property>
                         <property name="paddingRight">1pt</property>
                         <property name="textAlign">left</property>
                         <property name="textIndent">0em</property>
@@ -5122,7 +4486,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">#5F6EF0</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -5143,7 +4507,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">5pt</property>
-                            <property name="paddingLeft">0.5cm</property>
+                            <property name="paddingLeft">0cm</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="paddingRight">1pt</property>
                             <property name="textAlign">left</property>
@@ -5211,15 +4575,16 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="overflow">hidden</property>
                         <label id="160867059">
                             <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundColor">#8C8CAA</property>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
                             <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">bold</property>
+                            <property name="fontSize">8pt</property>
+                            <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">#8C8CAA</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -5240,12 +4605,12 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">1pt</property>
-                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">1pt</property>
-                            <property name="paddingRight">1pt</property>
-                            <property name="textAlign">center</property>
+                            <property name="paddingRight">0pt</property>
+                            <property name="textAlign">left</property>
                             <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
+                            <property name="lineHeight">1.5em</property>
                             <property name="orphans">2</property>
                             <property name="textTransform">none</property>
                             <property name="whiteSpace">normal</property>
@@ -5309,15 +4674,16 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="overflow">hidden</property>
                         <label id="160867061">
                             <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundColor">#3C3C6E</property>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
                             <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">bold</property>
+                            <property name="fontSize">8pt</property>
+                            <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">black</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -5338,12 +4704,12 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">1pt</property>
-                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">1pt</property>
-                            <property name="paddingRight">1pt</property>
-                            <property name="textAlign">center</property>
+                            <property name="paddingRight">0pt</property>
+                            <property name="textAlign">left</property>
                             <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
+                            <property name="lineHeight">1.5em</property>
                             <property name="orphans">2</property>
                             <property name="textTransform">none</property>
                             <property name="whiteSpace">normal</property>
@@ -5407,15 +4773,16 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="overflow">hidden</property>
                         <label id="160867063">
                             <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundColor">#505AC8</property>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
                             <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">bold</property>
+                            <property name="fontSize">8pt</property>
+                            <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">black</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -5436,12 +4803,12 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">1pt</property>
-                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">1pt</property>
-                            <property name="paddingRight">1pt</property>
-                            <property name="textAlign">center</property>
+                            <property name="paddingRight">0pt</property>
+                            <property name="textAlign">left</property>
                             <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
+                            <property name="lineHeight">1.5em</property>
                             <property name="orphans">2</property>
                             <property name="textTransform">none</property>
                             <property name="whiteSpace">normal</property>
@@ -5505,15 +4872,16 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="overflow">hidden</property>
                         <label id="160867065">
                             <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundColor">#5F6EF0</property>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
                             <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">bold</property>
+                            <property name="fontSize">8pt</property>
+                            <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">black</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -5534,12 +4902,12 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">1pt</property>
-                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">1pt</property>
-                            <property name="paddingRight">1pt</property>
-                            <property name="textAlign">center</property>
+                            <property name="paddingRight">0pt</property>
+                            <property name="textAlign">left</property>
                             <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
+                            <property name="lineHeight">1.5em</property>
                             <property name="orphans">2</property>
                             <property name="textTransform">none</property>
                             <property name="whiteSpace">normal</property>
@@ -5603,15 +4971,16 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="overflow">hidden</property>
                         <label id="160867067">
                             <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundColor">#46E6E6</property>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
                             <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">bold</property>
+                            <property name="fontSize">8pt</property>
+                            <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">black</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -5632,12 +5001,12 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">1pt</property>
-                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">1pt</property>
-                            <property name="paddingRight">1pt</property>
-                            <property name="textAlign">center</property>
+                            <property name="paddingRight">0pt</property>
+                            <property name="textAlign">left</property>
                             <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
+                            <property name="lineHeight">1.5em</property>
                             <property name="orphans">2</property>
                             <property name="textTransform">none</property>
                             <property name="whiteSpace">normal</property>
@@ -5705,11 +5074,11 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
                             <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">10pt</property>
-                            <property name="fontWeight">bold</property>
+                            <property name="fontSize">10%</property>
+                            <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
                             <property name="fontVariant">normal</property>
-                            <property name="color">#FFFFFF</property>
+                            <property name="color">black</property>
                             <property name="textLineThrough">none</property>
                             <property name="textOverline">none</property>
                             <property name="textUnderline">none</property>
@@ -5730,12 +5099,12 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="marginBottom">0pt</property>
                             <property name="marginRight">0pt</property>
                             <property name="paddingTop">1pt</property>
-                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">1pt</property>
-                            <property name="paddingRight">1pt</property>
-                            <property name="textAlign">center</property>
+                            <property name="paddingRight">0pt</property>
+                            <property name="textAlign">left</property>
                             <property name="letterSpacing">normal</property>
-                            <property name="lineHeight">normal</property>
+                            <property name="lineHeight">1.5em</property>
                             <property name="orphans">2</property>
                             <property name="textTransform">none</property>
                             <property name="whiteSpace">normal</property>
@@ -5779,7 +5148,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="borderLeftStyle">none</property>
                         <property name="borderRightStyle">none</property>
                         <property name="borderTopStyle">none</property>
-                        <property name="masterPage">Weitere Seiten</property>
+                        <property name="masterPage">Master Page - First page</property>
                         <property name="pageBreakAfter">avoid</property>
                         <cell id="160867106201">
                             <property name="borderBottomStyle">none</property>
@@ -5801,11 +5170,11 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                             <property name="paddingLeft">1pt</property>
                             <property name="paddingBottom">0.3cm</property>
                             <data id="160867073">
-                                <property name="fontFamily">"Simplon Norm Bold"</property>
+                                <property name="fontFamily">"Simplon Norm Medium"</property>
                                 <property name="fontSize">8pt</property>
                                 <property name="fontWeight">normal</property>
-                                <property name="color">#191E55</property>
-                                <property name="textUnderline">underline</property>
+                                <property name="color">#5F6EF0</property>
+                                <property name="textUnderline">none</property>
                                 <property name="paddingTop">2mm</property>
                                 <property name="paddingLeft">1pt</property>
                                 <property name="paddingBottom">2mm</property>
@@ -5834,7 +5203,7 @@ else { row["ZeitraumRolle"] + ", " + row["RollenAggregation"] }</expression>
                         <property name="paddingLeft">1pt</property>
                         <property name="paddingBottom">1pt</property>
                         <data id="160867082">
-                            <property name="fontFamily">"Simplon Norm"</property>
+                            <property name="fontFamily">"Simplon Norm Light"</property>
                             <property name="fontSize">8pt</property>
                             <property name="marginLeft">0.8cm</property>
                             <property name="paddingLeft">1pt</property>
