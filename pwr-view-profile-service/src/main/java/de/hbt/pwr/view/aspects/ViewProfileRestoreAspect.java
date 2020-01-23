@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
     private static final Logger LOG = LogManager.getLogger(ViewProfileRestoreAspect.class);
 
-    private void restore(ViewProfile viewProfile) {
+    void restore(ViewProfile viewProfile) {
 
         viewProfile.getDisplayCategories().forEach(category -> {
             category.getDisplaySkills().forEach(skill -> {
@@ -42,14 +43,21 @@ import java.util.stream.Collectors;
     }
 
     private Category mergeChildren(Category c1, Category c2) {
-        c1.getDisplaySkills().addAll(c2.getDisplaySkills());
+        List<Skill> skills = Stream.of(c1.getDisplaySkills(), c2.getDisplaySkills())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        c1.setDisplaySkills(skills);
         return c1;
     }
 
     private List<Category> mergeDuplicates(Collection<Category> displayCategories) {
-        return new ArrayList<>(displayCategories.stream().collect(
-                Collectors.toMap(Category::getId, Function.identity(), this::mergeChildren))
-                .values());
+        Map<Long, Category> merged = displayCategories.stream()
+                .collect(Collectors.toMap(Category::getId, Function.identity(), this::mergeChildren));
+        return displayCategories.stream()
+                .map(Category::getId)
+                .distinct()
+                .map(merged::get)
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unused") @Pointcut("this(de.hbt.pwr.view.repo.ViewProfileRepository)")

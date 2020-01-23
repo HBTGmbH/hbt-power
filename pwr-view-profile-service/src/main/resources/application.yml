@@ -68,4 +68,21 @@ spring:
 eureka:
   client:
     enabled: false
+---
+spring:
+  profiles: localDevNoEureka
+  redis:
+    host: localhost
+    port: 6379
+    database: 6
+logging:
+  level:
+    root: info
+    de.hbt.pwr.view: debug
 
+debug: false
+eureka:
+  client:
+    enabled: false
+pwr-profile-service.ribbon.listOfServers: localhost:9004
+pwr-skill-service.ribbon.listOfServers: localhost:9003
