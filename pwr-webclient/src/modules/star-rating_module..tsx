@@ -26,11 +26,19 @@ const styleDefault: CSSProperties = {
     color: 'initial'
 };
 
+const styleUnused: CSSProperties = {
+    color: Color.HBTSilver.toCSSRGBString()
+};
+
 const getStyle = (starPosition: number, rating: number) => {
-    if (starPosition <= rating) {
-        return styleYellow;
+    if (rating < 1 || rating > 5) {
+        return styleUnused;
     } else {
-        return styleDefault;
+        if (starPosition <= rating) {
+            return styleYellow;
+        } else {
+            return styleDefault;
+        }
     }
 };
 

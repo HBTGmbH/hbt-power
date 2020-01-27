@@ -12,7 +12,6 @@ import {formatToYear} from '../../../../../utils/DateUtil';
 import {StringUtils} from '../../../../../utils/StringUtil';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
-import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
 import {connect} from 'react-redux';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {PwrInputField} from '../../../../general/pwr-input-field';
@@ -31,6 +30,7 @@ import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {SkillChip} from '../skills/skill-chip_module';
 import Grid from '@material-ui/core/Grid/Grid';
 import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-skills';
+import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
 
 const chooseClientName = (project: Project) => {
     if (project.client) {
@@ -221,7 +221,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         this.props.updateEditingProject({...this.project(), ...{skills: skills}});
     };
 
-    private toSkillChip(skill: ProfileSkill) {
+    private toSkillChip (skill: ProfileSkill) {
         return <SkillChip key={skill.name} className="margin-2px" disabled={this.isEditDisabled()} skill={skill}
                           onDelete={skill => this.removeSkill(skill.name)}
                           canChangeRating={false}/>;

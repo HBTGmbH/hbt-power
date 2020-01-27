@@ -16,6 +16,9 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import Button from '@material-ui/core/Button';
 import {SkillInfo} from './skill-info_module';
 import Badge from '@material-ui/core/Badge';
+import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
+
+const defaultCategory: number = 152;
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
@@ -36,7 +39,7 @@ interface ProfileSkillsLocalState {
 
 interface ProfileSkillsDispatch {
     saveSkill(initials: string, skill: ProfileSkill);
-
+    createSkill(qualifier: string, category: number): void;
     deleteSkill(initials: string, skill: ProfileSkill);
 }
 
@@ -61,6 +64,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileSkillsDispatch {
         return {
             deleteSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.deleteProfileSkill(initials, skill)),
+            createSkill: (qualifier, category) => dispatch(SkillActionCreator.AsyncCreateSkill(qualifier, category)),
             saveSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.saveProfileSkill(initials, skill)),
         };
     }
@@ -78,6 +82,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
 
     private handleAddSkill = (name: string, rating: number) => {
         if (!this.props.skills.some(skill => skill.name === name)) {
+            this.props.createSkill(name, defaultCategory);
             this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
         }
     };
@@ -104,7 +109,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
 
     private toSkill = (skill: ProfileSkill) => {
         return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} container item spacing={0}
-                     alignItems={'center'}>
+                     alignItems={'center'} style={{marginBottom: '15px'}}>
             <Grid item container xs={2} sm={2} md={2} lg={2} xl={2} justify={'flex-end'}>
                 <PwrIconButton style={{right: 0}} iconName='delete'
                                tooltip={PowerLocalize.get('Action.Delete')}
