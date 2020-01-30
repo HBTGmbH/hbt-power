@@ -256,6 +256,16 @@ export namespace SkillActionCreator {
         };
     }
 
+    export function AsyncUpdateSkillCategories(qualifiers: string[]) {
+        return function (dispatch: redux.Dispatch<ApplicationState>) {
+            if (qualifiers) {
+                skillClient.categorizeSkills(qualifiers)
+                    .then((skills)=>console.log("Updated all profile skills to be properly categorized!"))
+                    .catch((error: any) => handleSkillServiceError(error));
+            }
+        }
+    }
+
     /**
      * Invokes witelisting of the {@link SkillCategory} identified by the given ID.
      * If the category is already whitelisted, nothing will change.
