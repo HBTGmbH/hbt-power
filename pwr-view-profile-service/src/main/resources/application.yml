@@ -8,6 +8,8 @@ spring:
     multipart:
       max-file-size: 128MB
       max-request-size: 128MB
+  main:
+    allow-bean-definition-overriding: true # We need to enable this for openfeign fallbacks
 server:
   port: 9008
 eureka:
@@ -66,4 +68,21 @@ spring:
 eureka:
   client:
     enabled: false
+---
+spring:
+  profiles: localDevNoEureka
+  redis:
+    host: localhost
+    port: 6379
+    database: 6
+logging:
+  level:
+    root: info
+    de.hbt.pwr.view: debug
 
+debug: false
+eureka:
+  client:
+    enabled: false
+pwr-profile-service.ribbon.listOfServers: localhost:9004
+pwr-skill-service.ribbon.listOfServers: localhost:9003
