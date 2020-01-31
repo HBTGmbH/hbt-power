@@ -20,6 +20,15 @@ public class SkillServiceCategory {
         // Default empty constructor for jackson
     }
 
+    public static SkillServiceCategory other() {
+        SkillServiceCategory skillServiceCategory = new SkillServiceCategory();
+        skillServiceCategory.setBlacklisted(true);
+        skillServiceCategory.setCustom(true);
+        skillServiceCategory.setQualifier("Other");
+        skillServiceCategory.setId(-1);
+        return skillServiceCategory;
+    }
+
     public SkillServiceCategory(String qualifier) {
         this.qualifier = qualifier;
     }
