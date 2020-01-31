@@ -6,6 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import static de.hbt.pwr.view.client.skill.model.SkillServiceCategory.other;
+
 @Component(value = "skillServiceFallback")
 public class SkillServiceFallback
         implements SkillServiceClient {
@@ -20,14 +22,7 @@ public class SkillServiceFallback
         skillServiceSkill.setCustom(false);
         skillServiceSkill.setQualifier(qualifier);
         skillServiceSkill.setId(-1);
-
-        SkillServiceCategory skillServiceCategory = new SkillServiceCategory();
-        skillServiceCategory.setBlacklisted(true);
-        skillServiceCategory.setCustom(true);
-        skillServiceCategory.setQualifier("Other");
-        skillServiceCategory.setId(-1);
-
-        skillServiceSkill.setCategory(skillServiceCategory);
+        skillServiceSkill.setCategory(other());
         return skillServiceSkill;
     }
 

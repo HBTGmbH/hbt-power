@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static de.hbt.pwr.view.client.skill.model.SkillServiceCategory.other;
+
 @Service
 public class ViewProfileCreatorService {
 
@@ -76,7 +78,7 @@ public class ViewProfileCreatorService {
     }
 
 
-    public ViewProfile createViewProfile(Profile profile, String initials, String name, String viewDescription, Locale locale) {
+    private ViewProfile createViewProfile(Profile profile, String initials, String name, String viewDescription, Locale locale) {
 
         ViewProfile result = new ViewProfile();
         result.setLocale(locale);
@@ -101,7 +103,7 @@ public class ViewProfileCreatorService {
         return result;
     }
 
-    public void applyInitialSorting(ViewProfile viewProfile) {
+    private void applyInitialSorting(ViewProfile viewProfile) {
         viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.SECTOR, true);
         viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.KEY_SKILL, true);
         viewProfileSortService.sortEntryByName(viewProfile, NameComparableEntryType.LANGUAGE, true);
@@ -210,7 +212,7 @@ public class ViewProfileCreatorService {
         skill.setVersions(profileSkill.getVersions());
 
         if (serviceSkill.getCategory() == null) {
-            throw new CategoryNotFoundException("null from Skill: " + serviceSkill.getQualifier());
+            serviceSkill.setCategory(other());
         }
         skill.setDisplayCategory(getDisplayCategory(serviceSkill.getCategory(), displayCategories));
     }

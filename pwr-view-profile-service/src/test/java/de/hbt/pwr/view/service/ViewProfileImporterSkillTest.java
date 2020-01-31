@@ -83,7 +83,7 @@ public class ViewProfileImporterSkillTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         reset(skillServiceClient);
         reset(profileServiceClient);
     }
@@ -251,7 +251,6 @@ public class ViewProfileImporterSkillTest {
 
         Optional<Skill> skillOptional = viewProfile.findSkillByName(testSkill1.getQualifier());
         assertThat(skillOptional.isPresent()).isTrue();
-        //noinspection ConstantConditions
         assertThat(skillOptional.get().getDisplayCategory().getName()).isEqualTo(lowest.getQualifier());
     }
 
@@ -275,7 +274,6 @@ public class ViewProfileImporterSkillTest {
         assertThat(viewProfile.getViewProfileInfo().getCreationDate()).isNotNull();
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void shouldImportWithLocaleIfAvailable() {
         SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
@@ -294,5 +292,17 @@ public class ViewProfileImporterSkillTest {
         Optional<Skill> skillOptional = viewProfile.findSkillByName(localizedQualifier.getQualifier());
         assertThat(skillOptional.isPresent()).isTrue();
         assertThat(skillOptional.get().getName()).isEqualTo(localizedQualifier.getQualifier());
+    }
+
+    @Test
+    public void whenImportingWithoutCategory_ShouldAddOther() {
+        SkillServiceSkill testSkill1 = new SkillServiceSkill("German", null);
+        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
+        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "deu");
+
+        assertThat(viewProfile.getDisplayCategories())
+                .extracting(Category::getName)
+                .contains("Other");
     }
 }
