@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
@@ -28,18 +29,20 @@ public class ProfileEntryService {
     private ProfileRepository profileRepository;
     private SkillRepository skillRepository;
     private ProjectRepository projectRepository;
+    private SkillProfileClient skillProfileClient;
 
     @Autowired
     public ProfileEntryService(NameEntityRepository nameEntityRepository,
                                ProfileEntryDAO profileEntryDAO,
                                ProfileRepository profileRepository,
                                SkillRepository skillRepository,
-                               ProjectRepository projectRepository) {
+                               ProjectRepository projectRepository, SkillProfileClient skillProfileClient) {
         this.nameEntityRepository = nameEntityRepository;
         this.profileEntryDAO = profileEntryDAO;
         this.profileRepository = profileRepository;
         this.skillRepository = skillRepository;
         this.projectRepository = projectRepository;
+        this.skillProfileClient = skillProfileClient;
     }
 
     public BaseProfile updateBaseProfile(Profile p, BaseProfile baseProfile) {
@@ -74,7 +77,10 @@ public class ProfileEntryService {
                 .findAny();
         return concurrent
                 .map(s -> updateSkill(s, skill))
-                .orElseGet(() -> createNewInProfile(skill, profile));
+                .orElseGet(() -> {
+                    skillProfileClient.updateAndGetCategory(skill.getName());
+                    return createNewInProfile(skill, profile);
+                });
     }
 
     private Skill updateSkill(Skill current, Skill newSkill) {
@@ -102,6 +108,7 @@ public class ProfileEntryService {
                 skill = skillRepository.save(skill);
             }
             profileSkills.add(skill);
+            skillProfileClient.updateAndGetCategory(skill.getName());
         } else {
             skill = inPro;
         }
@@ -177,9 +184,6 @@ public class ProfileEntryService {
 
         profile.getProjects().add(project);
 
-        if (project.getSkills() != null) {
-            profile.getSkills().addAll(project.getSkills());  //TODO entscheiden ob die randeffekte hier auftreten sollen bzw. wie sie geändert werden sollen
-        }
         profileRepository.save(profile);
         return project;
     }
