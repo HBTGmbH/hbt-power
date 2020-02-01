@@ -8,18 +8,11 @@ import java.time.LocalDate;
 
 @Data
 public class  ReportTemplate {
-
-
     private String id = null;
-
     private String name;
-
     private String description;
-
     public String fileId;
-
     public String createUser;
-
     public LocalDate createdDate;
 
 

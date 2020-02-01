@@ -11,20 +11,13 @@ import java.util.Locale;
 
 @Data
 public class ViewProfile {
-
     private String id;
-
     private String viewDescription = "";
-
     @JsonProperty("owner")
     private String ownerInitials;
-
     private ViewProfileInfo viewProfileInfo = new ViewProfileInfo();
-
     private String description = "";
-
     private LocalDate creationDate;
-
     private Locale locale;
 
     private List<ViewCareer> careers = new ArrayList<>();

@@ -17,27 +17,19 @@ import static org.springframework.util.StringUtils.cleanPath;
 @Service
 public class DBFileStorageService {
 
-    @Autowired
-    private DBFileRepository dbFileRepository;
+    private final DBFileRepository dbFileRepository;
 
-    public DBFile storeFile(String name, String fileType, byte[] data) {
-
-        DBFile dbFile = new DBFile(name, fileType, data);
-
-        return dbFileRepository.save(dbFile);
-
+    public DBFileStorageService(DBFileRepository dbFileRepository) {
+        this.dbFileRepository = dbFileRepository;
     }
 
     public DBFile storeFile(MultipartFile file) {
         String filename = cleanPath(file.getOriginalFilename());
-
         try {
             if (filename.contains("..")) {
-                throw new StorageFileException("invalid fileId" + filename);
+                throw new StorageFileException("invalid fileId " + filename);
             }
-
             DBFile dbFile = new DBFile(filename, file.getContentType(), file.getBytes());
-
             return dbFileRepository.save(dbFile);
         } catch (IOException e) {
             throw new StorageFileException("Could not store file: " + filename);

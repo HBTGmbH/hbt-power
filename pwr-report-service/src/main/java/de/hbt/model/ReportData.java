@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Table(name = "report_data")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportData {
@@ -17,19 +18,26 @@ public class ReportData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
 
+    @Column(name = "initials")
     String initials;
 
+    @Column(name = "view_profile_name")
     String viewProfileName;
 
+    @Column(name = "report_status")
     ReportStatus reportStatus;
 
+    @Column(name = "file_name")
     String fileName;
 
+    @Column(name = "template_id")
     String templateId;
 
+    @Column(name = "create_date")
     LocalDate createDate;
 
     @Lob
+    @Column(name = "data")
     protected byte[] data;
 
     public ReportData(String initials, String viewProfileName, String fileName, String templateId) {

@@ -20,18 +20,14 @@ spring:
   main:
     allow-bean-definition-overriding: true
 export:
-  designFile: src\main\resources\templates\HBTShortProfil_Word.rptdesign
+  # Temporary location where the data source for the BIRT report generation can be found.
   xmlFilePath: src\target\datasource.xml
-  previewDirectory: src\target\report\preview
-  designFileDirectory: src\main\resources\templates\
-  reportLocation: src\target\report\reports
+  # Temporary location where the report will be stored during generation (as BIRT needs to render to filesytem)
   wordLocalLocation: src\target\report\reports\%s\word\%s
+  # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
   htmlLocalLocation: src\target\report\reports\preview\%s
-  wordURLLocation: localhost:8080/exports/%s/word/%s
-  imgLocation: src\targe\images
-  kurztextCharsPerLine: 35
-  defaultCategoryIndex: 1
-  lang: deu
+  # BIRT will need images on the filesystem. Images will be available here.
+  imgLocation: src\target\images
   expiration-in-days: 5
 server:
   port: 9005
