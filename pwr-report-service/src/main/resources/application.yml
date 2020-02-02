@@ -8,12 +8,12 @@ spring:
       max-file-size: 128MB
       max-request-size: 128MB
   datasource:
-      username: pwr-report-service
-      password: password
-      url: jdbc:mysql://localhost:3306/report
+      username: ${DB_USER}
+      password: ${DB_PASS}
+      url: ${DB_URL}
   jpa:
       hibernate:
-        ddl-auto: update
+        ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -21,13 +21,13 @@ spring:
     allow-bean-definition-overriding: true
 export:
   # Temporary location where the data source for the BIRT report generation can be found.
-  xmlFilePath: src\target\datasource.xml
+  xmlFilePath: ${PWR_REPORT_FILE_PATH}\xml\datasource.xml
   # Temporary location where the report will be stored during generation (as BIRT needs to render to filesytem)
-  wordLocalLocation: src\target\report\reports\%s\word\%s
+  wordLocalLocation: ${PWR_REPORT_FILE_PATH}\reports\%s\word\%s
   # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
-  htmlLocalLocation: src\target\report\reports\preview\%s
+  htmlLocalLocation: ${PWR_REPORT_FILE_PATH}\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.
-  imgLocation: src\target\images
+  imgLocation: ${PWR_REPORT_FILE_PATH}\images
   expiration-in-days: 5
 server:
   port: 9005
@@ -41,50 +41,44 @@ management:
         allowed-origins: '*'
         allowed-methods: '*'
       base-path: /meta/actuator
+pwr-report-service:
+  ribbon:
+    ReadTimeout: 20000
+    ConnectTimeout: 10000
 ---
 spring:
-  profiles: bootstrapDatabase
+  profiles: local
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
     username: pwr-report-service
     password: password
     url: jdbc:mysql://localhost:3306/report
+export:
+  # Temporary location where the data source for the BIRT report generation can be found.
+  xmlFilePath: src\target\datasource.xml
+  # Temporary location where the report will be stored during generation (as BIRT needs to render to filesytem)
+  wordLocalLocation: src\target\report\reports\%s\word\%s
+  # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
+  htmlLocalLocation: src\target\report\reports\preview\%s
+  # BIRT will need images on the filesystem. Images will be available here.
+  imgLocation: src\target\images
+  expiration-in-days: 5
+---
+spring:
+  profiles: bootstrapDatabase
   jpa:
     hibernate:
       ddl-auto: create
 ---
 spring:
   profiles: localDevNoEureka
-  redis:
-    host: localhost
-    port: 6379
-    database: 1
 eureka:
   client:
     enabled: false
-pwr-report-service:
-  ribbon:
-    ReadTimeout: 20000
-    ConnectTimeout: 10000
-feign:
-  hystrix:
-    enabled: true # Enables Hystrix Fallback for Feign clients.
 ---
 spring:
   profiles: localDev
-  redis:
-    host: localhost
-    port: 6379
-    database: 1
 eureka:
   client:
     enabled: true
     service-url:
-       defaultZone: http://power02.corp.hbt.de:8761/eureka
-pwr-report-service:
-  ribbon:
-    ReadTimeout: 20000
-    ConnectTimeout: 10000
-feign:
-  hystrix:
-    enabled: true # Enables Hystrix Fallback for Feign clients.
+       defaultZone: http://localhost:8761/eureka

@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+  report:
+    image: pwr-report-service:master
+    ports:
+      - 9005:9005
+    environment:
+      DB_USER: pwr-report-service
+      DB_PASS: changeit
+      PWR_REPORT_FILE_PATH: tmpdata
+      DB_URL: jdbc:mysql://report_db:3306/report
+      DB_HIBERNATE_DDL_AUTO: update
+    volumes:
+      - /imagelocation:/tmpdata/imaages # We need to mount the images because, for now, nginx has to deliver them, too
+    depends_on:
+      - report_db
+  report_db:
+    image: mysql:8.0.19
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: changeit
+      MYSQL_DATABASE: report
+      MYSQL_USER: pwr-report-service
+      MYSQL_PASSWORD: changeit
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  db-data: {}
