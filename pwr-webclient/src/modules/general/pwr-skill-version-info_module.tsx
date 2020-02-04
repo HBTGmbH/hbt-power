@@ -98,7 +98,6 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
     };
 
     private handleDelete = (versionName: string) => {
-        console.log("HandleDelete für: " + versionName);
         if (this.props.serviceSkillId >= 0 && versionName) {
             this.props.deleteVersion(this.props.serviceSkillId, versionName);
         }
