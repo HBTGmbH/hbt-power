@@ -16,7 +16,6 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import Button from '@material-ui/core/Button';
 import {SkillInfo} from './skill-info_module';
 import Badge from '@material-ui/core/Badge';
-import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 
 const defaultCategory: number = 152;
 
@@ -39,7 +38,6 @@ interface ProfileSkillsLocalState {
 
 interface ProfileSkillsDispatch {
     saveSkill(initials: string, skill: ProfileSkill);
-    createSkill(qualifier: string, category: number): void;
     deleteSkill(initials: string, skill: ProfileSkill);
 }
 
@@ -64,7 +62,6 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileSkillsDispatch {
         return {
             deleteSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.deleteProfileSkill(initials, skill)),
-            createSkill: (qualifier, category) => dispatch(SkillActionCreator.AsyncCreateSkill(qualifier, category)),
             saveSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.saveProfileSkill(initials, skill)),
         };
     }
@@ -82,7 +79,6 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
 
     private handleAddSkill = (name: string, rating: number) => {
         if (!this.props.skills.some(skill => skill.name === name)) {
-            this.props.createSkill(name, defaultCategory);
             this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
         }
     };
