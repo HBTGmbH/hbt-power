@@ -33,6 +33,13 @@ public class SkillRecommendationService {
                 .orElseGet(Collections::emptyList);
     }
 
+    class SkillNameComparator implements Comparator<Skill> {
+        @Override
+        public int compare(Skill s1, Skill s2) {
+            return s1.getName().compareTo(s2.getName());
+        }
+    }
+
     private Collection<Skill> getRecommended(Project project) {
         String clientName = ofNullable(project.getClient())
                 .map(NameEntity::getName)
@@ -54,6 +61,7 @@ public class SkillRecommendationService {
                 .flatMap(Collection::stream)
                 .filter(s -> (!project.getSkills().contains(s)))
                 .distinct()
+                .sorted(new SkillNameComparator())
                 .collect(Collectors.toList());
     }
 
