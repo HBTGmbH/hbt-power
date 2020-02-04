@@ -11,7 +11,6 @@ export namespace SkillActions {
         toAdd: SkillCategory;
     }
 
-
     export interface AddSkillToTreeAction extends AbstractAction {
         categoryId: number;
         toAdd: SkillServiceSkill;

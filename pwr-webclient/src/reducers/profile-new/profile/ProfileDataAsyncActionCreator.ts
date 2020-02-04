@@ -30,6 +30,7 @@ import {AbstractAction} from '../../BaseActions';
 import {makeDeferrable} from '../../deferred/AsyncActionUnWrapper';
 import {ActionType} from '../../ActionType';
 import {ProfileEntryTypeName} from './model/ProfileEntryType';
+import {SkillActionCreator} from '../../skill/SkillActionCreator';
 import success = NavigationActionCreator.success;
 
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();
@@ -85,6 +86,10 @@ export class ProfileDataAsyncActionCreator {
         return function (dispatch: redux.Dispatch<ApplicationState>) {
             if (!!initials && initials.length > 0) {
                 profileUpdateServiceClient.getFullProfile(initials).then(value => {
+                    //Updating all skills to have proper categories
+                    let qualifiers = value.skills.map(s => s.name);
+                    dispatch(SkillActionCreator.AsyncUpdateSkillCategories(qualifiers));
+
                     dispatch(profileLoadAction(value));
                 });
             }
