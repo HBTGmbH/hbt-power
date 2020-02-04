@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/HBTGmbH/pwr-skill-service.svg?branch=travis)](https://travis-ci.org/HBTGmbH/pwr-skill-service)
+
 # Skill Service
 Please refer to pwr-profile-service for more information on how to set up a development environment for this service
 
