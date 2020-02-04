@@ -14,9 +14,8 @@ import {ProfileEntryDialog} from './profile-entry-edit_module';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Theme, withTheme} from '@material-ui/core';
-import {PwrButton} from '../../general/pwr-button';
 import {PwrFormSubCaption} from '../../general/pwr-typography';
-import {type} from 'os';
+import {Comparators} from '../../../utils/Comparators';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -122,6 +121,10 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.setDefaultState();
     };
 
+    private compareEntries = (entry1: ProfileEntry, entry2: ProfileEntry) => {
+        return Comparators.compareProfileEntries(this.props.type, entry1, entry2);
+    };
+
     private renderSingleElement = (entry: ProfileEntry, index: number) => {
         return (
             <Grid key={entry.id} item container spacing={0}>
@@ -183,7 +186,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                     <Grid item container spacing={8} md={12} sm={12}>
                         {
                             !isNullOrUndefined(this.props.allEntries) && this.props.allEntries.length > 0 ?
-                                this.props.allEntries.map(this.renderSingleElement) :
+                                this.props.allEntries.sort(this.compareEntries).map(this.renderSingleElement) :
                                 this.renderEmptyElement()
                         }
                     </Grid>
@@ -191,6 +194,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
             </div>
         );
     }
+
 }
 
 export const ProfileEntryElement = withTheme()(connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule));

@@ -9,6 +9,13 @@ import {ComparatorBuilder, NullMode, nullSafe} from 'ts-comparator';
 import {Project} from '../reducers/profile-new/profile/model/Project';
 import {ProfileSkill} from '../reducers/profile-new/profile/model/ProfileSkill';
 import {NameEntity} from '../reducers/profile-new/profile/model/NameEntity';
+import {Language} from '../reducers/profile-new/profile/model/Language';
+import {Education} from '../reducers/profile-new/profile/model/Education';
+import {Career} from '../reducers/profile-new/profile/model/Career';
+import {Qualification} from '../reducers/profile-new/profile/model/Qualification';
+import {FurtherTraining} from '../reducers/profile-new/profile/model/FurtherTraining';
+import {ProfileEntry} from '../reducers/profile-new/profile/model/ProfileEntry';
+import {toIdx} from '../reducers/profile-new/profile/model/LanguageLevel';
 
 export const PROJECTS_BY_START_DATE = ComparatorBuilder
     .comparing<Project>(nullSafe(t => t.startDate.getDate()))
@@ -82,5 +89,47 @@ export class Comparators {
         return Comparators.compareString(b1.name(), b2.name());
     }
 
+    public static compareEducationByEndDate(edu1: Education, edu2: Education): number {
+        return Comparators.compareDate(edu1.endDate, edu2.endDate);
+    }
 
+    public static compareCareerByEndDate(career1: Career, career2: Career): number {
+        return Comparators.compareDate(career1.endDate, career2.endDate);
+    }
+
+    public static compareQualificationByDate(qualification1: Qualification, qualification2: Qualification): number {
+        return Comparators.compareDate(qualification1.date, qualification2.date);
+    }
+
+    public static compareFurtherTrainingByEndDate(training1: FurtherTraining, training2: FurtherTraining): number {
+        return Comparators.compareDate(training1.endDate, training2.endDate);
+    }
+
+    public static compareLanguageByLevel(lang1: Language, lang2: Language): number {
+        return toIdx(lang2.level) - toIdx(lang1.level);
+    }
+
+    private static compareProfileEntryByName(entry1: ProfileEntry, entry2: ProfileEntry) {
+        return this.compareString(entry2.nameEntity.name, entry1.nameEntity.name);
+    }
+
+    public static compareProfileEntries = (type: string, entry1: ProfileEntry, entry2: ProfileEntry) => {
+        switch (type) {
+            case 'LANGUAGE':
+                return Comparators.compareLanguageByLevel(entry1 as Language, entry2 as Language);
+            case 'SECTOR':
+                return Comparators.compareProfileEntryByName(entry1, entry2);
+            case 'SPECIAL_FIELD':
+                return Comparators.compareProfileEntryByName(entry1, entry2);
+            case 'TRAINING':
+                return Comparators.compareFurtherTrainingByEndDate(entry1 as FurtherTraining, entry2 as FurtherTraining);
+            case 'CAREER':
+                return Comparators.compareCareerByEndDate(entry1 as Career, entry2 as Career);
+            case 'QUALIFICATION':
+                return Comparators.compareQualificationByDate(entry1 as Qualification, entry2 as Qualification);
+            case 'EDUCATION':
+                return Comparators.compareEducationByEndDate(entry1 as Education, entry2 as Education);
+        }
+        return 0;
+    }
 }

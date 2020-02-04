@@ -5,6 +5,20 @@ export enum LanguageLevel {
     NATIVE = 'NATIVE'
 }
 
+export function toIdx(lvl: LanguageLevel): number {
+    switch (lvl) {
+        case LanguageLevel.BASIC:
+            return 0;
+        case LanguageLevel.ADVANCED:
+            return 1;
+        case LanguageLevel.BUSINESS_FLUENT:
+            return 2;
+        case LanguageLevel.NATIVE:
+            return 3;
+        default:
+            return 0;
+    }
+}
 
 export function toLanguageLevel(name: string): LanguageLevel {
     switch (name) {
