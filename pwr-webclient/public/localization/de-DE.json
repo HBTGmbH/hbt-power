@@ -100,6 +100,7 @@
   "Profile.Project.Skills": "Skills",
   "Profile.Project.AddSkill": "Skill Hinzufügen",
   "Profile.Project.SkillsInProject": "Skills dieses Projektes",
+  "Profile.Project.SkillAdded": "Skill '{0}' wurde vorläufig hinzugefügt.",
   "Profile.Project.SkillSugestions": "Skillvorschläge",
   "Profile.Skills.AddSkillCaption": "Skill Hinzufügen",
   "Profile.Skills.MySkillsCaption": "Meine Skills",
