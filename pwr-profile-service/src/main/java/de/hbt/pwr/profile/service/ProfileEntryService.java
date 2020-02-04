@@ -69,14 +69,11 @@ public class ProfileEntryService {
     }
 
     public Skill updateProfileSkills(Skill skill, Profile profile) {
-        System.out.println("updating Skill");
+        Set<Skill> concurrent = profile.getSkills()
+                .stream().filter(s -> hasEqualName(s, skill))
+                .collect(Collectors.toSet());
+        concurrent.stream().forEach(s -> profile.getSkills().remove(s));
         return createNewInProfile(skill, profile);
-        /*Optional<Skill> concurrent = profile.getSkills()
-                .stream().filter(s -> hasEqualName(s, skill)) // TODO
-                .findAny();
-        return concurrent
-                .map(s -> updateSkill(s, skill))
-                .orElseGet(() -> createNewInProfile(skill, profile));*/
     }
 
     private Skill updateSkill(Skill current, Skill newSkill) {

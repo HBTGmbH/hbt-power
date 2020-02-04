@@ -205,7 +205,7 @@ public class ProfileEntryServiceTest {
         assertThat(p.getSkills()).containsExactly(s);
         assertThat(p.getSkills().size()).isEqualTo(1);
         profileEntryService.updateProfileSkills(ex, p);
-        assertThat(p.getSkills()).containsExactly(s);
+        assertThat(p.getSkills()).containsExactly(ex);
         assertThat(p.getSkills().size()).isEqualTo(1);
 
     }
