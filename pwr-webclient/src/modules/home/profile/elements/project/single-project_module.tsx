@@ -221,7 +221,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         this.props.updateEditingProject({...this.project(), ...{skills: skills}});
     };
 
-    private toSkillChip (skill: ProfileSkill) {
+    private toSkillChip(skill: ProfileSkill) {
         return <SkillChip key={skill.name} className="margin-2px" disabled={this.isEditDisabled()} skill={skill}
                           onDelete={skill => this.removeSkill(skill.name)}
                           canChangeRating={false}/>;

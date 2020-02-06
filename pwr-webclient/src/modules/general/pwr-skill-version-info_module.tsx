@@ -10,8 +10,6 @@ import {SkillVersionActionCreator} from '../../reducers/profile-skill/SkillVersi
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NON_PERSISTENT_ID} from '../../model/PwrConstants';
 
-const ChipInput = require('material-ui-chip-input').default;
-
 interface PwrSkillVersionInfoProps {
     serviceSkillId: number;
     allVersions: string[];

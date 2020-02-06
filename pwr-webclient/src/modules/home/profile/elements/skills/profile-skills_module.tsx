@@ -17,8 +17,6 @@ import Button from '@material-ui/core/Button';
 import {SkillInfo} from './skill-info_module';
 import Badge from '@material-ui/core/Badge';
 
-const defaultCategory: number = 152;
-
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
     initials: string;
