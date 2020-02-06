@@ -157,7 +157,6 @@ public class SkillController {
      */
     @ApiOperation(value = "Updates the category of the given skill. If no skill was found, the skill is created", response = SkillCategory.class)
     @PostMapping
-    // TODO integrationstest schreiben danke.
     public ResponseEntity<SkillCategory> updateAndGetCategory(@RequestParam("qualifier") String qualifier) {
         Skill skill = skillRepository.findOneByQualifier(qualifier)
                 .orElseGet(() -> skillService.createSkill(qualifier));

@@ -141,7 +141,7 @@ public class SkillControllerTest {
             builder.param("qualifier", skillName);
             mockMvc.perform(builder).andExpect(status().isOk());
             SkillCategory category = skillRepository.findOneByQualifier(skillName).map(Skill::getCategory).orElse(null);
-            assertThat(category != null);
+            assertThat(category).isNotNull();
             skillRepository.deleteAll();
         }
     }
@@ -157,7 +157,7 @@ public class SkillControllerTest {
             builder.param("qualifier", skillName);
             mockMvc.perform(builder).andExpect(status().isOk());
             SkillCategory category = skillRepository.findOneByQualifier(skillName).map(Skill::getCategory).orElse(null);
-            assertThat(category != null);
+            assertThat(category).isNotNull();
             skillRepository.deleteAll();
         }
     }
@@ -178,7 +178,8 @@ public class SkillControllerTest {
             MockHttpServletRequestBuilder builder = post("/skill");
             builder.param("qualifier", skillName);
             mockMvc.perform(builder).andExpect(status().isOk());
-            assertThat(copy.equals(skillRepository.findOneByQualifier(skillName).map(Skill::getCategory).orElse(null)));
+            SkillCategory skillCategory = skillRepository.findOneByQualifier(skillName).map(Skill::getCategory).orElse(null);
+            assertThat(copy).isEqualTo(skillCategory);
 
             skillRepository.deleteAll();
         }
