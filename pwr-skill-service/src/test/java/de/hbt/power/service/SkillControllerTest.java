@@ -126,5 +126,62 @@ public class SkillControllerTest {
         }
     }
 
+    /**
+     * Tests whether a skill that didn't have a category before will be categorized
+     * @throws Exception
+     */
+    @Test
+    public void testUpdateAndGetCategory_WithoutCategory_ShouldHaveCategory() throws Exception {
+        for (String skillName : skillNames) {
+            Skill skill = new Skill();
+            skill.setQualifier(skillName);
+            skill.setCategory(null);
+            skillRepository.save(skill);
+            MockHttpServletRequestBuilder builder = post("/skill");
+            builder.param("qualifier", skillName);
+            mockMvc.perform(builder).andExpect(status().isOk());
+            SkillCategory category = skillRepository.findOneByQualifier(skillName).map(Skill::getCategory).orElse(null);
+            assertThat(category).isNotNull();
+            skillRepository.deleteAll();
+        }
+    }
 
+    /**
+     * Tests whether a skill that didn't exist before will be created and categorized
+     * @throws Exception
+     */
+    @Test
+    public void testUpdateAndGetCategory_WithoutPriorExistence_ShouldHaveCategory() throws Exception {
+        for (String skillName : skillNames) {
+            MockHttpServletRequestBuilder builder = post("/skill");
+            builder.param("qualifier", skillName);
+            mockMvc.perform(builder).andExpect(status().isOk());
+            SkillCategory category = skillRepository.findOneByQualifier(skillName).map(Skill::getCategory).orElse(null);
+            assertThat(category).isNotNull();
+            skillRepository.deleteAll();
+        }
+    }
+
+    @Test
+    public void testUpdateAndGetCategory_WithPriorExistence_ShouldNotChangeCategory() throws Exception {
+       for (String skillName : skillNames) {
+            Skill skill = new Skill();
+            SkillCategory c = SkillCategory.custom("Kategorie"), copy;
+            c.setId(1);
+            skillCategoryRepository.save(c);
+            skill.setQualifier(skillName);
+            skill.setCategory(c);
+            skillRepository.save(skill);
+            copy = SkillCategory.custom(c.getQualifier());
+            copy.setId(c.getId());
+
+            MockHttpServletRequestBuilder builder = post("/skill");
+            builder.param("qualifier", skillName);
+            mockMvc.perform(builder).andExpect(status().isOk());
+            SkillCategory skillCategory = skillRepository.findOneByQualifier(skillName).map(Skill::getCategory).orElse(null);
+            assertThat(copy).isEqualTo(skillCategory);
+
+            skillRepository.deleteAll();
+        }
+    }
 }

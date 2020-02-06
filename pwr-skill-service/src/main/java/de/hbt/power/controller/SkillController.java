@@ -164,6 +164,7 @@ public class SkillController {
             log.info("Categorizing " + skill.toString());
             skill = categoryService.categorizeSkill(skill);
         }
+        skillRepository.save(skill);
         return ResponseEntity.ok(skill.getCategory());
     }
 
