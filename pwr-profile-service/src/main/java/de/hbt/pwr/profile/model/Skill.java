@@ -11,7 +11,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode
+@ToString
+@EqualsAndHashCode(exclude = "versions")
 public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
