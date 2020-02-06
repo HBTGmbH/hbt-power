@@ -208,7 +208,6 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                     :
                     null
             }
-
             <div className="col-md-12 fullWidth">
                 <ViewProfileEntries
                     movableEntryType="DISPLAY_CATEGORY"

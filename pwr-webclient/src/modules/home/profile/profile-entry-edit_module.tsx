@@ -182,14 +182,6 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!event.isPropagationStopped()) {
             let handled = false;
-            //Completely disabled because Autocomplete already implements a handler for entity selection
-            /*
-            // Only enabled on desktop devices because on mobile devices, the "Enter" action behaves strange
-            if (event.key === 'Enter' && isDesktop()) {
-                this.handleSave();
-                handled = true;
-            }
-            */
             if (event.key === 'Delete' && !!this.props.entry.id) {
                 this.openDeleteConfirm();
                 handled = true;

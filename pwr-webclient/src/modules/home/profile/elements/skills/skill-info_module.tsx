@@ -9,7 +9,6 @@ import {AxiosError} from 'axios';
 import {Grid} from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import {StarRating} from '../../../../star-rating_module.';
-import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {PwrSkillVersionInfo} from '../../../../general/pwr-skill-version-info_module';
 
 
@@ -72,7 +71,6 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
 
     private loadSkillData = (name: string) => {
         if (this.props.selectedSkill != null) {
-
             SkillServiceClient.instance().getSkillByName(name).then(skill => {
                 this.setState({
                     allVersions: skill.versions,
