@@ -73,7 +73,7 @@ public class ProfileEntryService {
 
     public Skill updateProfileSkills(Skill skill, Profile profile) {
         Optional<Skill> concurrent = profile.getSkills()
-                .stream().filter(s -> hasEqualName(s, skill)) // TODO
+                .stream().filter(s -> hasEqualName(s, skill))
                 .findAny();
         return concurrent
                 .map(s -> updateSkill(s, skill))
@@ -85,6 +85,7 @@ public class ProfileEntryService {
 
     private Skill updateSkill(Skill current, Skill newSkill) {
         current.setRating(newSkill.getRating());
+        current.setVersions(newSkill.getVersions());
         return current;
     }
 
