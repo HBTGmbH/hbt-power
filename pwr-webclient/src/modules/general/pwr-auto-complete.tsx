@@ -5,7 +5,6 @@ import {StringUtils} from '../../utils/StringUtil';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import {ValidationError} from '../../utils/ValidationUtils';
-import {Simulate} from 'react-dom/test-utils';
 import filterFuzzy = StringUtils.filterFuzzy;
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
@@ -81,6 +80,13 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         });
     };
 
+    handleSuggestionDisplay = (searchTerm: string, filteredData: Array<string>) => {
+        if (filteredData.indexOf(searchTerm) < 0) {
+            return [searchTerm, ...filteredData];
+        }
+        return filteredData;
+    };
+
     handleSuggestionsClearRequested = () => {
         this.setState({
             suggestions: [],
@@ -140,7 +146,6 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                 fullWidth={true}
                 clearInputValueOnChange
                 onUpdateInput={onChange}
-                //onAdd={onAdd}
                 onDelete={onDelete}
                 value={chips}
                 inputRef={ref}
@@ -182,7 +187,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
 
         const autosuggestProps = {
             renderInputComponent: this.props.multi ? this.renderChipInput : this.renderInputComponent,
-            suggestions: [this.props.searchTerm, ...this.dataFilteredBy(this.props.searchTerm)],
+            suggestions: this.handleSuggestionDisplay(this.props.searchTerm, this.dataFilteredBy(this.props.searchTerm)),
             onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
             onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
             onSuggestionSelected: this.handleSuggestionSelected,
@@ -191,7 +196,6 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         };
 
         const onlyChipProps = {
-            //onAdd: (chip) => this.props.onAdd(chip),
             onDelete: (chip, index) => this.props.onRemove(chip),
         };
 

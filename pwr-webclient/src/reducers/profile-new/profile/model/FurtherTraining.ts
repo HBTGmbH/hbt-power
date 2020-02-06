@@ -1,5 +1,4 @@
 import {ProfileEntry} from './ProfileEntry';
-import {Career} from './Career';
 import {NameEntity} from './NameEntity';
 
 export interface FurtherTraining extends ProfileEntry {
