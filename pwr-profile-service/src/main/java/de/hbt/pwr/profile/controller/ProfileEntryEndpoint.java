@@ -195,7 +195,7 @@ public class ProfileEntryEndpoint {
 
     @PutMapping("/skill")
     public Skill updateSkill(@PathVariable("initials") String initials, @RequestBody Skill skill) {
-        System.out.println("Skill update request");
+        log.debug("Skill update request");
         Profile p = consultantService.getProfileByInitials(initials);
         Skill s = profileEntryService.updateProfileSkills(skill, p);
         return s;
