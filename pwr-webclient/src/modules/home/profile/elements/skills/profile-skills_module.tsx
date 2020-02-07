@@ -36,7 +36,6 @@ interface ProfileSkillsLocalState {
 
 interface ProfileSkillsDispatch {
     saveSkill(initials: string, skill: ProfileSkill);
-
     deleteSkill(initials: string, skill: ProfileSkill);
 }
 
@@ -77,7 +76,9 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     };
 
     private handleAddSkill = (name: string, rating: number) => {
-        this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
+        if (!this.props.skills.some(skill => skill.name === name)) {
+            this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
+        }
     };
 
     private handleDeleteSkill = (skill: ProfileSkill) => {
@@ -102,7 +103,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
 
     private toSkill = (skill: ProfileSkill) => {
         return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} container item spacing={0}
-                     alignItems={'center'}>
+                     alignItems={'center'} style={{marginBottom: '15px'}}>
             <Grid item container xs={2} sm={2} md={2} lg={2} xl={2} justify={'flex-end'}>
                 <PwrIconButton style={{right: 0}} iconName='delete'
                                tooltip={PowerLocalize.get('Action.Delete')}

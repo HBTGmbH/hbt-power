@@ -12,7 +12,6 @@ import {formatToYear} from '../../../../../utils/DateUtil';
 import {StringUtils} from '../../../../../utils/StringUtil';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
-import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
 import {connect} from 'react-redux';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {PwrInputField} from '../../../../general/pwr-input-field';
@@ -23,7 +22,7 @@ import {
 } from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
 import {NameEntityType} from '../../../../../reducers/profile-new/profile/model/NameEntityType';
 import {PwrProjectRoleAutocomplete} from '../../../../general/autocompletes/pwr-project-role-autocomplete-module';
-import {immutablePush, immutableRemove} from '../../../../../utils/ImmutableUtils';
+import {immutableRemove, immutableUnshift} from '../../../../../utils/ImmutableUtils';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 import {PwrFormCaption, PwrFormSubCaption, PwrFormSubtitle} from '../../../../general/pwr-typography';
@@ -31,6 +30,8 @@ import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {SkillChip} from '../skills/skill-chip_module';
 import Grid from '@material-ui/core/Grid/Grid';
 import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-skills';
+import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
+import {Alerts} from '../../../../../utils/Alerts';
 
 const chooseClientName = (project: Project) => {
     if (project.client) {
@@ -189,7 +190,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     }
 
     private addProjectRole = (role: NameEntity) => {
-        const projectRoles = immutablePush(role, this.project().projectRoles);
+        const projectRoles = immutableUnshift(role, this.project().projectRoles);
         this.props.updateEditingProject({...this.project(), projectRoles});
     };
 
@@ -212,8 +213,10 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
 
     private addSkill = (skillName) => {
         const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0, versions: []};
-        const skills = immutablePush(newSkill, this.project().skills);
+        const skills = immutableUnshift(newSkill, this.project().skills);
+        this.setState({skillSearchValue: ''});
         this.props.updateEditingProject({...this.project(), skills});
+        Alerts.showSuccess(PowerLocalize.getFormatted("Profile.Project.SkillAdded", skillName));
     };
 
     private removeSkill = (skillName: string) => {

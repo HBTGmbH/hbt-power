@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Avatar, Button, Icon, Paper} from '@material-ui/core';
+import {Avatar, Paper} from '@material-ui/core';
 import {getProfileImageLocation} from '../../../API_CONFIG';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
@@ -79,7 +79,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                         {formatToFullLocalizedDateTime(this.props.lastEdited)}
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
-                        <PwrRaisedButton color={'primary'} icon={<Edit/>} text={PowerLocalize.get('Action.Edit')}
+                        <PwrRaisedButton color={'primary'} icon={<Edit/>} text={PowerLocalize.get('Profile.BaseData.Edit')}
                                          onClick={this.handleEditButtonClick}/>
                     </div>
                 </div>

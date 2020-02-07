@@ -85,7 +85,7 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
             </Button>
             <Dialog open={this.state.dialogOpen} onClose={this.closeDialog}>
                 <DialogTitle>{PowerLocalize.get('Profile.Project.SkillSugestions')}</DialogTitle>
-                <DialogContent>
+                <DialogContent style={{overflow:'scroll'}}>
                     <List>{
                         this.state.suggestedSkills.map((skill, index) => <div key={index}>
                             <ListItem>
@@ -101,11 +101,11 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
                     }</List>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={this.closeDialog}>
-                        {PowerLocalize.get('Action.Close')}
-                    </Button>
                     <Button variant="contained" color="primary" onClick={this.acceptSkills}>
                         {PowerLocalize.get('Action.Save')}
+                    </Button>
+                    <Button variant="contained" onClick={this.closeDialog}>
+                        {PowerLocalize.get('Action.Close')}
                     </Button>
                 </DialogActions>
             </Dialog>
