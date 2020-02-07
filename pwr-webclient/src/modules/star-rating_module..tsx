@@ -27,7 +27,7 @@ const styleDefault: CSSProperties = {
 };
 
 const styleUnused: CSSProperties = {
-    color: Color.Light_Red.toCSSRGBString()
+    color: Color.HBTSilver.toCSSRGBString()
 };
 
 const getStyle = (starPosition: number, rating: number) => {

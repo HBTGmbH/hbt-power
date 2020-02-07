@@ -103,6 +103,7 @@
   "Profile.Project.SkillAdded": "Skill '{0}' wurde vorläufig hinzugefügt.",
   "Profile.Project.SkillSugestions": "Skillvorschläge",
   "Profile.Skills.AddSkillCaption": "Skill Hinzufügen",
+  "Profile.Skills.AddSkillErrorCaption": "Ein Skill benötigt einen Namen!",
   "Profile.Skills.MySkillsCaption": "Meine Skills",
   "Profile.Skills.UnassessedSkillsCaption": "Unbewertete Skills",
   "Profile.Skills.CategoryTemplate": "Kategorie: {0}",
