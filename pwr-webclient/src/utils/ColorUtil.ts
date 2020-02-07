@@ -11,6 +11,7 @@ export class Color {
 
     public static readonly Green: Color = new Color(0, 255, 0, 255);
     public static readonly Red: Color = new Color(255, 0, 0, 255);
+    public static readonly Light_Red: Color = new Color(255, 204, 203);
 
     public static readonly HBTBlue: Color = new Color(0, 100, 152, 255);
     public static readonly HBTAnthrazit: Color = new Color(85, 85, 91, 255);

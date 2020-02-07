@@ -132,6 +132,41 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
         </Grid>;
     };
 
+    private toSkillList = (skills: Array<ProfileSkill>, caption: String) => {
+        return (<div>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
+                <PwrFormSubCaption>{caption}</PwrFormSubCaption>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
+                <Divider variant={'fullWidth'}
+                         style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
+                <div className="Pwr-Content-Container">
+                    <Grid container spacing={16}>
+                        {skills.map(s => this.toSkill(s))}
+                    </Grid>
+                </div>
+            </Grid>
+        </div>);
+    }
+
+    private toSkillOverview = () => {
+        let UnassessedSkills: Array<ProfileSkill> = this.props.skills.filter(s => !this.ratingIsValid(s.rating));
+
+        if (UnassessedSkills.length) {
+            return <div>
+                {this.toSkillList(UnassessedSkills, PowerLocalize.get('Profile.Skills.UnassessedSkillsCaption'))}
+                {this.toSkillList(this.props.skills, PowerLocalize.get('Profile.Skills.MySkillsCaption'))}
+            </div>
+        }
+        return this.toSkillList(this.props.skills, PowerLocalize.get('Profile.Skills.MySkillsCaption'));
+    }
+
+    private ratingIsValid = (rating: Number) => {
+        return (rating >= 1 && rating <= 5);
+    }
+
     render() {
         return (<Grid container spacing={8}>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
@@ -151,20 +186,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
                     <SkillInfo selectedSkill={this.getCurrentSkill()} handleChangeRating={this.handleChangeRating}/>
                 </div>
             </Grid>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <PwrFormSubCaption>{PowerLocalize.get('Profile.Skills.MySkillsCaption')}</PwrFormSubCaption>
-            </Grid>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <Divider variant={'fullWidth'}
-                         style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
-            </Grid>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <div className="Pwr-Content-Container">
-                    <Grid container spacing={16}>
-                        {this.props.skills.map(skill => this.toSkill(skill))}
-                    </Grid>
-                </div>
-            </Grid>
+            {this.toSkillOverview()}
         </Grid>);
     }
 }

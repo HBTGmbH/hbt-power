@@ -104,6 +104,7 @@
   "Profile.Project.SkillSugestions": "Skillvorschläge",
   "Profile.Skills.AddSkillCaption": "Skill Hinzufügen",
   "Profile.Skills.MySkillsCaption": "Meine Skills",
+  "Profile.Skills.UnassessedSkillsCaption": "Unbewertete Skills",
   "Profile.Skills.CategoryTemplate": "Kategorie: {0}",
   "Profile.Skills.CategoryNotFound": "Keine Kategorie gefunden",
   "Profile.BaseData.Edit": "Stammdaten bearbeiten",
