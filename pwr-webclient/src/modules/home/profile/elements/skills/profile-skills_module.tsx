@@ -159,11 +159,11 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     }
 
     private toSkillOverview = () => {
-        let pendingSkills: Array<ProfileSkill> = this.props.skills.filter(s => !this.ratingIsValid(s));
+        let pendingSkills: Array<ProfileSkill> = this.props.skills.filter(s => !this.ratingIsValid(s.rating));
         let ratedCaption: String = PowerLocalize.get('Profile.Skills.MySkillsCaption');
 
         if (pendingSkills.length) {
-            let ratedSkills: Array<ProfileSkill> = this.props.skills.filter(s => this.ratingIsValid(s));
+            let ratedSkills: Array<ProfileSkill> = this.props.skills.filter(s => this.ratingIsValid(s.rating));
             return <div>
                 {this.toSkillList(pendingSkills, PowerLocalize.get('Profile.Skills.UnassessedSkillsCaption'))}
                 {this.toSkillList(ratedSkills, ratedCaption)}
