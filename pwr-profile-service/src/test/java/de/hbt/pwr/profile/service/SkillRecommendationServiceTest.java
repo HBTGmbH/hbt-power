@@ -20,10 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * TODO
- * Skills nicht doppelt zurück geben
- */
 public class SkillRecommendationServiceTest {
 
     @Mock
