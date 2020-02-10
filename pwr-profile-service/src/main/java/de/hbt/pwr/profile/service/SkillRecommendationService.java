@@ -27,6 +27,27 @@ public class SkillRecommendationService {
 
     private static int YEARS_UNTIL_OUTDATED = 8;
 
+    private class SkillWrapper {
+        private final Skill skill;
+
+        SkillWrapper(Skill skill) {
+            this.skill = skill;
+        }
+
+        Skill unwrap() {
+            return skill;
+        }
+
+        public boolean equals(Object other) {
+            return other instanceof SkillWrapper
+                    && ((SkillWrapper) other).skill.getName().equals(skill.getName());
+        }
+
+        public int hashCode() {
+            return skill.getName().hashCode();
+        }
+    }
+
     public Collection<Skill> getRecommendedSkills(@Nullable Project project) {
         return ofNullable(project)
                 .map(this::getRecommended)
@@ -53,7 +74,9 @@ public class SkillRecommendationService {
                 .map(Project::getSkills)
                 .flatMap(Collection::stream)
                 .filter(s -> (!project.getSkills().contains(s)))
+                .map(SkillWrapper::new)
                 .distinct()
+                .map(SkillWrapper::unwrap)
                 .sorted(Comparator.comparing(Skill::getName))
                 .collect(Collectors.toList());
     }
