@@ -1,9 +1,6 @@
 package de.hbt.pwr.profile.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -14,6 +11,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString
+@EqualsAndHashCode(exclude = "versions")
 public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -54,6 +54,7 @@ public class SkillRecommendationService {
                 .flatMap(Collection::stream)
                 .filter(s -> (!project.getSkills().contains(s)))
                 .distinct()
+                .sorted(Comparator.comparing(Skill::getName))
                 .collect(Collectors.toList());
     }
 
