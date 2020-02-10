@@ -20,14 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * TODO
- * Skills nicht doppelt zurück geben
- */
 public class SkillRecommendationServiceTest {
 
     @Mock
     private ProjectRepository projectRepository;
+
 
     private List<Project> projects;
 
@@ -38,7 +35,7 @@ public class SkillRecommendationServiceTest {
     private Collection<String> defaultRoles = new ArrayList<>(Arrays.asList("Programmer", "QATester"));
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         initMocks(this);
         sampleProject = new Project();
         sampleProject.setClient(NameEntity.builder().name("Starfleet").type(COMPANY).build());
@@ -54,10 +51,19 @@ public class SkillRecommendationServiceTest {
         project.setProjectRoles(roles);
     }
 
-    private Project withExistingSkillsForCustomer(String customer, String...skills) {
+    private Long getMockId(String s) {
+        return (long) (s.length() * 10 + projects.size());
+    }
+
+    private Project withExistingSkillsForCustomer(String customer, boolean mockId, String...skills) {
         Project project = Project.builder()
                 .client(NameEntity.builder().name(customer).type(COMPANY).build())
-                .skills(Stream.of(skills).map(s -> Skill.builder().name(s).build()).collect(Collectors.toSet()))
+                .skills(Stream.of(skills).map(
+                        s -> Skill.builder()
+                                .name(s)
+                                .id(mockId ? getMockId(s) : null)
+                                .build())
+                        .collect(Collectors.toSet()))
                 .build();
         addDefaultRolesToProject(project);
         projects.add(project);
@@ -78,7 +84,7 @@ public class SkillRecommendationServiceTest {
 
     @Test
     public void withProjectForSpecificCustomer_shouldReturnCustomerSkills() {
-        withExistingSkillsForCustomer("Starfleet", "Java", "JBoss");
+        withExistingSkillsForCustomer("Starfleet", false, "Java", "JBoss");
 
         Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
 
@@ -98,7 +104,7 @@ public class SkillRecommendationServiceTest {
 
     @Test
     public void withExistingProject_ThatHasNoCustomer_shouldIgnore() {
-        Project existingProject = withExistingSkillsForCustomer("Rebel Alliance", "shoot", "fight");
+        Project existingProject = withExistingSkillsForCustomer("Rebel Alliance", false, "shoot", "fight");
         existingProject.setClient(null);
         Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
 
@@ -107,7 +113,7 @@ public class SkillRecommendationServiceTest {
 
     @Test
     public void withExistingProject_ThatIs10YearsOld_shouldIgnore() {
-        Project existingProject = withExistingSkillsForCustomer("Starfleet", "fly", "crash");
+        Project existingProject = withExistingSkillsForCustomer("Starfleet", false, "fly", "crash");
         existingProject.setStartDate(LocalDate.of(2005, 10, 21));
         existingProject.setEndDate(LocalDate.of(2009, 10, 21));
         Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
@@ -121,7 +127,7 @@ public class SkillRecommendationServiceTest {
         String kesselRun = "kessel run";
 
         String newSkill = "lose limbs";
-        withExistingSkillsForCustomer("Starfleet", blowingUp, kesselRun, newSkill);
+        withExistingSkillsForCustomer("Starfleet", false, blowingUp, kesselRun, newSkill);
         Set<Skill> sampleSkills = sampleProject.getSkills();
         sampleSkills.add(Skill.builder().name(newSkill).build());
         sampleProject.setSkills(sampleSkills);
@@ -134,7 +140,7 @@ public class SkillRecommendationServiceTest {
 
     @Test
     public void withExistingProject_SameNameDifferentClient_shouldConsider() {
-        Project existingProject = withExistingSkillsForCustomer("Rebel Alliance", "fly", "crash");
+        Project existingProject = withExistingSkillsForCustomer("Rebel Alliance", false, "fly", "crash");
         existingProject.setName("Generic sample project");
         sampleProject.setName("Generic sample project");
         Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
@@ -149,10 +155,24 @@ public class SkillRecommendationServiceTest {
         NameEntity roleTester = NameEntity.builder().name("Tester").type(PROJECT_ROLE).build();
         defaultRoles.clear();
         defaultRoles.add("Developer");
-        Project existingProject = withExistingSkillsForCustomer("Starfleet", "Java", "JBoss");
+        Project existingProject = withExistingSkillsForCustomer("Starfleet", false, "Java", "JBoss");
         existingProject.setProjectRoles(new HashSet<>(Arrays.asList(roleTester)));
         Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
 
         assertThat(recommendedSkills).isEmpty();
+    }
+
+    @Test
+    public void withExistingProjects_SameSkillsDifferentProjects_shouldIgnoreDuplicates() {
+        Project existingProject1 = withExistingSkillsForCustomer("Rebel Alliance", true, "fly", "crash");
+        existingProject1.setName("Generic sample project");
+        Project existingProject2 = withExistingSkillsForCustomer("Galactic Empire", true, "fly", "crash");
+        existingProject2.setName("Generic sample project");
+        sampleProject.setName("Generic sample project");
+        Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
+
+        assertThat(recommendedSkills)
+                .extracting(Skill::getName)
+                .containsOnlyOnce("fly", "crash");
     }
 }
