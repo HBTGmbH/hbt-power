@@ -171,8 +171,6 @@ public class SkillRecommendationServiceTest {
         sampleProject.setName("Generic sample project");
         Collection<Skill> recommendedSkills = skillRecommendationService.getRecommendedSkills(sampleProject);
 
-        System.out.println(projects);
-
         assertThat(recommendedSkills)
                 .extracting(Skill::getName)
                 .containsOnlyOnce("fly", "crash");

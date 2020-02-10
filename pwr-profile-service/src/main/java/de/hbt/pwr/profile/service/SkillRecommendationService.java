@@ -27,27 +27,6 @@ public class SkillRecommendationService {
 
     private static int YEARS_UNTIL_OUTDATED = 8;
 
-    private class SkillWrapper {
-        private final Skill skill;
-
-        SkillWrapper(Skill skill) {
-            this.skill = skill;
-        }
-
-        Skill unwrap() {
-            return skill;
-        }
-
-        public boolean equals(Object other) {
-            return other instanceof SkillWrapper
-                    && ((SkillWrapper) other).skill.getName().equals(skill.getName());
-        }
-
-        public int hashCode() {
-            return skill.getName().hashCode();
-        }
-    }
-
     public Collection<Skill> getRecommendedSkills(@Nullable Project project) {
         return ofNullable(project)
                 .map(this::getRecommended)
@@ -67,6 +46,7 @@ public class SkillRecommendationService {
         Predicate<Project> relevantProject = projectHasClient()
                 .and(onlyProjectsWithClient(clientName).and(onlyProjectsWithSimilarRoles(projectRoles)))
                 .or(onlyProjectsWithName(projectName));
+        Set<String> names = new HashSet<>();
         return projectRepository.findAll()
                 .stream()
                 .filter(relevantProject)
@@ -74,9 +54,8 @@ public class SkillRecommendationService {
                 .map(Project::getSkills)
                 .flatMap(Collection::stream)
                 .filter(s -> (!project.getSkills().contains(s)))
-                .map(SkillWrapper::new)
-                .distinct()
-                .map(SkillWrapper::unwrap)
+                //.distinct()-replacement to also remove duplicate Skills from other profiles, which have a different idea and possibly a different rating or versions
+                .filter(s -> names.add(s.getName()))
                 .sorted(Comparator.comparing(Skill::getName))
                 .collect(Collectors.toList());
     }
