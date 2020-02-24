@@ -11,12 +11,10 @@ spring:
       username: ${DB_USER}
       password: ${DB_PASS}
       url: ${DB_URL}
+      driver-class-name: ${DB_DRIVER_CLASS_NAME}
   jpa:
       hibernate:
         ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.MySQL5InnoDBDialect
   main:
     allow-bean-definition-overriding: true
 export:
