@@ -15,15 +15,12 @@ jobs:
       run: mvn -B package --file pom.xml
     - uses: nelonoel/branch-name@v1
     - name: Build & Push to Docker Hub
-      uses: opspresso/action-docker@master
+      uses: zenato/docker-action@v1.0.0
       with:
-        args: --docker
-      env:
-        USERNAME: ${{ github.actor }}
-        PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        REGISTRY: "docker.pkg.github.com"
-        IMAGE_NAME: "pwr/pwr-report-service"
-        TAG_NAME: ${{env.BRANCH_NAME}}
-        LATEST: "true"
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: "docker.pkg.github.com"
+        repository: hbtgmbh/pwr-report-service
+        tag: ${{env.BRANCH_NAME}}
 
 
