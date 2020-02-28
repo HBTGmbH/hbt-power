@@ -23,7 +23,7 @@ jobs:
         PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         REGISTRY: "docker.pkg.github.com"
         IMAGE_NAME: "pwr/pwr-report-service"
-        TAG_NAME: ${BRANCH_NAME}
+        TAG_NAME: ${{ BRANCH_NAME }}
         LATEST: "true"
 
 
