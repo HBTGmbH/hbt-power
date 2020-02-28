@@ -19,8 +19,8 @@ jobs:
       with:
         args: --docker
       env:
-        USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        USERNAME: ${{ github.actor }}
+        PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         REGISTRY: "docker.pkg.github.com"
         IMAGE_NAME: "pwr/pwr-report-service"
         TAG_NAME: ${BRANCH_NAME}
