@@ -4,9 +4,7 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 13
@@ -15,3 +13,17 @@ jobs:
         java-version: 13
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - uses: nelonoel/branch-name@v1
+    - name: Build & Push to Docker Hub
+      uses: opspresso/action-docker@master
+      with:
+        args: --docker
+      env:
+        USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        REGISTRY: "docker.pkg.github.com"
+        IMAGE_NAME: "pwr/pwr-report-service"
+        TAG_NAME: ${BRANCH_NAME}
+        LATEST: "true"
+
+
