@@ -1,7 +1,6 @@
 package de.hbt.controller;
 
 import de.hbt.model.ReportData;
-import de.hbt.model.ReportFileRef;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.export.Profil;
 import de.hbt.service.ModelConvertService;
@@ -10,13 +9,11 @@ import de.hbt.service.ReportDataService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,26 +30,11 @@ public class ReportController {
 
     private static final Logger LOG = LogManager.getLogger(ReportController.class);
 
-    @Value("${export.kurztextCharsPerLine}")
-    private int kurztextCharsPerLine;
-
-    @Value("${export.lang}")
-    private String language;
-
-    private final HttpServletRequest request;
-
     @Autowired
-    public ReportController(ProfileReportService profileReportService, ModelConvertService modelConvertService, ReportDataService reportDataService, HttpServletRequest request) {
+    public ReportController(ProfileReportService profileReportService, ModelConvertService modelConvertService, ReportDataService reportDataService) {
         this.profileReportService = profileReportService;
         this.ModelConvertService = modelConvertService;
         this.reportDataService = reportDataService;
-        this.request = request;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/refs/{initials}")
-    public ResponseEntity<List<ReportFileRef>> getAllRefs(@PathVariable("initials") String initials) {
-        LOG.info("getAllRefs: " + initials);
-        return ResponseEntity.ok(profileReportService.getAllRefs(initials));
     }
 
     @GetMapping("{initials}")
@@ -93,10 +75,6 @@ public class ReportController {
         );
 
         reportData = reportDataService.saveReportData(reportData);
-
-        if (charsPerLine != null) {
-            kurztextCharsPerLine = Integer.parseInt(charsPerLine);
-        }
         try {
             Profil profile = ModelConvertService.convert(reportInfo);
             xmlFile = profileReportService.marshalToXML(profile);

@@ -11,21 +11,16 @@ import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportEngineFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 import java.util.logging.Level;
 
 
-//@EnableDiscoveryClient
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = MongoAutoConfiguration.class)
-@EnableRedisRepositories
+@SpringBootApplication(exclude = {MongoAutoConfiguration.class})
 public class HbtPowerReportServiceApplication implements ApplicationContextAware {
 
     private ApplicationContext context;

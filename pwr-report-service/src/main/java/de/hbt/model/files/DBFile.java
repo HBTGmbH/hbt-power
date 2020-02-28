@@ -16,11 +16,14 @@ public class DBFile {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     protected String id;
 
+    @Column(name = "filename")
     protected String filename;
 
+    @Column(name = "filetype")
     protected String filetype;
 
     @Lob
+    @Column(name = "data")
     protected byte[] data;
 
     public DBFile() {

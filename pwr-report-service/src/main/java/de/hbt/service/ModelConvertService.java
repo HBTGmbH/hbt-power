@@ -9,17 +9,21 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Converts the new view profile model into the old power model.
  */
-@Service @Component public class ModelConvertService {
+@Service
+@Component
+public class ModelConvertService {
 
-    @Value("${export.imgLocation}") private String imgLocation;
-
-    @Value("${export.defaultCategoryIndex}") private int defaultCategoryIndex;
+    @Value("${export.imgLocation}")
+    private String imgLocation;
 
     private static Synonym toSynonym(String name) {
         Synonym res = new Synonym();
@@ -251,15 +255,7 @@ import java.util.stream.Collectors;
                 .map(ModelConvertService::toSpezialgebiet).collect(Collectors.toList());
     }
 
-    /**
-     * Performs conversion between view profile and old power model. The old model is still used
-     * to generate the report.
-     *
-     * @param reportInfo
-     * @return
-     * @throws IOException
-     */
-    public Profil convert(ReportInfo reportInfo) throws IOException {
+    public Profil convert(ReportInfo reportInfo) {
         Profil result = new Profil();
         ViewProfile viewProfile = reportInfo.viewProfile;
         result.setBildUrl(String.format(imgLocation, reportInfo.initials));
