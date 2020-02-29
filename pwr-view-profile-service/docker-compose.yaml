@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  report:
+    image: pwr-view-profile-service:local
+    ports:
+      - 9008:9008
+    environment:
+      DB_DATABASE: 1
+      DB_PORT: 6379
+      DB_HOST: view_profile_service_db
+      EUREKA_ENABLED: 'true'
+      EUREKA_URL: http://host.docker.internal:8761/eureka
+    depends_on:
+      - view_profile_service_db
+  view_profile_service_db:
+    image: redis:5.0.7-alpine
+    restart: always
+    ports:
+      - 10008:6379
+volumes:
+  db-data: {}

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.hbt.pwr</groupId>
-	<artifactId>view-profile-service</artifactId>
+	<artifactId>pwr-view-profile-service</artifactId>
 	<version>1.5.0</version>
 	<packaging>jar</packaging>
 
@@ -14,7 +14,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>13</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <spring-cloud.version>Hoxton.M3</spring-cloud.version>
         <spring-cloud-netflix.version>2.2.0.M2</spring-cloud-netflix.version>
     </properties>
@@ -107,13 +109,11 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>2.7.0</version>
         </dependency>
-        <!-- An old version of lombok has to be used because of changed
-        (stupid) semantics of Builder.Default -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-            <version>1.16.14</version>
-		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.0</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -172,6 +172,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
