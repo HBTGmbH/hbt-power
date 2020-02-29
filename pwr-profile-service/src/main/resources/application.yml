@@ -80,6 +80,7 @@ spring:
 eureka:
   client:
     enabled: false
+pwr-skill-service.ribbon.listOfServers: localhost:9003
 
 
 

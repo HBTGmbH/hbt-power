@@ -46,6 +46,7 @@ public class SkillRecommendationService {
         Predicate<Project> relevantProject = projectHasClient()
                 .and(onlyProjectsWithClient(clientName).and(onlyProjectsWithSimilarRoles(projectRoles)))
                 .or(onlyProjectsWithName(projectName));
+        Set<String> names = new HashSet<>();
         return projectRepository.findAll()
                 .stream()
                 .filter(relevantProject)
@@ -53,7 +54,9 @@ public class SkillRecommendationService {
                 .map(Project::getSkills)
                 .flatMap(Collection::stream)
                 .filter(s -> (!project.getSkills().contains(s)))
-                .distinct()
+                //.distinct()-replacement to also remove duplicate Skills from other profiles, which have a different idea and possibly a different rating or versions
+                .filter(s -> names.add(s.getName()))
+                .sorted(Comparator.comparing(Skill::getName))
                 .collect(Collectors.toList());
     }
 
