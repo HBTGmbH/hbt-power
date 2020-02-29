@@ -1,17 +1,22 @@
 spring:
     application:
-      name: pwr-profile-service # This name is used to register the application with the eurka service discovery
+      name: pwr-profile-service
     jackson:
       serialization:
         write_dates_as_timestamps: false
     datasource:
-      # The driver you want to use. No native queries are used, so any relation database should work
-      driver-class-name: com.mysql.jdbc.Driver
-      # Database configuration
-      username: pwr-profile-service
-      password: secretPassword
-      url: jdbc:mysql://localhost:3306/profile
-# For local development, you should switch each service to a different port.
+      username: ${DB_USER}
+      password: ${DB_PASS}
+      url: ${DB_URL}
+      driver-class-name: ${DB_DRIVER_CLASS_NAME:org.mariadb.jdbc.Driver}
+    jpa:
+      hibernate:
+        ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
+eureka:
+  client:
+    enabled: ${EUREKA_ENABLED:true}
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
 server:
     port: 9004
 logging:
@@ -22,7 +27,6 @@ logging:
   file: profile-service.log
 # This service can be polite!
 isPolite: true
-# Quite the antipattern. This is used in another service. Someone should fix this...
 default-chars-per-line: 32
 feign:
   hystrix:
@@ -60,7 +64,7 @@ eureka:
   client:
     enabled: true
     service-url:
-       defaultZone: http://development-database::8761/eureka
+       defaultZone: http://localhost:8761/eureka
 ---
 spring:
   profiles: localDevNoEureka

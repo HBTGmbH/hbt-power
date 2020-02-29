@@ -1,20 +1,20 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.data.ProjectRepository;
+import de.hbt.pwr.profile.model.Skill;
+import de.hbt.pwr.profile.model.profile.entries.NameEntity;
+import de.hbt.pwr.profile.model.profile.entries.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import de.hbt.pwr.profile.data.ProjectRepository;
-import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.profile.entries.NameEntity;
-import de.hbt.pwr.profile.model.profile.entries.Project;
 
 import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
@@ -27,7 +27,7 @@ public class SkillRecommendationService {
 
     private static int YEARS_UNTIL_OUTDATED = 8;
 
-    public Collection<Skill> getRecommendedSkills(@Nullable Project project) {
+    public Collection<Skill> getRecommendedSkills(Project project) {
         return ofNullable(project)
                 .map(this::getRecommended)
                 .orElseGet(Collections::emptyList);
