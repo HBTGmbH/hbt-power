@@ -39,7 +39,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>12</java.version>
+        <java.version>13</java.version>
         <spring-cloud.version>Hoxton.M2</spring-cloud.version>
         <spring-cloud-netflix.version>2.2.0.M2</spring-cloud-netflix.version>
         <spring-boot.version>2.2.0.RELEASE</spring-boot.version>
@@ -87,9 +87,8 @@
             <version>5.10.5.Final</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -115,7 +114,6 @@
         </dependency>
 
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -142,8 +140,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>12</source>
-                    <target>12</target>
+                    <source>13</source>
+                    <target>13</target>
                 </configuration>
             </plugin>
         </plugins>

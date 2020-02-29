@@ -38,13 +38,6 @@ public class CategoryServiceTest {
     }
 
     @Test
-    public void whenCreatingCategory_withoutId_shouldThrowException() {
-        skillCategory.setId(null);
-        SkillServiceException exception = expectThrown(() -> categoryService.createSkillCategory(skillCategory, 99), SkillServiceException.class);
-        assertThat(exception.getMessage()).isEqualTo("Request validation of category.id failed with reason: Id is null.");
-    }
-
-    @Test
     public void whenCreatingCategory_withoutQualifier_shouldThrow() {
         skillCategory.setQualifier(null);
         SkillServiceException exception = expectThrown(() -> categoryService.createSkillCategory(skillCategory, 99), SkillServiceException.class);
