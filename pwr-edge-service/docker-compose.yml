@@ -1,0 +1,10 @@
+version: '2'
+services:
+  edge-server:
+    ports:
+      - "9000:9000"
+    volumes:
+      - pwr-log-files:/logs
+    image: pwr-edge-server:local
+volumes:
+  pwr-log-files: {}

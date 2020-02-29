@@ -1,0 +1,39 @@
+zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
+  routes:
+    # This route is intended for the profile management microservice
+    profile:
+      serviceId: pwr-profile-service
+      stripPrefix: false
+      path: /api/profile/**
+    skillservice:
+      serviceId: pwr-skill-service
+      path: /api/skills/**
+    reportservice:
+      serviceId: pwr-report-service
+      path: /**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 1
+server:
+  port: 9000
+spring:
+  application:
+    name: power-edge-01
+security:
+  basic:
+    enabled: false
+logging:
+    file: edge-server.log
+ribbon:
+  readTimeout: 10000
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
