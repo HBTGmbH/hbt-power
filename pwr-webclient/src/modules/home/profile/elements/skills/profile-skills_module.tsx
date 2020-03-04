@@ -16,6 +16,7 @@ import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import Button from '@material-ui/core/Button';
 import {SkillInfo} from './skill-info_module';
 import Badge from '@material-ui/core/Badge';
+import {Alerts} from '../../../../../utils/Alerts';
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
@@ -76,10 +77,16 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     };
 
     private handleAddSkill = (name: string, rating: number) => {
-        if (!this.props.skills.some(skill => skill.name === name)) {
+        if (name === "") {
+            Alerts.showError(PowerLocalize.get('Profile.Skills.AddSkillErrorCaption'))
+        } else if (!this.props.skills.some(skill => skill.name === name)) {
             this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
         }
     };
+
+    private ratingIsValid = (rating) => {
+        return (!isNaN(rating) && rating >= 1 && rating <= 5)
+    }
 
     private handleDeleteSkill = (skill: ProfileSkill) => {
         this.props.deleteSkill(this.props.initials, skill);
@@ -132,6 +139,39 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
         </Grid>;
     };
 
+    private toSkillList = (skills: Array<ProfileSkill>, caption: String) => {
+        return (<div>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
+                <PwrFormSubCaption>{caption}</PwrFormSubCaption>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
+                <Divider variant={'fullWidth'}
+                         style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
+            </Grid>
+            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
+                <div className="Pwr-Content-Container">
+                    <Grid container spacing={16}>
+                        {skills.map(s => this.toSkill(s))}
+                    </Grid>
+                </div>
+            </Grid>
+        </div>);
+    }
+
+    private toSkillOverview = () => {
+        let pendingSkills: Array<ProfileSkill> = this.props.skills.filter(s => !this.ratingIsValid(s.rating));
+        let ratedCaption: String = PowerLocalize.get('Profile.Skills.MySkillsCaption');
+
+        if (pendingSkills.length) {
+            let ratedSkills: Array<ProfileSkill> = this.props.skills.filter(s => this.ratingIsValid(s.rating));
+            return <div>
+                {this.toSkillList(pendingSkills, PowerLocalize.get('Profile.Skills.UnassessedSkillsCaption'))}
+                {this.toSkillList(ratedSkills, ratedCaption)}
+            </div>
+        }
+        return this.toSkillList(this.props.skills, ratedCaption);
+    }
+
     render() {
         return (<Grid container spacing={8}>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
@@ -151,20 +191,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
                     <SkillInfo selectedSkill={this.getCurrentSkill()} handleChangeRating={this.handleChangeRating}/>
                 </div>
             </Grid>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <PwrFormSubCaption>{PowerLocalize.get('Profile.Skills.MySkillsCaption')}</PwrFormSubCaption>
-            </Grid>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <Divider variant={'fullWidth'}
-                         style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
-            </Grid>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <div className="Pwr-Content-Container">
-                    <Grid container spacing={16}>
-                        {this.props.skills.map(skill => this.toSkill(skill))}
-                    </Grid>
-                </div>
-            </Grid>
+            {this.toSkillOverview()}
         </Grid>);
     }
 }
