@@ -15,7 +15,7 @@ import FormControl from '@material-ui/core/FormControl/FormControl';
 import {LanguageLevel, toLanguageLevel} from '../../../reducers/profile-new/profile/model/LanguageLevel';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import MenuItem from '@material-ui/core/MenuItem/MenuItem';
-import {EducationDegree, toDegree} from '../../../reducers/profile-new/profile/model/EducationDegree';
+import {EducationDegree} from '../../../reducers/profile-new/profile/model/EducationDegree';
 import {PwrDatePicker} from '../../general/pwr-date-picker_module';
 import {DatePickerType} from '../../../model/DatePickerType';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
@@ -136,16 +136,10 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         </MenuItem>;
     };
 
-    private handleDegreeSelectChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
+    private handleDegreeSelectChange = (degree: string) => {
         this.setState({
-            degree: toDegree(event.target.value)
+            degree: degree
         });
-    };
-
-    private renderDegreeSelectElement = (level: EducationDegree, id: number) => {
-        return <MenuItem key={id} value={level}>
-            {level}
-        </MenuItem>;
     };
 
     private onStartDateChange = (date: Date) => {
@@ -248,14 +242,14 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                             //degree
                             !(this.props.type == 'EDUCATION') ? <></> :
                                 <Grid item md={6} xs={12}>
-                                    <FormControl>
-                                        <Select
-                                            value={this.state.degree}
-                                            onChange={this.handleDegreeSelectChange}
-                                        >
-                                            {this.props.degrees.map(this.renderDegreeSelectElement)}
-                                        </Select>
-                                    </FormControl>
+                                    <PwrAutoComplete
+                                        fullWidth
+                                        label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
+                                        id={'id'}
+                                        data={this.props.degrees}
+                                        searchTerm={this.state.degree}
+                                        onSearchChange={(value) => this.handleDegreeSelectChange(value)}
+                                    />
                                 </Grid>
                         }
                         {
