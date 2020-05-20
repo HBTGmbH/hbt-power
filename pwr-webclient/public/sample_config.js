@@ -1,36 +1,20 @@
-const POWER_PROFILE_SERVICE_URL = "http://power02.corp.hbt.de:9000/pwr-profile-service";
+const POWER_PROFILE_SERVICE_URL = "https://power.hbt.de/power/api/pwr-profile-service";
+const POWER_SKILL_SERVICE_URL = "https://power.hbt.de/power/api/pwr-skill-service";
+const POWER_VIEW_PROFILE_SERVICE_URL = "https://power.hbt.de/power/api/pwr-view-profile-service";
+const POWER_REPORT_SERVICE_URL = "https://power.hbt.de/power/api/pwr-report-service";
+const POWER_STATISTICS_SERVICE_URL = "https://power.hbt.de/power/api/pwr-statistics-service";
 
-const CLIENT_BUILD_INFO_LOCATION = "http://power02.corp.hbt.de/power/build_info.json";
 
+const CLIENT_BUILD_INFO_LOCATION = "https://power.hbt.de/power/build_info.json";
 
 const POWER_API_HOST = "https://power.hbt.de";
 const POWER_API_PORT = "";
 const POWER_API_PREFIX = "/power";
-const POWER_API_SUFFIX_PROFILE = POWER_API_PREFIX + "/api/pwr-profile-service/api";
-const POWER_PROFILE_META_INFO = POWER_API_HOST + ":" + POWER_API_PORT + "/power/api/pwr-profile-service/meta";
-
-const POWER_API_HOST_STATISTICS = "https://power.hbt.de";
-const POWER_API_PORT_STATISTICS = "";
-const POWER_API_SUFFIX_STATISTICS = POWER_API_PREFIX + "/api/pwr-statistics-service";
-
-const POWER_API_HOST_SKILL = "https://power.hbt.de";
-const POWER_API_PORT_SKILL = "";
-const POWER_API_SUFFIX_SKILL = POWER_API_PREFIX + "/api/pwr-skill-service";
-
-const POWER_API_HOST_VIEW = "https://power.hbt.de";
-const POWER_API_PORT_VIEW = "";
-const POWER_API_SUFFIX_VIEW = POWER_API_PREFIX + "/api/pwr-view-profile-service";
-
-const POWER_API_HOST_REPORT = "https://power.hbt.de";
-const POWER_API_PORT_REPORT = "";
-const POWER_API_SUFFIX_REPORT = POWER_API_PREFIX + "/api/pwr-report-service";
-
-const POWER_API_META_INFO_REPORT = "https://power.hbt.de/" + POWER_API_PREFIX + "/api/pwr-report-service/meta";
 
 const POWER_IMAGE_PATH = POWER_API_PREFIX + "/img";
 
 const POWER_APP_PATH = "/power";
-const POWER_LOCALE_PATH = "http://power02.corp.hbt.de/localization";
+const POWER_LOCALE_PATH = "https://power.hbt.de/power/localization";
 
 const GLOBAL_OPTIONS = {
     defaultCharsPerLine: 32,
