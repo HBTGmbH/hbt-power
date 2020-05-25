@@ -27,7 +27,6 @@ management:
       cors:
         allowed-methods: '*'
         allowed-origins: '*'
-      base-path: /meta/actuator
 feign:
   hystrix:
     enabled: true
