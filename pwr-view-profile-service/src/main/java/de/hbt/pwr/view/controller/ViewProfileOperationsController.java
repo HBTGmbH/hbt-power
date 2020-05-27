@@ -37,6 +37,7 @@ import java.util.Map;
         value = "View Profile Operations"
 )
 @Controller
+@CrossOrigin
 @RequestMapping("/{initials}/view/{viewProfileId}")
 public class ViewProfileOperationsController {
 

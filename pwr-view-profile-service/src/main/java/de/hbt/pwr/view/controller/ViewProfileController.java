@@ -53,6 +53,7 @@ import static java.util.Optional.ofNullable;
 @Api(value = "/view", description = "Creates, reads and deletes view profiles")
 @RequestMapping("/view")
 @Controller
+@CrossOrigin
 public class ViewProfileController {
 
     private static final Logger LOG = LogManager.getLogger(ViewProfile.class);
