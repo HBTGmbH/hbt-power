@@ -82,7 +82,8 @@ public class DocBirtExportHandler {
             log.debug("Report created to " + outputFilename);
             return outputFilename;
         } catch (Exception e) {
-            return "ReportFailed: " + e;
+            log.error("Report Failed", e);
+            throw e;
         }
     }
 
