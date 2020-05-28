@@ -12,7 +12,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 
+import lombok.extern.log4j.Log4j2;
+
 @Component
+@Log4j2
 public class DocBirtExportHandler {
 
     @Value("${export.wordLocalLocation}")
@@ -33,7 +36,8 @@ public class DocBirtExportHandler {
      */
     @SuppressWarnings("unchecked")
     public String exportProfile(String kuerzel, String ausgabedatei, String xmlDatasource, InputStream designFileStream, String format) throws IOException, EngineException, SemanticException {
-
+        log.debug("Generating profile for " + kuerzel + " to file " + ausgabedatei);
+        log.debug("XML datasource is " + xmlDatasource + " and local location is " + localLocation);
         try {
             /* Open the report design */
 
@@ -75,6 +79,7 @@ public class DocBirtExportHandler {
             /* run and render report */
             task.run();
             task.close();
+            log.debug("Report created to " + outputFilename);
             return outputFilename;
         } catch (Exception e) {
             return "ReportFailed: " + e;

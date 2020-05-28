@@ -89,6 +89,7 @@ public class ProfileReportService {
 
             String outputFileName = reportInfo.initials + "_export_" + df.format(new Date()) + ".docx";
             fullFilePath = docBirtExportHandler.exportProfile(reportInfo.initials, outputFileName, xmlFile.getAbsolutePath(), designFileStream, "docx");
+            log.info("Export created to " + fullFilePath);
             saveAsReportData(fullFilePath, reportDataId);
         } catch (Exception e) {
             setReportDataError(reportDataId);
