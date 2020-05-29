@@ -85,11 +85,12 @@ public class ProfileReportService {
     public void generateDocXExport(File xmlFile, ReportInfo reportInfo, Long reportDataId) throws RuntimeException, IOException {
         String fullFilePath = "";
         try {
-            InputStream designFileStream = new ByteArrayInputStream(storageService.getFile(reportInfo.reportTemplate.fileId).getData());
-
+            DBFile dbFile = storageService.getFile(reportInfo.reportTemplate.fileId);
+            log.debug("[Export] Resolved " + reportInfo.reportTemplate.fileId + " to " + dbFile);
+            InputStream designFileStream = new ByteArrayInputStream(dbFile.getData());
             String outputFileName = reportInfo.initials + "_export_" + df.format(new Date()) + ".docx";
             fullFilePath = docBirtExportHandler.exportProfile(reportInfo.initials, outputFileName, xmlFile.getAbsolutePath(), designFileStream, "docx");
-            log.info("Export created to " + fullFilePath);
+            log.debug("[Export] Created to " + fullFilePath);
             saveAsReportData(fullFilePath, reportDataId);
         } catch (Exception e) {
             setReportDataError(reportDataId);
