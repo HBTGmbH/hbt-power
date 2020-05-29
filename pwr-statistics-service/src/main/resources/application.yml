@@ -12,6 +12,11 @@ endpoints:
   cors:
     allowed-methods: '*'
     allowed-origins: '*'
+eureka:
+  client:
+    enabled: ${EUREKA_ENABLED:false}
+    service-url:
+      defaultZone: ${EUREKA_URL}
 ---
 spring:
   profiles: localDev
