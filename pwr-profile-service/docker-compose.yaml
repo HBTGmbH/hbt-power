@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  pwr_profile_service:
+    image: pwr-profile-service:local
+    ports:
+      - 9004:9004
+    environment:
+      DB_USER: pwr-profile-service
+      DB_PASS: changeit
+      DB_URL: jdbc:mariadb://pwr_profile_service_db:3306/profile
+      DB_DRIVER_CLASS_NAME: org.mariadb.jdbc.Driver
+      DB_HIBERNATE_DDL_AUTO: update
+      EUREKA_ENABLED: 'true'
+      EUREKA_URL: http://host.docker.internal:8761/eureka
+    depends_on:
+      - pwr_profile_service_db
+  pwr_profile_service_db:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 10004:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: changeit
+      MYSQL_DATABASE: profile
+      MYSQL_USER: pwr-profile-service
+      MYSQL_PASSWORD: changeit
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  db-data: {}
