@@ -20,8 +20,6 @@ spring:
 export:
   # Temporary location where the data source for the BIRT report generation can be found.
   xmlFilePath: ${PWR_REPORT_FILE_PATH}\xml\datasource.xml
-  # Temporary location where the report will be stored during generation (as BIRT needs to render to filesytem)
-  wordLocalLocation: ${PWR_REPORT_FILE_PATH}\reports\%s\word\%s
   # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
   htmlLocalLocation: ${PWR_REPORT_FILE_PATH}\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.
@@ -54,8 +52,6 @@ spring:
 export:
   # Temporary location where the data source for the BIRT report generation can be found.
   xmlFilePath: src\target\datasource.xml
-  # Temporary location where the report will be stored during generation (as BIRT needs to render to filesytem)
-  wordLocalLocation: src\target\report\reports\%s\word\%s
   # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
   htmlLocalLocation: src\target\report\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.

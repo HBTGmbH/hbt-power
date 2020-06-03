@@ -25,15 +25,14 @@ import java.util.stream.Collectors;
 public class ReportController {
 
     private final ProfileReportService profileReportService;
-    private final ModelConvertService ModelConvertService;
+
     private final ReportDataService reportDataService;
 
     private static final Logger LOG = LogManager.getLogger(ReportController.class);
 
     @Autowired
-    public ReportController(ProfileReportService profileReportService, ModelConvertService modelConvertService, ReportDataService reportDataService) {
+    public ReportController(ProfileReportService profileReportService, ReportDataService reportDataService) {
         this.profileReportService = profileReportService;
-        this.ModelConvertService = modelConvertService;
         this.reportDataService = reportDataService;
     }
 
@@ -63,9 +62,7 @@ public class ReportController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> generate(@RequestBody ReportInfo reportInfo,
-                                           @RequestParam("type") String type,
-                                           @RequestParam(value = "charsperline", required = false) String charsPerLine) throws Exception {
-        File xmlFile = null;
+                                           @RequestParam("type") String type) {
         LOG.info("Generating new report!");
         ReportData reportData = new ReportData(
                 reportInfo.initials,
@@ -73,23 +70,12 @@ public class ReportController {
                 reportInfo.initials + "_" + reportInfo.viewProfile.getViewProfileInfo().getName() + "_" + reportInfo.reportTemplate.getName(),
                 reportInfo.reportTemplate.getId()
         );
-
         reportData = reportDataService.saveReportData(reportData);
-        try {
-            Profil profile = ModelConvertService.convert(reportInfo);
-            xmlFile = profileReportService.marshalToXML(profile);
-            LOG.info("xml fileId: " + xmlFile.getAbsolutePath());
-            if ("DOC".equals(type)) {
-                //Async Call
-                profileReportService.generateDocXExport(xmlFile, reportInfo, reportData.getId());
-            } else {
-                throw new RuntimeException("Unsupported type " + type);
-            }
-            return ResponseEntity.ok("Started Report Generation");
-        } finally {
-            if (xmlFile != null) {
-                xmlFile.delete();
-            }
+        if ("DOC".equals(type)) {
+            profileReportService.generateDocXExport(reportInfo, reportData.getId());
+        } else {
+            throw new RuntimeException("Unsupported type " + type);
         }
+        return ResponseEntity.ok("Started Report Generation");
     }
 }
