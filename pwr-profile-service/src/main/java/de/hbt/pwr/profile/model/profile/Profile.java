@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class Profile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = HBTPowerConstants.PROFILE_DESCRIPTION_LENGTH)

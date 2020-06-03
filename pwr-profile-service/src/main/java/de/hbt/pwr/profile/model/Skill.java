@@ -15,7 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = "versions")
 public class Skill {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id = null;
 
     @Column(name = "name")

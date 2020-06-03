@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 public abstract class AdminNotification {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     /**

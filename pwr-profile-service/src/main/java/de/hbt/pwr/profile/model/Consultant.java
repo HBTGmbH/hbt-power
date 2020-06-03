@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Entity
 public class Consultant {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
