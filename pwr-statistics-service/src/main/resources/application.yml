@@ -3,6 +3,11 @@ server:
 spring:
   application:
     name: pwr-statistics-service
+  redis:
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:6379}
+    password: ${DB_PASSWORD:redis}
+    database: ${DB_DATABASE:1}
 feign:
   hystrix:
     enabled: true
