@@ -1,5 +1,6 @@
 package de.hbt.power.service;
 
+import de.hbt.power.repo.SkillRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class SkillSearcherService_ExpectedResultITest {
     private SkillService skillService;
 
     @Autowired
+    private SkillRepository skillRepository;
+
+    @Autowired
     private SkillSearcherService skillSearcherService;
 
     private Skill persistentSkill(String name) {
@@ -30,6 +34,7 @@ public class SkillSearcherService_ExpectedResultITest {
 
     @Test
     public void shouldFindQueryResult() throws Exception {
+        skillRepository.deleteAll();
         persistentSkill("Java");
         persistentSkill("Unity");
         persistentSkill("Kotlin");

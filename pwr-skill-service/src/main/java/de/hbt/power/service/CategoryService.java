@@ -102,9 +102,6 @@ public class CategoryService {
 
     public SkillCategory createSkillCategory(SkillCategory category, Integer parentId) {
         log.info("Creating custom " + category.toString() + " for parentId=" + parentId);
-        if (category.getId() == null) {
-            throw SkillServiceException.validationFailed("category.id", "Id is null.");
-        }
         if (category.getQualifier() == null) {
             throw SkillServiceException.validationFailed("category.qualifier", "Qualifier is null.");
         }
