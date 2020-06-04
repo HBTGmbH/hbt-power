@@ -22,22 +22,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCircuitBreaker
 public class StatisticsApplication {
 
-    /**
-     * Constructs the {@link RedisConnectionFactory}. This bean is necessary to use redis repositories
-     * @return {@link RedisConnectionFactory} bean
-     */
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        final JedisConnectionFactory factory = new JedisConnectionFactory();
-        factory.setHostName("localhost");
-        factory.setDatabase(0);
-        return factory;
-    }
-
-    @Bean
-    public RedisTemplate<?, ?> redisTemplate() {
-        RedisTemplate<byte[],byte[]> res =  new RedisTemplate<byte[], byte[]>();
-        res.setConnectionFactory(redisConnectionFactory());
+    public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<byte[],byte[]> res = new RedisTemplate<>();
+        res.setConnectionFactory(redisConnectionFactory);
         return res;
     }
 
