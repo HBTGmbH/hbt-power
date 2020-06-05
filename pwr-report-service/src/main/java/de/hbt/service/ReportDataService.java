@@ -34,10 +34,13 @@ public class ReportDataService {
         return reportDataRepository.save(reportData);
     }
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public ReportData saveReportDataInNewTransaction(ReportData reportData) {
+        return reportDataRepository.save(reportData);
+    }
+
     /**
      * Allows the caller to save report data without having a transaction
-     * @param reportDataId
-     * @param blop
      */
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void updateReportData(Long reportDataId, byte[] blop) {

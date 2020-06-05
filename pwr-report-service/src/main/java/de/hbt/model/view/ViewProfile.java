@@ -1,8 +1,7 @@
 package de.hbt.model.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,6 +9,9 @@ import java.util.List;
 import java.util.Locale;
 
 @Data
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ViewProfile {
     private String id;
     private String viewDescription = "";
