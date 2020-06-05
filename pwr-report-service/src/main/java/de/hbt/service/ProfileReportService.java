@@ -1,7 +1,6 @@
 package de.hbt.service;
 
 import de.hbt.exceptions.StorageFileException;
-import de.hbt.model.ReportData;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.ReportStatus;
 import de.hbt.model.export.Profil;
@@ -13,31 +12,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
-import org.eclipse.birt.report.engine.api.EngineException;
-import org.eclipse.birt.report.model.api.activity.SemanticException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import javax.transaction.Transactional;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-//import org.apache.log4j.Logger;
 
 @Slf4j
 @Service
 public class ProfileReportService {
-
-    @Value("${export.expiration-in-days}")
-    private Integer expirationInDays;
 
     private final DocBirtExportHandler docBirtExportHandler;
     private DBFileStorageService storageService;
@@ -88,6 +76,7 @@ public class ProfileReportService {
             setReportDataError(reportDataId);
         } finally {
             if (xmlFile != null) {
+                //noinspection ResultOfMethodCallIgnored
                 xmlFile.delete();
             }
         }
@@ -97,14 +86,14 @@ public class ProfileReportService {
         reportDataService.updateReportData(reportDataId, ReportStatus.ERROR);
     }
 
-    public String generateHTMLFile(String designId) throws SemanticException, EngineException, IOException {
+    public String generateHTMLFile(String designId) {
         DBFile file = storageService.getFile(designId);
         InputStream designFileStream = new ByteArrayInputStream(file.getData());
         String fullFilePath = htmlBirtExportHandler.exportProfile(designFileStream);
         return saveFileInDB(fullFilePath, "text/html").getId();
     }
 
-    public String generatePDFFile(String designId) throws SemanticException, EngineException, IOException {
+    public String generatePDFFile(String designId) {
         DBFile file = storageService.getFile(designId);
         InputStream designFileStream = new ByteArrayInputStream(file.getData());
         String fullFilePath = pdfBirtExportHandler.exportProfile(designFileStream);
@@ -126,6 +115,7 @@ public class ProfileReportService {
         MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
         DBFile f = storageService.storeFile(multipartFile);
         try {
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         } catch (SecurityException e) {
             throw new StorageFileException("Could not delete File after saving it.");

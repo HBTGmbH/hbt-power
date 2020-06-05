@@ -18,13 +18,12 @@ spring:
   main:
     allow-bean-definition-overriding: true
 export:
-  # Temporary location where the data source for the BIRT report generation can be found.
+  # Datasource which is used to create the previews. Contains sample data.
   xmlFilePath: ${PWR_REPORT_FILE_PATH}\xml\datasource.xml
   # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
   htmlLocalLocation: ${PWR_REPORT_FILE_PATH}\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.
   imgLocation: ${PWR_REPORT_FILE_PATH}\images
-  expiration-in-days: 5
 server:
   port: 9005
 eureka:
@@ -38,10 +37,6 @@ management:
       cors:
         allowed-origins: '*'
         allowed-methods: '*'
-pwr-report-service:
-  ribbon:
-    ReadTimeout: 20000
-    ConnectTimeout: 10000
 ---
 spring:
   profiles: local
@@ -56,7 +51,6 @@ export:
   htmlLocalLocation: src\target\report\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.
   imgLocation: src\target\images
-  expiration-in-days: 5
 ---
 spring:
   profiles: bootstrapDatabase

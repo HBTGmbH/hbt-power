@@ -1,20 +1,17 @@
 package de.hbt.model.export.birt;
 
 
+import lombok.extern.log4j.Log4j2;
 import org.eclipse.birt.report.engine.api.*;
 import org.eclipse.birt.report.model.api.OdaDataSourceHandle;
 import org.eclipse.birt.report.model.api.ReportDesignHandle;
 import org.eclipse.birt.report.model.api.activity.SemanticException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-
-import lombok.extern.log4j.Log4j2;
 
 @Component
 @Log4j2

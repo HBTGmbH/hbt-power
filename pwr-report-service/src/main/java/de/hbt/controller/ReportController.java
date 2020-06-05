@@ -2,8 +2,6 @@ package de.hbt.controller;
 
 import de.hbt.model.ReportData;
 import de.hbt.model.ReportInfo;
-import de.hbt.model.export.Profil;
-import de.hbt.service.ModelConvertService;
 import de.hbt.service.ProfileReportService;
 import de.hbt.service.ReportDataService;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
