@@ -4,7 +4,6 @@ import de.hbt.exceptions.StorageFileException;
 import de.hbt.exceptions.StorageFileNotFoundException;
 import de.hbt.model.files.DBFile;
 import de.hbt.repository.DBFileRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.springframework.util.StringUtils.cleanPath;
 
 @Service
@@ -24,7 +24,7 @@ public class DBFileStorageService {
     }
 
     public DBFile storeFile(MultipartFile file) {
-        String filename = cleanPath(file.getOriginalFilename());
+        String filename = cleanPath(defaultString(file.getOriginalFilename(), "???"));
         try {
             if (filename.contains("..")) {
                 throw new StorageFileException("invalid fileId " + filename);

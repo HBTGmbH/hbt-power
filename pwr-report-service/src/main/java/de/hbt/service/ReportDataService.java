@@ -6,6 +6,7 @@ import de.hbt.model.ReportData;
 import de.hbt.model.ReportStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -28,18 +29,37 @@ public class ReportDataService {
         reportDataRepository.deleteById(id);
     }
 
+    @Transactional
     public ReportData saveReportData(ReportData reportData) {
         return reportDataRepository.save(reportData);
     }
 
-    void updateReportData(Long reportDataId, byte[] blop) {
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public ReportData saveReportDataInNewTransaction(ReportData reportData) {
+        return reportDataRepository.save(reportData);
+    }
+
+    /**
+     * Allows the caller to save report data without having a transaction
+     */
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void updateReportData(Long reportDataId, byte[] blop) {
         ReportData reportData = getReportDataById(reportDataId);
         reportData.setData(blop);
         reportData.setReportStatus(ReportStatus.DONE);
         reportDataRepository.save(reportData);
     }
 
-    void updateReportData(Long reportDataId, ReportStatus status) {
+    /**
+     * Runs in a new transaction in case the caller does not haave a transaction or
+     * the caller's transaction has already been marked rollback (due to an exception)
+     * Allows finely grained control of the ReportStatus independent of a potentially
+     * long running parent transaction
+     * @param reportDataId to update
+     * @param status to update to
+     */
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void updateReportData(Long reportDataId, ReportStatus status) {
         ReportData reportData = getReportDataById(reportDataId);
         reportData.setData(null);
         reportData.setReportStatus(status);

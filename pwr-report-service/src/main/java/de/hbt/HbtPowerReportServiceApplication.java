@@ -16,11 +16,13 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.logging.Level;
 
 
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class})
+@EnableAsync
 public class HbtPowerReportServiceApplication implements ApplicationContextAware {
 
     private ApplicationContext context;

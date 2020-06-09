@@ -1,13 +1,12 @@
 package de.hbt.service;
 
+import de.hbt.config.ReportServiceConfig;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.export.*;
 import de.hbt.model.view.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +21,11 @@ import java.util.stream.Collectors;
 @Component
 public class ModelConvertService {
 
-    @Value("${export.imgLocation}")
-    private String imgLocation;
+    private final ReportServiceConfig reportServiceConfig;
+
+    public ModelConvertService(ReportServiceConfig reportServiceConfig) {
+        this.reportServiceConfig = reportServiceConfig;
+    }
 
     private static Synonym toSynonym(String name) {
         Synonym res = new Synonym();
@@ -255,10 +257,10 @@ public class ModelConvertService {
                 .map(ModelConvertService::toSpezialgebiet).collect(Collectors.toList());
     }
 
-    public Profil convert(ReportInfo reportInfo) {
+    Profil convert(ReportInfo reportInfo) {
         Profil result = new Profil();
         ViewProfile viewProfile = reportInfo.viewProfile;
-        result.setBildUrl(String.format(imgLocation, reportInfo.initials));
+        result.setBildUrl(String.format(reportServiceConfig.getImgLocation(), reportInfo.initials));
 
         result.setKurztext(viewProfile.getDescription());
         result.setName(reportInfo.name);

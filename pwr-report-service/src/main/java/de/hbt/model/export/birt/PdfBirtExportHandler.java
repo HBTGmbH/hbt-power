@@ -1,15 +1,14 @@
 package de.hbt.model.export.birt;
 
+import de.hbt.config.ReportServiceConfig;
+import lombok.extern.log4j.Log4j2;
 import org.eclipse.birt.report.engine.api.*;
 import org.eclipse.birt.report.model.api.OdaDataSourceHandle;
 import org.eclipse.birt.report.model.api.ReportDesignHandle;
-import org.eclipse.birt.report.model.api.activity.SemanticException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
@@ -17,26 +16,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Component
+@Log4j2
 public class PdfBirtExportHandler {
 
-    @Value("${export.htmlLocalLocation}")
-    private String localLocation;
-
-    @Value("${export.xmlFilePath}")
-    private String xmlDatasource;
-
     private final IReportEngine birtEngine;
+    private final ReportServiceConfig reportServiceConfig;
 
     private static DateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 
     @Autowired
-    public PdfBirtExportHandler(IReportEngine birtEngine) {
+    public PdfBirtExportHandler(IReportEngine birtEngine, ReportServiceConfig reportServiceConfig) {
         this.birtEngine = birtEngine;
+        this.reportServiceConfig = reportServiceConfig;
     }
 
     @SuppressWarnings("unchecked")
-    public String exportProfile(InputStream designFileStream) throws IOException, EngineException, SemanticException {
-
+    public String exportProfile(InputStream designFileStream) {
         try {
 
             // opens the designFile ( which is InputStream)
@@ -51,7 +46,7 @@ public class PdfBirtExportHandler {
             OdaDataSourceHandle dataSourceHandle = (OdaDataSourceHandle) report.findDataSource("Profil Data Source");
 
             // Sets the Property FILELIST to the xml Source
-            dataSourceHandle.setProperty("FILELIST", xmlDatasource);
+            dataSourceHandle.setProperty("FILELIST", reportServiceConfig.getXmlFilePath());
 
             /* Create task to run and render the report */
             IRunAndRenderTask task = birtEngine.createRunAndRenderTask(design);
@@ -61,7 +56,7 @@ public class PdfBirtExportHandler {
                     HtmlBirtExportHandler.class.getClassLoader());
 
             String suff = "preview_" + df.format(new Date()) + ".pdf";
-            String outputFilename = String.format(localLocation, suff);
+            String outputFilename = String.format(reportServiceConfig.getHtmlLocalLocation(), suff);
 
             PDFRenderOption options = new PDFRenderOption();
 
@@ -79,6 +74,7 @@ public class PdfBirtExportHandler {
             task.close();
             return outputFilename;
         } catch (Exception e) {
+            log.error("Report failed", e);
             return "ReportFailed: " + e;
         }
     }
