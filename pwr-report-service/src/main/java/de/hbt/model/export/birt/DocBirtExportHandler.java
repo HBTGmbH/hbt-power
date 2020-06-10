@@ -48,6 +48,7 @@ public class DocBirtExportHandler {
 
             // Sets the Property FILELIST to the xml Source
             dataSourceHandle.setProperty("FILELIST", xmlDataSource.getAbsolutePath());
+            dataSourceHandle.setProperty("ENCODINGLIST", "UTF-8");
             IRunAndRenderTask task = bootstrapTask(design);
             return renderToByteArray(task);
         } catch (Exception e) {

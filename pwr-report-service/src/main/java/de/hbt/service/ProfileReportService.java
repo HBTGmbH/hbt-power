@@ -140,7 +140,7 @@ public class ProfileReportService {
             File file = File.createTempFile("tempXMLexport", ".xml");
             JAXBContext jaxbContext = JAXBContext.newInstance(Profil.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "iso-8859-1");
+            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jaxbMarshaller.marshal(profile, file);
             return file;
