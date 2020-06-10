@@ -25,4 +25,6 @@ public class ReportServiceConfig {
      * profile pictures are stored.
      */
     private String imgLocation;
+
+    private boolean deleteDataSource = true;
 }

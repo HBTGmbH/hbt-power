@@ -1,5 +1,6 @@
 package de.hbt.service;
 
+import de.hbt.config.ReportServiceConfig;
 import de.hbt.exceptions.StorageFileException;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.ReportStatus;
@@ -33,6 +34,7 @@ public class ProfileReportService {
     private final PdfBirtExportHandler pdfBirtExportHandler;
     private final ReportDataService reportDataService;
     private final ModelConvertService modelConvertService;
+    private final ReportServiceConfig reportServiceConfig;
 
     @Autowired
     public ProfileReportService(DocBirtExportHandler docBirtExportHandler,
@@ -40,13 +42,14 @@ public class ProfileReportService {
                                 HtmlBirtExportHandler htmlBirtExportHandler,
                                 PdfBirtExportHandler pdfBirtExportHandler,
                                 ReportDataService reportDataService,
-                                ModelConvertService modelConvertService) {
+                                ModelConvertService modelConvertService, ReportServiceConfig reportServiceConfig) {
         this.docBirtExportHandler = docBirtExportHandler;
         this.storageService = storageService;
         this.htmlBirtExportHandler = htmlBirtExportHandler;
         this.pdfBirtExportHandler = pdfBirtExportHandler;
         this.reportDataService = reportDataService;
         this.modelConvertService = modelConvertService;
+        this.reportServiceConfig = reportServiceConfig;
     }
 
     /**
@@ -75,9 +78,11 @@ public class ProfileReportService {
             log.error("[Export] Failed to create report", e);
             setReportDataError(reportDataId);
         } finally {
-            if (xmlFile != null) {
+            if (xmlFile != null && reportServiceConfig.isDeleteDataSource()) {
                 //noinspection ResultOfMethodCallIgnored
                 xmlFile.delete();
+            } else {
+                log.debug("[Export][{}] Data source not deleted", reportInfo.initials);
             }
         }
     }
