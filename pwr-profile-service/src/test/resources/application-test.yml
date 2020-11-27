@@ -1,9 +1,9 @@
 logging:
   level:
     # Reduce framework logging for tests
-    root: WARN
-    org.springframework.web: WARN
-    org.hibernate: WARN
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate: INFO
 spring:
   datasource:
     driver-class-name: org.h2.Driver
