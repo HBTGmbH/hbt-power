@@ -141,7 +141,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     };
 
     private toSkillList = (skills: Array<ProfileSkill>, caption: String) => {
-        return (<div>
+        return (<React.Fragment>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                 <PwrFormSubCaption>{caption}</PwrFormSubCaption>
             </Grid>
@@ -151,12 +151,12 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
             </Grid>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                 <div className="Pwr-Content-Container">
-                    <Grid container spacing={10}>
+                    <Grid container spacing={1}>
                         {skills.map(s => this.toSkill(s))}
                     </Grid>
                 </div>
             </Grid>
-        </div>);
+        </React.Fragment>);
     }
 
     private toSkillOverview = () => {
@@ -174,7 +174,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     }
 
     render() {
-        return (<Grid container spacing={8}>
+        return (<Grid container spacing={1}>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                 <PwrFormSubCaption>{PowerLocalize.get('Profile.Skills.AddSkillCaption')}</PwrFormSubCaption>
             </Grid>

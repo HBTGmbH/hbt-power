@@ -281,7 +281,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     render() {
         return (
             <div>
-                <AppBar>
+                <AppBar color={'primary'}>
                     <Toolbar>
                         <IconButton
                             onClick={(e: any) => {
@@ -291,6 +291,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         >
                             <Icon className="material-icons">menu</Icon>
                         </IconButton>
+                        {this.renderMenu()}
 
                         {this.renderPower()}
                         <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}>
@@ -323,9 +324,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </Tooltip>
                     </Toolbar>
                 </AppBar>
-                <Paper style={{marginTop: 70}}>
-                    {this.renderMenu()}
-                </Paper>
             </div>
         );
     }

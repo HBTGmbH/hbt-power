@@ -23,7 +23,7 @@ interface BaseDataDashboardElementProps {
 }
 
 interface BaseDataDashboardElementLocalProps {
-
+    greeting: string;
 }
 
 interface BaseDataDashboardElementLocalState {
@@ -67,7 +67,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                 <div className="row">
                     <div className="col-md-12 vertical-align fullWidth">
                         <span style={{fontSize: '16px', fontWeight: 'bold', marginTop: '8px'}}>
-                            {getRandomGreeting()} {this.props.name}!
+                            {this.props.greeting} {this.props.name}!
                         </span>
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">

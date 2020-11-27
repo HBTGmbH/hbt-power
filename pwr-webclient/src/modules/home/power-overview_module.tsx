@@ -15,7 +15,7 @@ import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
 import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
-import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
+import {COOKIE_INITIALS_NAME, getRandomGreeting} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
 import {isNullOrUndefined} from 'util';
 import {PwrRaisedButton} from '../general/pwr-raised-button';
@@ -52,6 +52,7 @@ interface PowerOverviewLocalProps {
  */
 interface PowerOverviewLocalState {
     createViewDialogOpen: boolean;
+    greeting: string;
 }
 
 /**
@@ -110,7 +111,8 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
 
     private resetLocalState = () => {
         this.state = {
-            createViewDialogOpen: false
+            createViewDialogOpen: false,
+            greeting: getRandomGreeting()
         };
     };
 
@@ -127,7 +129,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                 <div className="col-md-5 col-md-offset-1">
                     <div className="row">
                         <div className="col-md-12">
-                            <BaseDataDashboardElement/>
+                            <BaseDataDashboardElement greeting={this.state.greeting}/>
                         </div>
                         <div className="col-md-12">
                             <CommonSkillsDashboardElement/>
