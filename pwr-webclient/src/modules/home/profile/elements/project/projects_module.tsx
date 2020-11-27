@@ -1,7 +1,6 @@
 import {Project} from '../../../../../reducers/profile-new/profile/model/Project';
 
 import * as React from 'react';
-import {useRef} from 'react';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import * as redux from 'redux';
@@ -22,11 +21,6 @@ interface ProjectsProps {
     canAddProject: boolean;
 }
 
-
-interface ProjectsLocalProps {
-
-}
-
 interface ProjectsLocalState {
 }
 
@@ -36,7 +30,7 @@ interface ProjectsDispatch {
     addNewProject(): void;
 }
 
-class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
+class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
     private projectRef;
 
     constructor(props) {
@@ -44,7 +38,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         this.projectRef = React.createRef();
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ProjectsProps): ProjectsProps {
+    static mapStateToProps(state: ApplicationState): ProjectsProps {
         return {
             projects: state.profileStore.profile.projects,
             selectedIndex: state.profileStore.selectedProjectIndex,
@@ -52,7 +46,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProjectsDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch): ProjectsDispatch {
         return {
             selectProject: index => dispatch(selectProject(index)),
             addNewProject: () => dispatch(addNewProject())
@@ -112,4 +106,4 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsProps & Pro
     }
 }
 
-export const Projects: React.ComponentClass<ProjectsLocalProps> = connect(ProjectsModule.mapStateToProps, ProjectsModule.mapDispatchToProps)(ProjectsModule);
+export const Projects = connect(ProjectsModule.mapStateToProps, ProjectsModule.mapDispatchToProps)(ProjectsModule);

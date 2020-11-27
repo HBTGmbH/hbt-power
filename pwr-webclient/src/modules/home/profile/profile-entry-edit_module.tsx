@@ -24,6 +24,7 @@ import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrButton} from '../../general/pwr-button';
 import Delete from '@material-ui/icons/Delete';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileEntryDialogProps {
     suggestions: Array<string>;
@@ -95,7 +96,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>, localProps: ProfileEntryDialogLocalProps): ProfileEntryDialogDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>, localProps: ProfileEntryDialogLocalProps): ProfileEntryDialogDispatch {
         return {
             updateEntity: ProfileTypeDataMapper.getUpdateFunction(localProps.type, dispatch),
             deleteEntry: ProfileTypeDataMapper.getDeleteFunction(localProps.type, dispatch)
@@ -279,4 +280,4 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     }
 }
 
-export const ProfileEntryDialog: React.ComponentClass<ProfileEntryDialogLocalProps> = connect(ProfileEntryDialogModule.mapStateToProps, ProfileEntryDialogModule.mapDispatchToProps)(ProfileEntryDialogModule);
+export const ProfileEntryDialog: React.ComponentClass<ProfileEntryDialogLocalProps> = connect(ProfileEntryDialogModule.mapStateToProps, ProfileEntryDialogModule.mapDispatchToProps)(ProfileEntryDialogModule) as any;

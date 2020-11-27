@@ -29,6 +29,7 @@ import Divider from '@material-ui/core/Divider/Divider';
 import {ReportManager} from './reportmanager/report-manager_module';
 import {TemplateActionCreator} from '../../reducers/template/TemplateActionCreator';
 import {ProfileLoadingSpinner} from '../home/profile/profile-loading-spinner_module';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 /**
@@ -96,7 +97,7 @@ class AdminClientModule extends React.Component<AdminClientProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminClientDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AdminClientDispatch {
         return {
             getNotifications: (user, pass) => {
                 dispatch(AdminActionCreator.AsyncRequestNotifications());

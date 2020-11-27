@@ -17,6 +17,7 @@ import Grid from '@material-ui/core/Grid';
 import ReplayIcon from '@material-ui/icons/Replay';
 import {ViewProfileUpdateDialog} from './view-profile-update-dialog_module';
 import TextField from '@material-ui/core/TextField';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ViewProfileOverviewProps {
@@ -54,7 +55,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ViewProfileOverviewDispatch {
         return {
             generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, '2')),
             setDescription: (description, viewProfileId) => dispatch(ViewProfileActionCreator.AsyncSetDescription(description, viewProfileId))
@@ -143,7 +144,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                         />
                     </div>
                     <div className="col-md-6">
-                        <Grid container direction={'column'} spacing={16}>
+                        <Grid container direction={'column'} spacing={2}>
                             <Grid item>
                                 <Button
                                     variant={'contained'}
@@ -207,4 +208,4 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
  * @author nt
  * @since 11.09.2017
  */
-export const ViewProfileOverview: React.ComponentClass<ViewProfileOverviewLocalProps> = connect(ViewProfileOverviewModule.mapStateToProps, ViewProfileOverviewModule.mapDispatchToProps)(ViewProfileOverviewModule);
+export const ViewProfileOverview: React.ComponentClass<ViewProfileOverviewLocalProps> = connect(ViewProfileOverviewModule.mapStateToProps, ViewProfileOverviewModule.mapDispatchToProps)(ViewProfileOverviewModule) as any;

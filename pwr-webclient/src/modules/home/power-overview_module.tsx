@@ -15,11 +15,12 @@ import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
 import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
-import {COOKIE_INITIALS_NAME} from '../../model/PwrConstants';
+import {COOKIE_INITIALS_NAME, getRandomGreeting} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
 import {isNullOrUndefined} from 'util';
 import {PwrRaisedButton} from '../general/pwr-raised-button';
 import Add from '@material-ui/icons/Add';
+import {ThunkDispatch} from 'redux-thunk';
 
 /**
  * Properties that are managed by react-redux.
@@ -51,6 +52,7 @@ interface PowerOverviewLocalProps {
  */
 interface PowerOverviewLocalState {
     createViewDialogOpen: boolean;
+    greeting: string;
 }
 
 /**
@@ -82,7 +84,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): PowerOverviewDispatch {
         return {
             requestSingleProfile: function (initials: string) {
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
@@ -92,7 +94,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
         if (!this.props.loggedInUser || !initials) {
             this.props.navigateTo(Paths.APP_ROOT);
@@ -109,7 +111,8 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
 
     private resetLocalState = () => {
         this.state = {
-            createViewDialogOpen: false
+            createViewDialogOpen: false,
+            greeting: getRandomGreeting()
         };
     };
 
@@ -126,7 +129,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                 <div className="col-md-5 col-md-offset-1">
                     <div className="row">
                         <div className="col-md-12">
-                            <BaseDataDashboardElement/>
+                            <BaseDataDashboardElement greeting={this.state.greeting}/>
                         </div>
                         <div className="col-md-12">
                             <CommonSkillsDashboardElement/>
@@ -189,4 +192,4 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
  * @author nt
  * @since 22.05.2017
  */
-export const PowerOverview: React.ComponentClass<PowerOverviewLocalProps> = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(PowerOverviewModule);
+export const PowerOverview = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(PowerOverviewModule);

@@ -13,6 +13,7 @@ import {ViewCategory} from '../../model/view/ViewCategory';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {Paths} from '../../Paths';
 import {ViewProfileServiceClient} from '../../clients/ViewProfileServiceClient';
+import {ThunkDispatch} from 'redux-thunk';
 
 const viewProfileClient = ViewProfileServiceClient.instance();
 export namespace ViewProfileActionCreator {
@@ -67,14 +68,14 @@ export namespace ViewProfileActionCreator {
         };
     }
 
-    function succeedAndRead(viewProfileResponse: ViewProfile, dispatch: redux.Dispatch<ApplicationState>) {
+    function succeedAndRead(viewProfileResponse: ViewProfile, dispatch: redux.Dispatch) {
         let viewProfile: ViewProfile = new ViewProfile(viewProfileResponse);
         dispatch(SetViewProfile(viewProfile));
         dispatch(CrossCuttingActionCreator.endRequest());
     }
 
     export function AsyncCreateViewProfile(name: string, description: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let body = {
@@ -91,7 +92,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncCreateChangedViewProfile(initials: string, oldId: string, newName: string, newDescription: string, keepOld: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let body = {
                 name: newName,
@@ -108,7 +109,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncMoveEntry(id: string, movableEntry: string, sourceIndex: number, targetIndex: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(SetSortInProgress(true));
@@ -123,7 +124,7 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncMoveNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number,
                                          movableEntry: string, sourceIndex: number, targetIndex: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(SetSortInProgress(true));
@@ -138,7 +139,7 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncToggleNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number,
                                            toggleableEntry: string, index: number, isEnabled: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.patchToggleNestedEntry(initials, id, container, containerIndex, toggleableEntry, index, isEnabled)
@@ -150,7 +151,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncToggleEntry(id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.patchToggleEntry(initials, id, toggleableEntry, index, isEnabled)
@@ -162,7 +163,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncAutoSortEntry(id: string, entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
@@ -175,7 +176,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncToggleSkill(viewProfileId: string, skillName: string, isEnabled: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'skill-name': skillName}};
@@ -188,7 +189,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncSetDisplayCategory(viewProfileId: string, skillName: string, newDisplayCategoryName: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {
@@ -207,7 +208,7 @@ export namespace ViewProfileActionCreator {
 
     export function AsyncAutoSortNestedEntry(id: string, container: string, containerIndex: number,
                                              entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
@@ -221,7 +222,7 @@ export namespace ViewProfileActionCreator {
 
 
     export function AsyncDeleteViewProfile(id: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.deleteViewProfile(initials, id)
@@ -235,7 +236,7 @@ export namespace ViewProfileActionCreator {
     }
 
     function AsyncLoadViewProfile(id: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.getViewProfile(initials, id)
                 .then((response) => succeedAndRead(response, dispatch))
@@ -246,7 +247,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncGenerateDocX(viewProfileId: string, templateId: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             viewProfileClient.postReport(initials, viewProfileId, templateId)
@@ -259,7 +260,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncUpdateViewProfile(viewProfileId: string, description: string, name: string, charsPerLine: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             let data = {
                 viewDescription: description,
@@ -279,7 +280,7 @@ export namespace ViewProfileActionCreator {
      * Loads all view profiles for the consultant that is currently logged in
      */
     export function AsyncLoadAllViewProfiles() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             dispatch(ClearViewProfiles());
             dispatch(CrossCuttingActionCreator.startRequest());
@@ -292,7 +293,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncSetDescription(description: string, viewProfileId: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             dispatch(CrossCuttingActionCreator.startRequest());
             let config: AxiosRequestConfig = {headers: {'Content-Type': 'text/plain'}};
@@ -305,7 +306,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncGetParentCategories(skill: ViewSkill) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             viewProfileClient.getParentCategories(skill.name)
                 .then((response) => dispatch(SetParentForSkill(response)))
                 .catch((error) => console.error(error))
@@ -315,7 +316,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncToggleVersion(id: string, skillName: string, versionName: string, isEnabled: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'skill-name': skillName, 'version-name': versionName}};
             viewProfileClient.patchToggleVersion(initials, id, skillName, versionName, isEnabled, config)

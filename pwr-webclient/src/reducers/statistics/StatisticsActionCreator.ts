@@ -22,6 +22,8 @@ import {NameEntity} from '../profile-new/profile/model/NameEntity';
 import {ProfileElementType} from '../../Store';
 import {AbstractAction} from '../BaseActions';
 import {StatisticsServiceClient} from '../../clients/StatisticsServiceClient';
+import {AnyAction} from 'redux';
+import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 
 const statisticsClient = StatisticsServiceClient.instance();
 
@@ -91,7 +93,7 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncCheckAvailability() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.headStatisticsServiceAvailable()
                 .then((response: AxiosResponse) => dispatch(StatisticsActionCreator.StatisticsAvailable()))
                 .catch(error => dispatch(StatisticsActionCreator.StatisticsNotAvailable()));
@@ -99,7 +101,7 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncRequestSkillUsages() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getSkillUsagesAbsolute()
                 .then(metrics => dispatch(StatisticsActionCreator.ReceiveSkillUsageMetrics(metrics.map(value => SkillUsageMetric.fromAPI(value)))))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
@@ -119,7 +121,7 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncGetProfileStatistics(initials: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getProfileStatistics(initials)
                 .then((metrics) => dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(metrics))))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
@@ -129,7 +131,7 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncRequestNetwork() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getKMedProfileNetwork()
                 .then((network) => dispatch(StatisticsActionCreator.ReceiveNetwork(Network.fromAPI(network))))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
@@ -139,7 +141,7 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncRequestConsultantClusterInfo(initials: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getConsultantClusterInfo(initials)
                 .then((info) =>
                     dispatch(StatisticsActionCreator.ReceiveConsultantClusterInfo(ConsultantClusterInfo.fromAPI(info))))
@@ -150,7 +152,7 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncRequestScatterSkills() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getScatterSkills()
                 .then((skills) => dispatch(StatisticsActionCreator.ReceiveScatterSkills(Immutable.List<ScatterSkill>(skills.map(value => ScatterSkill.fromAPI(value))))))
                 .then((skills) => dispatch(StatisticsActionCreator.StatisticsAvailable()))
@@ -163,11 +165,11 @@ export class StatisticsActionCreator {
      * Requests name entity info unless the info is already available in the store.
      * @param nameEntity
      * @param type
-     * @returns {(dispatch:redux.Dispatch<ApplicationState>, getState:()=>ApplicationState)=>undefined}
+     * @returns {(dispatch:redux.Dispatch, getState:()=>ApplicationState)=>undefined}
      * @constructor
      */
     public static AsyncRequestNameEntityUsageInfo(nameEntity: NameEntity, type: ProfileElementType) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let state = getState();
             if (!state.statisticsReducer.nameEntityUsageInfo().has(nameEntity)) {
                 let config: AxiosRequestConfig = {
@@ -187,7 +189,7 @@ export class StatisticsActionCreator {
     }
 
     public static AsyncRequestSkillUsageInfo(skillName: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let state = getState();
             if (!state.statisticsReducer.skillUsageInfo().has(skillName)) {
                 statisticsClient.getSkillUsageInfo(skillName)

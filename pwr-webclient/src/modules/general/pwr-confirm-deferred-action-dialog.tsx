@@ -45,7 +45,7 @@ class PwrConfirmDeferredActionDialogModule extends React.Component<ConfirmDeferr
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConfirmDeferredPropsDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch): ConfirmDeferredPropsDispatch {
         return {
             confirmAction: () => dispatch(confirmDeferredAction()),
             rejectAction: () => dispatch(rejectDeferredAction())
@@ -86,7 +86,7 @@ class PwrConfirmDeferredActionDialogModule extends React.Component<ConfirmDeferr
     }
 }
 
-export const PwrConfirmDeferredActionDialog: React.ComponentClass<ConfirmDeferredLocalProps> =
+export const PwrConfirmDeferredActionDialog =
     connect(
         PwrConfirmDeferredActionDialogModule.mapStateToProps,
         PwrConfirmDeferredActionDialogModule.mapDispatchToProps

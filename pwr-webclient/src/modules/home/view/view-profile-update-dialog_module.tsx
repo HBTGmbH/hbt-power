@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface UpdateProps {
     initials: string;
@@ -47,7 +48,7 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): UpdateDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): UpdateDispatch {
         return {
             updateViewProfile: (initials, oldId, newName, newDescription, keepOld) =>
                 dispatch(ViewProfileActionCreator.AsyncCreateChangedViewProfile(initials, oldId, newName, newDescription, keepOld)),
@@ -136,4 +137,4 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
     }
 }
 
-export const ViewProfileUpdateDialog: React.ComponentClass<UpdateLocalProps> = connect(ViewProfileUpdateDialog_module.mapStateToProps, ViewProfileUpdateDialog_module.mapDispatchToProps)(ViewProfileUpdateDialog_module);
+export const ViewProfileUpdateDialog: React.ComponentClass<UpdateLocalProps> = connect(ViewProfileUpdateDialog_module.mapStateToProps, ViewProfileUpdateDialog_module.mapDispatchToProps)(ViewProfileUpdateDialog_module) as any;

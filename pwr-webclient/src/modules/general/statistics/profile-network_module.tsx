@@ -8,6 +8,7 @@ import {Network} from '../../../model/statistics/Network';
 import * as vis from 'vis';
 import {Edge, Node} from 'vis';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileNetworkGraphProps {
     network: Network;
@@ -50,7 +51,7 @@ class ProfileNetworkGraphModule extends React.Component<ProfileNetworkGraphProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileNetworkGraphDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileNetworkGraphDispatch {
         return {};
     }
 
@@ -172,9 +173,4 @@ class ProfileNetworkGraphModule extends React.Component<ProfileNetworkGraphProps
     }
 }
 
-/**
- * @see ProfileNetworkGraphModule
- * @author nt
- * @since 22.06.2017
- */
-export const ProfileNetworkGraph: React.ComponentClass<ProfileNetworkGraphLocalProps> = connect(ProfileNetworkGraphModule.mapStateToProps, ProfileNetworkGraphModule.mapDispatchToProps)(ProfileNetworkGraphModule);
+export const ProfileNetworkGraph = connect(ProfileNetworkGraphModule.mapStateToProps, ProfileNetworkGraphModule.mapDispatchToProps)(ProfileNetworkGraphModule);

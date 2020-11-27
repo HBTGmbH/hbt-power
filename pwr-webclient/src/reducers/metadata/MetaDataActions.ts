@@ -12,6 +12,7 @@ import {ViewProfileServiceClient} from '../../clients/ViewProfileServiceClient';
 import {StatisticsServiceClient} from '../../clients/StatisticsServiceClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
 import {ReportServiceClient} from '../../clients/ReportServiceClient';
+import {ThunkDispatch} from 'redux-thunk';
 
 export interface AddOrReplaceBuildInfoAction extends AbstractAction {
     service: string;
@@ -45,7 +46,7 @@ export namespace MetaDataActionCreator {
 
 
     export function FetchBuildInfo(service: string, serviceUrl: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             axios.get(serviceUrl).then(response => {
                 let apiBuildInfo = response.data as APIBuildInfo;
                 dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(apiBuildInfo)));
@@ -56,16 +57,16 @@ export namespace MetaDataActionCreator {
         };
     }
 
-    const available = (service: string, dispatch: redux.Dispatch<ApplicationState>) => {
+    const available = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
         return buildInfo => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(buildInfo)));
     };
 
-    const notAvailable = (service: string, dispatch: redux.Dispatch<ApplicationState>) => {
+    const notAvailable = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
         return error => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.offline(service)));
     };
 
     function FetchClientBuildInfo() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             clientClient.getClientBuildInfo()
                 .then(value => dispatch(AddOrReplaceClientInfo(value)))
                 .catch(error => {
@@ -76,7 +77,7 @@ export namespace MetaDataActionCreator {
     }
 
     export function FetchAllBuildInfo() {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.getBuildInfo()
                 .then(available(MetaDataStore.KEY_PROFILE, dispatch))
                 .catch(notAvailable(MetaDataStore.KEY_PROFILE, dispatch));

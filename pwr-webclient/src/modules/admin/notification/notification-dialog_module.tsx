@@ -24,6 +24,7 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {provideValueTo} from '../../../utils/ReactUtils';
 import formatString = StringUtils.formatString;
+import {ThunkDispatch} from 'redux-thunk';
 
 // TODO radio button ohne form
 /**
@@ -99,7 +100,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationDialogDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): NotificationDialogDispatch {
         return {
             executeDeleteAction: (id: number) => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id)),
             executePatchAction: (notification) => dispatch(AdminActionCreator.AsyncNotificationInvokeEdit(notification)),
@@ -320,4 +321,4 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
  * @author nt
  * @since 31.05.2017
  */
-export const NotificationDialog: React.ComponentClass<NotificationDialogLocalProps> = connect(NotificationDialogModule.mapStateToProps, NotificationDialogModule.mapDispatchToProps)(NotificationDialogModule);
+export const NotificationDialog = connect(NotificationDialogModule.mapStateToProps, NotificationDialogModule.mapDispatchToProps)(NotificationDialogModule);

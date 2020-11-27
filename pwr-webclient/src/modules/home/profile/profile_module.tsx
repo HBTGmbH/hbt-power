@@ -30,6 +30,7 @@ import {Projects} from './elements/project/projects_module';
 import {ProfileSkills} from './elements/skills/profile-skills_module';
 import {CrossCuttingAsyncActionCreator} from '../../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 import {formatFullLocalizedDate, formatToShortDisplay} from '../../../utils/DateUtil';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ProfileProps {
@@ -80,7 +81,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileDispatch {
         return {
             loadFullProfile: (initials) => dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials)),
             preFetchSuggestions: () => dispatch(SuggestionAsyncActionCreator.requestAllNameEntities())
@@ -220,7 +221,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     </Grid>
 
 
-                    <Grid container spacing={16} className="mui-margin">
+                    <Grid container spacing={10} className="mui-margin">
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'LANGUAGE'}
                                                  renderSingleElementInfo={this.renderLanguageInfo}/>
@@ -268,4 +269,4 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 }
 
-export const ConsultantProfile: React.ComponentClass<ProfileLocalProps> = connect(ProfileModule.mapStateToProps, ProfileModule.mapDispatchToProps)(ProfileModule);
+export const ConsultantProfile: React.ComponentClass<ProfileLocalProps> = connect(ProfileModule.mapStateToProps, ProfileModule.mapDispatchToProps)(ProfileModule) as any;

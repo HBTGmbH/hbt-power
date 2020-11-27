@@ -5,6 +5,7 @@ import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {SortableEntryField, SortableEntryType} from '../../../../model/view/NameComparableType';
 import {ViewProfileActionCreator} from '../../../../reducers/view/ViewProfileActionCreator';
 import {EntrySortButton} from './entry-sort-button_module';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ComparableNestedEntryButtonProps {
 
@@ -42,7 +43,7 @@ class ComparableNestedEntryButtonModule extends React.Component<ComparableNested
         return {};
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ComparableNestedEntryButtonDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ComparableNestedEntryButtonDispatch {
         return {
             sortNestedEntries: (id, container, containerIndex, type, field, doAscending) => {
                 dispatch(ViewProfileActionCreator.AsyncAutoSortNestedEntry(id, container, containerIndex, type, field, doAscending));
@@ -73,4 +74,4 @@ class ComparableNestedEntryButtonModule extends React.Component<ComparableNested
  * @author nt
  * @since 12.09.2017
  */
-export const ComparableNestedEntryButton: React.ComponentClass<ComparableNestedEntryButtonLocalProps> = connect(ComparableNestedEntryButtonModule.mapStateToProps, ComparableNestedEntryButtonModule.mapDispatchToProps)(ComparableNestedEntryButtonModule);
+export const ComparableNestedEntryButton: React.ComponentClass<ComparableNestedEntryButtonLocalProps> = connect(ComparableNestedEntryButtonModule.mapStateToProps, ComparableNestedEntryButtonModule.mapDispatchToProps)(ComparableNestedEntryButtonModule) as any;

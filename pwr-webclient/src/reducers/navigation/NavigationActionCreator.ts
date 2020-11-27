@@ -1,11 +1,14 @@
 import {ActionType} from '../ActionType';
-import * as redux from 'redux';
-import {ApplicationState, PWR_HISTORY} from '../reducerIndex';
+import {ApplicationState} from '../reducerIndex';
 import {Paths} from '../../Paths';
 import {storeHasUnsavedChanges} from '../../utils/PwrStoreUtils';
 import {Alerts} from '../../utils/Alerts';
 import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
 import {AbstractAction} from '../BaseActions';
+import {ThunkDispatch} from 'redux-thunk';
+
+import createHistory from "history/createBrowserHistory";
+export const PWR_HISTORY = createHistory();
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;
@@ -58,8 +61,7 @@ export namespace NavigationActionCreator {
     }
 
 
-    function navigate(to: string, dispatch: redux.Dispatch<ApplicationState>): void {
-        console.debug('Navigating to ' + to);
+    function navigate(to: string, dispatch: ThunkDispatch<any, any, any>): void {
         PWR_HISTORY.push(to);
         dispatch(SetCurrentLocation(to));
     }
@@ -70,7 +72,7 @@ export namespace NavigationActionCreator {
      * @constructor
      */
     export function AsyncNavigateTo(target: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let state: ApplicationState = getState();
             let currentLocation = state.navigationSlice.currentLocation();
             const hasChanges = storeHasUnsavedChanges(getState());
@@ -91,7 +93,7 @@ export namespace NavigationActionCreator {
     }
 
     export function AsyncContinueToTarget() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let target: string = getState().navigationSlice.targetLocation();
             switch (target) {
                 case Paths.USER_SPECIAL_LOGOUT: {

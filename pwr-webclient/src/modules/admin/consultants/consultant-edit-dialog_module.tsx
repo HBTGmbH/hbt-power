@@ -10,6 +10,7 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import {PwrIconButton} from '../../general/pwr-icon-button';
+import {ThunkDispatch} from 'redux-thunk';
 
 /**
  * Properties that are managed by react-redux.
@@ -79,7 +80,7 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantEditDialogDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ConsultantEditDialogDispatch {
         return {
             redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials)),
             updateConsultant: (info) => dispatch(AdminActionCreator.AsyncUpdateConsultant(info)),
@@ -195,4 +196,4 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
  * @author nt
  * @since 08.06.2017
  */
-export const ConsultantEditDialog: React.ComponentClass<ConsultantEditDialogLocalProps> = connect(ConsultantEditDialogModule.mapStateToProps, ConsultantEditDialogModule.mapDispatchToProps)(ConsultantEditDialogModule);
+export const ConsultantEditDialog = connect(ConsultantEditDialogModule.mapStateToProps, ConsultantEditDialogModule.mapDispatchToProps)(ConsultantEditDialogModule);

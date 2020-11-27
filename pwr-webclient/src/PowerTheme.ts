@@ -4,7 +4,6 @@ import {createMuiTheme} from '@material-ui/core';
 
 const newPowerTheme: ThemeOptions = {
     typography: {
-        useNextVariants: true,
         fontSize: 24,
         fontFamily: [
             'Roboto',

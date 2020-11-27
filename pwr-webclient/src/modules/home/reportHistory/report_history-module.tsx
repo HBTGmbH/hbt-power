@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import * as redux from 'redux';
 import {connect} from 'react-redux';
 import {ReportData} from '../../../model/view/ReportData';
 import {ReportAsyncActionCreator} from '../../../reducers/report/ReportAsyncActionCreator';
@@ -16,7 +15,7 @@ import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
-import {ReportServiceClient} from '../../../clients/ReportServiceClient';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ReportHistoryLocalProps {
 }
@@ -63,7 +62,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         } as ReportHistoryProps;
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportHistoryDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportHistoryDispatch {
         return {
             loadAllReportData: (initials: string) => dispatch(ReportAsyncActionCreator.loadAllReportData(initials)),
             loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllFiles),
@@ -72,7 +71,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.loadAllData();
     };
 
@@ -207,5 +206,5 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
 
 }
 
-export const ReportHistory: React.ComponentClass<ReportHistoryLocalProps> = connect(ReportHistoryModule.mapStateToProps, ReportHistoryModule.mapDispatchToProps)(ReportHistoryModule);
+export const ReportHistory = connect(ReportHistoryModule.mapStateToProps, ReportHistoryModule.mapDispatchToProps)(ReportHistoryModule);
 

@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button';
 import {SkillInfo} from './skill-info_module';
 import Badge from '@material-ui/core/Badge';
 import {Alerts} from '../../../../../utils/Alerts';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
@@ -58,7 +59,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileSkillsDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileSkillsDispatch {
         return {
             deleteSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.deleteProfileSkill(initials, skill)),
             saveSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.saveProfileSkill(initials, skill)),
@@ -140,7 +141,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     };
 
     private toSkillList = (skills: Array<ProfileSkill>, caption: String) => {
-        return (<div>
+        return (<React.Fragment>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                 <PwrFormSubCaption>{caption}</PwrFormSubCaption>
             </Grid>
@@ -150,12 +151,12 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
             </Grid>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                 <div className="Pwr-Content-Container">
-                    <Grid container spacing={16}>
+                    <Grid container spacing={1}>
                         {skills.map(s => this.toSkill(s))}
                     </Grid>
                 </div>
             </Grid>
-        </div>);
+        </React.Fragment>);
     }
 
     private toSkillOverview = () => {
@@ -173,7 +174,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     }
 
     render() {
-        return (<Grid container spacing={8}>
+        return (<Grid container spacing={1}>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                 <PwrFormSubCaption>{PowerLocalize.get('Profile.Skills.AddSkillCaption')}</PwrFormSubCaption>
             </Grid>
@@ -196,4 +197,4 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     }
 }
 
-export const ProfileSkills = withTheme()(connect(ProfileSkillsModule.mapStateToProps, ProfileSkillsModule.mapDispatchToProps)(ProfileSkillsModule));
+export const ProfileSkills = withTheme((connect(ProfileSkillsModule.mapStateToProps, ProfileSkillsModule.mapDispatchToProps)(ProfileSkillsModule)));

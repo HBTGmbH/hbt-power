@@ -9,6 +9,7 @@ import {ApplicationState} from '../../reducers/reducerIndex';
 import Paper from '@material-ui/core/Paper';
 import {Color} from '../../utils/ColorUtil';
 import {Profile} from '../../reducers/profile-new/profile/model/Profile';
+import {ThunkDispatch} from 'redux-thunk';
 
 const Recharts = require('recharts');
 
@@ -42,7 +43,7 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileStatisticsDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileStatisticsDispatch {
         return {};
     }
 
@@ -115,4 +116,4 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
  * @author nt
  * @since 15.06.2017
  */
-export const ProfileStatistics: React.ComponentClass<ProfileStatisticsLocalProps> = connect(ProfileStatisticsModule.mapStateToProps, ProfileStatisticsModule.mapDispatchToProps)(ProfileStatisticsModule);
+export const ProfileStatistics = connect(ProfileStatisticsModule.mapStateToProps, ProfileStatisticsModule.mapDispatchToProps)(ProfileStatisticsModule);

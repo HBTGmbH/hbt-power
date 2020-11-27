@@ -12,7 +12,7 @@ export namespace TemplateReducer {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
     import SetPreviewAction = TemplateActions.SetPreviewAction;
 
-    export function reduce(store: TemplateStore, action: AbstractAction) {
+    export function reduce(store: TemplateStore, action: AbstractAction): TemplateStore {
         if (isNullOrUndefined(store)) {
             return TemplateStore.empty();
         }
@@ -35,7 +35,7 @@ export namespace TemplateReducer {
             }
             case ActionType.TemplateRequestFailed: {
                 console.error('TemplateRequestFailed');
-                return store.templates();
+                return store;
             }
             case ActionType.SetPreview : {
                 let act: SetPreviewAction = action as SetPreviewAction;

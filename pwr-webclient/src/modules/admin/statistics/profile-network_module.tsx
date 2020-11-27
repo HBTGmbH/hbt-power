@@ -4,6 +4,7 @@ import * as redux from 'redux';
 import {Network} from '../../../model/statistics/Network';
 import {ProfileNetworkGraph} from '../../general/statistics/profile-network_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ProfileNetworkProps {
@@ -48,7 +49,7 @@ class ProfileNetworkModule extends React.Component<ProfileNetworkProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileNetworkDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileNetworkDispatch {
         return {};
     }
 
@@ -66,4 +67,4 @@ class ProfileNetworkModule extends React.Component<ProfileNetworkProps
  * @author nt
  * @since 19.06.2017
  */
-export const ProfileNetwork: React.ComponentClass<ProfileNetworkLocalProps> = connect(ProfileNetworkModule.mapStateToProps, ProfileNetworkModule.mapDispatchToProps)(ProfileNetworkModule);
+export const ProfileNetwork = connect(ProfileNetworkModule.mapStateToProps, ProfileNetworkModule.mapDispatchToProps)(ProfileNetworkModule);

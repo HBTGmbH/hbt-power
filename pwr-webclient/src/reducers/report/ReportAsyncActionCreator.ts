@@ -11,7 +11,7 @@ export class ReportAsyncActionCreator {
 
 
     public static loadAllReportData(initials: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch) {
             reportServiceClient.getReportDataForUser(initials).then(reportDataList => {
                     dispatch(reportLoadAction(reportDataList));
                 }
@@ -20,7 +20,7 @@ export class ReportAsyncActionCreator {
     }
 
     public static deleteReportFile(id: number, cb: () => void) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch) {
             reportServiceClient.deleteReport(id).then(res => {
                 cb();
             });
@@ -28,7 +28,7 @@ export class ReportAsyncActionCreator {
     }
 
     public static getReportFile(reportData: ReportData) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch) {
             reportServiceClient.getReport(reportData.id)
                 .then(response => ReportAsyncActionCreator.downloadReportFile(response, reportData))
 

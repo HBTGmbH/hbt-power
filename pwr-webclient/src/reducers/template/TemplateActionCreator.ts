@@ -10,6 +10,7 @@ import {Alerts} from '../../utils/Alerts';
 import {TemplateClient} from '../../clients/TemplateClient';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 import {ReportServiceClient} from '../../clients/ReportServiceClient';
+import {ThunkDispatch} from 'redux-thunk';
 
 const templateClient = TemplateClient.instance();
 const reportClient = ReportServiceClient.instance();
@@ -23,12 +24,12 @@ export class TemplateActionCreator {
      * @param {Dispatch<ApplicationState>} dispatch
      * @constructor
      */
-    private static TemplateReceived(templateResponse: Template, dispatch: redux.Dispatch<ApplicationState>) {
+    private static TemplateReceived(templateResponse: Template, dispatch: redux.Dispatch) {
         let template: Template = new Template(templateResponse);
         dispatch(TemplateActions.SetTemplate(template));
     }
 
-    private static PreviewReceived(id: string, response: AxiosResponse, dispatch: redux.Dispatch<ApplicationState>) {
+    private static PreviewReceived(id: string, response: AxiosResponse, dispatch: redux.Dispatch) {
         dispatch(TemplateActions.SetPreview(id, 'hardcoded filename', 'hardcoded content', response.data));
     }
 
@@ -50,7 +51,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncChangeTemplate(template: Template) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             templateClient.changeTemplate(template.id, template)
                 .then((response) => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
 
@@ -61,7 +62,7 @@ export class TemplateActionCreator {
 
     @makeDeferrable(ActionType.AsyncDeleteTemplate)
     public static AsyncDeleteTemplate(id: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             templateClient.deleteTemplate(id)
                 .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
 
@@ -73,7 +74,7 @@ export class TemplateActionCreator {
 
 
     private static AsyncLoadTemplate(id: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             templateClient.getTemplateById(id)
                 .then((template) => TemplateActionCreator.TemplateReceived(template, dispatch))
@@ -87,7 +88,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncLoadAllTemplates() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(TemplateActions.ClearTemplates());
             templateClient.getAllTemplates()
@@ -101,7 +102,7 @@ export class TemplateActionCreator {
 
 
     public static AsyncLoadPreview(id: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             if (id != '') {
                 dispatch(CrossCuttingActionCreator.startRequest());
                 templateClient.getPreview(id)
@@ -116,7 +117,7 @@ export class TemplateActionCreator {
 
 
     public static AsyncLoadAllPreviews() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             templateClient.getAllPreviews()
                 .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
@@ -127,7 +128,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncLoadAllFiles() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             templateClient.getAllFiles()
                 .then((response) => dispatch(CrossCuttingActionCreator.endRequest()))
@@ -138,7 +139,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncUploadFileAsTemplate(file: any, name: string, description: string, createUser: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('templateSlice', JSON.stringify({

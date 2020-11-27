@@ -12,6 +12,7 @@ import {Paths} from '../../../Paths';
 import {getImagePath} from '../../../API_CONFIG';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import OpenInNew from '@material-ui/icons/OpenInNew';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface MissingCommonDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -39,7 +40,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): MissingCommonDashboardElementDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): MissingCommonDashboardElementDispatch {
         return {
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
@@ -95,4 +96,4 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
  * @author nt
  * @since 27.09.2017
  */
-export const MissingCommonDashboardElement: React.ComponentClass<MissingCommonDashboardElementLocalProps> = connect(MissingCommonDashboardElementModule.mapStateToProps, MissingCommonDashboardElementModule.mapDispatchToProps)(MissingCommonDashboardElementModule);
+export const MissingCommonDashboardElement = connect(MissingCommonDashboardElementModule.mapStateToProps, MissingCommonDashboardElementModule.mapDispatchToProps)(MissingCommonDashboardElementModule);

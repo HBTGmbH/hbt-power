@@ -16,6 +16,7 @@ import {newIndustrialSector} from './model/IndustrialSector';
 import {newTraining} from './model/FurtherTraining';
 import {Dispatch} from 'redux';
 import {AbstractAction} from '../../BaseActions';
+import {ThunkDispatch} from 'redux-thunk';
 
 export class ProfileTypeDataMapper {
 
@@ -73,7 +74,7 @@ export class ProfileTypeDataMapper {
         return null;
     }
 
-    public static getUpdateFunction(type: ProfileEntryType, dispatch: Dispatch<AbstractAction>) {
+    public static getUpdateFunction(type: ProfileEntryType, dispatch: ThunkDispatch<any, any, any>) {
         switch (type) {
             case 'LANGUAGE': {
                 return (initials, entry) => {
@@ -114,7 +115,7 @@ export class ProfileTypeDataMapper {
         return null;
     }
 
-    public static getDeleteFunction(type: ProfileEntryType, dispatch: Dispatch<ApplicationState>) {
+    public static getDeleteFunction(type: ProfileEntryType, dispatch: ThunkDispatch<any, any, any>) {
         switch (type) {
             case 'LANGUAGE': {
                 return (initials, id) => {

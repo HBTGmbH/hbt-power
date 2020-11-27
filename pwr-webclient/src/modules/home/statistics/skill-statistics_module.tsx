@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
 import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
@@ -8,11 +7,11 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import Button from '@material-ui/core/Button/Button';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Fab from '@material-ui/core/Fab/Fab';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
+import {ThunkDispatch} from 'redux-thunk';
 
 const Recharts = require('recharts');
 
@@ -61,7 +60,7 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillStatisticsDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): SkillStatisticsDispatch {
         return {
             loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
         };
@@ -200,4 +199,4 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
  * @author nt
  * @since 15.06.2017
  */
-export const SkillStatistics: React.ComponentClass<SkillStatisticsLocalProps> = connect(SkillStatisticsModule.mapStateToProps, SkillStatisticsModule.mapDispatchToProps)(SkillStatisticsModule);
+export const SkillStatistics: React.ComponentClass<SkillStatisticsLocalProps> = connect(SkillStatisticsModule.mapStateToProps, SkillStatisticsModule.mapDispatchToProps)(SkillStatisticsModule) as any;

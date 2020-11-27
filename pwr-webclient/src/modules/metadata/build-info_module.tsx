@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {BuildInfo} from '../../model/metadata/BuildInfo';
 import {ListSubheader} from '@material-ui/core';
@@ -9,6 +8,7 @@ import {MetaDataActionCreator} from '../../reducers/metadata/MetaDataActions';
 import {Comparators} from '../../utils/Comparators';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface BuildInfoProps {
@@ -43,7 +43,7 @@ class BuildInfoModule extends React.Component<BuildInfoProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BuildInfoDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): BuildInfoDispatch {
         return {
             fetchBuildInfo: () => dispatch(MetaDataActionCreator.FetchAllBuildInfo())
         };
@@ -88,4 +88,4 @@ class BuildInfoModule extends React.Component<BuildInfoProps
  * @author nt
  * @since 21.08.2017
  */
-export const BottomBuildInfo: React.ComponentClass<BuildInfoLocalProps> = connect(BuildInfoModule.mapStateToProps, BuildInfoModule.mapDispatchToProps)(BuildInfoModule);
+export const BottomBuildInfo: React.ComponentClass<BuildInfoLocalProps> = connect(BuildInfoModule.mapStateToProps, BuildInfoModule.mapDispatchToProps)(BuildInfoModule) as any;

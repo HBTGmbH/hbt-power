@@ -1,8 +1,8 @@
-import {applyMiddleware, combineReducers, createStore, Reducer, Store} from 'redux';
+import {Action, applyMiddleware, combineReducers, createStore, Reducer, Store} from 'redux';
 import {AdminReducer} from './admin/AdminReducer';
 import {StatisticsReducer} from './statistics/StatisticsReducer';
 
-import thunkMiddleware from 'redux-thunk';
+import thunkMiddleware, {ThunkMiddleware} from 'redux-thunk';
 import {SkillReducer} from './skill/SkillReducer';
 import {MetaDataReducer} from './metadata/MetaDataReducer';
 import {NavigationReducer} from './navigation/NavigationReducer';
@@ -14,8 +14,6 @@ import {SkillStore} from '../model/skill/SkillStore';
 import {MetaDataStore} from '../model/metadata/MetaDataStore';
 import {NavigationStore} from '../model/navigation/NavigationStore';
 import {ViewProfileStore} from '../model/view/ViewProfileStore';
-import {routerMiddleware, RouterState} from 'react-router-redux';
-import createHistory from 'history/createBrowserHistory';
 import {CrossCuttingReducer} from './crosscutting/CrossCuttingReducer';
 import {CrossCuttingStore} from '../model/crosscutting/CrossCuttingStore';
 import {TemplateReducer} from './template/TemplateReducer';
@@ -32,7 +30,10 @@ import {reduceReports} from './report/ReportReducer';
 import {SkillInfoStore} from './profile-skill/SkillInfoStore';
 import {reduceSkillVersions} from './profile-skill/SkillVersionReducer';
 import {TemplateStore} from './template/TemplateStore';
-
+import {AbstractAction} from './BaseActions';
+import createHistory from "history/createBrowserHistory";
+//
+// export const PWR_HISTORY = createHistory();
 
 export interface ApplicationState {
     profileStore: ProfileStore;
@@ -45,14 +46,13 @@ export interface ApplicationState {
     viewProfileSlice: ViewProfileStore;
     templateSlice: TemplateStore;
     crossCutting: CrossCuttingStore;
-    router: Reducer<RouterState>;
     deferred: DeferredStore;
     reportStore: ReportStore;
     skillVersionStore: SkillInfoStore;
 }
 
 
-const ApplicationStore: Reducer<ApplicationState> = combineReducers({
+const ApplicationStore: Reducer<ApplicationState, AbstractAction> = combineReducers({
     profileStore: reduceProfile,
     suggestionStore: reduceSuggestion,
     adminReducer: AdminReducer.reduce,
@@ -68,9 +68,6 @@ const ApplicationStore: Reducer<ApplicationState> = combineReducers({
     reportStore: reduceReports
 });
 
-export const PWR_HISTORY = createHistory();
-const reactRouterMiddleware = routerMiddleware(PWR_HISTORY);
-
 const composeEnhancers = composeWithDevTools({
     // Specify name here, actionsBlacklist, actionsCreators and other options if needed
 });
@@ -82,7 +79,7 @@ export const store: Store<ApplicationState> = createStore(
         // Async action un-wrapper MUST be before thunk, otherwise thunk won't realize its an async action
         (deferredActionMiddleware as any),
         (asyncActionUnWrapper as any),
-        thunkMiddleware,
-        reactRouterMiddleware,
+        // reactRouterMiddleware,
+        thunkMiddleware as ThunkMiddleware<ApplicationState, Action<any>>,
     ))
 );

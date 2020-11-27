@@ -1,17 +1,16 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Avatar, Button, Icon, Paper} from '@material-ui/core';
+import {Avatar, Paper} from '@material-ui/core';
 import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
-import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
 import {getImagePath} from '../../../API_CONFIG';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import OpenInNew from '@material-ui/icons/OpenInNew';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface CommonSkillsDashboardElementProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -37,7 +36,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): CommonSkillsDashboardElementDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): CommonSkillsDashboardElementDispatch {
         return {
             navigateToStatistics: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_STATISTICS_SKILLS)),
         };
@@ -85,4 +84,4 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
  * @author nt
  * @since 27.09.2017
  */
-export const CommonSkillsDashboardElement: React.ComponentClass<CommonSkillsDashboardElementLocalProps> = connect(CommonSkillsDashboardElementModule.mapStateToProps, CommonSkillsDashboardElementModule.mapDispatchToProps)(CommonSkillsDashboardElementModule);
+export const CommonSkillsDashboardElement = connect(CommonSkillsDashboardElementModule.mapStateToProps, CommonSkillsDashboardElementModule.mapDispatchToProps)(CommonSkillsDashboardElementModule);

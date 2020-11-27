@@ -15,6 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import {NameEntityInfoBox} from './name-entity-info-box';
 import {SuggestionAsyncActionCreator} from '../../../../reducers/suggestions/SuggestionAsyncActionCreator';
 import {NameEntity} from '../../../../reducers/profile-new/profile/model/NameEntity';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface NameEntityOverviewProps {
     sectors: Array<NameEntity>;
@@ -80,7 +81,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NameEntityOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): NameEntityOverviewDispatch {
         return {
             requestAllNameEntities: () => dispatch(SuggestionAsyncActionCreator.requestAllNameEntities()),
             requestNameEntityUsageInfo: (nameEntity, type) => dispatch(StatisticsActionCreator.AsyncRequestNameEntityUsageInfo(nameEntity, type)),
@@ -174,7 +175,6 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     private renderListItem = (nameEntity: NameEntity, index: number) => {
         return <ListItem button
                          onClick={(e: any) => this.handleIndexSelect(e, index)}
-                         value={index}
                          key={index}
                          className={this.isSelected(index) ? 'pwr-selected-list-item' : ''}
         >
@@ -208,7 +208,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     }
 }
 
-const connected = withTheme()(connect(NameEntityOverviewModule.mapStateToProps, NameEntityOverviewModule.mapDispatchToProps)(NameEntityOverviewModule));
+const connected = withTheme((connect(NameEntityOverviewModule.mapStateToProps, NameEntityOverviewModule.mapDispatchToProps)(NameEntityOverviewModule)));
 
 
 /**

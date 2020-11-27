@@ -10,6 +10,7 @@ import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import {ThunkDispatch} from 'redux-thunk';
 
 /**
  * Properties that are managed by react-redux.
@@ -66,7 +67,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
         return {};
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantCreateDialogDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ConsultantCreateDialogDispatch {
         return {
             createConsultant: (info) => dispatch(AdminActionCreator.AsyncCreateConsultant(info))
         };
@@ -190,4 +191,4 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
  * @author nt
  * @since 08.06.2017
  */
-export const ConsultantCreateDialog: React.ComponentClass<ConsultantCreateDialogLocalProps> = connect(ConsultantCreateDialogModule.mapStateToProps, ConsultantCreateDialogModule.mapDispatchToProps)(ConsultantCreateDialogModule);
+export const ConsultantCreateDialog = connect(ConsultantCreateDialogModule.mapStateToProps, ConsultantCreateDialogModule.mapDispatchToProps)(ConsultantCreateDialogModule);

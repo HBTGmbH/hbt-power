@@ -14,6 +14,7 @@ import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCr
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Divider from '@material-ui/core/Divider/Divider';
 import {connect} from 'react-redux';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ReportManagerInfoLocalProps {
     selectedTemplate: Template;
@@ -51,7 +52,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportManagerInfoDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportManagerInfoDispatch {
         return {
             deleteTemplate: (id: string) => dispatch(TemplateActionCreator.AsyncDeleteTemplate(id)),
             saveChanges: (template: Template) => dispatch(TemplateActionCreator.AsyncChangeTemplate(template))
@@ -262,4 +263,4 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
 }
 
 
-export const ReportManagerInfoBox: React.ComponentClass<ReportManagerInfoLocalProps> = connect(ReportManagerInfoBox_Module.mapStateToProps, ReportManagerInfoBox_Module.mapDispatchToProps)(ReportManagerInfoBox_Module);
+export const ReportManagerInfoBox = connect(ReportManagerInfoBox_Module.mapStateToProps, ReportManagerInfoBox_Module.mapDispatchToProps)(ReportManagerInfoBox_Module);

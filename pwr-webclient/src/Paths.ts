@@ -6,8 +6,6 @@ import {NavigationActionCreator} from './reducers/navigation/NavigationActionCre
 import {CONFIG} from './Config';
 import {CrossCuttingAsyncActionCreator} from './reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
-declare const POWER_APP_PATH: string;
-
 /**
  * Paths used for routing. Central point of configuration for routing information.
  */
@@ -54,7 +52,7 @@ export class Paths {
         console.info('Current history location is ', location.pathname);
         if (this.adminAvailableInCookies()) {
             console.info('Admin is available; Performing admin login!');
-            store.dispatch(AdminActionCreator.AsyncRestoreFromLocalStorage());
+            store.dispatch(AdminActionCreator.AsyncRestoreFromLocalStorage() as any);
         } else if (this.userAvailableInCookies()) {
             console.info('User restored from local storage');
             const storedInitials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
@@ -65,9 +63,9 @@ export class Paths {
                 console.log(`Requested path was '${path}', but '${path}' is not part of '${Paths.USER_BASE}'. Falling back to ${Paths.USER_HOME}`);
                 path = Paths.USER_HOME;
             }
-            store.dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(storedInitials, path));
+            store.dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(storedInitials, path) as any);
         } else {
-            store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
+            store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT) as any);
         }
     }
 

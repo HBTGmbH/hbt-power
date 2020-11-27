@@ -5,6 +5,7 @@ import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantCluster
 import {ConsultantClusterOverview} from '../../general/statistics/consultant-cluster-info_module';
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ClusterResultProps {
     consultantClusterInfo: ConsultantClusterInfo;
@@ -32,7 +33,7 @@ class ClusterResultModule extends React.Component<ClusterResultProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ClusterResultDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ClusterResultDispatch {
         return {};
     }
 
@@ -49,4 +50,4 @@ class ClusterResultModule extends React.Component<ClusterResultProps
  * @author nt
  * @since 23.06.2017
  */
-export const ClusterResult: React.ComponentClass<ClusterResultLocalProps> = connect(ClusterResultModule.mapStateToProps, ClusterResultModule.mapDispatchToProps)(ClusterResultModule);
+export const ClusterResult: React.ComponentClass<ClusterResultLocalProps> = connect(ClusterResultModule.mapStateToProps, ClusterResultModule.mapDispatchToProps)(ClusterResultModule) as any;

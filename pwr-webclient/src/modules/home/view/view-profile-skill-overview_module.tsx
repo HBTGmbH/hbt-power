@@ -19,6 +19,7 @@ import Icon from '@material-ui/core/Icon/Icon';
 import Typography from '@material-ui/core/Typography/Typography';
 import {Chip} from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ViewProfileSkillOverviewProps {
     viewProfile: ViewProfile;
@@ -67,7 +68,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileSkillOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ViewProfileSkillOverviewDispatch {
         return {
             moveEntry: (id, type, sourceIndex, targetIndex) => dispatch(ViewProfileActionCreator.AsyncMoveEntry(id, type, sourceIndex, targetIndex)),
             toggleEntry: (id, type, index, isEnabled) => {
@@ -230,4 +231,4 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
  * @author nt
  * @since 12.09.2017
  */
-export const ViewProfileSkillOverview: React.ComponentClass<ViewProfileSkillOverviewLocalProps> = connect(ViewProfileSkillOverviewModule.mapStateToProps, ViewProfileSkillOverviewModule.mapDispatchToProps)(ViewProfileSkillOverviewModule);
+export const ViewProfileSkillOverview: React.ComponentClass<ViewProfileSkillOverviewLocalProps> = connect(ViewProfileSkillOverviewModule.mapStateToProps, ViewProfileSkillOverviewModule.mapDispatchToProps)(ViewProfileSkillOverviewModule) as any;

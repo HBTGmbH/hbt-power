@@ -50,7 +50,8 @@ const styles = theme => ({
 
 const SingleButtonBase = (props: SingleButtonProps) => {
     const {classes} = props;
-    return <IconButton classes={{root: classes.root}} mini={true}
+    return <IconButton classes={{root: classes.root}}
+                       size='small'
                        onClick={() => props.starRatingProps.onRatingChange(props.position)}
                        style={getStyle(props.position, props.starRatingProps.rating)}><StarIcon/></IconButton>;
 };

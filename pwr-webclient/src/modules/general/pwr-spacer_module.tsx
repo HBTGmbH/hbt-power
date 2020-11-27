@@ -3,10 +3,10 @@ import {WithStyles, withStyles} from '@material-ui/core';
 
 const styles = theme => ({
     spacer: {
-        margin: theme.spacing.unit,
+        margin: theme.spacing(2),
     },
     doubleSpacer: {
-        margin: theme.spacing.unit * 2
+        margin: theme.spacing(2)
     }
 });
 

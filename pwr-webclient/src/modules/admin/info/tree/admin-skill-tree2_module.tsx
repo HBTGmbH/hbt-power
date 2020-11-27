@@ -20,6 +20,7 @@ import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator'
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
 import {PwrSkillVersionInfo} from '../../../general/pwr-skill-version-info_module';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface AdminSkillTree2Props {
     root: SkillTreeNode;
@@ -113,7 +114,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
         };
     };
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminSkillTree2Dispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AdminSkillTree2Dispatch {
         return {
             loadTree: () => dispatch(SkillActionCreator.AsyncLoadTree()),
             whitelistCategory: categoryId => dispatch(SkillActionCreator.AsyncWhitelistCategory(categoryId)),
@@ -542,4 +543,4 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
  * @author nt
  * @since 17.07.2017
  */
-export const AdminSkillTree2: React.ComponentClass<AdminSkillTree2LocalProps> = connect(AdminSkillTree2Module.mapStateToProps, AdminSkillTree2Module.mapDispatchToProps)(AdminSkillTree2Module);
+export const AdminSkillTree2 = connect(AdminSkillTree2Module.mapStateToProps, AdminSkillTree2Module.mapDispatchToProps)(AdminSkillTree2Module);

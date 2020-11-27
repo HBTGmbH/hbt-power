@@ -11,8 +11,7 @@ import {ConsultantCreateDialog} from './consultant-create-dialog_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
-
-const Toggle = require('react-toggle').default;
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ConsultantGridProps {
     consultantsByInitials: Immutable.Map<string, ConsultantInfo>;
@@ -50,7 +49,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantGridDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ConsultantGridDispatch {
         return {
             refreshConsultants: () => dispatch(AdminActionCreator.AsyncGetAllConsultants())
         };
@@ -141,4 +140,4 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
  * @author nt
  * @since 07.06.2017
  */
-export const ConsultantGrid: React.ComponentClass<ConsultantGridLocalProps> = connect(ConsultantGridModule.mapStateToProps, ConsultantGridModule.mapDispatchToProps)(ConsultantGridModule);
+export const ConsultantGrid = connect(ConsultantGridModule.mapStateToProps, ConsultantGridModule.mapDispatchToProps)(ConsultantGridModule);

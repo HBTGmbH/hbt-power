@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {Button, Card, CardActions, CardHeader, Icon} from '@material-ui/core';
@@ -11,6 +10,7 @@ import {ProfileGenerator} from './view-profile-generator_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ViewCardProps {
     viewProfile: ViewProfile;
@@ -53,7 +53,7 @@ class ViewCardModule extends React.Component<ViewCardProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewCardDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ViewCardDispatch {
         return {
             deleteViewProfile: (id) => dispatch(ViewProfileActionCreator.AsyncDeleteViewProfile(id)),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
@@ -153,5 +153,4 @@ class ViewCardModule extends React.Component<ViewCardProps
  * @author nt
  * @since 11.09.2017
  */
-export const ViewCard: React.ComponentClass<ViewCardLocalProps> = connect(ViewCardModule.mapStateToProps, ViewCardModule.mapDispatchToProps)(ViewCardModule);
-
+export const ViewCard: React.ComponentClass<ViewCardLocalProps> = connect(ViewCardModule.mapStateToProps, ViewCardModule.mapDispatchToProps)(ViewCardModule) as any;

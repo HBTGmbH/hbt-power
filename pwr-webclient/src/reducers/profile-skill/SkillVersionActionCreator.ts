@@ -11,7 +11,7 @@ export class SkillVersionActionCreator {
 
 
     public static AsyncGetSkillVersions(skillName: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillServiceClient.getSkillByName(skillName)
                 .then(skill => dispatch(newSkillVersionsLoadAction(skill.versions, skill.id)))
                 .catch(console.error);
@@ -19,7 +19,7 @@ export class SkillVersionActionCreator {
     }
 
     public static AsyncAddSkillVersion(skillId: number, newVersion: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillServiceClient.addSkillVersion(skillId, newVersion)
                 .then(versions => dispatch(newSkillVersionsLoadAction(versions, skillId)))
                 .catch(console.error);
@@ -28,7 +28,7 @@ export class SkillVersionActionCreator {
 
     @makeDeferrable(ActionType.AsyncDeleteVersion)
     public static AsyncDeleteSkillVersion(skillId: number, versionToDelete: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillServiceClient.deleteSkillVersion(skillId, versionToDelete)
                 .then(value => dispatch(newSkillVersionDeleteAction(versionToDelete)))
                 .catch(console.error);

@@ -18,6 +18,7 @@ import AppBar from '@material-ui/core/AppBar/AppBar';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ViewProfileGeneratorProps {
@@ -59,7 +60,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileGeneratorDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ViewProfileGeneratorDispatch {
         return {
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
@@ -200,4 +201,4 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
     }
 }
 
-export const ProfileGenerator: React.ComponentClass<ViewProfileGeneratorLocalProps> = connect(ViewProfileGenerator.mapStateToProps, ViewProfileGenerator.mapDispatchToProps)(ViewProfileGenerator);
+export const ProfileGenerator: React.ComponentClass<ViewProfileGeneratorLocalProps> = connect(ViewProfileGenerator.mapStateToProps, ViewProfileGenerator.mapDispatchToProps)(ViewProfileGenerator) as any;

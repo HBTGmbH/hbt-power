@@ -2,13 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import './index.css';
-import './../node_modules/react-toggle/style.css';
 import {ApplicationState, store} from './reducers/reducerIndex';
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
 import {Paths} from './Paths';
 import {AppWrapper} from './app-wrapper-module';
 import {storeHasUnsavedChanges} from './utils/PwrStoreUtils';
-import {ProfileDataAsyncActionCreator} from './reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 
 export function registerPageLeavePrevention() {
     // Prevents navigation
@@ -25,7 +23,8 @@ export function registerPageLeavePrevention() {
 
 registerPageLeavePrevention();
 new Paths().restorePath();
-store.dispatch(StatisticsActionCreator.AsyncCheckAvailability());
+// Workaround because typing for thunk is terrible
+store.dispatch(StatisticsActionCreator.AsyncCheckAvailability() as any);
 ReactDOM.render(
     (<AppWrapper/>),
     document.getElementById('root')

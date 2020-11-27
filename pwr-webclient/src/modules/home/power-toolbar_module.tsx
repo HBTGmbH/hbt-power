@@ -17,6 +17,7 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import Paper from '@material-ui/core/Paper/Paper';
 import Avatar from '@material-ui/core/Avatar/Avatar';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ToolbarProps {
     userInitials: string;
@@ -78,7 +79,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ToolbarDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ToolbarDispatch {
         return {
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
@@ -280,7 +281,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     render() {
         return (
             <div>
-                <AppBar>
+                <AppBar color={'primary'}>
                     <Toolbar>
                         <IconButton
                             onClick={(e: any) => {
@@ -290,6 +291,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         >
                             <Icon className="material-icons">menu</Icon>
                         </IconButton>
+                        {this.renderMenu()}
 
                         {this.renderPower()}
                         <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}>
@@ -322,12 +324,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </Tooltip>
                     </Toolbar>
                 </AppBar>
-                <Paper style={{marginTop: 70}}>
-                    {this.renderMenu()}
-                </Paper>
             </div>
         );
     }
 }
 
-export const PowerToolbar: React.ComponentClass<ToolbarLocalProps> = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(PowerToolbarModule);
+export const PowerToolbar = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(PowerToolbarModule);
