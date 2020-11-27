@@ -5,6 +5,7 @@ import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {SortableEntryField, SortableEntryType} from '../../../../model/view/NameComparableType';
 import {ViewProfileActionCreator} from '../../../../reducers/view/ViewProfileActionCreator';
 import {EntrySortButton} from './entry-sort-button_module';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ComparableEntryButtonProps {
 
@@ -40,7 +41,7 @@ class ComparableEntryButtonModule extends React.Component<ComparableEntryButtonP
         return {};
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ComparableEntryButtonDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ComparableEntryButtonDispatch {
         return {
             sortEntries: (id, type, field, doAscending) => dispatch(ViewProfileActionCreator.AsyncAutoSortEntry(id, type, field, doAscending))
         };
@@ -68,4 +69,4 @@ class ComparableEntryButtonModule extends React.Component<ComparableEntryButtonP
  * @author nt
  * @since 12.09.2017
  */
-export const ComparableEntryButton: React.ComponentClass<ComparableEntryButtonLocalProps> = connect(ComparableEntryButtonModule.mapStateToProps, ComparableEntryButtonModule.mapDispatchToProps)(ComparableEntryButtonModule);
+export const ComparableEntryButton: React.ComponentClass<ComparableEntryButtonLocalProps> = connect(ComparableEntryButtonModule.mapStateToProps, ComparableEntryButtonModule.mapDispatchToProps)(ComparableEntryButtonModule) as any;

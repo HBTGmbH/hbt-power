@@ -12,6 +12,7 @@ import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface SkillNotificationTableProps {
@@ -40,7 +41,7 @@ class SkillNotificationTableModule extends React.Component<SkillNotificationTabl
         return {};
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillNotificationTableDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): SkillNotificationTableDispatch {
         return {
             onDialogOpen: id => dispatch(AdminActionCreator.AsyncOpenSkillNotificationDialog(id)),
         };
@@ -146,4 +147,4 @@ class SkillNotificationTableModule extends React.Component<SkillNotificationTabl
  * @author nt
  * @since 27.07.2017
  */
-export const SkillNotificationTable: React.ComponentClass<SkillNotificationTableLocalProps> = connect(SkillNotificationTableModule.mapStateToProps, SkillNotificationTableModule.mapDispatchToProps)(SkillNotificationTableModule);
+export const SkillNotificationTable = connect(SkillNotificationTableModule.mapStateToProps, SkillNotificationTableModule.mapDispatchToProps)(SkillNotificationTableModule);

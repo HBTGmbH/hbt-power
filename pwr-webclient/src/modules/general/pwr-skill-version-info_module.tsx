@@ -9,6 +9,7 @@ import Chip from '@material-ui/core/Chip';
 import {SkillVersionActionCreator} from '../../reducers/profile-skill/SkillVersionActionCreator';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NON_PERSISTENT_ID} from '../../model/PwrConstants';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface PwrSkillVersionInfoProps {
     serviceSkillId: number;
@@ -55,7 +56,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PwrSkillVersionInfoDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): PwrSkillVersionInfoDispatch {
         return {
             addNewVersion: (skillId: number, newVersion: string) => dispatch(SkillVersionActionCreator.AsyncAddSkillVersion(skillId, newVersion)),
             loadVersions: (skillName: string) => dispatch(SkillVersionActionCreator.AsyncGetSkillVersions(skillName)),
@@ -140,4 +141,4 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
     }
 }
 
-export const PwrSkillVersionInfo: React.ComponentClass<PwrSkillVersionInfoLocalProps> = connect(PwrSkillVersionInfoModule.mapStateToProps, PwrSkillVersionInfoModule.mapDispatchToProps)(PwrSkillVersionInfoModule);
+export const PwrSkillVersionInfo = connect(PwrSkillVersionInfoModule.mapStateToProps, PwrSkillVersionInfoModule.mapDispatchToProps)(PwrSkillVersionInfoModule);

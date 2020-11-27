@@ -16,6 +16,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography/Typography';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ViewProfileProjectsOverviewProps {
@@ -50,7 +51,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileProjectsOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ViewProfileProjectsOverviewDispatch {
         return {
             moveEntry: (id, type, sourceIndex, targetIndex) => dispatch(ViewProfileActionCreator.AsyncMoveEntry(id, type, sourceIndex, targetIndex)),
             toggleEntry: (id, type, index, isEnabled) => {
@@ -172,4 +173,4 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
  * @author nt
  * @since 12.09.2017
  */
-export const ViewProfileProjectsOverview: React.ComponentClass<ViewProfileProjectsOverviewLocalProps> = connect(ViewProfileProjectsOverviewModule.mapStateToProps, ViewProfileProjectsOverviewModule.mapDispatchToProps)(ViewProfileProjectsOverviewModule);
+export const ViewProfileProjectsOverview: React.ComponentClass<ViewProfileProjectsOverviewLocalProps> = connect(ViewProfileProjectsOverviewModule.mapStateToProps, ViewProfileProjectsOverviewModule.mapDispatchToProps)(ViewProfileProjectsOverviewModule) as any;

@@ -1,4 +1,4 @@
-import {connect} from 'react-redux';
+import {connect, ConnectedComponent} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
@@ -46,7 +46,7 @@ class PwrCompanyAutocompleteModule extends React.Component<PwrCompanyAutocomplet
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PwrCompanyAutocompleteDispatch {
+    static mapDispatchToProps(dispatch: redux.Dispatch): PwrCompanyAutocompleteDispatch {
         return {};
     }
 
@@ -61,4 +61,4 @@ class PwrCompanyAutocompleteModule extends React.Component<PwrCompanyAutocomplet
  * @author Niklas
  * @since 02.08.2019
  */
-export const PwrCompanyAutocomplete: React.ComponentClass<PwrCompanyAutocompleteLocalProps> = connect(PwrCompanyAutocompleteModule.mapStateToProps, PwrCompanyAutocompleteModule.mapDispatchToProps)(PwrCompanyAutocompleteModule);
+export const PwrCompanyAutocomplete: React.ComponentClass<PwrCompanyAutocompleteLocalProps> = connect(PwrCompanyAutocompleteModule.mapStateToProps, PwrCompanyAutocompleteModule.mapDispatchToProps)(PwrCompanyAutocompleteModule) as any;

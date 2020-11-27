@@ -16,6 +16,7 @@ import Dropzone from 'react-dropzone';
 import {isNullOrUndefined} from 'util';
 import CloudUpload from '@material-ui/icons/CloudUpload';
 import {LinearProgress} from '@material-ui/core';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ReportUploadTemplateLocalProps {
@@ -56,7 +57,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportUploadTemplateDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportUploadTemplateDispatch {
         return {
             saveTemplate: (file: any, name: string, desc: string, createUser: string) => dispatch(TemplateActionCreator.AsyncUploadFileAsTemplate(file, name, desc, createUser)),
         };
@@ -240,4 +241,4 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
 }
 
 
-export const UploadTemplateDialog: React.ComponentClass<ReportUploadTemplateLocalProps> = connect(ReportUploadTemplateDialog.mapStateToProps, ReportUploadTemplateDialog.mapDispatchToProps)(ReportUploadTemplateDialog);
+export const UploadTemplateDialog = connect(ReportUploadTemplateDialog.mapStateToProps, ReportUploadTemplateDialog.mapDispatchToProps)(ReportUploadTemplateDialog);

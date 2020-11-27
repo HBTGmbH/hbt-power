@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button/Button';
 import GridListTileBar from '@material-ui/core/GridListTileBar/GridListTileBar';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
+import {ThunkDispatch} from 'redux-thunk';
 
 /**
  * Properties that are managed by react-redux.
@@ -70,7 +71,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConsultantTileDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ConsultantTileDispatch {
         return {
             redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials))
         };
@@ -185,4 +186,4 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
  * @author nt
  * @since 07.06.2017
  */
-export const ConsultantTile: React.ComponentClass<ConsultantTileLocalProps> = connect(ConsultantTileModule.mapStateToProps, ConsultantTileModule.mapDispatchToProps)(ConsultantTileModule);
+export const ConsultantTile = connect(ConsultantTileModule.mapStateToProps, ConsultantTileModule.mapDispatchToProps)(ConsultantTileModule);

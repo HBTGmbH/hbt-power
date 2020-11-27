@@ -12,6 +12,7 @@ import {ProfileUpdateNotificationTable} from './profile-update-notification-tabl
 import {SkillNotificationTable} from './skill-notification-table_module';
 import {SkillNotification} from '../../../model/admin/SkillNotification';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {ThunkDispatch} from 'redux-thunk';
 
 /**
  * Properties that are managed by react-redux.
@@ -84,7 +85,7 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationInboxDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): NotificationInboxDispatch {
         return {
             getNotifications: (user, pass) => {
                 dispatch(AdminActionCreator.AsyncRequestNotifications());
@@ -210,4 +211,4 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
  * @author nt
  * @since 30.05.2017
  */
-export const NotificationInbox = withTheme()(connect(NotificationInboxModule.mapStateToProps, NotificationInboxModule.mapDispatchToProps)(NotificationInboxModule));
+export const NotificationInbox = withTheme((connect(NotificationInboxModule.mapStateToProps, NotificationInboxModule.mapDispatchToProps)(NotificationInboxModule)));

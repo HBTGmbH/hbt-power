@@ -32,21 +32,7 @@ import Grid from '@material-ui/core/Grid/Grid';
 import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-skills';
 import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
 import {Alerts} from '../../../../../utils/Alerts';
-
-const chooseClientName = (project: Project) => {
-    if (project.client) {
-        return project.client.name;
-    }
-    return '';
-};
-
-const chooseBrokerName = (project: Project) => {
-    if (project.broker) {
-        return project.broker.name;
-    }
-    return '';
-};
-
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProjectProps {
     initials: string;
@@ -96,7 +82,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProjectDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProjectDispatch {
         return {
             deleteProject: (initials, id) => dispatch(ProfileDataAsyncActionCreator.deleteProject(initials, id)),
             saveSelectedProject: () => dispatch(ProfileDataAsyncActionCreator.saveSelectedProject()),
@@ -360,4 +346,4 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
 
 }
 
-export const SelectedProject: React.ComponentClass<ProjectLocalProps> = connect(Project_module.mapStateToProps, Project_module.mapDispatchToProps)(Project_module);
+export const SelectedProject = connect(Project_module.mapStateToProps, Project_module.mapDispatchToProps)(Project_module);

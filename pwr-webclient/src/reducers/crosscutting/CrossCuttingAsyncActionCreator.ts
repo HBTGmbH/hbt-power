@@ -13,12 +13,13 @@ import {CrossCuttingActionCreator} from './CrossCuttingActionCreator';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
 import {PowerApiError} from '../../clients/PowerHttpClient';
 import {ProfileDataAsyncActionCreator} from '../profile-new/profile/ProfileDataAsyncActionCreator';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 export namespace CrossCuttingAsyncActionCreator {
 
     export function AsyncLogOutUser() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             window.localStorage.removeItem(COOKIE_INITIALS_NAME);
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.INITIALS));
             dispatch(resetProfileStore());
@@ -27,7 +28,7 @@ export namespace CrossCuttingAsyncActionCreator {
     }
 
     export function AsyncLogInUser(initials: string, navTarget?: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             if (!initials || initials.length <= 0) {
                 dispatch(CrossCuttingActionCreator.SetLoginError('No Initials Set.'));
                 dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.REJECTED));

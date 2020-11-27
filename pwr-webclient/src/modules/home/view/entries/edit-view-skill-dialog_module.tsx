@@ -10,6 +10,7 @@ import {ApplicationState} from '../../../../reducers/reducerIndex';
 import * as redux from 'redux';
 import {ViewProfileActionCreator} from '../../../../reducers/view/ViewProfileActionCreator';
 import {connect} from 'react-redux';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface EditViewSkillDialogProps {
     parents: Array<ViewCategory>;
@@ -51,7 +52,7 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EditViewSkillDialogDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): EditViewSkillDialogDispatch {
         return {
             setDisplayCategory: (id, skillName, newDisplayCategoryName) => dispatch(ViewProfileActionCreator.AsyncSetDisplayCategory(id, skillName, newDisplayCategoryName)),
             getParentCategories: (skill) => dispatch(ViewProfileActionCreator.AsyncGetParentCategories(skill)),
@@ -105,4 +106,4 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
     }
 }
 
-export const EditViewSkillDialog: React.ComponentClass<EditViewSkillDialogLocalProps> = connect(EditViewSkillDialogModule.mapStateToProps, EditViewSkillDialogModule.mapDispatchToProps)(EditViewSkillDialogModule);
+export const EditViewSkillDialog: React.ComponentClass<EditViewSkillDialogLocalProps> = connect(EditViewSkillDialogModule.mapStateToProps, EditViewSkillDialogModule.mapDispatchToProps)(EditViewSkillDialogModule) as any;

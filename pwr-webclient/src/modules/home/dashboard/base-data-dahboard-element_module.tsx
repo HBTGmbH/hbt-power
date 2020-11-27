@@ -13,6 +13,7 @@ import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profi
 import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import Edit from '@material-ui/icons/Edit';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface BaseDataDashboardElementProps {
     initials: string;
@@ -46,7 +47,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): BaseDataDashboardElementDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): BaseDataDashboardElementDispatch {
         return {
             requestSingleProfile: function (initials: string = 'n/a') {
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
@@ -92,4 +93,4 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
  * @author nt
  * @since 27.09.2017
  */
-export const BaseDataDashboardElement: React.ComponentClass<BaseDataDashboardElementLocalProps> = connect(BaseDataDashboardElementModule.mapStateToProps, BaseDataDashboardElementModule.mapDispatchToProps)(BaseDataDashboardElementModule);
+export const BaseDataDashboardElement = connect(BaseDataDashboardElementModule.mapStateToProps, BaseDataDashboardElementModule.mapDispatchToProps)(BaseDataDashboardElementModule);

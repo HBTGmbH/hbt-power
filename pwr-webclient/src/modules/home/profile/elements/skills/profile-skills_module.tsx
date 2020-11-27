@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button';
 import {SkillInfo} from './skill-info_module';
 import Badge from '@material-ui/core/Badge';
 import {Alerts} from '../../../../../utils/Alerts';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
@@ -58,7 +59,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileSkillsDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileSkillsDispatch {
         return {
             deleteSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.deleteProfileSkill(initials, skill)),
             saveSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.saveProfileSkill(initials, skill)),
@@ -150,7 +151,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
             </Grid>
             <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                 <div className="Pwr-Content-Container">
-                    <Grid container spacing={16}>
+                    <Grid container spacing={10}>
                         {skills.map(s => this.toSkill(s))}
                     </Grid>
                 </div>
@@ -196,4 +197,4 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     }
 }
 
-export const ProfileSkills = withTheme()(connect(ProfileSkillsModule.mapStateToProps, ProfileSkillsModule.mapDispatchToProps)(ProfileSkillsModule));
+export const ProfileSkills = withTheme((connect(ProfileSkillsModule.mapStateToProps, ProfileSkillsModule.mapDispatchToProps)(ProfileSkillsModule)));

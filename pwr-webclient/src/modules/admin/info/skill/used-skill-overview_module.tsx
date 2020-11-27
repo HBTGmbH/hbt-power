@@ -15,6 +15,7 @@ import {UsedSkillInfoBox} from './used-skill-info-box';
 import {toArray} from '../../../../utils/ImmutableUtils';
 import {SuggestionAsyncActionCreator} from '../../../../reducers/suggestions/SuggestionAsyncActionCreator';
 import filterFuzzy = StringUtils.filterFuzzy;
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface UsedSkillOverviewProps {
@@ -62,7 +63,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): UsedSkillOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): UsedSkillOverviewDispatch {
         return {
             loadAllUsedSkills: () => dispatch(SuggestionAsyncActionCreator.requestAllSkills()),
             getSkillUsageInfo: skillName => dispatch(StatisticsActionCreator.AsyncRequestSkillUsageInfo(skillName)),
@@ -109,7 +110,6 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     private renderSkillItem = (name: string) => {
         return <ListItem button
                          className={this.selectedClass(name)}
-                         value={name}
                          key={name}
                          onChange={(e: any) => console.debug(e)}
                          onClick={() => this.handleSkillSelect(null, name)}
@@ -180,4 +180,4 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
  * @author nt
  * @since 18.07.2017
  */
-export const UsedSkillOverview: React.ComponentClass<UsedSkillOverviewLocalProps> = connect(UsedSkillOverviewModule.mapStateToProps, UsedSkillOverviewModule.mapDispatchToProps)(UsedSkillOverviewModule);
+export const UsedSkillOverview = connect(UsedSkillOverviewModule.mapStateToProps, UsedSkillOverviewModule.mapDispatchToProps)(UsedSkillOverviewModule);

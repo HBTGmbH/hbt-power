@@ -11,7 +11,7 @@ export namespace ViewProfileReducer {
     import SetSortInProgressAction = ViewProfileActions.SetSortInProgressAction;
     import SetParentCategoryAction = ViewProfileActions.SetParentCategoryAction;
 
-    export function reduce(store: ViewProfileStore, action: AbstractAction) {
+    export function reduce(store: ViewProfileStore, action: AbstractAction): ViewProfileStore {
         if (isNullOrUndefined(store)) {
             return ViewProfileStore.empty();
         }

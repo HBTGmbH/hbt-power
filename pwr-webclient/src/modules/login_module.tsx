@@ -17,6 +17,7 @@ import {PwrRaisedButton} from './general/pwr-raised-button';
 import ArrowRight from '@material-ui/icons/ArrowRight';
 import Person from '@material-ui/icons/Person';
 import {CrossCuttingAsyncActionCreator} from '../reducers/crosscutting/CrossCuttingAsyncActionCreator';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface LoginProps {
     loginStatus: LoginStatus;
@@ -57,7 +58,7 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): LoginDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): LoginDispatch {
         return {
             logInUser: (initials) => dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_HOME)),
             clearLoginError: () => {
@@ -144,4 +145,4 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
     }
 }
 
-export const LoginModule: React.ComponentClass<LoginLocalProps> = connect(Login_module.mapStateToProps, Login_module.mapDispatchToProps)(Login_module);
+export const LoginModule: React.ComponentClass<LoginLocalProps> = connect(Login_module.mapStateToProps, Login_module.mapDispatchToProps)(Login_module) as any;

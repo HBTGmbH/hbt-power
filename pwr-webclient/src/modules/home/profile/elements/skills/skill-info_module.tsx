@@ -10,6 +10,7 @@ import {Grid} from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import {StarRating} from '../../../../star-rating_module.';
 import {PwrSkillVersionInfo} from '../../../../general/pwr-skill-version-info_module';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface SkillInfoProps {
@@ -54,7 +55,7 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillInfoDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): SkillInfoDispatch {
         return {
             saveSkill: (initials, skill) => dispatch(ProfileDataAsyncActionCreator.saveProfileSkill(initials, skill)),
         };
@@ -96,7 +97,7 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
 
     render() {
         return (
-            <Grid container spacing={16}>
+            <Grid container spacing={2}>
 
                 {this.props.selectedSkill == null ? <></> :
                     <Grid item md={12}>
@@ -113,4 +114,4 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
     }
 }
 
-export const SkillInfo: React.ComponentClass<SkillInfoLocalProps> = connect(SkillInfoModule.mapStateToProps, SkillInfoModule.mapDispatchToProps)(SkillInfoModule);
+export const SkillInfo: React.ComponentClass<SkillInfoLocalProps> = connect(SkillInfoModule.mapStateToProps, SkillInfoModule.mapDispatchToProps)(SkillInfoModule) as any;

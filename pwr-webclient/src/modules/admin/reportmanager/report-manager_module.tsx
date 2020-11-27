@@ -13,6 +13,7 @@ import Paper from '@material-ui/core/Paper/Paper';
 import List from '@material-ui/core/List/List';
 import {UploadTemplateDialog} from './report-upload-template-dialog';
 import {ReportManagerInfoBox} from './report-manager-infobox_module';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ReportManagerProps {
     allTemplates: Array<Template>;
@@ -51,22 +52,17 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ReportManagerDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportManagerDispatch {
         return {
             loadPreview: (id: string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
             loadAllTemplates: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()),
         };
     }
 
-    public componentWillMount() {
+    public componentDidMount() {
         if (this.props.allTemplates.length == 0) {
             this.props.loadAllTemplates();
         }
-    }
-
-    public componentDidMount() {
-        //console.log(this.props.allTemplates);
-
     }
 
     public componentDidUpdate() {
@@ -156,4 +152,4 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
 }
 
-export const ReportManager: React.ComponentClass<ReportManagerLocalProps> = connect(ReportManagerModule.mapStateToProps, ReportManagerModule.mapDispatchToProps)(ReportManagerModule);
+export const ReportManager = connect(ReportManagerModule.mapStateToProps, ReportManagerModule.mapDispatchToProps)(ReportManagerModule);

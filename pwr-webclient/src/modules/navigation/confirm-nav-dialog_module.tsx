@@ -1,11 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {Button, Dialog} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ConfirmNavDialogProps {
     dialogOpen: boolean;
@@ -35,7 +35,7 @@ class ConfirmNavDialogModule extends React.Component<ConfirmNavDialogProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ConfirmNavDialogDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ConfirmNavDialogDispatch {
         return {
             continueNavigation: () => dispatch(NavigationActionCreator.AsyncContinueToTarget()),
             dropNavigationTarget: () => dispatch(NavigationActionCreator.DropNavigationTarget())
@@ -73,4 +73,4 @@ class ConfirmNavDialogModule extends React.Component<ConfirmNavDialogProps
  * @author nt
  * @since 23.08.2017
  */
-export const ConfirmNavDialog: React.ComponentClass<ConfirmNavDialogLocalProps> = connect(ConfirmNavDialogModule.mapStateToProps, ConfirmNavDialogModule.mapDispatchToProps)(ConfirmNavDialogModule);
+export const ConfirmNavDialog: React.ComponentClass<ConfirmNavDialogLocalProps> = connect(ConfirmNavDialogModule.mapStateToProps, ConfirmNavDialogModule.mapDispatchToProps)(ConfirmNavDialogModule) as any;

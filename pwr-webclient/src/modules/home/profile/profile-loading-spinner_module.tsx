@@ -1,8 +1,8 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {PwrLoadingButton} from '../../general/pwr-loading-button_module';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileSnackbarProps {
     requestPending: boolean;
@@ -17,7 +17,7 @@ class LoadingSpinnerModule extends React.Component<ProfileSnackbarProps, {}> {
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): {} {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): {} {
         return {};
     }
 
@@ -30,4 +30,4 @@ class LoadingSpinnerModule extends React.Component<ProfileSnackbarProps, {}> {
     }
 }
 
-export const ProfileLoadingSpinner: React.ComponentClass<{}> = connect(LoadingSpinnerModule.mapStateToProps, LoadingSpinnerModule.mapDispatchToProps)(LoadingSpinnerModule);
+export const ProfileLoadingSpinner = connect(LoadingSpinnerModule.mapStateToProps, LoadingSpinnerModule.mapDispatchToProps)(LoadingSpinnerModule);

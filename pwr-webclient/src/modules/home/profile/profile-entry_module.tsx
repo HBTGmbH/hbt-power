@@ -1,5 +1,4 @@
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import * as redux from 'redux';
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {isNullOrUndefined} from 'util';
@@ -16,6 +15,7 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Theme, withTheme} from '@material-ui/core';
 import {PwrFormSubCaption} from '../../general/pwr-typography';
 import {Comparators} from '../../../utils/Comparators';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileEntryProps {
     allEntries: Array<ProfileEntry>;
@@ -88,7 +88,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>, localProps: ProfileEntryLocalProps): ProfileEntryDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>, localProps: ProfileEntryLocalProps): ProfileEntryDispatch {
         return {
             updateEntity: ProfileTypeDataMapper.getUpdateFunction(localProps.type, dispatch),
             deleteEntry: ProfileTypeDataMapper.getDeleteFunction(localProps.type, dispatch)
@@ -197,4 +197,4 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
 
 }
 
-export const ProfileEntryElement = withTheme()(connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule));
+export const ProfileEntryElement = withTheme((connect(ProfileEntryModule.mapStateToProps, ProfileEntryModule.mapDispatchToProps)(ProfileEntryModule)));

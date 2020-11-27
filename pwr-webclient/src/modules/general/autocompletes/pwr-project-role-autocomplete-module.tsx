@@ -5,6 +5,7 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {PwrAutoComplete} from '../pwr-auto-complete';
 import {NameEntity} from '../../../reducers/profile-new/profile/model/NameEntity';
 import {NameEntityType} from '../../../reducers/profile-new/profile/model/NameEntityType';
+import {ComponentClass} from 'react';
 
 interface PwrProjectRoleAutocompleteProps {
     projectRoles: Array<NameEntity>;
@@ -43,7 +44,7 @@ class PwrProjectRoleAutocompleteModule extends React.Component<PwrProjectRoleAut
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): {} {
+    static mapDispatchToProps(dispatch: redux.Dispatch): {} {
         return {};
     }
 
@@ -106,4 +107,4 @@ class PwrProjectRoleAutocompleteModule extends React.Component<PwrProjectRoleAut
  * @author Niklas
  * @since 02.08.2019
  */
-export const PwrProjectRoleAutocomplete: React.ComponentClass<PwrProjectRoleAutocompletePropsLocalProps> = connect(PwrProjectRoleAutocompleteModule.mapStateToProps, PwrProjectRoleAutocompleteModule.mapDispatchToProps)(PwrProjectRoleAutocompleteModule);
+export const PwrProjectRoleAutocomplete: ComponentClass<PwrProjectRoleAutocompletePropsLocalProps> = connect(PwrProjectRoleAutocompleteModule.mapStateToProps, PwrProjectRoleAutocompleteModule.mapDispatchToProps)(PwrProjectRoleAutocompleteModule) as any;

@@ -9,6 +9,7 @@ import {ViewProfileEntries} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {EntryRenderers} from './entries/EntryRenderers';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ViewProfileEntriesOverviewProps {
@@ -48,7 +49,7 @@ class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntrie
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ViewProfileEntriesOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ViewProfileEntriesOverviewDispatch {
         return {
             moveEntry: (id, type, sourceIndex, targetIndex) => dispatch(ViewProfileActionCreator.AsyncMoveEntry(id, type, sourceIndex, targetIndex)),
             toggleEntry: (id, type, index, isEnabled) => {
@@ -204,4 +205,4 @@ class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntrie
  * @author nt
  * @since 12.09.2017
  */
-export const ViewProfileEntriesOverview: React.ComponentClass<ViewProfileEntriesOverviewLocalProps> = connect(ViewProfileEntriesOverviewModule.mapStateToProps, ViewProfileEntriesOverviewModule.mapDispatchToProps)(ViewProfileEntriesOverviewModule);
+export const ViewProfileEntriesOverview: React.ComponentClass<ViewProfileEntriesOverviewLocalProps> = connect(ViewProfileEntriesOverviewModule.mapStateToProps, ViewProfileEntriesOverviewModule.mapDispatchToProps)(ViewProfileEntriesOverviewModule) as any;

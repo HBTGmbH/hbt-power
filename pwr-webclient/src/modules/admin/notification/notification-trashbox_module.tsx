@@ -8,6 +8,7 @@ import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {ThunkDispatch} from 'redux-thunk';
 
 /**
  * Properties that are managed by react-redux.
@@ -63,7 +64,7 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): NotificationTrashboxDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): NotificationTrashboxDispatch {
         return {
             getTrashedNotifications: (user, pass) => dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(user, pass)),
             finalDeleteTrashed: (user, pass) => dispatch(AdminActionCreator.AsyncDeleteTrashed(user, pass))
@@ -160,4 +161,4 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
  * @author nt
  * @since 30.05.2017
  */
-export const NotificationTrashbox: React.ComponentClass<NotificationTrashboxLocalProps> = connect(NotificationTrashboxModule.mapStateToProps, NotificationTrashboxModule.mapDispatchToProps)(NotificationTrashboxModule);
+export const NotificationTrashbox = connect(NotificationTrashboxModule.mapStateToProps, NotificationTrashboxModule.mapDispatchToProps)(NotificationTrashboxModule);

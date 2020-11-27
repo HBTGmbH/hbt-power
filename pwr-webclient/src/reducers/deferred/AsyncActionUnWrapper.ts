@@ -10,7 +10,7 @@ import {ActionType} from '../ActionType';
  * If the action is not supposed to be deferred, this middleware will unwrap it, allowing it to be handled by redux-thunk.
  * @param api
  */
-export const asyncActionUnWrapper = (api: MiddlewareAPI<ApplicationState>) => (next) => (action): any => {
+export const asyncActionUnWrapper = (api: MiddlewareAPI) => (next) => (action): any => {
     // No async action available -> dont do anything
     if (!action.asyncAction) {
         next(action);

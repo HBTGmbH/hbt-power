@@ -14,6 +14,7 @@ import {ApplicationState} from '../../reducers/reducerIndex';
 import {getImagePath} from '../../API_CONFIG';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
+import {ThunkDispatch} from 'redux-thunk';
 
 
 /**
@@ -81,7 +82,7 @@ class AdminLoginModule extends React.Component<AdminLoginProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AdminLoginDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AdminLoginDispatch {
         return {
             changePassword: (val) => dispatch(AdminActionCreator.ChangePassword(val)),
             changeUsername: (val) => dispatch(AdminActionCreator.ChangeUsername(val)),
@@ -208,9 +209,4 @@ class AdminLoginModule extends React.Component<AdminLoginProps
     }
 }
 
-/**
- * @see AdminLoginModule
- * @author nt
- * @since 01.06.2017
- */
-export const AdminLogin: React.ComponentClass<AdminLoginLocalProps> = connect(AdminLoginModule.mapStateToProps, AdminLoginModule.mapDispatchToProps)(AdminLoginModule);
+export const AdminLogin = connect(AdminLoginModule.mapStateToProps, AdminLoginModule.mapDispatchToProps)(AdminLoginModule);

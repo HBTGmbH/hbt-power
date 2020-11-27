@@ -1,14 +1,11 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
-import TextField from '@material-ui/core/TextField/TextField';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
-import * as redux from 'redux';
 import {ProfileDataAsyncActionCreator} from '../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {PROFILE_DESCRIPTION_LENGTH} from '../../../../model/PwrConstants';
 import {setDescription} from '../../../../reducers/profile-new/profile/actions/ProfileActions';
-import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {LimitedTextField} from '../../../general/limited-text-field-module';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileDescriptionProps {
     description: string;
@@ -46,7 +43,7 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
         };
     }
 
-    public static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): ProfileDescriptionDispatch {
+    public static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileDescriptionDispatch {
         return {
             saveDescription: description => dispatch(ProfileDataAsyncActionCreator.saveDescription(description)),
             setDescription: description => dispatch(setDescription(description))
@@ -96,4 +93,4 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
     }
 }
 
-export const ProfileDescription: React.ComponentClass<ProfileDescriptionLocalProps> = connect(ProfileDescriptionModule.mapStateToProps, ProfileDescriptionModule.mapDispatchToProps)(ProfileDescriptionModule);
+export const ProfileDescription = connect(ProfileDescriptionModule.mapStateToProps, ProfileDescriptionModule.mapDispatchToProps)(ProfileDescriptionModule);

@@ -21,6 +21,7 @@ import StepContent from '@material-ui/core/StepContent/StepContent';
 import HelpOutline from '@material-ui/icons/HelpOutline';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {SkillServiceClient} from '../../../../../clients/SkillServiceClient';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface AddSkill_ModuleProps {
     histories: Immutable.Map<string, string>;
@@ -64,7 +65,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): AddSkill_ModuleDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AddSkill_ModuleDispatch {
         return {
             requestSkillHierarchy: (name: string) => dispatch(SkillActionCreator.AsyncRequestSkillHierarchy(name))
         };
@@ -236,4 +237,4 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
 
 
 export const AddSkill: React.ComponentClass<AddSkill_ModuleLocalProps> =
-    connect(AddSkill_Module.mapStateToProps, AddSkill_Module.mapDispatchToProps)(AddSkill_Module);
+    connect(AddSkill_Module.mapStateToProps, AddSkill_Module.mapDispatchToProps)(AddSkill_Module) as any;

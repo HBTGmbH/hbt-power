@@ -47,7 +47,6 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     private mapListItem = (category: SkillCategory) => {
         return <ListItem
             button
-            value={category.id()}
             key={category.id()}
             onClick={() => this.handleSelect(category.id())}
             className={this.state.selectedCategoryId === category.id() ? 'pwr-selected-list-item ' : ''}

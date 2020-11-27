@@ -15,6 +15,7 @@ import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
+import {ThunkDispatch} from 'redux-thunk';
 
 const skillClient = SkillServiceClient.instance();
 
@@ -220,14 +221,14 @@ export namespace SkillActionCreator {
     }
 
 
-    function InvokeChildUpdate(categoryId: number, dispatch: redux.Dispatch<ApplicationState>) {
+    function InvokeChildUpdate(categoryId: number, dispatch: ThunkDispatch<any, any, any>) {
         skillClient.getCategoryChildrenByCategoryId(categoryId)
             .then(response => response.forEach((value, index, array) => dispatch(AsyncUpdateCategory(value, true))))
             .catch(handleSkillServiceError);
     }
 
     export function AsyncUpdateCategory(categoryId: number, fullRecursive?: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch) {
             let doRecursive: boolean = isNullOrUndefined(fullRecursive) ? false : fullRecursive;
             skillClient.getCategoryById(categoryId)
                 .then((category) => dispatch(UpdateSkillCategory(SkillCategory.fromAPI(category))))
@@ -237,7 +238,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncMoveCategory(newParentId: number, toMoveId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.patchMoveCategory(newParentId, toMoveId)
                 .then((category) => dispatch(MoveCategory(newParentId, toMoveId)))
                 .catch(handleSkillServiceError);
@@ -245,7 +246,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncRequestSkillHierarchy(skillName: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let state = getState();
             if (!state.skillReducer.categorieHierarchiesBySkillName().has(skillName)) {
                 skillClient.getSkillByName(skillName)
@@ -263,7 +264,7 @@ export namespace SkillActionCreator {
      * @param categoryId of the category to be whitelisted
      */
     export function AsyncWhitelistCategory(categoryId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             skillClient.deleteBlacklistCategory(categoryId)
                 .then(() => dispatch(AsyncUpdateCategory(categoryId, true)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -271,7 +272,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncBlacklistCategory(categoryId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             skillClient.postBlacklistCategory(categoryId)
                 .then(() => dispatch(AsyncUpdateCategory(categoryId, true)))
 
@@ -280,21 +281,21 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncSetIsDisplay(categoryId: number, isDisplay: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.patchSetIsDisplayCategory(categoryId, isDisplay)
                 .then((category) => dispatch(UpdateSkillCategory(SkillCategory.fromAPI(category))))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
         };
     }
 
-    const invokeCategoryUpdate = (apiSkillCategory: APISkillCategory, dispatch: redux.Dispatch<ApplicationState>) => {
+    const invokeCategoryUpdate = (apiSkillCategory: APISkillCategory, dispatch: redux.Dispatch) => {
         let skillCategory = SkillCategory.fromAPI(apiSkillCategory);
         dispatch(UpdateSkillCategory(skillCategory));
         dispatch(AdminActionCreator.ChangeRequestStatus(RequestStatus.Successful));
     };
 
     export function AsyncAddLocale(categoryId: number, locale: string, qualifier: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.postLocaleToCategory(categoryId, locale, qualifier)
                 .then((category) => invokeCategoryUpdate(category, dispatch))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -302,7 +303,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncDeleteLocale(categoryId: number, language: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.deleteLocaleFromCategory(categoryId, language)
                 .then((category) => invokeCategoryUpdate(category, dispatch))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -310,7 +311,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncCreateCategory(qualifier: string, parentId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let category: SkillCategory = SkillCategory.of(null, qualifier);
             skillClient.postNewCategory(parentId, category)
                 .then((category) => dispatch(AddCategoryToTree(parentId, SkillCategory.fromAPI(category))))
@@ -320,7 +321,7 @@ export namespace SkillActionCreator {
 
 
     export function AsyncDeleteCategory(categoryId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.deleteCategory(categoryId)
                 .then((response: AxiosResponse) => dispatch(RemoveSkillCategory(categoryId)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -337,7 +338,7 @@ export namespace SkillActionCreator {
      * @constructor
      */
     export function AsyncGetSkillByName(qualifier: string, force?: boolean) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             if (!isNullOrUndefined(force)) {
                 force = false;
             }
@@ -350,7 +351,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.patchMoveSkill(skillId, newCategoryId)
                 .then((response: AxiosResponse) => dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -358,7 +359,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncCreateSkill(qualifier: string, categoryId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.postNewSkill(categoryId, qualifier)
                 .then((skill) => dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(skill))))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -366,7 +367,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncDeleteSkill(skillId: number) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.deleteCustomSkill(skillId)
                 .then((response: AxiosResponse) => dispatch(RemoveSkill(skillId)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -381,7 +382,7 @@ export namespace SkillActionCreator {
      * @constructor
      */
     export function AsyncAddSkillLocale(skillId: number, language: string, qualifier: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.addSkillLocale(skillId, language, qualifier)
                 .then((skill) => dispatch(UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -396,7 +397,7 @@ export namespace SkillActionCreator {
      * @param language defines which locale from the skill is deleted
      */
     export function AsyncDeleteSkillLocale(skillId: number, language: string) {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.deleteSkillLocale(skillId, language)
                 .then((response: AxiosResponse) => dispatch(UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(response.data))))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -405,7 +406,7 @@ export namespace SkillActionCreator {
 
 
     export function AsyncLoadTree() {
-        return function (dispatch: redux.Dispatch<ApplicationState>, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             skillClient.getFullTree()
                 .then((root) => dispatch(InitializeTree(root)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));

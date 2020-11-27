@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {Button, Dialog, DialogContent, DialogTitle, Step, StepLabel, Stepper} from '@material-ui/core';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
@@ -10,6 +9,7 @@ import {SkillReducer} from '../../../../reducers/skill/SkillReducer';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
 import {SkillServiceClient} from '../../../../clients/SkillServiceClient';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface EditSkillDialogProps {
 }
@@ -53,7 +53,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
         return {};
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): EditSkillDialogDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): EditSkillDialogDispatch {
         return {
             changeSkillName: ((oldName, newName) => dispatch(AdminActionCreator.AsyncChangeSkillName(oldName, newName)))
         };
@@ -206,4 +206,4 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
  * @author nt
  * @since 03.02.2018
  */
-export const EditSkillDialog: React.ComponentClass<EditSkillDialogLocalProps> = connect(EditSkillDialogModule.mapStateToProps, EditSkillDialogModule.mapDispatchToProps)(EditSkillDialogModule);
+export const EditSkillDialog = connect(EditSkillDialogModule.mapStateToProps, EditSkillDialogModule.mapDispatchToProps)(EditSkillDialogModule);

@@ -25,6 +25,7 @@ import {SkillSearcher} from '../../general/skill-search_module';
 import {AdminNotificationReason} from '../../../model/admin/AdminNotificationReason';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
@@ -103,7 +104,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): SkillNotificationModuleDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): SkillNotificationModuleDispatch {
         return {
             closeAndReset: () => dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg()),
             setSkillNotificationAction: action => dispatch(AdminActionCreator.SetSkillNotificationAction(action)),
@@ -406,4 +407,4 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
  * @author nt
  * @since 27.07.2017
  */
-export const SkillNotificationDialog: React.ComponentClass<SkillNotificationModuleLocalProps> = connect(SkillNotificationModuleModule.mapStateToProps, SkillNotificationModuleModule.mapDispatchToProps)(SkillNotificationModuleModule);
+export const SkillNotificationDialog = connect(SkillNotificationModuleModule.mapStateToProps, SkillNotificationModuleModule.mapDispatchToProps)(SkillNotificationModuleModule);

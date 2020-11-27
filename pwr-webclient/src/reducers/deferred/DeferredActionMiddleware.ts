@@ -1,4 +1,4 @@
-import {MiddlewareAPI} from 'redux';
+import {Dispatch, MiddlewareAPI} from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {ActionType} from '../ActionType';
 import {deferDeleteEntry, deferUnsavedChanges} from './DeferredActions';
@@ -41,7 +41,7 @@ const deferredActions: DeferrableAction<ApplicationState>[] = [
     }
 ];
 
-export const deferredActionMiddleware = (api: MiddlewareAPI<ApplicationState>) => (next) => (action): any => {
+export const deferredActionMiddleware = (api: MiddlewareAPI<Dispatch, ApplicationState>) => (next) => (action): any => {
     if (action.type === ActionType.ConfirmDeferredAction) {
         // Continue action and clear deferred state
         next(api.getState().deferred.deferredAction);

@@ -46,4 +46,4 @@ class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewPro
     }
 }
 
-export const AdminProfileOverview = withTheme()(AdminProfileOverviewModule);
+export const AdminProfileOverview = withTheme(AdminProfileOverviewModule);

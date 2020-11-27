@@ -20,6 +20,7 @@ import {Paths} from '../../Paths';
 import {isNullOrUndefined} from 'util';
 import {PwrRaisedButton} from '../general/pwr-raised-button';
 import Add from '@material-ui/icons/Add';
+import {ThunkDispatch} from 'redux-thunk';
 
 /**
  * Properties that are managed by react-redux.
@@ -82,7 +83,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch<ApplicationState>): PowerOverviewDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): PowerOverviewDispatch {
         return {
             requestSingleProfile: function (initials: string) {
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
@@ -92,7 +93,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
         if (!this.props.loggedInUser || !initials) {
             this.props.navigateTo(Paths.APP_ROOT);
@@ -189,4 +190,4 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
  * @author nt
  * @since 22.05.2017
  */
-export const PowerOverview: React.ComponentClass<PowerOverviewLocalProps> = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(PowerOverviewModule);
+export const PowerOverview = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(PowerOverviewModule);
