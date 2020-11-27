@@ -69,6 +69,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.HEAD, "/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
+                // Restrict profile picture upload to admins
+                .antMatchers(HttpMethod.POST, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
+                .antMatchers(HttpMethod.DELETE, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
                 .antMatchers("/pwr-profile-service/**").permitAll()
                 .antMatchers("/pwr-profile-service/api/consultants/**").permitAll()
                 .antMatchers("/pwr-report-service/**").permitAll()
