@@ -15,7 +15,8 @@ To get started, you have to bootstrap the database:
 1. Clone this repository ``git clone https://github.com/HBTGmbH/pwr-profile-service.git``
 2. Import the project into an IDE of your choosing and add it as maven project. An IntelliJ project configuration is provided within this repository. 
 3. Copy the ``application.yml`` from ``configuration`` to ``/src/main/resources`` 
-4. Edit the ``bootstrapDatabase`` profile and configure your own database
+4. Start a database with ``docker-compose up -d pwr_profile_service_db``
+    1. This will start a database that is preconfigured with profile service defaults
 5. Bootstrap the database bei either
     1. Creating and running a spring boot run configuration and setting the ``spring.profiles.active`` system property to ``bootstrapDatabase``
     2. Running ```mvnw spring-boot:run -Dspring.profiles.active=bootstrapDatabase```
@@ -25,10 +26,9 @@ for local development.
 ## Exploring the application
 
 1. Create a new run configuration, call it ``Profile Service (Local)``
-2. Go to the ``application.yml`` in ``/src/main/resources`` 
-3. Go to the ``localDevNoEureka`` profile and configure it to use your database. 
-4. Set the system property ``spring.profiles.active`` to ``localDevNoEureka``
-5. Launch
+2. Set the system property ``spring.profiles.active`` to ``docker``
+3. Make sure the database you started in ``Getting Started`` is running
+4. Launch
 
 Go to a browser of your choice and open the following url:
 [http://localhost:9004/webjars/swagger-ui/3.20.9/index.html?url=http://localhost:9004/v2/api-docs#/](http://localhost:9004/webjars/swagger-ui/3.20.9/index.html?url=http://localhost:9004/v2/api-docs#/)
@@ -40,9 +40,9 @@ This is the services swagger documentation. You can try it out, create a new con
 Before you start contributing:
 * Make sure you imported the provided code style settings. 
 * Make sure your development environment is set. You will need
-    * Java 8 or higher
+    * Java 13 or higher
     * Maven 3
-    * A relational database (MySQL is precondigured)
+    * Docker
     * A rough understanding about spring boot.
 
 If you are unfamiliar with spring boot, take a look at the [spring boot guides](https://spring.io/guides);
