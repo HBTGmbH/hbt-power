@@ -31,9 +31,6 @@ import {SkillInfoStore} from './profile-skill/SkillInfoStore';
 import {reduceSkillVersions} from './profile-skill/SkillVersionReducer';
 import {TemplateStore} from './template/TemplateStore';
 import {AbstractAction} from './BaseActions';
-import createHistory from "history/createBrowserHistory";
-//
-// export const PWR_HISTORY = createHistory();
 
 export interface ApplicationState {
     profileStore: ProfileStore;

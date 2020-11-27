@@ -7,8 +7,8 @@ import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncA
 import {AbstractAction} from '../BaseActions';
 import {ThunkDispatch} from 'redux-thunk';
 
-import createHistory from "history/createBrowserHistory";
-export const PWR_HISTORY = createHistory();
+import { createBrowserHistory } from 'history';
+export const PWR_HISTORY = createBrowserHistory();
 
 export interface SetNavigationTargetAction extends AbstractAction {
     target: string;

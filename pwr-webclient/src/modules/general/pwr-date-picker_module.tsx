@@ -7,6 +7,7 @@ import {PwrIconButton} from './pwr-icon-button';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {DatePickerView} from '@material-ui/pickers/DatePicker/DatePicker';
+import {Moment} from 'moment/moment';
 
 interface PwrDatePickerProps {
     onChange(date: Date): void;
@@ -32,12 +33,8 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
         };
     }
 
-    private onChangeDate = (date: Date) => {
-        date.setFullYear(date.getFullYear(),
-            this.props.type != DatePickerType.YEAR ? date.getMonth() : 1,
-            this.props.type == DatePickerType.FULL_DATE ? date.getDate() : 1);
-
-        this.props.onChange(date);
+    private onChangeDate = (moment: Moment) => {
+        this.props.onChange(moment.toDate());
     };
 
     private getFormat = () => {
@@ -87,7 +84,7 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
                     label={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
                     placeholder={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
                     value={this.props.placeholderDate}
-                    onChange={this.props.onChange}
+                    onChange={this.onChangeDate}
                     format={this.getFormat()}
                     openTo="year"
                     keyboardIcon={<Icon className={'material-icons'}>date_range</Icon>}
