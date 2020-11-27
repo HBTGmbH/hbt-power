@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {MuiPickersUtilsProvider} from 'material-ui-pickers';
+import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {MuiThemeProvider} from '@material-ui/core';
 import {POWER_MUI_THEME} from './PowerTheme';
