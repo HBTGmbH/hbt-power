@@ -13,7 +13,7 @@
     "cogo-toast": "^3.2.1",
     "doop": "2.2.1",
     "es6-promise": "4.2.8",
-    "history": "^5.0.0",
+    "history": "4.10.1",
     "immutable": "3.8.2",
     "isomorphic-fetch": "2.2.1",
     "material-ui-chip-input": "^1.0.0-beta.7",

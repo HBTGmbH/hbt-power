@@ -62,7 +62,7 @@ export namespace NavigationActionCreator {
 
 
     function navigate(to: string, dispatch: ThunkDispatch<any, any, any>): void {
-        PWR_HISTORY.push(to);
+        PWR_HISTORY.replace(to);
         dispatch(SetCurrentLocation(to));
     }
 

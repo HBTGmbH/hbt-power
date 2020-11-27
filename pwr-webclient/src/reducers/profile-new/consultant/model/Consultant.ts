@@ -22,14 +22,3 @@ export function emptyConsultant(): Consultant {
     };
 }
 
-export function newConsultant(initials: string, firstName: string, lastName: string, title: string, profile: Profile, birthDate: Date, active: boolean): Consultant {
-    return {
-        initials: initials,
-        firstName: firstName,
-        lastName: lastName,
-        title: title,
-        profileId: profile.id,
-        birthDate: birthDate,
-        active: active
-    };
-}
