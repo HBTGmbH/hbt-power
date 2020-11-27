@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import './index.css';
-import './../node_modules/react-toggle/style.css';
 import {ApplicationState, store} from './reducers/reducerIndex';
 import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
 import {Paths} from './Paths';

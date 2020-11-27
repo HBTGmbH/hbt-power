@@ -13,8 +13,6 @@ import FormControl from '@material-ui/core/FormControl/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {ThunkDispatch} from 'redux-thunk';
 
-const Toggle = require('react-toggle').default;
-
 interface ConsultantGridProps {
     consultantsByInitials: Immutable.Map<string, ConsultantInfo>;
 }

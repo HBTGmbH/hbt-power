@@ -4,8 +4,7 @@ import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable
 import {Card, CardHeader, Icon} from '@material-ui/core';
 import {IViewEntry} from '../../../../model/view/IViewEntry';
 import {isNullOrUndefined} from 'util';
-
-const Toggle = require('react-toggle').default;
+import Switch from '@material-ui/core/Switch';
 
 interface ViewProfileEntriesProps {
     entries: Array<IViewEntry>;
@@ -62,10 +61,11 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
                 </td>
                 <td>
                     <span style={{marginRight: '8px'}}>
-                        <Toggle
-                            checked={props.entry.enabled}
-                            onChange={(e: any) => this.handleToggle(props.entryIndex, e.target.checked)}
-                        />
+                         <Switch
+                             checked={props.entry.enabled}
+                             onChange={(e: any) => this.handleToggle(props.entryIndex, e.target.checked)}
+                             inputProps={{ 'aria-label': 'secondary checkbox' }}
+                         />
                      </span>
                 </td>
                 {this.props.renderEntry(props.entry, props.entryIndex)}
