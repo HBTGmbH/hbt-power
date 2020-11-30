@@ -281,6 +281,19 @@ body {
     white-space: nowrap;
 }
 
+.pwr-spacer-small {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.pwr-margin-bottom {
+    margin-bottom: 8px !important;
+}
+
+.pwr-margin-top {
+    margin-top: 8px !important;
+}
+
 /*[class*="MuiInputAdornment-root"] {*/
 /*height: auto !important;*/
 /*}*/

@@ -153,4 +153,28 @@ export class ProfileServiceClient extends PowerHttpClient {
         this.beginRequest();
         return this.executeRequest(axios.delete(url));
     };
+
+    public uploadProfilePicture = (picture: File): Promise<string> => {
+        const url = this.base() + `/profile-pictures`;
+        const config = this.credentialsConfig();
+        config.headers = {
+            'Content-Type': 'multipart/form-data'
+        }
+        const formData = new FormData();
+        formData.append("file", picture);
+        this.beginRequest();
+        return this.executeRequest(axios.post<{id: string}>(url, formData, config))
+            .then(response => response.id)
+    }
+
+    public deleteProfilePicture = (id: string): Promise<void> => {
+        const url = this.base() + `/profile-pictures/${id}`;
+        const config = this.credentialsConfig();
+        this.beginRequest();
+        return this.executeRequest(axios.delete(url, config));
+    }
+
+    getProfilePictureUrl(profilePictureId: string): string {
+        return  this.base() + `/profile-pictures/${profilePictureId}`;
+    }
 }

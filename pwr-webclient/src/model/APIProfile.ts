@@ -21,4 +21,5 @@ export interface APIConsultant {
     title: string;
     birthDate: string;
     active: boolean;
+    profilePictureId?: string;
 }

@@ -1,22 +1,21 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {Avatar, Paper} from '@material-ui/core';
-import {getProfileImageLocation} from '../../../API_CONFIG';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
-import {getRandomGreeting} from '../../../model/PwrConstants';
 import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import Edit from '@material-ui/icons/Edit';
 import {ThunkDispatch} from 'redux-thunk';
+import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
 
 interface BaseDataDashboardElementProps {
     initials: string;
+    profilePictureSrc: string;
     name: string;
     lastEdited: Date;
     profile: Profile;
@@ -39,11 +38,13 @@ interface BaseDataDashboardElementDispatch {
 class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardElementProps & BaseDataDashboardElementLocalProps & BaseDataDashboardElementDispatch, BaseDataDashboardElementLocalState> {
 
     static mapStateToProps(state: ApplicationState, localProps: BaseDataDashboardElementLocalProps): BaseDataDashboardElementProps {
+        const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             initials: state.profileStore.consultant.initials,
             name: state.profileStore.consultant.firstName,
             lastEdited: new Date(state.profileStore.profile.lastEdited),
-            profile: state.profileStore.profile
+            profile: state.profileStore.profile,
+            profilePictureSrc
         };
     }
 
@@ -71,7 +72,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                         </span>
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
-                        <Avatar sizes={'80'} src={getProfileImageLocation(this.props.initials)}/>
+                        <Avatar sizes={'80'} src={this.props.profilePictureSrc}/>
                     </div>
                     <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
                         {PowerLocalize.get('Overview.Base.LastEdited')}

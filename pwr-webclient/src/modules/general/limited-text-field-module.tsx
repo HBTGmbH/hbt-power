@@ -45,6 +45,10 @@ interface LimitedTextFieldProps {
     id?: string;
 
     rows?: number;
+
+    hideProgress?: boolean;
+
+    className?: string;
 }
 
 interface LimitedTextFieldState {
@@ -80,7 +84,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         onToggleEdit: () => {
         },
         disabled: false,
-        rows: 1
+        rows: 1,
+        hideProgress: false,
     };
 
     private interceptOnChange = (e: any) => {
@@ -97,11 +102,26 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     };
 
     render() {
+        let progressBar = <React.Fragment/>
+        if (!this.props.hideProgress) {
+            progressBar = <div style={{width: this.props.fullWidth ? '100%' : 256}}>
+                <div style={{width: '85%', float: 'left', marginTop: '7px'}}>
+                    <LinearProgress
+                        variant={'determinate'}
+                        value={(this.props.value.length / this.props.maxCharacters) * 100}
+                    />
+                </div>
+                <div style={{width: '10%', float: 'left'}}>
+                    {this.props.value.length + '/' + this.props.maxCharacters}
+                </div>
+            </div>
+        }
         return (
             <div>
                 <div style={{width: this.props.fullWidth ? '100%' : 350}}>
                     <div style={{width: this.props.fullWidth ? '85%' : 256, float: 'left'}}>
                         <TextField
+                            className={this.props.className}
                             rows={this.props.rows}
                             id={this.props.id}
                             value={(this.state.errorText !== null) ? this.state.errorText : this.props.value}
@@ -129,17 +149,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             null
                     }
                 </div>
-                <div style={{width: this.props.fullWidth ? '100%' : 256}}>
-                    <div style={{width: '85%', float: 'left', marginTop: '7px'}}>
-                        <LinearProgress
-                            variant={'determinate'}
-                            value={(this.props.value.length / this.props.maxCharacters) * 100}
-                        />
-                    </div>
-                    <div style={{width: '10%', float: 'left'}}>
-                        {this.props.value.length + '/' + this.props.maxCharacters}
-                    </div>
-                </div>
+                {progressBar}
             </div>
         );
     }

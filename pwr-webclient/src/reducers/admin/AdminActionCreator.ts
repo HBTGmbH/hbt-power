@@ -464,6 +464,5 @@ export class AdminActionCreator {
                 .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))
                 .catch((error) => Alerts.showError(error));
         };
-
     }
 }

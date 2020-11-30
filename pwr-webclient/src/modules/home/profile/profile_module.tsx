@@ -1,9 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {getProfileImageLocation} from '../../../API_CONFIG';
 import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Avatar from '@material-ui/core/Avatar/Avatar';
@@ -13,8 +11,6 @@ import Grid from '@material-ui/core/Grid/Grid';
 import Typography from '@material-ui/core/Typography/Typography';
 import {SuggestionAsyncActionCreator} from '../../../reducers/suggestions/SuggestionAsyncActionCreator';
 import {SuggestionStore} from '../../../reducers/suggestions/SuggestionStore';
-import {Paths} from '../../../Paths';
-import {COOKIE_INITIALS_NAME} from '../../../model/PwrConstants';
 import {Consultant} from '../../../reducers/profile-new/consultant/model/Consultant';
 import {ProfileEntryElement} from './profile-entry_module';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
@@ -28,15 +24,16 @@ import {Career} from '../../../reducers/profile-new/profile/model/Career';
 import {ProfileDescription} from './elements/profile-description_module';
 import {Projects} from './elements/project/projects_module';
 import {ProfileSkills} from './elements/skills/profile-skills_module';
-import {CrossCuttingAsyncActionCreator} from '../../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
-import {formatFullLocalizedDate, formatToShortDisplay} from '../../../utils/DateUtil';
+import {formatToShortDisplay} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
+import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
 
 
 interface ProfileProps {
     suggestions: SuggestionStore;
     loggedInUser: Consultant;
     profile: Profile;
+    profilePictureSrc: string;
 }
 
 /**
@@ -74,10 +71,12 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps): ProfileProps {
+        const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             suggestions: state.suggestionStore,
             loggedInUser: state.profileStore.consultant,
             profile: state.profileStore.profile,
+            profilePictureSrc
         };
     }
 
@@ -206,7 +205,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             </Grid>
                             <Grid item md={12}>
                                 <Avatar
-                                    src={getProfileImageLocation(this.getInitials())}
+                                    src={this.props.profilePictureSrc}
                                     style={{width: 90, height: 90}}
                                 />
                             </Grid>

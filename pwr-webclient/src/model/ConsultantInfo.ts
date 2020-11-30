@@ -36,16 +36,22 @@ export class ConsultantInfo {
         return doop<boolean, this>();
     };
 
+    @doop
+    public get profilePictureId() {
+        return doop<string, this>();
+    }
+
 
     private constructor(initials: string, firstName: string, lastName: string, title: string,
-                        birthDate: Date, active: boolean) {
+                        birthDate: Date, active: boolean, profilePictureId: string) {
         return this.initials(initials).firstName(firstName).lastName(lastName).title(title)
-            .birthDate(birthDate).active(active);
+            .birthDate(birthDate).active(active)
+            .profilePictureId(profilePictureId);
     }
 
     public static fromAPI(apiConsultant: APIConsultant) {
         return new ConsultantInfo(apiConsultant.initials, apiConsultant.firstName, apiConsultant.lastName,
-            apiConsultant.title, new Date(apiConsultant.birthDate), apiConsultant.active);
+            apiConsultant.title, new Date(apiConsultant.birthDate), apiConsultant.active, apiConsultant.profilePictureId);
     }
 
     public toAPI(): APIConsultant {
@@ -55,12 +61,13 @@ export class ConsultantInfo {
             firstName: this.firstName(),
             lastName: this.lastName(),
             title: this.title(),
-            birthDate: !isNullOrUndefined(this.birthDate()) ? this.birthDate().toISOString() : null
+            birthDate: !isNullOrUndefined(this.birthDate()) ? this.birthDate().toISOString() : null,
+            profilePictureId: this.profilePictureId()
         };
     }
 
     public static empty() {
-        return new ConsultantInfo('', '', '', '', new Date(), true);
+        return new ConsultantInfo('', '', '', '', new Date(), true, '');
     }
 
     /**

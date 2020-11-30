@@ -124,6 +124,12 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
         });
     };
 
+    private setProfilePictureId = (profilePictureId: string) => {
+        this.setState({
+            consultantInfo: this.state.consultantInfo.profilePictureId(profilePictureId)
+        });
+    };
+
 
     private readonly dialogActions = [
 
@@ -149,6 +155,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
     render() {
         return (<div>
             <Dialog
+                maxWidth={"xs"}
                 title={PowerLocalize.get('ConsultantTile.CreateConsultant')}
                 open={this.props.show}
                 onClose={this.closeAndReset}
@@ -163,19 +170,21 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                         title={this.state.consultantInfo.title()}
                         birthDate={this.state.consultantInfo.birthDate()}
                         active={this.state.consultantInfo.active()}
+                        profilePictureId={this.state.consultantInfo.profilePictureId()}
                         onFirstNameChange={this.setFirstName}
                         onLastNameChange={this.setLastName}
                         onTitleChange={this.setTitle}
                         onBirthDateChange={this.setBirthDate}
                         onActiveChange={this.setActive}
+                        onProfilePictureIdChange={this.setProfilePictureId}
                     >
                         <LimitedTextField
+                            className="pwr-margin-top pwr-margin-bottom"
                             maxCharacters={100}
                             value={this.state.consultantInfo.initials()}
                             label={PowerLocalize.get('Initials.Singular')}
                             onChange={(e, v) => this.setInitials(v)}
                         />
-
                     </ConsultantEditFields>
                 </DialogContent>
                 <DialogActions>

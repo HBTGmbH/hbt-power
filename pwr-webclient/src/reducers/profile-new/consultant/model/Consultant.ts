@@ -8,6 +8,7 @@ export interface Consultant {
     profileId: number;
     birthDate: Date;
     active: boolean;
+    profilePictureId: string;
 }
 
 export function emptyConsultant(): Consultant {
@@ -18,7 +19,8 @@ export function emptyConsultant(): Consultant {
         title: null,
         profileId: null,
         birthDate: null,
-        active: false
+        active: false,
+        profilePictureId: null,
     };
 }
 

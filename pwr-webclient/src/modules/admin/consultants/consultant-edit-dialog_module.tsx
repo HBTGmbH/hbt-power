@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import * as redux from 'redux';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {Dialog, DialogActions} from '@material-ui/core';
+import {Avatar, Dialog, DialogActions} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
@@ -112,6 +112,12 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
         });
     };
 
+    private setProfilePictureId = (profilePictureId: string) => {
+        this.setState({
+            consultantInfo: this.state.consultantInfo.profilePictureId(profilePictureId)
+        });
+    };
+
     private setTitle = (val: string) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.title(val)
@@ -161,6 +167,7 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
     render() {
         return (<div>
             <Dialog
+                maxWidth={"xs"}
                 id={'ConsultantTile.EditConsultant.Dialog'}
                 title={PowerLocalize.get('ConsultantTile.EditConsultant')}
                 open={this.props.show}
@@ -176,11 +183,13 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
                         title={this.state.consultantInfo.title()}
                         birthDate={this.state.consultantInfo.birthDate()}
                         active={this.state.consultantInfo.active()}
+                        profilePictureId={this.state.consultantInfo.profilePictureId()}
                         onFirstNameChange={this.setFirstName}
                         onLastNameChange={this.setLastName}
                         onTitleChange={this.setTitle}
                         onBirthDateChange={this.setBirthDate}
                         onActiveChange={this.setActive}
+                        onProfilePictureIdChange={this.setProfilePictureId}
                     />
                 </DialogContent>
                 <DialogActions>

@@ -1,9 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {GridListTile, Icon, Menu, MenuItem} from '@material-ui/core';
-import {getProfileImageLocation} from '../../../API_CONFIG';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditDialog} from './consultant-edit-dialog_module';
@@ -13,6 +11,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar/GridListTileBar';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import {ThunkDispatch} from 'redux-thunk';
+import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
 
 /**
  * Properties that are managed by react-redux.
@@ -140,6 +139,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
 
 
     render() {
+        const imageSrc = ProfileServiceClient.instance().getProfilePictureUrl(this.props.consultantInfo.profilePictureId());
         return (
             <div>
                 {this.renderMenu()}
@@ -161,8 +161,8 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
                 >
 
                     <img className={this.props.consultantInfo.active() ? '' : 'disabled-consultant-img'}
-                         src={getProfileImageLocation(this.props.consultantInfo.initials())}
-                        //src={getImagePath()+'/HBT002_Logo_neg.png'}
+                         alt={`Profile picture of ${this.props.consultantInfo.initials()}`}
+                         src={imageSrc}
                     />
                     <GridListTileBar
                         title={this.props.consultantInfo.getFullName()}
