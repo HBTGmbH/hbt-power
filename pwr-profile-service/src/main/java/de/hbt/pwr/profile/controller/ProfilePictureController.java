@@ -32,6 +32,14 @@ public class ProfilePictureController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/by-initials/{id}")
+    @ResponseBody
+    public ResponseEntity<byte[]> getPictureByInitials(@PathVariable("initials") String initials) {
+        return pictureService.findByInitials(initials)
+                .map(this::toResponse)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping(value = "", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public ResponseEntity<ProfilePicture> uploadPicture(@RequestParam("file") MultipartFile multipartFile) {

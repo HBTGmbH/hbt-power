@@ -18,7 +18,8 @@ import java.time.LocalDate;
 @Table(name = "consultant")
 public class Consultant {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", columnDefinition = "bigint not null auto_increment")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

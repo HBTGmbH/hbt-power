@@ -54,7 +54,7 @@ public class ProfileEntryEndpointITest {
     @Before
     public void setup() {
 
-        testConsultant = consultantService.createNewConsultant("abc", "a", "b", "", LocalDate.now());
+        testConsultant = consultantService.createNewConsultant("abc", "a", "b", "", null, LocalDate.now());
     }
 
     @After
