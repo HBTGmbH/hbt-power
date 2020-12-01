@@ -183,7 +183,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                         <Divider variant={'fullWidth'}
                                  style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
                     </Grid>
-                    <Grid item container spacing={8} md={12} sm={12}>
+                    <Grid item container spacing={1} md={12} sm={12}>
                         {
                             !isNullOrUndefined(this.props.allEntries) && this.props.allEntries.length > 0 ?
                                 this.props.allEntries.sort(this.compareEntries).map(this.renderSingleElement) :

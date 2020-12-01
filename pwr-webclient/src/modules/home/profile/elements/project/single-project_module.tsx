@@ -254,7 +254,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         rows={4}
                     />
                     <PwrSpacer/>
-                    <Grid container spacing={8} justify={'flex-start'}>
+                    <Grid container spacing={1} justify={'flex-start'}>
                         <Grid item>
                             <PwrDatePicker label={PowerLocalize.get('Profile.Project.StartDate')}
                                            disabled={this.isEditDisabled()}

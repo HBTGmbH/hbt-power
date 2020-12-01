@@ -220,7 +220,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     </Grid>
 
 
-                    <Grid container spacing={10} className="mui-margin">
+                    <Grid container spacing={2} className="mui-margin">
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'LANGUAGE'}
                                                  renderSingleElementInfo={this.renderLanguageInfo}/>

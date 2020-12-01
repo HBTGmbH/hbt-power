@@ -117,7 +117,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                     <GridList
                         cols={4}
                         cellHeight={310}
-                        spacing={5}
+                        spacing={1}
                     >
                         {
                             this.props.consultantsByInitials
