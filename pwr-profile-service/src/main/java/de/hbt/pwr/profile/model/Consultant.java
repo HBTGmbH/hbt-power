@@ -18,6 +18,7 @@ import java.time.LocalDate;
 @Table(name = "consultant")
 public class Consultant {
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;

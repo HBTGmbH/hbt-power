@@ -79,7 +79,7 @@ public class ConsultantsEndpoint {
         Consultant res = null;
         if ("new".equals(action)) {
             res = consultantService.createNewConsultant(consultant.getInitials(), consultant.getFirstName(),
-                    consultant.getLastName(), consultant.getTitle(), consultant.getBirthDate());
+                    consultant.getLastName(), consultant.getTitle(), consultant.getProfilePictureId(), consultant.getBirthDate());
         } else {
             throw new WebApplicationException(HttpStatus.BAD_REQUEST, "Invalid request: Unknown action type " + action);
         }
@@ -95,7 +95,7 @@ public class ConsultantsEndpoint {
     })
     public ResponseEntity<Consultant> update(@RequestBody Consultant consultant, @PathVariable("initials") String initials) {
         Consultant result = consultantService.updatePersonalData(initials, consultant);
-        return ResponseEntity.ok(consultant);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("{initials}/delete")

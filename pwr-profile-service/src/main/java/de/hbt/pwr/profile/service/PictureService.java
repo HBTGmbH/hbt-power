@@ -34,10 +34,15 @@ public class PictureService {
 
     @Transactional
     public void deletePicture(String id) {
-        profilePictureRepository.deleteById(id);
+        profilePictureRepository.findById(id)
+                .ifPresent(profilePictureRepository::delete);
     }
 
     public Optional<ProfilePicture> findProfilePicture(String id) {
         return profilePictureRepository.findById(id);
+    }
+
+    public Optional<ProfilePicture> findByInitials(String initials) {
+        return profilePictureRepository.findByInitials(initials);
     }
 }

@@ -93,11 +93,14 @@ public class ConsultantService {
         if (updateFrom.getActive() != null) {
             toUpdate.setActive(updateFrom.getActive());
         }
+        if (updateFrom.getProfilePictureId() != null) {
+            toUpdate.setProfilePictureId(updateFrom.getProfilePictureId());
+        }
         return toUpdate;
     }
 
     @Transactional
-    public Consultant createNewConsultant(String initials, String firstName, String lastName, String title, LocalDate birthDate) {
+    public Consultant createNewConsultant(String initials, String firstName, String lastName, String title, String profilePictureId, LocalDate birthDate) {
         if (consultantRepository.existsByInitials(initials)) {
             throw new WebApplicationException(HttpStatus.BAD_REQUEST, "Consultant with initials = " + initials + " already exists");
         }
@@ -109,6 +112,7 @@ public class ConsultantService {
         res.setTitle(title);
         res.setProfile(Profile.empty());
         res.setBirthDate(birthDate);
+        res.setProfilePictureId(profilePictureId);
         res.setId(null);
         return consultantRepository.save(res);
     }
