@@ -132,14 +132,13 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
 
 
     private readonly dialogActions = [
-
         <Button
             key="save"
             variant={'text'}
             color={'primary'}
             onClick={this.saveAndReset}
         >
-            {PowerLocalize.get('Action.Save')}
+            Speichern
         </Button>
         ,
         <Button
@@ -148,14 +147,14 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
             color={'primary'}
             onClick={this.closeAndReset}
         >
-            {PowerLocalize.get('Action.Exit')}
+           Schließen
         </Button>,
     ];
 
     render() {
         return (<div>
             <Dialog
-                maxWidth={"xs"}
+                scroll={"paper"}
                 title={PowerLocalize.get('ConsultantTile.CreateConsultant')}
                 open={this.props.show}
                 onClose={this.closeAndReset}
@@ -163,7 +162,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                 <DialogTitle>
                     {PowerLocalize.get('ConsultantTile.CreateConsultant')}
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent dividers={true} style={{width: '400px', 'overflowX': 'hidden'}}>
                     <ConsultantEditFields
                         firstName={this.state.consultantInfo.firstName()}
                         lastName={this.state.consultantInfo.lastName()}
@@ -181,6 +180,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                         <LimitedTextField
                             className="pwr-margin-top pwr-margin-bottom"
                             maxCharacters={100}
+                            hideProgress={true}
                             value={this.state.consultantInfo.initials()}
                             label={PowerLocalize.get('Initials.Singular')}
                             onChange={(e, v) => this.setInitials(v)}

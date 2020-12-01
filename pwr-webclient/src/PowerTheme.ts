@@ -35,16 +35,6 @@ const newPowerTheme: ThemeOptions = {
         }
     },
     overrides: {
-        MuiDialogContent: {
-            root: {
-                overflowY: 'unset',
-            }
-        },
-        MuiDialog: {
-            paper: {
-                overflowY: 'unset',
-            }
-        },
         MuiInputAdornment: {
             root: {
                 height: 'auto'

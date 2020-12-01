@@ -39,7 +39,8 @@ export class ConsultantEditFields extends React.Component<ConsultantEditFieldsPr
 
     render() {
         return (<div>
-            <ConsultantEditProfilePicture profilePictureId={this.props.profilePictureId} onProfilePictureIdChange={this.props.onProfilePictureIdChange}/>
+            <ConsultantEditProfilePicture profilePictureId={this.props.profilePictureId}
+                                          onProfilePictureIdChange={this.props.onProfilePictureIdChange}/>
             <Typography variant="subtitle1" gutterBottom className={"pwr-margin-top"}>
                 Persönliche Daten
             </Typography>
