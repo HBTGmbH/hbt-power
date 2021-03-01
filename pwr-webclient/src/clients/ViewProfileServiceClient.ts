@@ -1,8 +1,9 @@
 import {PowerHttpClient} from './PowerHttpClient';
 import {SortableEntryField, SortableEntryType} from '../model/view/NameComparableType';
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
 import {ViewProfile} from '../model/view/ViewProfile';
 import {ViewCategory} from '../model/view/ViewCategory';
+import {APIBuildInfo} from '../model/metadata/BuildInfo';
 
 declare const POWER_VIEW_PROFILE_SERVICE_URL;
 
@@ -28,6 +29,22 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     public getBuildInfoURL() {
         return this.base() + '/actuator/info';
     }
+
+    public getBuildInfo = (): Promise<APIBuildInfo> => {
+        const url = this.base() + '/actuator/info';
+        this.beginRequest();
+        return this.executeRequest<APIBuildInfo>(axios.get(url))
+            // Append swagger ref
+            .then(value => {
+                return ({
+                    ...value,
+                    build: {
+                        ...value.build,
+                        swaggerHref: this.base() + '/v2/api-docs'
+                    }
+                })
+            })
+    };
 
     /*
     

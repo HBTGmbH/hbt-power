@@ -7,6 +7,7 @@ export interface APIBuildInfo {
         name: string;
         group: string;
         time: string;
+        swaggerHref?: string; // Manually appended
     }
 }
 
@@ -42,9 +43,14 @@ export class BuildInfo {
         return doop<boolean, this>();
     };
 
+    @doop
+    public get swaggerRef() {
+        return doop<string, this>();
+    }
 
-    constructor(version: string, artifact: string, name: string, group: string, time: Date, available: boolean) {
-        return this.version(version).artifact(artifact).name(name).group(group).time(time).available(available);
+
+    constructor(version: string, artifact: string, name: string, group: string, time: Date, available: boolean, swaggerRef: string) {
+        return this.version(version).artifact(artifact).name(name).group(group).time(time).available(available).swaggerRef(swaggerRef);
     }
 
     public static of(apiBuildInfo: APIBuildInfo) {
@@ -54,11 +60,12 @@ export class BuildInfo {
             apiBuildInfo.build.name,
             apiBuildInfo.build.group,
             new Date(apiBuildInfo.build.time),
-            true
+            true,
+            apiBuildInfo.build.swaggerHref || ''
         );
     }
 
     public static offline(service: string): BuildInfo {
-        return new BuildInfo('', '', service, '', new Date(), false);
+        return new BuildInfo('', '', service, '', new Date(), false, '');
     }
 }

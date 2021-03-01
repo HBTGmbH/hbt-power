@@ -1,7 +1,5 @@
 import {APIBuildInfo, BuildInfo} from '../../model/metadata/BuildInfo';
 import {ActionType} from '../ActionType';
-import {ApplicationState} from '../reducerIndex';
-import * as redux from 'redux';
 import axios from 'axios';
 import {MetaDataStore} from '../../model/metadata/MetaDataStore';
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
@@ -81,10 +79,14 @@ export namespace MetaDataActionCreator {
             profileServiceClient.getBuildInfo()
                 .then(available(MetaDataStore.KEY_PROFILE, dispatch))
                 .catch(notAvailable(MetaDataStore.KEY_PROFILE, dispatch));
+            SkillServiceClient.instance().getBuildInfo()
+                .then(available(MetaDataStore.KEY_SKILL, dispatch))
+                .catch(notAvailable(MetaDataStore.KEY_SKILL, dispatch));
+            ViewProfileServiceClient.instance().getBuildInfo()
+                .then(available(MetaDataStore.KEY_VIEW_PROFILE, dispatch))
+                .catch(notAvailable(MetaDataStore.KEY_VIEW_PROFILE, dispatch));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_STATISTICS, StatisticsServiceClient.instance().getBuildInfoURL()));
-            dispatch(FetchBuildInfo(MetaDataStore.KEY_SKILL, SkillServiceClient.instance().getBuildInfoURL()));
             dispatch(FetchBuildInfo(MetaDataStore.KEY_REPORT, ReportServiceClient.instance().getBuildInfoURL()));
-            dispatch(FetchBuildInfo(MetaDataStore.KEY_VIEW_PROFILE, ViewProfileServiceClient.instance().getBuildInfoURL()));
             dispatch(FetchClientBuildInfo());
         };
     }

@@ -80,7 +80,17 @@ export class ProfileServiceClient extends PowerHttpClient {
     public getBuildInfo = (): Promise<APIBuildInfo> => {
         const url = this.base() + '/actuator/info';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.executeRequest<APIBuildInfo>(axios.get(url))
+            // Append swagger ref
+            .then(value => {
+                return ({
+                    ...value,
+                    build: {
+                        ...value.build,
+                        swaggerHref: this.base() + '/v2/api-docs'
+                    }
+                })
+            })
     };
 
     public getAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
