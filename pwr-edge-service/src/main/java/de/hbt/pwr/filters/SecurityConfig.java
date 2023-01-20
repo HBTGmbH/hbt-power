@@ -1,19 +1,40 @@
 package de.hbt.pwr.filters;
 
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.ldap.LdapAuthenticationProviderConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import java.util.Arrays;
 
 @Configuration
-@EnableWebSecurity()
+@EnableWebFluxSecurity()
 @ConfigurationProperties(prefix = "security-config")
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     /**
      * username of the LDAP admin for HBT
@@ -45,12 +66,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("role-prefix")
     private String rolePrefix;
 
-    @Autowired
-    public SecurityConfig() {
-    }
+    private final ObjectPostProcessor<Object> objectPostProcessor = new ObjectPostProcessor<>() {
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        @SneakyThrows
+        @Override
+        public <T> T postProcess(T object) {
+            if (object instanceof InitializingBean) {
+                InitializingBean bean = (InitializingBean) object;
+                bean.afterPropertiesSet();
+            }
+            return object;
+        }
+
+    };
+
+    @Bean
+    public ReactiveAuthenticationManager authenticationManager() throws Exception {
+        AuthenticationManagerBuilder auth = new AuthenticationManagerBuilder(objectPostProcessor);
         auth.ldapAuthentication()
                 .userSearchBase(userSearchBase)
                 .userSearchFilter(userSearchFilter)
@@ -61,28 +93,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .url(url)
                 .managerDn(managerDn)
                 .managerPassword(managerPassword);
+        return new ReactiveAuthenticationManagerAdapter(auth.build());
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.HEAD, "/**").permitAll()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
+    @Bean
+    public SecurityWebFilterChain configure(ServerHttpSecurity http) throws Exception {
+        return http.authenticationManager(authenticationManager()).authorizeExchange()
+                .pathMatchers(HttpMethod.HEAD, "/**").permitAll()
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .pathMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
                 // Restrict profile picture upload to admins
-                .antMatchers(HttpMethod.POST, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
-                .antMatchers(HttpMethod.DELETE, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
-                .antMatchers("/pwr-profile-service/**").permitAll()
-                .antMatchers("/pwr-profile-service/api/consultants/**").permitAll()
-                .antMatchers("/pwr-report-service/**").permitAll()
-                .antMatchers("/pwr-view-profile-service/**").permitAll()
-                .antMatchers("/pwr-skill-service/**").permitAll()
-                .antMatchers("/pwr-statistics-service/**").permitAll()
-                .antMatchers("/**").authenticated()
+                .pathMatchers(HttpMethod.POST, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
+                .pathMatchers(HttpMethod.DELETE, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
+                .pathMatchers("/pwr-profile-service/**").permitAll()
+                .pathMatchers("/pwr-profile-service/api/consultants/**").permitAll()
+                .pathMatchers("/pwr-report-service/**").permitAll()
+                .pathMatchers("/pwr-view-profile-service/**").permitAll()
+                .pathMatchers("/pwr-skill-service/**").permitAll()
+                .pathMatchers("/pwr-statistics-service/**").permitAll()
+                .pathMatchers("/**").permitAll()
                 .and()
                 .httpBasic()
                 .and()
-                .csrf().disable();
+                .csrf().disable()
+                .cors(corsSpec -> corsSpec.configurationSource(new SeriouslyFuckItCorsFilter()))
+                .build();
     }
 
 

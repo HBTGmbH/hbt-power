@@ -1,25 +1,19 @@
-zuul:
-  host:
-    connect-timeout-millis: 20000
-    socket-timeout-millis: 20000
-ribbon:
-  ReadTimeout: 60000
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 20000
-        timeout:
-          enabled: false
-# Increase the timeout for communiction with the reprot serive so it doesn't die during report generation
-pwr-report-service:
-  ribbon:
-    ReadTimeout: 600000 # 60 seconds should suffice
-    ConnectTimeout: 10000
-#  Same for profile. Also report related
-pwr-profile-service:
-  ribbon:
-    ReadTimeout: 20000
-    ConnectTimeout: 10000
+server:
+  port: 9000
+---
+spring:
+  config:
+    activate:
+      on-profile: localDev
+pwr:
+  url:
+    skill: http://localhost:9003
+    profile: http://localhost:9004
+    report: http://localhost:9005
+    view-profile: http://localhost:9008
+    statistics: http://localhost:9009
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
