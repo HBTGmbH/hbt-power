@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  pwr_profile_service:
+  pwr-profile-service:
     image: pwr-profile-service:local
     ports:
       - 9004:9004
