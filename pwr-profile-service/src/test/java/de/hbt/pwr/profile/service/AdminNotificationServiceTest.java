@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.AbstractIntegrationTest;
 import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.model.Skill;
@@ -36,10 +37,7 @@ import static org.mockito.Matchers.any;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class AdminNotificationServiceTest {
-
-    @MockBean(name = "skillProfileClient")
-    private SkillProfileClient skillProfileClient;
+public class AdminNotificationServiceTest extends AbstractIntegrationTest {
 
     @Autowired
     private SkillRepository skillRepository;
@@ -67,7 +65,7 @@ public class AdminNotificationServiceTest {
                 profileEntryDAO, profileRepository, skillRepository, skillProfileClient, null);
         profileUpdateService = new ProfileUpdateService(nameEntityRepository, skillRepository, profileEntryDAO, projectRepository,
                 profileRepository, adminNotificationService, profileValidationService);
-        given(skillProfileClient.updateAndGetCategory(any())).willReturn(ResponseEntity.ok(new SkillCategory()));
+        given(skillProfileClient.updateAndGetCategory(any())).willReturn(new SkillCategory());
     }
 
     private Skill newSkill(String name, Integer level) {
@@ -240,7 +238,7 @@ public class AdminNotificationServiceTest {
         sc.setBlacklisted(true);
 
 
-        given(skillProfileClient.updateAndGetCategory(qualifier)).willReturn(ResponseEntity.ok(sc));
+        given(skillProfileClient.updateAndGetCategory(qualifier)).willReturn(sc);
 
 
         Profile p = new Profile();
@@ -265,7 +263,7 @@ public class AdminNotificationServiceTest {
         sc.setBlacklisted(false);
 
 
-        given(skillProfileClient.updateAndGetCategory(qualifier)).willReturn(ResponseEntity.ok(sc));
+        given(skillProfileClient.updateAndGetCategory(qualifier)).willReturn(sc);
 
 
         Profile p = new Profile();

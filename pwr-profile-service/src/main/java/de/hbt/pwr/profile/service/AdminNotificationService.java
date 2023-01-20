@@ -176,7 +176,7 @@ public class AdminNotificationService {
      */
     public Optional<AdminNotification> createSkillNotification(Profile profile, Skill skill, boolean newSkillCreated) {
         // Priority: Blacklist first, if not blacklist, check unknown
-        SkillCategory category = skillProfileClient.updateAndGetCategory(skill.getName()).getBody();
+        SkillCategory category = skillProfileClient.updateAndGetCategory(skill.getName());
         if (category != null && category.isBlacklisted()) {
             return Optional.of(createBlacklistedSkillNotification(profile, skill));
         } else if (newSkillCreated) {

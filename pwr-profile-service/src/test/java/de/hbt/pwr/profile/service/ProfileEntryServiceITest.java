@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.AbstractIntegrationTest;
 import de.hbt.pwr.profile.data.NameEntityRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.data.ProjectRepository;
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.tuple;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class ProfileEntryServiceITest {
+public class ProfileEntryServiceITest extends AbstractIntegrationTest {
 
     @Autowired
     private ProfileEntryService profileEntryService;

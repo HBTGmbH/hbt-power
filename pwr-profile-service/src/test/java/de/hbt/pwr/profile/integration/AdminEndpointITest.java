@@ -1,6 +1,8 @@
 package de.hbt.pwr.profile.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hbt.pwr.profile.AbstractIntegrationTest;
+import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.controller.AdminEndpoint;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
@@ -11,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +27,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-public class AdminEndpointITest {
+public class AdminEndpointITest extends AbstractIntegrationTest {
 
     private Profile sampleProfile;
 

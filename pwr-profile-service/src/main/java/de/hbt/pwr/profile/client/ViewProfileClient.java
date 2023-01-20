@@ -1,22 +1,45 @@
 package de.hbt.pwr.profile.client;
 
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
-@Component
-@FeignClient(value = "pwr-view-profile-service")
-public interface ViewProfileClient {
-    @RequestMapping(method = RequestMethod.DELETE, path = "/view/{initials}/{id}")
-    ResponseEntity deleteViewProfile(@PathVariable("initials") String initials, @PathVariable("id") String id);
+@Service
+public class ViewProfileClient {
 
+    private static final ParameterizedTypeReference<List<String>> LIST_OF_STRING = new ParameterizedTypeReference<>() {};
+    
+    @Value("${pwr-view-profile-service-url}")
+    private String pwrViewProfileServiceUrl;
+    private final RestTemplate restTemplate;
+    public ViewProfileClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
-    @GetMapping(path = "view/{initials}")
-    ResponseEntity<List<String>> getAllViewProfiles(@PathVariable("initials") String initials);
+    public void deleteViewProfile(String initials, String id) {
+        restTemplate.exchange(pwrViewProfileServiceUrl + "/view/{initials}/{id}",
+                HttpMethod.DELETE,
+                new HttpEntity<>(null),
+                Void.class,
+                Map.of("initials", initials, "id", id)
+        );
+    }
+
+    public List<String> getAllViewProfiles(@PathVariable("initials") String initials) {
+        return restTemplate.exchange(pwrViewProfileServiceUrl + "/view/{initials}",
+                HttpMethod.GET,
+                new HttpEntity<>(null),
+                LIST_OF_STRING,
+                Map.of("initials", initials)
+        ).getBody();
+    }
 }

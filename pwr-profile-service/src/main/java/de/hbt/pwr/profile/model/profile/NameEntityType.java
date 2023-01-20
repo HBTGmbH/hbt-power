@@ -1,7 +1,7 @@
 package de.hbt.pwr.profile.model.profile;
 
 import de.hbt.pwr.profile.model.profile.entries.*;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Set;
 

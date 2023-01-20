@@ -12,11 +12,6 @@ spring:
     jpa:
       hibernate:
         ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
-eureka:
-  client:
-    enabled: ${EUREKA_ENABLED:true}
-    service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
 server:
     port: 9004
 logging:
@@ -28,23 +23,10 @@ logging:
 # This service can be polite!
 isPolite: true
 default-chars-per-line: 32
-feign:
-  hystrix:
-    enabled: true # Enables Hystrix Fallback for Feign clients.
----
-spring:
-  profiles: bootstrapDatabase
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    username: pwr-profile-service
-    password: changeit
-    url: jdbc:mysql://localhost:10004/profile?serverTimezone=Europe/Berlin
-  jpa:
-    hibernate:
-      ddl-auto: create
-eureka:
-  client:
-    enabled: false
+# The default is a docker-compose deployment; use hostnames
+pwr-skill-service-url: http://pwr-skill-service:9003
+# The default is a docker-compose deployment; use hostnames
+pwr-view-profile-service-url: http://pwr-view-profile-service:9008
 ---
 spring:
   profiles: docker
@@ -56,42 +38,21 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-eureka:
-  client:
-    enabled: false
 ---
+# Use this with pwr-compose-deploy/start-dependencies.cmd
 spring:
   profiles: localDev
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    username: pwr-profile-service
-    password: secretPassword
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: changeit
     url: jdbc:mysql://localhost:3306/profile
-  jpa:
-    hibernate:
-      ddl-auto: none
-      use-new-id-generator-mappings: false
-eureka:
-  client:
-    enabled: true
-    service-url:
-       defaultZone: http://localhost:8761/eureka
----
-spring:
-  profiles: localDevNoEureka
-  datasource:
-      driver-class-name: com.mysql.jdbc.Driver
-      username: pwr-profile-service
-      password: secretPassword
-      url: jdbc:mysql://localhost:3306/profile
   jpa:
     hibernate:
       ddl-auto: update
       use-new-id-generator-mappings: false
-eureka:
-  client:
-    enabled: false
-pwr-skill-service.ribbon.listOfServers: localhost:9003
-
-
-
+pwr-skill-service-url: http://localhost:9003
+pwr-view-profile-service-url: http://localhost:9008
+logging:
+  level:
+    org.springframework.web: DEBUG

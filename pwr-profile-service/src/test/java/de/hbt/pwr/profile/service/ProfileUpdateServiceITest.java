@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.AbstractIntegrationTest;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.notification.*;
@@ -17,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,27 +32,27 @@ import static org.assertj.core.api.Assertions.fail;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class ProfileUpdateServiceITest {
+public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
 
-    @Inject
+    @Autowired
     private ProfileUpdateService profileUpdateService;
 
-    @Inject
+    @Autowired
     private NameEntityRepository nameEntityRepository;
 
-    @Inject
+    @Autowired
     private ProfileEntryDAO profileEntryDAO;
 
-    @Inject
+    @Autowired
     private SkillRepository skillRepository;
 
     @Autowired
     private ProjectRepository projectRepository;
 
-    @Inject
+    @Autowired
     private ProfileRepository profileRepository;
 
-    @Inject
+    @Autowired
     private AdminNotificationRepository adminNotificationRepository;
 
 
@@ -105,8 +105,6 @@ public class ProfileUpdateServiceITest {
         assertThat(languageSkillSet.size()).isEqualTo(3);
         assertThat(languageSkillSet).containsExactlyInAnyOrder(lang1, lang2, lang3);
     }
-
-
 
 
     /**
@@ -170,7 +168,7 @@ public class ProfileUpdateServiceITest {
         Set<LanguageSkill> languageSkillSet = new HashSet<>();
         languageSkillSet.add(lang2);
         languageSkillSet.add(lang3);
-        languageSkillSet = ReflectionTestUtils.invokeMethod(profileUpdateService, "persistEntries", languageSkillSet, p, NameEntityType.LANGUAGE,adminNotifications);
+        languageSkillSet = ReflectionTestUtils.invokeMethod(profileUpdateService, "persistEntries", languageSkillSet, p, NameEntityType.LANGUAGE, adminNotifications);
         assertThat(languageSkillSet.size()).isEqualTo(2);
     }
 
@@ -264,7 +262,7 @@ public class ProfileUpdateServiceITest {
 
     @Test
     @Transactional
-    public void testAddSkillChangeRating(){
+    public void testAddSkillChangeRating() {
         Profile profile = new Profile();
         profileRepository.saveAndFlush(profile);
         Skill mySQL = new Skill("MySQL", 1);
@@ -278,8 +276,7 @@ public class ProfileUpdateServiceITest {
         profileRepository.saveAndFlush(profile);
 
 
-
-        Skill duplicate = new Skill(mySQL.getName(),5);
+        Skill duplicate = new Skill(mySQL.getName(), 5);
         profile.getSkills().add(duplicate);
 
         profile = profileUpdateService.updateProfile(profile);

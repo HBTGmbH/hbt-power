@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.controller;
 
+import de.hbt.pwr.profile.AbstractIntegrationTest;
 import de.hbt.pwr.profile.client.ViewProfileClient;
 import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
@@ -31,10 +32,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class ProfileEntryEndpointITest {
-
-    @MockBean
-    ViewProfileClient viewProfileClient;
+public class ProfileEntryEndpointITest extends AbstractIntegrationTest {
 
     @Autowired
     ProfileEntryEndpoint endpoint;
@@ -48,12 +46,11 @@ public class ProfileEntryEndpointITest {
     private Consultant testConsultant;
 
     private void setUpFeignClient() {
-        when(viewProfileClient.getAllViewProfiles(any())).thenAnswer(invocationOnMock ->  ResponseEntity.ok(new ArrayList<String>()));
+        when(viewProfileClient.getAllViewProfiles(any())).thenAnswer(invocationOnMock ->  new ArrayList<String>());
     }
 
     @Before
     public void setup() {
-
         testConsultant = consultantService.createNewConsultant("abc", "a", "b", "", null, LocalDate.now());
     }
 

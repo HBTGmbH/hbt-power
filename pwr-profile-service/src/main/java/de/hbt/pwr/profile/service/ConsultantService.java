@@ -127,8 +127,7 @@ public class ConsultantService {
         } else {
 
             // View Profile Service bescheid sagen
-            ResponseEntity<List<String>> response = viewProfileClient.getAllViewProfiles(toDelete.getInitials());
-            List<String> viewIds = response.getBody();
+            List<String> viewIds = viewProfileClient.getAllViewProfiles(toDelete.getInitials());
             if (viewIds != null) {
                 viewIds.forEach((id) -> viewProfileClient.deleteViewProfile(toDelete.getInitials(), id));
             }
