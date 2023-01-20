@@ -1,7 +1,7 @@
 package de.hbt.pwr.model.profile;
 
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDate;

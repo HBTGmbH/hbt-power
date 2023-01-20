@@ -1,16 +1,34 @@
 package de.hbt.pwr.client;
 
 import de.hbt.pwr.model.profile.Consultant;
-import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @Component
-@FeignClient(value = "pwr-profile-service", fallback = PowerProfileClientFallback.class )
-public interface PowerProfileClient {
-    @RequestMapping(value = "/api/consultants", method = RequestMethod.GET, produces = "application/json")
-    List<Consultant> getAllConsultants();
+public class PowerProfileClient {
+    private static final ParameterizedTypeReference<List<Consultant>> LIST_OF_CONSULTANT = new ParameterizedTypeReference<List<Consultant>>() {
+    };
+
+    private final RestTemplate restTemplate;
+
+    @Value("${pwr-profile-service-url}")
+    private String pwrProfileServiceUrl;
+
+    public PowerProfileClient() {
+        this.restTemplate = new RestTemplate();
+    }
+
+    public List<Consultant> getAllConsultants() {
+        return restTemplate.exchange(pwrProfileServiceUrl + "/consultants",
+                HttpMethod.GET,
+                new HttpEntity<>(null),
+                LIST_OF_CONSULTANT
+        ).getBody();
+    }
 }

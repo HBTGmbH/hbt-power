@@ -53,7 +53,7 @@ public class AsyncInformationService {
     }
 
     @Async
-    private void refreshConsultantData() {
+    void refreshConsultantData() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("Starting async refresh task for consultant data.");
@@ -74,7 +74,7 @@ public class AsyncInformationService {
     }
 
     @Async
-    private void refreshStatistics() {
+    void refreshStatistics() {
         final StatisticsConfig config = getConfig();
         List<Consultant> consultants = StreamUtils.asStream(consultantRepository.findAll().iterator()).collect(Collectors.toList());
         List<ProfileClusterable> values = consultants.stream().map(consultant -> new ProfileClusterable(consultant.getProfile())).collect(Collectors.toList());
