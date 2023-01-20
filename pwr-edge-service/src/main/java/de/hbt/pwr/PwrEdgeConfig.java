@@ -15,7 +15,7 @@ public class PwrEdgeConfig {
         private String report = "http://pwr-report-service:9005";
         private String skill = "http://pwr-skill-service:9003";
         private String viewProfile = "http://pwr-view-profile-service:9008";
-        private String statistics = "http://pwr-statistics-service:9009";
+        private String statistics = "http://pwr-statistics-service:9007";
     }
 
     private Url url = new Url();

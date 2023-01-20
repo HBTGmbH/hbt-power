@@ -6,7 +6,7 @@ pwr:
     profile: http://pwr-profile-service:9004
     report: http://pwr-report-service:9005
     view-profile: http://pwr-view-profile-service:9008
-    statistics: http://pwr-statistics-service:9009
+    statistics: http://pwr-statistics-service:9007
 ---
 spring:
   config:
