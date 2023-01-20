@@ -4,7 +4,6 @@ import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.Profile;
 import de.hbt.pwr.view.client.profile.model.ProfileSkill;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
-import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.client.skill.model.LocalizedQualifier;
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
@@ -14,7 +13,6 @@ import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,9 +40,6 @@ public class ViewProfileImporterSkillTest {
 
     @MockBean
     private ProfileServiceClient profileServiceClient;
-
-    @MockBean
-    private SkillServiceFallback skillServiceFallback;
 
     @MockBean
     private ViewProfileRepository viewProfileRepository;
@@ -79,7 +74,7 @@ public class ViewProfileImporterSkillTest {
     public void setUp() {
         profile = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
-        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, null, viewProfileRepository, viewProfileSortService);
+        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, viewProfileRepository, viewProfileSortService);
     }
 
     @After

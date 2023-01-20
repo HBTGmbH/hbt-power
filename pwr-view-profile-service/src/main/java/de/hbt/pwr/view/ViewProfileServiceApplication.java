@@ -1,16 +1,10 @@
 package de.hbt.pwr.view;
 
-import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.hystrix.EnableHystrix;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -28,10 +22,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import static springfox.documentation.builders.PathSelectors.any;
 
 @SpringBootApplication
-@EnableDiscoveryClient
-@EnableFeignClients
-@EnableCircuitBreaker
-@EnableHystrix
 @EnableAutoConfiguration(exclude = MongoAutoConfiguration.class)
 @EnableSwagger2
 @EnableAspectJAutoProxy // Enables AspectJ style annotations
@@ -45,14 +35,6 @@ public class ViewProfileServiceApplication {
         this.redisConnectionFactory = redisConnectionFactory;
     }
 
-
-    /**
-     * Exposes the hystrix metrics
-     */
-    @Bean
-    public ServletRegistrationBean servletRegistrationBean(){
-        return new ServletRegistrationBean<>(new HystrixMetricsStreamServlet(),"/hystrix.stream");
-    }
 
     @Bean
     public RedisTemplate<?, ?> redisTemplate() {

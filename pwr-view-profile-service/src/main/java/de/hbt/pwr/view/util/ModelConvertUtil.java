@@ -6,7 +6,7 @@ import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

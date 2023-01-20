@@ -3,10 +3,8 @@ package de.hbt.pwr.view.service;
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.*;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
-import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
-import de.hbt.pwr.view.exception.CategoryNotFoundException;
 import de.hbt.pwr.view.exception.NoProfileAvailableException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.ViewProfileInfo;
@@ -21,7 +19,6 @@ import de.hbt.pwr.view.util.ModelConvertUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -45,19 +42,16 @@ public class ViewProfileCreatorService {
 
     private ProfileServiceClient profileServiceClient;
     private SkillServiceClient skillServiceClient;
-    private SkillServiceFallback skillServiceFallback;
     private ViewProfileRepository viewProfileRepository;
     private ViewProfileSortService viewProfileSortService;
 
     @Autowired
-    public ViewProfileCreatorService(ProfileServiceClient profileServiceClient
-            , SkillServiceClient skillServiceClient
-            , SkillServiceFallback skillServiceFallback
-            , ViewProfileRepository viewProfileRepository, ViewProfileSortService viewProfileSortService) {
-
+    public ViewProfileCreatorService(ProfileServiceClient profileServiceClient,
+                                     SkillServiceClient skillServiceClient,
+                                     ViewProfileRepository viewProfileRepository,
+                                     ViewProfileSortService viewProfileSortService) {
         this.profileServiceClient = profileServiceClient;
         this.skillServiceClient = skillServiceClient;
-        this.skillServiceFallback = skillServiceFallback;
         this.viewProfileRepository = viewProfileRepository;
         this.viewProfileSortService = viewProfileSortService;
     }
@@ -200,7 +194,7 @@ public class ViewProfileCreatorService {
     private void getDisplayCategoryForProfileSkill(ProfileSkill profileSkill, List<Category> displayCategories) {
         SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(profileSkill.getName());
         if (serviceSkill == null) {
-            serviceSkill = skillServiceFallback.getSkillByName(profileSkill.getName());
+            serviceSkill = skillServiceClient.getDefaultSkillByName(profileSkill.getName());
         }
         Skill skill = new Skill(
                 serviceSkill.getId() != null ? serviceSkill.getId().longValue() : -1,

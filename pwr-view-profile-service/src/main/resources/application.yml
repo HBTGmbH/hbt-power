@@ -16,35 +16,15 @@ spring:
     database: ${DB_DATABASE}
 server:
   port: 9008
-eureka:
-  client:
-    enabled: ${EUREKA_ENABLED:false}
-    service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
 management:
   endpoints:
     web:
       cors:
         allowed-methods: '*'
         allowed-origins: '*'
-feign:
-  hystrix:
-    enabled: true
-# Increase the timeout for communication with the report service so it doesn't die during report generation
-pwr-report-service:
-  ribbon:
-    ReadTimeout: 20000
-    ConnectTimeout: 10000
-hystrix:
-  command:
-    default:
-      execution:
-        timeout:
-          enabled: "false"
-        isolation:
-          strategy: "THREAD"
-          thread:
-            timeoutInMilliseconds: "20000"
+pwr-profile-service-url: http://pwr-profile-service:9004
+pwr-skill-service-url: http://pwr-skill-service:9003
+pwr-report-service-url: http://pwr-report-service:9005
 ---
 spring:
   profiles: localDev
@@ -52,17 +32,15 @@ spring:
     host: localhost
     port: 6379
     database: 6
+    password: changeit
 logging:
   level:
     root: info
     de.hbt.pwr.view: debug
-
 debug: false
-eureka:
-  client:
-    enabled: true
-    service-url:
-      defaultZone: http://power02.corp.hbt.de:8761/eureka
+pwr-skill-service-url: http://localhost:9003
+pwr-profile-service-url: http://localhost:9004
+pwr-report-service-url: http://localhost:9005
 ---
 spring:
   profiles: test
@@ -70,24 +48,3 @@ spring:
     host: localhost
     port: 6379
     database: 5
-eureka:
-  client:
-    enabled: false
----
-spring:
-  profiles: localDevNoEureka
-  redis:
-    host: localhost
-    port: 6379
-    database: 6
-logging:
-  level:
-    root: info
-    de.hbt.pwr.view: debug
-
-debug: false
-eureka:
-  client:
-    enabled: false
-pwr-profile-service.ribbon.listOfServers: localhost:9004
-pwr-skill-service.ribbon.listOfServers: localhost:9003

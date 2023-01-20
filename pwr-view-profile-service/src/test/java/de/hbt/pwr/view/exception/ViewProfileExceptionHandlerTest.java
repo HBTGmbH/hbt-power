@@ -3,7 +3,6 @@ package de.hbt.pwr.view.exception;
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
-import de.hbt.pwr.view.client.skill.SkillServiceFallback;
 import de.hbt.pwr.view.controller.ViewProfileController;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.service.*;
@@ -55,8 +54,6 @@ public class ViewProfileExceptionHandlerTest {
     @MockBean
     private SkillServiceClient skillServiceClient;
 
-    @MockBean
-    private SkillServiceFallback skillServiceFallback;
     @MockBean
     private ProfileServiceClient profileServiceClient;
 

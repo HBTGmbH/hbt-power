@@ -83,7 +83,7 @@ public class ViewProfileImporterEntryTest {
         profileToReturn = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profileToReturn);
         given(viewProfileRepository.save(any())).will(invocationOnMock -> invocationOnMock.getArgument(0));
-        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, null, viewProfileRepository, viewProfileSortService);
+        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, viewProfileRepository, viewProfileSortService);
     }
 
     @After

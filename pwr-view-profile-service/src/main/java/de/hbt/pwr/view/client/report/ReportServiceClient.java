@@ -1,21 +1,33 @@
 package de.hbt.pwr.view.client.report;
 
 import de.hbt.pwr.view.client.report.model.ReportInfo;
-import de.hbt.pwr.view.model.UploadFileResponse;
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-@Component
-@FeignClient(value = "pwr-report-service")
-public interface ReportServiceClient {
-    @PostMapping("report")
-    ResponseEntity<String> generateReport(@RequestBody ReportInfo reportInfo,
-                                          @RequestParam("type") String type,
-                                          @RequestParam(value = "charsperline", required = false) Integer charsPerLine);
+import java.util.Map;
 
-    @GetMapping("pdf/{fileId}")
-    ResponseEntity<UploadFileResponse> generatePdf(@PathVariable("fileId") String templatePath);
+@Service
+public class ReportServiceClient {
 
+    @Value("${pwr-report-service-url}")
+    private String pwrReportServiceUrl;
+
+    private final RestTemplate restTemplate;
+
+    public ReportServiceClient() {
+        restTemplate = new RestTemplate();
+    }
+
+    public ResponseEntity<String> generateReport(ReportInfo reportInfo, String type, Integer charsPerLine) {
+        return restTemplate.exchange(pwrReportServiceUrl + "/report?type={type}&charsperline={charsPerLine}",
+                HttpMethod.POST,
+                new HttpEntity<>(reportInfo),
+                String.class,
+                Map.of("type", type, "charsPerLine", charsPerLine)
+        );
+    }
 }
