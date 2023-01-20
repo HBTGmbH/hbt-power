@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class PwrEdgeConfig {
     @Data
     public static class Url {
-        private String profile = "http://pwr_profile_service:9004";
-        private String report = "http://pwr_report_service:9005";
+        private String profile = "http://pwr-profile-service:9004";
+        private String report = "http://pwr-report-service:9005";
         private String skill = "http://pwr-skill-service:9003";
         private String viewProfile = "http://pwr-view-profile-service:9008";
         private String statistics = "http://pwr-statistics-service:9009";
