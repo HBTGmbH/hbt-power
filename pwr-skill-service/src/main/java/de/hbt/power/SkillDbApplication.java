@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
@@ -20,13 +19,11 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.text.SimpleDateFormat;
 import java.util.concurrent.Executor;
 
 import static springfox.documentation.builders.PathSelectors.any;
 
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableAsync
 @EnableSwagger2
 public class SkillDbApplication extends AsyncConfigurerSupport {
