@@ -22,9 +22,9 @@ management:
       cors:
         allowed-methods: '*'
         allowed-origins: '*'
-pwr-profile-service-url: http://pwr-profile-service:9004
 pwr-skill-service-url: http://pwr-skill-service:9003
-pwr-report-service-url: http://pwr-report-service:9005
+pwr-profile-service-url: http://pwr_profile_service:9004
+pwr-report-service-url: http://pwr_report_service:9005
 ---
 spring:
   profiles: localDev
