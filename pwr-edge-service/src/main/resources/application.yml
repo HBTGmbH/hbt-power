@@ -1,5 +1,12 @@
 server:
   port: 9000
+pwr:
+  url:
+    skill: http://pwr-skill-service:9003
+    profile: http://pwr_profile_service:9004
+    report: http://pwr_report_service:9005
+    view-profile: http://pwr-view-profile-service:9008
+    statistics: http://pwr-statistics-service:9009
 ---
 spring:
   config:
