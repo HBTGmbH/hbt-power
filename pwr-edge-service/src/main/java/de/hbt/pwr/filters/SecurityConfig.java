@@ -1,35 +1,18 @@
 package de.hbt.pwr.filters;
 
-import lombok.SneakyThrows;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.ldap.LdapAuthenticationProviderConfigurer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.ldap.authentication.BindAuthenticator;
-import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
-import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtGrantedAuthoritiesConverterAdapter;
+import org.springframework.security.oauth2.server.resource.web.server.ServerBearerTokenAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebFluxSecurity()
@@ -66,60 +49,50 @@ public class SecurityConfig {
     @Value("role-prefix")
     private String rolePrefix;
 
-    private final ObjectPostProcessor<Object> objectPostProcessor = new ObjectPostProcessor<>() {
-
-        @SneakyThrows
-        @Override
-        public <T> T postProcess(T object) {
-            if (object instanceof InitializingBean) {
-                InitializingBean bean = (InitializingBean) object;
-                bean.afterPropertiesSet();
-            }
-            return object;
-        }
-
-    };
-
     @Bean
-    public ReactiveAuthenticationManager authenticationManager() throws Exception {
-        AuthenticationManagerBuilder auth = new AuthenticationManagerBuilder(objectPostProcessor);
-        auth.ldapAuthentication()
-                .userSearchBase(userSearchBase)
-                .userSearchFilter(userSearchFilter)
-                .groupSearchBase(groupSearchBase)
-                .groupSearchFilter(groupSearchFilter)
-                .rolePrefix(rolePrefix)
-            .contextSource()
-                .url(url)
-                .managerDn(managerDn)
-                .managerPassword(managerPassword);
-        return new ReactiveAuthenticationManagerAdapter(auth.build());
-    }
-
-    @Bean
-    public SecurityWebFilterChain configure(ServerHttpSecurity http) throws Exception {
-        return http.authenticationManager(authenticationManager()).authorizeExchange()
-                .pathMatchers(HttpMethod.HEAD, "/**").permitAll()
-                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .pathMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
-                // Restrict profile picture upload to admins
-                .pathMatchers(HttpMethod.POST, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
-                .pathMatchers(HttpMethod.DELETE, "/pwr-profile-service/api/admin/profile-pictures").hasAnyAuthority("ROLE_HBT-POWER-ADMINS")
-                .pathMatchers("/pwr-profile-service/**").permitAll()
-                .pathMatchers("/pwr-profile-service/api/consultants/**").permitAll()
-                .pathMatchers("/pwr-report-service/**").permitAll()
-                .pathMatchers("/pwr-view-profile-service/**").permitAll()
-                .pathMatchers("/pwr-skill-service/**").permitAll()
-                .pathMatchers("/pwr-statistics-service/**").permitAll()
-                .pathMatchers("/**").permitAll()
+    public SecurityWebFilterChain configure(ServerHttpSecurity http) {
+        return http.authorizeExchange()
+                // Static content => needs to be deliverable
+                .pathMatchers(HttpMethod.GET, "/pwr-profile-service/profile-pictures/**").permitAll()
+                // Only admins can do admin things
+                .pathMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("Power.Admin")
+                .pathMatchers("/pwr-profile-service/admin/**").hasAnyAuthority("Power.Admin")
+                // Users and admins can access everything.
+                .pathMatchers("/**").hasAnyAuthority("Power.User", "Power.Admin")
                 .and()
-                .httpBasic()
+                .oauth2ResourceServer()
+                    .jwt()
+                    .and()
                 .and()
                 .csrf().disable()
                 .cors(corsSpec -> corsSpec.configurationSource(new SeriouslyFuckItCorsFilter()))
                 .build();
     }
 
+    @Bean
+    public ReactiveJwtAuthenticationConverter reactiveJwtAuthenticationConverter() {
+        var authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthoritiesClaimName("roles");
+        authoritiesConverter.setAuthorityPrefix("");
+        var reactiveAuthoritiesConverter = new ReactiveJwtGrantedAuthoritiesConverterAdapter(authoritiesConverter);
+        ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(reactiveAuthoritiesConverter);
+        return converter;
+    }
+
+    private Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec> oAuth2WithAccessToken() {
+        return oauth2ResourceServer -> {
+            // Okay now we want security on websockets. Sadly, the Websocket protocol does not allow
+            // us to send custom headers (because it's a "socket", TCP for the web).
+            // What we do have is a the possibility to add query parameters
+            // spring allows us to use the access_token query parameter if we set allowUriQueryParameter to true
+            // That way, we can send our JsonWebToken (JWT) via access_token query parameter
+            ServerBearerTokenAuthenticationConverter serverBearerTokenAuthenticationConverter = new ServerBearerTokenAuthenticationConverter();
+            serverBearerTokenAuthenticationConverter.setAllowUriQueryParameter(true);
+            oauth2ResourceServer.bearerTokenConverter(serverBearerTokenAuthenticationConverter);
+            oauth2ResourceServer.jwt(Customizer.withDefaults());
+        };
+    }
 
     public String getManagerDn() {
         return managerDn;

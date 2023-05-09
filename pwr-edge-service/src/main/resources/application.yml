@@ -18,9 +18,9 @@ pwr:
     profile: http://localhost:9004
     report: http://localhost:9005
     view-profile: http://localhost:9008
-    statistics: http://localhost:9009
+    statistics: http://localhost:9007
 logging:
   level:
     org:
       springframework:
-        security: DEBUG
+        security: trace
