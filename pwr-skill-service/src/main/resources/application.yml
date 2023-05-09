@@ -16,13 +16,6 @@ spring:
       force: true
 server:
   port: 9003
-management:
-  endpoints:
-    web:
-      cors:
-        allowed-origins: '*'
-        allowed-methods: '*'
-      base-path: /meta
 ---
 spring:
   profiles: localDev
