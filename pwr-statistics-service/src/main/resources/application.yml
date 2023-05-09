@@ -8,12 +8,6 @@ spring:
     port: ${DB_PORT:6379}
     password: ${DB_PASSWORD:redis}
     database: ${DB_DATABASE:1}
-management:
-  context-path: /meta
-endpoints:
-  cors:
-    allowed-methods: '*'
-    allowed-origins: '*'
 pwr-profile-service-url: http://pwr-profile-service:9004
 ---
 spring:

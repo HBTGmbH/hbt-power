@@ -35,8 +35,13 @@ public class ProfileKMedoidClusterer {
      * @return medoids
      */
     public List<ProfileMedoid> cluster(List<ProfileClusterable> values, int clusters) {
+        if (values.isEmpty()) {
+            return Collections.emptyList();
+        }
         if(clusters < 0) throw new IllegalArgumentException("Parameter 'clusters' may not be negative.");
-        if(clusters > values.size()) throw new IllegalArgumentException("Parameter 'clusters' may not be greater than the size of available values.");
+        if(clusters > values.size()) {
+            return Collections.emptyList();
+        }
         List<ProfileMedoid> resultMedoids = new ArrayList<>();
 
         // Work on a copy of the list.
