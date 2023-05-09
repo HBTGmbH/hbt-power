@@ -64,3 +64,4 @@ care of cross cutting concerns:
 * Buttons should always have an icon. Icon buttons require a tooltip while normal buttons should always
 be as descriptive as possible. 
 * Buttons with an icon should have their icon on the right. 
+
