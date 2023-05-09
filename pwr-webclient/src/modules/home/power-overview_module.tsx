@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
-import {Button, Icon, Paper} from '@material-ui/core';
+import {Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileStatistics} from './profile-statistics_module';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
@@ -15,9 +14,8 @@ import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
 import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
-import {COOKIE_INITIALS_NAME, getRandomGreeting} from '../../model/PwrConstants';
+import {getRandomGreeting} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
-import {isNullOrUndefined} from 'util';
 import {PwrRaisedButton} from '../general/pwr-raised-button';
 import Add from '@material-ui/icons/Add';
 import {ThunkDispatch} from 'redux-thunk';
@@ -95,12 +93,13 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     }
 
     componentDidMount() {
-        const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
-        if (!this.props.loggedInUser || !initials) {
-            this.props.navigateTo(Paths.APP_ROOT);
-        } else {
-            this.props.requestSingleProfile(initials);
-        }
+        // FIXME@nt get initials from path (Once we are able to restore paths again)
+        // const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
+        // if (!this.props.loggedInUser || !initials) {
+        //     this.props.navigateTo(Paths.APP_ROOT);
+        // } else {
+        //     this.props.requestSingleProfile(initials);
+        // }
     }
 
     private setViewDialogOpen(isOpen: boolean) {

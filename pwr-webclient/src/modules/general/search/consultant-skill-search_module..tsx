@@ -1,5 +1,4 @@
 import * as React from 'react';
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import * as Immutable from 'immutable';
 import {List, ListItem, Paper} from '@material-ui/core';
 import {APISkill} from '../../../model/APIProfile';
@@ -50,10 +49,8 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
 
     private executeSearch = () => {
         StatisticsServiceClient.instance().postFindConsultantBySkills(this.state.currentSearchSkills.toArray())
-            .then((response: AxiosResponse) =>
-                this.setState({foundConsultants: Immutable.List<ConsultantSkillInfo>(response.data)}))
-            .catch((error: any) =>
-                this.setState({foundConsultants: Immutable.List<ConsultantSkillInfo>()}));
+            .then(skillInfo => this.setState({foundConsultants: Immutable.List<ConsultantSkillInfo>(skillInfo)}))
+            .catch((error: any) => this.setState({foundConsultants: Immutable.List<ConsultantSkillInfo>()}));
     };
 
     public componentDidUpdate(prevProps: ConsultantSkillSearchProps, prevState: ConsultantSkillSearchState) {
@@ -77,19 +74,11 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
 
     private handleUpdateInput = (value: string) => {
         if (value.trim().length > 0) {
-            let prev = this.state.currentSuggestSkills;
-            let config: AxiosRequestConfig = {
-                params: {
-                    maxResults: this.MAX_RESULTS,
-                    searchterm: value
-                }
-            };
             this.setState({
                 searchTerm: value
             });
-            const url = SkillServiceClient.instance().getSearchSkillURL();
-            axios.get(url, config)
-                .then((response: AxiosResponse) => this.setState({currentSuggestSkills: response.data}))
+            SkillServiceClient.instance().getSearchSkill(value)
+                .then(currentSuggestSkills => this.setState({currentSuggestSkills}))
                 .catch((error: any) => console.error((error)));
         }
     };

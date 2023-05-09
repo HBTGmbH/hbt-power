@@ -18,7 +18,6 @@ import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {isNullOrUndefined} from 'util';
-import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
 import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
@@ -276,16 +275,16 @@ export class AdminActionCreator {
     }
 
 
-    public static AsyncRestoreFromLocalStorage() {
-        return function (dispatch: ThunkDispatch<any, any, any>) {
-            const storedUsername = window.localStorage.getItem(COOKIE_ADMIN_USERNAME);
-            const storedPassword = window.localStorage.getItem(COOKIE_ADMIN_PASSWORD);
-            Promise.all([
-                dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
-                dispatch(AdminActionCreator.ChangePassword(storedPassword))]
-            ).then(() => dispatch(AdminActionCreator.AsyncValidateAuthentication(storedUsername, storedPassword, true, true)));
-        };
-    }
+    // public static AsyncRestoreFromLocalStorage() {
+    //     return function (dispatch: ThunkDispatch<any, any, any>) {
+    //         const storedUsername = window.localStorage.getItem(COOKIE_ADMIN_USERNAME);
+    //         const storedPassword = window.localStorage.getItem(COOKIE_ADMIN_PASSWORD);
+    //         Promise.all([
+    //             dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
+    //             dispatch(AdminActionCreator.ChangePassword(storedPassword))]
+    //         ).then(() => dispatch(AdminActionCreator.AsyncValidateAuthentication(storedUsername, storedPassword, true, true)));
+    //     };
+    // }
 
     public static AsyncLogOutAdmin() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
@@ -294,24 +293,10 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncValidateAuthentication(username: string, password: string, rememberLogin?: boolean, restoreRoute?: boolean) {
+    public static AsyncValidateAuthentication() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            if (isNullOrUndefined(rememberLogin)) {
-                rememberLogin = false;
-            }
             profileServiceClient.authenticateAdmin().then(ignored => {
-                if (rememberLogin) {
-                    localStorage.setItem(COOKIE_ADMIN_USERNAME, username);
-                    localStorage.setItem(COOKIE_ADMIN_PASSWORD, password);
-                }
-                dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.INITIALS));
                 dispatch(AdminActionCreator.LogInAdmin());
-                if (!restoreRoute) {
-                    dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_INBOX));
-                }
-                if (window.location.pathname.startsWith('/app/home')) {
-                    dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_INBOX));
-                }
             }).catch((error: PowerApiError) => {
                 console.error(error);
                 if (error.status != -1) {
@@ -334,7 +319,7 @@ export class AdminActionCreator {
 
     public static AsyncRedirectToUser(initials: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_HOME));
+            dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials));
         };
     }
 

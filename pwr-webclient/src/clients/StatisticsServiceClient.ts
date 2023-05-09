@@ -1,11 +1,6 @@
 import {PowerHttpClient} from './PowerHttpClient';
-import axios, {AxiosRequestConfig} from 'axios';
-import {
-    APIConsultantClusterInfo,
-    APINetwork,
-    APIProfileSkillMetric,
-    APISkillUsageMetric
-} from '../model/statistics/ApiMetrics';
+import {AxiosRequestConfig} from 'axios';
+import {APIConsultantClusterInfo, APINetwork, APIProfileSkillMetric, APISkillUsageMetric} from '../model/statistics/ApiMetrics';
 import {APIScatterSkill} from '../model/statistics/ScatterSkill';
 import {APIConsultant} from '../model/APIProfile';
 
@@ -36,73 +31,63 @@ export class StatisticsServiceClient extends PowerHttpClient {
     }
 
     public getBuildInfoURL() {
-        return this.base() + '/meta/info';
+        return this.base() + '/info';
     }
 
 
     public getSkillUsagesAbsolute = (): Promise<Array<APISkillUsageMetric>> => {
         const url = this.base() + '/statistics/skill/usage/absolute';
-        let config: AxiosRequestConfig = {
-            params: {
-                max: 500
-            }
-        };
         this.beginRequest();
-        return this.executeRequest(axios.get(url, config));
+        return this.get(url);
     };
 
     public getSkillUsageRelative = (): Promise<Array<APISkillUsageMetric>> => {
         const url = this.base() + '/statistics/skill/usage/relative';
-        let config: AxiosRequestConfig = {
-            params: {
-                max: 500
-            }
-        };
         this.beginRequest();
-        return this.executeRequest(axios.get(url, config));
+        return this.get(url);
     };
 
     public getProfileStatistics = (initials: string): Promise<APIProfileSkillMetric> => {
         const url = this.base() + '/statistics/skill/common/' + initials;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     };
 
     public getKMedProfileNetwork = (): Promise<APINetwork> => {
         const url = this.base() + '/statistics/network/kmed';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     };
 
     public headStatisticsServiceAvailable = () => {
         const url = this.base() + '/statistics';
         this.beginRequest();
-        return this.executeRequest(axios.head(url));
+        return this.head(url);
     };
 
     public getConsultantClusterInfo = (initials: string): Promise<APIConsultantClusterInfo> => {
         const url = this.base() + '/statistics/network/consultant/' + initials;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     };
 
     public getScatterSkills = (): Promise<Array<APIScatterSkill>> => {
         const url = this.base() + '/statistics/skill/level';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     };
 
-    public postFindConsultantBySkills = (skills: string[]) => {
+    public postFindConsultantBySkills = (skills: string[]): Promise<Array<any>> => {
         const url = this.base() + '/statistics/consultant/find/skills';
         this.beginRequest();
-        return this.executeRequest(axios.post(url, skills));
+        return this.post(url, skills);
     };
 
 
     public getNameEntityUsageInfo(config: AxiosRequestConfig): Promise<Array<APIConsultant>> {
         const url = this.base() + '/statistics/entries/referencing';
         this.beginRequest();
-        return this.executeRequest(axios.get(url, config));
+        return this.get(url, config);
     }
 
     public getSkillUsageInfo(skillName: string): Promise<Array<APIConsultant>> {
@@ -111,6 +96,6 @@ export class StatisticsServiceClient extends PowerHttpClient {
             params: {'skill': skillName}
         };
         this.beginRequest();
-        return this.executeRequest(axios.get(url, config));
+        return this.get(url, config);
     }
 }

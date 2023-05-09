@@ -1,5 +1,4 @@
 import {PowerHttpClient} from '../../../clients/PowerHttpClient';
-import axios from 'axios';
 
 import {Consultant} from './model/Consultant';
 
@@ -27,9 +26,10 @@ export class ConsultantClient extends PowerHttpClient {
 
 
     public getConsultant(initials: string): Promise<Consultant> {
+        console.log('Doing getConsultant');
         const url = this.base() + '/consultants/' + initials;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 }
 

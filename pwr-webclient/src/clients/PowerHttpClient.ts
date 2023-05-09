@@ -1,7 +1,8 @@
-import {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
+import axios, {AxiosError, AxiosInstance, AxiosPromise, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {store} from '../reducers/reducerIndex';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
 import {Alerts} from '../utils/Alerts';
+import {OIDCService} from '../OIDCService';
 
 /**
  * A general API error. All services conform to this error.
@@ -18,6 +19,36 @@ export interface PowerApiError {
  * General HTTP Client that covers centralized error handling.
  */
 export class PowerHttpClient {
+
+
+
+    constructor() {
+
+    }
+
+    get<T, R>(url: string, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios().then(client => this.executeRequest(client.get(url, config)));
+    }
+
+    delete<T, R>(url: string, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios().then(client => this.executeRequest(client.delete(url, config)));
+    }
+
+    head<T, R>(url: string, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios().then(client => this.executeRequest(client.head(url, config)));
+    }
+
+    post<T, R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios().then(client => this.executeRequest(client.post(url, data, config)));
+    }
+
+    put<T, R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios().then(client => this.executeRequest(client.put(url, data, config)));
+    }
+
+    patch<T, R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios().then(client => this.executeRequest(client.patch(url, data, config)));
+    }
 
     /**
      * Overwrite this method if a client does not conform to the {@link PowerApiError] interface
@@ -50,13 +81,27 @@ export class PowerHttpClient {
      * If the request has an error, a default notification is posted to the user and the error is rethrown (allowing you to react to it if you wish to)
      * @param promise
      */
-    executeRequest = <T>(promise: AxiosPromise<T>): Promise<T> => {
+    private executeRequest = <T>(promise: AxiosPromise<T>): Promise<T> => {
         return promise
             .then(this.endRequest)
             .catch(this.errorRequest);
     };
 
     private determineError = (error: AxiosError): PowerApiError => {
+        if ((error as any).status === 403) {
+            return {
+                status: 403,
+                message: 'Unzureichende Berechtigung',
+                error: 'Forbidden'
+            };
+        }
+        if ((error as any).status === 401) {
+            return {
+                status: 403,
+                message: 'Fehlende Autorisierung',
+                error: 'Unauthorized'
+            };
+        }
         if (!error.response) {
             console.error('Intercepted client error', error);
             if (error.message && error.message === 'Network Error') {
@@ -88,4 +133,9 @@ export class PowerHttpClient {
         Alerts.showError(message);
         return apiError;
     };
+
+    private getAxios = (): Promise<AxiosInstance> => {
+        return OIDCService.instance().getToken()
+            .then(token => axios.create({headers: {Authorization: 'Bearer '+ token}, withCredentials: true}))
+    }
 }

@@ -1,5 +1,5 @@
 import {PowerHttpClient} from './PowerHttpClient';
-import axios, {AxiosRequestConfig} from 'axios';
+import {AxiosRequestConfig} from 'axios';
 import {Template} from '../model/view/Template';
 
 declare const POWER_VIEW_PROFILE_SERVICE_URL: string;
@@ -26,37 +26,37 @@ export class TemplateClient extends PowerHttpClient {
     public getAllTemplates(): Promise<Array<string>> {
         const url = this.base() + '/template/';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
     public uploadAsTemplate(formData: any, config: AxiosRequestConfig): Promise<Template> {
         const url = this.base() + '/template/';
         this.beginRequest();
-        return this.executeRequest(axios.post(url, formData, config));
+        return this.post(url, formData, config);
     }
 
     public deleteTemplate(id: string) {
         const url = this.base() + '/template/' + id;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
     public getTemplateById(id: string): Promise<Template> {
         const url = this.base() + '/template' + '/' + id;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
-    public changeTemplate(id: string, template: Template) {
+    public changeTemplate(id: string) {
         const url = this.base() + '/template' + '/' + id;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
     public getPreview(id: string) {
         const url = this.base() + '/template' + '/preview' + '/' + id;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
     public getPreviewURL(id: string): string {
@@ -67,12 +67,12 @@ export class TemplateClient extends PowerHttpClient {
     public getAllPreviews(): Promise<Array<string>> {
         const url = this.base() + '/template' + '/preview';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
     public getAllFiles() {
         const url = this.base() + '/file';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 }

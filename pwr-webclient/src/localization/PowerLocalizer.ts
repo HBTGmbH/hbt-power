@@ -3,9 +3,8 @@
  */
 import {isNullOrUndefined} from 'util';
 import {StringUtils} from '../utils/StringUtil';
+import deDE from './de-DE.json';
 import formatString = StringUtils.formatString;
-import axios, {AxiosError} from 'axios';
-import {CONFIG} from '../Config';
 
 /**
  * Quick localizer that localizes localizations. For localizing locales.
@@ -40,26 +39,30 @@ export class PowerLocalize {
      * @param locale the new locale. Has to be a valid ISO language code (https://www.w3schools.com/tags/ref_language_codes.asp)
      */
     public static setLocale(locale: string): Promise<any> {
-        return this.resolveLocale(locale);
+        this.localization = deDE;
+        // This entire thing used to async load these things, but right now, it's more annoying than useful. So we just hard compile
+        // the translation in and be done with it.
+        return Promise.resolve();
     }
 
-    private static resolveLocale(locale: string): Promise<any> {
-        const basePath = CONFIG.LOCALE_PATH;
-        return axios.get(`${basePath}/${locale}.json`)
-            .then(response => response.data)
-            .then(localeData => PowerLocalize.localization = localeData)
-            .catch((error: AxiosError) => this.handleLocaleError(locale, error));
-    }
+    // private static resolveLocale(locale: string): Promise<any> {
+    //     if ()
+    //     const basePath = CONFIG.LOCALE_PATH;
+    //     return axios.get(`${basePath}/${locale}.json`)
+    //         .then(response => response.data)
+    //         .then(localeData => PowerLocalize.localization = localeData)
+    //         .catch((error: AxiosError) => this.handleLocaleError(locale, error));
+    // }
 
-    private static async handleLocaleError(locale: string, error: AxiosError) {
-        if (locale !== this.defaultLocale) {
-            console.log(`Locale ${locale} not found. Falling back to default ${PowerLocalize.defaultLocale}`);
-            await PowerLocalize.resolveLocale(this.defaultLocale);
-        } else {
-            console.log(`Locale ${locale} cant be resolved: `, error);
-        }
-        return null;
-    }
+    // private static async handleLocaleError(locale: string, error: AxiosError) {
+    //     if (locale !== this.defaultLocale) {
+    //         // console.log(`Locale ${locale} not found. Falling back to default ${PowerLocalize.defaultLocale}`);
+    //         await PowerLocalize.resolveLocale(this.defaultLocale);
+    //     } else {
+    //         // console.log(`Locale ${locale} cant be resolved: `, error);
+    //     }
+    //     return null;
+    // }
 
     /**
      * Returns a localized string for the given field name. If no localization has been found,

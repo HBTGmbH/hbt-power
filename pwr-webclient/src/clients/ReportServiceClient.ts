@@ -1,5 +1,4 @@
 import {PowerHttpClient} from './PowerHttpClient';
-import axios from 'axios';
 import {ReportData} from '../model/view/ReportData';
 
 declare const POWER_REPORT_SERVICE_URL: string;
@@ -34,24 +33,24 @@ export class ReportServiceClient extends PowerHttpClient {
     public getReportDataForUser(initials: string): Promise<ReportData[]> {
         const url = this.base() + '/report/' + initials;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
     public getReport(id): Promise<any> {
         const url = this.base() + '/report/file/' + id;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
     public deleteReport(id): Promise<unknown> {
         const url = this.base() + '/report/delete/' + id;
-        return this.executeRequest(axios.delete(url));
+        return this.delete(url);
     }
 
     public getFileById(id: string) {
         const url = this.base() + '/file/' + id;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     }
 
 }

@@ -72,7 +72,7 @@ class BuildInfoModule extends React.Component<BuildInfoProps
             <div style={{paddingLeft: '16px'}}>
                 {this.props.buildInfo
                     .sort(Comparators.getBuildInfoComparator(true))
-                    .map(buildInfo => <div key={buildInfo.name()}><SingleBuildInfo buildInfo={buildInfo}/><br/></div>)
+                    .map((buildInfo, key) => <div key={key}><SingleBuildInfo buildInfo={buildInfo}/><br/></div>)
                     .toArray()}
             </div>
             <ListSubheader>Client-Info</ListSubheader>

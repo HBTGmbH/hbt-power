@@ -62,7 +62,7 @@ export namespace NavigationActionCreator {
 
 
     function navigate(to: string, dispatch: ThunkDispatch<any, any, any>): void {
-        PWR_HISTORY.replace(to);
+        PWR_HISTORY.push(to);
         dispatch(SetCurrentLocation(to));
     }
 
@@ -77,6 +77,7 @@ export namespace NavigationActionCreator {
             let currentLocation = state.navigationSlice.currentLocation();
             const hasChanges = storeHasUnsavedChanges(getState());
             if (target === Paths.USER_SPECIAL_LOGOUT) {
+                console.log('target === Paths.USER_SPECIAL_LOGOUT');
                 if (hasChanges) {
                     dispatch(SetNavigationTarget(target));
                 } else {
@@ -97,6 +98,7 @@ export namespace NavigationActionCreator {
             let target: string = getState().navigationSlice.targetLocation();
             switch (target) {
                 case Paths.USER_SPECIAL_LOGOUT: {
+                    console.log(' case Paths.USER_SPECIAL_LOGOUT:');
                     navigate(Paths.APP_ROOT, dispatch);
                     dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
                     break;

@@ -17,7 +17,6 @@ import {RequestStatus} from '../../Store';
 import * as Immutable from 'immutable';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {LoginStatus} from '../../model/LoginStatus';
-import {COOKIE_ADMIN_PASSWORD, COOKIE_ADMIN_USERNAME} from '../../model/PwrConstants';
 import {APIProfileEntryNotification, ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {Comparators} from '../../utils/Comparators';
 import {APISkillNotification, SkillNotification} from '../../model/admin/SkillNotification';
@@ -108,8 +107,6 @@ export class AdminReducer {
     }
 
     public static LogOutAdmin(state: AdminState): AdminState {
-        window.localStorage.removeItem(COOKIE_ADMIN_USERNAME);
-        window.localStorage.removeItem(COOKIE_ADMIN_PASSWORD);
         return AdminState.createDefault();
     }
 

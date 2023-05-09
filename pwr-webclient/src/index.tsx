@@ -3,10 +3,9 @@ import * as ReactDOM from 'react-dom';
 
 import './index.css';
 import {ApplicationState, store} from './reducers/reducerIndex';
-import {StatisticsActionCreator} from './reducers/statistics/StatisticsActionCreator';
-import {Paths} from './Paths';
 import {AppWrapper} from './app-wrapper-module';
 import {storeHasUnsavedChanges} from './utils/PwrStoreUtils';
+import {OIDCService} from './OIDCService';
 
 export function registerPageLeavePrevention() {
     // Prevents navigation
@@ -22,9 +21,8 @@ export function registerPageLeavePrevention() {
 }
 
 registerPageLeavePrevention();
-new Paths().restorePath();
-// Workaround because typing for thunk is terrible
-store.dispatch(StatisticsActionCreator.AsyncCheckAvailability() as any);
+// Init OIDC
+OIDCService.instance();
 ReactDOM.render(
     (<AppWrapper/>),
     document.getElementById('root')

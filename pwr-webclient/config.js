@@ -7,10 +7,6 @@ const POWER_IMAGE_PATH = "#POWER_IMAGE_PATH";
 
 const CLIENT_BUILD_INFO_LOCATION = "https://power.hbt.de/power/build_info.json";
 
-const POWER_API_HOST = "https://power.hbt.de";
-const POWER_API_PORT = "";
-const POWER_API_PREFIX = "/power";
-
 const POWER_APP_PATH = "/power";
 const POWER_LOCALE_PATH = "#POWER_LOCALE_PATH";
 

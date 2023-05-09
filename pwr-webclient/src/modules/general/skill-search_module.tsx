@@ -1,5 +1,4 @@
 import * as React from 'react';
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {isNullOrUndefined} from 'util';
 import {PwrAutoComplete} from './pwr-auto-complete';
 import {noOp} from '../../utils/ObjectUtil';
@@ -75,27 +74,9 @@ export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSear
                 searchText: searchText
             });
             if (!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
-                let config: AxiosRequestConfig = {
-                    params: {
-                        maxResults: this.props.maxResults,
-                        searchterm: searchText
-                    }
-                };
-                const url = SkillServiceClient.instance().getSearchSkillURL();
-                axios.get(url, config)
-                    .then((response: AxiosResponse) => {
-                        if (response.status === 200) {
-                            this.setState({
-                                skills: response.data
-                            });
-                        } else if (response.status === 204) {
-                            this.setState({
-                                skills: []
-                            });
-                        }
-                    }).catch((error: any) => {
-                    console.error((error));
-                });
+                SkillServiceClient.instance().getSearchSkill(searchText)
+                    .then(skills => this.setState({skills}))
+                    .catch((error: any) => console.error((error)));
             }
         }
     };

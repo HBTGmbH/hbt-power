@@ -1,5 +1,5 @@
 import {APIConsultant} from '../model/APIProfile';
-import axios, {AxiosRequestConfig} from 'axios';
+import {AxiosRequestConfig} from 'axios';
 import {PowerHttpClient} from './PowerHttpClient';
 import {APIBuildInfo} from '../model/metadata/BuildInfo';
 import {APIAdminNotification} from '../model/admin/AdminNotification';
@@ -45,13 +45,13 @@ export class ProfileServiceClient extends PowerHttpClient {
     public getConsultant = (initials: string): Promise<APIConsultant> => {
         const url = this.base() + '/consultants/' + initials;
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     };
 
     public getConsultants = (): Promise<Array<APIConsultant>> => {
         const url = this.base() + '/consultants/';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     };
 
     public createConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {
@@ -62,25 +62,25 @@ export class ProfileServiceClient extends PowerHttpClient {
         };
         const url = this.base() + '/consultants/';
         this.beginRequest();
-        return this.executeRequest(axios.post(url, consultant, config));
+        return this.post(url, consultant, config);
     };
 
     public updateConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {
         const url = this.base() + '/consultants/' + consultant.initials;
         this.beginRequest();
-        return this.executeRequest(axios.patch(url, consultant));
+        return this.patch(url, consultant);
     };
 
     public getSkillSuggestions = (): Promise<Array<String>> => {
         const url = this.base() + '/suggestions/skills';
         this.beginRequest();
-        return this.executeRequest(axios.get(url));
+        return this.get(url);
     };
 
     public getBuildInfo = (): Promise<APIBuildInfo> => {
         const url = this.base() + '/actuator/info';
         this.beginRequest();
-        return this.executeRequest<APIBuildInfo>(axios.get(url))
+        return this.get<any, APIBuildInfo>(url)
             // Append swagger ref
             .then(value => {
                 return ({
@@ -96,25 +96,25 @@ export class ProfileServiceClient extends PowerHttpClient {
     public getAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
         const url = this.base() + '/admin/notifications';
         this.beginRequest();
-        return this.executeRequest(axios.get(url, this.credentialsConfig()));
+        return this.get(url);
     };
 
     public getTrashedAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
         const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
-        return this.executeRequest(axios.get(url, this.credentialsConfig()));
+        return this.get(url, this.credentialsConfig());
     };
 
     public trashNotifications = (ids: Array<number>): Promise<void> => {
         const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
-        return this.executeRequest(axios.put(url, ids, this.credentialsConfig()));
+        return this.put(url, ids, this.credentialsConfig());
     };
 
     public deleteTrashedNotifications = (): Promise<void> => {
         const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
-        return this.executeRequest(axios.delete(url, this.credentialsConfig()));
+        return this.delete(url, this.credentialsConfig());
     };
 
     public renameSkill = (oldName: string, newName: string): Promise<void> => {
@@ -125,35 +125,35 @@ export class ProfileServiceClient extends PowerHttpClient {
             newname: newName
         };
         this.beginRequest();
-        return this.executeRequest(axios.patch(url, null, config));
+        return this.patch(url, null, config);
     };
 
     public authenticateAdmin = (): Promise<void> => {
         const url = this.base() + '/admin/';
         let config = this.credentialsConfig();
         this.beginRequest();
-        return this.executeRequest(axios.head(url, config));
+        return this.head(url, config);
     };
 
     public invokeNotificationDelete = (notificationId: number): Promise<void> => {
         const url = this.base() + '/admin/notifications/' + notificationId;
         const config = this.credentialsConfig();
         this.beginRequest();
-        return this.executeRequest(axios.delete(url, config));
+        return this.delete(url, config);
     };
 
     public invokeNotificationOK = (notificationId: number): Promise<void> => {
         const url = this.base() + '/admin/notifications/' + notificationId;
         const config = this.credentialsConfig();
         this.beginRequest();
-        return this.executeRequest(axios.put(url, null, config));
+        return this.put(url, null, config);
     };
 
     public invokeNotificationEdit = (notification: ProfileEntryNotification | SkillNotification): Promise<void> => {
         const url = this.base() + '/admin/notifications';
         const config = this.credentialsConfig();
         this.beginRequest();
-        return this.executeRequest(axios.patch(url, notification.toAPI(), config));
+        return this.patch(url, notification.toAPI(), config);
     };
 
 
@@ -161,7 +161,7 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + `/consultants/${initials}/delete`;
         const config = this.credentialsConfig();
         this.beginRequest();
-        return this.executeRequest(axios.delete(url));
+        return this.delete(url);
     };
 
     public uploadProfilePicture = (picture: File): Promise<string> => {
@@ -173,7 +173,7 @@ export class ProfileServiceClient extends PowerHttpClient {
         const formData = new FormData();
         formData.append("file", picture);
         this.beginRequest();
-        return this.executeRequest(axios.post<{id: string}>(url, formData, config))
+        return this.post<any, {id: string}>(url, formData, config)
             .then(response => response.id)
     }
 
@@ -181,7 +181,7 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + `/profile-pictures/${id}`;
         const config = this.credentialsConfig();
         this.beginRequest();
-        return this.executeRequest(axios.delete(url, config));
+        return this.delete(url, config);
     }
 
     getProfilePictureUrl(profilePictureId: string): string {

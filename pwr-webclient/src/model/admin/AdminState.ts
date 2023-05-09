@@ -147,11 +147,11 @@ export class AdminState {
 
     public adminAuthConfig(): AxiosRequestConfig {
         return {
-            auth: {
-                username: this.adminName(),
-                password: this.adminPass()
-            },
-            headers: {'X-Requested-With': 'XMLHttpRequest'}
+            // auth: {
+            //     username: this.adminName(),
+            //     password: this.adminPass()
+            // },
+            // headers: {'X-Requested-With': 'XMLHttpRequest'}
         };
     }
 

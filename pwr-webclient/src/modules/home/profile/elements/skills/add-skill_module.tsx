@@ -1,13 +1,10 @@
 import * as React from 'react';
-import axios, {AxiosRequestConfig} from 'axios';
 import {KeyboardEvent} from 'react';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
-import * as redux from 'redux';
 import {StarRating} from '../../../../star-rating_module.';
 import Button from '@material-ui/core/Button/Button';
 import Typography from '@material-ui/core/Typography/Typography';
-import {AxiosResponse} from 'axios';
 import {isNullOrUndefined} from 'util';
 import * as Immutable from 'immutable';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
@@ -36,7 +33,7 @@ interface AddSkill_ModuleDispatch {
 }
 
 interface AddSkill_ModuleState {
-    skills: Array<string>
+    skills: Array<string>;
     skillRating: number;
     skillName: string;
     progressState: number;
@@ -81,25 +78,9 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             skillName: data
         });
         if (!isNullOrUndefined(data) && data.trim().length > 0) {
-            let config: AxiosRequestConfig = {
-                params: {
-                    maxResults: 10,
-                    searchterm: data
-                }
-            };
-            const url = SkillServiceClient.instance().getSearchSkillURL();
-            axios.get(url, config)
-                .then((response: AxiosResponse) => {
-                    if (response.status === 200) {
-                        this.setState({
-                            skills: response.data
-                        });
-                    } else if (response.status === 204) {
-                        this.setState({
-                            skills: []
-                        });
-                    }
-                }).catch((error: any) => console.error((error)));
+            SkillServiceClient.instance().getSearchSkill(data)
+                .then(skills => this.setState({skills}))
+                .catch((error: any) => console.error((error)));
             this.requestSkillHierarchy(data);
         }
     };

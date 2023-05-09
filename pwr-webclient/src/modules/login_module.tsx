@@ -1,23 +1,17 @@
 import {getImagePath} from '../API_CONFIG';
-import {Paths} from '../Paths';
-import {BottomBuildInfo} from './metadata/build-info_module';
-import {Link} from 'react-router-dom';
 import {LoginStatus} from '../model/LoginStatus';
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {KeyboardEvent} from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../reducers/reducerIndex';
 import {PowerLocalize} from '../localization/PowerLocalizer';
-import FormHelperText from '@material-ui/core/FormHelperText/FormHelperText';
-import TextField from '@material-ui/core/TextField/TextField';
-import FormControl from '@material-ui/core/FormControl/FormControl';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
 import {PwrRaisedButton} from './general/pwr-raised-button';
 import ArrowRight from '@material-ui/icons/ArrowRight';
-import Person from '@material-ui/icons/Person';
-import {CrossCuttingAsyncActionCreator} from '../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 import {ThunkDispatch} from 'redux-thunk';
+import {OIDCService} from '../OIDCService';
+import {Redirect} from 'react-router-dom';
+import {Paths} from '../Paths';
 
 interface LoginProps {
     loginStatus: LoginStatus;
@@ -26,7 +20,6 @@ interface LoginProps {
 
 
 interface LoginLocalProps {
-
 }
 
 
@@ -36,8 +29,6 @@ interface LoginLocalState {
 }
 
 interface LoginDispatch {
-    logInUser(initials: string): void;
-
     clearLoginError(): void;
 }
 
@@ -60,7 +51,6 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): LoginDispatch {
         return {
-            logInUser: (initials) => dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(initials, Paths.USER_HOME)),
             clearLoginError: () => {
                 dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.INITIALS));
                 dispatch(CrossCuttingActionCreator.SetLoginError(''));
@@ -92,54 +82,49 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
     };
 
     private logInUser = () => {
-        this.props.logInUser(this.state.initials);
+        OIDCService.instance().login();
     };
 
-    private renderInputField = () => {
-        return <FormControl error={this.hasError()}>
-            <TextField
-                label={PowerLocalize.get('Initials.Singular')}
-                value={this.state.initials}
-                onChange={(e) => this.handleInitialsChange(e.target.value)}
-                onKeyPress={this.handleInputFieldKeyPress}
-            />
-            {this.hasError() ?
-                <FormHelperText id="login-error-text">{this.props.loginError}</FormHelperText> :
-                <></>}
-        </FormControl>;
-    };
+    // private renderInputField = () => {
+    //     return <FormControl error={this.hasError()}>
+    //         <TextField
+    //             label={PowerLocalize.get('Initials.Singular')}
+    //             value={this.state.initials}
+    //             onChange={(e) => this.handleInitialsChange(e.target.value)}
+    //             onKeyPress={this.handleInputFieldKeyPress}
+    //         />
+    //         {this.hasError() ?
+    //             <FormHelperText id="login-error-text">{this.props.loginError}</FormHelperText> :
+    //             <></>}
+    //     </FormControl>;
+    // };
 
     render() {
+        if (this.props.loginStatus === LoginStatus.SUCCESS) {
+            // Already logged in? Great! Redirect to Profile Selection!
+            return <Redirect to={Paths.PROFILE_SELECT}/>
+        }
         return (
             <div>
                 <div className="vertical-align">
                     <div style={{padding: '64px', backgroundColor: 'white'}}>
                         <div className="vertical-align">
-                            <img className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
+                            <img alt="HBT Power Logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
                         </div>
                         <div className="vertical-align">
                             <h1>{PowerLocalize.get('Login.Title')}</h1>
                         </div>
                         <div className="vertical-align">
                             <div className="fittingContainer">
-                                <div className="vertical-align">
-                                    {this.renderInputField()}
-                                </div>
-                                <br/>
+                                {/*<div className="vertical-align">*/}
+                                {/*    {this.renderInputField()}*/}
+                                {/*</div>*/}
+                                {/*<br/>*/}
                                 <PwrRaisedButton color='primary' icon={<ArrowRight/>} onClick={this.logInUser}
-                                                 text={PowerLocalize.get('Login.SelectProfile')}/>
-                                <br/>
-                                <br/>
-                                <Link to={Paths.ADMIN_LOGIN}>
-                                    <PwrRaisedButton color='primary' icon={<Person/>}
-                                                     text={PowerLocalize.get('Login.AdminSpace')}/>
-                                </Link>
+                                                 text={PowerLocalize.get('Login.LoginAzure')}/>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="vertical-align" style={{marginTop: '50px'}}>
-                    <BottomBuildInfo/>
                 </div>
             </div>);
     }

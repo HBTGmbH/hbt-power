@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {AppBar, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {LoginStatus} from '../../model/LoginStatus';
@@ -15,7 +14,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
-import Paper from '@material-ui/core/Paper/Paper';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
@@ -117,8 +115,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private renderPower = () => {
         return (
             <div className="vertical-align" style={{height: '100%', flexGrow: 1}}>
-                <img className="img-responsive logo-small" src={getImagePath() + '/HBT002_Logo_neg.png'}
-                />
+                <img alt="HBT Power Logo" className="img-responsive logo-small" src={getImagePath() + '/HBT002_Logo_neg.png'}/>
             </div>
         );
     };
@@ -145,6 +142,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     };
 
     private logOutUser = () => {
+        console.log('logOutUser');
         this.props.navigateTo(Paths.USER_SPECIAL_LOGOUT);
     };
 
