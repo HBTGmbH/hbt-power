@@ -274,5 +274,4 @@ export class ProfileUpdateServiceClient extends PowerHttpClient {
 
     // end
 
-
 }
