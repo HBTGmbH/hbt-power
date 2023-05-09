@@ -14,3 +14,6 @@ const GLOBAL_OPTIONS = {
     defaultCharsPerLine: 32,
     greetings: ["Moin", "Hallo", "Ahoi", "Willkommen"]
 };
+
+const POWER_AZURE_TENANT_ID = '#POWER_AZURE_TENANT_ID';
+const POWER_AZURE_CLIENT_ID = '#POWER_AZURE_CLIENT_ID';
