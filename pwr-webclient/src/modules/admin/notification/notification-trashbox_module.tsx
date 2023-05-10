@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {Button, Icon, Tab, Table, TableBody, TableCell, TableRow, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -18,8 +17,6 @@ import {ThunkDispatch} from 'redux-thunk';
  */
 interface NotificationTrashboxProps {
     notifications: Immutable.List<AdminNotification>;
-    username: string;
-    password: string;
 }
 
 /**
@@ -47,27 +44,25 @@ interface NotificationTrashboxLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface NotificationTrashboxDispatch {
-    getTrashedNotifications(user: string, pass: string): void;
+    getTrashedNotifications(): void;
 
-    finalDeleteTrashed(user: string, pass: string): void;
+    finalDeleteTrashed(): void;
 }
 
 class NotificationTrashboxModule extends React.Component<NotificationTrashboxProps
     & NotificationTrashboxLocalProps
     & NotificationTrashboxDispatch, NotificationTrashboxLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: NotificationTrashboxLocalProps): NotificationTrashboxProps {
+    static mapStateToProps(state: ApplicationState, _: NotificationTrashboxLocalProps): NotificationTrashboxProps {
         return {
             notifications: state.adminReducer.trashedNotifications(),
-            username: state.adminReducer.adminName(),
-            password: state.adminReducer.adminPass()
         };
     }
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): NotificationTrashboxDispatch {
         return {
-            getTrashedNotifications: (user, pass) => dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(user, pass)),
-            finalDeleteTrashed: (user, pass) => dispatch(AdminActionCreator.AsyncDeleteTrashed(user, pass))
+            getTrashedNotifications: () => dispatch(AdminActionCreator.AsyncRequestTrashedNotifications()),
+            finalDeleteTrashed: () => dispatch(AdminActionCreator.AsyncDeleteTrashed())
         };
     }
 
@@ -75,19 +70,12 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
         let toReturn: string = '';
         switch (notification.type()) {
             case 'SkillNotification':
-                // toReturn = formatString(PowerLocalize.get("NotificationInbox.SkillNotification.SubjectTextTemplate"),
-                //    notification.type());
                 toReturn = 'Skill hinzugefügt';
                 break;
             case 'ProfileUpdatedNotification':
-                // toReturn = PowerLocalize.get("NotificationInbox.ProfileUpdateNotification.SubjectText");
                 toReturn = 'Profil aktualisiert';
                 break;
             case 'ProfileEntryNotification':
-                //toReturn = formatString(
-                //   PowerLocalize.get("NotificationInbox.NameEntityNotification.SubjectTextTemplate"),
-                //   notification.reason().toString(),
-                //   notification.type().toString())
                 toReturn = 'Neuer Bezeichner hinzugefügt';
                 break;
         }
@@ -117,7 +105,7 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
                         <Button
                             variant={'contained'}
                             style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
-                            onClick={() => this.props.getTrashedNotifications(this.props.username, this.props.password)}
+                            onClick={() => this.props.getTrashedNotifications()}
                         >
                             {PowerLocalize.get('Action.Update')}
                             <Icon className="material-icons">refresh</Icon>
@@ -125,7 +113,7 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
                         <Button
                             variant={'contained'}
                             style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
-                            onClick={() => this.props.finalDeleteTrashed(this.props.username, this.props.password)}
+                            onClick={() => this.props.finalDeleteTrashed()}
                         >
                             {PowerLocalize.get('Action.FinalDelete')}
                             <Icon className="material-icons">delete</Icon>

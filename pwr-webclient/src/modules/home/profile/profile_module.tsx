@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {isNullOrUndefined} from 'util';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
@@ -18,8 +17,6 @@ import {FurtherTraining} from '../../../reducers/profile-new/profile/model/Furth
 import {Language} from '../../../reducers/profile-new/profile/model/Language';
 import {Education} from '../../../reducers/profile-new/profile/model/Education';
 import {Qualification} from '../../../reducers/profile-new/profile/model/Qualification';
-import {IndustrialSector} from '../../../reducers/profile-new/profile/model/IndustrialSector';
-import {SpecialField} from '../../../reducers/profile-new/profile/model/SpecialField';
 import {Career} from '../../../reducers/profile-new/profile/model/Career';
 import {ProfileDescription} from './elements/profile-description_module';
 import {Projects} from './elements/project/projects_module';
@@ -31,7 +28,7 @@ import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
 
 interface ProfileProps {
     suggestions: SuggestionStore;
-    loggedInUser: Consultant;
+    activeConsultant: Consultant;
     profile: Profile;
     profilePictureSrc: string;
 }
@@ -70,11 +67,11 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ProfileLocalProps): ProfileProps {
+    static mapStateToProps(state: ApplicationState): ProfileProps {
         const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             suggestions: state.suggestionStore,
-            loggedInUser: state.profileStore.consultant,
+            activeConsultant: state.profileStore.consultant,
             profile: state.profileStore.profile,
             profilePictureSrc
         };
@@ -87,39 +84,22 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         };
     }
 
-    private getInitials = () => {
-        return isNullOrUndefined(this.props.loggedInUser) ? '' : this.props.loggedInUser.initials;
-    };
-
     componentDidUpdate(prevProps: Readonly<ProfileProps & ProfileLocalProps & ProfileDispatch>, prevState: Readonly<ProfileLocalState>, snapshot?: any): void {
-        if (prevProps.loggedInUser.initials !== this.props.loggedInUser.initials) {
-            this.props.loadFullProfile(this.props.loggedInUser.initials);
+        console.log('prevProps.activeConsultant.initials', prevProps.activeConsultant.initials);
+        console.log('this.props.activeConsultant.initials', this.props);
+        if (prevProps.activeConsultant.initials !== this.props.activeConsultant.initials) {
+            console.log('Initials changed! Loading!!');
+            this.props.loadFullProfile(this.props.activeConsultant.initials);
         }
     }
 
     componentDidMount() {
         this.props.preFetchSuggestions();
-        if (this.props.profile.id == null) {
-            this.props.loadFullProfile(this.props.loggedInUser.initials);
+        if (!!this.props.activeConsultant.initials) {
+            console.log('this.props.activeConsultant.initials', this.props.activeConsultant.initials);
+            this.props.loadFullProfile(this.props.activeConsultant.initials);
         }
     }
-
-    private checkProfile = () => {
-        const p: Profile = this.props.profile;
-        return p
-            && p.id
-            && p.description
-            && p.lastEdited
-            && p.trainings
-            && p.careers
-            && p.specialFieldEntries
-            && p.languages
-            && p.qualification
-            && p.education
-            && p.sectors
-            && p.projects
-            && p.skills;
-    };
 
     private renderInfo(value: string) {
         return <span>
@@ -127,37 +107,31 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         </span>;
     }
 
-    private renderLanguageInfo = (entry: ProfileEntry, id: number) => {
+    private renderLanguageInfo = (entry: ProfileEntry) => {
         const language: Language = entry as Language;
         return this.renderInfo(PowerLocalize.langLevelToLocalizedString(language.level));
     };
 
-    private renderTrainingInfo = (entry: ProfileEntry, id: number) => {
+    private renderTrainingInfo = (entry: ProfileEntry) => {
         const training: FurtherTraining = entry as FurtherTraining;
         return this.renderInfo(`${formatToShortDisplay(training.startDate)} - ${formatToShortDisplay(training.endDate)}`);
     };
 
-    private renderEducationInfo = (entry: ProfileEntry, id: number) => {
+    private renderEducationInfo = (entry: ProfileEntry) => {
         const education: Education = entry as Education;
         return this.renderInfo(`${formatToShortDisplay(education.endDate)} | ${education.degree}`);
     };
 
-    private renderQualificationInfo = (entry: ProfileEntry, id: number) => {
+    private renderQualificationInfo = (entry: ProfileEntry) => {
         const qualification: Qualification = entry as Qualification;
         return this.renderInfo(formatToShortDisplay(qualification.date));
     };
 
-    private renderSectorInfo = (entry: ProfileEntry, id: number) => {
-        const sector: IndustrialSector = entry as IndustrialSector;
-        return this.renderInfo('');
+    private renderEmpty = (_: ProfileEntry) => {
+        return <span></span>
     };
 
-    private renderKeySkillInfo = (entry: ProfileEntry, id: number) => {
-        const specialField: SpecialField = entry as SpecialField;
-        return this.renderInfo('');
-    };
-
-    private renderCareerInfo = (entry: ProfileEntry, id: number) => {
+    private renderCareerInfo = (entry: ProfileEntry) => {
         const career: Career = entry as Career;
         return this.renderInfo(`${formatToShortDisplay(career.startDate)} - ${formatToShortDisplay(career.endDate)}`);
     };
@@ -197,8 +171,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                                     variant={'h6'}
                                 >
                                     {
-                                        this.props.loggedInUser != null
-                                            ? this.props.loggedInUser.firstName + ' ' + this.props.loggedInUser.lastName
+                                        this.props.activeConsultant != null
+                                            ? this.props.activeConsultant.firstName + ' ' + this.props.activeConsultant.lastName
                                             : 'No Name'
                                     }
                                 </Typography>
@@ -238,11 +212,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                                                  renderSingleElementInfo={this.renderQualificationInfo}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderSectorInfo}/>
+                            <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderEmpty}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'SPECIAL_FIELD'}
-                                                 renderSingleElementInfo={this.renderKeySkillInfo}/>
+                            <ProfileEntryElement type={'SPECIAL_FIELD'} renderSingleElementInfo={this.renderEmpty}/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>

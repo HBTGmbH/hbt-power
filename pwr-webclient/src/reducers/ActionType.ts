@@ -42,8 +42,6 @@ export enum ActionType {
     ReceiveTrashedNotifications = '[Profile] ReceiveTrashedNotifications',
     AdminRequestStatus = '[Profile] AdminRequestStatus',
     SetCustomSkillFiltering = '[Skill] SetCustomSkillFiltering',
-    ChangeUsername = '[Profile] ChangeUsername',
-    ChangePassword = '[Profile] ChangePassword',
     ChangeAdminLoginStatus = '[Profile] ChangeAdminLoginStatus',
     LogInAdmin = '[Profile] LogInAdmin',
     LogOutAdmin = '[Profile] LogOutAdmin',

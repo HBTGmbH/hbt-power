@@ -22,7 +22,7 @@ export class AppWrapper extends React.Component<{}, {}> {
 
     constructor(props: {}) {
         super(props);
-        PowerLocalize.setLocale(navigator.language);
+        PowerLocalize.setLocale();
     }
 
     componentDidMount() {

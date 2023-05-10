@@ -9,7 +9,6 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/Expan
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions/ExpansionPanelActions';
 import Icon from '@material-ui/core/Icon/Icon';
-import * as redux from 'redux';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import Divider from '@material-ui/core/Divider/Divider';
@@ -21,7 +20,6 @@ interface ReportManagerInfoLocalProps {
 }
 
 interface ReportManagerInfoProps {
-    currentUser: string;
 }
 
 
@@ -32,7 +30,7 @@ interface ReportManagerInfoDispatch {
 }
 
 interface ReportManagerInfoState {
-    template: Template;
+    template: Template | null;
     edit: boolean;
 }
 
@@ -46,10 +44,8 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ReportManagerInfoLocalProps): ReportManagerInfoProps {
-        return {
-            currentUser: state.adminReducer.adminName(),
-        };
+    static mapStateToProps(_: ApplicationState, __: ReportManagerInfoLocalProps): ReportManagerInfoProps {
+        return {};
     }
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportManagerInfoDispatch {
@@ -151,7 +147,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                         }}
                         label="Name"
                         error={this.state.template.name != this.props.selectedTemplate.name}
-                        value={this.state.template != null ? this.state.template.name : this.props.selectedTemplate.name}
+                        value={this.state.template.name}
                         onChange={(e: any) => this.handleChange('name', e.target.value)}
                         margin="normal"
                     />
@@ -166,7 +162,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                             disableUnderline: !this.state.edit
                         }}
                         label="Beschreibung"
-                        value={this.state.template != null ? this.state.template.description : this.props.selectedTemplate.description}
+                        value={this.state.template.description}
                         onChange={(e: any) => this.handleChange('description', e.target.value)}
                         margin="normal"
                     />
@@ -180,7 +176,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                             disableUnderline: !this.state.edit
                         }}
                         label="Ersteller"
-                        value={this.state.template != null ? this.state.template.createUser : this.props.selectedTemplate.createUser}
+                        value={this.state.template.createUser}
                         onChange={(e: any) => this.handleChange('createUser', e.target.value)}
                         margin="normal"
                     />
@@ -195,7 +191,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                             disableUnderline: true
                         }}
                         label="Datum"
-                        value={this.state.template != null ? this.state.template.createdDate : this.props.selectedTemplate.createdDate}
+                        value={this.state.template.createdDate}
                         margin="normal"
                     />
                 </div>
@@ -214,7 +210,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                                     disableUnderline: true,
                                 }}
                                 label="ID"
-                                value={this.state.template != null ? this.state.template.id : this.props.selectedTemplate.id}
+                                value={this.state.template.id}
                                 margin="normal"
                             />
                         </div>
@@ -227,7 +223,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                                     disableUnderline: !this.state.edit
                                 }}
                                 label="fileId"
-                                value={this.state.template != null ? this.state.template.fileId : this.props.selectedTemplate.fileId}
+                                value={this.state.template.fileId}
                                 onChange={(e: any) => this.handleChange('fileId', e.target.value)}
                                 margin="normal"
                             />
@@ -241,7 +237,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                                     disableUnderline: !this.state.edit
                                 }}
                                 label="previewId"
-                                value={this.state.template != null ? this.state.template.previewId : this.props.selectedTemplate.previewId}
+                                value={this.state.template.previewId}
                                 onChange={(e: any) => this.handleChange('previewId', e.target.value)}
                                 margin="normal"
                             />

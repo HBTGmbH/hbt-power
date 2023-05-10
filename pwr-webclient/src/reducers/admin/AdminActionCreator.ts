@@ -35,6 +35,7 @@ import {SuggestionAsyncActionCreator} from '../suggestions/SuggestionAsyncAction
 import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 import {ThunkDispatch} from 'redux-thunk';
+import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = SkillServiceClient.instance();
@@ -59,20 +60,6 @@ export class AdminActionCreator {
         return {
             type: ActionType.AdminRequestStatus,
             requestStatus: to
-        };
-    }
-
-    public static ChangeUsername(val: string): ChangeStringValueAction {
-        return {
-            type: ActionType.ChangeUsername,
-            value: val
-        };
-    }
-
-    public static ChangePassword(val: string): ChangeStringValueAction {
-        return {
-            type: ActionType.ChangePassword,
-            value: val
         };
     }
 
@@ -194,7 +181,7 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncRequestTrashedNotifications(username: string, password: string) {
+    public static AsyncRequestTrashedNotifications() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.getTrashedAdminNotifications()
                 .then(notifications => dispatch(AdminActionCreator.ReceiveTrashedNotifications(notifications)))
@@ -213,32 +200,39 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncDeleteTrashed(username: string, password: string) {
+    public static AsyncDeleteTrashed() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.deleteTrashedNotifications()
                 .then(ignored => {
-                    dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
+                    dispatch(AdminActionCreator.AsyncRequestTrashedNotifications());
                     Alerts.showSuccess('Notifications successfully deleted!');
                 }).catch(console.error);
         };
     }
 
-    public static AsyncNavigateToInbox(username: string, password: string) {
+    public static AsyncNavigateToInbox() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             dispatch(AdminActionCreator.AsyncRequestNotifications());
             dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_INBOX));
         };
     }
 
-    public static AsyncNavigateToTrashbox(username: string, password: string) {
+    public static AsyncNavigateToAdmin() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(AdminActionCreator.AsyncRequestTrashedNotifications(username, password));
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));
+            dispatch(resetProfileStore());
+        };
+    }
+
+    public static AsyncNavigateToTrashbox() {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            dispatch(AdminActionCreator.AsyncRequestTrashedNotifications());
             dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TRASHBOX));
         };
     }
 
     public static AsyncNotificationInvokeDelete(notificationId: number) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.invokeNotificationDelete(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
                 .then(() => Alerts.showSuccess('Success'))
@@ -247,7 +241,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncNotificationInvokeOK(notificationId: number) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.invokeNotificationOK(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
                 .then(() => Alerts.showSuccess('Success'))
@@ -256,7 +250,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncNotificationInvokeEdit(notification: ProfileEntryNotification) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.invokeNotificationEdit(notification)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
                 .then(() => Alerts.showSuccess('Success'))
@@ -311,7 +305,7 @@ export class AdminActionCreator {
     public static AsyncGetAllConsultants() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.getConsultants()
-                .then(apiConsultants => apiConsultants.map((value, index, array) => ConsultantInfo.fromAPI(value)))
+                .then(apiConsultants => apiConsultants.map((value) => ConsultantInfo.fromAPI(value)))
                 .then(consultants => dispatch(AdminActionCreator.ReceiveAllConsultants(consultants)))
                 .catch(console.error);
         };
@@ -335,7 +329,7 @@ export class AdminActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.createConsultant(apiConsultant)
-                .then(value => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
+                .then(_ => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
                 .then(() => Alerts.showSuccess('Created consultant ' + consultantInfo.initials()))
                 .catch(console.error);
         };
@@ -346,7 +340,7 @@ export class AdminActionCreator {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.updateConsultant(apiConsultant)
                 .then(consultant => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(consultant))))
-                .then(ingored => Alerts.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
+                .then(_ => Alerts.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
                 .catch(console.error);
         };
     }
@@ -433,7 +427,7 @@ export class AdminActionCreator {
     }
 
     public static AsyncChangeSkillName(oldName: string, newName: string) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.renameSkill(oldName, newName)
                 .then(() => dispatch(SuggestionAsyncActionCreator.requestAllSkills()))
                 .then(() => Alerts.showSuccess('Renamed ' + oldName + ' to ' + newName))
@@ -443,7 +437,7 @@ export class AdminActionCreator {
 
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static AsyncDeleteConsultant(initials: string) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.deleteConsultant(initials)
                 .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))
                 .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))

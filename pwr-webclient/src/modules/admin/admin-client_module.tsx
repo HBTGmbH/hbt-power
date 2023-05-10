@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import IconButton from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Paper from '@material-ui/core/Paper';
@@ -39,8 +38,6 @@ import {ThunkDispatch} from 'redux-thunk';
  * otherwise the component will not render and update correctly.
  */
 interface AdminClientProps {
-    username: string;
-    password: string;
 }
 
 /**
@@ -69,11 +66,11 @@ interface AdminClientLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface AdminClientDispatch {
-    getNotifications(user: string, pass: string): void;
+    getNotifications(): void;
 
-    navigateToTrashbox(user: string, pass: string): void;
+    navigateToTrashbox(): void;
 
-    navigateToInbox(user: string, pass: string): void;
+    navigateToInbox(): void;
 
     navigateToConsultants(): void;
 
@@ -90,23 +87,20 @@ class AdminClientModule extends React.Component<AdminClientProps
     & AdminClientLocalProps
     & AdminClientDispatch, AdminClientLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: AdminClientLocalProps): AdminClientProps {
-        return {
-            username: state.adminReducer.adminName(),
-            password: state.adminReducer.adminPass()
-        };
+    static mapStateToProps(_: ApplicationState, __: AdminClientLocalProps): AdminClientProps {
+        return {};
     }
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AdminClientDispatch {
         return {
-            getNotifications: (user, pass) => {
+            getNotifications: () => {
                 dispatch(AdminActionCreator.AsyncRequestNotifications());
             },
-            navigateToInbox: (user, pass) => {
-                dispatch(AdminActionCreator.AsyncNavigateToInbox(user, pass));
+            navigateToInbox: () => {
+                dispatch(AdminActionCreator.AsyncNavigateToInbox());
             },
-            navigateToTrashbox: (user, pass) => {
-                dispatch(AdminActionCreator.AsyncNavigateToTrashbox(user, pass));
+            navigateToTrashbox: () => {
+                dispatch(AdminActionCreator.AsyncNavigateToTrashbox());
             },
             navigateToConsultants: () => {
                 dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
@@ -128,11 +122,11 @@ class AdminClientModule extends React.Component<AdminClientProps
     }
 
     private handleInboxButtonClick = () => {
-        this.props.navigateToInbox(this.props.username, this.props.password);
+        this.props.navigateToInbox();
     };
 
     private handleTrashboxButtonClick = () => {
-        this.props.navigateToTrashbox(this.props.username, this.props.password);
+        this.props.navigateToTrashbox();
     };
 
     render() {
@@ -144,6 +138,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                             <Toolbar>
                                 <div className="vertical-align" style={{flexGrow: 1}}>
                                     <img className="img-responsive logo-small"
+                                         alt="HBT Logo"
                                          src={getImagePath() + '/HBT002_Logo_neg.png'}/>
                                 </div>
                                 <IconButton color={'secondary'} onClick={this.props.logOutAdmin}>

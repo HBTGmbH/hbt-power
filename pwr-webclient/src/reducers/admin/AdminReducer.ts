@@ -39,7 +39,7 @@ export class AdminReducer {
      */
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotificationsAction): AdminState {
         if (isNullOrUndefined(action.notifications)) throw new TypeError('ReceiveNotificationAction.notifications must not be null or undefined.');
-        let apiProfileEntryNotifications = action.notifications.filter((value, index, array) => value.type === AdminNotification.TP_PROFILE_ENTRY);
+        let apiProfileEntryNotifications = action.notifications.filter((value) => value.type === AdminNotification.TP_PROFILE_ENTRY);
         let apiProfileUpdateNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_PROFILE_UPDATE);
         let apiSkillNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_SKILL);
 
@@ -82,31 +82,23 @@ export class AdminReducer {
         return state.requestStatus(action.requestStatus);
     }
 
-    public static ChangeUsername(state: AdminState, action: ChangeStringValueAction) {
-        return state.adminName(action.value);
-    }
-
-    public static ChangePassword(state: AdminState, action: ChangeStringValueAction) {
-        return state.adminPass(action.value);
-    }
-
     public static ChangeLoginStatus(state: AdminState, action: ChangeLoginStatusAction) {
         return state.loginStatus(action.status);
     }
 
-    public static LogInAdmin(state: AdminState, action: AbstractAction): AdminState {
+    public static LogInAdmin(state: AdminState): AdminState {
         return state.loginStatus(LoginStatus.SUCCESS);
     }
 
     public static ReceiveAllConsultants(state: AdminState, action: ReceiveAllConsultantsAction): AdminState {
         let consultants = Immutable.Map<string, ConsultantInfo>();
-        action.consultants.forEach((value, index, array) => {
+        action.consultants.forEach((value) => {
             consultants = consultants.set(value.initials(), value);
         });
         return state.consultantsByInitials(consultants);
     }
 
-    public static LogOutAdmin(state: AdminState): AdminState {
+    public static LogOutAdmin(): AdminState {
         return AdminState.createDefault();
     }
 
@@ -125,7 +117,7 @@ export class AdminReducer {
     }
 
     public static OpenSkillNotificationDialog(state: AdminState, setSkillInfoAction: OpenSkillNotificationDialogAction) {
-        let notification = state.skillNotifications().find((value, key, iter) => value.adminNotification().id() === setSkillInfoAction.notificationId);
+        let notification = state.skillNotifications().find((value) => value.adminNotification().id() === setSkillInfoAction.notificationId);
         return state.selectedSkillNotification(notification).skillNotificationEditStatus(SkillNotificationEditStatus.FETCHING_DATA);
     }
 
@@ -149,16 +141,12 @@ export class AdminReducer {
                 return state.requestStatus((action as ChangeRequestStatusAction).requestStatus);
             case ActionType.ChangeAdminLoginStatus:
                 return AdminReducer.ChangeLoginStatus(state, action as ChangeLoginStatusAction);
-            case ActionType.ChangeUsername:
-                return AdminReducer.ChangeUsername(state, action as ChangeStringValueAction);
-            case ActionType.ChangePassword:
-                return AdminReducer.ChangePassword(state, action as ChangeStringValueAction);
             case ActionType.LogInAdmin:
-                return AdminReducer.LogInAdmin(state, action);
+                return AdminReducer.LogInAdmin(state);
             case ActionType.ReceiveAllConsultants:
                 return AdminReducer.ReceiveAllConsultants(state, action as ReceiveAllConsultantsAction);
             case ActionType.LogOutAdmin:
-                return AdminReducer.LogOutAdmin(state);
+                return AdminReducer.LogOutAdmin();
             case ActionType.ReceiveSingleConsultant:
                 return AdminReducer.ReceiveSingleConsultant(state, action as ReceiveConsultantAction);
             case ActionType.SetSkillNotificationEditStatus:

@@ -17,6 +17,7 @@ import Collapse from '@material-ui/core/Collapse/Collapse';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
+import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 
 interface ToolbarProps {
     userInitials: string;
@@ -50,6 +51,7 @@ interface ToolbarLocalState {
 
 interface ToolbarDispatch {
     navigateTo(target: string): void;
+    navigateToAdmin(): void;
 
     loadNetworkGraph(): void;
 
@@ -70,7 +72,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ToolbarLocalProps): ToolbarProps {
+    static mapStateToProps(state: ApplicationState, _: ToolbarLocalProps): ToolbarProps {
         const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             userInitials: state.profileStore.consultant.initials,
@@ -83,6 +85,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ToolbarDispatch {
         return {
+            navigateToAdmin: () => dispatch(AdminActionCreator.AsyncNavigateToAdmin()),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
@@ -308,7 +311,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                     <IconButton
                                         style={{'color': 'white'}}
                                         className="material-icons"
-                                        onClick={() => this.handleMenuNavigate(Paths.ADMIN_CONSULTANTS)}
+                                        onClick={() => this.props.navigateToAdmin()}
                                     >
                                         home
                                     </IconButton>

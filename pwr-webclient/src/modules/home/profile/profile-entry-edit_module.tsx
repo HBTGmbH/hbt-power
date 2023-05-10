@@ -1,4 +1,3 @@
-import * as redux from 'redux';
 import Dialog from '@material-ui/core/Dialog/Dialog';
 import * as React from 'react';
 import {ProfileTypeDataMapper} from '../../../reducers/profile-new/profile/ProfileTypeDataMapper';
@@ -22,7 +21,6 @@ import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrButton} from '../../general/pwr-button';
-import Delete from '@material-ui/icons/Delete';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
 import {ThunkDispatch} from 'redux-thunk';
 
@@ -44,8 +42,6 @@ interface ProfileEntryDialogLocalProps {
 
 interface ProfileEntryDialogDispatch {
     updateEntity(initials: string, entry: ProfileEntry): void;
-
-    deleteEntry(initials: string, id: number);
 }
 
 export interface ProfileEntryDialogState {
@@ -54,7 +50,6 @@ export interface ProfileEntryDialogState {
     endDate: Date;
     degree: string;
     langLevel: LanguageLevel;
-    deleteConfirm: boolean;
 }
 
 class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps & ProfileEntryDialogLocalProps & ProfileEntryDialogDispatch, ProfileEntryDialogState> {
@@ -76,7 +71,6 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
             endDate: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['endDate']) ? props.entry['endDate'] : new Date(),
             degree: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['degree']) ? props.entry['degree'] : EducationDegree.BACHELOR,
             langLevel: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['level']) ? props.entry['level'] : LanguageLevel.BASIC,
-            deleteConfirm: false,
         };
     };
 
@@ -99,7 +93,6 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>, localProps: ProfileEntryDialogLocalProps): ProfileEntryDialogDispatch {
         return {
             updateEntity: ProfileTypeDataMapper.getUpdateFunction(localProps.type, dispatch),
-            deleteEntry: ProfileTypeDataMapper.getDeleteFunction(localProps.type, dispatch)
         };
     }
 
@@ -165,28 +158,12 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         this.props.onClose();
     };
 
-    private handleDelete = () => {
-        this.props.deleteEntry(this.props.initials, this.props.entry.id);
-        this.props.onClose();
-    };
 
-    private openDeleteConfirm = () => {
-        this.setState({deleteConfirm: true});
-    };
 
     private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!event.isPropagationStopped()) {
-            let handled = false;
-            if (event.key === 'Delete' && !!this.props.entry.id) {
-                this.openDeleteConfirm();
-                handled = true;
-            }
             if (event.key == 'Escape') {
                 this.props.onClose();
-                handled = true;
-            }
-            if (handled) {
-                // This way we prevent the event leaving the scope of the dialog (e.g. to any previously focused buttons)
                 event.stopPropagation();
                 event.preventDefault();
             }

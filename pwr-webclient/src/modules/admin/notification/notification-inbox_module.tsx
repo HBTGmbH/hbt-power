@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {Button, Icon, Tab, Tabs, Theme, withTheme} from '@material-ui/core';
@@ -24,8 +23,6 @@ interface NotificationInboxProps {
     profileEntryNotifications: Immutable.List<ProfileEntryNotification>;
     profileUpdateNotifications: Immutable.List<AdminNotification>;
     skillNotifications: Immutable.List<SkillNotification>;
-    username: string;
-    password: string;
 }
 
 /**
@@ -56,7 +53,7 @@ interface NotificationInboxLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface NotificationInboxDispatch {
-    getNotifications(user: string, pass: string): void;
+    getNotifications(): void;
 
     trashNotifications(ids: Array<number>): void;
 }
@@ -75,27 +72,23 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: NotificationInboxLocalProps): NotificationInboxProps {
+    static mapStateToProps(state: ApplicationState, _: NotificationInboxLocalProps): NotificationInboxProps {
         return {
             profileUpdateNotifications: state.adminReducer.profileUpdateNotifications(),
             profileEntryNotifications: state.adminReducer.profileEntryNotifications(),
             skillNotifications: state.adminReducer.skillNotifications(),
-            username: state.adminReducer.adminName(),
-            password: state.adminReducer.adminPass()
         };
     }
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): NotificationInboxDispatch {
         return {
-            getNotifications: (user, pass) => {
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
-            },
+            getNotifications: () => dispatch(AdminActionCreator.AsyncRequestNotifications()),
             trashNotifications: (ids) => dispatch(AdminActionCreator.AsyncTrashNotifications(ids))
         };
     }
 
     public componentDidMount() {
-        this.props.getNotifications(this.props.username, this.props.password);
+        this.props.getNotifications();
     }
 
     private gatherIdsProfileEntry = (rows: Array<number>, entries: Immutable.List<ProfileEntryNotification>) => {
@@ -146,7 +139,7 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
                             <Button
                                 variant={'contained'}
                                 style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
-                                onClick={() => this.props.getNotifications(this.props.username, this.props.password)}
+                                onClick={() => this.props.getNotifications()}
                             >
                                 {PowerLocalize.get('Action.Update')}
                                 <Icon className="material-icons">refresh</Icon>

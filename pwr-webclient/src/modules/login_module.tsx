@@ -2,7 +2,6 @@ import {getImagePath} from '../API_CONFIG';
 import {LoginStatus} from '../model/LoginStatus';
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {KeyboardEvent} from 'react';
 import {ApplicationState} from '../reducers/reducerIndex';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import {CrossCuttingActionCreator} from '../reducers/crosscutting/CrossCuttingActionCreator';
@@ -42,7 +41,7 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: LoginProps): LoginProps {
+    static mapStateToProps(state: ApplicationState, _: LoginProps): LoginProps {
         return {
             loginStatus: state.crossCutting.loginStatus,
             loginError: state.crossCutting.loginError
@@ -58,46 +57,9 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
         };
     }
 
-    private hasError = (): boolean => {
-        return this.props.loginStatus == LoginStatus.REJECTED;
-    };
-
-    private handleTextChange = (value: string) => {
-        this.setState({
-            initials: value
-        });
-    };
-
-    private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
-        if (event.key == 'Enter' && !this.hasError()) {
-            this.logInUser();
-        }
-    };
-
-    private handleInitialsChange = (value: string) => {
-        this.setState({
-            initials: value
-        });
-        this.props.clearLoginError();
-    };
-
     private logInUser = () => {
         OIDCService.instance().login();
     };
-
-    // private renderInputField = () => {
-    //     return <FormControl error={this.hasError()}>
-    //         <TextField
-    //             label={PowerLocalize.get('Initials.Singular')}
-    //             value={this.state.initials}
-    //             onChange={(e) => this.handleInitialsChange(e.target.value)}
-    //             onKeyPress={this.handleInputFieldKeyPress}
-    //         />
-    //         {this.hasError() ?
-    //             <FormHelperText id="login-error-text">{this.props.loginError}</FormHelperText> :
-    //             <></>}
-    //     </FormControl>;
-    // };
 
     render() {
         if (this.props.loginStatus === LoginStatus.SUCCESS) {
@@ -116,10 +78,6 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
                         </div>
                         <div className="vertical-align">
                             <div className="fittingContainer">
-                                {/*<div className="vertical-align">*/}
-                                {/*    {this.renderInputField()}*/}
-                                {/*</div>*/}
-                                {/*<br/>*/}
                                 <PwrRaisedButton color='primary' icon={<ArrowRight/>} onClick={this.logInUser}
                                                  text={PowerLocalize.get('Login.LoginAzure')}/>
                             </div>

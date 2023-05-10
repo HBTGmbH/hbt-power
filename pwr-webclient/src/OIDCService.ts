@@ -40,12 +40,11 @@ export class OIDCService {
      * Performs a manual login request for a new user.
      */
     public login(): void {
-        console.log('Doing login request');
         this.msalInstance.doLogin();
     }
 
     public logout(): void {
-        this.msalInstance.accessMsal().logoutRedirect();
+        this.msalInstance.accessMsal().logoutRedirect({account: this.msalInstance.accessMsal().getActiveAccount()})
     }
 
     /**
@@ -69,5 +68,9 @@ export class OIDCService {
 
     public getToken(): Promise<string> {
         return this.msalInstance.getToken();
+    }
+
+    public getCurrentUserName(): string {
+        return this.msalInstance.accessMsal().getActiveAccount().name;
     }
 }

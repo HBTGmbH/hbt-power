@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import * as redux from 'redux';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import Dialog from '@material-ui/core/Dialog/Dialog';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
@@ -17,16 +16,15 @@ import {isNullOrUndefined} from 'util';
 import CloudUpload from '@material-ui/icons/CloudUpload';
 import {LinearProgress} from '@material-ui/core';
 import {ThunkDispatch} from 'redux-thunk';
+import {OIDCService} from '../../../OIDCService';
 
 
 interface ReportUploadTemplateLocalProps {
     open: boolean;
-
     onClose(): void;
 }
 
 interface ReportUploadTemplateProps {
-    currentUser: string;
     progressPercent: number;
     pending: boolean;
 }
@@ -49,9 +47,8 @@ interface ReportUploadTemplateState {
 
 class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplateProps & ReportUploadTemplateLocalProps & ReportUploadTemplateDispatch, ReportUploadTemplateState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: ReportUploadTemplateLocalProps): ReportUploadTemplateProps {
+    static mapStateToProps(state: ApplicationState, _: ReportUploadTemplateLocalProps): ReportUploadTemplateProps {
         return {
-            currentUser: state.adminReducer.adminName(),
             pending: state.adminReducer.templateUploadPending(),
             progressPercent: state.adminReducer.templateUploadProgress()
         };
@@ -68,12 +65,10 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
         & ReportUploadTemplateLocalProps
         & ReportUploadTemplateDispatch) {
         super(props);
-        this.resetState(props);
+        this.resetState();
     }
 
-    private resetState(props: ReportUploadTemplateProps
-        & ReportUploadTemplateLocalProps
-        & ReportUploadTemplateDispatch) {
+    private resetState() {
         this.state = {
             fileName: '',
             tempName: '',
@@ -87,24 +82,9 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
     private uploadTemplate = () => {
         if (this.state.file != null) {
             console.debug('trying to upload file... ', this.state.file);
-            this.props.saveTemplate(this.state.file, this.state.tempName, this.state.tempDescription, this.props.currentUser);
+            const userName = OIDCService.instance().getCurrentUserName();
+            this.props.saveTemplate(this.state.file, this.state.tempName, this.state.tempDescription, userName);
         }
-    };
-
-    private renderTemplate = () => {
-        if (this.state.file != null) {
-            //this.props.renderTemplate(this.state.file);
-            //console.log('trying to render file... ', this.state.file);
-        }
-    };
-
-    private onInputChange = (e: any) => {
-        this.setState({
-            fileName: e.target.value,
-            file: e.target.files[0],
-        });
-
-        //this.props.renderTemplate(this.state.file);
     };
 
     private isValidFile = (): boolean => {
@@ -114,15 +94,8 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
         return false;
     };
 
-    private dropZoneClassNames = (isDragActive: boolean) => {
-        let classes = ['dropzone'];
-        if (isDragActive) {
-            classes.push('dropzone--isActive');
-        }
-        return classes.join(' ');
-    };
 
-    private handleFileDrop = (acceptedFiles: Array<File>, rejectedFiles: Array<File>) => {
+    private handleFileDrop = (acceptedFiles: Array<File>, _: Array<File>) => {
         if (acceptedFiles.length > 0) {
             this.setState({
                 file: acceptedFiles[0]
@@ -130,6 +103,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
         }
     };
 
+    // noinspection JSUnusedLocalSymbols
     private Progress = () => this.props.pending ?
         <LinearProgress variant="determinate" value={this.props.progressPercent}/> : <></>;
 

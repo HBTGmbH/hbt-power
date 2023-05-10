@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {Button, Dialog, DialogActions} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
@@ -63,7 +62,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ConsultantCreateDialogLocalProps): ConsultantCreateDialogProps {
+    static mapStateToProps(_: ApplicationState, __: ConsultantCreateDialogLocalProps): ConsultantCreateDialogProps {
         return {};
     }
 
