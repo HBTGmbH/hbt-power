@@ -14,7 +14,7 @@ export class MSALInstance {
         auth: {
             authority: `https://login.microsoftonline.com/${CONFIG.AZURE_TENANT_ID}`,
             clientId: CONFIG.AZURE_CLIENT_ID,
-            redirectUri: `${window.location.origin}/power`
+            redirectUri: `${window.location.origin}`
         },
     };
     private readonly msalInstance: Msal.PublicClientApplication;

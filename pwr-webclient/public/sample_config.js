@@ -6,9 +6,9 @@ const POWER_STATISTICS_SERVICE_URL = "https://power.hbt.de/power/api/pwr-statist
 
 const CLIENT_BUILD_INFO_LOCATION = "https://power.hbt.de/power/build_info.json";
 
-const POWER_IMAGE_PATH = "/power/img";
+const POWER_IMAGE_PATH = "/img";
 
-const POWER_APP_PATH = "/power";
+const POWER_APP_PATH = "";
 const POWER_LOCALE_PATH = "https://power.hbt.de/power/localization";
 
 const GLOBAL_OPTIONS = {
