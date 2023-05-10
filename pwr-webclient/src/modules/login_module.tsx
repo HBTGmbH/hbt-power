@@ -64,27 +64,32 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
     render() {
         if (this.props.loginStatus === LoginStatus.SUCCESS) {
             // Already logged in? Great! Redirect to Profile Selection!
-            return <Redirect to={Paths.PROFILE_SELECT}/>
+            return <Redirect to={Paths.PROFILE_SELECT}/>;
         }
         return (
-            <div>
-                <div className="vertical-align">
-                    <div style={{padding: '64px', backgroundColor: 'white'}}>
-                        <div className="vertical-align">
-                            <img alt="HBT Power Logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
-                        </div>
-                        <div className="vertical-align">
-                            <h1>{PowerLocalize.get('Login.Title')}</h1>
-                        </div>
-                        <div className="vertical-align">
-                            <div className="fittingContainer">
-                                <PwrRaisedButton color='primary' icon={<ArrowRight/>} onClick={this.logInUser}
-                                                 text={PowerLocalize.get('Login.LoginAzure')}/>
+            <React.Fragment>
+                <div className="hbt-schild-background">
+                </div>
+                <div>
+                    <div className="vertical-align">
+                        <div style={{padding: '64px', backgroundColor: 'white'}}>
+                            <div className="vertical-align">
+                                <img alt="HBT Power Logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
+                            </div>
+                            <div className="vertical-align">
+                                <h1>{PowerLocalize.get('Login.Title')}</h1>
+                            </div>
+                            <div className="vertical-align">
+                                <div className="fittingContainer">
+                                    <PwrRaisedButton color="primary" icon={<ArrowRight/>} onClick={this.logInUser}
+                                                     text={PowerLocalize.get('Login.LoginAzure')}/>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>);
+            </React.Fragment>
+        );
     }
 }
 

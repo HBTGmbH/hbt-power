@@ -16,6 +16,7 @@ import {Paths} from '../Paths';
 
 interface ProfileSelectDispatch {
     openProfile(initials: string): void;
+
     openAdminArea(): void;
 }
 
@@ -23,13 +24,13 @@ interface ProfileSelectProps {
     isAdmin: boolean;
 }
 
-class ProfileSelectModule extends React.Component<ProfileSelectDispatch & ProfileSelectProps, {initials: string}> {
+class ProfileSelectModule extends React.Component<ProfileSelectDispatch & ProfileSelectProps, { initials: string }> {
 
     constructor(props) {
         super(props);
         this.state = {
             initials: '',
-        }
+        };
     }
 
     static mapStateToProps(state: ApplicationState): ProfileSelectProps {
@@ -48,12 +49,11 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
     }
 
 
-
     private handleInitialsChange = (initials: string) => {
         this.setState({
             initials
         });
-    }
+    };
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
         if (event.key == 'Enter') {
@@ -63,11 +63,11 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
 
     private openProfile = () => {
         this.props.openProfile(this.state.initials);
-    }
+    };
 
     private openAdminArea = () => {
         this.props.openAdminArea();
-    }
+    };
 
 
     private renderInputField = () => {
@@ -83,34 +83,39 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
 
     render() {
         return (
-            <div>
-                <div className="vertical-align">
-                    <div style={{padding: '64px', backgroundColor: 'white'}}>
-                        <div className="vertical-align">
-                            <img alt="HBT Power logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
-                        </div>
-                        <div className="vertical-align">
-                            <h1>Profil Wählen</h1>
-                        </div>
-                        <div className="vertical-align pwr-margin-bottom">
-                            <div className="fittingContainer">
-                                <div className="vertical-align">
-                                    {this.renderInputField()}
+            <React.Fragment>
+                <div className="hbt-schild-background">
+                </div>
+
+                <div>
+                    <div className="vertical-align">
+                        <div style={{padding: '64px', backgroundColor: 'white'}}>
+                            <div className="vertical-align">
+                                <img alt="HBT Power logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
+                            </div>
+                            <div className="vertical-align">
+                                <h1>Profil Wählen</h1>
+                            </div>
+                            <div className="vertical-align pwr-margin-bottom">
+                                <div className="fittingContainer">
+                                    <div className="vertical-align">
+                                        {this.renderInputField()}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="vertical-align pwr-margin-bottom">
-                            <PwrRaisedButton color="primary" icon={<ArrowRight/>} onClick={this.openProfile}
-                                             text="Profil Öffnen"/>
-                        </div>
-                        {
-                            this.props.isAdmin && <div className="vertical-align">
-                                <PwrRaisedButton color="primary" icon={<ArrowRight/>} onClick={this.openAdminArea} text="Admin Bereich"/>
+                            <div className="vertical-align pwr-margin-bottom">
+                                <PwrRaisedButton color="primary" icon={<ArrowRight/>} onClick={this.openProfile}
+                                                 text="Profil Öffnen"/>
                             </div>
-                        }
+                            {
+                                this.props.isAdmin && <div className="vertical-align">
+                                    <PwrRaisedButton color="primary" icon={<ArrowRight/>} onClick={this.openAdminArea} text="Admin Bereich"/>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>);
+            </React.Fragment>);
     }
 }
 
