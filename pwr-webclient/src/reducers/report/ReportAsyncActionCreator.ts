@@ -1,5 +1,4 @@
 import * as redux from 'redux';
-import {ApplicationState} from '../reducerIndex';
 import {ReportServiceClient} from '../../clients/ReportServiceClient';
 import {reportLoadAction} from './ReportActions';
 import {AxiosResponse} from 'axios';
@@ -38,15 +37,23 @@ export class ReportAsyncActionCreator {
 
     public static downloadReportFile(response: AxiosResponse, reportData: ReportData) {
 
-        const location = reportServiceClient.getReportURL(reportData.id);
         let blob: Blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-        let a: any = document.createElement('a');
-        a.style = 'display: none';
-        a.href = location;
-        let url = window.URL.createObjectURL(blob);
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+        ReportAsyncActionCreator.downloadBlob(blob, reportData.fileName);
+    }
 
+    private static downloadBlob(file: Blob, fileName: string): void {
+        if (file) {
+            const objectUrl = URL.createObjectURL(file);
+            ReportAsyncActionCreator.downloadFile(fileName, objectUrl);
+            URL.revokeObjectURL(objectUrl);
+        }
+    }
+
+    private static downloadFile(download: string, path: string): void {
+        const link = document.createElement('a');
+        link.download = download;
+        link.href = path;
+        link.click();
+        link.remove();
     }
 }
