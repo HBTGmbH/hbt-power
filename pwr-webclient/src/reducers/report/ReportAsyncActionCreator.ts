@@ -30,14 +30,12 @@ export class ReportAsyncActionCreator {
         return function (dispatch: redux.Dispatch) {
             reportServiceClient.getReport(reportData.id)
                 .then(response => ReportAsyncActionCreator.downloadReportFile(response, reportData))
-
                 .catch(error => console.error(error));
         };
     }
 
-    public static downloadReportFile(response: AxiosResponse, reportData: ReportData) {
-
-        let blob: Blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    public static downloadReportFile(response: ArrayBuffer, reportData: ReportData) {
+        let blob: Blob = new Blob([response], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
         ReportAsyncActionCreator.downloadBlob(blob, reportData.fileName);
     }
 

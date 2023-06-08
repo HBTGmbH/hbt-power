@@ -39,7 +39,7 @@ export class ReportServiceClient extends PowerHttpClient {
     public getReport(id): Promise<any> {
         const url = this.base() + '/report/file/' + id;
         this.beginRequest();
-        return this.get(url);
+        return this.get(url, {responseType: 'arraybuffer'});
     }
 
     public deleteReport(id): Promise<unknown> {
