@@ -34,7 +34,7 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
     }
 
     private onChangeDate = (moment: Moment) => {
-        this.props.onChange(moment.toDate());
+        this.props.onChange(moment?.toDate());
     };
 
     private getFormat = () => {
