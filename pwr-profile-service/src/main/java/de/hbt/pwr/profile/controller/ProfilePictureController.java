@@ -32,7 +32,7 @@ public class ProfilePictureController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/by-initials/{id}")
+    @GetMapping("/by-initials/{initials}")
     @ResponseBody
     public ResponseEntity<byte[]> getPictureByInitials(@PathVariable("initials") String initials) {
         return pictureService.findByInitials(initials)
