@@ -27,8 +27,8 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 public class ProfileUpdateService {
 
     private static class Pair<K, V> {
-        private K key;
-        private V value;
+        private final K key;
+        private final V value;
         private Pair(K key, V value) {
             this.key = key;
             this.value = value;
@@ -70,9 +70,9 @@ public class ProfileUpdateService {
      * Invokes merging of given entity into the set of existing entities, while resolving potential conflicts.
      * <p>
      * This methods aims to provide consistency amoing {@link NameEntity} of the same {@link NameEntityType}.
-     * Whenever a {@link NameEntity} is supposed to be new (i.E. it's {@link NameEntity#name} equals <code>null</code>,
-     * it has to be checked that no concurrent {@link NameEntity} with the same {@link NameEntity#name} and
-     * {@link NameEntity#type} exists.
+     * Whenever a {@link NameEntity} is supposed to be new (i.E. it's {@link NameEntity#getName()} equals <code>null</code>,
+     * it has to be checked that no concurrent {@link NameEntity} with the same {@link NameEntity#getName()} and
+     * {@link NameEntity#getType()} exists.
      * </p>
      * <p>
      * This method checks if a concurrent entity exists. If one exists that describes the same {@link NameEntity}
@@ -87,9 +87,10 @@ public class ProfileUpdateService {
      */
     private Pair<Boolean, NameEntity> mergeNameEntity(@NotNull NameEntity nameEntity, NameEntityType newEntityType) {
         NameEntity res = nameEntity;
-        Boolean created = false;
+        boolean created = false;
         LOG.debug("NameEntity: " + nameEntity.toString());
-        List<NameEntity> names = nameEntityRepository.findAll();
+        // Precache all
+        nameEntityRepository.findAll();
         NameEntity concurrentEntity = nameEntityRepository.findByNameAndType(nameEntity.getName(), newEntityType);
         LOG.debug("Concurrent: " + (concurrentEntity == null ? null : concurrentEntity.toString()));
         if (concurrentEntity != null) {
@@ -137,7 +138,7 @@ public class ProfileUpdateService {
         skill.setName(skill.getName().trim());
         Skill res;
         Skill concurrent = skillsByLcName.get(skill.getName().toLowerCase());
-        LOG.debug("Skill: " + skill.toString());
+        LOG.debug("Skill: " + skill);
         LOG.debug("Concurrent skill: " + (concurrent == null ? null : concurrent.toString()));
         if (concurrent == null) {
             if (skill.getId() == null) {
@@ -153,10 +154,8 @@ public class ProfileUpdateService {
             }
         }
         // Do notifications
-        Optional<AdminNotification> notification = adminNotificationService.createSkillNotification(profile, skill, newSkillCreated);
-        if(notification.isPresent()) {
-            adminNotifications.add(notification.get());
-        }
+        Optional<AdminNotification> notification = adminNotificationService.createSkillNotification(profile, res, newSkillCreated);
+        notification.ifPresent(adminNotifications::add);
         return res;
     }
 
@@ -164,7 +163,7 @@ public class ProfileUpdateService {
      * Imports Skills from a project and makes sure they are also in the set of profile skills.
      *
      * @param project defines the imported skills
-     * @return the imported {@link Project} with possible changed skills in the project. The {@link Project#skills} will
+     * @return the imported {@link Project} with possible changed skills in the project. The {@link Project#getSkills()} will
      * have been replaced by a new Set.
      */
     protected Project importProjectSkills(Profile profile, Project project, Set<AdminNotification> adminNotifications) {
@@ -296,7 +295,7 @@ public class ProfileUpdateService {
      * Checks for invalid entries. Invalid entries may be one of the following:
      * <ul>
      * <li>Entries that reference no {@link NameEntity}</li>
-     * <li>{@link CareerElement} whose {@link CareerElement#startDate} is before {@link CareerElement#endDate}</li>
+     * <li>{@link CareerElement} whose {@link CareerElement#getStartDate()} is before {@link CareerElement#getEndDate()}</li>
      * <li>Entries who share the same {@link NameEntity} (Duplicates)</li>
      * </ul>
      *
@@ -347,20 +346,20 @@ public class ProfileUpdateService {
             throw new PwrValidationException(errors);
         }
 
-        LOG.info(profile.toString() + ": Importing profile.");
+        LOG.info(profile + ": Importing profile.");
         removeInvalidEntries(profile);
-        LOG.info(profile.toString() + ": Persisting name entities.");
+        LOG.info(profile + ": Persisting name entities.");
         persistNameEntities(profile, adminNotifications);
         // Note: order is important here. Cascading is deactivated, so
         // it is important to first persist all new profile skills,
         // then all project skills and THEN the projects.
-        LOG.info(profile.toString() + ": Importing profile skills.");
+        LOG.info(profile + ": Importing profile skills.");
         importProfileSkills(profile, adminNotifications);
-        LOG.info(profile.toString() + ": Importing project skills.");
+        LOG.info(profile + ": Importing project skills.");
         importProjectSkills(profile, adminNotifications);
-        LOG.info(profile.toString() + ": Importing projects.");
+        LOG.info(profile + ": Importing projects.");
         importProjects(profile);
-        LOG.info(profile.toString() + ": Importing done.");
+        LOG.info(profile + ": Importing done.");
         profile.setLastEdited(LocalDateTime.now());
         profile = profileRepository.save(profile);
         LOG.info("Profile saved...");
