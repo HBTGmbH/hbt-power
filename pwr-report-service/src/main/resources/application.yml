@@ -32,6 +32,7 @@ management:
       cors:
         allowed-origins: '*'
         allowed-methods: '*'
+pwr-profile-service-url: http://pwr-profile-service:9004
 ---
 spring:
   profiles: localDev
@@ -50,3 +51,4 @@ export:
   htmlLocalLocation: src\target\report\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.
   imgLocation: src\target\images
+pwr-profile-service-url: http://localhost:9004

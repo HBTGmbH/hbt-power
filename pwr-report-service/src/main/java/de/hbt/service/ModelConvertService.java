@@ -1,6 +1,5 @@
 package de.hbt.service;
 
-import de.hbt.config.ReportServiceConfig;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.export.*;
 import de.hbt.model.view.*;
@@ -21,10 +20,7 @@ import java.util.stream.Collectors;
 @Component
 public class ModelConvertService {
 
-    private final ReportServiceConfig reportServiceConfig;
-
-    public ModelConvertService(ReportServiceConfig reportServiceConfig) {
-        this.reportServiceConfig = reportServiceConfig;
+    public ModelConvertService() {
     }
 
     private static Synonym toSynonym(String name) {
@@ -257,10 +253,10 @@ public class ModelConvertService {
                 .map(ModelConvertService::toSpezialgebiet).collect(Collectors.toList());
     }
 
-    Profil convert(ReportInfo reportInfo) {
+    Profil convert(ReportInfo reportInfo, String picturePath) {
         Profil result = new Profil();
         ViewProfile viewProfile = reportInfo.viewProfile;
-        result.setBildUrl(String.format(reportServiceConfig.getImgLocation(), reportInfo.initials));
+        result.setBildUrl(picturePath);
 
         result.setKurztext(viewProfile.getDescription());
         result.setName(reportInfo.name);

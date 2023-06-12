@@ -1,5 +1,6 @@
 package de.hbt.service;
 
+import de.hbt.client.ProfilePictureClient;
 import de.hbt.config.ReportServiceConfig;
 import de.hbt.exceptions.StorageFileException;
 import de.hbt.model.ReportInfo;
@@ -14,6 +15,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,18 +25,21 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 @Slf4j
 @Service
 public class ProfileReportService {
 
     private final DocBirtExportHandler docBirtExportHandler;
-    private DBFileStorageService storageService;
+    private final DBFileStorageService storageService;
     private final HtmlBirtExportHandler htmlBirtExportHandler;
     private final PdfBirtExportHandler pdfBirtExportHandler;
     private final ReportDataService reportDataService;
     private final ModelConvertService modelConvertService;
     private final ReportServiceConfig reportServiceConfig;
+    private final ProfilePictureClient profilePictureClient;
 
     @Autowired
     public ProfileReportService(DocBirtExportHandler docBirtExportHandler,
@@ -42,7 +47,7 @@ public class ProfileReportService {
                                 HtmlBirtExportHandler htmlBirtExportHandler,
                                 PdfBirtExportHandler pdfBirtExportHandler,
                                 ReportDataService reportDataService,
-                                ModelConvertService modelConvertService, ReportServiceConfig reportServiceConfig) {
+                                ModelConvertService modelConvertService, ReportServiceConfig reportServiceConfig, ProfilePictureClient profilePictureClient) {
         this.docBirtExportHandler = docBirtExportHandler;
         this.storageService = storageService;
         this.htmlBirtExportHandler = htmlBirtExportHandler;
@@ -50,12 +55,12 @@ public class ProfileReportService {
         this.reportDataService = reportDataService;
         this.modelConvertService = modelConvertService;
         this.reportServiceConfig = reportServiceConfig;
+        this.profilePictureClient = profilePictureClient;
     }
 
     /**
      * Invokes asynchronous generation of the export document. Exports are always based on
      * an XML data source that has been previously marshalled from the input data.
-     *
      * This file has been created by the spawning thread and has to be deleted once this asynchronous
      * action completes
      */
@@ -64,8 +69,9 @@ public class ProfileReportService {
         File xmlFile = null;
         try {
             log.debug("[Export][{}] Incoming render request. ReportTemplateIdFileId: {}", reportInfo.initials, reportInfo.reportTemplate.fileId);
+            String pictureFilePath = saveImageOnDisk(reportInfo.initials);
             DBFile dbFile = storageService.getFile(reportInfo.reportTemplate.fileId);
-            Profil profile = modelConvertService.convert(reportInfo);
+            Profil profile = modelConvertService.convert(reportInfo, pictureFilePath);
             log.debug("[Export][{}]Profile converted, now generationg XML datasource file.", reportInfo.initials);
             xmlFile = marshalToXML(profile);
             log.debug("[Export][{}] Creating report based on XML data source {}", reportInfo.initials, xmlFile.getAbsolutePath());
@@ -131,7 +137,6 @@ public class ProfileReportService {
 
     /**
      * Marshalls the profile into an XML file
-     *
      * The resulting XML file is used to generate the BIRT report. Our BIRT Engine templates
      * rely on these XML datasources to create the export documents
      */
@@ -149,4 +154,26 @@ public class ProfileReportService {
         }
     }
 
+    private String saveImageOnDisk(String initials) {
+        ResponseEntity<byte[]> response = profilePictureClient.getPictureByInitials(initials);
+        String contentType = response.getHeaders().get("Content-Type").get(0);
+        String fileEnding = "";
+        if (contentType.equals("image/jpeg")) {
+            fileEnding = ".jpeg";
+        }
+        if (contentType.equals("image/jpg")) {
+            fileEnding = ".jpg";
+        }
+        if (contentType.equals("image/png")) {
+            fileEnding = ".png";
+        }
+        try {
+            File tempFile = File.createTempFile("foto_" + initials, fileEnding);
+            tempFile.deleteOnExit();
+            Files.write(tempFile.toPath(), response.getBody(), StandardOpenOption.WRITE);
+            return tempFile.getAbsolutePath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package de.hbt.service;
 
+import de.hbt.client.ProfilePictureClient;
 import de.hbt.model.ReportData;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.ReportStatus;
@@ -10,9 +11,13 @@ import de.hbt.repository.DBFileRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
@@ -34,6 +39,9 @@ class ProfileReportServiceITest {
     @Autowired
     private ReportDataService reportDataService;
 
+    @MockBean
+    private ProfilePictureClient profilePictureClient;
+
     @SneakyThrows
     private DBFile persistTestFile() {
         DBFile dbFile = new DBFile();
@@ -49,6 +57,10 @@ class ProfileReportServiceITest {
     @Test
     @Transactional
     void shouldGenerateReport() {
+        ResponseEntity<byte[]> response = ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body("tst".getBytes());
+        Mockito.when(profilePictureClient.getPictureByInitials("tst")).thenReturn(response);
         DBFile dbFile = persistTestFile();
 
         ReportData reportData = new ReportData();
