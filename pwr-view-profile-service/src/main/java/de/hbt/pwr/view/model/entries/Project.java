@@ -6,15 +6,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"projectRoles", "skills"})
+@ToString(exclude = {"projectRoles", "skills"})
 public class Project implements ToggleableEntry, StartEndDateComparable {
     private Long id;
     private String name;

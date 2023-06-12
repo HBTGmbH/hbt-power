@@ -16,9 +16,9 @@ import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.ModelConvertUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import static de.hbt.pwr.view.client.skill.model.SkillServiceCategory.other;
 
 @Service
+@RequiredArgsConstructor
 public class ViewProfileCreatorService {
 
     public static final String DEFAULT_LOCALE = "deu";
@@ -40,21 +41,10 @@ public class ViewProfileCreatorService {
 
     private static final Logger LOG = LogManager.getLogger(ViewProfileCreatorService.class);
 
-    private ProfileServiceClient profileServiceClient;
-    private SkillServiceClient skillServiceClient;
-    private ViewProfileRepository viewProfileRepository;
-    private ViewProfileSortService viewProfileSortService;
-
-    @Autowired
-    public ViewProfileCreatorService(ProfileServiceClient profileServiceClient,
-                                     SkillServiceClient skillServiceClient,
-                                     ViewProfileRepository viewProfileRepository,
-                                     ViewProfileSortService viewProfileSortService) {
-        this.profileServiceClient = profileServiceClient;
-        this.skillServiceClient = skillServiceClient;
-        this.viewProfileRepository = viewProfileRepository;
-        this.viewProfileSortService = viewProfileSortService;
-    }
+    private final ProfileServiceClient profileServiceClient;
+    private final SkillServiceClient skillServiceClient;
+    private final ViewProfileRepository viewProfileRepository;
+    private final ViewProfileSortService viewProfileSortService;
 
     public ViewProfile createViewProfile(String initials, String name, String viewDescription, String localeStr) {
         Locale locale = (localeStr == null || localeStr.equals("")) ? Locale.GERMAN : Locale.forLanguageTag(localeStr);
@@ -170,7 +160,7 @@ public class ViewProfileCreatorService {
 
     private void setConsultantData(ViewProfileInfo viewProfileInfo, String initials) {
         ResponseEntity<ConsultantInfo> response = profileServiceClient.findByInitials(initials);
-        if (response != null) {
+        if (response != null && response.getBody() != null) {
             ConsultantInfo consultantInfo = response.getBody();
             viewProfileInfo.setConsultantBirthDate(consultantInfo.getBirthDate());
             String fullName = consultantInfo.getFirstName() + " " + consultantInfo.getLastName();

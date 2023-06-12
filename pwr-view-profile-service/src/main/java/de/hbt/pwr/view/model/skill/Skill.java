@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"rating", "enabled", "displayCategory"})
 @ToString(exclude = {"displayCategory"})

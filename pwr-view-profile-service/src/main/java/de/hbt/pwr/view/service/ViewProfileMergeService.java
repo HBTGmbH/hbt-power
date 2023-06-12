@@ -3,31 +3,27 @@ package de.hbt.pwr.view.service;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
+import de.hbt.pwr.view.model.entries.ProjectRole;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.model.entries.sort.NameComparable;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Slf4j
 @Service
 public class ViewProfileMergeService {
 
-    private static final Logger LOG = LogManager.getLogger(ViewProfileMergeService.class);
-
-    private ViewProfileRepository viewProfileRepository;
-
-
-    private ViewProfileCreatorService viewProfileCreatorService;
+    private final ViewProfileRepository viewProfileRepository;
+    private final ViewProfileCreatorService viewProfileCreatorService;
 
 
     @Autowired
@@ -79,15 +75,85 @@ public class ViewProfileMergeService {
     }
 
     private List<Project> mergeProjects(List<Project> oldList, List<Project> newList) {
-        List<Project> toReturn = new ArrayList<>();
-        oldList.forEach(project -> {
-            newList.forEach(p -> {
-                if (p.getId().equals(project.getId())) {
-                    toReturn.add(project);
-                }
-            });
-        });
-        return toReturn;
+        return newList.stream()
+                .map(newProject -> {
+                    Optional<Project> maybeOldProject = oldList.stream()
+                            .filter(oldProject -> Objects.equals(oldProject.getId(), newProject.getId()))
+                            .findAny();
+                    return maybeOldProject
+                            .map(project -> mergeProject(newProject, project))
+                            .orElse(newProject);
+                })
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(newProject -> findIndexIn(oldList, newProject)))
+                .collect(Collectors.toList());
+    }
+
+    private Project mergeProject(Project newProject, Project oldProject) {
+        return newProject.toBuilder()
+                .projectRoles(mergeProjectRoles(newProject.getProjectRoles(), oldProject.getProjectRoles()))
+                .skills(mergeProjectSkills(newProject.getSkills(), oldProject.getSkills()))
+                .enabled(oldProject.getEnabled())
+                .build();
+    }
+
+    private List<ProjectRole> mergeProjectRoles(List<ProjectRole> newProjectRoles, List<ProjectRole> oldProjectRoles) {
+        return newProjectRoles.stream()
+                .map(newRole -> {
+                    Boolean roleActive = oldProjectRoles.stream()
+                            .filter(oldRole -> Objects.equals(oldRole.getName(), newRole.getName()))
+                            .findAny()
+                            .map(ProjectRole::getEnabled)
+                            .orElse(true);
+                    return newRole.toBuilder()
+                            .enabled(roleActive)
+                            .build();
+                })
+                .sorted(Comparator.comparing(newProject -> findIndexIn(oldProjectRoles, newProject)))
+                .collect(Collectors.toList());
+    }
+
+    private List<Skill> mergeProjectSkills(List<Skill> newSkills, List<Skill> oldSkills) {
+        return newSkills.stream()
+                .map(newSkill -> {
+                    Boolean skillActive = oldSkills.stream()
+                            .filter(oldSkill -> Objects.equals(oldSkill.getName(), newSkill.getName()))
+                            .findAny()
+                            .map(Skill::getEnabled)
+                            .orElse(true);
+                    return newSkill.toBuilder()
+                            .enabled(skillActive)
+                            .build();
+                })
+                .sorted(Comparator.comparing(newProject -> findIndexIn(oldSkills, newProject)))
+                .collect(Collectors.toList());
+    }
+
+    private Integer findIndexIn(List<Skill> oldList, Skill newSkill) {
+        return IntStream
+                .range(0, oldList.size())
+                .filter(index -> Objects.equals(oldList.get(index).getId(), newSkill.getId()))
+                .boxed()
+                .findAny()
+                .orElse(null);
+    }
+
+    private Integer findIndexIn(List<Project> oldList, Project newProject) {
+        return IntStream
+                .range(0, oldList.size())
+                .filter(index -> Objects.equals(oldList.get(index).getId(), newProject.getId()))
+                .boxed()
+                .findAny()
+                .orElse(null);
+    }
+
+    private Integer findIndexIn(List<ProjectRole> oldList, ProjectRole oldRole) {
+        return IntStream
+                .range(0, oldList.size())
+                .filter(index -> Objects.equals(oldList.get(index).getName(), oldRole.getName()))
+                .boxed()
+                .findAny()
+                .orElse(null);
     }
 
     private <T extends NameComparable & ToggleableEntry> List<T> mergeEntities(List<T> oldList, List<T> newList) {
@@ -134,9 +200,7 @@ public class ViewProfileMergeService {
                 result.stream()
                         .filter(category -> category.getId().equals(skill.getDisplayCategory().getId()))
                         .findAny()
-                        .ifPresent(category -> {
-                            category.getDisplaySkills().add(skill);
-                        });
+                        .ifPresent(category -> category.getDisplaySkills().add(skill));
             } else {
                 skill.getDisplayCategory().setEnabled(true);
                 skill.getDisplayCategory().setIsDisplay(true);

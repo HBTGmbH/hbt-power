@@ -1,22 +1,20 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.fixture.ViewProfileFixtures;
 import de.hbt.pwr.view.model.LanguageLevel;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Career;
 import de.hbt.pwr.view.model.entries.Language;
 import de.hbt.pwr.view.model.entries.Project;
 import de.hbt.pwr.view.model.skill.Category;
-import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,35 +24,12 @@ import static org.mockito.Mockito.when;
 
 @Slf4j
 public class ViewProfileMergeServiceTest {
-
-
     private ViewProfileMergeService viewProfileMergeService;
-
-    private ViewProfileRepository viewProfileRepository;
-    private ViewProfileCreatorService viewProfileCreatorService;
-
-
     private ViewProfile oldView;
     private Language l1;
     private Language l2;
-    private Career c1;
-    private Career c2;
     private Project p1;
     private Project p2;
-
-    private Category root;
-    private Category first;
-    private Category second;
-    private Category third;
-    private Skill resSkillA1a;
-    private Skill resSkillA1b;
-    private Skill resSkillA2a;
-    private Skill resSkillA2b;
-    private Skill resSkillB1a;
-    private Skill resSkillB1b;
-    private Skill resSkillB2a;
-    private Skill resSkillB2b;
-
     private ViewProfile.ViewProfileMergeOptions options;
 
     private ViewProfile makeViewProfile() {
@@ -64,8 +39,8 @@ public class ViewProfileMergeServiceTest {
         view.getLanguages().add(l1);
         view.getLanguages().add(l2);
 
-        c1 = new Career("Career1", LocalDate.now(), LocalDate.now(), true);
-        c2 = new Career("Career2", LocalDate.now(), LocalDate.now(), false);
+        Career c1 = new Career("Career1", LocalDate.now(), LocalDate.now(), true);
+        Career c2 = new Career("Career2", LocalDate.now(), LocalDate.now(), false);
         view.getCareers().add(c1);
         view.getCareers().add(c2);
 
@@ -74,20 +49,10 @@ public class ViewProfileMergeServiceTest {
         view.getProjects().add(p1);
         view.getProjects().add(p2);
 
-        third = new Category("third", true, true);
-        second = new Category("second", true, true);
-        first = new Category("first", true, true);
-        root = new Category("root", true, true);
-
-
-        resSkillA1a = new Skill(1L, "name-a1a", 3, true, root);
-        resSkillA1b = new Skill(2L, "name-a1b", 3, false, root);
-        resSkillA2a = new Skill(3L, "name-a2a", 3, false, first);
-        resSkillA2b = new Skill(4L, "name-a2b", 3, true, first);
-        resSkillB1a = new Skill(5L, "name-B1a", 3, true, second);
-        resSkillB1b = new Skill(6L, "name-B1b", 3, false, second);
-        resSkillB2a = new Skill(7L, "name-B2a", 3, true, third);
-        resSkillB2b = new Skill(8L, "name-B2b", 3, false, third);
+        Category third = new Category("third", true, true);
+        Category second = new Category("second", true, true);
+        Category first = new Category("first", true, true);
+        Category root = new Category("root", true, true);
 
         // DisplayCategories
         List<Category> displayCategories = new ArrayList<>(Arrays.asList(root, first, second, third));
@@ -103,14 +68,9 @@ public class ViewProfileMergeServiceTest {
         options.name = "test";
         options.viewDescription = "test description";
         options.keepOld = true;
-        viewProfileRepository = mock(ViewProfileRepository.class);
+        ViewProfileRepository viewProfileRepository = mock(ViewProfileRepository.class);
         when(viewProfileRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, viewProfileCreatorService);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
+        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null);
     }
 
     @Test
@@ -142,8 +102,8 @@ public class ViewProfileMergeServiceTest {
 
         ViewProfile newViewProfile = new ViewProfile();
         List<Project> newProjects = new ArrayList<>();
-        Project p3 = new Project(1L, "name1", "description", "client", "broker", LocalDate.now(), LocalDate.now(), null, null, false);
-        Project p4 = new Project(2L, "name2", "description", "client", "broker", LocalDate.now(), LocalDate.now(), null, null, true);
+        Project p3 = new Project(1L, "name1", "description", "client", "broker", LocalDate.now(), LocalDate.now(), new ArrayList<>(), new ArrayList<>(), false);
+        Project p4 = new Project(2L, "name2", "description", "client", "broker", LocalDate.now(), LocalDate.now(), new ArrayList<>(), new ArrayList<>(), true);
 
         newProjects.add(p3);
         newProjects.add(p4);
@@ -154,5 +114,59 @@ public class ViewProfileMergeServiceTest {
 
         assertThat(newViewProfile.getProjects()).contains(p1);
         assertThat(newViewProfile.getProjects()).contains(p2);
+    }
+
+    @Test
+    public void whenMergingProject_shouldAddNewProjectToProfile() {
+        Project newProject = ViewProfileFixtures.validProject();
+        ViewProfile newViewProfile = new ViewProfile();
+        newViewProfile.getProjects().add(newProject);
+        oldView.setProjects(new ArrayList<>());
+
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+
+        assertThat(newViewProfile.getProjects()).containsExactly(newProject);
+    }
+
+    @Test
+    public void whenMergingProject_andOldProjectExists_shouldMergeBasicDataIntoOldProject() {
+        // Given two projects with the same ID
+        Project oldProject = ViewProfileFixtures.validProject()
+                .toBuilder()
+                .id(55L)
+                .client("Evil Corp")
+                .broker("Evil Broker")
+                .description("An Evil Project")
+                .endDate(LocalDate.of(2009, 3, 26))
+                .startDate(LocalDate.of(2003, 1, 21))
+                .name("Evil Project")
+                .enabled(false)
+                .build();
+        Project newProject = oldProject.toBuilder()
+                .id(55L)
+                .client("Not Evil Corp")
+                .broker("Not Evil Broker")
+                .description("No longer an evil project")
+                .endDate(null)
+                .startDate(LocalDate.of(2003, 1, 21))
+                .name("Good Project")
+                .enabled(true)
+                .build();
+        ViewProfile newViewProfile = new ViewProfile();
+        newViewProfile.getProjects().add(newProject);
+        oldView.getProjects().add(oldProject);
+
+        // When merging
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+
+        // Should update the old project with new values
+        Project updatedProject = newViewProfile.getProjects().iterator().next();
+        assertThat(updatedProject.getClient()).isEqualTo(newProject.getClient());
+        assertThat(updatedProject.getBroker()).isEqualTo(newProject.getBroker());
+        assertThat(updatedProject.getDescription()).isEqualTo(newProject.getDescription());
+        assertThat(updatedProject.getEndDate()).isEqualTo(newProject.getEndDate());
+        assertThat(updatedProject.getStartDate()).isEqualTo(newProject.getStartDate());
+        assertThat(updatedProject.getName()).isEqualTo(newProject.getName());
+        assertThat(updatedProject.getEnabled()).isFalse(); // The old project was disabled, so this is, too
     }
 }
