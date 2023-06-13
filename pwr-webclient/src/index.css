@@ -300,9 +300,17 @@ body {
     background-image: url("/img/HBT_Schild_01.jpeg");
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
-    background-size: auto;
+    background-size: cover;
     height: 100vh;
     width: 100vw;
+}
+
+.select-in-toolbar .MuiSelect-select {
+    color: white;
+}
+
+.select-in-toolbar .MuiSelect-icon {
+    color: white;
 }
 
 /*[class*="MuiInputAdornment-root"] {*/

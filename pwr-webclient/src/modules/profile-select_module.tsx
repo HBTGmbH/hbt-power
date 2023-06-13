@@ -88,7 +88,7 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
                 </div>
 
                 <div>
-                    <div className="vertical-align">
+                    <div className="vertical-align" style={{height: '100vh'}}>
                         <div style={{padding: '64px', backgroundColor: 'white'}}>
                             <div className="vertical-align">
                                 <img alt="HBT Power logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>

@@ -2,7 +2,7 @@ import {ActionType} from '../ActionType';
 import {APIAdminNotification} from '../../model/admin/AdminNotification';
 import {
     ChangeLoginStatusAction,
-    ChangeRequestStatusAction,
+    ChangeRequestStatusAction, LoadConsultantInfoSuccess,
     OpenSkillNotificationDialogAction,
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
@@ -36,6 +36,7 @@ import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeSt
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 import {ThunkDispatch} from 'redux-thunk';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
+import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = SkillServiceClient.instance();
@@ -268,18 +269,6 @@ export class AdminActionCreator {
         };
     }
 
-
-    // public static AsyncRestoreFromLocalStorage() {
-    //     return function (dispatch: ThunkDispatch<any, any, any>) {
-    //         const storedUsername = window.localStorage.getItem(COOKIE_ADMIN_USERNAME);
-    //         const storedPassword = window.localStorage.getItem(COOKIE_ADMIN_PASSWORD);
-    //         Promise.all([
-    //             dispatch(AdminActionCreator.ChangeUsername(storedUsername)),
-    //             dispatch(AdminActionCreator.ChangePassword(storedPassword))]
-    //         ).then(() => dispatch(AdminActionCreator.AsyncValidateAuthentication(storedUsername, storedPassword, true, true)));
-    //     };
-    // }
-
     public static AsyncLogOutAdmin() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
@@ -291,6 +280,7 @@ export class AdminActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.authenticateAdmin().then(ignored => {
                 dispatch(AdminActionCreator.LogInAdmin());
+                dispatch(AdminActionCreator.AsyncLoadConsultantInfo());
             }).catch((error: PowerApiError) => {
                 console.error(error);
                 if (error.status != -1) {
@@ -442,6 +432,21 @@ export class AdminActionCreator {
                 .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))
                 .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))
                 .catch((error) => Alerts.showError(error));
+        };
+    }
+
+    public static LoadConsultantInfoSuccess(consultantInfo: ConsultantInfoDTO[]): LoadConsultantInfoSuccess {
+        return {
+            type: ActionType.LoadConsultantInfoSuccess,
+            consultantInfo: consultantInfo
+        };
+    }
+
+    public static AsyncLoadConsultantInfo() {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.getAllConsultantInfos()
+              .then((consultantInfo) => dispatch(AdminActionCreator.LoadConsultantInfoSuccess(consultantInfo)))
+              .catch((error) => Alerts.showError(error));
         };
     }
 }

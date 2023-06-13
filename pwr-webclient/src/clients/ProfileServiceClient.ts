@@ -3,9 +3,9 @@ import {AxiosRequestConfig} from 'axios';
 import {PowerHttpClient} from './PowerHttpClient';
 import {APIBuildInfo} from '../model/metadata/BuildInfo';
 import {APIAdminNotification} from '../model/admin/AdminNotification';
-import {store} from '../reducers/reducerIndex';
 import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
 import {SkillNotification} from '../model/admin/SkillNotification';
+import {ConsultantInfoDTO} from '../model/ConsultantInfoDTO';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -36,11 +36,6 @@ export class ProfileServiceClient extends PowerHttpClient {
     public getBuildInfoURL() {
         return this.base() + '/actuator/info';
     }
-
-    private credentialsConfig(): AxiosRequestConfig {
-        return store.getState().adminReducer.adminAuthConfig();
-    }
-
 
     public getConsultant = (initials: string): Promise<APIConsultant> => {
         const url = this.base() + '/consultants/' + initials;
@@ -102,74 +97,77 @@ export class ProfileServiceClient extends PowerHttpClient {
     public getTrashedAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
         const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
-        return this.get(url, this.credentialsConfig());
+        return this.get(url);
     };
 
     public trashNotifications = (ids: Array<number>): Promise<void> => {
         const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
-        return this.put(url, ids, this.credentialsConfig());
+        return this.put(url, ids);
     };
 
     public deleteTrashedNotifications = (): Promise<void> => {
         const url = this.base() + '/admin/notifications/trash';
         this.beginRequest();
-        return this.delete(url, this.credentialsConfig());
+        return this.delete(url);
     };
 
     public renameSkill = (oldName: string, newName: string): Promise<void> => {
         const url = this.base() + '/admin/skills/name';
-        let config = this.credentialsConfig();
-        config.params = {
-            oldname: oldName,
-            newname: newName
-        };
+        const config = {
+            params: {
+                oldname: oldName,
+                newname: newName
+            }
+        }
         this.beginRequest();
         return this.patch(url, null, config);
     };
 
     public authenticateAdmin = (): Promise<void> => {
         const url = this.base() + '/admin/';
-        let config = this.credentialsConfig();
         this.beginRequest();
-        return this.head(url, config);
+        return this.head(url);
     };
 
     public invokeNotificationDelete = (notificationId: number): Promise<void> => {
         const url = this.base() + '/admin/notifications/' + notificationId;
-        const config = this.credentialsConfig();
         this.beginRequest();
-        return this.delete(url, config);
+        return this.delete(url);
     };
 
     public invokeNotificationOK = (notificationId: number): Promise<void> => {
         const url = this.base() + '/admin/notifications/' + notificationId;
-        const config = this.credentialsConfig();
         this.beginRequest();
-        return this.put(url, null, config);
+        return this.put(url, null);
     };
 
     public invokeNotificationEdit = (notification: ProfileEntryNotification | SkillNotification): Promise<void> => {
         const url = this.base() + '/admin/notifications';
-        const config = this.credentialsConfig();
         this.beginRequest();
-        return this.patch(url, notification.toAPI(), config);
+        return this.patch(url, notification.toAPI());
     };
 
 
     public deleteConsultant = (initials: string): Promise<void> => {
         const url = this.base() + `/consultants/${initials}/delete`;
-        const config = this.credentialsConfig();
         this.beginRequest();
         return this.delete(url);
     };
 
+    public getAllConsultantInfos = (): Promise<ConsultantInfoDTO[]> => {
+        const url = this.base() + `/consultants/info`;
+        this.beginRequest();
+        return this.get(url);
+    };
+
     public uploadProfilePicture = (picture: File): Promise<string> => {
         const url = this.base() + `/profile-pictures`;
-        const config = this.credentialsConfig();
-        config.headers = {
-            'Content-Type': 'multipart/form-data'
-        }
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
         const formData = new FormData();
         formData.append("file", picture);
         this.beginRequest();
@@ -179,9 +177,14 @@ export class ProfileServiceClient extends PowerHttpClient {
 
     public deleteProfilePicture = (id: string): Promise<void> => {
         const url = this.base() + `/profile-pictures/${id}`;
-        const config = this.credentialsConfig();
         this.beginRequest();
-        return this.delete(url, config);
+        return this.delete(url);
+    }
+
+    public getConsultantInfo = (): Promise<void> => {
+        const url = this.base() + `/consultants/info`;
+        this.beginRequest();
+        return this.get(url);
     }
 
     getProfilePictureUrl(profilePictureId: string): string {

@@ -1,6 +1,4 @@
 import {PowerHttpClient} from '../../../../clients/PowerHttpClient';
-import {AxiosRequestConfig} from 'axios';
-import {store} from '../../../reducerIndex';
 
 import {Language} from '../model/Language';
 import {Qualification} from '../model/Qualification';
@@ -84,10 +82,6 @@ export class ProfileUpdateServiceClient extends PowerHttpClient {
 
 
     // ---------------------- LOAD
-
-    private credentialsConfig(): AxiosRequestConfig {
-        return store.getState().adminReducer.adminAuthConfig();
-    }
 
     public getFullProfile(initials: string): Promise<Profile> {
         const url = this.getFullProfileUrl(initials);

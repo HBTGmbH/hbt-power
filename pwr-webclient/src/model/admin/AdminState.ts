@@ -8,7 +8,7 @@ import {ProfileEntryNotification} from './ProfileEntryNotification';
 import {SkillNotification} from './SkillNotification';
 import {SkillNotificationEditStatus} from './SkillNotificationEditStatus';
 import {SkillNotificationAction} from './SkillNotificationAction';
-import {AxiosRequestConfig} from 'axios';
+import {ConsultantInfoDTO} from '../ConsultantInfoDTO';
 
 @doop
 export class AdminState {
@@ -84,6 +84,10 @@ export class AdminState {
         return doop<boolean, this>();
     }
 
+    @doop
+    public get consultantInfo() {
+        return doop<ConsultantInfoDTO[], this>();
+    }
 
     private constructor(profileEntryNotifications: Immutable.List<ProfileEntryNotification>,
                         profileUpdateNotifications: Immutable.List<AdminNotification>,
@@ -98,7 +102,8 @@ export class AdminState {
                         skillNotificationSelectedAction: SkillNotificationAction,
                         isSkillNameEdited: boolean,
                         templateUploadProgress: number,
-                        templateUploadPending: boolean
+                        templateUploadPending: boolean,
+                        consultantInfo: ConsultantInfoDTO[],
     ) {
         return this.profileEntryNotifications(profileEntryNotifications)
             .profileUpdateNotifications(profileUpdateNotifications)
@@ -113,7 +118,8 @@ export class AdminState {
             .skillNotificationSelectedAction(skillNotificationSelectedAction)
             .isSkillNameEdited(isSkillNameEdited)
             .templateUploadProgress(templateUploadProgress)
-            .templateUploadPending(templateUploadPending);
+            .templateUploadPending(templateUploadPending)
+            .consultantInfo(consultantInfo);
     }
 
     public static createDefault() {
@@ -123,17 +129,7 @@ export class AdminState {
             Immutable.List<AdminNotification>(),
             RequestStatus.Inactive, LoginStatus.INITIALS,
             Immutable.Map<string, ConsultantInfo>(),
-            SkillNotificationEditStatus.CLOSED, null, '', SkillNotificationAction.ACTION_OK, false, 0, false);
-    }
-
-    public adminAuthConfig(): AxiosRequestConfig {
-        return {
-            // auth: {
-            //     username: this.adminName(),
-            //     password: this.adminPass()
-            // },
-            // headers: {'X-Requested-With': 'XMLHttpRequest'}
-        };
+            SkillNotificationEditStatus.CLOSED, null, '', SkillNotificationAction.ACTION_OK, false, 0, false, []);
     }
 
     public findSkillNotification = (notificationId: number): SkillNotification => {

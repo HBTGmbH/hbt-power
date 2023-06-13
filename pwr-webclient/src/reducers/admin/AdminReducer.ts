@@ -2,7 +2,7 @@ import {AdminState} from '../../model/admin/AdminState';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeLoginStatusAction,
-    ChangeRequestStatusAction,
+    ChangeRequestStatusAction, LoadConsultantInfoSuccess,
     OpenSkillNotificationDialogAction,
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
@@ -175,6 +175,10 @@ export class AdminReducer {
             case ActionType.SetReportUploadPending: {
                 let act = action as ChangeBoolValueAction;
                 return state.templateUploadPending(act.value);
+            }
+            case ActionType.LoadConsultantInfoSuccess: {
+                let act = action as LoadConsultantInfoSuccess;
+                return state.consultantInfo(act.consultantInfo);
             }
             default:
                 return state;

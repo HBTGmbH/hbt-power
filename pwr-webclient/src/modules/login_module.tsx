@@ -71,7 +71,7 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
                 <div className="hbt-schild-background">
                 </div>
                 <div>
-                    <div className="vertical-align">
+                    <div className="vertical-align" style={{height: '100vh'}}>
                         <div style={{padding: '64px', backgroundColor: 'white'}}>
                             <div className="vertical-align">
                                 <img alt="HBT Power Logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>

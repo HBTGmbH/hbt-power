@@ -181,4 +181,6 @@ export enum ActionType {
     LoadSkillInfo = '[SkillInfo] LoadSkillInfo',
 
     AsyncDeleteVersion = '[Async] DeleteVersionFromSkill',
+
+    LoadConsultantInfoSuccess = '[Admin] Load Consultant Info Success',
 }

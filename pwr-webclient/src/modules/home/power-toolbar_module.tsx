@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {AppBar, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
+import {AppBar, FormControl, Icon, IconButton, Menu, MenuItem, Select} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {LoginStatus} from '../../model/LoginStatus';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
@@ -18,6 +18,8 @@ import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
+import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
+import {CrossCuttingAsyncActionCreator} from '../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 
 interface ToolbarProps {
     userInitials: string;
@@ -25,6 +27,7 @@ interface ToolbarProps {
     statisticsAvailable: boolean;
     profilePictureSrc: string;
     viewProfiles: Array<ViewProfile>;
+    consultantInfo: ConsultantInfoDTO[];
 }
 
 /**
@@ -58,6 +61,8 @@ interface ToolbarDispatch {
     loadConsultantClusterInfo(initials: string): void;
 
     loadSkillStatistics(): void;
+
+    changeConsultant(initials: string): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -79,7 +84,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available(),
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray(),
-            profilePictureSrc
+            profilePictureSrc,
+            consultantInfo: state.adminReducer.consultantInfo(),
         };
     }
 
@@ -89,7 +95,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
-            loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
+            loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages()),
+            changeConsultant: (initials: string) => dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials)),
         };
     }
 
@@ -317,6 +324,17 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                     </IconButton>
                                 </Tooltip>
                                 : null
+                        }
+                        {
+                            this.props.loggedInAsAdmin ?
+                              <FormControl>
+                                <Select className="select-in-toolbar" value={this.props.userInitials} onChange={(event) => this.props.changeConsultant(event.target.value as string)}>
+                                    {
+                                        this.props.consultantInfo.map(consultantInfo => <MenuItem key={consultantInfo.initials} value={consultantInfo.initials}>{consultantInfo.name}</MenuItem> )
+                                    }
+                                </Select>
+                              </FormControl>
+                              : null
                         }
                         <Tooltip title={PowerLocalize.get('Tooolbar.LogOut')}>
                             <IconButton

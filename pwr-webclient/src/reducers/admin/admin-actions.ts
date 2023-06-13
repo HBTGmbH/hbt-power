@@ -6,6 +6,7 @@ import {ActionType} from '../ActionType';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
 import {AbstractAction} from '../BaseActions';
+import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 
 /**
  * Represents an action where an array of {@link APIAdminNotification} is received from an external source and parsed.
@@ -64,4 +65,8 @@ export interface OpenSkillNotificationDialogAction extends AbstractAction {
  */
 export interface SetNewSkillNameAction extends AbstractAction {
     name: string;
+}
+
+export interface LoadConsultantInfoSuccess extends AbstractAction {
+    consultantInfo: ConsultantInfoDTO[];
 }
