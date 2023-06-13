@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -114,6 +115,7 @@ public class ConsultantsEndpoint {
     public ResponseEntity<List<ConsultantInfoDTO>> getAllConsultantInfos() {
         List<ConsultantInfoDTO> response = consultantRepository.findAll()
                 .stream()
+                .filter(consultant -> BooleanUtils.isTrue(consultant.getActive()))
                 .map(consultant -> new ConsultantInfoDTO(consultant.getFirstName() + " " + consultant.getLastName(), consultant.getInitials()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
