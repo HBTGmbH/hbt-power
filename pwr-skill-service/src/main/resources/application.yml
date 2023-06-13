@@ -9,6 +9,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
+    properties:
+      hibernate:
+        search:
+          default:
+            directory_provider: filesystem
+            indexBase: /lucene-data
   http:
     encoding:
       charset: UTF-8
@@ -27,6 +33,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        search:
+          default:
+            directory_provider: filesystem
+            indexBase: ./target
 ---
 spring:
   profiles: test
