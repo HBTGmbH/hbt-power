@@ -41,7 +41,7 @@ public class SkillTreeMappingService {
         return new SkillTreeMapper(categories, skills).map();
     }
 
-    private class SkillTreeMapper {
+    private static class SkillTreeMapper {
         private final List<SkillCategory> categories;
         private final List<Skill> skills;
 

@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import org.apache.lucene.search.Query;
+import org.hibernate.search.exception.EmptyQueryException;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -26,7 +27,7 @@ import static java.util.Collections.emptyList;
 @Log4j2
 public class SkillSearcherService {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     public SkillSearcherService(final EntityManagerFactory entityManagerFactory) {
@@ -45,11 +46,20 @@ public class SkillSearcherService {
         em.createIndexer().startAndWait();
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> searchSkill(String searchTerm, int maxResults) {
         if (StringUtils.isEmpty(searchTerm)) {
             return emptyList();
         }
+        try {
+            return doSearch(searchTerm, maxResults);
+        } catch (EmptyQueryException emptyQueryException) {
+            // This happens when the query consists of one of lucenes "stop-words". In this case, we just return an empty list
+            return emptyList();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> doSearch(String searchTerm, int maxResults) throws EmptyQueryException {
         FullTextEntityManager em = Search.getFullTextEntityManager(entityManager);
         QueryBuilder queryBuilder = em.getSearchFactory().buildQueryBuilder().forEntity(Skill.class).get();
         String lowerCaseSearchTerm = searchTerm.toLowerCase();
