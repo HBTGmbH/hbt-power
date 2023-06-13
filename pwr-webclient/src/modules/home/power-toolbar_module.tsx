@@ -85,7 +85,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             statisticsAvailable: state.statisticsReducer.available(),
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray(),
             profilePictureSrc,
-            consultantInfo: state.adminReducer.consultantInfo(),
+            consultantInfo: [...state.adminReducer.consultantInfo()].sort((a, b) => a.name.localeCompare(b.name))
         };
     }
 
@@ -328,7 +328,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         {
                             this.props.loggedInAsAdmin ?
                               <FormControl>
-                                <Select className="select-in-toolbar" value={this.props.userInitials} onChange={(event) => this.props.changeConsultant(event.target.value as string)}>
+                                <Select rowsMax={15} className="select-in-toolbar" value={this.props.userInitials} onChange={(event) => this.props.changeConsultant(event.target.value as string)}>
                                     {
                                         this.props.consultantInfo.map(consultantInfo => <MenuItem key={consultantInfo.initials} value={consultantInfo.initials}>{consultantInfo.name}</MenuItem> )
                                     }
