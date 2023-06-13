@@ -3,6 +3,7 @@ package de.hbt.pwr.profile.controller;
 import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
+import de.hbt.pwr.profile.model.ConsultantInfoDTO;
 import de.hbt.pwr.profile.service.ConsultantService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -31,14 +32,12 @@ public class ConsultantsEndpoint {
 
     private final ConsultantRepository consultantRepository;
     private final ConsultantService consultantService;
-    private final ServletContext servletContext;
 
 
     @Autowired
-    public ConsultantsEndpoint(ConsultantRepository consultantRepository, ConsultantService consultantService, ServletContext servletContext) {
+    public ConsultantsEndpoint(ConsultantRepository consultantRepository, ConsultantService consultantService) {
         this.consultantService = consultantService;
         this.consultantRepository = consultantRepository;
-        this.servletContext = servletContext;
     }
 
     @GetMapping
@@ -75,8 +74,8 @@ public class ConsultantsEndpoint {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created."),
             @ApiResponse(code = 409, message = "Conflict! A consultant with that initials allready exists.")})
-    public ResponseEntity create(@RequestBody Consultant consultant, @RequestParam("action") String action) {
-        Consultant res = null;
+    public ResponseEntity<Consultant> create(@RequestBody Consultant consultant, @RequestParam("action") String action) {
+        Consultant res;
         if ("new".equals(action)) {
             res = consultantService.createNewConsultant(consultant.getInitials(), consultant.getFirstName(),
                     consultant.getLastName(), consultant.getTitle(), consultant.getProfilePictureId(), consultant.getBirthDate());
@@ -105,9 +104,18 @@ public class ConsultantsEndpoint {
             @ApiResponse(code = 404, message = "No consultant found to delete at the given URI."),
             @ApiResponse(code = 423, message = "Consultant exists but is active")
     })
-    public ResponseEntity delete(@PathVariable("initials") String initials) {
+    public ResponseEntity<Void> delete(@PathVariable("initials") String initials) {
         consultantService.deleteConsultant(initials);
         return ResponseEntity.ok().build();
+    }
 
+
+    @GetMapping("info")
+    public ResponseEntity<List<ConsultantInfoDTO>> getAllConsultantInfos() {
+        List<ConsultantInfoDTO> response = consultantRepository.findAll()
+                .stream()
+                .map(consultant -> new ConsultantInfoDTO(consultant.getFirstName() + " " + consultant.getLastName(), consultant.getInitials()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 }
