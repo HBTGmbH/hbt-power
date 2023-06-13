@@ -22,6 +22,7 @@ public class SecurityConfig {
                 // Only admins can do admin things
                 .pathMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("Power.Admin")
                 .pathMatchers("/pwr-profile-service/admin/**").hasAnyAuthority("Power.Admin")
+                .pathMatchers("/pwr-profile-service/consultants/info").hasAnyAuthority("Power.Admin")
                 // Users and admins can access everything.
                 .pathMatchers("/**").hasAnyAuthority("Power.User", "Power.Admin")
                 .and()
