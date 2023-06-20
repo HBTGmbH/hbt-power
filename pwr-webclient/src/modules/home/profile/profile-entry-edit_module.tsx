@@ -177,7 +177,9 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     render() {
         let error = validateNonEmptyProfileEntry(this.state.searchText);
         return (
-            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth
+            <Dialog open={this.props.open} onClose={this.props.onClose}
+                    fullWidth
+                    maxWidth="sm"
                     scroll="paper"
                     onKeyDown={event => this.handleKeyDown(event)}>
                 <DialogTitle>
@@ -199,7 +201,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         {
                             //startDate
                             !(this.props.type == 'CAREER' || this.props.type == 'EDUCATION' || this.props.type == 'TRAINING' || this.props.type == 'QUALIFICATION') ? <></> :
-                                <Grid item md={6} xs={12}>
+                                <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onStartDateChange}
                                         placeholderDate={this.state.startDate}
@@ -212,7 +214,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         {
                             //endDate
                             !(this.props.type == 'CAREER' || this.props.type == 'EDUCATION' || this.props.type == 'TRAINING') ? <></> :
-                                <Grid item md={6} xs={12}>
+                                <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onEndDateChange}
                                         placeholderDate={this.state.endDate}
@@ -223,7 +225,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         {
                             //degree
                             !(this.props.type == 'EDUCATION') ? <></> :
-                                <Grid item md={6} xs={12}>
+                                <Grid item md={12} xs={12}>
                                     <PwrAutoComplete
                                         fullWidth
                                         label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
@@ -237,7 +239,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         {
                             //lang level
                             !(this.props.type == 'LANGUAGE') ? <></> :
-                                <Grid item md={6} xs={12}>
+                                <Grid item md={12} xs={12}>
                                     <FormControl>
                                         <Select
                                             value={this.state.langLevel}

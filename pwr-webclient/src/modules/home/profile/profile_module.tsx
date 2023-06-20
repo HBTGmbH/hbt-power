@@ -85,10 +85,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 
     componentDidUpdate(prevProps: Readonly<ProfileProps & ProfileLocalProps & ProfileDispatch>, prevState: Readonly<ProfileLocalState>, snapshot?: any): void {
-        console.log('prevProps.activeConsultant.initials', prevProps.activeConsultant.initials);
-        console.log('this.props.activeConsultant.initials', this.props);
         if (prevProps.activeConsultant.initials !== this.props.activeConsultant.initials) {
-            console.log('Initials changed! Loading!!');
             this.props.loadFullProfile(this.props.activeConsultant.initials);
         }
     }
@@ -96,7 +93,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     componentDidMount() {
         this.props.preFetchSuggestions();
         if (!!this.props.activeConsultant.initials) {
-            console.log('this.props.activeConsultant.initials', this.props.activeConsultant.initials);
             this.props.loadFullProfile(this.props.activeConsultant.initials);
         }
     }
