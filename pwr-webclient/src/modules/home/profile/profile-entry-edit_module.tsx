@@ -137,14 +137,18 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     };
 
     private onStartDateChange = (date: Date) => {
+        const startDate = new Date(date);
+        startDate.setHours(12);
         this.setState({
-            startDate: date
+            startDate
         });
     };
 
     private onEndDateChange = (date: Date) => {
+        let endDate = new Date(date);
+        endDate.setHours(12);
         this.setState({
-            endDate: date
+            endDate
         });
     };
 
