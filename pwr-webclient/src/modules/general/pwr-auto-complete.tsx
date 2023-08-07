@@ -6,6 +6,7 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import {ValidationError} from '../../utils/ValidationUtils';
 import filterFuzzy = StringUtils.filterFuzzy;
+import * as ReactDOM from "react-dom";
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
 const ChipInput = require('material-ui-chip-input').default;
@@ -64,6 +65,7 @@ type Styles =
 export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps & Styles, {}> {
     state = {
         suggestions: [],
+        input: null,
     };
 
     dataFilteredBy = (value: string) => {
@@ -155,6 +157,9 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
     };
 
     renderSuggestion = (suggestion, {query, isHighlighted}) => {
+        if (suggestion === query) {
+            return null;
+        }
         const matches = match(suggestion, query);
         const parts = parse(suggestion, matches);
         return (
@@ -180,6 +185,13 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         }
     };
 
+    storeInputReference = (val: any): void => {
+        if (val) {
+            this.setState({input: val.input});
+        } else {
+            this.setState({input: null});
+        }
+    }
 
 
     render() {
@@ -222,17 +234,30 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                 id={this.props.id}
                 {...autosuggestProps}
                 inputProps={inputProps}
+                ref={this.storeInputReference}
                 theme={{
                     container: classes.container,
                     suggestionsContainerOpen: classes.suggestionsContainerOpen,
                     suggestionsList: classes.suggestionsList,
                     suggestion: classes.suggestion,
                 }}
-                renderSuggestionsContainer={options => (
-                    <Paper {...options.containerProps} square>
+                renderSuggestionsContainer={options => {
+                    if (!this.state.input) {
+                        return null;
+                    }
+                    const inputCoords = this.state.input.getBoundingClientRect();
+                    const style = {
+                            left: inputCoords.left + window.scrollX, // adding scrollX and scrollY to get the coords wrt document instead of viewport
+                            top: inputCoords.bottom + window.scrollY,
+                            width: inputCoords.width,
+                            zIndex: 1500,
+                            position: 'absolute',
+                        };
+                    const toRender = <Paper {...options.containerProps} style={style} square>
                         {options.children}
                     </Paper>
-                )}
+                    return ReactDOM.createPortal(toRender, document.querySelector('body'));
+                }}
             />
         );
     }
