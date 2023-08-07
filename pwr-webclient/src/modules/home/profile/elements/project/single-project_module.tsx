@@ -3,7 +3,6 @@ import {Project} from '../../../../../reducers/profile-new/profile/model/Project
 import * as React from 'react';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
-import * as redux from 'redux';
 import {isNullOrUndefined} from 'util';
 import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
@@ -118,8 +117,8 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
             .map(value => value.name)
             .join(', ');
 
-        const start = !isNullOrUndefined(this.project().startDate) ? formatToYear(this.project().startDate) : '';
-        const end = !isNullOrUndefined(this.project().endDate) ? formatToYear(this.project().endDate) : PowerLocalize.get('Today');
+        const start = formatToYear(this.project().startDate);
+        const end = formatToYear(this.project().endDate);
         return PowerLocalize.getFormatted('Profile.Project.List.SubTitle', roleNames, start, end);
     };
 

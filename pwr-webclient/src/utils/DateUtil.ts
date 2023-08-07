@@ -1,7 +1,6 @@
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
-import {isMoment} from 'moment';
 
 const optionsShortDisplay: DateTimeFormatOptions = {
     year: 'numeric',
@@ -106,35 +105,17 @@ export function formatToMailDisplay(date: Date) {
     }
 }
 
-export function formatToYear(date: Date) {
+export function formatToYear(date: number | string | Date | undefined) {
+    if (!date) {
+        return PowerLocalize.get('Today');
+    }
     const newDate = new Date(date);
-    if (isNullOrUndefined(date)) return PowerLocalize.get('Today');
-    return formatOnlyYear.format(newDate);
-}
-
-export namespace DateUtils {
-    export function formatLocaleDateToIso(date: Date): string {
-        if (isNullOrUndefined(date)) {
-            return null;
-        }
-
-        let dateString: string;
-        if (isMoment(date)) {
-            let dateFormat = 'DD.MM.YYYY';
-            date.local();
-            dateString = date.format(dateFormat);
-        } else {
-            dateString = '' + date.toLocaleDateString('de-De');
-        }
-        let splitted: Array<string> = dateString.split('.').reverse();
-        splitted = splitted.map(splitString => {
-            if (splitString.length === 1) {
-                return '0' + splitString;
-            }
-            return splitString;
-        });
-        console.debug('splitted', splitted);
-        return splitted.join('-');
+    if (isNullOrUndefined(date)) {
+        return PowerLocalize.get('Today');
+    }
+    try {
+        return formatOnlyYear.format(newDate);
+    } catch (e) {
+        return '?';
     }
 }
-
