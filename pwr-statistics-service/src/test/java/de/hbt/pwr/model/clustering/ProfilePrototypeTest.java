@@ -2,7 +2,7 @@ package de.hbt.pwr.model.clustering;
 
 import de.hbt.pwr.model.profile.Profile;
 import de.hbt.pwr.model.profile.Skill;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashSet;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProfilePrototypeTest {
     @Test
-    public void addClusterable() throws Exception {
+    public void addClusterable()  {
         Skill s1 = new Skill("S1", 4);
         Skill s2 = new Skill("S2", 3);
         Skill s3 = new Skill("S3", 1);

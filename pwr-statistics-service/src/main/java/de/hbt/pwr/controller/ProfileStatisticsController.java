@@ -25,10 +25,6 @@ import static de.hbt.pwr.model.StatisticsConfig.DEFAULT_MAX_SKILLS;
 
 @Controller
 @RequestMapping("/statistics")
-@CrossOrigin(origins = "*",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.HEAD},
-        allowedHeaders = {"origin", "content-type", "accept", "authorization", "X-Requested-With"},
-        allowCredentials = "true")
 public class ProfileStatisticsController {
 
     private final StatisticsService statisticsService;
@@ -43,12 +39,12 @@ public class ProfileStatisticsController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.HEAD)
-    public ResponseEntity available() {
+    public ResponseEntity<Void> available() {
         return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity refresh() {
+    public ResponseEntity<Void> refresh() {
         asyncInformationService.invokeConsultantDataRefresh();
         return ResponseEntity.noContent().build();
     }

@@ -5,7 +5,7 @@ import de.hbt.pwr.model.SimRank.ProfileSkillNetwork;
 import de.hbt.pwr.model.SimRank.SkillNode;
 import de.hbt.pwr.model.profile.Profile;
 import de.hbt.pwr.model.profile.Skill;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;

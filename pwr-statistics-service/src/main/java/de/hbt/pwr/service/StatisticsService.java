@@ -10,8 +10,6 @@ import de.hbt.pwr.model.profile.entries.ProfileEntry;
 import de.hbt.pwr.repo.ClusteredNetworkRepo;
 import de.hbt.pwr.repo.ConsultantRepository;
 import de.hbt.pwr.repo.StatisticsConfigRepo;
-import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +33,6 @@ public class StatisticsService {
      */
     private static final float COMMON_SKILL_THRESHOLD = 0.8f;
 
-    private static final Logger LOG = Logger.getLogger(StatisticsService.class);
-
-
     @Autowired
     public StatisticsService(ConsultantRepository consultantRepository, ClusteredNetworkRepo clusteredNetworkRepo,
                              StatisticsConfigRepo statisticsConfigRepo, AsyncInformationService asyncInformationService) {
@@ -54,17 +49,15 @@ public class StatisticsService {
 
     private List<SkillUsage> getSkillUsages() {
         final Map<String, Integer> usageBySkillName = new HashMap<>();
-        StreamUtils.asStream(consultantRepository.findAll().iterator()).forEach(consultant -> {
-            consultant.getProfile().getSkills().forEach(skill -> {
-                Integer usage = usageBySkillName.get(skill.getName());
-                if (usage == null) {
-                    usage = 1;
-                } else {
-                    usage += 1;
-                }
-                usageBySkillName.put(skill.getName(), usage);
-            });
-        });
+        StreamUtils.asStream(consultantRepository.findAll().iterator()).forEach(consultant -> consultant.getProfile().getSkills().forEach(skill -> {
+            Integer usage = usageBySkillName.get(skill.getName());
+            if (usage == null) {
+                usage = 1;
+            } else {
+                usage += 1;
+            }
+            usageBySkillName.put(skill.getName(), usage);
+        }));
         return usageBySkillName.entrySet().stream().map(StatisticsService::makeSkillUsage).collect(Collectors.toList());
     }
 
@@ -76,18 +69,13 @@ public class StatisticsService {
         return result;
     }
 
-    /**
-     * Returns a list of most used skills with their respective usages.
-     * @param topResultCount defines how many top-skills are displayed.
-     * @return
-     */
     public List<SkillUsage> getMostUsedSkills(int topResultCount) {
         List<SkillUsage> usageList = getSkillUsages();
         usageList.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-        if(topResultCount < 0) {
+        if (topResultCount < 0) {
             return usageList;
         }
-        return usageList.subList(0, usageList.size() < topResultCount ? usageList.size() : topResultCount);
+        return usageList.subList(0, Math.min(usageList.size(), topResultCount));
     }
 
     public List<RelativeSkillUsage> getRelativeMostUsedSkills(int topResultCount) {
@@ -98,6 +86,7 @@ public class StatisticsService {
 
     /**
      * Returns a list of skill-names that are interpreteable as common.
+     *
      * @return list of common skill names
      */
     public List<String> getCommonSkills() {
@@ -112,7 +101,7 @@ public class StatisticsService {
         List<String> commonSkills = getCommonSkills();
         Set<String> profileSkills = getAllProfileSkillNames(initials);
         commonSkills.forEach(s -> {
-            if(profileSkills.contains(s)) foundCommonSkills.add(s);
+            if (profileSkills.contains(s)) foundCommonSkills.add(s);
             else missingCommonSkills.add(s);
         });
     }
@@ -133,13 +122,13 @@ public class StatisticsService {
 
     public ConsultantClusteringInfo getConsultantInfo(String initials) {
         ClusteredNetwork clusteredNetwork = clusteredNetworkRepo.findAll().iterator().next();
-        if(clusteredNetwork == null) throw new RuntimeException("No clustered network available for analysis.");
+        if (clusteredNetwork == null) throw new RuntimeException("No clustered network available for analysis.");
         Optional<ClusteredNetwork.Node> nodeOptional = clusteredNetwork.getNodes().stream().filter(node -> node.initials.equals(initials)).findFirst();
 
         Map<String, Consultant> consultantsByInitials = new HashMap<>();
         StreamUtils.asStream(consultantRepository.findAll().iterator()).forEach(consultant -> consultantsByInitials.put(consultant.getInitials(), consultant));
 
-        if(nodeOptional.isPresent()) {
+        if (nodeOptional.isPresent()) {
             ClusteredNetwork.Node n = nodeOptional.get();
             ConsultantClusteringInfo info = new ConsultantClusteringInfo(consultantsByInitials.get(initials));
             info.setClusterId(n.cluster);
@@ -154,7 +143,6 @@ public class StatisticsService {
     }
 
 
-    @NotNull
     public List<ConsultantSkillInfo> findConsultantsBySkills(List<String> skillNames) {
         List<Consultant> consultants = StreamUtils.asStream(consultantRepository.findAll()).collect(Collectors.toList());
         Set<String> skillNameSet = new HashSet<>(skillNames);
@@ -174,7 +162,7 @@ public class StatisticsService {
         Set<Skill> skills = getAllSkills(consultants);
         skills.forEach(skill -> {
             SkillAverageRating s = ratedSkillsByName.get(skill.getName());
-            if(s == null) {
+            if (s == null) {
                 s = new SkillAverageRating(skill.getName());
                 ratedSkillsByName.put(s.getName(), s);
             }
@@ -183,17 +171,15 @@ public class StatisticsService {
         return ratedSkillsByName.values().stream().peek(SkillAverageRating::evaluate).collect(Collectors.toList());
     }
 
-    public boolean hasNameEntity(Consultant consultant,@NotNull String name, NameEntityType type) {
+    public boolean hasNameEntity(Consultant consultant, String name, NameEntityType type) {
         Profile profile = consultant.getProfile();
-        if(type == NameEntityType.COMPANY) {
+        if (type == NameEntityType.COMPANY) {
             Set<NameEntity> companies = profile.getProjects().stream().map(Project::getBroker).collect(Collectors.toSet());
             companies.addAll(profile.getProjects().stream().map(Project::getClient).collect(Collectors.toSet()));
             return companies.stream().anyMatch(nameEntity -> name.equals(nameEntity.getName()));
-        } else if(type == NameEntityType.PROJECT_ROLE) {
+        } else if (type == NameEntityType.PROJECT_ROLE) {
             final Set<NameEntity> roles = new HashSet<>();
-            profile.getProjects().forEach(project -> {
-                roles.addAll(project.getProjectRoles());
-            });
+            profile.getProjects().forEach(project -> roles.addAll(project.getProjectRoles()));
             return roles.stream().anyMatch(nameEntity -> name.equals(nameEntity.getName()));
         } else {
             Set<? extends ProfileEntry> lookup = new HashSet<>();
@@ -224,18 +210,18 @@ public class StatisticsService {
         }
     }
 
-    public boolean hasSkill(@NotNull Consultant consultant, @NotNull String name) {
+    public boolean hasSkill(Consultant consultant, String name) {
         return consultant.getProfile().getSkills().stream().anyMatch(skill -> name.equals(skill.getName()));
     }
 
-    public List<Consultant> getAllConsultantsReferencingNameEntity(@NotNull String nameEntityName, NameEntityType type) {
+    public List<Consultant> getAllConsultantsReferencingNameEntity(String nameEntityName, NameEntityType type) {
         return StreamUtils
                 .asStream(consultantRepository.findAll())
                 .filter(consultant -> hasNameEntity(consultant, nameEntityName, type))
                 .collect(Collectors.toList());
     }
 
-    public List<Consultant> getAllConsultantsReferencingSkill(@NotNull String skillName) {
+    public List<Consultant> getAllConsultantsReferencingSkill(String skillName) {
         return StreamUtils
                 .asStream(consultantRepository.findAll())
                 .filter(consultant -> hasSkill(consultant, skillName))

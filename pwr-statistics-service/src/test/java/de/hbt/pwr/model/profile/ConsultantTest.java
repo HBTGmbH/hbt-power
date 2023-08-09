@@ -1,9 +1,12 @@
 package de.hbt.pwr.model.profile;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -11,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ConsultantTest {
     @Test
-    public void hasSkills() throws Exception {
+    public void hasSkills() {
         Consultant consultant = new Consultant();
         Skill s1 = new Skill("S1", 3);
         Skill s2 = new Skill("S2", 2);
@@ -27,14 +30,14 @@ public class ConsultantTest {
     }
 
     @Test
-    public void hasSkillsEmpty() throws Exception {
+    public void hasSkillsEmpty() {
         Consultant consultant = new Consultant();
 
         Profile p = new Profile();
         consultant.setProfile(p);
 
         assertThat(consultant.hasAllSkills(new HashSet<>())).isTrue();
-        assertThat(consultant.hasAllSkills(new HashSet<>(Arrays.asList("S1")))).isFalse();
+        assertThat(consultant.hasAllSkills(new HashSet<>(List.of("S1")))).isFalse();
     }
 
 }

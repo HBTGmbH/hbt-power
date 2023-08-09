@@ -14,7 +14,8 @@ import de.hbt.pwr.statistics.KMedoidCommonSkillMetric;
 import de.hbt.pwr.statistics.KMedoidMetric;
 import de.hbt.pwr.statistics.KMedoidSimRankMetric;
 import de.hbt.pwr.statistics.ProfileKMedoidClusterer;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,7 +36,7 @@ public class AsyncInformationService {
     private final StatisticsConfigRepo statisticsConfigRepo;
 
 
-    private static final Logger LOG = Logger.getLogger(AsyncInformationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncInformationService.class);
 
 
     @Autowired
@@ -63,11 +64,11 @@ public class AsyncInformationService {
         LOG.info("...done. Received " + consultantList.size() + " consultants.");
         LOG.info("Deleting all old consultants...");
         // Delete all old consultants
-        consultantRepository.delete(consultantRepository.findAll());
+        consultantRepository.deleteAll(consultantRepository.findAll());
         LOG.info("...done.");
         LOG.info("Saving " + consultantList.size() + " consultants...");
         // Save all new.
-        consultantRepository.save(consultantList);
+        consultantRepository.saveAll(consultantList);
         LOG.info("..done.");
         stopWatch.stop();
         LOG.info("Async refresh task done. Took " + stopWatch.getTotalTimeSeconds() + " seconds.");
@@ -92,7 +93,7 @@ public class AsyncInformationService {
                 metric = new KMedoidCommonSkillMetric();
                 break;
             default:
-                throw new IllegalArgumentException("Unknown metric type " + config.getCurrentMetricType() == null ? null : config.getCurrentMetricType().toString());
+                throw new IllegalArgumentException(config.getCurrentMetricType().toString());
         }
 
         ProfileKMedoidClusterer clusterer = new ProfileKMedoidClusterer(config.getCurrentKMedIterations(), metric);
@@ -106,7 +107,7 @@ public class AsyncInformationService {
         // Add the new.
         clusteredNetworkRepo.save(result);
         // Delete all old
-        old.forEach(clusteredNetworkRepo::delete);
+        old.forEach(clusteredNetworkRepo::deleteById);
     }
 
     private void initConfigIfUninitialized() {

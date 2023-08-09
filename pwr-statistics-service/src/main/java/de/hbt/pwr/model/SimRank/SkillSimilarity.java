@@ -1,7 +1,6 @@
 package de.hbt.pwr.model.SimRank;
 
 import lombok.Value;
-import org.jetbrains.annotations.NotNull;
 
 @Value
 public class SkillSimilarity {
@@ -20,7 +19,6 @@ public class SkillSimilarity {
         return node1.getSkillName().equals(node2.getSkillName());
     }
 
-    @NotNull
     public SkillSimilarity updateSimVal(double newVal) {
         return new SkillSimilarity(node1, node2, newVal);
     }
