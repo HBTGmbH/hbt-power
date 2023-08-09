@@ -176,7 +176,9 @@ public class StatisticsService {
         if (type == NameEntityType.COMPANY) {
             Set<NameEntity> companies = profile.getProjects().stream().map(Project::getBroker).collect(Collectors.toSet());
             companies.addAll(profile.getProjects().stream().map(Project::getClient).collect(Collectors.toSet()));
-            return companies.stream().anyMatch(nameEntity -> Objects.equals(name, nameEntity.getName()));
+            return companies.stream()
+                    .filter(Objects::nonNull)
+                    .anyMatch(nameEntity -> Objects.equals(name, nameEntity.getName()));
         } else if (type == NameEntityType.PROJECT_ROLE) {
             final Set<NameEntity> roles = new HashSet<>();
             profile.getProjects().forEach(project -> roles.addAll(project.getProjectRoles()));
