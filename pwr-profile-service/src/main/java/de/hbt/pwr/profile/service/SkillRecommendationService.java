@@ -4,6 +4,7 @@ import de.hbt.pwr.profile.data.ProjectRepository;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
 import de.hbt.pwr.profile.model.profile.entries.Project;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class SkillRecommendationService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    private static int YEARS_UNTIL_OUTDATED = 8;
+    private static final int YEARS_UNTIL_OUTDATED = 8;
 
     public Collection<Skill> getRecommendedSkills(Project project) {
         return ofNullable(project)
@@ -50,7 +51,7 @@ public class SkillRecommendationService {
                 .filter(onlyRecentProjects(projectDate))
                 .map(Project::getSkills)
                 .flatMap(Collection::stream)
-                .filter(s -> (!project.getSkills().contains(s)))
+                .filter(skill -> !project.getSkills().contains(skill))
                 //.distinct()-replacement to also remove duplicate Skills from other profiles, which have a different idea and possibly a different rating or versions
                 .filter(s -> names.add(s.getName()))
                 .sorted(Comparator.comparing(Skill::getName))
@@ -71,16 +72,14 @@ public class SkillRecommendationService {
     }
 
     private Predicate<Project> onlyProjectsWithClient(String clientName) {
-        return project -> clientName.equals(project.getClient().getName());
+        return project -> StringUtils.equalsIgnoreCase(clientName, project.getClient().getName());
     }
 
     private Predicate<Project> onlyProjectsWithName(String projectName) {
-        return project -> {
-            return ofNullable(project.getName())
-                    .map(s -> s.toUpperCase())
-                    .map(s -> projectName.toUpperCase().equals(s))
-                    .orElse(false);
-        };
+        return project -> ofNullable(project.getName())
+                .map(String::toUpperCase)
+                .map(s -> projectName.toUpperCase().equals(s))
+                .orElse(false);
     }
 
     private Predicate<Project> onlyRecentProjects(LocalDate projectDate) {

@@ -3,6 +3,7 @@ package de.hbt.pwr.profile.controller;
 import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
+import de.hbt.pwr.profile.model.ConsultantDTO;
 import de.hbt.pwr.profile.model.ConsultantInfoDTO;
 import de.hbt.pwr.profile.service.ConsultantService;
 import io.swagger.annotations.Api;
@@ -54,12 +55,24 @@ public class ConsultantsEndpoint {
             @ApiResponse(code = 200, message = "Found"),
             @ApiResponse(code = 404, message = "No consultant with that initials found"),
             @ApiResponse(code = 423, message = "Consultant exists but is inactive")})
-    public ResponseEntity<Consultant> findByInitials(@PathVariable("initials") String initials) {
+    public ResponseEntity<ConsultantDTO> findByInitials(@PathVariable("initials") String initials) {
         Optional<Consultant> consultant = consultantRepository.findByInitials(initials);
         if (consultant.isPresent()) {
             Consultant res = consultant.get();
             if (res.getActive()) {
-                return ResponseEntity.ok(res);
+                ConsultantDTO dto = new ConsultantDTO()
+                        .toBuilder()
+                        .active(res.getActive())
+                        .birthDate(res.getBirthDate())
+                        .title(res.getTitle())
+                        .firstName(res.getFirstName())
+                        .lastName(res.getLastName())
+                        .profileId(res.getProfile().getId())
+                        .profilePictureId(res.getProfilePictureId())
+                        .initials(res.getInitials())
+                        .profileLastUpdated(res.getProfile().getLastEdited())
+                        .build();
+                return ResponseEntity.ok(dto);
             } else {
                 return ResponseEntity.status(423).build();
             }
