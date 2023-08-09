@@ -6,59 +6,42 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
 import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
-import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
-import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import Edit from '@material-ui/icons/Edit';
 import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
 
 interface BaseDataDashboardElementProps {
-    initials: string;
     profilePictureSrc: string;
     name: string;
     lastEdited: Date;
-    profile: Profile;
 }
 
 interface BaseDataDashboardElementLocalProps {
     greeting: string;
 }
-
-interface BaseDataDashboardElementLocalState {
-
-}
-
 interface BaseDataDashboardElementDispatch {
-    requestSingleProfile(initials: string): void;
-
     navigateTo(target: string): void;
 }
 
-class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardElementProps & BaseDataDashboardElementLocalProps & BaseDataDashboardElementDispatch, BaseDataDashboardElementLocalState> {
+class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardElementProps & BaseDataDashboardElementLocalProps & BaseDataDashboardElementDispatch, {}> {
 
-    static mapStateToProps(state: ApplicationState, localProps: BaseDataDashboardElementLocalProps): BaseDataDashboardElementProps {
+    static mapStateToProps(state: ApplicationState): BaseDataDashboardElementProps {
         const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
-            initials: state.profileStore.consultant.initials,
             name: state.profileStore.consultant.firstName,
-            lastEdited: new Date(state.profileStore.profile.lastEdited),
-            profile: state.profileStore.profile,
+            lastEdited: new Date(state.profileStore.consultant.profileLastUpdated),
             profilePictureSrc
         };
     }
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): BaseDataDashboardElementDispatch {
         return {
-            requestSingleProfile: function (initials: string = 'n/a') {
-                dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
-            },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
         };
     }
 
     private handleEditButtonClick = () => {
-        //this.props.requestSingleProfile(this.props.initials);
         this.props.navigateTo(Paths.USER_PROFILE);
     };
 

@@ -1,4 +1,3 @@
-import {Profile} from '../../profile/model/Profile';
 
 export interface Consultant {
     initials: string;
@@ -7,6 +6,7 @@ export interface Consultant {
     title: string;
     profileId: number;
     birthDate: Date;
+    profileLastUpdated: string;
     active: boolean;
     profilePictureId: string;
 }
@@ -21,6 +21,7 @@ export function emptyConsultant(): Consultant {
         birthDate: null,
         active: false,
         profilePictureId: null,
+        profileLastUpdated: null
     };
 }
 
