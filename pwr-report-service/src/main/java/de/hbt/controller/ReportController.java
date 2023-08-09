@@ -43,7 +43,7 @@ public class ReportController {
     }
 
     @GetMapping(value = "/file/{reportId}", produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-    public ResponseEntity getReportFile(@PathVariable("reportId") Long reportId) {
+    public ResponseEntity<ByteArrayResource> getReportFile(@PathVariable("reportId") Long reportId) {
         ReportData reportData = reportDataService.getReportDataById(reportId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
@@ -52,7 +52,7 @@ public class ReportController {
     }
 
     @DeleteMapping(value = "/delete/{reportId}")
-    public ResponseEntity DeleteReportFile(@PathVariable("reportId") Long reportId) {
+    public ResponseEntity<String> deleteReportFile(@PathVariable("reportId") Long reportId) {
         reportDataService.deleteReportDataById(reportId);
         return ResponseEntity.ok("Deleted Report File");
     }
