@@ -82,7 +82,7 @@ public class ConsultantClusteringInfo {
                 .filter(averagedSkill -> averagedSkill.getRelativeOccurance() >= 0.5)
                 .map(AveragedSkill::getName)
                 .collect(Collectors.toList());
-        Set<String> recommendationsSet = new HashSet<String>(commonSkills);
+        Set<String> recommendationsSet = new HashSet<>(commonSkills);
         recommendationsSet.removeAll(consultant.getProfile().getSkills().stream().map(Skill::getName).collect(Collectors.toSet()));
         recommendations = new ArrayList<>(recommendationsSet);
     }
@@ -98,7 +98,7 @@ public class ConsultantClusteringInfo {
     private static class AveragedSkill {
 
         @Getter
-        private String name;
+        private final String name;
 
         @Getter
         private int numOccurances;
@@ -130,7 +130,7 @@ public class ConsultantClusteringInfo {
         }
 
         public void calc() {
-            this.average = (double) totalRating / (double) numOccurances;
+            this.average = totalRating / (double) numOccurances;
         }
 
     }

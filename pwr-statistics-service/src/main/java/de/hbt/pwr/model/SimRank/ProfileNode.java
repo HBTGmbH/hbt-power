@@ -4,11 +4,13 @@ package de.hbt.pwr.model.SimRank;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hbt.pwr.model.profile.Profile;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@NoArgsConstructor
 public class ProfileNode {
 
     @Getter
@@ -20,17 +22,10 @@ public class ProfileNode {
     @JsonIgnore
     private Set<SkillNode> skillNodes = new HashSet<>();
 
-    public ProfileNode() {
-    }
-
     public ProfileNode(Profile profile) {
         this.profileId = profile.getId();
     }
 
-    /**
-     * Adds a skill node and also adds the skill nodes reference to this profile node to the skill node.
-     * @param skillNode
-     */
     public void addSkillNode(SkillNode skillNode) {
         skillNodes.add(skillNode);
         skillNode.addProfileNode(this);

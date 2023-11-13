@@ -4,10 +4,10 @@ import lombok.Value;
 
 @Value
 public class SkillSimilarity {
-    private SkillNode node1;
-    private SkillNode node2;
+    SkillNode node1;
+    SkillNode node2;
 
-    private double simVal;
+    double simVal;
 
     public SkillSimilarity(SkillNode node1, SkillNode node2, double simVal) {
         this.node1 = node1;

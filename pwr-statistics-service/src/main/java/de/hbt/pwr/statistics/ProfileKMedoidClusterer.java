@@ -16,9 +16,9 @@ import java.util.stream.IntStream;
 public class ProfileKMedoidClusterer {
 
 
-    private int maxIterations = 10;
+    private final int maxIterations;
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     private final KMedoidMetric metric;
 
@@ -42,7 +42,7 @@ public class ProfileKMedoidClusterer {
         if(clusters > values.size()) {
             return Collections.emptyList();
         }
-        List<ProfileMedoid> resultMedoids = new ArrayList<>();
+        List<ProfileMedoid> resultMedoids;
 
         // Work on a copy of the list.
         List<ProfileClusterable> _values = new ArrayList<>(values);
@@ -62,7 +62,7 @@ public class ProfileKMedoidClusterer {
         }
         _values = valueCopies;
         _values.forEach(clusterable -> assignToFurthestMedoid(clusterable, initialMedoids));
-        Double cost = sumCost(initialMedoids);
+        double cost = sumCost(initialMedoids);
         resultMedoids = initialMedoids;
 
         // Now, during each iteration, we'll grab a random medoid and a random value and swap them.
@@ -84,7 +84,7 @@ public class ProfileKMedoidClusterer {
 
             // Now, perform the calculation again.
             assignToMedoids(workValues, workMedoids);
-            Double newCost = sumCost(workMedoids);
+            double newCost = sumCost(workMedoids);
             if(newCost > cost) {
                 // Good! Randomly found a better composition. Replace the old values
                 _values = workValues;
@@ -99,16 +99,16 @@ public class ProfileKMedoidClusterer {
         values.forEach(clusterable -> assignToFurthestMedoid(clusterable, medoids));
     }
 
-    private Double sumCost(List<ProfileMedoid> medoids) {
+    private double sumCost(List<ProfileMedoid> medoids) {
         return medoids.stream().mapToDouble(ProfileMedoid::getCost).sum();
     }
 
 
     private void assignToFurthestMedoid(ProfileClusterable clusterable, List<ProfileMedoid> medoids) {
-        Double distance = Double.MIN_VALUE;
-        Integer highestIndex = 0;
+        double distance = Double.MIN_VALUE;
+        int highestIndex = 0;
         for (int i = 0; i < medoids.size(); i++) {
-            Double currentDistance = metric.measure(clusterable, medoids.get(i));
+            double currentDistance = metric.measure(clusterable, medoids.get(i));
             if(currentDistance > distance) {
                 distance = currentDistance;
                 highestIndex = i;

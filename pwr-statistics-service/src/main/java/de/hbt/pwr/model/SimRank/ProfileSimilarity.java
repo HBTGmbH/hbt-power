@@ -4,10 +4,10 @@ import lombok.Value;
 
 @Value
 public class ProfileSimilarity {
-    private ProfileNode node1;
-    private ProfileNode node2;
+    ProfileNode node1;
+    ProfileNode node2;
 
-    private double simVal;
+    double simVal;
 
     public ProfileSimilarity(ProfileNode node1, ProfileNode node2, double simVal) {
         this.node1 = node1;

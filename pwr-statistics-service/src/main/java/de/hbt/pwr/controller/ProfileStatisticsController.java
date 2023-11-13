@@ -3,10 +3,8 @@ package de.hbt.pwr.controller;
 import de.hbt.pwr.model.*;
 import de.hbt.pwr.model.clustering.ClusteredNetwork;
 import de.hbt.pwr.model.clustering.ConsultantClusteringInfo;
-import de.hbt.pwr.model.clustering.MetricType;
 import de.hbt.pwr.model.profile.Consultant;
 import de.hbt.pwr.model.profile.NameEntityType;
-import de.hbt.pwr.service.AsyncInformationService;
 import de.hbt.pwr.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,24 +27,10 @@ public class ProfileStatisticsController {
 
     private final StatisticsService statisticsService;
 
-    private final AsyncInformationService asyncInformationService;
-
 
     @Autowired
-    public ProfileStatisticsController(StatisticsService statisticsService, AsyncInformationService asyncInformationService) {
+    public ProfileStatisticsController(StatisticsService statisticsService) {
         this.statisticsService = statisticsService;
-        this.asyncInformationService = asyncInformationService;
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.HEAD)
-    public ResponseEntity<Void> available() {
-        return ResponseEntity.noContent().build();
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<Void> refresh() {
-        asyncInformationService.invokeConsultantDataRefresh();
-        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(value = "/skill/usage/absolute", produces = "application/json")
@@ -67,11 +51,6 @@ public class ProfileStatisticsController {
         if(maxSkills == null) maxSkills = DEFAULT_MAX_SKILLS;
         if(maxSkills <= 0) throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Parameter 'max' must not be negative.");
         return ResponseEntity.ok(statisticsService.getRelativeMostUsedSkills(maxSkills));
-    }
-
-    @RequestMapping(value = "/skill/common", produces = "application/json")
-    public ResponseEntity<List<String>> getCommonSkills() {
-        return ResponseEntity.ok(statisticsService.getCommonSkills());
     }
 
     @RequestMapping(value = "/skill/common/{initials}", produces = "application/json")
@@ -95,23 +74,6 @@ public class ProfileStatisticsController {
         return ResponseEntity.ok(statisticsService.getClusteredNetwork());
     }
 
-    /**
-     * Updates the parameters for the clustering process that is automated and invokes a re-clustering
-     * @param iterations the amount of iterations used for the k-medoid algorithm
-     * @param clusters the amount of expected clusters
-     * @param metric type to be used
-     * @return the newly clustered network.
-     */
-    @RequestMapping(value = "/network/kmed", produces = "application/json", method = RequestMethod.POST)
-    public ResponseEntity<ClusteredNetwork> updateClusteredNetworkParams(
-            @RequestParam(value = "iterations", required = true) Integer iterations,
-            @RequestParam(value = "clusters", required = true) Integer clusters,
-            @RequestParam(value = "metric", required = true) MetricType metric
-    ) {
-        statisticsService.updateConfigAndRenewNetwork(iterations, clusters, metric);
-        return ResponseEntity.ok(statisticsService.getClusteredNetwork());
-    }
-
     @RequestMapping(value = "/network/consultant/{initials}", produces = "application/json")
     public ResponseEntity<ConsultantClusteringInfo> getConsultantClusteringInfo(@PathVariable("initials") String initials){
         return ResponseEntity.ok(statisticsService.getConsultantInfo(initials));
@@ -119,15 +81,15 @@ public class ProfileStatisticsController {
 
     @GetMapping(value = "/entries/referencing", produces = "application/json")
     public ResponseEntity<List<ConsultantInfo>> getConsultantsReferencingNameEntity(
-            @RequestParam(value = "name-entity", required = true) String nameEntityName,
-            @RequestParam(value = "type", required = true) NameEntityType type) {
+            @RequestParam(value = "name-entity") String nameEntityName,
+            @RequestParam(value = "type") NameEntityType type) {
         List<Consultant> consultantLost = statisticsService.getAllConsultantsReferencingNameEntity(nameEntityName, type);
         return ResponseEntity.ok(consultantLost.stream().map(ConsultantInfo::new).collect(Collectors.toList()));
     }
 
     @GetMapping(value = "/skill/referencing", produces = "application/json")
     public ResponseEntity<List<ConsultantInfo>> getConsultantsReferencingSkill(
-            @RequestParam(value = "skill", required = true) String skillName) {
+            @RequestParam(value = "skill") String skillName) {
         List<Consultant> consultants = statisticsService.getAllConsultantsReferencingSkill(skillName);
         return ResponseEntity.ok(consultants.stream().map(ConsultantInfo::new).collect(Collectors.toList()));
     }

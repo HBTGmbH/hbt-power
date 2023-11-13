@@ -1,15 +1,16 @@
 package de.hbt.pwr.service;
 
 import de.hbt.pwr.StreamUtils;
-import de.hbt.pwr.model.*;
+import de.hbt.pwr.model.ConsultantSkillInfo;
+import de.hbt.pwr.model.RelativeSkillUsage;
+import de.hbt.pwr.model.SkillAverageRating;
+import de.hbt.pwr.model.SkillUsage;
 import de.hbt.pwr.model.clustering.ClusteredNetwork;
 import de.hbt.pwr.model.clustering.ConsultantClusteringInfo;
-import de.hbt.pwr.model.clustering.MetricType;
 import de.hbt.pwr.model.profile.*;
 import de.hbt.pwr.model.profile.entries.ProfileEntry;
 import de.hbt.pwr.repo.ClusteredNetworkRepo;
 import de.hbt.pwr.repo.ConsultantRepository;
-import de.hbt.pwr.repo.StatisticsConfigRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +25,6 @@ public class StatisticsService {
 
     private final ClusteredNetworkRepo clusteredNetworkRepo;
 
-    private final StatisticsConfigRepo statisticsConfigRepo;
-
-    private final AsyncInformationService asyncInformationService;
 
     /**
      * Defines a threshold(percentage) that a skill needs to achieve to qualify as 'common'
@@ -34,12 +32,9 @@ public class StatisticsService {
     private static final float COMMON_SKILL_THRESHOLD = 0.8f;
 
     @Autowired
-    public StatisticsService(ConsultantRepository consultantRepository, ClusteredNetworkRepo clusteredNetworkRepo,
-                             StatisticsConfigRepo statisticsConfigRepo, AsyncInformationService asyncInformationService) {
+    public StatisticsService(ConsultantRepository consultantRepository, ClusteredNetworkRepo clusteredNetworkRepo) {
         this.consultantRepository = consultantRepository;
         this.clusteredNetworkRepo = clusteredNetworkRepo;
-        this.statisticsConfigRepo = statisticsConfigRepo;
-        this.asyncInformationService = asyncInformationService;
     }
 
 
@@ -111,14 +106,6 @@ public class StatisticsService {
         return networkOptional.orElseThrow(() -> new RuntimeException("No network available."));
     }
 
-    public void updateConfigAndRenewNetwork(Integer iterations, Integer clusters, MetricType metricType) {
-        StatisticsConfig config = statisticsConfigRepo.findAll().iterator().next();
-        config.setCurrentKMedIterations(iterations);
-        config.setCurrentKMedClusters(clusters);
-        config.setCurrentMetricType(metricType);
-        statisticsConfigRepo.save(config);
-        asyncInformationService.invokeConsultantDataRefresh();
-    }
 
     public ConsultantClusteringInfo getConsultantInfo(String initials) {
         ClusteredNetwork clusteredNetwork = clusteredNetworkRepo.findAll().iterator().next();

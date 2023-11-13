@@ -69,15 +69,12 @@ public class SimRank {
             }
         }
 
-
-        final ProfileSkillNetwork profileSkillNetwork = new ProfileSkillNetwork(
+        return new ProfileSkillNetwork(
                 profileNodes,
                 skillNodes,
                 cartesianSkillNodes(skillNodes),
                 cartesianProfileNodes(profileNodes)
         );
-
-        return profileSkillNetwork;
     }
 
     private double sumSimValues(ProfileSimilarity profileSimilarity, ProfileSkillNetwork network) {

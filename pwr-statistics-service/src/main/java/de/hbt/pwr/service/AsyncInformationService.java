@@ -9,7 +9,6 @@ import de.hbt.pwr.model.clustering.ProfileMedoid;
 import de.hbt.pwr.model.profile.Consultant;
 import de.hbt.pwr.repo.ClusteredNetworkRepo;
 import de.hbt.pwr.repo.ConsultantRepository;
-import de.hbt.pwr.repo.StatisticsConfigRepo;
 import de.hbt.pwr.statistics.KMedoidCommonSkillMetric;
 import de.hbt.pwr.statistics.KMedoidMetric;
 import de.hbt.pwr.statistics.KMedoidSimRankMetric;
@@ -33,7 +32,6 @@ public class AsyncInformationService {
     private final ConsultantRepository consultantRepository;
     private final PowerProfileClient powerProfileClient;
     private final ClusteredNetworkRepo clusteredNetworkRepo;
-    private final StatisticsConfigRepo statisticsConfigRepo;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncInformationService.class);
@@ -41,16 +39,15 @@ public class AsyncInformationService {
 
     @Autowired
     public AsyncInformationService(ConsultantRepository consultantRepository,
-                                   PowerProfileClient powerProfileClient, ClusteredNetworkRepo clusteredNetworkRepo, StatisticsConfigRepo statisticsConfigRepo) {
+                                   PowerProfileClient powerProfileClient, ClusteredNetworkRepo clusteredNetworkRepo) {
         this.consultantRepository = consultantRepository;
         this.powerProfileClient = powerProfileClient;
         this.clusteredNetworkRepo = clusteredNetworkRepo;
-        this.statisticsConfigRepo = statisticsConfigRepo;
     }
 
 
     private StatisticsConfig getConfig() {
-        return StreamUtils.asStream(statisticsConfigRepo.findAll().iterator()).findFirst().get();
+        return new StatisticsConfig(); // fixme@nt move this to config properties
     }
 
     @Async
@@ -83,7 +80,7 @@ public class AsyncInformationService {
         Map<Long, String> initialsByProfileId = new HashMap<>();
         consultants.forEach(consultant -> initialsByProfileId.put(consultant.getProfile().getId(), consultant.getInitials()));
 
-        KMedoidMetric metric = null;
+        KMedoidMetric metric;
         // Create the metric
         switch (config.getCurrentMetricType()) {
             case SIM_RANK:
@@ -110,20 +107,12 @@ public class AsyncInformationService {
         old.forEach(clusteredNetworkRepo::deleteById);
     }
 
-    private void initConfigIfUninitialized() {
-        if(statisticsConfigRepo.count() <= 0) {
-            LOG.info("No Configuration stored in database. Storing default config.");
-            statisticsConfigRepo.save(new StatisticsConfig());
-        }
-    }
-
 
     /**
      * Invokes a refresh of the stored data
      */
     @Scheduled(fixedRate = 60000L * 60L)
     public void invokeConsultantDataRefresh() {
-        initConfigIfUninitialized();
         refreshConsultantData();
         refreshStatistics();
     }

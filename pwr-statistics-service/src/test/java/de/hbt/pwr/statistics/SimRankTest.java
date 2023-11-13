@@ -64,7 +64,7 @@ public class SimRankTest {
         assertThat(node.getSkillNodes()).containsExactlyInAnyOrder(new SkillNode("S2"), new SkillNode("S1"));
 
         // Now, check that back references work
-        node.getSkillNodes().forEach(skillNode -> assertThat(skillNode.getProfileNodes().contains(new ProfileNode(profile1))));
+        node.getSkillNodes().forEach(skillNode -> assertThat(skillNode.getProfileNodes()).contains(new ProfileNode(profile1)));
     }
 
     @Test

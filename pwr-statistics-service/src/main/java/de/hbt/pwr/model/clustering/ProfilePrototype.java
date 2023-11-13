@@ -1,7 +1,6 @@
 package de.hbt.pwr.model.clustering;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,23 +10,22 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ProfilePrototype {
 
-    private static AtomicLong CURRENT_ID = new AtomicLong();
+    private static final AtomicLong CURRENT_ID = new AtomicLong();
 
     @Getter
-    @Setter
-    private String name;
+    private final String name;
 
     @Getter
-    private Long clusterId;
+    private final Long clusterId;
 
     @Getter
-    private Set<SkillWrapper> skills = new HashSet<>();
+    private final Set<SkillWrapper> skills;
 
     /**
      * Used for evaluation
      */
     @Getter
-    private List<ProfileClusterable> profileClusterables = new ArrayList<>();
+    private final List<ProfileClusterable> profileClusterables = new ArrayList<>();
 
     /**
      * List that keeps track of the currently assigned clusterables.
@@ -77,9 +75,7 @@ public class ProfilePrototype {
             return empty();
         }
         Set<SkillWrapper> newSkills = new HashSet<>(profileClusterables.get(0).getValues());
-        profileClusterables.forEach(profileClusterable -> {
-            newSkills.retainAll(profileClusterable.getValues());
-        });
+        profileClusterables.forEach(profileClusterable -> newSkills.retainAll(profileClusterable.getValues()));
         ProfilePrototype result = new ProfilePrototype(newSkills, name, clusterId);
         result.assignedClusterables = profileClusterables;
         return result;

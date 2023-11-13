@@ -4,7 +4,7 @@ import de.hbt.pwr.model.profile.Skill;
 
 public class SkillWrapper {
 
-    private Skill skill;
+    private final Skill skill;
 
     public Skill getSkill() {
         return skill;
@@ -12,10 +12,6 @@ public class SkillWrapper {
 
     public SkillWrapper(Skill skill) {
         this.skill = skill;
-    }
-
-    public SkillWrapper(String name) {
-        this.skill = new Skill(name, 0);
     }
 
     @Override
