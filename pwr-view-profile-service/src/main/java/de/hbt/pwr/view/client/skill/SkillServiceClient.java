@@ -1,6 +1,5 @@
 package de.hbt.pwr.view.client.skill;
 
-import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -29,15 +28,6 @@ public class SkillServiceClient {
                 HttpMethod.GET,
                 new HttpEntity<>(null),
                 SkillServiceSkill.class,
-                Map.of("qualifier", qualifier)
-        ).getBody();
-    }
-
-    public SkillServiceCategory getCategoryByQualifier(String qualifier) {
-        return restTemplate.exchange(pwrSkillServiceUrl + "/category/byName?qualifier={qualifier}",
-                HttpMethod.GET,
-                new HttpEntity<>(null),
-                SkillServiceCategory.class,
                 Map.of("qualifier", qualifier)
         ).getBody();
     }
