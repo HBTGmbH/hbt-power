@@ -57,8 +57,8 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.post(url, null, config);
     };
 
-    public addSkillVersion = (skillId: number, version: string): Promise<string[]> => {
-        const url = this.base() + '/skill/' + skillId + '/version';
+    public addVersion = (skillId: number, version: string): Promise<string[]> => {
+        const url = this.base() + '/skill/{id}/version'.replace('{id}', skillId.toString());
         const config: AxiosRequestConfig = {
             headers: {
                 'Content-Type': 'text/plain'
@@ -68,8 +68,8 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.post(url, version, config);
     };
 
-    public deleteSkillVersion = (skillId: number, version: string) => {
-        const url = this.base() + '/skill/' + skillId + '/version';
+    public deleteVersion = (skillId: number, version: string) => {
+        const url = this.base() + '/skill/{id}/version'.replace('{id}', skillId.toString());
         const config: AxiosRequestConfig = {
             data: version,
             headers: {'Content-Type': 'text/plain'}
@@ -81,12 +81,6 @@ export class SkillServiceClient extends PowerHttpClient {
     public getSearchSkillURL = (): string => {
         return this.base() + '/skill/search';
 
-    };
-
-    public getRootCategoryIds = () => {
-        const url = this.base() + '/category/root';
-        this.beginRequest();
-        return this.get(url);
     };
 
     public getSearchSkill = (searchTerm: string): Promise<Array<string>> => {
@@ -108,12 +102,6 @@ export class SkillServiceClient extends PowerHttpClient {
 
     public getCategoryChildrenByCategoryId = (id: number): Promise<number[]> => {
         const url = this.base() + '/category/' + id + '/children';
-        this.beginRequest();
-        return this.get(url);
-    };
-
-    public getSkillsForCategory = (id: number) => {
-        const url = this.base() + '/category/' + id + '/skills';
         this.beginRequest();
         return this.get(url);
     };

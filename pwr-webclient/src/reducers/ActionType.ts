@@ -88,7 +88,6 @@ export enum ActionType {
     MoveSkill = '[Skill] MoveSkill',
     RemoveSkillServiceSkill = '[Skill] RemoveSkillServiceSkill',
     UpdateSkillServiceSkill = '[Skill] UpdateSkillServiceSkill',
-    BatchAddSkills = '[Skill] BatchAddSkills',
     LoadTree = '[Skill] LoadTree',
     SetCurrentSkillName = '[Skill] SetCurrentSkillName',
     SetCurrentSkillRating = '[Skill] SetCurrentSkillRating',

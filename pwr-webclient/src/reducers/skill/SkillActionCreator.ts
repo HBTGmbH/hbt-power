@@ -30,7 +30,6 @@ export namespace SkillActionCreator {
     import MoveSkillAction = SkillActions.MoveSkillAction;
     import RemoveSkillAction = SkillActions.RemoveSkillAction;
     import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
-    import BatchAddSkillsAction = SkillActions.BatchAddSkillsAction;
     import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
     import FilterTreeAction = SkillActions.FilterTreeAction;
     import InitializeTreeAction = SkillActions.InitializeTreeAction;
@@ -134,20 +133,6 @@ export namespace SkillActionCreator {
         };
     }
 
-    export function SetAddToProjectId(projectId: string): ChangeStringValueAction {
-        return {
-            type: ActionType.SetAddToProjectId,
-            value: projectId
-        };
-    }
-
-    function SetNoCategoryReason(reason: string): ChangeStringValueAction {
-        return {
-            type: ActionType.SetNoCategoryReason,
-            value: reason
-        };
-    }
-
     function UpdateSkillCategory(skillCategory: SkillCategory): UpdateSkillCategoryAction {
         return {
             type: ActionType.UpdateSkillCategory,
@@ -193,13 +178,6 @@ export namespace SkillActionCreator {
         };
     }
 
-    function BatchAddSkills(skills: Array<SkillServiceSkill>): BatchAddSkillsAction {
-        return {
-            type: ActionType.BatchAddSkills,
-            skills: skills
-        };
-    }
-
     function InitializeTree(root: TCategoryNode): InitializeTreeAction {
         return {
             type: ActionType.LoadTree,
@@ -223,16 +201,15 @@ export namespace SkillActionCreator {
 
     function InvokeChildUpdate(categoryId: number, dispatch: ThunkDispatch<any, any, any>) {
         skillClient.getCategoryChildrenByCategoryId(categoryId)
-            .then(response => response.forEach((value, index, array) => dispatch(AsyncUpdateCategory(value, true))))
+            .then(response => response.forEach((value) => dispatch(AsyncUpdateCategory(value))))
             .catch(handleSkillServiceError);
     }
 
-    export function AsyncUpdateCategory(categoryId: number, fullRecursive?: boolean) {
+    export function AsyncUpdateCategory(categoryId: number) {
         return function (dispatch: redux.Dispatch) {
-            let doRecursive: boolean = isNullOrUndefined(fullRecursive) ? false : fullRecursive;
             skillClient.getCategoryById(categoryId)
                 .then((category) => dispatch(UpdateSkillCategory(SkillCategory.fromAPI(category))))
-                .then(() => doRecursive ? InvokeChildUpdate(categoryId, dispatch) : console.log()) // TODO change else
+                .then(() => InvokeChildUpdate(categoryId, dispatch))
                 .catch(handleSkillServiceError);
         };
     }
@@ -240,7 +217,7 @@ export namespace SkillActionCreator {
     export function AsyncMoveCategory(newParentId: number, toMoveId: number) {
         return function (dispatch: redux.Dispatch) {
             skillClient.patchMoveCategory(newParentId, toMoveId)
-                .then((category) => dispatch(MoveCategory(newParentId, toMoveId)))
+                .then(() => dispatch(MoveCategory(newParentId, toMoveId)))
                 .catch(handleSkillServiceError);
         };
     }
@@ -266,7 +243,7 @@ export namespace SkillActionCreator {
     export function AsyncWhitelistCategory(categoryId: number) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             skillClient.deleteBlacklistCategory(categoryId)
-                .then(() => dispatch(AsyncUpdateCategory(categoryId, true)))
+                .then(() => dispatch(AsyncUpdateCategory(categoryId)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
         };
     }
@@ -274,7 +251,7 @@ export namespace SkillActionCreator {
     export function AsyncBlacklistCategory(categoryId: number) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             skillClient.postBlacklistCategory(categoryId)
-                .then(() => dispatch(AsyncUpdateCategory(categoryId, true)))
+                .then(() => dispatch(AsyncUpdateCategory(categoryId)))
 
                 .catch((error: AxiosError) => handleSkillServiceError(error));
         };
@@ -295,7 +272,7 @@ export namespace SkillActionCreator {
     };
 
     export function AsyncAddLocale(categoryId: number, locale: string, qualifier: string) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.postLocaleToCategory(categoryId, locale, qualifier)
                 .then((category) => invokeCategoryUpdate(category, dispatch))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -303,7 +280,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncDeleteLocale(categoryId: number, language: string) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.deleteLocaleFromCategory(categoryId, language)
                 .then((category) => invokeCategoryUpdate(category, dispatch))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -311,7 +288,7 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncCreateCategory(qualifier: string, parentId: number) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             let category: SkillCategory = SkillCategory.of(null, qualifier);
             skillClient.postNewCategory(parentId, category)
                 .then((category) => dispatch(AddCategoryToTree(parentId, SkillCategory.fromAPI(category))))
@@ -321,9 +298,9 @@ export namespace SkillActionCreator {
 
 
     export function AsyncDeleteCategory(categoryId: number) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.deleteCategory(categoryId)
-                .then((response: AxiosResponse) => dispatch(RemoveSkillCategory(categoryId)))
+                .then(() => dispatch(RemoveSkillCategory(categoryId)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
         };
     }
@@ -351,15 +328,15 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.patchMoveSkill(skillId, newCategoryId)
-                .then((response: AxiosResponse) => dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId)))
+                .then(() => dispatch(MoveSkill(oldCategoryId, newCategoryId, skillId)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
         };
     }
 
     export function AsyncCreateSkill(qualifier: string, categoryId: number) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.postNewSkill(categoryId, qualifier)
                 .then((skill) => dispatch(AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(skill))))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -367,9 +344,9 @@ export namespace SkillActionCreator {
     }
 
     export function AsyncDeleteSkill(skillId: number) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.deleteCustomSkill(skillId)
-                .then((response: AxiosResponse) => dispatch(RemoveSkill(skillId)))
+                .then(() => dispatch(RemoveSkill(skillId)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
         };
     }
@@ -382,7 +359,7 @@ export namespace SkillActionCreator {
      * @constructor
      */
     export function AsyncAddSkillLocale(skillId: number, language: string, qualifier: string) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.addSkillLocale(skillId, language, qualifier)
                 .then((skill) => dispatch(UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -397,7 +374,7 @@ export namespace SkillActionCreator {
      * @param language defines which locale from the skill is deleted
      */
     export function AsyncDeleteSkillLocale(skillId: number, language: string) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.deleteSkillLocale(skillId, language)
                 .then((response: AxiosResponse) => dispatch(UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(response.data))))
                 .catch((error: AxiosError) => handleSkillServiceError(error));
@@ -406,7 +383,7 @@ export namespace SkillActionCreator {
 
 
     export function AsyncLoadTree() {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             skillClient.getFullTree()
                 .then((root) => dispatch(InitializeTree(root)))
                 .catch((error: AxiosError) => handleSkillServiceError(error));

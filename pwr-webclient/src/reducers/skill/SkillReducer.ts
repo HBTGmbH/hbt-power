@@ -21,7 +21,6 @@ export namespace SkillReducer {
     import MoveSkillAction = SkillActions.MoveSkillAction;
     import RemoveSkillServiceSkillAction = SkillActions.RemoveSkillAction;
     import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
-    import BatchAddSkillsAction = SkillActions.BatchAddSkillsAction;
     import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
     import FilterTreeAction = SkillActions.FilterTreeAction;
     import InitializeTreeAction = SkillActions.InitializeTreeAction;
@@ -64,14 +63,6 @@ export namespace SkillReducer {
             return SkillStore.empty();
         }
         switch (action.type) {
-            case ActionType.BatchAddSkills: {
-                let act = action as BatchAddSkillsAction;
-                let store = skillStore;
-                act.skills.forEach(skill => {
-                    store = addOrUpdateSkill(store, skill);
-                });
-                return store;
-            }
             case ActionType.UpdateSkillCategory: {
                 let act = action as PartiallyUpdateSkillCategoryAction;
                 // First, update the map
