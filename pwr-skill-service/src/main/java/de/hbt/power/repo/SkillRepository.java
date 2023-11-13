@@ -2,7 +2,6 @@ package de.hbt.power.repo;
 
 import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -15,17 +14,7 @@ import java.util.Optional;
 public interface SkillRepository extends JpaRepository<Skill, Integer>, CrudRepository<Skill, Integer> {
     Optional<Skill> findOneByQualifier(String qualifier);
 
-    Optional<Skill> getByQualifiersContaining(String localizedQualifiers);
-
-    List<Skill> findAllByCategory_Id(Integer categoryId);
-
-    List<Skill> findAllByCategory(SkillCategory category);
-
     void deleteAllByCategory(SkillCategory category);
-
-    List<Skill> findTop100ById(Integer id);
-
-    List<Skill> findFirst50ByOrderById();
 
     @Query("select s from Skill s WHERE not s.category is null")
     List<Skill> findForTree();

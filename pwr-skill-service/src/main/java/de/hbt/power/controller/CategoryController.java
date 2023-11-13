@@ -1,10 +1,8 @@
 package de.hbt.power.controller;
 
 import de.hbt.power.exception.SkillServiceException;
-import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
 import de.hbt.power.repo.SkillCategoryRepository;
-import de.hbt.power.repo.SkillRepository;
 import de.hbt.power.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,15 +27,13 @@ import java.util.stream.Collectors;
         allowCredentials = "true")
 public class CategoryController {
     private final SkillCategoryRepository skillCategoryRepository;
-    private final SkillRepository skillRepository;
 
     private final CategoryService categoryService;
 
 
     @Autowired
-    CategoryController(SkillCategoryRepository skillCategoryRepository, SkillRepository skillRepository, CategoryService categoryService, SkillRepository skillRepository1, CategoryService categoryService1) {
+    CategoryController(SkillCategoryRepository skillCategoryRepository, CategoryService categoryService1) {
         this.skillCategoryRepository = skillCategoryRepository;
-        this.skillRepository = skillRepository1;
         this.categoryService = categoryService1;
     }
 
@@ -46,25 +42,6 @@ public class CategoryController {
         final List<Integer> categories = new ArrayList<>();
         skillCategoryRepository.findAll().forEach(c -> categories.add(c.getId()));
         return ResponseEntity.ok(categories);
-    }
-
-    /**
-     * Returns all root categories -> categories without a parent
-     */
-    @ApiOperation(value = "Returns all root IDs",
-            notes = "Returns all available root categories ids. A root category has no direct parent. It might happen that the" +
-                    "returned list is empty, indicating a server or database problem. (The list should not be empty, there are always root categories.)",
-            response = Integer.class,
-            responseContainer = "List",
-            httpMethod = "GET",
-            produces = "application/json")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Returns the root category ids in response. May be empty.", response = List.class),
-    })
-    @GetMapping(value = "/root")
-    public ResponseEntity<List<Integer>> getRootCategoryIds() {
-        final List<Integer> ids = skillCategoryRepository.findAllByCategoryIsNull().stream().map(SkillCategory::getId).collect(Collectors.toList());
-        return ResponseEntity.ok(ids);
     }
 
     @ApiOperation(value = "Returns all child IDs",
@@ -85,21 +62,6 @@ public class CategoryController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(childIds);
     }
-
-    @ApiOperation(value = "Returns all child Skills",
-            notes = "For a given category ID, returns all skills that are direct children to that category.",
-            response = Skill.class,
-            responseContainer = "List",
-            httpMethod = "GET",
-            produces = "application/json")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Child Skills returned in response. May be empty.")
-    })
-    @GetMapping(value = "/{id}/skills")
-    public ResponseEntity<List<Skill>> getChildSkills(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(skillRepository.findAllByCategory_Id(id));
-    }
-
 
     @ApiOperation(value = "Returns a category",
             notes = "Returns the category identified by the given ID.",
@@ -167,7 +129,7 @@ public class CategoryController {
     })
     @DeleteMapping(value = "/{id}")
     @Transactional
-    public ResponseEntity deleteCategory(@PathVariable("id") Integer categoryId) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Integer categoryId) {
         SkillCategory skillCategory = getCategory(categoryId);
 
         log.info("Deleting the " + skillCategory.toString());
@@ -310,14 +272,6 @@ public class CategoryController {
         log.info("Whitelisting the category " + skillCategory.toString() + " and all child categories.");
         categoryService.whitelist(skillCategory);
         return ResponseEntity.ok(skillCategory);
-    }
-
-
-    @GetMapping(value = "/blacklist")
-    public ResponseEntity<List<Integer>> getAllBlacklistedCategoryIds() {
-        List<SkillCategory> blacklisted = skillCategoryRepository.findAllByBlacklistedTrue();
-        List<Integer> ids = blacklisted.stream().map(SkillCategory::getId).collect(Collectors.toList());
-        return ResponseEntity.ok(ids);
     }
 
     private SkillCategory getCategory(Integer categoryId) {

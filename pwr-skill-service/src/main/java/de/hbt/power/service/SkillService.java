@@ -29,13 +29,6 @@ public class SkillService {
         return toMove;
     }
 
-    public Skill createSkill(String name) {
-        Skill skill = new Skill();
-        skill.setCustom(true);
-        skill.setQualifier(name);
-        return skillRepository.save(skill);
-    }
-
     @Transactional
     public Skill createSkillInCategory(Skill skill, SkillCategory skillCategory) {
         skill.setCustom(true);

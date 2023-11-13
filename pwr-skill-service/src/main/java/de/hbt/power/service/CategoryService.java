@@ -1,7 +1,6 @@
 package de.hbt.power.service;
 
 import de.hbt.power.exception.SkillServiceException;
-import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
 import de.hbt.power.repo.SkillCategoryRepository;
 import de.hbt.power.repo.SkillRepository;
@@ -92,12 +91,9 @@ public class CategoryService {
     }
 
 
-    public Skill categorizeSkill(Skill toCategorize) {
-        // Skill Provider has been removed, for now, we are simply assuming 'Other'
-        SkillCategory other = skillCategoryRepository.findOneByQualifier(OTHER_CATEGORY_NAME)
+    public SkillCategory getOther() {
+        return skillCategoryRepository.findOneByQualifier(OTHER_CATEGORY_NAME)
                 .orElseThrow(() -> new RuntimeException("Category 'Other' is missing. This should not happen!"));
-        toCategorize.setCategory(other);
-        return toCategorize;
     }
 
     public SkillCategory createSkillCategory(SkillCategory category, Integer parentId) {

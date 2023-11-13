@@ -65,14 +65,6 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     @DirtiesContext
-    public void testCategorizeSkill() {
-        skillCategoryRepository.save(SkillCategory.builder().qualifier("Other").build());
-        Skill result = categoryService.categorizeSkill(skillToTest);
-        assertThat(result.getCategory().getQualifier()).isEqualTo("Other");
-    }
-
-    @Test
-    @DirtiesContext
     @Transactional
     public void addLocalizationToCategory() {
         SkillCategory skillCategory = SkillCategory.of("Test");

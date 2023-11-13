@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashSet;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +32,7 @@ public class SkillServiceTest {
     private SkillService skillService;
 
     @Test
-    public void moveSkillToCategory() throws Exception {
+    public void moveSkillToCategory() {
         SkillCategory category1 = SkillCategory.of("Category1");
         skillCategoryRepository.save(category1);
         SkillCategory category2 = SkillCategory.of("Category2");
@@ -51,10 +50,9 @@ public class SkillServiceTest {
      * Creates a custom skill; Makes sure that the skill is in the db, has the correct
      * parent and has custom flag set to true
      *
-     * @throws Exception foo bar
      */
     @Test
-    public void createSkillInCategory() throws Exception {
+    public void createSkillInCategory() {
         SkillCategory skillCategory = SkillCategory.of("Bla Blub");
         skillCategoryRepository.save(skillCategory);
 
@@ -66,15 +64,6 @@ public class SkillServiceTest {
         assertThat(retrieved).isNotNull();
         assertThat(retrieved.getCategory()).isEqualTo(skillCategory);
         assertThat(retrieved.isCustom()).isTrue();
-    }
-
-    @Test
-    public void shouldCreateSkill() {
-        Skill skill = skillService.createSkill("Java5001");
-        assertThat(skill.isCustom()).isTrue();
-        assertThat(skill.getQualifier()).isEqualTo("Java5001");
-        Optional<Skill> persistent = skillRepository.findOneByQualifier("Java5001");
-        assertThat(persistent).isPresent();
     }
 
 }

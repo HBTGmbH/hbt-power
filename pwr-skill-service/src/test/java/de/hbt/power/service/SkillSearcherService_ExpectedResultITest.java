@@ -20,16 +20,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SkillSearcherService_ExpectedResultITest {
 
     @Autowired
-    private SkillService skillService;
-
-    @Autowired
     private SkillRepository skillRepository;
 
     @Autowired
     private SkillSearcherService skillSearcherService;
 
-    private Skill persistentSkill(String name) {
-        return skillService.createSkill(name);
+    private void persistentSkill(String name) {
+        skillRepository.save(Skill.of(name));
     }
 
     @Test

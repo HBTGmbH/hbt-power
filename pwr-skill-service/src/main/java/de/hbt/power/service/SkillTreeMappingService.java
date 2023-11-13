@@ -32,10 +32,6 @@ public class SkillTreeMappingService {
         return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findForTree());
     }
 
-    public TCategoryNode buildSkillTreeDebug() {
-        return buildSkillTree(skillCategoryRepository.findAll(), skillRepository.findAll());
-    }
-
     public TCategoryNode buildSkillTree(List<SkillCategory> categories, List<Skill> skills) {
         log.info("categories: " + categories.size() + "        skills: " + skills.size());
         return new SkillTreeMapper(categories, skills).map();

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,11 +30,6 @@ import static de.hbt.power.util.SkillServiceUtil.peek;
  */
 @RestController()
 @RequestMapping("/skill")
-/*
-@CrossOrigin(origins = "*",
-        methods = {RequestMethod.PUT, RequestMethod.GET, RequestMethod.PATCH, RequestMethod.POST, RequestMethod.DELETE},
-        allowedHeaders = {"origin", "content-type", "accept", "authorization", "X-Requested-With"},
-        allowCredentials = "true")*/
 @CrossOrigin
 @Log4j2
 public class SkillController {
@@ -94,26 +88,6 @@ public class SkillController {
         return ResponseEntity.ok(skill);
     }
 
-
-    @ApiOperation(value = "Returns all skill IDs", response = Integer.class, responseContainer = "List")
-    @GetMapping
-    public ResponseEntity<List<Integer>> getAllSkillIds() {
-        final List<Integer> result = new ArrayList<>();
-        skillRepository.findAll().forEach(skill -> result.add(skill.getId()));
-        return ResponseEntity.ok(result);
-    }
-
-
-    @ApiOperation(value = "Updates a skill", response = Skill.class)
-    @PutMapping("/{id}")
-    public ResponseEntity<Skill> updateSkill(@PathVariable Integer id, @RequestBody Skill skill) {
-        Skill s = requireSkill(id);
-        skill.setId(s.getId());
-        skillRepository.save(s);
-        return ResponseEntity.ok().build();
-    }
-
-
     @ApiOperation(value = "Searches and returns a skill by qualifier", response = Skill.class)
     @GetMapping("/byName")
     public ResponseEntity<Skill> findSkillByQualifier(@RequestParam("qualifier") String qualifier) {
@@ -134,19 +108,11 @@ public class SkillController {
     @ApiOperation(value = "Fuzzy search for skill names", response = String.class, responseContainer = "List")
     @GetMapping(value = "/search")
     public ResponseEntity<List<String>> searchSkill(@RequestParam("searchterm") String searchTerm, @RequestParam Integer maxResults) {
-        if (maxResults == null) maxResults = DEFAULT_MAX_RESULTS;
+        if (maxResults == null) {
+            maxResults = DEFAULT_MAX_RESULTS;
+        }
         List<String> suggestions = skillSearcherService.searchSkill(searchTerm, maxResults);
         return ResponseEntity.ok(suggestions);
-    }
-
-
-    @ApiOperation(value = "Attempty to automatically group a skill into a category", response = Skill.class)
-    @PatchMapping("/{id}")
-    public ResponseEntity<Skill> categorizeSkill(@PathVariable Integer id) {
-        Skill responseSkill = requireSkill(id);
-        log.info("Categorizing " + responseSkill.toString());
-        responseSkill = categoryService.categorizeSkill(responseSkill);
-        return ResponseEntity.ok(responseSkill);
     }
 
 
@@ -159,12 +125,10 @@ public class SkillController {
     @PostMapping
     public ResponseEntity<SkillCategory> updateAndGetCategory(@RequestParam("qualifier") String qualifier) {
         Skill skill = skillRepository.findOneByQualifier(qualifier)
-                .orElseGet(() -> skillService.createSkill(qualifier));
-        if (skill.getCategory() == null) {
-            log.info("Categorizing " + skill.toString());
-            skill = categoryService.categorizeSkill(skill);
-        }
-        skillRepository.save(skill);
+                .orElseGet(() -> {
+                    Skill toCreate = Skill.of(qualifier);
+                    return skillService.createSkillInCategory(toCreate, categoryService.getOther());
+                });
         return ResponseEntity.ok(skill.getCategory());
     }
 
@@ -185,7 +149,7 @@ public class SkillController {
         if (concurrent.isPresent()) {
             throw SkillServiceException.skillAlreadyExists(concurrent.get());
         }
-        log.info("Creating " + skill.toString() + " in " + skillCategory.toString());
+        log.info("Creating " + skill + " in " + skillCategory.toString());
         skill.setId(null);
         skillService.createSkillInCategory(skill, skillCategory);
         return ResponseEntity.ok(skill);
@@ -194,7 +158,7 @@ public class SkillController {
 
     @ApiOperation(value = "Permanently deletes a skill")
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteSkill(@PathVariable("id") Integer skillId) {
+    public ResponseEntity<Void> deleteSkill(@PathVariable("id") Integer skillId) {
         skillRepository.findById(skillId)
                 .map(peek(s -> log.info("Deleting skill " + s)))
                 .ifPresent(skillRepository::delete);
@@ -231,7 +195,7 @@ public class SkillController {
 
     @ApiOperation(value = "Deletes a version from a skill")
     @DeleteMapping("{id}/version")
-    public ResponseEntity deleteVersion(@PathVariable("id") Integer skillId, @RequestBody String version) {
+    public ResponseEntity<Void> deleteVersion(@PathVariable("id") Integer skillId, @RequestBody String version) {
         Skill skill = requireSkill(skillId);
         skillService.deleteVersion(skill, version);
         return ResponseEntity.ok().build();
@@ -241,11 +205,5 @@ public class SkillController {
     @GetMapping("/tree")
     public ResponseEntity<TCategoryNode> getTree() {
         return ResponseEntity.ok(skillTreeMappingService.buildSkillTree());
-    }
-
-    @ApiOperation(value = "Returns a model of the skill tree. Returned value is the root node.", response = TCategoryNode.class)
-    @GetMapping("/tree/debug")
-    public ResponseEntity<TCategoryNode> getTreeDebug() {
-        return ResponseEntity.ok(skillTreeMappingService.buildSkillTreeDebug());
     }
 }
