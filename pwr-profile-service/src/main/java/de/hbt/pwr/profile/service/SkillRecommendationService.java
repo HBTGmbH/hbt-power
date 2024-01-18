@@ -51,8 +51,7 @@ public class SkillRecommendationService {
                 .filter(onlyRecentProjects(projectDate))
                 .map(Project::getSkills)
                 .flatMap(Collection::stream)
-                .filter(skill -> !project.getSkills().contains(skill))
-                //.distinct()-replacement to also remove duplicate Skills from other profiles, which have a different idea and possibly a different rating or versions
+                .filter(skill -> !project.containsSkill(skill))
                 .filter(s -> names.add(s.getName()))
                 .sorted(Comparator.comparing(Skill::getName))
                 .collect(Collectors.toList());

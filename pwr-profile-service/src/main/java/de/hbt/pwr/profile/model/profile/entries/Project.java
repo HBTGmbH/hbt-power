@@ -197,4 +197,8 @@ public class Project {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    public boolean containsSkill(Skill skill) {
+        return getSkills().stream().anyMatch(projectSkill -> projectSkill.getName().equalsIgnoreCase(skill.getName()));
+    }
 }
