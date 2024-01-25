@@ -6,6 +6,8 @@ import {Redirect, Route} from 'react-router-dom';
 import {RouteProps} from 'react-router';
 import {Paths} from '../../Paths';
 import {connect} from 'react-redux';
+import {ProfileSelect} from "../profile-select_module";
+import {ComponentType} from "react";
 
 interface AuthenticatedRouteDialogProps {
     isLoggedIn: boolean;
@@ -14,6 +16,8 @@ interface AuthenticatedRouteDialogProps {
 
 interface AuthenticatedRouteDialogLocalProps extends RouteProps {
     requiresAdmin?: boolean;
+    path?: string;
+    component?: React.ComponentType;
 }
 
 interface AuthenticatedRouteDialogLocalState {

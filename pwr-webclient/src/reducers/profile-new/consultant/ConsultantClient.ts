@@ -26,7 +26,6 @@ export class ConsultantClient extends PowerHttpClient {
 
 
     public getConsultant(initials: string): Promise<Consultant> {
-        console.log('Doing getConsultant');
         const url = this.base() + '/consultants/' + initials;
         this.beginRequest();
         return this.get(url);

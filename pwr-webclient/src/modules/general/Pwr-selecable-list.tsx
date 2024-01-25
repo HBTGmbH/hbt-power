@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {Children, ReactChild} from 'react';
+import {Children, PropsWithChildren, ReactChild} from 'react';
 
-interface PwrSelectableListProps {
+interface PwrSelectableListProps extends PropsWithChildren {
 
 }
 

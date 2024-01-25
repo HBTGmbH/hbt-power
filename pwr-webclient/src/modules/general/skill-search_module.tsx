@@ -3,6 +3,7 @@ import {isNullOrUndefined} from 'util';
 import {PwrAutoComplete} from './pwr-auto-complete';
 import {noOp} from '../../utils/ObjectUtil';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
+import {useEffect, useState} from "react";
 
 
 interface SkillSearcherProps {
@@ -25,80 +26,63 @@ interface SkillSearcherProps {
     onValueChange?(value: string): void;
 }
 
-interface SkillSearcherState {
-    searchText: string;
-    skills: Array<string>
-}
+
+const defaultProps: SkillSearcherProps = {
+    label: '',
+    maxResults: 10,
+    maxHeight: null,
+    onNewRequest: noOp,
+    onValueChange: noOp,
+    resetOnRequest: true,
+    disabled: false,
+    id: ''
+};
+
 
 /**
  * Performs skill-searches against an API and displayes the suggestions the API provides, instead
  * of doing the skill-searching on a local dump of all available skills (>70.000)
  */
-export class SkillSearcher extends React.Component<SkillSearcherProps, SkillSearcherState> {
+export const SkillSearcher = (props: SkillSearcherProps) => {
+    props = {...defaultProps, ...props};
+    const [searchText, setSearchText] = useState(props.initialValue);
+    const [skills, setSkills] = useState([] as Array<string>);
 
-
-    constructor(props: SkillSearcherProps) {
-        super(props);
-        this.state = {
-            searchText: !isNullOrUndefined(props.initialValue) ? props.initialValue : '',
-            skills: []
-        };
-
-    }
-
-    public componentWillReceiveProps(props: SkillSearcherProps) {
-        if (!isNullOrUndefined(props.value) && this.props.value !== props.value) {
-            this.requestSkills(props.value);
+    useEffect(() => {
+        if (props.value) {
+            requestSkills(props.value);
         }
-    }
+    }, [props.value])
 
-    public static defaultProps: Partial<SkillSearcherProps> = {
-        label: '',
-        maxResults: 10,
-        maxHeight: null,
-        onNewRequest: noOp,
-        onValueChange: noOp,
-        resetOnRequest: true,
-        disabled: false
+    const handleRequest = (request: string) => {
+        props.onValueChange(request);
+        setSearchText(props.resetOnRequest ? '' : request)
+        props.onNewRequest(request);
     };
 
-    private requestSkills = (searchText: string, navigation?: boolean) => {
+    const requestSkills = (searchText: string, navigation?: boolean) => {
         if (navigation) {
-            this.setState({
-                searchText: searchText
-            });
+            setSearchText(searchText)
             return;
         } else {
-            this.props.onValueChange(searchText);
-            this.setState({
-                searchText: searchText
-            });
+            props.onValueChange(searchText);
+            setSearchText(searchText)
             if (!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
                 SkillServiceClient.instance().getSearchSkill(searchText)
-                    .then(skills => this.setState({skills}))
+                    .then(skills => setSkills(skills))
                     .catch((error: any) => console.error((error)));
             }
         }
     };
 
-    private handleRequest = (request: string) => {
-        this.props.onValueChange(request);
-        this.setState({
-            searchText: this.props.resetOnRequest ? '' : request
-        });
-        this.props.onNewRequest(request);
-    };
-
-    render() {
-        return <PwrAutoComplete
-            disabled={this.props.disabled}
-            fullWidth={this.props.fullWidth}
-            label={this.props.label}
-            id={this.props.id}
-            data={this.state.skills}
-            searchTerm={this.state.searchText}
-            onAdd={this.handleRequest}
-            onSearchChange={this.requestSkills}
-        />;
-    }
+    return <PwrAutoComplete
+        disabled={props.disabled}
+        fullWidth={props.fullWidth}
+        label={props.label}
+        id={props.id}
+        data={skills}
+        searchTerm={searchText}
+        onAdd={handleRequest}
+        onSearchChange={requestSkills}
+    />
 }

@@ -65,10 +65,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         }
     }
 
-    public componentDidUpdate() {
-
-    }
-
     private onCreateDialogOpen = () => {
         this.setState({
             createDialogOpen: true,

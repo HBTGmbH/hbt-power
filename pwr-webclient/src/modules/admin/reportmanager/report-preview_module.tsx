@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Iframe from 'react-iframe';
 import {TemplateClient} from '../../../clients/TemplateClient';
 
 
@@ -13,7 +12,8 @@ export const ReportPreview = (props: ReportPreviewLocalProps) => {
     return <div style={{height: '100%'}}>
         {
             (props.templateId != '') ?
-                <Iframe url={TemplateClient.instance().getPreviewURL(props.templateId)} width={'100%'} height={'100%'}/>
+                <iframe src={TemplateClient.instance().getPreviewURL(props.templateId)}
+                        style={{width: '100%', height: '10ß0%'}}/>
                 : <>Template auswählen</>
         }
     </div>;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ChangeEvent, CSSProperties} from 'react';
+import {ChangeEvent, CSSProperties, PropsWithChildren} from 'react';
 import {Theme} from '@material-ui/core';
 
 
@@ -19,7 +19,7 @@ export namespace ReactUtils {
     };
 
     export function wrapSelectableList(ComposedComponent: any) {
-        return class SelectableList extends React.Component<SelectableListProps, {}> {
+        return class SelectableList extends React.Component<SelectableListProps & PropsWithChildren, {}> {
 
             handleRequestChange = (event: any, index: any) => {
                 this.props.onSelect(event, index);

@@ -192,7 +192,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                     <TableRow key={index}>
                                         <TableCell>{value.viewProfileName}</TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
-                                        <TableCell align="left">{value.createDate}</TableCell>
+                                        <TableCell align="left">{<>value.createDate</>}</TableCell>
                                         <TableCell
                                             align="left">{this.StatusDisplay(value)}</TableCell>
                                     </TableRow>)

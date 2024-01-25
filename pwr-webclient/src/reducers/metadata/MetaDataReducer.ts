@@ -7,12 +7,7 @@ import {AbstractAction} from '../BaseActions';
 
 export namespace MetaDataReducer {
 
-    export function reduce(store: MetaDataStore, action: AbstractAction): MetaDataStore {
-        if (isNullOrUndefined(store)) {
-            let empty = MetaDataStore.empty();
-            console.info('Initializing MetaDataStore', empty);
-            return empty;
-        }
+    export function reduce(store: MetaDataStore = MetaDataStore.empty(), action: AbstractAction): MetaDataStore {
         switch (action.type) {
             case ActionType.AddOrReplaceBuildInfo: {
                 let act: AddOrReplaceBuildInfoAction = action as AddOrReplaceBuildInfoAction;

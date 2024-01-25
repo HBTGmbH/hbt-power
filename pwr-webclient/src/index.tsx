@@ -1,11 +1,12 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import './index.css';
 import {ApplicationState, store} from './reducers/reducerIndex';
 import {AppWrapper} from './app-wrapper-module';
 import {storeHasUnsavedChanges} from './utils/PwrStoreUtils';
 import {OIDCService} from './OIDCService';
+import {Provider} from "react-redux";
 
 export function registerPageLeavePrevention() {
     // Prevents navigation
@@ -23,8 +24,7 @@ export function registerPageLeavePrevention() {
 registerPageLeavePrevention();
 // Init OIDC
 OIDCService.instance();
-ReactDOM.render(
-    (<AppWrapper/>),
-    document.getElementById('root')
-);
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<AppWrapper/>);
 

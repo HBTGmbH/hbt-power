@@ -60,9 +60,9 @@ export class StatisticsServiceClient extends PowerHttpClient {
     };
 
     public headStatisticsServiceAvailable = () => {
-        const url = this.base() + '/statistics';
+        const url = this.base() + '/statistics/ping';
         this.beginRequest();
-        return this.head(url);
+        return this.get(url);
     };
 
     public getConsultantClusterInfo = (initials: string): Promise<APIConsultantClusterInfo> => {
