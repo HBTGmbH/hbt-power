@@ -3,6 +3,7 @@ import {ActionType} from '../ActionType';
 import {SuggestionUpdateAction} from './actions/SuggestionUpdateAction';
 import {SkillSuggestionUpdateAction} from './actions/SkillSuggestionUpdateAction';
 import {AbstractAction} from '../BaseActions';
+import {onlyUnique} from "../../utils/ObjectUtil";
 
 export function reduceSuggestion(store: SuggestionStore = emptyStore, action: AbstractAction): SuggestionStore {
     switch (action.type) {
@@ -22,5 +23,5 @@ function handleUpdateField(action: SuggestionUpdateAction, store: SuggestionStor
 }
 
 function handleUpdateSkills(action: SkillSuggestionUpdateAction, store: SuggestionStore): SuggestionStore {
-    return {...store, allSkills: action.payload};
+    return {...store, allSkills: action.payload.filter(onlyUnique)};
 }

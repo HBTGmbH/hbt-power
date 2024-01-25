@@ -91,3 +91,7 @@ export function omitKeys(object: Object, ...keys: string[]): Object {
     keys.forEach(key => delete copy[key]);
     return copy;
 }
+
+export function onlyUnique<T>(value: T, index: number, self: T[]): boolean {
+    return self.indexOf(value) === index;
+}
