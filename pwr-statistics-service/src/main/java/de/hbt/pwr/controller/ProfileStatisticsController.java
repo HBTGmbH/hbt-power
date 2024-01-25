@@ -33,6 +33,11 @@ public class ProfileStatisticsController {
         this.statisticsService = statisticsService;
     }
 
+    @RequestMapping(value = "/ping", produces = "plain/text", method = RequestMethod.GET)
+    public ResponseEntity<String> returnPing() {
+        return ResponseEntity.ok("UP!");
+    }
+
     @RequestMapping(value = "/skill/usage/absolute", produces = "application/json")
     public ResponseEntity<List<SkillUsage>> getMostUsedSkills(@RequestParam(value = "max", required = false) Integer maxSkills) {
         if(maxSkills == null) maxSkills = DEFAULT_MAX_SKILLS;

@@ -11,7 +11,9 @@ spring:
 pwr-profile-service-url: http://pwr-profile-service:9004
 ---
 spring:
-  profiles: localDev
+  config:
+    activate:
+      on-profile: localDev
   redis:
     host: localhost
     port: 6379
