@@ -11,7 +11,6 @@ export class Paths {
     public static readonly ADMIN_CONSULTANTS = CONFIG.APP_PATH + '/admin/home/consultants';
     public static readonly ADMIN_TEMPLATES = CONFIG.APP_PATH + '/admin/home/templates';
     public static readonly ADMIN_STATISTICS_SKILL = CONFIG.APP_PATH + '/admin/home/statistics/skills';
-    public static readonly ADMIN_STATISTICS_NETWORK = CONFIG.APP_PATH + '/admin/home/statistics/network';
     public static readonly ADMIN_INFO_SKILLTREE = CONFIG.APP_PATH + '/admin/home/info/skilltree';
     public static readonly ADMIN_INFO_NAME_ENTITY = CONFIG.APP_PATH + '/admin/home/info/names';
 
@@ -24,7 +23,6 @@ export class Paths {
     public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/profile';
     public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/reports';
     public static readonly USER_SEARCH = CONFIG.APP_PATH + '/app/search';
-    public static readonly USER_STATISTICS_NETWORK = CONFIG.APP_PATH + '/app/statistics/network';
     public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/statistics/clusterinfo';
     public static readonly USER_STATISTICS_SKILLS = CONFIG.APP_PATH + '/app/statistics/skills';
 

@@ -201,7 +201,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {this.props.localizations.map(this.mapLocalizedRow)}
+                        <>{this.props.localizations.map(this.mapLocalizedRow)}</>
                     </TableBody>
                 </Table>
                 <div className="vertical-align fullWidth">

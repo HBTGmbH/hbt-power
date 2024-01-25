@@ -68,7 +68,6 @@ export enum ActionType {
     ReceiveSkillUsageMetrics = '[Statistics] ReceiveSkillUsageMetrics',
     ReceiveRelativeSkillUsageMetrics = '[Statistics] ReceiveRelativeSkillUsageMetrics',
     ReceiveProfileSkillMetrics = '[Statistics] ReceiveProfileSkillMetrics',
-    ReceiveNetwork = '[Statistics] ReceiveNetwork',
     ReceiveConsultantClusterInfo = '[Statistics] ReceiveConsultantClusterInfo',
     StatisticsAvailable = '[Statistics] StatisticsAvailable',
     StatisticsNotAvailable = '[Statistics] StatisticsNotAvailable',

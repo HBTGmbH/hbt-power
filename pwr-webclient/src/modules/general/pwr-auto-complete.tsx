@@ -214,7 +214,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         const basicInputProps = {
             classes,
             placeholder: this.props.label,
-            value: this.props.searchTerm,
+            value: this.props.searchTerm || '',
             chips: this.props.chips,
             onChange: (event, {newValue}) => this.handleChange(event, newValue),
         };

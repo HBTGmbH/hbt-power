@@ -33,8 +33,8 @@ export class AppWrapper extends React.Component<{}, {}> {
         return (
             <MuiPickersUtilsProvider utils={MomentUtils}>
                 <MuiThemeProvider theme={POWER_MUI_THEME}>
-                    <Provider store={store}>
-                        <Router history={PWR_HISTORY}>
+                    <Router history={PWR_HISTORY}>
+                        <Provider store={store}>
                             <div>
                                 <Route exact path={Paths.APP_ROOT} component={LoginModule}/>
                                 <AuthenticatedRoute path={Paths.PROFILE_SELECT} component={ProfileSelect}/>
@@ -43,8 +43,8 @@ export class AppWrapper extends React.Component<{}, {}> {
                                 <ConfirmNavDialog/>
                                 <PwrConfirmDeferredActionDialog/>
                             </div>
-                        </Router>
-                    </Provider>
+                        </Provider>
+                    </Router>
                 </MuiThemeProvider>
             </MuiPickersUtilsProvider>
         );

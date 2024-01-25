@@ -138,13 +138,6 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncNavigateToNetwork() {
-        return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(StatisticsActionCreator.AsyncRequestNetwork());
-            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_STATISTICS_NETWORK));
-        };
-    }
-
     public static SetNewSkillName(newName: string): SetNewSkillNameAction {
         return {
             type: ActionType.SetNewSkillName,

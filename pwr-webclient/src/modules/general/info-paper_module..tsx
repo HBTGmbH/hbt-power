@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {CSSProperties} from 'react';
+import {CSSProperties, PropsWithChildren} from 'react';
 import {Paper} from '@material-ui/core';
 import {PwrIconHeader} from './pwr-icon-header';
 
-interface InfoPaperProps {
+interface InfoPaperProps extends PropsWithChildren {
     minHeight?: string;
     width?: string;
     title?: string;

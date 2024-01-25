@@ -113,8 +113,10 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
             <div className="row" style={{paddingLeft: '20px'}}>
                 <div className="col-md-11">
                     <List>
+                        <>
                         {this.state.foundConsultants.map(consultant => <ListItem
                             key={'Consultant.Search.' + consultant.fullName}>{this.renderConsultantInfo(consultant)}</ListItem>)}
+                        </>
                     </List>
                 </div>
             </div>

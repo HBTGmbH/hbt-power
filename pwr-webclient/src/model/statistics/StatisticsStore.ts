@@ -2,7 +2,6 @@ import {doop} from 'doop';
 import * as Immutable from 'immutable';
 import {SkillUsageMetric} from './SkillUsageMetric';
 import {ProfileSkillMetrics} from './ProfileSkillMetrics';
-import {Network} from './Network';
 import {ConsultantClusterInfo} from './ConsultantClusterInfo';
 import {ScatterSkill} from './ScatterSkill';
 import {ConsultantInfo} from '../ConsultantInfo';
@@ -27,11 +26,6 @@ export class StatisticsStore {
     @doop
     public get activeProfileMetric() {
         return doop<ProfileSkillMetrics, this>();
-    };
-
-    @doop
-    public get network() {
-        return doop<Network, this>();
     };
 
     /**
@@ -70,7 +64,6 @@ export class StatisticsStore {
     private constructor(skillUsages: Immutable.List<SkillUsageMetric>,
                         relativeSkillUsages: Immutable.List<SkillUsageMetric>,
                         activeProfileMetric: ProfileSkillMetrics,
-                        network: Network,
                         available: boolean,
                         consultantClusterInfo: ConsultantClusterInfo,
                         scatteredSkills: Immutable.List<ScatterSkill>,
@@ -80,7 +73,6 @@ export class StatisticsStore {
         return this.skillUsages(skillUsages)
             .relativeSkillUsages(relativeSkillUsages)
             .activeProfileMetric(activeProfileMetric)
-            .network(network)
             .available(available)
             .consultantClusterInfo(consultantClusterInfo)
             .scatteredSkills(scatteredSkills)
@@ -89,7 +81,7 @@ export class StatisticsStore {
     }
 
     public static createEmpty(): StatisticsStore {
-        return new StatisticsStore(Immutable.List<SkillUsageMetric>(), Immutable.List<SkillUsageMetric>(), null, null,
+        return new StatisticsStore(Immutable.List<SkillUsageMetric>(), Immutable.List<SkillUsageMetric>(), null,
             false, null, Immutable.List<ScatterSkill>(), Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>(),
             Immutable.Map<string, Immutable.List<ConsultantInfo>>());
     }

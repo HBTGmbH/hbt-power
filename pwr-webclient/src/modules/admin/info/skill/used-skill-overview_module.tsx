@@ -57,7 +57,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
 
     static mapStateToProps(state: ApplicationState, localProps: UsedSkillOverviewLocalProps): UsedSkillOverviewProps {
         return {
-            usedSkillNames: [],
+            usedSkillNames: state.suggestionStore.allSkills,
             skillUsageInfo: state.statisticsReducer.skillUsageInfo(),
             skillHierarchies: state.skillReducer.categorieHierarchiesBySkillName()
         };

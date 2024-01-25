@@ -1,24 +1,21 @@
-import cogoToast, {Options} from 'cogo-toast';
+import cogoToast, {CTOptions} from '@successtar/cogo-toast';
 import {PowerLocalize} from '../localization/PowerLocalizer';
+
+const options = (hideTime: number): CTOptions => {
+    return {
+        position: 'bottom-left',
+        hideAfter: hideTime,
+    };
+}
 
 export class Alerts {
 
-    static options(hideTime: number): Options {
-        return {
-            position: 'bottom-left',
-            hideAfter: hideTime,
-            onClick: (hide: any) => {
-                hide();
-            },
-        };
-    }
-
     static showInfo(message) {
-        cogoToast.info(message, Alerts.options(10));
+        const {hide} = cogoToast.info(message,{...options(10), onClick: () => hide()});
     }
 
     static showSuccess(message) {
-        cogoToast.success(message, Alerts.options(10));
+        const {hide} = cogoToast.success(message, {...options(10), onClick: () => hide()});
     }
 
     static showLocalizedSuccess(key: string, ...args: string[]) {
@@ -27,6 +24,6 @@ export class Alerts {
     }
 
     static showError(message) {
-        cogoToast.error(message, Alerts.options(10));
+        const {hide} = cogoToast.error(message, {...options(10), onClick: () => hide()});
     }
 }

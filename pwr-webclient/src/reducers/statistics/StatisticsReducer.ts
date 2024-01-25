@@ -4,7 +4,6 @@ import {
     AddNameEntityUsageInfoAction,
     AddSkillUsageInfoAction,
     ReceiveConsultantClusterInfoAction,
-    ReceiveNetworkAction,
     ReceiveProfileSkillMetrics,
     ReceiveScatterSkillsAction,
     ReceiveSkillUsageMetricsAction
@@ -30,10 +29,6 @@ export class StatisticsReducer {
 
     public static ReceiveProfileSkillMetrics(store: StatisticsStore, action: ReceiveProfileSkillMetrics): StatisticsStore {
         return store.activeProfileMetric(action.metrics);
-    }
-
-    public static ReceiveNetwork(store: StatisticsStore, action: ReceiveNetworkAction): StatisticsStore {
-        return store.network(action.network);
     }
 
     public static ReceiveConsultantClusterInfo(store: StatisticsStore, action: ReceiveConsultantClusterInfoAction): StatisticsStore {
@@ -67,8 +62,6 @@ export class StatisticsReducer {
                 return StatisticsReducer.ReceiveSkillUsageMetrics(store, action as ReceiveSkillUsageMetricsAction);
             case ActionType.ReceiveProfileSkillMetrics:
                 return StatisticsReducer.ReceiveProfileSkillMetrics(store, action as ReceiveProfileSkillMetrics);
-            case ActionType.ReceiveNetwork:
-                return StatisticsReducer.ReceiveNetwork(store, action as ReceiveNetworkAction);
             case ActionType.StatisticsAvailable:
                 return store.available(true);
             case ActionType.StatisticsNotAvailable:

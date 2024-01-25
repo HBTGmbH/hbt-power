@@ -12,8 +12,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import Fab from '@material-ui/core/Fab/Fab';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {ThunkDispatch} from 'redux-thunk';
-
-const Recharts = require('recharts');
+import {Bar, BarChart, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis} from "recharts";
 
 const TagCloud = require('react-tagcloud');
 const TCloud: any = TagCloud.TagCloud;
@@ -115,36 +114,36 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
                 <CardContent>
                     <ListSubheader>{PowerLocalize.get('SkillStatistics.SkillCount.Absolute.Title')}</ListSubheader>
                     {PowerLocalize.get('SkillStatistics.SkillCount.Absolute.Description')}
-                    <Recharts.BarChart width={730} height={250} layout="horizontal" data={this.renderData()}>
-                        <Recharts.XAxis dataKey="name"/>
-                        <Recharts.YAxis/>
-                        <Recharts.CartesianGrid strokeDasharray="3 3"/>
-                        <Recharts.Tooltip/>
-                        <Recharts.Legend/>
-                        <Recharts.Bar
+                    <BarChart width={730} height={250} layout="horizontal" data={this.renderData()}>
+                        <XAxis dataKey="name"/>
+                        <YAxis/>
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <Tooltip/>
+                        <Legend/>
+                        <Bar
                             dataKey="value"
                             fill="#8884d8"
                             layout="vertical"
                             name={PowerLocalize.get('SkillStatistics.SkillCount')}/>
-                    </Recharts.BarChart>
+                    </BarChart>
                 </CardContent>
                 <CardContent>
                     <ListSubheader>{PowerLocalize.get('SkillStatistics.SkillCount.Relative.Title')}</ListSubheader>
                     {PowerLocalize.get('SkillStatistics.SkillCount.Relative.Description')}<br/>
-                    <Recharts.BarChart width={730} height={250} layout="horizontal" data={this.renderRelativeData()}>
-                        <Recharts.XAxis dataKey="name"/>
-                        <Recharts.YAxis/>
-                        <Recharts.CartesianGrid strokeDasharray="3 3"/>
-                        <Recharts.Tooltip/>
-                        <Recharts.Legend/>
-                        <Recharts.Bar
+                    <BarChart width={730} height={250} layout="horizontal" data={this.renderRelativeData()}>
+                        <XAxis dataKey="name"/>
+                        <YAxis/>
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <Tooltip/>
+                        <Legend/>
+                        <Bar
                             unit="%"
                             dataKey="value"
                             fill="#8884d8"
                             layout="vertical"
                             name={PowerLocalize.get('SkillStatistics.SkillCount.Relative')}
                         />
-                    </Recharts.BarChart>
+                    </BarChart>
                 </CardContent>
                 <CardContent>
                     <ListSubheader>{PowerLocalize.get('SkillStatistics.WordCloud.Title')}</ListSubheader>
@@ -176,16 +175,16 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
                         </Fab>
                     </div>
 
-                    <Recharts.ComposedChart width={700} height={400} data={this.renderScatterData()}
+                    <ComposedChart width={700} height={400} data={this.renderScatterData()}
                                             margin={{top: 20, right: 20, bottom: 20, left: 20}}>
-                        <Recharts.XAxis dataKey="name"/>
-                        <Recharts.YAxis/>
-                        <Recharts.Tooltip/>
-                        <Recharts.Legend/>
-                        <Recharts.CartesianGrid stroke='#f5f5f5'/>
-                        <Recharts.Bar dataKey='occ' barSize={20} fill='#413ea0'/>
-                        <Recharts.Line type='monotone' dataKey='rating' stroke='#ff7300'/>
-                    </Recharts.ComposedChart>
+                        <XAxis dataKey="name"/>
+                        <YAxis/>
+                        <Tooltip/>
+                        <Legend/>
+                        <CartesianGrid stroke='#f5f5f5'/>
+                        <Bar dataKey='occ' barSize={20} fill='#413ea0'/>
+                        <Line type='monotone' dataKey='rating' stroke='#ff7300'/>
+                    </ComposedChart>
                 </CardContent>
 
             </Card>

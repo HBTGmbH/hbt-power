@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {Icon, IconButton, Tooltip} from '@material-ui/core';
 import {IconButtonProps} from '@material-ui/core/IconButton/IconButton';
+import {PropsWithChildren} from "react";
 
 
-interface PwrIconButtonProps {
+interface PwrIconButtonProps extends PropsWithChildren {
     id?: string;
     iconName: string;
     tooltip: string;

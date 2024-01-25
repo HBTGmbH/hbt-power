@@ -1,6 +1,6 @@
 import {PowerHttpClient} from './PowerHttpClient';
 import {AxiosRequestConfig} from 'axios';
-import {APIConsultantClusterInfo, APINetwork, APIProfileSkillMetric, APISkillUsageMetric} from '../model/statistics/ApiMetrics';
+import {APIConsultantClusterInfo, APIProfileSkillMetric, APISkillUsageMetric} from '../model/statistics/ApiMetrics';
 import {APIScatterSkill} from '../model/statistics/ScatterSkill';
 import {APIConsultant} from '../model/APIProfile';
 
@@ -53,16 +53,10 @@ export class StatisticsServiceClient extends PowerHttpClient {
         return this.get(url);
     };
 
-    public getKMedProfileNetwork = (): Promise<APINetwork> => {
-        const url = this.base() + '/statistics/network/kmed';
+    public headStatisticsServiceAvailable = () => {
+        const url = this.base() + '/statistics/ping';
         this.beginRequest();
         return this.get(url);
-    };
-
-    public headStatisticsServiceAvailable = () => {
-        const url = this.base() + '/statistics';
-        this.beginRequest();
-        return this.head(url);
     };
 
     public getConsultantClusterInfo = (initials: string): Promise<APIConsultantClusterInfo> => {
