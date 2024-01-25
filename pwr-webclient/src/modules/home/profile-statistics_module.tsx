@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
@@ -10,8 +9,8 @@ import Paper from '@material-ui/core/Paper';
 import {Color} from '../../utils/ColorUtil';
 import {Profile} from '../../reducers/profile-new/profile/model/Profile';
 import {ThunkDispatch} from 'redux-thunk';
+import {Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip} from "recharts";
 
-const Recharts = require('recharts');
 
 interface ProfileStatisticsProps {
     profileSkillMetrics: ProfileSkillMetrics;
@@ -70,19 +69,19 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
             {name: PowerLocalize.get('SpecialField.Plural'), value: keySkillCount},
         ];
         return (
-            <Recharts.ResponsiveContainer minHeight={200} maxHeight={400}>
-                <Recharts.BarChart layout="horizontal" data={data}>
-                    <Recharts.XAxis dataKey="name"/>
-                    <Recharts.YAxis/>
-                    <Recharts.CartesianGrid strokeDasharray="3 3"/>
-                    <Recharts.Tooltip/>
-                    <Recharts.Bar
+            <ResponsiveContainer minHeight={200} maxHeight={400}>
+                <BarChart layout="horizontal" data={data}>
+                    <XAxis dataKey="name"/>
+                    <YAxis/>
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <Tooltip />
+                    <Bar
                         dataKey="value"
                         fill={Color.HBT_2017_DARK_BLUE.toCSSRGBString()}
                         layout="horizontal"
                     />
-                </Recharts.BarChart>
-            </Recharts.ResponsiveContainer>
+                </BarChart>
+            </ResponsiveContainer>
         );
     };
 
