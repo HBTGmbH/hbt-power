@@ -7,14 +7,12 @@ import {
     AddNameEntityUsageInfoAction,
     AddSkillUsageInfoAction,
     ReceiveConsultantClusterInfoAction,
-    ReceiveNetworkAction,
     ReceiveProfileSkillMetrics,
     ReceiveScatterSkillsAction,
     ReceiveSkillUsageMetricsAction
 } from './statistics-actions';
 import {ActionType} from '../ActionType';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
-import {Network} from '../../model/statistics/Network';
 import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
 import {ScatterSkill} from '../../model/statistics/ScatterSkill';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
@@ -47,13 +45,6 @@ export class StatisticsActionCreator {
         return {
             type: ActionType.ReceiveProfileSkillMetrics,
             metrics: metrics
-        };
-    }
-
-    public static ReceiveNetwork(network: Network): ReceiveNetworkAction {
-        return {
-            type: ActionType.ReceiveNetwork,
-            network: network
         };
     }
 
@@ -126,16 +117,6 @@ export class StatisticsActionCreator {
                 .then((metrics) => dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(metrics))))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
                 .catch((error: AxiosError) => console.error(error))
-                .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
-        };
-    }
-
-    public static AsyncRequestNetwork() {
-        return function (dispatch: ThunkDispatch<any, any, any>) {
-            statisticsClient.getKMedProfileNetwork()
-                .then((network) => dispatch(StatisticsActionCreator.ReceiveNetwork(Network.fromAPI(network))))
-                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
-                .catch((error: any) => console.error(error))
                 .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
         };
     }

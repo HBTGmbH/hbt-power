@@ -1,6 +1,6 @@
 import {PowerHttpClient} from './PowerHttpClient';
 import {AxiosRequestConfig} from 'axios';
-import {APIConsultantClusterInfo, APINetwork, APIProfileSkillMetric, APISkillUsageMetric} from '../model/statistics/ApiMetrics';
+import {APIConsultantClusterInfo, APIProfileSkillMetric, APISkillUsageMetric} from '../model/statistics/ApiMetrics';
 import {APIScatterSkill} from '../model/statistics/ScatterSkill';
 import {APIConsultant} from '../model/APIProfile';
 
@@ -49,12 +49,6 @@ export class StatisticsServiceClient extends PowerHttpClient {
 
     public getProfileStatistics = (initials: string): Promise<APIProfileSkillMetric> => {
         const url = this.base() + '/statistics/skill/common/' + initials;
-        this.beginRequest();
-        return this.get(url);
-    };
-
-    public getKMedProfileNetwork = (): Promise<APINetwork> => {
-        const url = this.base() + '/statistics/network/kmed';
         this.beginRequest();
         return this.get(url);
     };

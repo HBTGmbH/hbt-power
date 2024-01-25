@@ -56,8 +56,6 @@ interface ToolbarDispatch {
     navigateTo(target: string): void;
     navigateToAdmin(): void;
 
-    loadNetworkGraph(): void;
-
     loadConsultantClusterInfo(initials: string): void;
 
     loadSkillStatistics(): void;
@@ -93,7 +91,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return {
             navigateToAdmin: () => dispatch(AdminActionCreator.AsyncNavigateToAdmin()),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            loadNetworkGraph: () => dispatch(StatisticsActionCreator.AsyncRequestNetwork()),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
             loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages()),
             changeConsultant: (initials: string) => dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials)),
@@ -128,13 +125,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 <img alt="HBT Power Logo" className="img-responsive logo-small" src={getImagePath() + '/HBT002_Logo_neg.png'}/>
             </div>
         );
-    };
-
-    private loadNetworkGraph = () => {
-        // FIXME move this into the async action.
-        this.handleMenuClose();
-        this.props.loadNetworkGraph();
-        this.props.navigateTo(Paths.USER_STATISTICS_NETWORK);
     };
 
     private loadConsultantClusterInfo = () => {
@@ -224,17 +214,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                         <Icon className="material-icons">keyboard_arrow_right</Icon>
                                     </MenuItem>
                                     <Collapse in={this.state.statisticsOpen}>
-                                        <MenuItem
-                                            key="Menu.Statistics.Network"
-                                            onClick={this.loadNetworkGraph}
-                                        >
-                                            <ListItemIcon>
-                                                <Icon className="material-icons">collections</Icon>
-                                            </ListItemIcon>
-                                            <ListItemText>
-                                                {PowerLocalize.get('Menu.Statistics.Network')}
-                                            </ListItemText>
-                                        </MenuItem>
                                         <MenuItem
                                             key="Menu.Statistics.Network.Clusterinfo"
                                             onClick={this.loadConsultantClusterInfo}

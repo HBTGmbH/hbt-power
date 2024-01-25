@@ -30,9 +30,8 @@
     "react-tagcloud": "2.3.3",
     "recharts": "2.7.3",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0",
-    "ts-comparator": "^1.1.2",
-    "vis": "^4.21.0"
+    "redux-thunk": "2.3.0",
+    "ts-comparator": "^1.1.2"
   },
   "devDependencies": {
     "@types/isomorphic-fetch": "0.0.34",

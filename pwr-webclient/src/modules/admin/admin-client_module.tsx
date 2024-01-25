@@ -18,7 +18,6 @@ import {NotificationInbox} from './notification/notification-inbox_module';
 import {NotificationTrashbox} from './notification/notification-trashbox_module';
 import {ConsultantGrid} from './consultants/consultant-grid_module';
 import {SkillStatistics} from '../home/statistics/skill-statistics_module';
-import {ProfileNetwork} from './statistics/profile-network_module';
 import {AdminSkillTree2} from './info/tree/admin-skill-tree2_module';
 import {AdminProfileOverview} from './info/admin-profile-overview_module.';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
@@ -78,8 +77,6 @@ interface AdminClientDispatch {
 
     navigateToSkillStatistics(): void;
 
-    navigateToNetwork(): void;
-
     logOutAdmin(): void;
 }
 
@@ -114,9 +111,6 @@ class AdminClientModule extends React.Component<AdminClientProps
             },
             logOutAdmin: () => {
                 dispatch(AdminActionCreator.AsyncLogOutAdmin());
-            },
-            navigateToNetwork: () => {
-                dispatch(AdminActionCreator.AsyncNavigateToNetwork());
             }
         };
     }
@@ -238,16 +232,6 @@ class AdminClientModule extends React.Component<AdminClientProps
                                     </ListItemIcon>
                                     <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}/>
                                 </ListItem>
-                                <ListItem
-                                    button
-                                    key="AdminClient.Menu.Statistics.Network"
-                                    onClick={this.props.navigateToNetwork}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">collections</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Network')}/>
-                                </ListItem>
                             </List>
                         </Paper>
                     </div>
@@ -257,7 +241,6 @@ class AdminClientModule extends React.Component<AdminClientProps
                         <Route path={Paths.ADMIN_TEMPLATES} component={ReportManager}/>
                         <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox}/>
                         <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics}/>
-                        <Route path={Paths.ADMIN_STATISTICS_NETWORK} component={ProfileNetwork}/>
                         <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2}/>
                         <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={AdminProfileOverview}/>
                     </div>

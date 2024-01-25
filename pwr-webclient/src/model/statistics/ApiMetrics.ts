@@ -14,26 +14,6 @@ export interface APIProfileSkillMetric {
     missing: Array<string>;
 }
 
-// == API Network == //
-
-export interface APINode {
-    id: number;
-    initials: string;
-    cluster: number;
-    matchFactor: number;
-}
-
-export interface APIEdge {
-    node1: number;
-    node2: number;
-    strength: number;
-}
-
-export interface APINetwork {
-    nodes: Array<APINode>;
-    edges: Array<APIEdge>;
-}
-
 // == API consultant Info == //
 
 export interface APIAveragedSkill {
