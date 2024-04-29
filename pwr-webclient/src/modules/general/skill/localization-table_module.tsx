@@ -103,7 +103,6 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
     };
 
     private invokeAdd = () => {
-        //console.log(LanguageUtils.getISO639_2LanguageCode(this.state.locale));
         this.props.onLocaleAdd(this.state.locale, this.state.qualifier);
         this.closeDialog();
     };

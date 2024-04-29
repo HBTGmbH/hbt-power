@@ -13,7 +13,6 @@ export class OIDCService {
         this.msalInstance = MSALInstance.instance();
         this.msalInstance.accessMsal().handleRedirectPromise()
             .then(tokenResponse => {
-                console.log('Response: ', tokenResponse);
                 if (!tokenResponse) {
                     return;
                 }
@@ -22,7 +21,6 @@ export class OIDCService {
                 }
                 this.msalInstance.accessMsal().setActiveAccount(tokenResponse.account);
                 store.dispatch(CrossCuttingAsyncActionCreator.AsyncLogInUser(tokenResponse) as any);
-                console.log('Login success');
             })
             .catch(error => {
                 console.log('Login error', error);

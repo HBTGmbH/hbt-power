@@ -11,6 +11,7 @@ import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileAction
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
 import {ThunkDispatch} from 'redux-thunk';
+import {withRouter} from 'react-router-dom';
 
 interface ViewCardProps {
     viewProfile: ViewProfile;
@@ -18,6 +19,7 @@ interface ViewCardProps {
 
 interface ViewCardLocalProps {
     viewProfileId: string;
+    match?: any; // From react-router connection
 }
 
 interface ViewCardLocalState {
@@ -84,6 +86,7 @@ class ViewCardModule extends React.Component<ViewCardProps
 
 
     render() {
+        const initials = this.props.match.params.initials;
         return (
             <Card className="fullWidth">
                 <ViewProfileDialog
@@ -118,7 +121,7 @@ class ViewCardModule extends React.Component<ViewCardProps
                             style={{marginLeft: '8px', marginTop: '5px'}}
                             variant={'contained'}
                             className="mui-margin"
-                            onClick={() => this.props.navigateTo(Paths.USER_VIEW_PROFILE.replace(':id', this.props.viewProfileId))}
+                            onClick={() => this.props.navigateTo(Paths.build(Paths.USER_VIEW_PROFILE, {id: this.props.viewProfileId, initials}))}
                         >
                             <Icon className="material-icons">edit</Icon>
                             {PowerLocalize.get('ViewProfileCard.Action.Edit')}
@@ -147,10 +150,11 @@ class ViewCardModule extends React.Component<ViewCardProps
             </Card>);
     }
 }
+const WithRouterComponent = withRouter(props => <ViewCardModule {...props}/>);
 
 /**
  * @see ViewCardModule
  * @author nt
  * @since 11.09.2017
  */
-export const ViewCard: React.ComponentClass<ViewCardLocalProps> = connect(ViewCardModule.mapStateToProps, ViewCardModule.mapDispatchToProps)(ViewCardModule) as any;
+export const ViewCard: React.ComponentClass<ViewCardLocalProps> = connect(ViewCardModule.mapStateToProps, ViewCardModule.mapDispatchToProps)(WithRouterComponent) as any;

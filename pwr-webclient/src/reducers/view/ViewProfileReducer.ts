@@ -39,7 +39,6 @@ export namespace ViewProfileReducer {
             }
             case ActionType.SetParentCategories : {
                 let act: SetParentCategoryAction = action as SetParentCategoryAction;
-                console.log('Reducing categoryMap', act.categoryMap);
                 let map = store.parentsForSkill();
                 Object.keys(act.categoryMap).forEach(value => {
                     map = map.set(Number(value), act.categoryMap[value]);

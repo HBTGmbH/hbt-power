@@ -252,6 +252,7 @@ export namespace ViewProfileActionCreator {
             dispatch(CrossCuttingActionCreator.startRequest());
             viewProfileClient.postReport(initials, viewProfileId, templateId)
                 .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
+                // FIXME@nt fill initials!
                 .then(() => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_REPORTS)))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))

@@ -44,14 +44,16 @@ class AuthenticatedRouteModule extends React.Component<AuthenticatedRouteDialogP
 
     render() {
         // FIXME@nt here we need to somehow store the link we try to route to so that, later on,
-        console.log('isLoggedIn', this.props.isLoggedIn);
+        let allowed = true;
         if (!this.props.isLoggedIn) {
-            console.log('User is not logged in, redirect to login')
-            return <Redirect to={{pathname: Paths.APP_ROOT}}></Redirect>;
+            allowed = false;
         }
         if (this.props.requiresAdmin && !this.props.userIsAdmin) {
-            console.log('Route requires admin but user is not admin, redirect to profile selection')
-            return <Redirect to={{pathname: Paths.PROFILE_SELECT}}></Redirect>;
+            allowed = false;
+        }
+        if (!allowed) {
+            // if not allowed to route -> do not render that route!
+            return <></>
         }
         const rest = this.props;
         return (<Route {...rest}/>);

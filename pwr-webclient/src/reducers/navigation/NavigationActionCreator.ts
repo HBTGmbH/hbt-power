@@ -77,7 +77,6 @@ export namespace NavigationActionCreator {
             let currentLocation = state.navigationSlice.currentLocation();
             const hasChanges = storeHasUnsavedChanges(getState());
             if (target === Paths.USER_SPECIAL_LOGOUT) {
-                console.log('target === Paths.USER_SPECIAL_LOGOUT');
                 if (hasChanges) {
                     dispatch(SetNavigationTarget(target));
                 } else {
@@ -85,6 +84,7 @@ export namespace NavigationActionCreator {
                     dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
                 }
             }
+            //  FIXME@nt this probably doesn't work anymore right now
             if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && hasChanges) {
                 dispatch(SetNavigationTarget(target));
             } else {
@@ -98,7 +98,6 @@ export namespace NavigationActionCreator {
             let target: string = getState().navigationSlice.targetLocation();
             switch (target) {
                 case Paths.USER_SPECIAL_LOGOUT: {
-                    console.log(' case Paths.USER_SPECIAL_LOGOUT:');
                     navigate(Paths.APP_ROOT, dispatch);
                     dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
                     break;

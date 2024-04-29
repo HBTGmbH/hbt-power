@@ -10,6 +10,7 @@ import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import Edit from '@material-ui/icons/Edit';
 import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
+import {withRouter} from 'react-router-dom';
 
 interface BaseDataDashboardElementProps {
     profilePictureSrc: string;
@@ -19,6 +20,7 @@ interface BaseDataDashboardElementProps {
 
 interface BaseDataDashboardElementLocalProps {
     greeting: string;
+    match?: any; // From react-router
 }
 interface BaseDataDashboardElementDispatch {
     navigateTo(target: string): void;
@@ -42,7 +44,8 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
     }
 
     private handleEditButtonClick = () => {
-        this.props.navigateTo(Paths.USER_PROFILE);
+        const initials = this.props.match.params.initials;
+        this.props.navigateTo(Paths.build(Paths.USER_PROFILE, {initials}));
     };
 
     render() {
@@ -72,9 +75,11 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
     }
 }
 
+const WithRouterComponent = withRouter(props => <BaseDataDashboardElementModule {...props}/>);
+
 /**
  * @see BaseDataDashboardElementModule
  * @author nt
  * @since 27.09.2017
  */
-export const BaseDataDashboardElement = connect(BaseDataDashboardElementModule.mapStateToProps, BaseDataDashboardElementModule.mapDispatchToProps)(BaseDataDashboardElementModule);
+export const BaseDataDashboardElement = connect(BaseDataDashboardElementModule.mapStateToProps, BaseDataDashboardElementModule.mapDispatchToProps)(WithRouterComponent);

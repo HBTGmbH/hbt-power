@@ -19,6 +19,7 @@ import {Paths} from '../../Paths';
 import {PwrRaisedButton} from '../general/pwr-raised-button';
 import Add from '@material-ui/icons/Add';
 import {ThunkDispatch} from 'redux-thunk';
+import {withRouter} from 'react-router-dom';
 
 /**
  * Properties that are managed by react-redux.
@@ -40,7 +41,7 @@ interface PowerOverviewProps {
  * managed by redux.
  */
 interface PowerOverviewLocalProps {
-
+    match?: any; // from react-router
 }
 
 /**
@@ -93,13 +94,6 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     }
 
     componentDidMount() {
-        // FIXME@nt get initials from path (Once we are able to restore paths again)
-        // const initials = window.localStorage.getItem(COOKIE_INITIALS_NAME);
-        // if (!this.props.loggedInUser || !initials) {
-        //     this.props.navigateTo(Paths.APP_ROOT);
-        // } else {
-        //     this.props.requestSingleProfile(initials);
-        // }
     }
 
     private setViewDialogOpen(isOpen: boolean) {
@@ -123,6 +117,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
 
 
     render() {
+        const initials = this.props.match.params.initials;
         return (
             <div>
                 <div className="col-md-5 col-md-offset-1">
@@ -166,7 +161,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                 </div>
                                 <div className={'col-md-6'}>
                                     <PwrRaisedButton color={'primary'}
-                                                     onClick={() => this.props.navigateTo(Paths.USER_REPORTS)}
+                                                     onClick={() => this.props.navigateTo(Paths.build(Paths.USER_REPORTS, {initials}))}
                                                      icon={<></>} text={PowerLocalize.get('Report.History')}/>
                                 </div>
                                 <div className="row">
@@ -186,9 +181,11 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     }
 }
 
+const WithRouterComponent = withRouter(props => <PowerOverviewModule {...props}/>);
+
 /**
  * @see PowerOverviewModule
  * @author nt
  * @since 22.05.2017
  */
-export const PowerOverview = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(PowerOverviewModule);
+export const PowerOverview = connect(PowerOverviewModule.mapStateToProps, PowerOverviewModule.mapDispatchToProps)(WithRouterComponent);

@@ -20,10 +20,11 @@ import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {CrossCuttingAsyncActionCreator} from '../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
+import {withRouter} from 'react-router-dom';
 
 interface ToolbarProps {
-    userInitials: string;
     loggedInAsAdmin: boolean;
+    hasProfilePicture: boolean;
     statisticsAvailable: boolean;
     profilePictureSrc: string;
     viewProfiles: Array<ViewProfile>;
@@ -37,7 +38,7 @@ interface ToolbarProps {
  * and is being managed by redux.
  */
 interface ToolbarLocalProps {
-
+    match?: any;
 }
 
 /**
@@ -78,11 +79,11 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     static mapStateToProps(state: ApplicationState, _: ToolbarLocalProps): ToolbarProps {
         const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
-            userInitials: state.profileStore.consultant.initials,
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available(),
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray(),
             profilePictureSrc,
+            hasProfilePicture: !!state.profileStore.consultant.profilePictureId,
             consultantInfo: [...state.adminReducer.consultantInfo()].sort((a, b) => a.name.localeCompare(b.name))
         };
     }
@@ -114,9 +115,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         this.handleMenuClose();
         this.props.navigateTo(target);
     };
-    private getInitials = () => {
-        return this.props.userInitials;
-    };
 
 
     private renderPower = () => {
@@ -127,33 +125,30 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         );
     };
 
-    private loadConsultantClusterInfo = () => {
-        // FIXME move this into the async action.
+    private loadConsultantClusterInfo = (initials: string) => {
         this.handleMenuClose();
-        this.props.loadConsultantClusterInfo(this.props.userInitials);
-        this.props.navigateTo(Paths.USER_STATISTICS_CLUSTERINFO);
+        this.props.loadConsultantClusterInfo(initials);
+        this.props.navigateTo(Paths.build(Paths.USER_STATISTICS_CLUSTERINFO, {initials}));
     };
 
-    private loadSkillStatistics = () => {
-        // FIXME move this into the async action.
+    private loadSkillStatistics = (initials: string) => {
         this.handleMenuClose();
         this.props.loadSkillStatistics();
-        this.props.navigateTo(Paths.USER_STATISTICS_SKILLS);
+        this.props.navigateTo(Paths.build(Paths.USER_STATISTICS_SKILLS, {initials}));
     };
 
     private logOutUser = () => {
-        console.log('logOutUser');
         this.props.navigateTo(Paths.USER_SPECIAL_LOGOUT);
     };
 
-    private renderViewProfile = (viewProfile: ViewProfile) => {
+    private renderViewProfile = (viewProfile: ViewProfile, initials: string) => {
         let text = viewProfile.viewProfileInfo.name;
         if (text === null || text.trim() === '') {
             text = viewProfile.id;
         }
         return <MenuItem
             key={viewProfile.id}
-            onClick={() => this.handleMenuNavigate(Paths.USER_VIEW_PROFILE.replace(':id', viewProfile.id))}
+            onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_VIEW_PROFILE, {id: viewProfile.id, initials}))}
         >
             <ListItemText>
                 {text}
@@ -161,7 +156,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         </MenuItem>;
     };
 
-    private renderMenu = () => {
+    private renderMenu = (initials: string) => {
         return (<div>
 
                 <Menu
@@ -172,7 +167,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 >
                     <MenuItem
                         key={'1'}
-                        onClick={() => this.handleMenuNavigate(Paths.USER_HOME)}
+                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_HOME, {initials}))}
                     >
                         <Icon className="material-icons">home</Icon>
                         <ListItemText>
@@ -181,7 +176,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     </MenuItem>
                     <MenuItem
                         key={'2'}
-                        onClick={() => this.handleMenuNavigate(Paths.USER_PROFILE)}
+                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_PROFILE, {initials}))}
                     >
                         <Icon className="material-icons">person</Icon>
                         <ListItemText>
@@ -198,7 +193,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 <Icon className="material-icons">keyboard_arrow_right</Icon>
                             </MenuItem>
                             <Collapse in={this.state.profilesOpen}>
-                                {this.props.viewProfiles.map(this.renderViewProfile)}
+                                {this.props.viewProfiles.map(vp => this.renderViewProfile(vp, initials))}
                             </Collapse>
                         </div>
                         : null
@@ -216,7 +211,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                     <Collapse in={this.state.statisticsOpen}>
                                         <MenuItem
                                             key="Menu.Statistics.Network.Clusterinfo"
-                                            onClick={this.loadConsultantClusterInfo}
+                                            onClick={() => this.loadConsultantClusterInfo(initials)}
                                         >
                                             <ListItemIcon>
                                                 <Icon className="material-icons">info</Icon>
@@ -227,7 +222,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                         </MenuItem>
                                         <MenuItem
                                             key="Menu.Statistics.Skills"
-                                            onClick={this.loadSkillStatistics}
+                                            onClick={() => this.loadSkillStatistics(initials)}
                                         >
                                             <ListItemIcon>
                                                 <Icon className="material-icons">palette</Icon>
@@ -243,7 +238,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     }
                     <MenuItem
                         key={'6'}
-                        onClick={() => this.handleMenuNavigate(Paths.USER_REPORTS)}
+                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_REPORTS, {initials}))}
                     >
                         <Icon className="material-icons">folder</Icon>
                         <ListItemText>
@@ -253,7 +248,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     </MenuItem>
                     <MenuItem
                         key={'7'}
-                        onClick={() => this.handleMenuNavigate(Paths.USER_SEARCH)}
+                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_SEARCH, {initials}))}
                     >
                         <Icon className="material-icons">search</Icon>
                         <ListItemText>
@@ -270,6 +265,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
      * @returns {any}
      */
     render() {
+        const initials = this.props.match.params.initials;
         return (
             <div>
                 <AppBar color={'primary'}>
@@ -282,15 +278,19 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         >
                             <Icon className="material-icons">menu</Icon>
                         </IconButton>
-                        {this.renderMenu()}
+                        {this.renderMenu(initials)}
 
                         {this.renderPower()}
-                        <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + this.getInitials()}>
-                            <Avatar
-                                src={this.props.profilePictureSrc}
-                                style={{width: 40, height: 40}}
-                            />
-                        </Tooltip>
+                        {
+                            this.props.hasProfilePicture ?
+                                <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + initials}>
+                                    <Avatar
+                                      src={this.props.profilePictureSrc}
+                                      style={{width: 40, height: 40}}
+                                    />
+                                </Tooltip>
+                              : null
+                        }
                         {
                             this.props.loggedInAsAdmin ?
                                 <Tooltip title={PowerLocalize.get('Tooolbar.ToAdminOverview')}>
@@ -305,9 +305,14 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 : null
                         }
                         {
-                            this.props.loggedInAsAdmin ?
+                            this.props.loggedInAsAdmin && this.props.consultantInfo.length >= 1 ?
                               <FormControl>
-                                <Select rowsMax={15} className="select-in-toolbar" value={this.props.userInitials} onChange={(event) => this.props.changeConsultant(event.target.value as string)}>
+                                <Select rowsMax={15}
+                                        className="select-in-toolbar"
+                                        value={initials}
+                                        defaultValue=""
+                                        onChange={(event) => this.props.changeConsultant(event.target.value as string)}
+                                >
                                     {
                                         this.props.consultantInfo.map(consultantInfo => <MenuItem key={consultantInfo.initials} value={consultantInfo.initials}>{consultantInfo.name}</MenuItem> )
                                     }
@@ -331,4 +336,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     }
 }
 
-export const PowerToolbar = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(PowerToolbarModule);
+const WithRouterComponent = withRouter(props => <PowerToolbarModule {...props}/>);
+
+export const PowerToolbar = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(WithRouterComponent);

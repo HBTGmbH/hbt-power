@@ -296,7 +296,7 @@ export class AdminActionCreator {
 
     public static AsyncRedirectToUser(initials: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials));
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_PROFILE.replace(":initials", initials)));
         };
     }
 

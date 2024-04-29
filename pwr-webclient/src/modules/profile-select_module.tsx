@@ -42,7 +42,7 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileSelectDispatch {
         return {
             openProfile: (initials) => {
-                dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials));
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.build(Paths.USER_HOME, {initials})));
             },
             openAdminArea: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_BASE)),
         };

@@ -61,7 +61,6 @@ export class PowerHttpClient {
      * Override this if you want to change the behavior of request beginning
      */
     beginRequest = () => {
-        //console.log(store.getState().adminReducer.adminPass());
         store.dispatch(CrossCuttingActionCreator.startRequest());
     };
 

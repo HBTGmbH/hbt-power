@@ -16,17 +16,25 @@ export class Paths {
 
     public static readonly USER_SPECIAL_LOGOUT = '##LOGOUT_USER##';
 
-    public static readonly USER_BASE = CONFIG.APP_PATH + '/app/';
+    public static readonly USER_BASE = CONFIG.APP_PATH + '/app/:initials';
     public static readonly PROFILE_SELECT = CONFIG.APP_PATH + '/profilauswahl';
-    public static readonly USER_HOME = CONFIG.APP_PATH + '/app/home';
-    public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/view/:id';
-    public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/profile';
-    public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/reports';
-    public static readonly USER_SEARCH = CONFIG.APP_PATH + '/app/search';
-    public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/statistics/clusterinfo';
-    public static readonly USER_STATISTICS_SKILLS = CONFIG.APP_PATH + '/app/statistics/skills';
+    public static readonly USER_HOME = CONFIG.APP_PATH + '/app/:initials/home';
+    public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/:initials/view/:id';
+    public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/:initials/profile';
+    public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/:initials/reports';
+    public static readonly USER_SEARCH = CONFIG.APP_PATH + '/app/:initials/search';
+    public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/:initials/statistics/clusterinfo';
+    public static readonly USER_STATISTICS_SKILLS = CONFIG.APP_PATH + '/app/:initials/statistics/skills';
 
     constructor() {
 
+    }
+
+    public static build(path: string, params: Record<string, string>): string {
+        let result = path;
+        for (let key in params) {
+            result = result.replace(`:${key}`, params[key]);
+        }
+        return result;
     }
 }
