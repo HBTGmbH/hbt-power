@@ -29,7 +29,7 @@ export namespace CrossCuttingAsyncActionCreator {
     }
 
     export function AsyncLogOutUser() {
-        return function(dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function(dispatch: ThunkDispatch<any, any, any>) {
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.INITIALS));
             dispatch(resetProfileStore());
             dispatch(ViewProfileActionCreator.ResetViewState());
@@ -38,7 +38,7 @@ export namespace CrossCuttingAsyncActionCreator {
     }
 
     export function AsyncRenewLogin(authResponse: AuthenticationResult) {
-        return function(dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function(dispatch: ThunkDispatch<any, any, any>) {
             // If the user is an admin => validate admin authentication
             if (isAdmin(authResponse)) {
                 dispatch(AdminActionCreator.AsyncValidateAuthentication());
@@ -88,7 +88,7 @@ export namespace CrossCuttingAsyncActionCreator {
     }
 
     export function AsyncLogInUser(authResponse: AuthenticationResult) {
-        return function(dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function(dispatch: ThunkDispatch<any, any, any>) {
             if (isAdmin(authResponse)) {
                 dispatch(AdminActionCreator.AsyncValidateAuthentication());
             }

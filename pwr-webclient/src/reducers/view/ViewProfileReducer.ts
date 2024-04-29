@@ -3,7 +3,6 @@ import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {ViewProfileActions} from './ViewProfileActions';
 import {AbstractAction} from '../BaseActions';
-import {ViewCategory} from '../../model/view/ViewCategory';
 
 export namespace ViewProfileReducer {
     import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;

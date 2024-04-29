@@ -76,7 +76,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
         this.resetLocalState();
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: PowerOverviewLocalProps): PowerOverviewProps {
+    static mapStateToProps(state: ApplicationState): PowerOverviewProps {
         return {
             loggedInUser: state.profileStore.consultant,
             viewProfiles: state.viewProfileSlice.viewProfiles().toArray()

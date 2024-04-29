@@ -92,7 +92,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncCreateChangedViewProfile(initials: string, oldId: string, newName: string, newDescription: string, keepOld: boolean) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let body = {
                 name: newName,
@@ -307,7 +307,7 @@ export namespace ViewProfileActionCreator {
     }
 
     export function AsyncGetParentCategories(skill: ViewSkill) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             viewProfileClient.getParentCategories(skill.name)
                 .then((response) => dispatch(SetParentForSkill(response)))
                 .catch((error) => console.error(error))

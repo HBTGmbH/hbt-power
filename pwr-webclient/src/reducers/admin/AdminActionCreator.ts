@@ -30,7 +30,6 @@ import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {PowerApiError} from '../../clients/PowerHttpClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
 import {Alerts} from '../../utils/Alerts';
-import {CrossCuttingAsyncActionCreator} from '../crosscutting/CrossCuttingAsyncActionCreator';
 import {SuggestionAsyncActionCreator} from '../suggestions/SuggestionAsyncActionCreator';
 import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';

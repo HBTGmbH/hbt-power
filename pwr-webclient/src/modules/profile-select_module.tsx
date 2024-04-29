@@ -10,7 +10,6 @@ import {getImagePath} from '../API_CONFIG';
 import {PwrRaisedButton} from './general/pwr-raised-button';
 import ArrowRight from '@material-ui/icons/ArrowRight';
 import {connect} from 'react-redux';
-import {CrossCuttingAsyncActionCreator} from '../reducers/crosscutting/CrossCuttingAsyncActionCreator';
 import {NavigationActionCreator} from '../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../Paths';
 
