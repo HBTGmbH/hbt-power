@@ -56,9 +56,9 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
 
     }
 
-    public static mapStateToProps(state: ApplicationState, localProps: AddSkill_ModuleLocalProps): AddSkill_ModuleProps {
+    public static mapStateToProps(state: ApplicationState): AddSkill_ModuleProps {
         return {
-            histories: state.skillReducer.categorieHierarchiesBySkillName(),
+            histories: state.skillReducer.categorieHierarchiesBySkillName,
         };
     }
 

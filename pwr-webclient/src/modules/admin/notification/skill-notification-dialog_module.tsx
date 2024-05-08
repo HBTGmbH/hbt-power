@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {
     Button,
     CircularProgress,
@@ -70,7 +69,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
     static mapStateToProps(state: ApplicationState, localProps: SkillNotificationModuleLocalProps): SkillNotificationModuleProps {
         let hierarchy = '';
         if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
-            hierarchy = state.skillReducer.categorieHierarchiesBySkillName().get(state.adminReducer.selectedSkillNotification().newName());
+            hierarchy = state.skillReducer.categorieHierarchiesBySkillName.get(state.adminReducer.selectedSkillNotification().newName());
         }
         let newSkillName = '';
         if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {

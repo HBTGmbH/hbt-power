@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {SkillCategory} from '../../../../model/skill/SkillCategory';
 import {SkillActionCreator} from '../../../../reducers/skill/SkillActionCreator';
@@ -28,10 +27,6 @@ interface AdminSkillTree2Props {
     categoriesById: Immutable.Map<number, SkillCategory>;
     skillsById: Immutable.Map<number, SkillServiceSkill>;
     filterNonCustomSkills: boolean;
-}
-
-interface AdminSkillTree2LocalProps {
-
 }
 
 interface AdminSkillTree2LocalState {
@@ -84,9 +79,7 @@ interface AdminSkillTree2Dispatch {
 }
 
 
-class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
-    & AdminSkillTree2LocalProps
-    & AdminSkillTree2Dispatch, AdminSkillTree2LocalState> {
+class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & AdminSkillTree2Dispatch, AdminSkillTree2LocalState> {
 
     private readonly NO_ID = -99999;
 
@@ -104,13 +97,13 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: AdminSkillTree2LocalProps): AdminSkillTree2Props {
+    static mapStateToProps(state: ApplicationState): AdminSkillTree2Props {
         return {
             skillStore: state.skillReducer,
-            root: state.skillReducer.skillTreeRoot(),
-            categoriesById: state.skillReducer.categoriesById(),
-            skillsById: state.skillReducer.skillsById(),
-            filterNonCustomSkills: state.skillReducer.filterNonCustomSkills()
+            root: state.skillReducer.skillTreeRoot,
+            categoriesById: state.skillReducer.categoriesById,
+            skillsById: state.skillReducer.skillsById,
+            filterNonCustomSkills: state.skillReducer.filterNonCustomSkills
         };
     };
 
@@ -253,12 +246,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props
     private openCategorySearcher = () => {
         this.setState({
             categorySearcherOpen: true
-        });
-    };
-
-    private openMoveCategorySearcher = () => {
-        this.setState({
-            moveCategorySearcher: true
         });
     };
 

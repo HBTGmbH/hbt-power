@@ -7,7 +7,6 @@ import {RequestStatus} from '../../Store';
 import {AxiosError, AxiosResponse} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
-import {isNullOrUndefined} from 'util';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {SkillServiceError} from '../../model/skill/SkillServiceError';
@@ -225,7 +224,7 @@ export namespace SkillActionCreator {
     export function AsyncRequestSkillHierarchy(skillName: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let state = getState();
-            if (!state.skillReducer.categorieHierarchiesBySkillName().has(skillName)) {
+            if (!state.skillReducer.categorieHierarchiesBySkillName.has(skillName)) {
                 skillClient.getSkillByName(skillName)
                     .then((skill) => dispatch(ReadSkillHierarchy(skill)))
 
@@ -305,27 +304,6 @@ export namespace SkillActionCreator {
         };
     }
 
-    /**
-     * Retrieves a {@link SkillServiceSkill} from the skill service and adds it to the {@link SkillStore}.
-     *
-     * If the skill is already present, no operation is performed.
-     *
-     * @param qualifier of the skill to be retrieved
-     * @param force forces a retrieval of the skill even if it is already loaded (Can be used to perform an update operation). Default: false
-     * @constructor
-     */
-    export function AsyncGetSkillByName(qualifier: string, force?: boolean) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            if (!isNullOrUndefined(force)) {
-                force = false;
-            }
-            if (!getState().skillReducer.skillWithQualifierExists(qualifier)) {
-                skillClient.getSkillByName(qualifier)
-                    .then((skill) => dispatch(AddSkillToTree(SkillServiceSkill.fromAPI(skill).categoryId(), SkillServiceSkill.fromAPI(skill))))
-                    .catch(error => handleSkillServiceError(error));
-            }
-        };
-    }
 
     export function AsyncMoveSkill(skillId: number, newCategoryId: number, oldCategoryId: number) {
         return function (dispatch: redux.Dispatch) {

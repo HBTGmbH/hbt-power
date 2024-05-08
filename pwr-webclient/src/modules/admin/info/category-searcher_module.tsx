@@ -3,7 +3,7 @@ import {SkillCategory} from '../../../model/skill/SkillCategory';
 import {Dialog, DialogContent, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
-import {SkillStore} from '../../../model/skill/SkillStore';
+import {getInverseCategoryHierarchy, SkillStore} from '../../../model/skill/SkillStore';
 import {StringUtils} from '../../../utils/StringUtil';
 import filterFuzzy = StringUtils.filterFuzzy;
 
@@ -56,7 +56,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
                 <span style={{
                     fontSize: '10px',
                     fontStyle: 'italic'
-                }}>{this.props.skillStore.getInverseCategoryHierarchy(category.id())}</span>
+                }}>{getInverseCategoryHierarchy(category.id(), this.props.skillStore)}</span>
             </div>
         </ListItem>;
     };

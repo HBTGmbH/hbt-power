@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {List, ListItem, Paper, TextField} from '@material-ui/core';
 import {Comparators} from '../../../../utils/Comparators';
@@ -59,7 +58,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         return {
             usedSkillNames: state.suggestionStore.allSkills,
             skillUsageInfo: state.statisticsReducer.skillUsageInfo(),
-            skillHierarchies: state.skillReducer.categorieHierarchiesBySkillName()
+            skillHierarchies: state.skillReducer.categorieHierarchiesBySkillName
         };
     }
 
