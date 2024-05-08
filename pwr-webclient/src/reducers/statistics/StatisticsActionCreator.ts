@@ -1,7 +1,6 @@
-import * as redux from 'redux';
 import * as Immutable from 'immutable';
 import {ApplicationState} from '../reducerIndex';
-import {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
+import {AxiosError, AxiosRequestConfig} from 'axios';
 import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {
     AddNameEntityUsageInfoAction,
@@ -20,8 +19,7 @@ import {NameEntity} from '../profile-new/profile/model/NameEntity';
 import {ProfileElementType} from '../../Store';
 import {AbstractAction} from '../BaseActions';
 import {StatisticsServiceClient} from '../../clients/StatisticsServiceClient';
-import {AnyAction} from 'redux';
-import {ThunkAction, ThunkDispatch} from 'redux-thunk';
+import {ThunkDispatch} from 'redux-thunk';
 
 const statisticsClient = StatisticsServiceClient.instance();
 
@@ -86,8 +84,8 @@ export class StatisticsActionCreator {
     public static AsyncCheckAvailability() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.headStatisticsServiceAvailable()
-                .then((response: AxiosResponse) => dispatch(StatisticsActionCreator.StatisticsAvailable()))
-                .catch(error => dispatch(StatisticsActionCreator.StatisticsNotAvailable()));
+                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+                .catch(() => dispatch(StatisticsActionCreator.StatisticsNotAvailable()));
         };
     }
 
@@ -136,23 +134,16 @@ export class StatisticsActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getScatterSkills()
                 .then((skills) => dispatch(StatisticsActionCreator.ReceiveScatterSkills(Immutable.List<ScatterSkill>(skills.map(value => ScatterSkill.fromAPI(value))))))
-                .then((skills) => dispatch(StatisticsActionCreator.StatisticsAvailable()))
+                .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
                 .catch((error: any) => console.error(error))
                 .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
         };
     }
 
-    /**
-     * Requests name entity info unless the info is already available in the store.
-     * @param nameEntity
-     * @param type
-     * @returns {(dispatch:redux.Dispatch, getState:()=>ApplicationState)=>undefined}
-     * @constructor
-     */
     public static AsyncRequestNameEntityUsageInfo(nameEntity: NameEntity, type: ProfileElementType) {
         return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let state = getState();
-            if (!state.statisticsReducer.nameEntityUsageInfo().has(nameEntity)) {
+            if (!state.statisticsReducer.nameEntityUsageInfo.has(nameEntity)) {
                 let config: AxiosRequestConfig = {
                     params: {
                         'name-entity': nameEntity.name,
@@ -172,7 +163,7 @@ export class StatisticsActionCreator {
     public static AsyncRequestSkillUsageInfo(skillName: string) {
         return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let state = getState();
-            if (!state.statisticsReducer.skillUsageInfo().has(skillName)) {
+            if (!state.statisticsReducer.skillUsageInfo.has(skillName)) {
                 statisticsClient.getSkillUsageInfo(skillName)
                     .then((infos) => dispatch(StatisticsActionCreator.AddSkillUsageInfo(skillName,
                         infos.map(value => ConsultantInfo.fromAPI(value)))))

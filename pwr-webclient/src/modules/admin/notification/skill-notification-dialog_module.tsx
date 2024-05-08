@@ -66,7 +66,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
     & SkillNotificationModuleLocalProps
     & SkillNotificationModuleDispatch, SkillNotificationModuleLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: SkillNotificationModuleLocalProps): SkillNotificationModuleProps {
+    static mapStateToProps(state: ApplicationState): SkillNotificationModuleProps {
         let hierarchy = '';
         if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification)) {
             hierarchy = state.skillReducer.categorieHierarchiesBySkillName.get(state.adminReducer.selectedSkillNotification.newName());

@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ProfileElementType} from '../../../../Store';
 import {FormControl, InputLabel, List, ListItem, MenuItem, Paper, Select, withTheme} from '@material-ui/core';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
@@ -65,7 +64,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         this.props.requestAllNameEntities();
     };
 
-    static mapStateToProps(state: ApplicationState, localProps: NameEntityOverviewLocalProps): NameEntityOverviewProps {
+    static mapStateToProps(state: ApplicationState): NameEntityOverviewProps {
         return {
             sectors: state.suggestionStore.allIndustrialSectors.sort(NAME_ENTITY_BY_NAME),
             keySkills: state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
@@ -77,7 +76,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
             projectRoles: state.suggestionStore.allProjectRoles.sort(NAME_ENTITY_BY_NAME),
             companies: state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
             currentlyUsedSkillNames: state.suggestionStore.allSkills,
-            nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo(),
+            nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo,
         };
     }
 
@@ -157,7 +156,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                             {
                                 NameEntityUtil
                                     .getProfileElementTypes()
-                                    .map((value, index, array) => <MenuItem key={value} value={value}
+                                    .map((value) => <MenuItem key={value} value={value}
                                                                             button><ListItemText
                                         primary={PowerLocalize.get(`NameEntityType.${value}`)}/></MenuItem>)
                             }

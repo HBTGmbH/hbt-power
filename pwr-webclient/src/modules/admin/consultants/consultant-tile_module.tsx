@@ -96,7 +96,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
     };
 
 
-    private handleMenuClose = (event: any) => {
+    private handleMenuClose = () => {
         this.setState({
             menuAnchorEl: null
         });
@@ -178,12 +178,4 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
     }
 }
 
-/**
- * Renders a single {@link GridTile} with all necessary information to represent a consultant for a brief overview.
- * The grid tile contains name, profile pictures and provides ways to edit the consultant details and to quickly
- * switch to their respective profile.
- * @see ConsultantTileModule
- * @author nt
- * @since 07.06.2017
- */
 export const ConsultantTile = connect(ConsultantTileModule.mapStateToProps, ConsultantTileModule.mapDispatchToProps)(ConsultantTileModule);

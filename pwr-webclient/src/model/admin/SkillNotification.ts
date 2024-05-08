@@ -1,8 +1,6 @@
-import {doop} from 'doop';
 import {AdminNotification, APIAdminNotification} from './AdminNotification';
 import {Skill} from '../Skill';
 import {APISkill} from '../APIProfile';
-import {AdminState} from './AdminState';
 
 export interface APISkillNotification extends APIAdminNotification {
     skill: APISkill;

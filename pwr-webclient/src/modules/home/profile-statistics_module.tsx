@@ -1,14 +1,12 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
-import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import Paper from '@material-ui/core/Paper';
 import {Color} from '../../utils/ColorUtil';
 import {Profile} from '../../reducers/profile-new/profile/model/Profile';
-import {ThunkDispatch} from 'redux-thunk';
 import {Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip} from "recharts";
 
 
@@ -34,15 +32,15 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
     & ProfileStatisticsLocalProps
     & ProfileStatisticsDispatch, ProfileStatisticsLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: ProfileStatisticsLocalProps): ProfileStatisticsProps {
+    static mapStateToProps(state: ApplicationState): ProfileStatisticsProps {
         return {
-            profileSkillMetrics: state.statisticsReducer.activeProfileMetric(),
+            profileSkillMetrics: state.statisticsReducer.activeProfileMetric,
             profile: state.profileStore.profile,
-            available: state.statisticsReducer.available()
+            available: state.statisticsReducer.available
         };
     }
 
-    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProfileStatisticsDispatch {
+    static mapDispatchToProps(): ProfileStatisticsDispatch {
         return {};
     }
 
@@ -89,7 +87,7 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
         if (!this.props.available) {
             return <NoStatisticsAvailable/>;
         }
-        if (isNullOrUndefined(this.props.profileSkillMetrics))
+        if (!this.props.profileSkillMetrics)
             return <div/>;
         return (
             <Paper className="dashboard-element">

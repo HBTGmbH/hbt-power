@@ -1,9 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {isNullOrUndefined} from 'util';
-import {Avatar, Button, Icon, Paper} from '@material-ui/core';
+import {Avatar, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
@@ -34,9 +32,9 @@ interface MissingCommonDashboardElementDispatch {
 
 class MissingCommonDashboardElementModule extends React.Component<MissingCommonDashboardElementProps & MissingCommonDashboardElementLocalProps & MissingCommonDashboardElementDispatch, MissingCommonDashboardElementLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: MissingCommonDashboardElementLocalProps): MissingCommonDashboardElementProps {
+    static mapStateToProps(state: ApplicationState): MissingCommonDashboardElementProps {
         return {
-            profileSkillMetrics: state.statisticsReducer.activeProfileMetric(),
+            profileSkillMetrics: state.statisticsReducer.activeProfileMetric,
         };
     }
 
@@ -69,7 +67,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
     };
 
     render() {
-        if (isNullOrUndefined(this.props.profileSkillMetrics)) {
+        if (!this.props.profileSkillMetrics) {
             return <div/>;
         } else {
             return (<Paper className="dashboard-element">

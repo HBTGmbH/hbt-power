@@ -10,7 +10,6 @@ import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import {PwrIconButton} from '../../general/pwr-icon-button';
 import {ThunkDispatch} from 'redux-thunk';
-import DialogContentText from '@material-ui/core/DialogContentText';
 
 /**
  * Properties that are managed by react-redux.
@@ -87,12 +86,6 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
             deleteConsultant: (initials => dispatch(AdminActionCreator.AsyncDeleteConsultant(initials)))
         };
     }
-
-    private setEditDisabled = (disabled: boolean) => {
-        this.setState({
-            editDisabled: disabled
-        });
-    };
 
     private setFirstName = (val: string) => {
         this.setState({

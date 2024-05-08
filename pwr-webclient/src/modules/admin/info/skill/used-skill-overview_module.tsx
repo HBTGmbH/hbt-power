@@ -54,10 +54,10 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: UsedSkillOverviewLocalProps): UsedSkillOverviewProps {
+    static mapStateToProps(state: ApplicationState): UsedSkillOverviewProps {
         return {
             usedSkillNames: state.suggestionStore.allSkills,
-            skillUsageInfo: state.statisticsReducer.skillUsageInfo(),
+            skillUsageInfo: state.statisticsReducer.skillUsageInfo,
             skillHierarchies: state.skillReducer.categorieHierarchiesBySkillName
         };
     }
@@ -129,7 +129,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     };
 
     render() {
-        let res = null;
+        let res;
         if (this.state.filterString !== '') {
             res = this.props.usedSkillNames.filter((value) => filterFuzzy(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
         } else {

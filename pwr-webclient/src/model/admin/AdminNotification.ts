@@ -1,5 +1,3 @@
-import {doop} from 'doop';
-import {ProfileEntryNotification} from './ProfileEntryNotification';
 import {AdminNotificationReason, AdminNotificationReasonUtil} from './AdminNotificationReason';
 
 /**

@@ -1,29 +1,14 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
-import {
-    Button,
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    Radio,
-    RadioGroup,
-    Step,
-    StepLabel,
-    Stepper,
-    TextField
-} from '@material-ui/core';
+import {Button, Dialog, DialogContent, DialogTitle, FormControl, Radio, RadioGroup, Step, StepLabel, Stepper, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {isNullOrUndefined} from 'util';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
-import {StringUtils} from '../../../utils/StringUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {provideValueTo} from '../../../utils/ReactUtils';
-import formatString = StringUtils.formatString;
 import {ThunkDispatch} from 'redux-thunk';
 
 // TODO radio button ohne form
@@ -285,13 +270,6 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
 
         }
         return <div/>;
-    };
-
-    private renderTitle = () => {
-        return formatString(
-            PowerLocalize.get('NotificationInbox.NameEntityNotification.SubjectTextTemplate'),
-            this.props.notification.nameEntity.name(),
-            NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity));
     };
 
     render() {

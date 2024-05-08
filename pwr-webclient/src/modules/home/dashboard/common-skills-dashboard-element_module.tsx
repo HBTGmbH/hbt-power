@@ -4,7 +4,6 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {Avatar, Paper} from '@material-ui/core';
 import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {isNullOrUndefined} from 'util';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
 import {getImagePath} from '../../../API_CONFIG';
@@ -30,9 +29,9 @@ interface CommonSkillsDashboardElementDispatch {
 
 class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDashboardElementProps & CommonSkillsDashboardElementLocalProps & CommonSkillsDashboardElementDispatch, CommonSkillsDashboardElementLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: CommonSkillsDashboardElementLocalProps): CommonSkillsDashboardElementProps {
+    static mapStateToProps(state: ApplicationState): CommonSkillsDashboardElementProps {
         return {
-            profileSkillMetrics: state.statisticsReducer.activeProfileMetric(),
+            profileSkillMetrics: state.statisticsReducer.activeProfileMetric,
         };
     }
 
@@ -57,7 +56,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
     };
 
     render() {
-        if (isNullOrUndefined(this.props.profileSkillMetrics)) {
+        if (!this.props.profileSkillMetrics) {
             return <div/>;
         } else {
             return (<Paper className="dashboard-element">

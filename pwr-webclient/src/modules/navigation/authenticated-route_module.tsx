@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {ThunkDispatch} from 'redux-thunk';
 import {LoginStatus} from '../../model/LoginStatus';
 import {Route} from 'react-router-dom';
 import {RouteProps} from 'react-router';
@@ -28,14 +27,14 @@ class AuthenticatedRouteModule extends React.Component<AuthenticatedRouteDialogP
     & AuthenticatedRouteDialogLocalProps
     & AuthenticatedRouteDialogDispatch, AuthenticatedRouteDialogLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: AuthenticatedRouteDialogLocalProps): AuthenticatedRouteDialogProps {
+    static mapStateToProps(state: ApplicationState): AuthenticatedRouteDialogProps {
         return {
             isLoggedIn: state.crossCutting.loginStatus === LoginStatus.SUCCESS,
             userIsAdmin: state.adminReducer.loginStatus === LoginStatus.SUCCESS,
         };
     }
 
-    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AuthenticatedRouteDialogDispatch {
+    static mapDispatchToProps(): AuthenticatedRouteDialogDispatch {
         return {};
     }
 

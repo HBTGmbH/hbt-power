@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {Button, Checkbox, GridList, Icon} from '@material-ui/core';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
@@ -43,7 +42,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ConsultantGridLocalProps): ConsultantGridProps {
+    static mapStateToProps(state: ApplicationState): ConsultantGridProps {
         return {
             consultantsByInitials: state.adminReducer.consultantsByInitials
         };

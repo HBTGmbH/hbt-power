@@ -1,5 +1,4 @@
-import {StatisticsStore} from '../../model/statistics/StatisticsStore';
-import {isNullOrUndefined} from 'util';
+import {emptyStatisticsStore, StatisticsStore} from '../../model/statistics/StatisticsStore';
 import {
     AddNameEntityUsageInfoAction,
     AddSkillUsageInfoAction,
@@ -19,42 +18,60 @@ export class StatisticsReducer {
 
     public static ReceiveSkillUsageMetrics(store: StatisticsStore, action: ReceiveSkillUsageMetricsAction): StatisticsStore {
         let metrics: Immutable.List<SkillUsageMetric> = Immutable.List<SkillUsageMetric>(action.metrics);
-        return store.skillUsages(metrics);
+        return {
+            ...store,
+            skillUsages: metrics
+        }
     }
 
     public static ReceiveRelativeSkillUsageMetrics(store: StatisticsStore, action: ReceiveSkillUsageMetricsAction): StatisticsStore {
         let metrics: Immutable.List<SkillUsageMetric> = Immutable.List<SkillUsageMetric>(action.metrics);
-        return store.relativeSkillUsages(metrics);
+        return {
+            ...store,
+            relativeSkillUsages: metrics,
+        }
     }
 
     public static ReceiveProfileSkillMetrics(store: StatisticsStore, action: ReceiveProfileSkillMetrics): StatisticsStore {
-        return store.activeProfileMetric(action.metrics);
+        return {
+            ...store,
+            activeProfileMetric: action.metrics
+        }
     }
 
     public static ReceiveConsultantClusterInfo(store: StatisticsStore, action: ReceiveConsultantClusterInfoAction): StatisticsStore {
-        return store.consultantClusterInfo(action.consultantClusterInfo);
+        return {
+            ...store,
+            consultantClusterInfo: action.consultantClusterInfo
+        }
     }
 
     public static ReceiveScatterSkills(store: StatisticsStore, action: ReceiveScatterSkillsAction): StatisticsStore {
-        return store.scatteredSkills(action.scatterSkills);
+        return {
+            ...store,
+            scatteredSkills: action.scatterSkills
+        }
     }
 
     public static AddNameEntityUsageInfo(store: StatisticsStore, action: AddNameEntityUsageInfoAction): StatisticsStore {
-        let map = store.nameEntityUsageInfo();
+        let map = store.nameEntityUsageInfo;
         map = map.set(action.nameEntity, Immutable.List<ConsultantInfo>(action.consultantInfos));
-        return store.nameEntityUsageInfo(map);
+        return {
+            ...store,
+            nameEntityUsageInfo: map
+        }
     }
 
     public static AddSkillUsageInfo(store: StatisticsStore, action: AddSkillUsageInfoAction): StatisticsStore {
-        let map = store.skillUsageInfo();
-        map = map.set(action.skillName, Immutable.List<ConsultantInfo>(action.consultantInfos));
-        return store.skillUsageInfo(map);
+        let skillUsageInfo = store.skillUsageInfo;
+        skillUsageInfo = skillUsageInfo.set(action.skillName, Immutable.List<ConsultantInfo>(action.consultantInfos));
+        return {
+            ...store,
+            skillUsageInfo,
+        }
     }
 
-    public static reduce(store: StatisticsStore, action: AbstractAction): StatisticsStore {
-        if (isNullOrUndefined(store)) {
-            return StatisticsStore.createEmpty();
-        }
+    public static reduce(store = emptyStatisticsStore(), action: AbstractAction): StatisticsStore {
         switch (action.type) {
             case ActionType.ReceiveRelativeSkillUsageMetrics:
                 return StatisticsReducer.ReceiveRelativeSkillUsageMetrics(store, action as ReceiveSkillUsageMetricsAction);
@@ -63,9 +80,15 @@ export class StatisticsReducer {
             case ActionType.ReceiveProfileSkillMetrics:
                 return StatisticsReducer.ReceiveProfileSkillMetrics(store, action as ReceiveProfileSkillMetrics);
             case ActionType.StatisticsAvailable:
-                return store.available(true);
+                return {
+                    ...store,
+                    available: true,
+                }
             case ActionType.StatisticsNotAvailable:
-                return store.available(false);
+                return {
+                    ...store,
+                    available: false,
+                }
             case ActionType.ReceiveConsultantClusterInfo:
                 return StatisticsReducer.ReceiveConsultantClusterInfo(store, action as ReceiveConsultantClusterInfoAction);
             case ActionType.ReceiveScatterSkills:

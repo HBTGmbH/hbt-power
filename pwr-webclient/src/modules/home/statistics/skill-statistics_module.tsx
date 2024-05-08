@@ -51,11 +51,11 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
 
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: SkillStatisticsLocalProps): SkillStatisticsProps {
+    static mapStateToProps(state: ApplicationState): SkillStatisticsProps {
         return {
-            usageMetrics: state.statisticsReducer.skillUsages(),
-            relativeUsageMetrics: state.statisticsReducer.relativeSkillUsages(),
-            scatterSkills: state.statisticsReducer.scatteredSkills()
+            usageMetrics: state.statisticsReducer.skillUsages,
+            relativeUsageMetrics: state.statisticsReducer.relativeSkillUsages,
+            scatterSkills: state.statisticsReducer.scatteredSkills
         };
     }
 

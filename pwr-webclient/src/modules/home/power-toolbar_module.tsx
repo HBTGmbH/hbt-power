@@ -80,7 +80,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             loggedInAsAdmin: state.adminReducer.loginStatus === LoginStatus.SUCCESS,
-            statisticsAvailable: state.statisticsReducer.available(),
+            statisticsAvailable: state.statisticsReducer.available,
             viewProfiles: state.viewProfileSlice.viewProfiles.toArray(),
             profilePictureSrc,
             hasProfilePicture: !!state.profileStore.consultant.profilePictureId,
