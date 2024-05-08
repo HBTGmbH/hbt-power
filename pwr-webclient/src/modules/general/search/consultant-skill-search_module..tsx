@@ -5,8 +5,6 @@ import {APISkill} from '../../../model/APIProfile';
 import {PwrAutoComplete} from '../pwr-auto-complete';
 import {StatisticsServiceClient} from '../../../clients/StatisticsServiceClient';
 import {SkillServiceClient} from '../../../clients/SkillServiceClient';
-// Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
-const ChipInput = require('material-ui-chip-input').default;
 
 
 interface ConsultantSkillInfo {

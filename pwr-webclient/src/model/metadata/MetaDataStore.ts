@@ -1,4 +1,3 @@
-import {doop} from 'doop';
 import {BuildInfo} from './BuildInfo';
 import * as Immutable from 'immutable';
 import {ClientBuildInfo} from './ClientBuildInfo';

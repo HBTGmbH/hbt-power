@@ -1,6 +1,5 @@
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {APINameEntity} from './APIProfile';
-import {doop} from 'doop';
 
 /**
  * Describes an unique name/qualifier.
@@ -21,15 +20,18 @@ import {doop} from 'doop';
  * {@link NameEntity} to choose from, and, as the {@link NameEntity.name} can be considered as identification, no two
  * {@link NameEntity} objects with the same name should exists.
  */
-@doop
 export class NameEntity {
+    private readonly _id: string;
+    private readonly _name: string;
+    private readonly _isNew: boolean;
+    private readonly _type: string;
+
     /**
      * ID of this {@NameEntity}. Represents identity throughout the whole API enviroment. A null ID sent
      * to the API represents a new {@link NameEntity}
      */
-    @doop
-    public get id() {
-        return doop<string, this>();
+    public id() {
+        return this._id;
     }
 
     /**
@@ -43,9 +45,12 @@ export class NameEntity {
      * the same class in this client. This has practical reasons: The signatures are identical on each {@link NameEntity},
      * which reduces cluttering of classes.
      */
-    @doop
-    public get name() {
-        return doop<string, this>();
+    public name() {
+        return this._name;
+    }
+
+    public setName(name: string): NameEntity {
+        return new NameEntity(this._id, name, this._isNew, this._type);
     }
 
     /**
@@ -54,18 +59,12 @@ export class NameEntity {
      *
      * New {@link NameEntity} objects need their ID set to null before persisiting them against the API.
      */
-    @doop
-    public get isNew() {
-        return doop<boolean, this>();
+    public isNew() {
+        return this._isNew;
     }
 
-    /**
-     * "API-Transient", has to be kept the same. On new entites, this is set by the API based on occurrence
-     * @returns {Doop<string, this>}
-     */
-    @doop
-    public get type() {
-        return doop<string, this>();
+    public type() {
+        return this._type;
     }
 
     /**
@@ -76,7 +75,10 @@ export class NameEntity {
     private static CURRENT_LOCAL_ID: number = 0;
 
     protected constructor(id: string, name: string, isNew: boolean, type: string) {
-        return this.id(id).name(name).isNew(isNew).type(type);
+        this._id = id;
+        this._name = name;
+        this._isNew = isNew;
+        this._type = type;
     }
 
 

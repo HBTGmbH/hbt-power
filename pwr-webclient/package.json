@@ -12,7 +12,6 @@
     "autosuggest-highlight": "^3.1.1",
     "axios": "0.19.0",
     "@successtar/cogo-toast": "^5.0.6",
-    "doop": "2.2.1",
     "es6-promise": "4.2.8",
     "history": "4.10.1",
     "immutable": "3.8.2",

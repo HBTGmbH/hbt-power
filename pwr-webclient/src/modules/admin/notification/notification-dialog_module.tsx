@@ -135,7 +135,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
             case 'edit':
                 let notification = this.props.notification;
                 let nameEntity = notification.nameEntity;
-                nameEntity = nameEntity.name(this.state.nameEntityName);
+                nameEntity = nameEntity.setName(this.state.nameEntityName);
                 notification = notification.setNameEntity(nameEntity);
                 this.props.executePatchAction(notification);
                 break;
