@@ -89,43 +89,43 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
 
     private setFirstName = (val: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.firstName(val)
+            consultantInfo: this.state.consultantInfo.setFirstName(val)
         });
     };
 
     private setLastName = (val: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.lastName(val)
+            consultantInfo: this.state.consultantInfo.setLastName(val)
         });
     };
 
     private setTitle = (val: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.title(val)
+            consultantInfo: this.state.consultantInfo.setTitle(val)
         });
     };
 
     private setInitials = (val: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.initials(val)
+            consultantInfo: this.state.consultantInfo.setInitials(val)
         });
     };
 
     private setActive = (val: boolean) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.active(val)
+            consultantInfo: this.state.consultantInfo.setActive(val)
         });
     };
 
     private setBirthDate = (val: Date) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.birthDate(val)
+            consultantInfo: this.state.consultantInfo.setBirthDate(val)
         });
     };
 
     private setProfilePictureId = (profilePictureId: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.profilePictureId(profilePictureId)
+            consultantInfo: this.state.consultantInfo.setProfilePictureId(profilePictureId)
         });
     };
 

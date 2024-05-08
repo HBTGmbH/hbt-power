@@ -1,5 +1,4 @@
 import {AdminNotification, APIAdminNotification} from './AdminNotification';
-import {doop} from 'doop';
 import {NameEntity} from '../NameEntity';
 import {APINameEntity} from '../APIProfile';
 
@@ -9,31 +8,35 @@ export interface APIProfileEntryNotification extends APIAdminNotification {
 }
 
 
-@doop
 export class ProfileEntryNotification {
-    @doop
-    public get adminNotification() {
-        return doop<AdminNotification, this>();
+    private _adminNotification: AdminNotification;
+    private _profileEntryId: number;
+    private _nameEntity: NameEntity;
+
+    public get adminNotification(): AdminNotification {
+        return this._adminNotification;
     };
 
-    @doop
-    public get profileEntryId() {
-        return doop<number, this>();
+    public get profileEntryId(): number {
+        return this._profileEntryId;
     }
 
-    @doop
     public get nameEntity() {
-        return doop<NameEntity, this>();
+        return this._nameEntity;
     };
+
+    public setNameEntity(nameEntity: NameEntity): ProfileEntryNotification {
+        return new ProfileEntryNotification(this.adminNotification, this.profileEntryId, nameEntity);
+    }
+
 
     protected constructor(adminNotification: AdminNotification,
                           profileEntryId: number,
                           nameEntity: NameEntity
     ) {
-
-        return this.adminNotification(adminNotification)
-            .profileEntryId(profileEntryId)
-            .nameEntity(nameEntity);
+        this._adminNotification = adminNotification;
+        this._profileEntryId = profileEntryId;
+        this._nameEntity = nameEntity;
     }
 
     public static of(adminNotification: AdminNotification, profileEntryId: number, nameEntity: NameEntity) {
@@ -49,9 +52,10 @@ export class ProfileEntryNotification {
     }
 
     public toAPI(): APIProfileEntryNotification {
-        return Object.assign(this.adminNotification().toApi(), {
-            nameEntity: this.nameEntity().toAPI(),
-            profileEntryId: this.profileEntryId()
-        });
+        return {
+            ...this.adminNotification.toApi(),
+            nameEntity: this.nameEntity.toAPI(),
+            profileEntryId: this.profileEntryId
+        }
     }
 }

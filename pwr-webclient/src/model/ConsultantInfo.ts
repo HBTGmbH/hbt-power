@@ -1,52 +1,82 @@
-import {doop} from 'doop';
 import {APIConsultant} from './APIProfile';
-import {isNullOrUndefined} from 'util';
 
-@doop
 export class ConsultantInfo {
 
-    @doop
-    public get initials() {
-        return doop<string, this>();
+    private readonly _initials: string;
+    private readonly _firstName: string;
+    private readonly _lastName: string;
+    private readonly _title: string;
+    private readonly _birthDate: Date;
+    private readonly _active: boolean;
+    private readonly _profilePictureId: string;
+
+    public initials() {
+        return this._initials;
     };
 
-    @doop
-    public get firstName() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get lastName() {
-        return doop<string, this>();
-    };
-
-
-    @doop
-    public get title() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get birthDate() {
-        return doop<Date, this>();
-    };
-
-    @doop
-    public get active() {
-        return doop<boolean, this>();
-    };
-
-    @doop
-    public get profilePictureId() {
-        return doop<string, this>();
+    public setInitials(initials: string): ConsultantInfo {
+        return new ConsultantInfo(initials, this.firstName(), this.lastName(), this.title(), this.birthDate(), this.active(), this.profilePictureId());
     }
+
+    public firstName(): string {
+        return this._firstName;
+    };
+
+    public setFirstName(firstName: string): ConsultantInfo {
+        return new ConsultantInfo(this.initials(), firstName, this.lastName(), this.title(), this.birthDate(), this.active(), this.profilePictureId());
+    }
+
+    public lastName() {
+        return this._lastName;
+    };
+
+    public setLastName(lastName: string): ConsultantInfo {
+        return new ConsultantInfo(this.initials(), this.firstName(), lastName, this.title(), this.birthDate(), this.active(), this.profilePictureId());
+    }
+
+    public title() {
+        return this._title;
+    };
+
+    public setTitle(title: string): ConsultantInfo {
+        return new ConsultantInfo(this.initials(), this.firstName(), this.lastName(), title, this.birthDate(), this.active(), this.profilePictureId());
+    }
+
+    public birthDate() {
+        return this._birthDate;
+    };
+
+    public setBirthDate(birthDate: Date): ConsultantInfo {
+        return new ConsultantInfo(this.initials(), this.firstName(), this.lastName(), this.title(), birthDate, this.active(), this.profilePictureId());
+    }
+
+    public active() {
+        return this._active;
+    };
+
+    public setActive(active: boolean): ConsultantInfo {
+        return new ConsultantInfo(this.initials(), this.firstName(), this.lastName(), this.title(), this.birthDate(), active, this.profilePictureId());
+    }
+
+    public profilePictureId() {
+        return this._profilePictureId;
+    }
+
+    public setProfilePictureId(profilePictureId: string): ConsultantInfo {
+        return new ConsultantInfo(this.initials(), this.firstName(), this.lastName(), this.title(), this.birthDate(), this.active(), profilePictureId);
+    }
+
 
 
     private constructor(initials: string, firstName: string, lastName: string, title: string,
                         birthDate: Date, active: boolean, profilePictureId: string) {
-        return this.initials(initials).firstName(firstName).lastName(lastName).title(title)
-            .birthDate(birthDate).active(active)
-            .profilePictureId(profilePictureId);
+        this._initials = initials;
+        this._firstName = firstName;
+        this._lastName = lastName;
+        this._title = title;
+        this._birthDate = birthDate;
+        this._active = active;
+        this._profilePictureId = profilePictureId;
     }
 
     public static fromAPI(apiConsultant: APIConsultant) {
@@ -61,7 +91,7 @@ export class ConsultantInfo {
             firstName: this.firstName(),
             lastName: this.lastName(),
             title: this.title(),
-            birthDate: !isNullOrUndefined(this.birthDate()) ? this.birthDate().toISOString() : null,
+            birthDate: this.birthDate() ? this.birthDate().toISOString() : null,
             profilePictureId: this.profilePictureId()
         };
     }
@@ -76,8 +106,7 @@ export class ConsultantInfo {
      * @returns {string}
      */
     public getFullName(): string {
-        let title = !isNullOrUndefined(this.title()) ? this.title().trim() + ' ' : '';
-
+        let title = this._title ? (this._title.trim() + ' ') : '';
         return title + this.firstName() + ' ' + this.lastName();
     }
 }

@@ -1,8 +1,9 @@
-import {AdminState} from '../../model/admin/AdminState';
+import {AdminState, emptyAdminState} from '../../model/admin/AdminState';
 import {isNullOrUndefined} from 'util';
 import {
     ChangeLoginStatusAction,
-    ChangeRequestStatusAction, LoadConsultantInfoSuccess,
+    ChangeRequestStatusAction,
+    LoadConsultantInfoSuccess,
     OpenSkillNotificationDialogAction,
     ReceiveAllConsultantsAction,
     ReceiveConsultantAction,
@@ -46,7 +47,7 @@ export class AdminReducer {
 
         let profileEntryNotifications = apiProfileEntryNotifications
             .map(an => ProfileEntryNotification.fromAPI(an as APIProfileEntryNotification))
-            .sort((a, b) => Comparators.compareAdminNotification(a.adminNotification(), b.adminNotification()));
+            .sort((a, b) => Comparators.compareAdminNotification(a.adminNotification, b.adminNotification));
         let profileUpdateNotifications = apiProfileUpdateNotifications
             .map(an => AdminNotification.fromAPI(an))
             .sort(Comparators.compareAdminNotification);
@@ -54,11 +55,13 @@ export class AdminReducer {
             .map(an => SkillNotification.fromAPI(an as APISkillNotification))
             .sort((a, b) => Comparators.compareAdminNotification(a.adminNotification(), b.adminNotification()));
 
-        return state
-            .profileEntryNotifications(Immutable.List<ProfileEntryNotification>(profileEntryNotifications))
-            .profileUpdateNotifications(Immutable.List<AdminNotification>(profileUpdateNotifications))
-            .skillNotifications(Immutable.List<SkillNotification>(skillNotifications))
-            .requestStatus(RequestStatus.Successful);
+        return {
+            ...state,
+            profileEntryNotifications: Immutable.List<ProfileEntryNotification>(profileEntryNotifications),
+            profileUpdateNotifications: Immutable.List<AdminNotification>(profileUpdateNotifications),
+            skillNotifications: Immutable.List<SkillNotification>(skillNotifications),
+            requestStatus: RequestStatus.Successful
+        }
     }
 
     /**
@@ -74,20 +77,33 @@ export class AdminReducer {
      */
     public static ReceiveTrashedNotifications(state: AdminState, action: ReceiveNotificationsAction): AdminState {
         let notifications = action.notifications.map(an => AdminNotification.fromAPI(an));
-        return state.trashedNotifications(Immutable.List<AdminNotification>(notifications)).requestStatus(RequestStatus.Successful);
+        return {
+            ...state,
+            trashedNotifications: Immutable.List<AdminNotification>(notifications),
+            requestStatus: RequestStatus.Successful
+        }
     }
 
 
-    public static RequestNotificationTrashing(state: AdminState, action: ChangeRequestStatusAction) {
-        return state.requestStatus(action.requestStatus);
+    public static RequestNotificationTrashing(state: AdminState, action: ChangeRequestStatusAction): AdminState {
+        return {
+            ...state,
+            requestStatus: action.requestStatus
+        }
     }
 
-    public static ChangeLoginStatus(state: AdminState, action: ChangeLoginStatusAction) {
-        return state.loginStatus(action.status);
+    public static ChangeLoginStatus(state: AdminState, action: ChangeLoginStatusAction): AdminState {
+        return {
+            ...state,
+            loginStatus: action.status
+        }
     }
 
     public static LogInAdmin(state: AdminState): AdminState {
-        return state.loginStatus(LoginStatus.SUCCESS);
+        return {
+            ...state,
+            loginStatus: LoginStatus.SUCCESS
+        }
     }
 
     public static ReceiveAllConsultants(state: AdminState, action: ReceiveAllConsultantsAction): AdminState {
@@ -95,50 +111,73 @@ export class AdminReducer {
         action.consultants.forEach((value) => {
             consultants = consultants.set(value.initials(), value);
         });
-        return state.consultantsByInitials(consultants);
+        return {
+            ...state,
+            consultantsByInitials: consultants
+        }
     }
 
     public static LogOutAdmin(): AdminState {
-        return AdminState.createDefault();
+        return emptyAdminState();
     }
 
-    public static ReceiveSingleConsultant(state: AdminState, receiveConsultantAction: ReceiveConsultantAction) {
-        let consultants = state.consultantsByInitials().set(receiveConsultantAction.consultant.initials(), receiveConsultantAction.consultant);
-        return state.consultantsByInitials(consultants);
+    public static ReceiveSingleConsultant(state: AdminState, receiveConsultantAction: ReceiveConsultantAction): AdminState {
+        let consultants = state.consultantsByInitials.set(receiveConsultantAction.consultant.initials(), receiveConsultantAction.consultant);
+        return {
+            ...state,
+            consultantsByInitials: consultants
+        }
     }
 
-    public static SetSkillNotificationEditStatus(state: AdminState, action: SetSkillNotificationEditStatusAction) {
+    public static SetSkillNotificationEditStatus(state: AdminState, action: SetSkillNotificationEditStatusAction): AdminState {
         if (typeof SkillNotificationEditStatus[action.skillNotificationEditStatus] === 'undefined')
             throw new RangeError('Enum value for SkillNotificationEditStatus is out of range: ' + action.skillNotificationEditStatus);
         if (action.skillNotificationEditStatus === SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG) {
-            state = state.isSkillNameEdited(true);
+            state = {
+                ...state,
+                isSkillNameEdited: true
+            }
         }
-        return state.skillNotificationEditStatus(action.skillNotificationEditStatus);
+        return {
+            ...state,
+            skillNotificationEditStatus: action.skillNotificationEditStatus
+        }
     }
 
-    public static OpenSkillNotificationDialog(state: AdminState, setSkillInfoAction: OpenSkillNotificationDialogAction) {
-        let notification = state.skillNotifications().find((value) => value.adminNotification().id() === setSkillInfoAction.notificationId);
-        return state.selectedSkillNotification(notification).skillNotificationEditStatus(SkillNotificationEditStatus.FETCHING_DATA);
+    public static OpenSkillNotificationDialog(state: AdminState, setSkillInfoAction: OpenSkillNotificationDialogAction): AdminState {
+        let notification = state.skillNotifications.find((value) => value.adminNotification().id() === setSkillInfoAction.notificationId);
+        return {
+            ...state,
+            selectedSkillNotification: notification,
+            skillNotificationEditStatus: SkillNotificationEditStatus.FETCHING_DATA
+        }
     }
 
-    public static SetSkillNotificationError(state: AdminState, action: ChangeStringValueAction) {
-        return state.skillNotificationError(action.value);
+    public static SetSkillNotificationError(state: AdminState, action: ChangeStringValueAction): AdminState {
+        return {
+            ...state,
+            skillNotificationError: action.value
+        }
     }
 
-    public static SetSkillNotification(state: AdminState, setSkillNotificationAction: SetSkillNotificationActionAction) {
-
-        return state.skillNotificationSelectedAction(setSkillNotificationAction.skillNotificationAction);
+    public static SetSkillNotification(state: AdminState, setSkillNotificationAction: SetSkillNotificationActionAction): AdminState {
+        return {
+            ...state,
+            skillNotificationSelectedAction: setSkillNotificationAction.skillNotificationAction
+        }
     }
 
-    public static reduce(state: AdminState, action: AbstractAction): AdminState {
-        if (isNullOrUndefined(state)) return AdminState.createDefault();
+    public static reduce(state = emptyAdminState(), action: AbstractAction): AdminState {
         switch (action.type) {
             case ActionType.ReceiveNotifications:
                 return AdminReducer.ReceiveNotifications(state, action as ReceiveNotificationsAction);
             case ActionType.ReceiveTrashedNotifications:
                 return AdminReducer.ReceiveTrashedNotifications(state, action as ReceiveNotificationsAction);
             case ActionType.AdminRequestStatus:
-                return state.requestStatus((action as ChangeRequestStatusAction).requestStatus);
+                return {
+                    ...state,
+                    requestStatus: (action as ChangeRequestStatusAction).requestStatus
+                }
             case ActionType.ChangeAdminLoginStatus:
                 return AdminReducer.ChangeLoginStatus(state, action as ChangeLoginStatusAction);
             case ActionType.LogInAdmin:
@@ -152,12 +191,14 @@ export class AdminReducer {
             case ActionType.SetSkillNotificationEditStatus:
                 return AdminReducer.SetSkillNotificationEditStatus(state, action as SetSkillNotificationEditStatusAction);
             case ActionType.CloseAndResetSkillNotificationDlg:
-                return state
-                    .skillNotificationEditStatus(SkillNotificationEditStatus.CLOSED)
-                    .isSkillNameEdited(false)
-                    .selectedSkillNotification(null)
-                    .skillNotificationError('')
-                    .skillNotificationSelectedAction(SkillNotificationAction.ACTION_OK);
+                return {
+                    ...state,
+                    skillNotificationEditStatus: SkillNotificationEditStatus.CLOSED,
+                    isSkillNameEdited: false,
+                    selectedSkillNotification: null,
+                    skillNotificationError: '',
+                    skillNotificationSelectedAction: SkillNotificationAction.ACTION_OK
+                }
             case ActionType.OpenSkillNotificationDialog:
                 return AdminReducer.OpenSkillNotificationDialog(state, action as OpenSkillNotificationDialogAction);
             case ActionType.SetSkillNotificationError:
@@ -166,19 +207,31 @@ export class AdminReducer {
                 return AdminReducer.SetSkillNotification(state, action as SetSkillNotificationActionAction);
             case ActionType.SetNewSkillName: {
                 let act = action as SetNewSkillNameAction;
-                return state.selectedSkillNotification(state.selectedSkillNotification().newName(act.name));
+                return {
+                    ...state,
+                    selectedSkillNotification: state.selectedSkillNotification.setNewName(act.name)
+                }
             }
             case ActionType.SetReportUploadProgress: {
                 let act = action as ChangeNumberValueAction;
-                return state.templateUploadProgress(act.value);
+                return {
+                    ...state,
+                    templateUploadProgress: act.value
+                }
             }
             case ActionType.SetReportUploadPending: {
                 let act = action as ChangeBoolValueAction;
-                return state.templateUploadPending(act.value);
+                return {
+                    ...state,
+                    templateUploadPending: act.value
+                }
             }
             case ActionType.LoadConsultantInfoSuccess: {
                 let act = action as LoadConsultantInfoSuccess;
-                return state.consultantInfo(act.consultantInfo);
+                return {
+                    ...state,
+                    consultantInfo: act.consultantInfo
+                }
             }
             default:
                 return state;

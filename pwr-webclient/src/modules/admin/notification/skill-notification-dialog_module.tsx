@@ -68,33 +68,33 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
 
     static mapStateToProps(state: ApplicationState, localProps: SkillNotificationModuleLocalProps): SkillNotificationModuleProps {
         let hierarchy = '';
-        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
-            hierarchy = state.skillReducer.categorieHierarchiesBySkillName.get(state.adminReducer.selectedSkillNotification().newName());
+        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification)) {
+            hierarchy = state.skillReducer.categorieHierarchiesBySkillName.get(state.adminReducer.selectedSkillNotification.newName());
         }
         let newSkillName = '';
-        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
-            newSkillName = state.adminReducer.selectedSkillNotification().newName();
+        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification)) {
+            newSkillName = state.adminReducer.selectedSkillNotification.newName();
         }
         let comment = null;
         let skillName = '';
         let initials = '';
         let newName = '';
         let reason = undefined;
-        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification())) {
-            comment = state.adminReducer.selectedSkillNotification().skill().comment();
-            skillName = state.adminReducer.selectedSkillNotification().skill().name();
-            initials = state.adminReducer.selectedSkillNotification().adminNotification().initials();
-            newName = state.adminReducer.selectedSkillNotification().newName();
-            reason = state.adminReducer.selectedSkillNotification().adminNotification().reason();
+        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification)) {
+            comment = state.adminReducer.selectedSkillNotification.skill().comment();
+            skillName = state.adminReducer.selectedSkillNotification.skill().name();
+            initials = state.adminReducer.selectedSkillNotification.adminNotification().initials();
+            newName = state.adminReducer.selectedSkillNotification.newName();
+            reason = state.adminReducer.selectedSkillNotification.adminNotification().reason();
         }
 
         return {
-            status: state.adminReducer.skillNotificationEditStatus(),
+            status: state.adminReducer.skillNotificationEditStatus,
             hierarchy: hierarchy,
-            error: state.adminReducer.skillNotificationError(),
-            skillNotificationSelectedAction: state.adminReducer.skillNotificationSelectedAction(),
+            error: state.adminReducer.skillNotificationError,
+            skillNotificationSelectedAction: state.adminReducer.skillNotificationSelectedAction,
             newSkillName: newSkillName,
-            skillEdited: state.adminReducer.isSkillNameEdited(),
+            skillEdited: state.adminReducer.isSkillNameEdited,
             comment: comment,
             skillName: skillName,
             initials: initials,

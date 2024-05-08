@@ -74,9 +74,9 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
 
     static mapStateToProps(state: ApplicationState, _: NotificationInboxLocalProps): NotificationInboxProps {
         return {
-            profileUpdateNotifications: state.adminReducer.profileUpdateNotifications(),
-            profileEntryNotifications: state.adminReducer.profileEntryNotifications(),
-            skillNotifications: state.adminReducer.skillNotifications(),
+            profileUpdateNotifications: state.adminReducer.profileUpdateNotifications,
+            profileEntryNotifications: state.adminReducer.profileEntryNotifications,
+            skillNotifications: state.adminReducer.skillNotifications,
         };
     }
 
@@ -94,7 +94,7 @@ class NotificationInboxModule extends React.Component<NotificationInboxProps
     private gatherIdsProfileEntry = (rows: Array<number>, entries: Immutable.List<ProfileEntryNotification>) => {
         return rows
             .map(rowNumber => entries.get(rowNumber))
-            .map(notification => notification.adminNotification().id());
+            .map(notification => notification.adminNotification.id());
     };
 
     private gatherIdsProfileUpdate = (rows: Array<number>, entries: Immutable.List<AdminNotification>) => {

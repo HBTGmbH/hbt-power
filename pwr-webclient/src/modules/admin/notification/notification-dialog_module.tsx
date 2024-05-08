@@ -96,7 +96,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
 
     static mapStateToProps(state: ApplicationState, localProps: NotificationDialogLocalProps): NotificationDialogProps {
         return {
-            notification: state.adminReducer.profileEntryNotifications().get(localProps.index),
+            notification: state.adminReducer.profileEntryNotifications.get(localProps.index),
         };
     }
 
@@ -118,7 +118,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
         if (!this.stepperHasFinished()) {
             this.setState({
                 stepIndex: this.state.stepIndex + 1,
-                nameEntityName: this.state.selectedAction == 'edit' ? this.props.notification.nameEntity().name() : ''
+                nameEntityName: this.state.selectedAction == 'edit' ? this.props.notification.nameEntity.name() : ''
             });
         } else {
             this.executeSelectedAction();
@@ -145,17 +145,17 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
     private executeSelectedAction = () => {
         switch (this.state.selectedAction) {
             case 'ok':
-                this.props.executeOkAction(this.props.notification.adminNotification().id());
+                this.props.executeOkAction(this.props.notification.adminNotification.id());
                 break;
             case 'edit':
                 let notification = this.props.notification;
-                let nameEntity = notification.nameEntity();
+                let nameEntity = notification.nameEntity;
                 nameEntity = nameEntity.name(this.state.nameEntityName);
-                notification = notification.nameEntity(nameEntity);
+                notification = notification.setNameEntity(nameEntity);
                 this.props.executePatchAction(notification);
                 break;
             case 'delete':
-                this.props.executeDeleteAction(this.props.notification.adminNotification().id());
+                this.props.executeDeleteAction(this.props.notification.adminNotification.id());
                 break;
         }
         this.closeDialog();
@@ -219,11 +219,11 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
     private renderStepperContentIndex0 = () => {
         return (
             <div>
-                Im Profil von <strong>{this.props.notification.adminNotification().initials()}</strong> wurde der neue
+                Im Profil von <strong>{this.props.notification.adminNotification.initials()}</strong> wurde der neue
                 Bezeichner <strong>
-                {this.props.notification.nameEntity().name()}</strong> hinzugefügt.
+                {this.props.notification.nameEntity.name()}</strong> hinzugefügt.
                 Dies betrifft den
-                Eintragstyp <strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity())}</strong>
+                Eintragstyp <strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity)}</strong>
                 <br/>
                 Bitte wählen sie im nächsten Schritt eine Aktion.
             </div>);
@@ -290,8 +290,8 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
     private renderTitle = () => {
         return formatString(
             PowerLocalize.get('NotificationInbox.NameEntityNotification.SubjectTextTemplate'),
-            this.props.notification.nameEntity().name(),
-            NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity()));
+            this.props.notification.nameEntity.name(),
+            NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity));
     };
 
     render() {

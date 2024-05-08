@@ -76,7 +76,7 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
 
     static mapStateToProps(state: ApplicationState, localProps: ConsultantEditDialogLocalProps): ConsultantEditDialogProps {
         return {
-            consultantInfo: state.adminReducer.consultantsByInitials().get(localProps.initials)
+            consultantInfo: state.adminReducer.consultantsByInitials.get(localProps.initials)
         };
     }
 
@@ -96,37 +96,37 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
 
     private setFirstName = (val: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.firstName(val)
+            consultantInfo: this.state.consultantInfo.setFirstName(val)
         });
     };
 
     private setLastName = (val: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.lastName(val)
+            consultantInfo: this.state.consultantInfo.setLastName(val)
         });
     };
 
     private setActive = (val: boolean) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.active(val)
+            consultantInfo: this.state.consultantInfo.setActive(val)
         });
     };
 
     private setProfilePictureId = (profilePictureId: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.profilePictureId(profilePictureId)
+            consultantInfo: this.state.consultantInfo.setProfilePictureId(profilePictureId)
         });
     };
 
     private setTitle = (val: string) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.title(val)
+            consultantInfo: this.state.consultantInfo.setTitle(val)
         });
     };
 
     private setBirthDate = (val: Date) => {
         this.setState({
-            consultantInfo: this.state.consultantInfo.birthDate(val)
+            consultantInfo: this.state.consultantInfo.setBirthDate(val)
         });
     };
 

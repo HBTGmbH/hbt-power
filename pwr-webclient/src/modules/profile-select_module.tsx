@@ -34,7 +34,7 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
 
     static mapStateToProps(state: ApplicationState): ProfileSelectProps {
         return {
-            isAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS
+            isAdmin: state.adminReducer.loginStatus === LoginStatus.SUCCESS
         };
     }
 

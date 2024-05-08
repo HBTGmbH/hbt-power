@@ -55,7 +55,7 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
 
     static mapStateToProps(state: ApplicationState, _: NotificationTrashboxLocalProps): NotificationTrashboxProps {
         return {
-            notifications: state.adminReducer.trashedNotifications(),
+            notifications: state.adminReducer.trashedNotifications,
         };
     }
 

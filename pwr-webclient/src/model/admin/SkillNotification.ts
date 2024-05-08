@@ -2,6 +2,7 @@ import {doop} from 'doop';
 import {AdminNotification, APIAdminNotification} from './AdminNotification';
 import {Skill} from '../Skill';
 import {APISkill} from '../APIProfile';
+import {AdminState} from './AdminState';
 
 export interface APISkillNotification extends APIAdminNotification {
     skill: APISkill;
@@ -9,25 +10,32 @@ export interface APISkillNotification extends APIAdminNotification {
 }
 
 
-@doop
 export class SkillNotification {
-    @doop
-    public get adminNotification() {
-        return doop<AdminNotification, this>();
+
+    private readonly _adminNotification: AdminNotification;
+    private readonly _skill: Skill;
+    private readonly _newName: string;
+
+    public adminNotification() {
+        return this._adminNotification;
     };
 
-    @doop
-    public get skill() {
-        return doop<Skill, this>();
+    public skill() {
+        return this._skill;
     };
 
-    @doop
-    public get newName() {
-        return doop<string, this>();
+    public newName() {
+        return this._newName;
     };
 
-    constructor(adminNotification: AdminNotification, skill: Skill, newName: string) {
-        return this.adminNotification(adminNotification).skill(skill).newName(newName);
+    public setNewName(newName: string): SkillNotification {
+        return new SkillNotification(this._adminNotification, this._skill, newName)
+    }
+
+    private constructor(adminNotification: AdminNotification, skill: Skill, newName: string) {
+        this._adminNotification = adminNotification;
+        this._skill = skill;
+        this._newName = newName;
     }
 
     public static of(adminNotification: AdminNotification, skill: Skill, newName: string) {

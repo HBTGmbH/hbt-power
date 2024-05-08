@@ -66,7 +66,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
 
     static mapStateToProps(state: ApplicationState, localProps: ConsultantTileLocalProps): ConsultantTileProps {
         return {
-            consultantInfo: state.adminReducer.consultantsByInitials().get(localProps.initials),
+            consultantInfo: state.adminReducer.consultantsByInitials.get(localProps.initials),
         };
     }
 

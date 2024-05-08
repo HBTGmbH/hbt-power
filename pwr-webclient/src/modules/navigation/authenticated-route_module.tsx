@@ -31,7 +31,7 @@ class AuthenticatedRouteModule extends React.Component<AuthenticatedRouteDialogP
     static mapStateToProps(state: ApplicationState, localProps: AuthenticatedRouteDialogLocalProps): AuthenticatedRouteDialogProps {
         return {
             isLoggedIn: state.crossCutting.loginStatus === LoginStatus.SUCCESS,
-            userIsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
+            userIsAdmin: state.adminReducer.loginStatus === LoginStatus.SUCCESS,
         };
     }
 

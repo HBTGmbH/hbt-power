@@ -49,8 +49,8 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
 
     static mapStateToProps(state: ApplicationState, _: ReportUploadTemplateLocalProps): ReportUploadTemplateProps {
         return {
-            pending: state.adminReducer.templateUploadPending(),
-            progressPercent: state.adminReducer.templateUploadProgress()
+            pending: state.adminReducer.templateUploadPending,
+            progressPercent: state.adminReducer.templateUploadProgress
         };
     }
 

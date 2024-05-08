@@ -17,35 +17,36 @@ export interface APIAdminNotification {
     type: string;
 }
 
-@doop
 export class AdminNotification {
     public static readonly TP_SKILL: string = 'SkillNotification';
     public static readonly TP_PROFILE_UPDATE: string = 'ProfileUpdatedNotification';
     public static readonly TP_PROFILE_ENTRY: string = 'ProfileEntryNotification';
 
-    @doop
-    public get id() {
-        return doop<number, this>();
+    private readonly _id: number;
+    private readonly _initials: string;
+    private readonly _reason: AdminNotificationReason;
+    private readonly _occurrence: Date;
+    private readonly _type: string;
+
+    public id(): number {
+        return this._id;
     };
 
-    @doop
-    public get initials() {
-        return doop<string, this>();
+
+    public initials() {
+        return this._initials;
     };
 
-    @doop
-    public get reason() {
-        return doop<AdminNotificationReason, this>();
+    public reason() {
+        return this._reason;
     };
 
-    @doop
-    public get occurrence() {
-        return doop<Date, this>();
+    public occurrence() {
+        return this._occurrence;
     };
 
-    @doop
-    public get type() {
-        return doop<string, this>();
+    public type() {
+        return this._type;
     };
 
 
@@ -53,12 +54,12 @@ export class AdminNotification {
                           initials: string,
                           reason: AdminNotificationReason,
                           occurrence: Date,
-                          type: string,) {
-        return this.id(id)
-            .initials(initials)
-            .reason(reason)
-            .occurrence(occurrence)
-            .type(type);
+                          type: string) {
+        this._id = id;
+        this._initials = initials;
+        this._reason = reason;
+        this._occurrence = occurrence;
+        this._type = type;
     }
 
     public static of(id: number, initials: string, reason: AdminNotificationReason, occurence: Date, type: string) {

@@ -254,7 +254,7 @@ export class AdminActionCreator {
     public static AsyncNotificationInvokeSkillEdit() {
         return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
-            profileServiceClient.invokeNotificationEdit(getState().adminReducer.selectedSkillNotification())
+            profileServiceClient.invokeNotificationEdit(getState().adminReducer.selectedSkillNotification)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
                 .then(() => Alerts.showSuccess('Success'))
                 .catch(console.error);
@@ -330,7 +330,7 @@ export class AdminActionCreator {
     public static AsyncOpenSkillNotificationDialog(notificationId: number) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(AdminActionCreator.OpenSkillNotificationDialog(notificationId));
-            let notification = getState().adminReducer.skillNotifications().find(value => value.adminNotification().id() == notificationId);
+            let notification = getState().adminReducer.skillNotifications.find(value => value.adminNotification().id() == notificationId);
             skillServiceClient.getSkillByName(notification.skill().name())
                 .then(skill => {
                     if (isNullOrUndefined(skill.category)) {
@@ -360,7 +360,7 @@ export class AdminActionCreator {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let ApplicationState = getState().adminReducer;
             let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY, SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG];
-            if (allowedStates.indexOf(ApplicationState.skillNotificationEditStatus()) === -1) {
+            if (allowedStates.indexOf(ApplicationState.skillNotificationEditStatus) === -1) {
                 throw new RangeError('Invalid status for AsyncCategorizeSkill. Expected one of ' + allowedStates);
             } else {
                 skillServiceClient.categorizeSkill(skillName)
@@ -390,19 +390,19 @@ export class AdminActionCreator {
             let allowedStates = [SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY,
                 SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR,
                 SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY];
-            if (allowedStates.indexOf(ApplicationState.skillNotificationEditStatus()) === -1) {
+            if (allowedStates.indexOf(ApplicationState.skillNotificationEditStatus) === -1) {
                 throw new RangeError('Invalid status for AsyncProgressFromActionSelection. Expected one of ' + allowedStates);
             } else {
-                if (ApplicationState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_OK) {
-                    dispatch(AdminActionCreator.AsyncNotificationInvokeOK(ApplicationState.selectedSkillNotification().adminNotification().id()));
+                if (ApplicationState.skillNotificationSelectedAction === SkillNotificationAction.ACTION_OK) {
+                    dispatch(AdminActionCreator.AsyncNotificationInvokeOK(ApplicationState.selectedSkillNotification.adminNotification().id()));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
-                } else if (ApplicationState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_DELETE) {
-                    dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(ApplicationState.selectedSkillNotification().adminNotification().id()));
+                } else if (ApplicationState.skillNotificationSelectedAction === SkillNotificationAction.ACTION_DELETE) {
+                    dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(ApplicationState.selectedSkillNotification.adminNotification().id()));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
-                } else if (ApplicationState.skillNotificationSelectedAction() === SkillNotificationAction.ACTION_EDIT) {
+                } else if (ApplicationState.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT) {
                     dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG));
                 } else {
-                    throw new RangeError('Invalid value for skillNotificationSelectedAction. Was:' + SkillNotificationEditStatus[ApplicationState.skillNotificationSelectedAction()]);
+                    throw new RangeError('Invalid value for skillNotificationSelectedAction. Was:' + SkillNotificationEditStatus[ApplicationState.skillNotificationSelectedAction]);
                 }
             }
         };

@@ -40,7 +40,7 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
 
         return (
             <TableRow
-                key={'NotificationInbox.TableRow.Not.' + notification.adminNotification().id()}
+                key={'NotificationInbox.TableRow.Not.' + notification.adminNotification.id()}
                 selected={this.props.selectedRows.indexOf(key) != -1}
                 style={{backgroundColor: 'white'}}
                 onClick={event => this.handleRowSelection}
@@ -56,18 +56,18 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
                         />
                     </FormGroup>
                 </TableCell>
-                <TableCell>{notification.adminNotification().initials()}</TableCell>
+                <TableCell>{notification.adminNotification.initials()}</TableCell>
                 <TableCell
                     className="cursor-pointer"
                     onClick={() => this.showNotificationDialog(key)}
                 >
                     {formatString(
                         PowerLocalize.get('NotificationInbox.NameEntityNotification.SubjectTextTemplate'),
-                        notification.nameEntity().name(),
-                        NameEntityUtil.typeToLocalizedType(notification.nameEntity()))
+                        notification.nameEntity.name(),
+                        NameEntityUtil.typeToLocalizedType(notification.nameEntity))
                     }
                 </TableCell>
-                <TableCell>{formatToMailDisplay(notification.adminNotification().occurrence())}</TableCell>
+                <TableCell>{formatToMailDisplay(notification.adminNotification.occurrence())}</TableCell>
             </TableRow>
         );
     };

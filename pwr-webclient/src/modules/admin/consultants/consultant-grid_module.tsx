@@ -45,7 +45,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
 
     static mapStateToProps(state: ApplicationState, localProps: ConsultantGridLocalProps): ConsultantGridProps {
         return {
-            consultantsByInitials: state.adminReducer.consultantsByInitials()
+            consultantsByInitials: state.adminReducer.consultantsByInitials
         };
     }
 
