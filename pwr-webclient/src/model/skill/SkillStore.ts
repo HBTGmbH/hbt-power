@@ -54,8 +54,8 @@ export function getInverseCategoryHierarchy(categoryId: number, skillStore: Skil
     let currentCategory = skillStore.categoriesById.get(categoryId);
     while (!!currentCategory) {
         resString += delimiter;
-        resString += currentCategory.qualifier();
-        let parentId = skillStore.parentCategoryIdById.get(currentCategory.id());
+        resString += currentCategory.qualifier;
+        let parentId = skillStore.parentCategoryIdById.get(currentCategory.id);
         currentCategory = skillStore.categoriesById.get(parentId);
         delimiter = ' <= ';
     }

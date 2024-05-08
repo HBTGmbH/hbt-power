@@ -29,9 +29,9 @@ class ConfirmNavDialogModule extends React.Component<ConfirmNavDialogProps
     & ConfirmNavDialogLocalProps
     & ConfirmNavDialogDispatch, ConfirmNavDialogLocalState> {
 
-    static mapStateToProps(state: ApplicationState, localProps: ConfirmNavDialogLocalProps): ConfirmNavDialogProps {
+    static mapStateToProps(state: ApplicationState): ConfirmNavDialogProps {
         return {
-            dialogOpen: state.navigationSlice.confirmDialogOpen()
+            dialogOpen: state.navigationSlice.confirmDialogOpen
         };
     }
 

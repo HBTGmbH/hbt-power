@@ -1,5 +1,4 @@
 import {emptySkillStore, SkillStore} from '../../model/skill/SkillStore';
-import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {SkillActions} from './SkillActions';
 import {APISkillCategory} from '../../model/skill/SkillCategory';
@@ -27,8 +26,8 @@ export namespace SkillReducer {
     import MoveCategoryAction = SkillActions.MoveCategoryAction;
 
     export function buildHierarchy(category: APISkillCategory): string {
-        if (!isNullOrUndefined(category)) {
-            if (!isNullOrUndefined(category.category)) {
+        if (!!(category)) {
+            if (!!(category.category)) {
                 return category.qualifier + ' => ' + buildHierarchy(category.category);
             } else {
                 return category.qualifier;
@@ -79,7 +78,7 @@ export namespace SkillReducer {
                 let act = action as PartiallyUpdateSkillCategoryAction;
                 // First, update the map
                 let categoriesById = skillStore.categoriesById;
-                categoriesById = categoriesById.set(act.skillCategory.id(), act.skillCategory);
+                categoriesById = categoriesById.set(act.skillCategory.id, act.skillCategory);
                 return {
                     ...skillStore,
                     categoriesById
@@ -87,14 +86,14 @@ export namespace SkillReducer {
             }
             case ActionType.AddCategoryToTree: {
                 let act = action as AddCategoryToTreeAction;
-                if (isNullOrUndefined(act.parentId)) {
+                if (!(act.parentId)) {
                     act.parentId = -1;
                 }
                 let categoriesById = skillStore.categoriesById;
-                categoriesById = categoriesById.set(act.toAdd.id(), act.toAdd);
+                categoriesById = categoriesById.set(act.toAdd.id, act.toAdd);
 
                 let parentCategoryIdById = skillStore.parentCategoryIdById;
-                parentCategoryIdById.set(act.toAdd.id(), act.parentId);
+                parentCategoryIdById.set(act.toAdd.id, act.parentId);
 
                 let skillTreeRoot = skillStore.skillTreeRoot;
                 skillTreeRoot.addCategoryToTree(act.parentId, act.toAdd, categoriesById);
@@ -148,7 +147,7 @@ export namespace SkillReducer {
             }
             case ActionType.MoveSkill: {
                 let act = action as MoveSkillAction;
-                let skill = skillStore.skillsById.get(act.skillId).categoryId(act.targetCategoryId);
+                let skill = skillStore.skillsById.get(act.skillId).setCategoryId(act.targetCategoryId);
 
                 let root = skillStore.skillTreeRoot;
                 root.removeSkillFromTree(act.originCategoryId, act.skillId);
@@ -172,7 +171,7 @@ export namespace SkillReducer {
             }
             case ActionType.ReadSkillHierarchy: {
                 let act = action as ReadSkillHierarchyAction;
-                if (!isNullOrUndefined(act.skill.category)) {
+                if (!!(act.skill.category)) {
                     let map = skillStore.categorieHierarchiesBySkillName;
                     map = map.set(act.skill.qualifier, act.skill.qualifier + ' => ' + buildHierarchy(act.skill.category));
                     return {

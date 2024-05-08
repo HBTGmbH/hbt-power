@@ -214,19 +214,19 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
 
     private handleCreateCategory = (categoryName: string) => {
         let selectedCategory = this.props.categoriesById.get(this.state.selectedCategoryId);
-        this.props.createCategory(selectedCategory.id(), categoryName);
+        this.props.createCategory(selectedCategory.id, categoryName);
         this.closeNameDialog();
     };
 
     private handleCreateSkill = (skillName: string) => {
         let selectedCategory = this.props.categoriesById.get(this.state.selectedCategoryId);
-        this.props.createSkill(skillName, selectedCategory.id());
+        this.props.createSkill(skillName, selectedCategory.id);
         this.closeSkillNameDialog();
     };
 
     private handleDeleteSelectedCategory = () => {
         let selectedCategory = this.props.categoriesById.get(this.state.selectedCategoryId);
-        this.props.deleteCategory(selectedCategory.id());
+        this.props.deleteCategory(selectedCategory.id);
         this.setState({
             selectedCategoryId: this.NO_ID,
             deleteConfirmationOpen: false
@@ -235,7 +235,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
 
     private invokeMoveSelectedCategory = (newCategoryId: number) => {
         let selectedCategory = this.getSelectedCategory();
-        this.props.moveCategory(newCategoryId, selectedCategory.id());
+        this.props.moveCategory(newCategoryId, selectedCategory.id);
         this.closeCategorySearcher();
     };
 
@@ -330,16 +330,16 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
             <CategorySearcher
                 skillStore={this.props.skillStore}
                 open={this.state.moveCategorySearcher}
-                categories={this.props.categoriesById.toArray().filter((value, index) => value.id() !== selectedCategory.id())}
+                categories={this.props.categoriesById.toArray().filter((value, index) => value.id !== selectedCategory.id)}
                 onClose={this.closeCategorySearcher}
                 onSelectCategory={this.invokeMoveSelectedCategory}
             />
-            <ListSubheader>{selectedCategory.qualifier()}</ListSubheader>
+            <ListSubheader>{selectedCategory.qualifier}</ListSubheader>
             <FormControlLabel
                 control={
                     <Checkbox
                         style={{marginLeft: '16px'}}
-                        checked={selectedCategory.blacklisted()}
+                        checked={selectedCategory.blacklisted}
                         onChange={this.handleCategoryBlacklistCheck}
                         color={'primary'}
                     />}
@@ -350,7 +350,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
                 control={
                     <Checkbox
                         style={{marginLeft: '16px'}}
-                        checked={selectedCategory.isDisplay()}
+                        checked={selectedCategory.isDisplay}
                         onChange={this.handleCategoryIsDisplayCheck}
                         color={'primary'}
                     />}
@@ -358,8 +358,8 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
             />
             <ListSubheader>{PowerLocalize.get('AdminClient.Info.SkillTree.Category.Localizations')}</ListSubheader>
             <LocalizationTable
-                localizations={selectedCategory.qualifiers()}
-                termToLocalize={selectedCategory.qualifier()}
+                localizations={selectedCategory.qualifiers}
+                termToLocalize={selectedCategory.qualifier}
                 onLocaleAdd={this.handleAddCategoryLocale}
                 onLocaleDelete={this.handleDeleteCategoryLocale}
             />
@@ -386,7 +386,7 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
                 {PowerLocalize.get('Action.AddSkillToCategory')}
                 <Add/>
             </Button>{
-            selectedCategory.isCustom() ?
+            selectedCategory.isCustom ?
                 <Button
                     style={{margin: '4px'}}
                     variant={'contained'}

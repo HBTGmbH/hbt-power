@@ -1,5 +1,4 @@
 import * as Immutable from 'immutable';
-import {doop} from 'doop';
 import {SkillServiceSkill} from './SkillServiceSkill';
 import {APILocalizedQualifier, LocalizedQualifier} from './LocalizedQualifier';
 import {TCategoryNode} from './tree/TCategoryNode';
@@ -15,51 +14,27 @@ export interface APISkillCategory {
 }
 
 
-@doop
 export class SkillCategory {
-    @doop
-    public get id() {
-        return doop<number, this>();
-    }
+    public readonly id: number;
+    public readonly qualifier: string;
+    public readonly qualifiers: Immutable.List<LocalizedQualifier>;
+    public readonly skills: Immutable.List<SkillServiceSkill>;
+    public readonly blacklisted: boolean;
+    public readonly isCustom: boolean;
+    public readonly isDisplay: boolean;
 
-    @doop
-    public get qualifier() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get qualifiers() {
-        return doop<Immutable.List<LocalizedQualifier>, this>();
-    };
-
-    //@doop public get categories() {return doop<Immutable.List<SkillCategory>, this>()};
-
-    @doop
-    public get skills() {
-        return doop<Immutable.List<SkillServiceSkill>, this>();
-    };
-
-    @doop
-    public get blacklisted() {
-        return doop<boolean, this>();
-    };
-
-    @doop
-    public get isCustom() {
-        return doop<boolean, this>();
-    };
-
-    @doop
-    public get isDisplay() {
-        return doop<boolean, this>();
-    };
 
     private constructor(id: number, qualifier: string,
                         qualifiers: Immutable.List<LocalizedQualifier>,
                         skills: Immutable.List<SkillServiceSkill>, blacklisted: boolean,
                         isCustom: boolean, isDisplay: boolean) {
-        return this.id(id).qualifier(qualifier).qualifiers(qualifiers).skills(skills)
-            .blacklisted(blacklisted).isCustom(isCustom).isDisplay(isDisplay);
+        this.id = id;
+        this.qualifier = qualifier;
+        this.qualifiers = qualifiers;
+        this.skills = skills;
+        this.blacklisted = blacklisted;
+        this.isCustom = isCustom;
+        this.isDisplay = isDisplay;
     }
 
     public static of(id: number, qualifier: string) {

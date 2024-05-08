@@ -1,27 +1,13 @@
-import {doop} from 'doop';
+export interface NavigationStore {
+    currentLocation: string;
+    targetLocation: string;
+    confirmDialogOpen: boolean;
+}
 
-@doop
-export class NavigationStore {
-    @doop
-    public get currentLocation() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get targetLocation() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get confirmDialogOpen() {
-        return doop<boolean, this>();
-    };
-
-    private constructor(currentLocation: string, targetLocation: string, confirmDialogOpen: boolean) {
-        return this.currentLocation(currentLocation).targetLocation(targetLocation).confirmDialogOpen(confirmDialogOpen);
-    }
-
-    public static empty() {
-        return new NavigationStore('/', '', false);
+export function emptyNavigationStore(): NavigationStore {
+    return {
+        currentLocation: '',
+        confirmDialogOpen: false,
+        targetLocation: ''
     }
 }

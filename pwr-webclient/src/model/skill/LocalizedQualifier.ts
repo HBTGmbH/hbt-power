@@ -1,4 +1,3 @@
-import {doop} from 'doop';
 
 export interface APILocalizedQualifier {
     /**
@@ -15,25 +14,28 @@ export interface APILocalizedQualifier {
     qualifier: string;
 }
 
-@doop
 export class LocalizedQualifier {
-    @doop
-    public get id() {
-        return doop<number, this>();
+    private readonly _id: number;
+    private readonly _locale: string;
+    private readonly _qualifier: string;
+
+
+    public id() {
+        return this._id;
     };
 
-    @doop
-    public get locale() {
-        return doop<string, this>();
+    public locale() {
+        return this._locale;
     };
 
-    @doop
-    public get qualifier() {
-        return doop<string, this>();
+    public qualifier() {
+        return this._qualifier;
     };
 
     private constructor(id: number, locale: string, qualifier: string) {
-        return this.id(id).locale(locale).qualifier(qualifier);
+        this._id = id;
+        this._locale = locale;
+        this._qualifier = qualifier;
     }
 
     public static of(id: number, locale: string, qualifier: string) {

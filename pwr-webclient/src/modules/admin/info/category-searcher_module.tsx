@@ -47,16 +47,16 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     private mapListItem = (category: SkillCategory) => {
         return <ListItem
             button
-            key={category.id()}
-            onClick={() => this.handleSelect(category.id())}
-            className={this.state.selectedCategoryId === category.id() ? 'pwr-selected-list-item ' : ''}
+            key={category.id}
+            onClick={() => this.handleSelect(category.id)}
+            className={this.state.selectedCategoryId === category.id ? 'pwr-selected-list-item ' : ''}
         >
             <div>
-                <span style={{fontWeight: 'bold'}}>{category.qualifier()}</span><br/>
+                <span style={{fontWeight: 'bold'}}>{category.qualifier}</span><br/>
                 <span style={{
                     fontSize: '10px',
                     fontStyle: 'italic'
-                }}>{getInverseCategoryHierarchy(category.id(), this.props.skillStore)}</span>
+                }}>{getInverseCategoryHierarchy(category.id, this.props.skillStore)}</span>
             </div>
         </ListItem>;
     };
@@ -78,7 +78,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     private renderCategories = () => {
         let categories = this.props.categories;
         if (this.state.filterText !== '') {
-            categories = categories.filter(category => filterFuzzy(this.state.filterText, category.qualifier()));
+            categories = categories.filter(category => filterFuzzy(this.state.filterText, category.qualifier));
         }
         categories.sort(Comparators.compareCategories);
         return categories.map(this.mapListItem);

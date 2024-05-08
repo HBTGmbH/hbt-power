@@ -34,7 +34,7 @@ export class SkillTreeNode {
     }
 
     public static of(skillCategory: SkillCategory) {
-        return new SkillTreeNode(skillCategory.id(), [], [], false, true);
+        return new SkillTreeNode(skillCategory.id, [], [], false, true);
     }
 
     public static root() {
@@ -54,8 +54,7 @@ export class SkillTreeNode {
      * @param categoriesById is necessary for sorting
      */
     public addCategoryToTree(parentId: number, category: SkillCategory, categoriesById: Immutable.Map<number, SkillCategory>) {
-        let newNodes;
-        if (this.skillCategoryId === parentId && this.getChildIndex(category.id()) === -1) {
+        if (this.skillCategoryId === parentId && this.getChildIndex(category.id) === -1) {
             this.childNodes.push(SkillTreeNode.of(category));
             this.childNodes.sort(Comparators.getSkillTreeNodeComparator(categoriesById));
         } else {

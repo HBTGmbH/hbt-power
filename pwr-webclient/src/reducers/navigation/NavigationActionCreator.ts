@@ -74,7 +74,7 @@ export namespace NavigationActionCreator {
     export function AsyncNavigateTo(target: string) {
         return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
             let state: ApplicationState = getState();
-            let currentLocation = state.navigationSlice.currentLocation();
+            let currentLocation = state.navigationSlice.currentLocation;
             const hasChanges = storeHasUnsavedChanges(getState());
             if (target === Paths.USER_SPECIAL_LOGOUT) {
                 if (hasChanges) {
@@ -95,7 +95,7 @@ export namespace NavigationActionCreator {
 
     export function AsyncContinueToTarget() {
         return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
-            let target: string = getState().navigationSlice.targetLocation();
+            let target: string = getState().navigationSlice.targetLocation;
             switch (target) {
                 case Paths.USER_SPECIAL_LOGOUT: {
                     navigate(Paths.APP_ROOT, dispatch);

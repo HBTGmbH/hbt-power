@@ -49,7 +49,7 @@ export class SkillTreeBuilder {
         // The iterate over children, do the same.
         let skillServiceCategory = SkillCategory.fromTCategoryNode(category);
         let skillTreeNode = SkillTreeNode.of(skillServiceCategory);
-        this.categories.set(skillServiceCategory.id(), skillServiceCategory);
+        this.categories.set(skillServiceCategory.id, skillServiceCategory);
         if (!this.treeRoot) {
             this.treeRoot = skillTreeNode;
         }

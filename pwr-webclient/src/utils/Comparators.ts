@@ -62,12 +62,12 @@ export class Comparators {
     }
 
     public static compareCategories(s1: SkillCategory, s2: SkillCategory): number {
-        return Comparators.compareString(s2.qualifier(), s1.qualifier());
+        return Comparators.compareString(s2.qualifier, s1.qualifier);
     }
 
     public static getSkillTreeNodeComparator(categoriesById: Immutable.Map<number, SkillCategory>) {
         return function (s1: SkillTreeNode, s2: SkillTreeNode) {
-            return Comparators.compareString(categoriesById.get(s2.skillCategoryId).qualifier(), categoriesById.get(s1.skillCategoryId).qualifier());
+            return Comparators.compareString(categoriesById.get(s2.skillCategoryId).qualifier, categoriesById.get(s1.skillCategoryId).qualifier);
         };
     }
 

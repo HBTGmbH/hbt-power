@@ -1,4 +1,3 @@
-import {doop} from 'doop';
 import {APISkillCategory} from './SkillCategory';
 import {isNullOrUndefined} from 'util';
 import {APILocalizedQualifier, LocalizedQualifier} from './LocalizedQualifier';
@@ -15,40 +14,49 @@ export interface APISkillServiceSkill {
     versions: string[];
 }
 
-@doop
 export class SkillServiceSkill {
-    @doop
-    public get id() {
-        return doop<number, this>();
+    private readonly _id: number;
+    private readonly _qualifier: string;
+    private readonly _categoryId: number;
+    private readonly _isCustom: boolean;
+    private readonly _qualifiers: Immutable.List<LocalizedQualifier>;
+    private readonly _versions: Immutable.List<string>;
+
+    public id() {
+        return this._id;
     }
 
-    @doop
-    public get qualifier() {
-        return doop<string, this>();
+    public qualifier(): string {
+        return this._qualifier;
     }
 
-    @doop
-    public get categoryId() {
-        return doop<number, this>();
+    public categoryId(): number {
+        return this._categoryId;
     }
 
-    @doop
-    public get isCustom() {
-        return doop<boolean, this>();
+    public setCategoryId(categoryId: number): SkillServiceSkill {
+        return new SkillServiceSkill(this._id, this._qualifier, categoryId, this._isCustom, this._qualifiers, this._versions);
+    }
+
+    public isCustom(): boolean {
+        return this._isCustom;
     };
 
-    @doop
-    public get qualifiers() {
-        return doop<Immutable.List<LocalizedQualifier>, this>();
+    public qualifiers(): Immutable.List<LocalizedQualifier> {
+        return this._qualifiers;
     };
 
-    @doop
-    public get versions() {
-        return doop<Immutable.List<string>, this>();
+    public versions() {
+        return this._versions;
     };
 
     constructor(id: number, qualifier: string, categoryId: number, isCustom: boolean, qualifiers: Immutable.List<LocalizedQualifier>, versions: Immutable.List<string>) {
-        return this.id(id).qualifier(qualifier).categoryId(categoryId).isCustom(isCustom).qualifiers(qualifiers).versions(versions);
+        this._id = id;
+        this._qualifier = qualifier;
+        this._categoryId = categoryId;
+        this._isCustom = isCustom;
+        this._qualifiers = qualifiers;
+        this._versions = versions;
     }
 
     public static forQualifier(qualifier: string) {

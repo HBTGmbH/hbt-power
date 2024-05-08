@@ -176,15 +176,15 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         let customIcon = null;
         let displayIcon = null;
 
-        if (skillCategory.blacklisted()) {
+        if (skillCategory.blacklisted) {
             blacklistIcon = <SkillTree.BlacklistedIcon margin={currentMargin + 'px'}/>;
             currentMargin += 24;
         }
-        if (skillCategory.isCustom()) {
+        if (skillCategory.isCustom) {
             customIcon = <SkillTree.CustomIcon margin={currentMargin + 'px'}/>;
             currentMargin += 24;
         }
-        if (skillCategory.isDisplay()) {
+        if (skillCategory.isDisplay) {
             displayIcon = <SkillTree.DisplayIcon margin={currentMargin + 'px'}/>;
             currentMargin += 24;
         }
@@ -194,7 +194,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
                 <Label/>
             </ListItemIcon>
             <ListItemText>
-                {skillCategory.qualifier()}
+                {skillCategory.qualifier}
                 {blacklistIcon}
                 {customIcon}
                 {displayIcon}

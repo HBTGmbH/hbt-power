@@ -1,33 +1,31 @@
-import {doop} from 'doop';
 import {APISkill} from './APIProfile';
 import {NEW_ENTITY_PREFIX} from './PwrConstants';
-import {isNullOrUndefined} from 'util';
 
-@doop
 export class Skill {
-    @doop
-    public get id() {
-        return doop<string, this>();
+    private readonly _id: string;
+    private readonly _name: string;
+    private readonly _rating: number;
+    private readonly _comment: string;
+    private readonly _isNew: boolean;
+
+    public id() {
+        return this._id;
     }
 
-    @doop
-    public get name() {
-        return doop<string, this>();
+    public name() {
+        return this._name;
     }
 
-    @doop
-    public get rating() {
-        return doop<number, this>();
+    public rating() {
+        return this._rating;
     }
 
-    @doop
-    public get comment() {
-        return doop<string, this>();
+    public comment() {
+        return this._comment;
     }
 
-    @doop
-    public get isNew() {
-        return doop<boolean, this>();
+    public isNew() {
+        return this._isNew;
     }
 
 
@@ -35,7 +33,11 @@ export class Skill {
 
 
     constructor(name: string, id: string, rating: number, comment: string, isNew: boolean) {
-        return this.name(name).id(id).rating(rating).comment(comment).isNew(isNew);
+        this._id = id;
+        this._name = name;
+        this._rating = rating;
+        this._comment = comment;
+        this._isNew = isNew;
     }
 
     public toAPI(): APISkill {
@@ -52,7 +54,7 @@ export class Skill {
     }
 
     public static of(name: string, level: number, comment?: string): Skill {
-        let _comment = isNullOrUndefined(comment) ? '' : comment;
+        let _comment = comment ?? '';
         return new Skill(name, NEW_ENTITY_PREFIX + String(Skill.CURRENT_ID++), level, _comment, true);
     }
 

@@ -29,7 +29,7 @@ export class CategoryDeleteConfirmation extends React.Component<CategoryDeleteCo
                 open={this.props.open}
                 //modal={true}
             >
-                Do you really want to delete <strong>{this.props.category.qualifier()}</strong> including its
+                Do you really want to delete <strong>{this.props.category.qualifier}</strong> including its
                 child categories?
 
                 <DialogActions>
