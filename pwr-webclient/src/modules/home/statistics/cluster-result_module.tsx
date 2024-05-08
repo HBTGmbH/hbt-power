@@ -1,11 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantClusterInfo';
 import {ConsultantClusterOverview} from '../../general/statistics/consultant-cluster-info_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
+import {APIConsultantClusterInfo} from '../../../model/statistics/ApiMetrics';
 
 interface ClusterResultProps {
-    consultantClusterInfo: ConsultantClusterInfo;
+    consultantClusterInfo: APIConsultantClusterInfo;
 }
 
 interface ClusterResultLocalProps {

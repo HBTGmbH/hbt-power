@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {Avatar, Paper} from '@material-ui/core';
-import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
@@ -10,9 +9,10 @@ import {getImagePath} from '../../../API_CONFIG';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import OpenInNew from '@material-ui/icons/OpenInNew';
 import {ThunkDispatch} from 'redux-thunk';
+import {APIProfileSkillMetric} from '../../../model/statistics/ApiMetrics';
 
 interface CommonSkillsDashboardElementProps {
-    profileSkillMetrics: ProfileSkillMetrics;
+    profileSkillMetrics: APIProfileSkillMetric;
 }
 
 interface CommonSkillsDashboardElementLocalProps {
@@ -42,12 +42,12 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
     }
 
     private renderCommonSkills = () => {
-        if (this.props.profileSkillMetrics.commonSkills().size == 0) {
+        if (this.props.profileSkillMetrics.common.length == 0) {
             return PowerLocalize.get('None');
         }
         let commonSkills: String = '';
         let prefix = '';
-        this.props.profileSkillMetrics.commonSkills().forEach(com => {
+        this.props.profileSkillMetrics.common.forEach(com => {
             commonSkills += prefix;
             commonSkills += com;
             prefix = ', ';

@@ -1,31 +1,29 @@
 import * as Immutable from 'immutable';
-import {SkillUsageMetric} from './SkillUsageMetric';
-import {ProfileSkillMetrics} from './ProfileSkillMetrics';
-import {ConsultantClusterInfo} from './ConsultantClusterInfo';
-import {ScatterSkill} from './ScatterSkill';
+import {APIScatterSkill} from './ScatterSkill';
 import {ConsultantInfo} from '../ConsultantInfo';
 import {NameEntity} from '../../reducers/profile-new/profile/model/NameEntity';
+import {APIConsultantClusterInfo, APIProfileSkillMetric, APISkillUsageMetric} from './ApiMetrics';
 
 export interface StatisticsStore {
-    skillUsages: Immutable.List<SkillUsageMetric>;
-    relativeSkillUsages: Immutable.List<SkillUsageMetric>;
-    activeProfileMetric: ProfileSkillMetrics;
+    skillUsages: Immutable.List<APISkillUsageMetric>;
+    relativeSkillUsages: Immutable.List<APISkillUsageMetric>;
+    activeProfileMetric: APIProfileSkillMetric;
     available: boolean;
-    consultantClusterInfo: ConsultantClusterInfo;
-    scatteredSkills: Immutable.List<ScatterSkill>;
+    consultantClusterInfo: APIConsultantClusterInfo;
+    scatteredSkills: Immutable.List<APIScatterSkill>;
     nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>;
     skillUsageInfo: Immutable.Map<string, Immutable.List<ConsultantInfo>>;
 }
 
 export function emptyStatisticsStore(): StatisticsStore {
     return {
-        skillUsages: Immutable.List<SkillUsageMetric>(),
+        skillUsages: Immutable.List<APISkillUsageMetric>(),
         activeProfileMetric: null,
         available: false,
         consultantClusterInfo: null,
         nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>(),
-        relativeSkillUsages: Immutable.List<SkillUsageMetric>(),
-        scatteredSkills: Immutable.List<ScatterSkill>(),
+        relativeSkillUsages: Immutable.List<APISkillUsageMetric>(),
+        scatteredSkills: Immutable.List<APIScatterSkill>(),
         skillUsageInfo: Immutable.Map<string, Immutable.List<ConsultantInfo>>()
     }
 }

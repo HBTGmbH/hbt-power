@@ -7,17 +7,17 @@ import {
     ReceiveScatterSkillsAction,
     ReceiveSkillUsageMetricsAction
 } from './statistics-actions';
-import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import * as Immutable from 'immutable';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {AbstractAction} from '../BaseActions';
+import {APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 
 
 export class StatisticsReducer {
 
     public static ReceiveSkillUsageMetrics(store: StatisticsStore, action: ReceiveSkillUsageMetricsAction): StatisticsStore {
-        let metrics: Immutable.List<SkillUsageMetric> = Immutable.List<SkillUsageMetric>(action.metrics);
+        let metrics: Immutable.List<APISkillUsageMetric> = Immutable.List<APISkillUsageMetric>(action.metrics);
         return {
             ...store,
             skillUsages: metrics
@@ -25,7 +25,7 @@ export class StatisticsReducer {
     }
 
     public static ReceiveRelativeSkillUsageMetrics(store: StatisticsStore, action: ReceiveSkillUsageMetricsAction): StatisticsStore {
-        let metrics: Immutable.List<SkillUsageMetric> = Immutable.List<SkillUsageMetric>(action.metrics);
+        let metrics: Immutable.List<APISkillUsageMetric> = Immutable.List<APISkillUsageMetric>(action.metrics);
         return {
             ...store,
             relativeSkillUsages: metrics,

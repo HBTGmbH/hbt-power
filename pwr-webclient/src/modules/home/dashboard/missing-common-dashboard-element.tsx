@@ -3,7 +3,6 @@ import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {Avatar, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ProfileSkillMetrics} from '../../../model/statistics/ProfileSkillMetrics';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
@@ -11,9 +10,10 @@ import {getImagePath} from '../../../API_CONFIG';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import OpenInNew from '@material-ui/icons/OpenInNew';
 import {ThunkDispatch} from 'redux-thunk';
+import {APIProfileSkillMetric} from '../../../model/statistics/ApiMetrics';
 
 interface MissingCommonDashboardElementProps {
-    profileSkillMetrics: ProfileSkillMetrics;
+    profileSkillMetrics: APIProfileSkillMetric;
 }
 
 interface MissingCommonDashboardElementLocalProps {
@@ -53,12 +53,12 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
 
 
     private renderMissingSkills = () => {
-        if (this.props.profileSkillMetrics.missingSkills().size == 0) {
+        if (this.props.profileSkillMetrics.missing.length == 0) {
             return PowerLocalize.get('None');
         }
         let missingSkills: String = '';
         let prefix = '';
-        this.props.profileSkillMetrics.missingSkills().forEach((com: string) => {
+        this.props.profileSkillMetrics.missing.forEach((com: string) => {
             missingSkills += prefix;
             missingSkills += com;
             prefix = ', ';

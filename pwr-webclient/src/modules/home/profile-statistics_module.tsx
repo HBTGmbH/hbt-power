@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
@@ -8,10 +7,11 @@ import Paper from '@material-ui/core/Paper';
 import {Color} from '../../utils/ColorUtil';
 import {Profile} from '../../reducers/profile-new/profile/model/Profile';
 import {Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip} from "recharts";
+import {APIProfileSkillMetric} from '../../model/statistics/ApiMetrics';
 
 
 interface ProfileStatisticsProps {
-    profileSkillMetrics: ProfileSkillMetrics;
+    profileSkillMetrics: APIProfileSkillMetric;
     profile: Profile;
     available: boolean;
 }

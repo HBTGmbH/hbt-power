@@ -1,27 +1,25 @@
-import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
-import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
-import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
-import {ScatterSkill} from '../../model/statistics/ScatterSkill';
+import {APIScatterSkill} from '../../model/statistics/ScatterSkill';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
 import {NameEntity} from '../profile-new/profile/model/NameEntity';
 import {AbstractAction} from '../BaseActions';
+import {APIConsultantClusterInfo, APIProfileSkillMetric, APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 
 export interface ReceiveSkillUsageMetricsAction extends AbstractAction {
-    metrics: Array<SkillUsageMetric>;
+    metrics: Array<APISkillUsageMetric>;
 }
 
 export interface ReceiveProfileSkillMetrics extends AbstractAction {
-    metrics: ProfileSkillMetrics;
+    metrics: APIProfileSkillMetric;
 }
 
 export interface ReceiveConsultantClusterInfoAction extends AbstractAction {
-    consultantClusterInfo: ConsultantClusterInfo;
+    consultantClusterInfo: APIConsultantClusterInfo;
 }
 
 export interface ReceiveScatterSkillsAction extends AbstractAction {
-    scatterSkills: Immutable.List<ScatterSkill>;
+    scatterSkills: Immutable.List<APIScatterSkill>;
 }
 
 export class AddNameEntityUsageInfoAction implements AbstractAction {

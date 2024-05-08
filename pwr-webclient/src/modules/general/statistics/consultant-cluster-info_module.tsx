@@ -1,10 +1,9 @@
 import * as React from 'react';
-import {ConsultantClusterInfo} from '../../../model/statistics/ConsultantClusterInfo';
 import {Card, CardContent, CardHeader, List, ListItem, Popover} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {AveragedSkill} from '../../../model/statistics/AveragedSkill';
 import {StringUtils} from '../../../utils/StringUtil';
 import formatString = StringUtils.formatString;
+import {APIAveragedSkill, APIConsultantClusterInfo} from '../../../model/statistics/ApiMetrics';
 
 
 const randomColor = require('randomcolor');
@@ -12,7 +11,7 @@ const TagCloud = require('react-tagcloud');
 const TCloud: any = TagCloud.TagCloud;
 
 interface ConsultantClusterInfoProps {
-    info: ConsultantClusterInfo;
+    info: APIConsultantClusterInfo;
 }
 
 interface ConsultantClusterInfoState {
@@ -23,13 +22,6 @@ interface ConsultantClusterInfoState {
 }
 
 export class ConsultantClusterOverview extends React.Component<ConsultantClusterInfoProps, ConsultantClusterInfoState> {
-
-
-    private infoPaperStyle = {
-        margin: '1px',
-        padding: '5px'
-    };
-
 
     private readonly customTagStyles = {
         margin: '0px 3px',
@@ -57,12 +49,12 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
 
 
     private renderInitials = () => {
-        return this.props.info.clusterInitials().map(initials => <ListItem disabled={true}
-                                                                           key={initials}>{initials}</ListItem>).toArray();
+        return this.props.info.clusterInitials.map(initials => <ListItem disabled={true}
+                                                                           key={initials}>{initials}</ListItem>);
     };
 
     private renderCommonSkills = () => {
-        return this.props.info.commonSkills().map(skillName => {
+        return this.props.info.commonSkills.map(skillName => {
             const color = randomColor();
             return (<div
                 key={skillName}
@@ -76,22 +68,22 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
             >
                 {skillName}
             </div>);
-        }).toArray();
+        });
     };
 
     private renderRecommendations = () => {
-        return this.props.info.recommendations().map(skillName => <ListItem disabled={true}
-                                                                            key={skillName}>{skillName}</ListItem>).toArray();
+        return this.props.info.recommendations.map(skillName => <ListItem disabled={true}
+                                                                            key={skillName}>{skillName}</ListItem>);
     };
 
     private renderTags = (props: ConsultantClusterInfoProps) => {
-        return props.info.clusterSkills().map(skill => {
+        return props.info.clusterSkills.map(skill => {
             return {
-                value: skill.name(),
-                count: skill.numberOfOccurrences(),
-                key: skill.name()
+                value: skill.name,
+                count: skill.numOccurances,
+                key: skill.name
             };
-        }).toArray();
+        });
     };
 
     private handleTagClick = (evt: React.SyntheticEvent<any>, tagName: string) => {
@@ -111,21 +103,21 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
     };
 
     private getSkill = (skillName: string) => {
-        return this.props.info.clusterSkills().find(skill => skill.name() == skillName);
+        return this.props.info.clusterSkills.find(skill => skill.name == skillName);
     };
 
     private getSkillInfo() {
 
         if (this.state.selectedSkillName != null) {
-            let skill: AveragedSkill = this.getSkill(this.state.selectedSkillName);
+            let skill: APIAveragedSkill = this.getSkill(this.state.selectedSkillName);
             return (<Card>
                 <CardHeader
-                    title={skill.name()}
+                    title={skill.name}
                 />
                 <CardContent>
-                    {formatString('Der Skill {0} tritt {1} mal im Cluster auf.', skill.name(), String(skill.numberOfOccurrences()))}<br/>
-                    {formatString('Damit haben {0}% der Berater in diesem Cluster diesen Skill.', (skill.relativeOccurrences() * 100).toFixed(2))}<br/>
-                    {formatString('Das Durchschnittliche Skill-Level beträgt {0}/5.0.', skill.averageSkillLevel().toFixed(2))}<br/>
+                    {formatString('Der Skill {0} tritt {1} mal im Cluster auf.', skill.name, String(skill.numOccurances))}<br/>
+                    {formatString('Damit haben {0}% der Berater in diesem Cluster diesen Skill.', (skill.relativeOccurance * 100).toFixed(2))}<br/>
+                    {formatString('Das Durchschnittliche Skill-Level beträgt {0}/5.0.', skill.average.toFixed(2))}<br/>
                 </CardContent>
             </Card>);
         }
@@ -175,7 +167,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.CommonSkills.Title')}
-                            subheader={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills().size))}
+                            subheader={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills.length))}
                         />
                         <CardContent className="row">
                             {this.renderCommonSkills()}
@@ -186,7 +178,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.Skills.Title')}
-                            subheader={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills().size))}
+                            subheader={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills.length))}
                         />
                         <CardContent>
                             <TCloud

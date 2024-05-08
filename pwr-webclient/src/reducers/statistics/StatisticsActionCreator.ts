@@ -1,7 +1,6 @@
 import * as Immutable from 'immutable';
 import {ApplicationState} from '../reducerIndex';
 import {AxiosError, AxiosRequestConfig} from 'axios';
-import {SkillUsageMetric} from '../../model/statistics/SkillUsageMetric';
 import {
     AddNameEntityUsageInfoAction,
     AddSkillUsageInfoAction,
@@ -11,35 +10,34 @@ import {
     ReceiveSkillUsageMetricsAction
 } from './statistics-actions';
 import {ActionType} from '../ActionType';
-import {ProfileSkillMetrics} from '../../model/statistics/ProfileSkillMetrics';
-import {ConsultantClusterInfo} from '../../model/statistics/ConsultantClusterInfo';
-import {ScatterSkill} from '../../model/statistics/ScatterSkill';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {NameEntity} from '../profile-new/profile/model/NameEntity';
 import {ProfileElementType} from '../../Store';
 import {AbstractAction} from '../BaseActions';
 import {StatisticsServiceClient} from '../../clients/StatisticsServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
+import {APIScatterSkill} from '../../model/statistics/ScatterSkill';
+import {APIConsultantClusterInfo, APIProfileSkillMetric, APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 
 const statisticsClient = StatisticsServiceClient.instance();
 
 export class StatisticsActionCreator {
 
-    public static ReceiveSkillUsageMetrics(metrics: Array<SkillUsageMetric>): ReceiveSkillUsageMetricsAction {
+    public static ReceiveSkillUsageMetrics(metrics: Array<APISkillUsageMetric>): ReceiveSkillUsageMetricsAction {
         return {
             type: ActionType.ReceiveSkillUsageMetrics,
             metrics: metrics
         };
     }
 
-    public static ReceiveRelativeSkillUsageMetrics(metrics: Array<SkillUsageMetric>): ReceiveSkillUsageMetricsAction {
+    public static ReceiveRelativeSkillUsageMetrics(metrics: Array<APISkillUsageMetric>): ReceiveSkillUsageMetricsAction {
         return {
             type: ActionType.ReceiveRelativeSkillUsageMetrics,
             metrics: metrics
         };
     }
 
-    public static ReceiveProfileMetrics(metrics: ProfileSkillMetrics): ReceiveProfileSkillMetrics {
+    public static ReceiveProfileMetrics(metrics: APIProfileSkillMetric): ReceiveProfileSkillMetrics {
         return {
             type: ActionType.ReceiveProfileSkillMetrics,
             metrics: metrics
@@ -59,14 +57,14 @@ export class StatisticsActionCreator {
         };
     }
 
-    public static ReceiveConsultantClusterInfo(consultantClusterInfo: ConsultantClusterInfo): ReceiveConsultantClusterInfoAction {
+    public static ReceiveConsultantClusterInfo(consultantClusterInfo: APIConsultantClusterInfo): ReceiveConsultantClusterInfoAction {
         return {
             type: ActionType.ReceiveConsultantClusterInfo,
             consultantClusterInfo: consultantClusterInfo
         };
     }
 
-    public static ReceiveScatterSkills(scatterSkills: Immutable.List<ScatterSkill>): ReceiveScatterSkillsAction {
+    public static ReceiveScatterSkills(scatterSkills: Immutable.List<APIScatterSkill>): ReceiveScatterSkillsAction {
         return {
             type: ActionType.ReceiveScatterSkills,
             scatterSkills: scatterSkills
@@ -92,14 +90,14 @@ export class StatisticsActionCreator {
     public static AsyncRequestSkillUsages() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getSkillUsagesAbsolute()
-                .then(metrics => dispatch(StatisticsActionCreator.ReceiveSkillUsageMetrics(metrics.map(value => SkillUsageMetric.fromAPI(value)))))
+                .then(metrics => dispatch(StatisticsActionCreator.ReceiveSkillUsageMetrics(metrics)))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
 
                 .catch((error: any) => console.error(error))
                 .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
 
             statisticsClient.getSkillUsageRelative()
-                .then(metrics => dispatch(StatisticsActionCreator.ReceiveRelativeSkillUsageMetrics(metrics.map(value => SkillUsageMetric.fromAPI(value)))))
+                .then(metrics => dispatch(StatisticsActionCreator.ReceiveRelativeSkillUsageMetrics(metrics)))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
 
                 .catch((error: any) => console.error(error))
@@ -112,7 +110,7 @@ export class StatisticsActionCreator {
     public static AsyncGetProfileStatistics(initials: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getProfileStatistics(initials)
-                .then((metrics) => dispatch(StatisticsActionCreator.ReceiveProfileMetrics(ProfileSkillMetrics.fromAPI(metrics))))
+                .then((metrics) => dispatch(StatisticsActionCreator.ReceiveProfileMetrics(metrics)))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
                 .catch((error: AxiosError) => console.error(error))
                 .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
@@ -123,7 +121,7 @@ export class StatisticsActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getConsultantClusterInfo(initials)
                 .then((info) =>
-                    dispatch(StatisticsActionCreator.ReceiveConsultantClusterInfo(ConsultantClusterInfo.fromAPI(info))))
+                    dispatch(StatisticsActionCreator.ReceiveConsultantClusterInfo(info)))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
                 .catch((error: any) => console.error(error))
                 .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));
@@ -133,7 +131,7 @@ export class StatisticsActionCreator {
     public static AsyncRequestScatterSkills() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.getScatterSkills()
-                .then((skills) => dispatch(StatisticsActionCreator.ReceiveScatterSkills(Immutable.List<ScatterSkill>(skills.map(value => ScatterSkill.fromAPI(value))))))
+                .then((skills) => dispatch(StatisticsActionCreator.ReceiveScatterSkills(Immutable.List<APIScatterSkill>(skills))))
                 .then(() => dispatch(StatisticsActionCreator.StatisticsAvailable()))
                 .catch((error: any) => console.error(error))
                 .catch(() => dispatch(StatisticsActionCreator.AsyncCheckAvailability()));

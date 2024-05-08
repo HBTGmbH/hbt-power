@@ -1,10 +1,8 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as Immutable from 'immutable';
-import {SkillUsageMetric} from '../../../model/statistics/SkillUsageMetric';
 import {Card, CardContent, CardHeader, ListSubheader} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ScatterSkill} from '../../../model/statistics/ScatterSkill';
 import {compareNumbers} from '../../../utils/ObjectUtil';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import AddIcon from '@material-ui/icons/Add';
@@ -13,14 +11,16 @@ import Fab from '@material-ui/core/Fab/Fab';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {ThunkDispatch} from 'redux-thunk';
 import {Bar, BarChart, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis} from "recharts";
+import {APIScatterSkill} from '../../../model/statistics/ScatterSkill';
+import {APISkillUsageMetric} from '../../../model/statistics/ApiMetrics';
 
 const TagCloud = require('react-tagcloud');
 const TCloud: any = TagCloud.TagCloud;
 
 interface SkillStatisticsProps {
-    usageMetrics: Immutable.List<SkillUsageMetric>;
-    relativeUsageMetrics: Immutable.List<SkillUsageMetric>;
-    scatterSkills: Immutable.List<ScatterSkill>;
+    usageMetrics: Immutable.List<APISkillUsageMetric>;
+    relativeUsageMetrics: Immutable.List<APISkillUsageMetric>;
+    scatterSkills: Immutable.List<APIScatterSkill>;
 }
 
 interface SkillStatisticsLocalProps {
@@ -68,9 +68,9 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
     private renderTags = () => {
         return this.props.usageMetrics.map(usageMetric => {
             return {
-                value: usageMetric.skillName(),
-                count: usageMetric.skillUsage(),
-                key: usageMetric.skillName()
+                value: usageMetric.name,
+                count: usageMetric.value,
+                key: usageMetric.name
             };
         }).toArray();
     };
@@ -78,8 +78,8 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
     private renderData = () => {
         return this.props.usageMetrics.map(usageMetric => {
             return {
-                name: usageMetric.skillName(),
-                value: usageMetric.skillUsage(),
+                name: usageMetric.name,
+                value: usageMetric.value,
             };
         }).toArray().slice(0, 10);
     };
@@ -88,8 +88,8 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
     private renderRelativeData = () => {
         return this.props.relativeUsageMetrics.map(usageMetric => {
             return {
-                name: usageMetric.skillName(),
-                value: usageMetric.skillUsage() * 100.0,
+                name: usageMetric.name,
+                value: usageMetric.value * 100.0,
             };
         }).toArray().slice(0, 10);
     };
@@ -97,9 +97,9 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
     private renderScatterData = () => {
         return this.props.scatterSkills.map(scatterSkill => {
             return {
-                occ: scatterSkill.occurrences(),
-                rating: scatterSkill.meanRating(),
-                name: scatterSkill.name()
+                occ: scatterSkill.occurrences,
+                rating: scatterSkill.meanRating,
+                name: scatterSkill.name
             };
         }).toArray().sort((s1, s2) => compareNumbers(s1.occ, s2.occ)).slice(0, this.state.skillOccLevelLength);
     };
