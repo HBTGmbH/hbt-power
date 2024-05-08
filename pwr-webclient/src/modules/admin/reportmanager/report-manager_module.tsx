@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {Template} from '../../../model/view/Template';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {ReportPreview} from './report-preview_module';
@@ -46,9 +45,9 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ReportManagerLocalProps): ReportManagerProps {
+    static mapStateToProps(state: ApplicationState): ReportManagerProps {
         return {
-            allTemplates: state.templateSlice.templates().toArray()
+            allTemplates: state.templateSlice.templates.toArray()
         };
     }
 

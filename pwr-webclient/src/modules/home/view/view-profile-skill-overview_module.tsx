@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
@@ -64,7 +63,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileSkillOverviewLocalProps): ViewProfileSkillOverviewProps {
         return {
-            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.viewProfileId)
+            viewProfile: state.viewProfileSlice.viewProfiles.get(localProps.viewProfileId)
         };
     }
 

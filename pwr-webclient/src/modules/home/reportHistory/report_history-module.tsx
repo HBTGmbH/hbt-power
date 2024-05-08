@@ -50,8 +50,8 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         super(props);
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ReportHistoryLocalProps): ReportHistoryProps {
-        const templates = state.templateSlice.templates() != null ? state.templateSlice.templates() : new Map<string, Template>();
+    static mapStateToProps(state: ApplicationState): ReportHistoryProps {
+        const templates = state.templateSlice.templates != null ? state.templateSlice.templates : new Map<string, Template>();
         const reports = state.reportStore.reports != null ? state.reportStore.reports : [];
         const initials = state.profileStore.consultant.initials != null ? state.profileStore.consultant.initials : '';
 

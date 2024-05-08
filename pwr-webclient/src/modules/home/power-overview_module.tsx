@@ -79,7 +79,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     static mapStateToProps(state: ApplicationState): PowerOverviewProps {
         return {
             loggedInUser: state.profileStore.consultant,
-            viewProfiles: state.viewProfileSlice.viewProfiles().toArray()
+            viewProfiles: state.viewProfileSlice.viewProfiles.toArray()
         };
     }
 

@@ -51,7 +51,7 @@ class ViewCardModule extends React.Component<ViewCardProps
 
     static mapStateToProps(state: ApplicationState, localProps: ViewCardLocalProps): ViewCardProps {
         return {
-            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.viewProfileId)
+            viewProfile: state.viewProfileSlice.viewProfiles.get(localProps.viewProfileId)
         };
     }
 

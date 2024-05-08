@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {isNullOrUndefined} from 'util';
@@ -16,7 +15,6 @@ import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 import Grid from '@material-ui/core/Grid';
 import ReplayIcon from '@material-ui/icons/Replay';
 import {ViewProfileUpdateDialog} from './view-profile-update-dialog_module';
-import TextField from '@material-ui/core/TextField';
 import {ThunkDispatch} from 'redux-thunk';
 
 
@@ -50,8 +48,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileOverviewLocalProps): ViewProfileOverviewProps {
         return {
-            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.match.params.id),
-            isInProgress: state.viewProfileSlice.sortInProgress()
+            viewProfile: state.viewProfileSlice.viewProfiles.get(localProps.match.params.id),
+            isInProgress: state.viewProfileSlice.sortInProgress
         };
     }
 

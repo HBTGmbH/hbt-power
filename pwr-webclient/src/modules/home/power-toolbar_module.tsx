@@ -81,7 +81,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return {
             loggedInAsAdmin: state.adminReducer.loginStatus() === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available(),
-            viewProfiles: state.viewProfileSlice.viewProfiles().toArray(),
+            viewProfiles: state.viewProfileSlice.viewProfiles.toArray(),
             profilePictureSrc,
             hasProfilePicture: !!state.profileStore.consultant.profilePictureId,
             consultantInfo: [...state.adminReducer.consultantInfo()].sort((a, b) => a.name.localeCompare(b.name))

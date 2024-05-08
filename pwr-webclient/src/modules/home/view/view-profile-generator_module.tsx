@@ -1,13 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {Button, Dialog, Icon, List, ListItem,} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {Template} from '../../../model/view/Template';
-import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
@@ -55,8 +53,8 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileGeneratorLocalProps): ViewProfileGeneratorProps {
         return {
-            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.viewProfileId),
-            allTemplates: state.templateSlice.templates().toArray(),
+            viewProfile: state.viewProfileSlice.viewProfiles.get(localProps.viewProfileId),
+            allTemplates: state.templateSlice.templates.toArray(),
         };
     }
 

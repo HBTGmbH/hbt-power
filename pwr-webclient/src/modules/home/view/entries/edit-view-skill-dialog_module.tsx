@@ -7,7 +7,6 @@ import {ViewCategory} from '../../../../model/view/ViewCategory';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
-import * as redux from 'redux';
 import {ViewProfileActionCreator} from '../../../../reducers/view/ViewProfileActionCreator';
 import {connect} from 'react-redux';
 import {ThunkDispatch} from 'redux-thunk';
@@ -41,8 +40,8 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
         this.state = {};
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: EditViewSkillDialogLocalProps): EditViewSkillDialogProps {
-        let parentMap = state.viewProfileSlice.parentsForSkill();
+    static mapStateToProps(state: ApplicationState): EditViewSkillDialogProps {
+        let parentMap = state.viewProfileSlice.parentsForSkill;
         let array: ViewCategory[] = [];
         if (parentMap != null) {
             parentMap.forEach((value, key) => array[key] = value);

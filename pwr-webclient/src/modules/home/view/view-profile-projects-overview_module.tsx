@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
@@ -47,7 +46,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileProjectsOverviewLocalProps): ViewProfileProjectsOverviewProps {
         return {
-            viewProfile: state.viewProfileSlice.viewProfiles().get(localProps.viewProfileId)
+            viewProfile: state.viewProfileSlice.viewProfiles.get(localProps.viewProfileId)
         };
     }
 

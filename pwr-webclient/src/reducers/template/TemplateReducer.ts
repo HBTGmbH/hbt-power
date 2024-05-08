@@ -1,7 +1,6 @@
-import {TemplateStore} from './TemplateStore';
+import {emptyTemplateStore, TemplateStore} from './TemplateStore';
 import {ActionType} from '../ActionType';
 import {TemplateActions} from './TemplateActions';
-import {isNullOrUndefined} from 'util';
 import {ReportPreviewFile} from '../../model/view/ReportPreviewFile';
 import {AbstractAction} from '../BaseActions';
 
@@ -12,26 +11,31 @@ export namespace TemplateReducer {
     import SetTemplateAction = TemplateActions.SetTemplateAction;
     import SetPreviewAction = TemplateActions.SetPreviewAction;
 
-    export function reduce(store: TemplateStore, action: AbstractAction): TemplateStore {
-        if (isNullOrUndefined(store)) {
-            return TemplateStore.empty();
-        }
-
+    export function reduce(store: TemplateStore = emptyTemplateStore(), action: AbstractAction): TemplateStore {
         switch (action.type) {
             case ActionType.SetTemplate: {
                 let act: SetTemplateAction = action as SetTemplateAction;
-                let templates = store.templates();
+                let templates = store.templates;
                 templates = templates.set(act.template.id, act.template);
-                return store.templates(templates);
+                return {
+                    ...store,
+                    templates
+                }
             }
             case ActionType.RemoveTemplate: {
                 let act: RemoveTemplateAction = action as RemoveTemplateAction;
-                let templates = store.templates();
+                let templates = store.templates;
                 templates = templates.remove(act.id);
-                return store.templates(templates);
+                return {
+                    ...store,
+                    templates
+                }
             }
             case ActionType.ClearTemplates: {
-                return store.templates(store.templates().clear());
+                return {
+                    ...store,
+                    templates: store.templates.clear()
+                }
             }
             case ActionType.TemplateRequestFailed: {
                 console.error('TemplateRequestFailed');
@@ -39,16 +43,19 @@ export namespace TemplateReducer {
             }
             case ActionType.SetPreview : {
                 let act: SetPreviewAction = action as SetPreviewAction;
-                let temp: ReportPreviewFile = null;
+                let temp: ReportPreviewFile = new ReportPreviewFile();
                 temp.templateId = act.templateId;
                 temp.filename = act.filename;
                 temp.content = act.content;
                 temp.file = act.file;
                 temp.id = '111';
 
-                let previews = store.previews();
+                let previews = store.previews;
                 previews.set(act.templateId, new ReportPreviewFile(temp));
-                return store.previews(previews);
+                return {
+                    ...store,
+                    previews,
+                }
             }
         }
         return store;

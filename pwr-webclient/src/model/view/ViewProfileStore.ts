@@ -1,33 +1,17 @@
-import {doop} from 'doop';
 import * as Immutable from 'immutable';
 import {ViewProfile} from './ViewProfile';
 import {ViewCategory} from './ViewCategory';
 
-@doop
-export class ViewProfileStore {
-    @doop
-    public get viewProfiles() {
-        return doop<Immutable.Map<string, ViewProfile>, this>();
-    };
+export interface ViewProfileStore {
+    viewProfiles: Immutable.Map<string, ViewProfile>;
+    sortInProgress: boolean;
+    parentsForSkill: Immutable.Map<number, ViewCategory>;
+}
 
-    @doop
-    public get sortInProgress() {
-        return doop<boolean, this>();
-    };
-
-    @doop
-    public get parentsForSkill() {
-        return doop<Immutable.Map<number, ViewCategory>, this>();
-    }
-
-    private constructor() {
-        return this;
-    }
-
-    public static empty(): ViewProfileStore {
-        return new ViewProfileStore()
-            .viewProfiles(Immutable.Map<string, ViewProfile>())
-            .sortInProgress(false)
-            .parentsForSkill(Immutable.Map<number, ViewCategory>());
+export function emptyViewProfileStore(): ViewProfileStore {
+    return {
+        viewProfiles: Immutable.Map<string, ViewProfile>(),
+        parentsForSkill: Immutable.Map<number, ViewCategory>(),
+        sortInProgress: false,
     }
 }
