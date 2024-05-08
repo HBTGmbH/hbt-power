@@ -1,5 +1,3 @@
-import {doop} from 'doop';
-
 export interface APIBuildInfo {
     build: {
         version: string;
@@ -11,61 +9,36 @@ export interface APIBuildInfo {
     }
 }
 
-@doop
-export class BuildInfo {
-    @doop
-    public get version() {
-        return doop<string, this>();
+export interface BuildInfo {
+    version: string;
+    artifact: string;
+    name: string;
+    group: string;
+    time: Date;
+    available: boolean;
+    swaggerRef: string;
+}
+
+export function ofAPIBuildInfo(apiBuildInfo: APIBuildInfo): BuildInfo {
+    return {
+        version: apiBuildInfo.build.version,
+        artifact: apiBuildInfo.build.artifact,
+        name: apiBuildInfo.build.name,
+        group: apiBuildInfo.build.name,
+        time: new Date(apiBuildInfo.build.time),
+        available: true,
+        swaggerRef: apiBuildInfo.build.swaggerHref
     }
+}
 
-    @doop
-    public get artifact() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get name() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get group() {
-        return doop<string, this>();
-    };
-
-    @doop
-    public get time() {
-        return doop<Date, this>();
-    };
-
-    @doop
-    public get available() {
-        return doop<boolean, this>();
-    };
-
-    @doop
-    public get swaggerRef() {
-        return doop<string, this>();
-    }
-
-
-    constructor(version: string, artifact: string, name: string, group: string, time: Date, available: boolean, swaggerRef: string) {
-        return this.version(version).artifact(artifact).name(name).group(group).time(time).available(available).swaggerRef(swaggerRef);
-    }
-
-    public static of(apiBuildInfo: APIBuildInfo) {
-        return new BuildInfo(
-            apiBuildInfo.build.version,
-            apiBuildInfo.build.artifact,
-            apiBuildInfo.build.name,
-            apiBuildInfo.build.group,
-            new Date(apiBuildInfo.build.time),
-            true,
-            apiBuildInfo.build.swaggerHref || ''
-        );
-    }
-
-    public static offline(service: string): BuildInfo {
-        return new BuildInfo('', '', service, '', new Date(), false, '');
+export function offlineBuildInfo(service: string): BuildInfo {
+    return {
+        version: '',
+        artifact: '',
+        name: service,
+        group: '',
+        time: new Date(),
+        available: false,
+        swaggerRef: ''
     }
 }

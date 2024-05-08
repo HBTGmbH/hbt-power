@@ -36,10 +36,10 @@ class BuildInfoModule extends React.Component<BuildInfoProps
         this.props.fetchBuildInfo();
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: BuildInfoLocalProps): BuildInfoProps {
+    static mapStateToProps(state: ApplicationState): BuildInfoProps {
         return {
-            buildInfo: state.metaDataReducer.buildInfoByService(),
-            clientInfo: state.metaDataReducer.clientBuildInfo(),
+            buildInfo: state.metaDataReducer.buildInfoByService,
+            clientInfo: state.metaDataReducer.clientBuildInfo,
         };
     }
 

@@ -1,7 +1,7 @@
-import {APIBuildInfo, BuildInfo} from '../../model/metadata/BuildInfo';
+import {APIBuildInfo, BuildInfo, ofAPIBuildInfo, offlineBuildInfo} from '../../model/metadata/BuildInfo';
 import {ActionType} from '../ActionType';
 import axios from 'axios';
-import {MetaDataStore} from '../../model/metadata/MetaDataStore';
+import {MetaDataStore, MetaDataStoreKeys} from '../../model/metadata/MetaDataStore';
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {ClientClient} from '../../clients/ClientClient';
@@ -47,20 +47,20 @@ export namespace MetaDataActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             axios.get(serviceUrl).then(response => {
                 let apiBuildInfo = response.data as APIBuildInfo;
-                dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(apiBuildInfo)));
+                dispatch(AddOrReplaceBuildInfo(service, ofAPIBuildInfo(apiBuildInfo)));
             }).catch(error => {
                 console.error(error);
-                dispatch(AddOrReplaceBuildInfo(service, BuildInfo.offline(service)));
+                dispatch(AddOrReplaceBuildInfo(service, offlineBuildInfo(service)));
             });
         };
     }
 
     const available = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
-        return buildInfo => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.of(buildInfo)));
+        return buildInfo => dispatch(AddOrReplaceBuildInfo(service, ofAPIBuildInfo(buildInfo)));
     };
 
     const notAvailable = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
-        return error => dispatch(AddOrReplaceBuildInfo(service, BuildInfo.offline(service)));
+        return error => dispatch(AddOrReplaceBuildInfo(service, offlineBuildInfo(service)));
     };
 
     function FetchClientBuildInfo() {
@@ -77,16 +77,16 @@ export namespace MetaDataActionCreator {
     export function FetchAllBuildInfo() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.getBuildInfo()
-                .then(available(MetaDataStore.KEY_PROFILE, dispatch))
-                .catch(notAvailable(MetaDataStore.KEY_PROFILE, dispatch));
+                .then(available(MetaDataStoreKeys.KEY_PROFILE, dispatch))
+                .catch(notAvailable(MetaDataStoreKeys.KEY_PROFILE, dispatch));
             SkillServiceClient.instance().getBuildInfo()
-                .then(available(MetaDataStore.KEY_SKILL, dispatch))
-                .catch(notAvailable(MetaDataStore.KEY_SKILL, dispatch));
+                .then(available(MetaDataStoreKeys.KEY_SKILL, dispatch))
+                .catch(notAvailable(MetaDataStoreKeys.KEY_SKILL, dispatch));
             ViewProfileServiceClient.instance().getBuildInfo()
-                .then(available(MetaDataStore.KEY_VIEW_PROFILE, dispatch))
-                .catch(notAvailable(MetaDataStore.KEY_VIEW_PROFILE, dispatch));
-            dispatch(FetchBuildInfo(MetaDataStore.KEY_STATISTICS, StatisticsServiceClient.instance().getBuildInfoURL()));
-            dispatch(FetchBuildInfo(MetaDataStore.KEY_REPORT, ReportServiceClient.instance().getBuildInfoURL()));
+                .then(available(MetaDataStoreKeys.KEY_VIEW_PROFILE, dispatch))
+                .catch(notAvailable(MetaDataStoreKeys.KEY_VIEW_PROFILE, dispatch));
+            dispatch(FetchBuildInfo(MetaDataStoreKeys.KEY_STATISTICS, StatisticsServiceClient.instance().getBuildInfoURL()));
+            dispatch(FetchBuildInfo(MetaDataStoreKeys.KEY_REPORT, ReportServiceClient.instance().getBuildInfoURL()));
             dispatch(FetchClientBuildInfo());
         };
     }

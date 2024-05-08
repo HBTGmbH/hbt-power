@@ -86,7 +86,7 @@ export class Comparators {
     }
 
     public static compareBuildInfo(b1: BuildInfo, b2: BuildInfo): number {
-        return Comparators.compareString(b1.name(), b2.name());
+        return Comparators.compareString(b1.name, b2.name);
     }
 
     public static compareEducationByEndDate(edu1: Education, edu2: Education): number {
