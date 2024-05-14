@@ -13,7 +13,6 @@ import {ReportServiceClient} from '../../clients/ReportServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
 
 const templateClient = TemplateClient.instance();
-const reportClient = ReportServiceClient.instance();
 
 export class TemplateActionCreator {
 
@@ -51,7 +50,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncChangeTemplate(template: Template) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             templateClient.changeTemplate(template.id)
                 .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
                 .catch(() => dispatch(TemplateActions.TemplateRequestFailed()))
@@ -61,7 +60,7 @@ export class TemplateActionCreator {
 
     @makeDeferrable(ActionType.AsyncDeleteTemplate)
     public static AsyncDeleteTemplate(id: string) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             templateClient.deleteTemplate(id)
                 .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
 
@@ -73,7 +72,7 @@ export class TemplateActionCreator {
 
 
     private static AsyncLoadTemplate(id: string) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             dispatch(CrossCuttingActionCreator.startRequest());
             templateClient.getTemplateById(id)
                 .then((template) => TemplateActionCreator.TemplateReceived(template, dispatch))
@@ -87,7 +86,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncLoadAllTemplates() {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(TemplateActions.ClearTemplates());
             templateClient.getAllTemplates()
@@ -101,8 +100,8 @@ export class TemplateActionCreator {
 
 
     public static AsyncLoadPreview(id: string) {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            if (id != '') {
+        return function (dispatch: redux.Dispatch) {
+            if (id !== '') {
                 dispatch(CrossCuttingActionCreator.startRequest());
                 templateClient.getPreview(id)
                     .then((response: AxiosResponse) => TemplateActionCreator.PreviewReceived(id, response.data, dispatch))
@@ -116,7 +115,7 @@ export class TemplateActionCreator {
 
 
     public static AsyncLoadAllPreviews() {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             dispatch(CrossCuttingActionCreator.startRequest());
             templateClient.getAllPreviews()
                 .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
@@ -127,7 +126,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncLoadAllFiles() {
-        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+        return function (dispatch: redux.Dispatch) {
             dispatch(CrossCuttingActionCreator.startRequest());
             templateClient.getAllFiles()
                 .then((response) => dispatch(CrossCuttingActionCreator.endRequest()))
@@ -138,7 +137,7 @@ export class TemplateActionCreator {
     }
 
     public static AsyncUploadFileAsTemplate(file: any, name: string, description: string, createUser: string) {
-        return function (dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('templateSlice', JSON.stringify({
@@ -161,8 +160,8 @@ export class TemplateActionCreator {
                 .then(() => dispatch(AdminActionCreator.SetReportUploadProgress(0)))
 
                 .catch((error) => Alerts.showError('Upload Fehlgeschlagen: ' + error.toString()))
-                .catch((error) => dispatch(AdminActionCreator.SetReportUploadPending(false)))
-                .catch((error) => dispatch(AdminActionCreator.SetReportUploadProgress(0)));
+                .catch(() => dispatch(AdminActionCreator.SetReportUploadPending(false)))
+                .catch(() => dispatch(AdminActionCreator.SetReportUploadProgress(0)));
         };
     }
 }

@@ -274,7 +274,7 @@ export class AdminActionCreator {
                 dispatch(AdminActionCreator.AsyncLoadConsultantInfo());
             }).catch((error: PowerApiError) => {
                 console.error(error);
-                if (error.status != -1) {
+                if (error.status !== -1) {
                     dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.REJECTED));
                 } else {
                     dispatch(AdminActionCreator.ChangeLoginStatus(LoginStatus.UNAVAILABLE));

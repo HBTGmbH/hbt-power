@@ -1,7 +1,7 @@
 export class StringUtils {
     public static formatString(val: string, ...args: any[]): string {
         return val.replace(/{(\d+)}/g, function (match, number) {
-            return typeof args[number] != 'undefined'
+            return typeof args[number] !== 'undefined'
                 ? args[number]
                 : match
                 ;

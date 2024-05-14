@@ -75,7 +75,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
     }
 }
 
-const WithRouterComponent = withRouter(props => <BaseDataDashboardElementModule {...props}/>);
+const WithRouterComponent = withRouter((props: any) => <BaseDataDashboardElementModule {...props}/>);
 
 /**
  * @see BaseDataDashboardElementModule

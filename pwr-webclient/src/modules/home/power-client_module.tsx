@@ -17,7 +17,7 @@ import {useDispatch} from "react-redux";
 
 export const PowerClient = () => {
     const dispatch = useDispatch();
-    const {initials} = useParams();
+    const {initials} = useParams<{initials: string}>();
     useEffect(() => {
         dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials));
     }, [initials])

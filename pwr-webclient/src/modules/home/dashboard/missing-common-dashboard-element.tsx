@@ -53,7 +53,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
 
 
     private renderMissingSkills = () => {
-        if (this.props.profileSkillMetrics.missing.length == 0) {
+        if (this.props.profileSkillMetrics.missing.length === 0) {
             return PowerLocalize.get('None');
         }
         let missingSkills: String = '';

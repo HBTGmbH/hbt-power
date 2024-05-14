@@ -21,32 +21,27 @@ export interface PowerApiError {
 export class PowerHttpClient {
 
 
-
-    constructor() {
-
-    }
-
-    get<T, R>(url: string, config?: AxiosRequestConfig): Promise<R> {
+    get<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.get(url, config)));
     }
 
-    delete<T, R>(url: string, config?: AxiosRequestConfig): Promise<R> {
+    delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.delete(url, config)));
     }
 
-    head<T, R>(url: string, config?: AxiosRequestConfig): Promise<R> {
+    head<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.head(url, config)));
     }
 
-    post<T, R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+    post<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.post(url, data, config)));
     }
 
-    put<T, R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+    put<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.put(url, data, config)));
     }
 
-    patch<T, R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+    patch<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.patch(url, data, config)));
     }
 
@@ -69,7 +64,7 @@ export class PowerHttpClient {
         return response.data;
     };
 
-    errorRequest = <T>(error: AxiosError): any => {
+    errorRequest = (error: AxiosError): any => {
         store.dispatch(CrossCuttingActionCreator.endRequest());
         throw(this.handleError(error));
     };

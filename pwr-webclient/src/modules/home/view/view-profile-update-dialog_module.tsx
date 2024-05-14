@@ -1,6 +1,5 @@
 import * as react from 'react';
 import React from 'react';
-import * as redux from 'redux';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
@@ -55,7 +54,7 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: UpdateLocalProps): UpdateProps {
+    static mapStateToProps(state: ApplicationState): UpdateProps {
         const initials = state.profileStore.consultant.initials;
         return {
             initials: initials,
@@ -129,7 +128,7 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
                         variant={'contained'}
                         color={'primary'}
                         onClick={() => this.updateViewProfile()}
-                        disabled={this.state.name.length == 0 || this.state.description.length == 0}
+                        disabled={this.state.name.length === 0 || this.state.description.length === 0}
                     >Confirm</Button>
                 </DialogActions>
             </Dialog>

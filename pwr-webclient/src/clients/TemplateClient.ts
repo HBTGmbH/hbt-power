@@ -42,30 +42,30 @@ export class TemplateClient extends PowerHttpClient {
     }
 
     public getTemplateById(id: string): Promise<Template> {
-        const url = this.base() + '/template' + '/' + id;
+        const url = this.base() + '/template/' + id;
         this.beginRequest();
         return this.get(url);
     }
 
     public changeTemplate(id: string) {
-        const url = this.base() + '/template' + '/' + id;
+        const url = this.base() + '/template/' + id;
         this.beginRequest();
         return this.get(url);
     }
 
     public getPreview(id: string) {
-        const url = this.base() + '/template' + '/preview' + '/' + id;
+        const url = this.base() + '/template/preview/' + id;
         this.beginRequest();
         return this.get(url);
     }
 
     public getPreviewURL(id: string): string {
-        return this.base() + '/template' + '/preview' + '/' + id;
+        return this.base() + '/template/preview/' + id;
 
     }
 
     public getAllPreviews(): Promise<Array<string>> {
-        const url = this.base() + '/template' + '/preview';
+        const url = this.base() + '/template/preview';
         this.beginRequest();
         return this.get(url);
     }

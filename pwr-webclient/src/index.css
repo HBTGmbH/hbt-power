@@ -297,7 +297,7 @@ body {
 .hbt-schild-background {
     position: fixed;
     z-index: -1;
-    background-image: url("/img/HBT_Schild_01.jpeg");
+    background-image: url("./img/HBT_Schild_01.jpeg");
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover;

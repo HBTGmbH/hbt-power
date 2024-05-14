@@ -70,7 +70,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
         & ViewProfileGeneratorLocalProps
         & ViewProfileGeneratorDispatch) {
         super(props);
-        this.resetState(props);
+        this.resetState();
     }
 
     componentDidMount(): void {
@@ -78,9 +78,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
     }
 
 
-    private resetState(props: ViewProfileGeneratorProps
-        & ViewProfileGeneratorLocalProps
-        & ViewProfileGeneratorDispatch) {
+    private resetState() {
         this.state = {
             activeTemplateId: '',
             activeTemplateNumber: -1,
@@ -97,13 +95,12 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
     }
 
     private closeAndReset = () => {
-        this.resetState(this.props);
+        this.resetState();
         this.props.onClose();
     };
 
     private renderListItems = () => {
         let items: any = [];
-        let label: string = '';
 
         if (this.props.allTemplates.length === 0) {
             items.push(
@@ -125,7 +122,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
     };
 
     private startGenerate = (viewID: string, tempID: string) => {
-        if (tempID == '' || tempID == null) {
+        if (tempID === '' || !tempID) {
             tempID = '-1';
         }
 
@@ -150,7 +147,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                                 color={'secondary'}
                                 variant={'outlined'}
                                 className="mui-margin"
-                                disabled={this.state.activeTemplateId == ''}
+                                disabled={this.state.activeTemplateId === ''}
                                 onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
                             >
                                 <Icon className="material-icons">open_in_new</Icon>

@@ -33,7 +33,7 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     public getBuildInfo = (): Promise<APIBuildInfo> => {
         const url = this.base() + '/actuator/info';
         this.beginRequest();
-        return this.get<any, APIBuildInfo>(url)
+        return this.get<APIBuildInfo>(url)
             // Append swagger ref
             .then(value => {
                 return ({

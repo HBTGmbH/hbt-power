@@ -1,6 +1,5 @@
-import {ThemeOptions} from '@material-ui/core/styles/createMuiTheme';
 import {Color} from './utils/ColorUtil';
-import {createMuiTheme} from '@material-ui/core';
+import {createTheme, ThemeOptions} from '@material-ui/core/styles';
 
 const newPowerTheme: ThemeOptions = {
     typography: {
@@ -58,4 +57,4 @@ const newPowerTheme: ThemeOptions = {
     }
 };
 
-export const POWER_MUI_THEME = createMuiTheme(newPowerTheme as any);
+export const POWER_MUI_THEME = createTheme(newPowerTheme as any);

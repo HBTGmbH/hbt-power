@@ -101,7 +101,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
             this.setState(this.defaultState({}));
         } else if (this.props.entry != oldProps.entry) {
             let date: Date;
-            if (oldProps.type == 'QUALIFICATION') {
+            if (oldProps.type === 'QUALIFICATION') {
                 date = this.props.entry && this.props.entry['date'] ? this.props.entry['date'] : new Date();
             } else {
                 date = this.props.entry && this.props.entry['startDate'] ? this.props.entry['startDate'] : new Date();
@@ -165,7 +165,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
 
     private handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!event.isPropagationStopped()) {
-            if (event.key == 'Escape') {
+            if (event.key === 'Escape') {
                 this.props.onClose();
                 event.stopPropagation();
                 event.preventDefault();
@@ -199,7 +199,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         </Grid>
                         {
                             //startDate
-                            !(this.props.type == 'CAREER' || this.props.type == 'EDUCATION' || this.props.type == 'TRAINING' || this.props.type == 'QUALIFICATION') ? <></> :
+                            !(this.props.type === 'CAREER' || this.props.type === 'EDUCATION' || this.props.type === 'TRAINING' || this.props.type === 'QUALIFICATION') ? <></> :
                                 <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onStartDateChange}
@@ -212,7 +212,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         }
                         {
                             //endDate
-                            !(this.props.type == 'CAREER' || this.props.type == 'EDUCATION' || this.props.type == 'TRAINING') ? <></> :
+                            !(this.props.type === 'CAREER' || this.props.type === 'EDUCATION' || this.props.type === 'TRAINING') ? <></> :
                                 <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onEndDateChange}
@@ -223,7 +223,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         }
                         {
                             //degree
-                            !(this.props.type == 'EDUCATION') ? <></> :
+                            !(this.props.type === 'EDUCATION') ? <></> :
                                 <Grid item md={12} xs={12}>
                                     <PwrAutoComplete
                                         fullWidth
@@ -237,7 +237,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                         }
                         {
                             //lang level
-                            !(this.props.type == 'LANGUAGE') ? <></> :
+                            !(this.props.type === 'LANGUAGE') ? <></> :
                                 <Grid item md={12} xs={12}>
                                     <FormControl>
                                         <Select

@@ -75,7 +75,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     };
 
     private loadAllData() {
-        if (this.props.templates == null || this.props.templates.size == 0) {
+        if (!this.props.templates || this.props.templates.size === 0) {
             this.loadAllTemplateData();
         }
         this.loadAllReportData();

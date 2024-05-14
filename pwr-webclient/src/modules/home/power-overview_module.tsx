@@ -181,7 +181,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     }
 }
 
-const WithRouterComponent = withRouter(props => <PowerOverviewModule {...props}/>);
+const WithRouterComponent = withRouter((props: any) => <PowerOverviewModule {...props}/>);
 
 /**
  * @see PowerOverviewModule

@@ -30,14 +30,14 @@ export class AscDescButton extends React.Component<AscDescButtonProps, AscDescBu
         super(props);
         this.state = {
             currState: props.initial,
-            currentIconName: props.initial == 'ASC' ? this.ascName : this.descName
+            currentIconName: props.initial === 'ASC' ? this.ascName : this.descName
         };
     }
 
     private handleButtonPress = () => {
         let newState: 'ASC' | 'DESC' = 'ASC';
         let newIcon: string = this.ascName;
-        if (this.state.currState == 'ASC') {
+        if (this.state.currState === 'ASC') {
             newState = 'DESC';
             newIcon = this.descName;
         }

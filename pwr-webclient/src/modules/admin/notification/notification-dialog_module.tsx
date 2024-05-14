@@ -102,7 +102,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
         if (!this.stepperHasFinished()) {
             this.setState({
                 stepIndex: this.state.stepIndex + 1,
-                nameEntityName: this.state.selectedAction == 'edit' ? this.props.notification.nameEntity.name() : ''
+                nameEntityName: this.state.selectedAction === 'edit' ? this.props.notification.nameEntity.name() : ''
             });
         } else {
             this.executeSelectedAction();
@@ -122,8 +122,8 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
     };
 
     private stepperHasFinished = () => {
-        return (this.state.selectedAction == 'edit' && this.state.stepIndex == 2)
-            || (this.state.selectedAction != 'edit' && this.state.stepIndex == 1);
+        return (this.state.selectedAction === 'edit' && this.state.stepIndex === 2)
+            || (this.state.selectedAction !== 'edit' && this.state.stepIndex === 1);
     };
 
     private executeSelectedAction = () => {
@@ -153,7 +153,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
     private renderStepper = () => {
         // Unfortunately, this is necessary because the Stepper will attempt to render null or false
         // JSX elements in its children. Mixins don't work here
-        if (this.state.selectedAction == 'edit') {
+        if (this.state.selectedAction === 'edit') {
             return <Stepper activeStep={this.state.stepIndex}>
                 <Step>
                     <StepLabel>{PowerLocalize.get('NotificationDialog.Stepper.Label.Step0')}</StepLabel>
@@ -183,7 +183,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
             <Button
                 id="NotificationActionDialog.Prev"
                 variant={'text'}
-                disabled={this.state.stepIndex == 0}
+                disabled={this.state.stepIndex === 0}
                 onClick={this.backStep}
                 style={{marginRight: 12}}
             >

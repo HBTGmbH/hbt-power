@@ -42,7 +42,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
     }
 
     private renderCommonSkills = () => {
-        if (this.props.profileSkillMetrics.common.length == 0) {
+        if (this.props.profileSkillMetrics.common.length === 0) {
             return PowerLocalize.get('None');
         }
         let commonSkills: String = '';

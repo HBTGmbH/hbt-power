@@ -33,27 +33,43 @@
     "ts-comparator": "^1.1.2"
   },
   "devDependencies": {
-    "@types/isomorphic-fetch": "0.0.34",
-    "@types/jest": "20.0.2",
-    "@types/node": "^20.11.5",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "@types/react-router-dom": "^5.2.0",
     "@types/react-dropzone": "^5.1.0",
     "@types/react-sortable-hoc": "0.6.0",
     "@types/vis": "4.18.2",
     "react-scripts-ts": "^3.1.0",
     "redux-devtools-extension": "^2.13.9",
-    "source-map-explorer": "^2.5.3",
+    "@types/jest": "^27.5.2",
+    "react-scripts": "^5.0.1",
     "typescript": "~5.3.3"
   },
   "scripts": {
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts --openssl-legacy-provider build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject",
-    "compileInfo": "node ./compileBuildInfo.js",
-    "incrementRelease": "node ./scripts/increment-release-version.js",
-    "incrementSnapshot": "node ./scripts/increment-snapshot-version.js"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

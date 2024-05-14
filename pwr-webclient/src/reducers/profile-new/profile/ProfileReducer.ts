@@ -97,7 +97,7 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
                 // Index did not change, do nothing!
                 return store;
             }
-            if (store.selectedProject && store.selectedProject.id === null) {
+            if (store.selectedProject && !store.selectedProject.id) {
                 // New Project. Delete it
                 return cancelEditOnNewProject(store, selectedIndex - 1);
             }
@@ -190,7 +190,7 @@ function handleUpdateEntry(action: EntryUpdateAction, profile: Profile): Profile
 
 function handleDeleteEntry(action: EntryDeleteAction, profile: Profile): Profile {
     let field: Array<ProfileEntry> = profile[action.field];
-    let newField = field.filter(value => value.id != action.id);
+    let newField = field.filter(value => value.id !== action.id);
     return sortAndReplace(profile, action.field, newField);
 }
 
@@ -256,7 +256,7 @@ function handleSetEditMode(store: ProfileStore): ProfileStore {
 function cancelEditOnNewProject(store: ProfileStore, indexToJumpTo = null): ProfileStore {
     const withDeletedProject = deleteProjectFromProfile(store.selectedProject.id, store);
     let selectedProject = null;
-    if (indexToJumpTo != null) {
+    if (indexToJumpTo !== null) {
         selectedProject = getProject(indexToJumpTo, withDeletedProject);
     }
     return {...withDeletedProject, ...{isProjectEditing: false, selectedProjectIndex: indexToJumpTo, selectedProject}};

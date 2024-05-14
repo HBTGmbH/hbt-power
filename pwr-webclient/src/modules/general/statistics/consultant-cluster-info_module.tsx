@@ -102,7 +102,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
     };
 
     private getSkill = (skillName: string) => {
-        return this.props.info.clusterSkills.find(skill => skill.name == skillName);
+        return this.props.info.clusterSkills.find(skill => skill.name === skillName);
     };
 
     private getSkillInfo() {

@@ -98,7 +98,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
 
         let searchTerm: string = newValue;
         let navigation: boolean = false;
-        if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             navigation = true;
             searchTerm = this.props.searchTerm;
         }

@@ -55,7 +55,7 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
     };
 
     private handleInputFieldKeyPress = (event: KeyboardEvent<{}>) => {
-        if (event.key == 'Enter') {
+        if (event.key === 'Enter') {
             this.openProfile();
         }
     };

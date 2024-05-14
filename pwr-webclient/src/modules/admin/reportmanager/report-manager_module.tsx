@@ -59,7 +59,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
     }
 
     public componentDidMount() {
-        if (this.props.allTemplates.length == 0) {
+        if (this.props.allTemplates.length === 0) {
             this.props.loadAllTemplates();
         }
     }
@@ -135,7 +135,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             <div className={'col-md-3'} style={{marginLeft: '10px'}}>
                 <Paper>
                     {
-                        this.state.selectedTemplate == null ? <></> :
+                        !this.state.selectedTemplate ? <></> :
                             <div>
                                 <ReportManagerInfoBox selectedTemplate={this.state.selectedTemplate}/>
                             </div>

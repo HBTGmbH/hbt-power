@@ -28,8 +28,8 @@ export const DefaultEquals = (a: any, b: any) => {
  */
 export function areEqualArrays<T>(a1: Array<T>, a2: Array<T>, comparator: EqualsFunction<T> = DefaultEquals) {
     if (a1 === a2) return true;
-    if (a1 == null || a2 == null) return false;
-    if (a1.length != a2.length) return false;
+    if (!a1 || !a2) return false;
+    if (a1.length !== a2.length) return false;
 
     // If you don't care about the order of the elements inside
     // the array, you should sort both arrays here.

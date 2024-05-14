@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {newProfileSkill, ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 import {PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
@@ -52,7 +51,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ProfileSkillsLocalProps): ProfileSkillsProps {
+    static mapStateToProps(state: ApplicationState): ProfileSkillsProps {
         return {
             skills: state.profileStore.profile.skills.sort(PROFILE_SKILLS_BY_NAME),
             initials: state.profileStore.consultant.initials
@@ -101,7 +100,7 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
                        prevState: Readonly<ProfileSkillsLocalState>): void {
         if (prevProps.skills != this.props.skills) {
             if (prevState.selectedSkill != null) {
-                const newSkill: ProfileSkill = this.props.skills.filter(skill => prevState.selectedSkill.name == skill.name)[0];
+                const newSkill: ProfileSkill = this.props.skills.filter(skill => prevState.selectedSkill.name === skill.name)[0];
                 this.setState({
                     selectedSkill: newSkill
                 });

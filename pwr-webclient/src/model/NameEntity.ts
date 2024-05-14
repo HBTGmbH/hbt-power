@@ -1,4 +1,3 @@
-import {NEW_ENTITY_PREFIX} from './PwrConstants';
 import {APINameEntity} from './APIProfile';
 
 /**

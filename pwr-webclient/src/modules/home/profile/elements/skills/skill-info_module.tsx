@@ -1,7 +1,6 @@
 import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {SkillServiceClient} from '../../../../../clients/SkillServiceClient';
@@ -48,7 +47,7 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: SkillInfoLocalProps): SkillInfoProps {
+    static mapStateToProps(state: ApplicationState): SkillInfoProps {
         const initials = state.profileStore.consultant != null ? state.profileStore.consultant.initials : 'error';
         return {
             initials: initials,
@@ -99,7 +98,7 @@ class SkillInfoModule extends React.Component<SkillInfoProps & SkillInfoLocalPro
         return (
             <Grid container spacing={2}>
 
-                {this.props.selectedSkill == null ? <></> :
+                {!this.props.selectedSkill ? <></> :
                     <Grid item md={12}>
                         <Typography variant={'body1'}>{this.props.selectedSkill.name}</Typography>
                         <PwrSkillVersionInfo skillName={this.props.selectedSkill.name}

@@ -64,7 +64,7 @@ export function levenshtein(a: string, b: string): number {
 
 export function compareNumbers(n1: number, n2: number) {
     if (n1 > n2) return -1;
-    if (n1 == n2) return 0;
+    if (n1 === n2) return 0;
     return 1;
 }
 
@@ -82,7 +82,7 @@ export function orDefault<V, R>(keyExtractor: (v: V) => R, def: R) {
     };
 }
 
-export function noOp<ArgType>(arg1?: ArgType) {
+export function noOp<ArgType>(_?: ArgType) {
 }
 
 

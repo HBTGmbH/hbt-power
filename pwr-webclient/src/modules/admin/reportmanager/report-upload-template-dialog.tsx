@@ -129,7 +129,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
                     </div>
                 </div>
             </div>
-            {this.isValidFile() == false ? <div className={'row'}>Select a .rptdesing file</div> :
+            {this.isValidFile() === false ? <div className={'row'}>Select a .rptdesing file</div> :
                 <div>
                     <div className={'Aligner'}>
                         <TextField

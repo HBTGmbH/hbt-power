@@ -56,7 +56,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
     }
 
     public componentDidUpdate(prevProps: ReportManagerInfoProps & ReportManagerInfoLocalProps & ReportManagerInfoDispatch) {
-        if (this.props.selectedTemplate.id != prevProps.selectedTemplate.id || this.state.template == null) {
+        if (this.props.selectedTemplate.id != prevProps.selectedTemplate.id || this.state.template === null) {
             this.setState({
                 template: this.props.selectedTemplate,
             });
@@ -126,7 +126,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
     };
 
     render() {
-        if (this.state.template == null) {
+        if (!this.state.template) {
             this.setState({
                 template: this.props.selectedTemplate,
             });

@@ -143,7 +143,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     private renderViewProfile = (viewProfile: ViewProfile, initials: string) => {
         let text = viewProfile.viewProfileInfo.name;
-        if (text === null || text.trim() === '') {
+        if (!text) {
             text = viewProfile.id;
         }
         return <MenuItem
@@ -336,6 +336,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     }
 }
 
-const WithRouterComponent = withRouter(props => <PowerToolbarModule {...props}/>);
+const WithRouterComponent = withRouter((props: any) => <PowerToolbarModule {...props}/>);
 
 export const PowerToolbar = connect(PowerToolbarModule.mapStateToProps, PowerToolbarModule.mapDispatchToProps)(WithRouterComponent);

@@ -65,7 +65,7 @@ export class SkillServiceSkill {
     public static fromAPI(api: APISkillServiceSkill) {
         let categoryId = api.category?.id;
         let qualifiers: Array<LocalizedQualifier> = [];
-        if (api.qualifiers != null) {
+        if (api.qualifiers !== null) {
             qualifiers = api.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));
         }
 

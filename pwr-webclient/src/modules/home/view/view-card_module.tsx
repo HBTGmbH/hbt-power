@@ -150,7 +150,7 @@ class ViewCardModule extends React.Component<ViewCardProps
             </Card>);
     }
 }
-const WithRouterComponent = withRouter(props => <ViewCardModule {...props}/>);
+const WithRouterComponent = withRouter((props: any) => <ViewCardModule {...props}/>);
 
 /**
  * @see ViewCardModule

@@ -26,10 +26,6 @@ export class Paths {
     public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/:initials/statistics/clusterinfo';
     public static readonly USER_STATISTICS_SKILLS = CONFIG.APP_PATH + '/app/:initials/statistics/skills';
 
-    constructor() {
-
-    }
-
     public static build(path: string, params: Record<string, string>): string {
         let result = path;
         for (let key in params) {

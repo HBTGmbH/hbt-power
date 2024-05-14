@@ -255,4 +255,4 @@ class AdminClientModule extends React.Component<AdminClientProps
  * @author nt
  * @since 30.05.2017
  */
-export const AdminClient = connect(AdminClientModule.mapStateToProps, AdminClientModule.mapDispatchToProps)(AdminClientModule);
+export const AdminClient = connect(AdminClientModule.mapStateToProps, AdminClientModule.mapDispatchToProps)(AdminClientModule) as any;

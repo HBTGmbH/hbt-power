@@ -135,7 +135,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         return <div>
             {
 
-                this.props.reason == AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN ?
+                this.props.reason === AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN ?
                     <p>
                         The previously unknown skill <strong>{this.props.skillName}</strong> was added to the profile
                         of <strong>{this.props.initials}</strong>.

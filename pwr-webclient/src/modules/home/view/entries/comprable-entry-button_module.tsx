@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import * as redux from 'redux';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {SortableEntryField, SortableEntryType} from '../../../../model/view/NameComparableType';
 import {ViewProfileActionCreator} from '../../../../reducers/view/ViewProfileActionCreator';
@@ -37,7 +36,7 @@ class ComparableEntryButtonModule extends React.Component<ComparableEntryButtonP
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ComparableEntryButtonLocalProps): ComparableEntryButtonProps {
+    static mapStateToProps(): ComparableEntryButtonProps {
         return {};
     }
 

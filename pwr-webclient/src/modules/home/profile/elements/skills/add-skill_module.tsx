@@ -115,27 +115,27 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
     };
 
     private handleKeyPress = (event: KeyboardEvent) => {
-        if (this.state.progressState == 0 && event.key == 'Enter' && !!(this.state.skillName)) {
+        if (this.state.progressState === 0 && event.key === 'Enter' && !!(this.state.skillName)) {
             if (!this.props.histories.has(this.state.skillName)) {
                 this.requestSkillHierarchy(this.state.skillName);
             }
             this.setState({progressState: 1});
             // TODO remove focus from Textfield
             document.getElementById('addSkillMain').focus();
-        } else if (this.state.progressState == 1) {
-            if (event.keyCode == 37) {
-                let val: number = this.state.skillRating == 1 ? 1 : (this.state.skillRating - 1);
+        } else if (this.state.progressState === 1) {
+            if (event.keyCode === 37) {
+                let val: number = this.state.skillRating === 1 ? 1 : (this.state.skillRating - 1);
                 this.handleRatingChange(val);
                 //console.debug('leftArrow');
-            } else if (event.keyCode == 39) {
-                let val: number = this.state.skillRating == 5 ? 5 : (this.state.skillRating + 1);
+            } else if (event.keyCode === 39) {
+                let val: number = this.state.skillRating === 5 ? 5 : (this.state.skillRating + 1);
                 this.handleRatingChange(val);
                 //console.debug('leftArrow');
-            } else if (event.key == 'Enter') {
+            } else if (event.key === 'Enter') {
                 this.onAddSkill();
             }
         }
-        if (event.key == 'Escape') {
+        if (event.key === 'Escape') {
             this.resetState();
         }
     };
@@ -198,12 +198,12 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
                     />
                 </div>
                 <div id={'addSkillRatingSelect'} className={'col-md-6'}>
-                    {this.state.progressState == 1 ? <ArrowLeft/> : <></>}
+                    {this.state.progressState === 1 ? <ArrowLeft/> : <></>}
                     <StarRating rating={this.state.skillRating} onRatingChange={this.handleRatingChange}/>
-                    {this.state.progressState == 1 ? <ArrowRight/> : <></>}
+                    {this.state.progressState === 1 ? <ArrowRight/> : <></>}
                 </div>
                 <Button variant={'contained'} onClick={this.onAddSkill} className={'col-md-2'}>
-                    {this.state.progressState == 1 ? 'Enter' : 'Bestätigen'}
+                    {this.state.progressState === 1 ? 'Enter' : 'Bestätigen'}
                 </Button>
             </div>
             <div

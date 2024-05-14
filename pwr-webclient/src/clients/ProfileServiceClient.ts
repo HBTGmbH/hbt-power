@@ -75,7 +75,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     public getBuildInfo = (): Promise<APIBuildInfo> => {
         const url = this.base() + '/actuator/info';
         this.beginRequest();
-        return this.get<any, APIBuildInfo>(url)
+        return this.get<APIBuildInfo>(url)
             // Append swagger ref
             .then(value => {
                 return ({
@@ -171,7 +171,7 @@ export class ProfileServiceClient extends PowerHttpClient {
         const formData = new FormData();
         formData.append("file", picture);
         this.beginRequest();
-        return this.post<any, {id: string}>(url, formData, config)
+        return this.post<{id: string}>(url, formData, config)
             .then(response => response.id)
     }
 

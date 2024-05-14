@@ -2,7 +2,6 @@ import TextField from '@material-ui/core/TextField';
 import * as React from 'react';
 import {KeyboardEvent} from 'react';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import * as redux from 'redux';
 import {connect} from 'react-redux';
 import {Grid} from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
@@ -47,7 +46,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: PwrSkillVersionInfoLocalProps): PwrSkillVersionInfoProps {
+    static mapStateToProps(state: ApplicationState): PwrSkillVersionInfoProps {
         const versions = state.skillVersionStore.currentVersions ? state.skillVersionStore.currentVersions : [];
         const skillId = state.skillVersionStore.serviceSkillId;
         return {
@@ -103,7 +102,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
     };
 
     private handleEnterButton = (event: KeyboardEvent) => {
-        if (event.key == 'Enter') {
+        if (event.key === 'Enter') {
             this.setState({anchorEl: null});
             this.handleAddNewVersion();
         }
