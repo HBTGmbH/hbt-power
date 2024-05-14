@@ -3,7 +3,6 @@ import {CSSProperties} from 'react';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import {Card, CardHeader, Icon} from '@material-ui/core';
 import {IViewEntry} from '../../../../model/view/IViewEntry';
-import {isNullOrUndefined} from 'util';
 import Switch from '@material-ui/core/Switch';
 
 interface ViewProfileEntriesProps {
@@ -108,7 +107,7 @@ export class ViewProfileEntries extends React.Component<ViewProfileEntriesProps,
         return (<div>
             <Card>
                 {
-                    !isNullOrUndefined(this.props.title) ? <CardHeader
+                    !!(this.props.title) ? <CardHeader
                         title={this.props.title}
                     /> : null
                 }

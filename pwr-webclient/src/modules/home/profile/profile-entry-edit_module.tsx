@@ -5,7 +5,6 @@ import {PwrAutoComplete} from '../../general/pwr-auto-complete';
 import {ProfileEntryType} from '../../../reducers/profile-new/profile/model/ProfileEntryType';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {isNullOrUndefined} from 'util';
 import {NameEntity} from '../../../reducers/profile-new/profile/model/NameEntity';
 import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileEntry';
 import Grid from '@material-ui/core/Grid/Grid';
@@ -66,21 +65,21 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
 
     private defaultState = (props) => {
         return {
-            searchText: !isNullOrUndefined(props.entry) ? props.entry.nameEntity.name : '',
-            startDate: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['startDate']) ? props.entry['startDate'] : new Date(),
-            endDate: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['endDate']) ? props.entry['endDate'] : new Date(),
-            degree: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['degree']) ? props.entry['degree'] : EducationDegree.BACHELOR,
-            langLevel: !isNullOrUndefined(props.entry) && !isNullOrUndefined(props.entry['level']) ? props.entry['level'] : LanguageLevel.BASIC,
+            searchText: !!(props.entry) ? props.entry.nameEntity.name : '',
+            startDate: !!(props.entry) && !!(props.entry['startDate']) ? props.entry['startDate'] : new Date(),
+            endDate: !!(props.entry) && !!(props.entry['endDate']) ? props.entry['endDate'] : new Date(),
+            degree: !!(props.entry) && !!(props.entry['degree']) ? props.entry['degree'] : EducationDegree.BACHELOR,
+            langLevel: !!(props.entry) && !!(props.entry['level']) ? props.entry['level'] : LanguageLevel.BASIC,
         };
     };
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileEntryDialogLocalProps): ProfileEntryDialogProps {
         const suggestionField = ProfileTypeDataMapper.getSuggestionField(localProps.type);
-        const suggestionData: Array<NameEntity> = !isNullOrUndefined(suggestionField) && !isNullOrUndefined(state.suggestionStore) ? state.suggestionStore[suggestionField] : [];
-        const suggestionNames = !isNullOrUndefined(suggestionData) ? suggestionData.map(e => e.name) : [];
+        const suggestionData: Array<NameEntity> = !!(suggestionField) && !!(state.suggestionStore) ? state.suggestionStore[suggestionField] : [];
+        const suggestionNames = !!(suggestionData) ? suggestionData.map(e => e.name) : [];
         const degrees = [EducationDegree.BACHELOR, EducationDegree.MASTER, EducationDegree.DOKTOR, EducationDegree.DIPLOM];
         const langLevel = [LanguageLevel.BASIC, LanguageLevel.ADVANCED, LanguageLevel.BUSINESS_FLUENT, LanguageLevel.NATIVE];
-        const initials = !isNullOrUndefined(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
+        const initials = !!(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
 
         return {
             suggestions: suggestionNames,
@@ -103,17 +102,17 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         } else if (this.props.entry != oldProps.entry) {
             let date: Date;
             if (oldProps.type == 'QUALIFICATION') {
-                date = !isNullOrUndefined(this.props.entry) && !isNullOrUndefined(this.props.entry['date']) ? this.props.entry['date'] : new Date();
+                date = this.props.entry && this.props.entry['date'] ? this.props.entry['date'] : new Date();
             } else {
-                date = !isNullOrUndefined(this.props.entry) && !isNullOrUndefined(this.props.entry['startDate']) ? this.props.entry['startDate'] : new Date();
+                date = this.props.entry && this.props.entry['startDate'] ? this.props.entry['startDate'] : new Date();
             }
 
             this.setState({
-                searchText: !isNullOrUndefined(this.props.entry) ? this.props.entry.nameEntity.name : '',
+                searchText: this.props.entry ? this.props.entry.nameEntity.name : '',
                 startDate: date,
-                endDate: !isNullOrUndefined(this.props.entry) && !isNullOrUndefined(this.props.entry['endDate']) ? this.props.entry['endDate'] : new Date(),
-                degree: !isNullOrUndefined(this.props.entry) && !isNullOrUndefined(this.props.entry['degree']) ? this.props.entry['degree'] : EducationDegree.BACHELOR,
-                langLevel: !isNullOrUndefined(this.props.entry) && !isNullOrUndefined(this.props.entry['level']) ? this.props.entry['level'] : LanguageLevel.BASIC
+                endDate: this.props.entry && this.props.entry['endDate'] ? this.props.entry['endDate'] : new Date(),
+                degree: this.props.entry && this.props.entry['degree'] ? this.props.entry['degree'] : EducationDegree.BACHELOR,
+                langLevel: this.props.entry && this.props.entry['level'] ? this.props.entry['level'] : LanguageLevel.BASIC
             });
         }
     }
@@ -154,7 +153,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
 
     private handleSave = () => {
         const entry = ProfileTypeDataMapper.makeEntry(this.props.type, this.state, this.props.entry);
-        if (!isNullOrUndefined(entry)) {
+        if (entry) {
             this.props.updateEntity(this.props.initials, entry);
         } else {
             console.error('Can\'t create ProfileEntry');

@@ -17,7 +17,6 @@ import {RequestStatus} from '../../Store';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
-import {isNullOrUndefined} from 'util';
 import {Paths} from '../../Paths';
 import {ProfileEntryNotification} from '../../model/admin/ProfileEntryNotification';
 import {SkillNotificationEditStatus} from '../../model/admin/SkillNotificationEditStatus';
@@ -333,7 +332,7 @@ export class AdminActionCreator {
             let notification = getState().adminReducer.skillNotifications.find(value => value.adminNotification().id() == notificationId);
             skillServiceClient.getSkillByName(notification.skill().name())
                 .then(skill => {
-                    if (isNullOrUndefined(skill.category)) {
+                    if (!(skill.category)) {
                         dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY));
                     } else {
                         dispatch(SkillActionCreator.ReadSkillHierarchy(skill));
@@ -369,7 +368,7 @@ export class AdminActionCreator {
                     .then(() => dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY)))
                     .catch(error => {
                         console.error(error);
-                        if (!isNullOrUndefined(error.response)) {
+                        if (!!(error.response)) {
                             dispatch(AdminActionCreator.SetSkillNotificationErrorText('ERR_' + error.response.status));
                         } else {
                             dispatch(AdminActionCreator.SetSkillNotificationErrorText('ERR_UNKNOWN'));

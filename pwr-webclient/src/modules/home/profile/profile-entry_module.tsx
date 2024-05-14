@@ -1,7 +1,6 @@
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {isNullOrUndefined} from 'util';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
 import {ProfileEntryType} from '../../../reducers/profile-new/profile/model/ProfileEntryType';
@@ -76,11 +75,11 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
 
     static mapStateToProps(state: ApplicationState, localProps: ProfileEntryLocalProps): ProfileEntryProps {
         const profileField = ProfileTypeDataMapper.getProfileField(localProps.type);
-        const entries = (!isNullOrUndefined(profileField) && !isNullOrUndefined(state.profileStore.profile)) ? state.profileStore.profile[profileField] : [];
+        const entries = (profileField && state.profileStore.profile) ? state.profileStore.profile[profileField] : [];
         const suggestionField = ProfileTypeDataMapper.getSuggestionField(localProps.type);
-        const suggestionData: Array<NameEntity> = !isNullOrUndefined(suggestionField) && !isNullOrUndefined(state.suggestionStore) ? state.suggestionStore[suggestionField] : [];
-        const suggestionNames = !isNullOrUndefined(suggestionData) ? suggestionData.map(e => e.name) : [];
-        const initials = !isNullOrUndefined(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
+        const suggestionData: Array<NameEntity> = !!(suggestionField) && !!(state.suggestionStore) ? state.suggestionStore[suggestionField] : [];
+        const suggestionNames = suggestionData?.map(e => e.name) || [];
+        const initials = state.profileStore.consultant?.initials || '';
         return {
             allEntries: entries,
             suggestions: suggestionNames,
@@ -102,10 +101,6 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         });
     };
 
-    private handleUpdateButton = () => {
-        this.props.updateEntity(this.props.initials, null);
-    };
-
     private handleDeleteButton = (id: number) => {
         this.props.deleteEntry(this.props.initials, id);
     };
@@ -125,7 +120,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         return Comparators.compareProfileEntries(this.props.type, entry1, entry2);
     };
 
-    private renderSingleElement = (entry: ProfileEntry, index: number) => {
+    private renderSingleElement = (entry: ProfileEntry) => {
         return (
             <Grid key={entry.id} item container spacing={0}>
                 <Grid item xs={2} sm={2} md={1} lg={1} xl={1}>
@@ -134,7 +129,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                 </Grid>
                 <Grid xs={10} sm={10} md={11} lg={11} xl={11} key={entry.id} item container alignItems={'flex-end'}
                       spacing={0} className="cursor-pointer"
-                      onClick={event => this.handleEditButton(entry)}
+                      onClick={() => this.handleEditButton(entry)}
                 >
                     <Grid item className="pwr-profile-entry-name" xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Typography className="pwr-profile-entry-name" variant={'subtitle1'}>
@@ -185,7 +180,7 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                     </Grid>
                     <Grid item container spacing={1} md={12} sm={12}>
                         {
-                            !isNullOrUndefined(this.props.allEntries) && this.props.allEntries.length > 0 ?
+                            this.props.allEntries && this.props.allEntries.length > 0 ?
                                 this.props.allEntries.sort(this.compareEntries).map(this.renderSingleElement) :
                                 this.renderEmptyElement()
                         }

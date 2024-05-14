@@ -18,7 +18,6 @@ import {
 
 import {SkillNotificationEditStatus} from '../../../model/admin/SkillNotificationEditStatus';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
-import {isNullOrUndefined} from 'util';
 import {SkillNotificationAction} from '../../../model/admin/SkillNotificationAction';
 import {SkillSearcher} from '../../general/skill-search_module';
 import {AdminNotificationReason} from '../../../model/admin/AdminNotificationReason';
@@ -68,11 +67,11 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
 
     static mapStateToProps(state: ApplicationState): SkillNotificationModuleProps {
         let hierarchy = '';
-        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification)) {
+        if (state.adminReducer.selectedSkillNotification) {
             hierarchy = state.skillReducer.categorieHierarchiesBySkillName.get(state.adminReducer.selectedSkillNotification.newName());
         }
         let newSkillName = '';
-        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification)) {
+        if (state.adminReducer.selectedSkillNotification) {
             newSkillName = state.adminReducer.selectedSkillNotification.newName();
         }
         let comment = null;
@@ -80,7 +79,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         let initials = '';
         let newName = '';
         let reason = undefined;
-        if (!isNullOrUndefined(state.adminReducer.selectedSkillNotification)) {
+        if (state.adminReducer.selectedSkillNotification) {
             comment = state.adminReducer.selectedSkillNotification.skill().comment();
             skillName = state.adminReducer.selectedSkillNotification.skill().name();
             initials = state.adminReducer.selectedSkillNotification.adminNotification().initials();
@@ -148,7 +147,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
                     </p>
             }
             {
-                !isNullOrUndefined(this.props.comment) ? <p>A comment was provided: {this.props.comment}</p> : false
+                this.props.comment ? <p>A comment was provided: {this.props.comment}</p> : false
             }
             {
                 this.props.skillEdited ?

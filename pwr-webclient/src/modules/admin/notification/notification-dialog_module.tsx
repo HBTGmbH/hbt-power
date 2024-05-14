@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {Button, Dialog, DialogContent, DialogTitle, FormControl, Radio, RadioGroup, Step, StepLabel, Stepper, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {isNullOrUndefined} from 'util';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
 import {ProfileEntryNotification} from '../../../model/admin/ProfileEntryNotification';
@@ -258,7 +257,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
     };
 
     private renderStepperContent = () => {
-        if (!isNullOrUndefined(this.props.notification)) {
+        if (!!this.props.notification) {
             switch (this.state.stepIndex) {
                 case 0:
                     return this.renderStepperContentIndex0();

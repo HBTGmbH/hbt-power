@@ -1,5 +1,4 @@
 import {APISkillCategory} from './SkillCategory';
-import {isNullOrUndefined} from 'util';
 import {APILocalizedQualifier, LocalizedQualifier} from './LocalizedQualifier';
 import * as Immutable from 'immutable';
 import {StringUtils} from '../../utils/StringUtil';
@@ -64,7 +63,7 @@ export class SkillServiceSkill {
     }
 
     public static fromAPI(api: APISkillServiceSkill) {
-        let categoryId = !isNullOrUndefined(api.category) ? api.category.id : null;
+        let categoryId = api.category?.id;
         let qualifiers: Array<LocalizedQualifier> = [];
         if (api.qualifiers != null) {
             qualifiers = api.qualifiers.map(apiQualifier => LocalizedQualifier.fromAPI(apiQualifier));

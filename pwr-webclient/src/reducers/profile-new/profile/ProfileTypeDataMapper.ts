@@ -2,10 +2,8 @@ import {ProfileEntryType, ProfileEntryTypeName} from './model/ProfileEntryType';
 import {SuggestionField} from '../../suggestions/model/SuggestionField';
 import {ProfileEntryField} from './model/ProfileEntryField';
 import {ProfileDataAsyncActionCreator} from './ProfileDataAsyncActionCreator';
-import {ApplicationState} from '../../reducerIndex';
 import {ProfileEntryDialogState} from '../../../modules/home/profile/profile-entry-edit_module';
 import {newLanguage} from './model/Language';
-import {isNullOrUndefined} from 'util';
 import {ProfileEntry} from './model/ProfileEntry';
 import {NameEntity, newNameEntity} from './model/NameEntity';
 import {newEducation} from './model/Education';
@@ -14,8 +12,6 @@ import {newSpecialField} from './model/SpecialField';
 import {newQualification} from './model/Qualification';
 import {newIndustrialSector} from './model/IndustrialSector';
 import {newTraining} from './model/FurtherTraining';
-import {Dispatch} from 'redux';
-import {AbstractAction} from '../../BaseActions';
 import {ThunkDispatch} from 'redux-thunk';
 
 export class ProfileTypeDataMapper {
@@ -157,26 +153,28 @@ export class ProfileTypeDataMapper {
     }
 
     public static makeEntry(type: ProfileEntryType, state: ProfileEntryDialogState, entry: ProfileEntry) {
-        if (isNullOrUndefined(state.searchText)) return null;
-        const isNew = isNullOrUndefined(entry);
+        if (!state.searchText) {
+            return null;
+        }
+        const isNew = !entry;
         const id = isNew ? -1 : entry.id;
         const nameId = isNew ? -1 : entry.nameEntity.id;
         let nameEntity: NameEntity = newNameEntity(nameId, state.searchText, type);
         switch (type) {
             case 'LANGUAGE': {
-                if (!isNullOrUndefined(state.langLevel)) {
+                if (!!(state.langLevel)) {
                     return newLanguage(id, nameEntity, state.langLevel);
                 }
                 break;
             }
             case 'EDUCATION': {
-                if (!isNullOrUndefined(state.degree) && !isNullOrUndefined(state.startDate)) {
+                if (!!(state.degree) && !!(state.startDate)) {
                     return newEducation(id, nameEntity, state.startDate, state.endDate, state.degree);
                 }
                 break;
             }
             case 'CAREER': {
-                if (!isNullOrUndefined(state.startDate)) {
+                if (!!(state.startDate)) {
                     return newCareer(id, nameEntity, state.startDate, state.endDate);
                 }
                 break;
@@ -185,7 +183,7 @@ export class ProfileTypeDataMapper {
                 return newSpecialField(id, nameEntity);
             }
             case 'QUALIFICATION': {
-                if (!isNullOrUndefined(state.startDate)) {
+                if (!!(state.startDate)) {
                     return newQualification(id, nameEntity, state.startDate);
                 }
                 break;
@@ -194,7 +192,7 @@ export class ProfileTypeDataMapper {
                 return newIndustrialSector(id, nameEntity);
             }
             case 'TRAINING': {
-                if (!isNullOrUndefined(state.startDate)) {
+                if (!!(state.startDate)) {
                     return newTraining(id, nameEntity, state.startDate, state.endDate);
                 }
                 break;

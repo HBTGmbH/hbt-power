@@ -1,4 +1,3 @@
-import {isNullOrUndefined} from 'util';
 
 export class ViewTraining {
     name: string;
@@ -16,8 +15,8 @@ export class ViewTraining {
 
     public static of(viewTraining: ViewTraining) {
         return new ViewTraining(viewTraining.name,
-            isNullOrUndefined(viewTraining.startDate) ? null : new Date(viewTraining.startDate),
-            isNullOrUndefined(viewTraining.endDate) ? null : new Date(viewTraining.endDate),
+            !viewTraining.startDate ? null : new Date(viewTraining.startDate),
+            !viewTraining.endDate ? null : new Date(viewTraining.endDate),
             viewTraining.enabled);
     }
 }

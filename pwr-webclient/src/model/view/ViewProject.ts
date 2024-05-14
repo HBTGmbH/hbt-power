@@ -1,6 +1,5 @@
 import {ViewProjectRole} from './ViewProjectRole';
 import {ViewSkill} from './ViewSkill';
-import {isNullOrUndefined} from 'util';
 
 export class ViewProject {
     id: number;
@@ -35,8 +34,8 @@ export class ViewProject {
             viewProject.description,
             viewProject.client,
             viewProject.broker,
-            isNullOrUndefined(viewProject.startDate) ? null : new Date(viewProject.startDate),
-            isNullOrUndefined(viewProject.endDate) ? null : new Date(viewProject.endDate),
+            !viewProject.startDate ? null : new Date(viewProject.startDate),
+            !viewProject.endDate ? null : new Date(viewProject.endDate),
             viewProject.projectRoles,
             viewProject.skills,
             viewProject.enabled);

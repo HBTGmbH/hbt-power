@@ -1,5 +1,4 @@
 import {AdminState, emptyAdminState} from '../../model/admin/AdminState';
-import {isNullOrUndefined} from 'util';
 import {
     ChangeLoginStatusAction,
     ChangeRequestStatusAction,
@@ -39,7 +38,7 @@ export class AdminReducer {
      * @see ReceiveNotificationsAction
      */
     public static ReceiveNotifications(state: AdminState, action: ReceiveNotificationsAction): AdminState {
-        if (isNullOrUndefined(action.notifications)) throw new TypeError('ReceiveNotificationAction.notifications must not be null or undefined.');
+        if (!(action.notifications)) throw new TypeError('ReceiveNotificationAction.notifications must not be null or undefined.');
         let apiProfileEntryNotifications = action.notifications.filter((value) => value.type === AdminNotification.TP_PROFILE_ENTRY);
         let apiProfileUpdateNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_PROFILE_UPDATE);
         let apiSkillNotifications = action.notifications.filter(notification => notification.type === AdminNotification.TP_SKILL);

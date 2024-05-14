@@ -1,7 +1,6 @@
 /**
  * Created by nt on 20.04.2017.
  */
-import {isNullOrUndefined} from 'util';
 import {StringUtils} from '../utils/StringUtil';
 import deDE from './de-DE.json';
 import formatString = StringUtils.formatString;
@@ -38,7 +37,9 @@ export class PowerLocalize {
      */
     public static get(field: string): string {
         let val = this.localization[field];
-        if (isNullOrUndefined(val)) return field + '_' + PowerLocalize.noLocalizationFound;
+        if (!val) {
+            return field + '_' + PowerLocalize.noLocalizationFound;
+        }
         return String(val);
     }
 

@@ -5,7 +5,6 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {StarRating} from '../../../../star-rating_module.';
 import Button from '@material-ui/core/Button/Button';
 import Typography from '@material-ui/core/Typography/Typography';
-import {isNullOrUndefined} from 'util';
 import * as Immutable from 'immutable';
 import {SkillActionCreator} from '../../../../../reducers/skill/SkillActionCreator';
 import {SkillSearcher} from '../../../../general/skill-search_module';
@@ -77,7 +76,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
         this.setState({
             skillName: data
         });
-        if (!isNullOrUndefined(data) && data.trim().length > 0) {
+        if (!!(data) && data.trim().length > 0) {
             SkillServiceClient.instance().getSearchSkill(data)
                 .then(skills => this.setState({skills}))
                 .catch((error: any) => console.error((error)));
@@ -116,7 +115,7 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
     };
 
     private handleKeyPress = (event: KeyboardEvent) => {
-        if (this.state.progressState == 0 && event.key == 'Enter' && !isNullOrUndefined(this.state.skillName)) {
+        if (this.state.progressState == 0 && event.key == 'Enter' && !!(this.state.skillName)) {
             if (!this.props.histories.has(this.state.skillName)) {
                 this.requestSkillHierarchy(this.state.skillName);
             }

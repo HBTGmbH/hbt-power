@@ -7,7 +7,6 @@ import {ProfileEntryField} from './model/ProfileEntryField';
 import {ProfileSkill} from './model/ProfileSkill';
 import {emptyProject, Project} from './model/Project';
 import {ConsultantUpdateAction} from '../consultant/actions/ConsultantUpdateAction';
-import {isNullOrUndefined} from 'util';
 import {
     ProjectDeleteAction,
     ProjectLoadAction,
@@ -109,7 +108,7 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
             return {...store, selectedProject: editedProject};
         }
         case ActionType.EditSelectedProject: {
-            return handleSetEditMode(store, true);
+            return handleSetEditMode(store);
         }
         case ActionType.CancelEditSelectedProject: {
             if (store.selectedProject.id === null) {
@@ -139,7 +138,7 @@ function handleAddProject(store: ProfileStore): ProfileStore {
     // 3. Enter edit mode
     const withNewProject = addProject(store, emptyProject());
     const withNewProjectSelected = handleSelectProject(0, withNewProject);
-    return handleSetEditMode(withNewProjectSelected, true);
+    return handleSetEditMode(withNewProjectSelected);
 }
 
 function handleConsultantUpdate(action: ConsultantUpdateAction, store: ProfileStore): ProfileStore {
@@ -151,7 +150,7 @@ function replaceProfile(store: ProfileStore, profile: Profile): ProfileStore {
 }
 
 function sortAndReplace(profile: Profile, field: ProfileEntryField, collection: Array<ProfileEntry>) {
-    collection.filter(e => !isNullOrUndefined(e));
+    collection.filter(e => !!(e));
     collection.sort(byName);
     return {...profile, [field]: collection};
 }
@@ -250,7 +249,7 @@ function addProject(store: ProfileStore, project: Project): ProfileStore {
     };
 }
 
-function handleSetEditMode(store: ProfileStore, isEditing: boolean): ProfileStore {
+function handleSetEditMode(store: ProfileStore): ProfileStore {
     return {...store, ...{isProjectEditing: true}};
 }
 

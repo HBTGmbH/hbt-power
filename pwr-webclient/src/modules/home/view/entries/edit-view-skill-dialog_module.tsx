@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Checkbox, Dialog, DialogContent, DialogTitle} from '@material-ui/core';
 import {ViewSkill} from '../../../../model/view/ViewSkill';
-import {isNullOrUndefined} from 'util';
 import {ViewProfile} from '../../../../model/view/ViewProfile';
 import {ViewCategory} from '../../../../model/view/ViewCategory';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
@@ -86,7 +85,7 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
     };
 
     render() {
-        if (!isNullOrUndefined(this.props.skill)) {
+        if (!!(this.props.skill)) {
             return <Dialog open={this.props.open}
                            onClose={this.props.onClose}
                            fullWidth={true}

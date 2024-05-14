@@ -3,7 +3,6 @@ import {Project} from '../../../../../reducers/profile-new/profile/model/Project
 import * as React from 'react';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
-import {isNullOrUndefined} from 'util';
 import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
@@ -72,8 +71,8 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         };
     }
 
-    static mapStateToProps(state: ApplicationState, localProps: ProjectLocalProps): ProjectProps {
-        const initials = !isNullOrUndefined(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
+    static mapStateToProps(state: ApplicationState): ProjectProps {
+        const initials = !!(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
         return {
             initials: initials,
             editedProject: state.profileStore.selectedProject,

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {isNullOrUndefined} from 'util';
 import {PwrAutoComplete} from './pwr-auto-complete';
 import {noOp} from '../../utils/ObjectUtil';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
@@ -67,7 +66,7 @@ export const SkillSearcher = (props: SkillSearcherProps) => {
         } else {
             props.onValueChange(searchText);
             setSearchText(searchText)
-            if (!isNullOrUndefined(searchText) && searchText.trim().length > 0) {
+            if (!searchText && searchText.trim().length > 0) {
                 SkillServiceClient.instance().getSearchSkill(searchText)
                     .then(skills => setSkills(skills))
                     .catch((error: any) => console.error((error)));

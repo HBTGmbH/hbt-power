@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {isNullOrUndefined} from 'util';
 import {Button, Dialog, Icon, Paper, Tab, Tabs} from '@material-ui/core';
 import {ViewProfileEntriesOverview} from './view-profile-entries-overview_module';
 import {ViewProfileProjectsOverview} from './view-profile-projects-overview_module';
@@ -63,7 +62,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     constructor(props: ViewProfileOverviewProps & ViewProfileOverviewLocalProps & ViewProfileOverviewDispatch) {
         super(props);
         this.state = {
-            currentDescription: !isNullOrUndefined(props.viewProfile) ? props.viewProfile.description : '',
+            currentDescription: !!(props.viewProfile) ? props.viewProfile.description : '',
             descriptionDisabled: true,
             generatorOpen: false,
             updateDialogOpen: false,
@@ -74,7 +73,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     public componentDidUpdate(prevProps: ViewProfileOverviewProps & ViewProfileOverviewLocalProps & ViewProfileOverviewDispatch) {
         if (prevProps.viewProfile !== this.props.viewProfile) {
             this.setState({
-                currentDescription: !isNullOrUndefined(this.props.viewProfile) ? this.props.viewProfile.description : ''
+                currentDescription: !!(this.props.viewProfile) ? this.props.viewProfile.description : ''
             });
         }
 
@@ -102,7 +101,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     }
 
     render() {
-        if (isNullOrUndefined(this.props.viewProfile)) {
+        if (!(this.props.viewProfile)) {
             return <div>Does not exist</div>;
         } else {
             let viewProfileId = this.props.match.params.id;

@@ -14,7 +14,6 @@ import {Build, ErrorOutline} from '@material-ui/icons';
 import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {isNullOrUndefined} from 'util';
 import {ThunkDispatch} from 'redux-thunk';
 
 interface ReportHistoryLocalProps {
@@ -154,13 +153,14 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
 
     getTemplateName = (idx: string): string => {
         const templates = this.props.templates;
-        if (!isNullOrUndefined(templates)) {
-            const template = templates.get(idx);
-            if (!isNullOrUndefined(template)) {
-                return template.name;
-            }
+        if (!templates) {
+            return PowerLocalize.get('Report.UnknownTemplate');
         }
-        return PowerLocalize.get('Report.UnknownTemplate');
+        const template = templates.get(idx);
+        if (!template) {
+            return PowerLocalize.get('Report.UnknownTemplate');
+        }
+        return template.name;
     };
 
     render() {

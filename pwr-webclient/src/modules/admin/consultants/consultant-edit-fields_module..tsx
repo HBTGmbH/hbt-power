@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {isNullOrUndefined} from 'util';
 import {FormControl, FormControlLabel} from '@material-ui/core';
 import {PwrDatePicker} from '../../general/pwr-date-picker_module';
 import {DatePickerType} from '../../../model/DatePickerType';
@@ -59,13 +58,13 @@ export function ConsultantEditFields(props: ConsultantEditFieldsProps) {
             className="pwr-margin-top pwr-margin-bottom"
             hideProgress={true}
             maxCharacters={100}
-            value={isNullOrUndefined(props.title) ? '' : props.title}
+            value={props.title || ''}
             label={PowerLocalize.get('Title.Singular')}
             onChange={(e, v) => props.onTitleChange(v)}
         />
         <PwrDatePicker
             onChange={props.onBirthDateChange}
-            placeholderDate={isNullOrUndefined(props.birthDate) ? new Date() : props.birthDate}
+            placeholderDate={!(props.birthDate) ? new Date() : props.birthDate}
             label={'Geburtstag'}
             type={DatePickerType.FULL_DATE}
             disableOpenEnd

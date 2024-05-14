@@ -10,7 +10,6 @@ import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
-import {isNullOrUndefined} from 'util';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
@@ -95,11 +94,6 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             editSkillOpen: false,
             editSkill: null
         });
-    };
-
-    private handleChangeDisplayCategory = (skillName: string, newDisplayCategoryName: string) => {
-        this.props.setDisplayCategory(this.props.viewProfile.id, skillName, newDisplayCategoryName);
-        this.closeEditSkillDialog();
     };
 
     private handleNestedMove = (container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, sourceIndex: number, targetIndex: number) => {
@@ -198,7 +192,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
     render() {
         return (<div className="row">
             {
-                !isNullOrUndefined(this.state.editSkill) ?
+                !!(this.state.editSkill) ?
                     <EditViewSkillDialog
                         skill={this.state.editSkill}
                         open={this.state.editSkillOpen}

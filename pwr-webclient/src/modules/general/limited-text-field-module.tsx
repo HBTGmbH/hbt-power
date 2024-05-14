@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {FormEvent} from 'react';
 import {Icon, IconButton, LinearProgress, TextField} from '@material-ui/core';
-import {isNullOrUndefined} from 'util';
 
 interface LimitedTextFieldProps {
     maxCharacters: number;
@@ -68,7 +67,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     }
 
     public componentWillReceiveProps(newProps: LimitedTextFieldProps) {
-        if (isNullOrUndefined(newProps.overrideErrorText) && (newProps.value.length <= newProps.maxCharacters)) {
+        if (!(newProps.overrideErrorText) && (newProps.value.length <= newProps.maxCharacters)) {
             this.setState({
                 errorText: null
             });
@@ -94,7 +93,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     };
 
 
-    private handleEditButtonPress = (evt: any) => {
+    private handleEditButtonPress = () => {
         if (this.props.disabled)
             this.props.onToggleEdit(false);
         else
@@ -130,7 +129,6 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             multiline={this.props.multiLine}
                             fullWidth={this.props.fullWidth}
                             error={this.state.errorText !== null}
-                            //errorText={isNullOrUndefined(this.state.errorText) ? this.props.overrideErrorText : this.state.errorText}
                             label={this.props.label}
                         />
                     </div>

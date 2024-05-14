@@ -12,7 +12,6 @@ import Icon from '@material-ui/core/Icon/Icon';
 import Paper from '@material-ui/core/Paper/Paper';
 import TextField from '@material-ui/core/TextField/TextField';
 import Dropzone from 'react-dropzone';
-import {isNullOrUndefined} from 'util';
 import CloudUpload from '@material-ui/icons/CloudUpload';
 import {LinearProgress} from '@material-ui/core';
 import {ThunkDispatch} from 'redux-thunk';
@@ -119,7 +118,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
                             accept=".rptdesign"
                         >
                             <div className="Aligner" style={{height: '100%', textAlign: 'center'}}>
-                                {!isNullOrUndefined(this.state.file) ?
+                                {this.state.file ?
                                     <span>
                                         Selected File:<br/>
                                         {this.state.file.name}

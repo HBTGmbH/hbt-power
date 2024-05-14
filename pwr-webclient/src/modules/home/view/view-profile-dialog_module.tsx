@@ -3,7 +3,6 @@ import {Button, Dialog, Icon, TextField} from '@material-ui/core';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {isNullOrUndefined} from 'util';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
@@ -44,10 +43,10 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     private resetState = (props: ViewProfileDialogProps) => {
         this.state = {
-            name: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.name) ? '' : props.viewProfile.viewProfileInfo.name,
-            description: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.viewDescription) ? '' : props.viewProfile.viewProfileInfo.viewDescription,
-            charsPerLine: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.viewProfileInfo.charsPerLine) ? 45 : props.viewProfile.viewProfileInfo.charsPerLine,
-            locale: isNullOrUndefined(props.viewProfile) || isNullOrUndefined(props.viewProfile.locale) ? 'deu' : props.viewProfile.locale
+            name: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.name) ? '' : props.viewProfile.viewProfileInfo.name,
+            description: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.viewDescription) ? '' : props.viewProfile.viewProfileInfo.viewDescription,
+            charsPerLine: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.charsPerLine) ? 45 : props.viewProfile.viewProfileInfo.charsPerLine,
+            locale: !(props.viewProfile) || !(props.viewProfile.locale) ? 'deu' : props.viewProfile.locale
         };
     };
 
@@ -79,15 +78,15 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     };
 
     private closeAndSave = () => {
-        if (!isNullOrUndefined(this.props.onSave)) {
+        if (!!(this.props.onSave)) {
             this.props.onSave(this.state.name, this.state.description, this.state.charsPerLine);
         }
     };
 
     private renderActions = () => {
         let actions = [];
-        let label = '';
-        let icon = '';
+        let label: string;
+        let icon: string;
         if (this.props.type === 'edit') {
             label = PowerLocalize.get('Action.Save');
             icon = 'save';

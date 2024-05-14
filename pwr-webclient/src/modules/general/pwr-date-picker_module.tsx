@@ -5,7 +5,6 @@ import { KeyboardDatePicker } from '@material-ui/pickers'
 import Grid from '@material-ui/core/Grid/Grid';
 import {PwrIconButton} from './pwr-icon-button';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {isNullOrUndefined} from 'util';
 import {DatePickerView} from '@material-ui/pickers/DatePicker/DatePicker';
 import {Moment} from 'moment/moment';
 
@@ -77,7 +76,7 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
         return <Grid container item direction={'row'} justify={'flex-start'} alignItems={'flex-end'} spacing={8}>
             <Grid item md>
                 <KeyboardDatePicker
-                    error={!isNullOrUndefined(this.props.error) ? this.props.error : false}
+                    error={!!(this.props.error) ? this.props.error : false}
                     autoOk
                     disabled={this.props.disabled}
                     views={this.getViews()}

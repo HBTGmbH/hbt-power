@@ -1,5 +1,4 @@
 import {emptyMetaDataStore, MetaDataStore} from '../../model/metadata/MetaDataStore';
-import {isNullOrUndefined} from 'util';
 import {ActionType} from '../ActionType';
 import {AddOrReplaceBuildInfoAction, AddOrReplaceClientInfoAction} from './MetaDataActions';
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';

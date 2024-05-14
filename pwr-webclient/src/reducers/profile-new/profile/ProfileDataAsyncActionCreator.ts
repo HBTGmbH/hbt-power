@@ -13,7 +13,6 @@ import {Career} from './model/Career';
 import {FurtherTraining} from './model/FurtherTraining';
 import {Education} from './model/Education';
 import {ProfileUpdateServiceClient} from './client/ProfileUpdateServiceClient';
-import {isNullOrUndefined} from 'util';
 import {projectDeleteAction, projectLoadAction, projectUpdateSuccessAction} from './actions/ProjectActions';
 import {Alerts} from '../../../utils/Alerts';
 import {
@@ -65,7 +64,7 @@ export class ProfileDataAsyncActionCreator {
 
     public static loadFullProfileInParts(initials: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            if (!isNullOrUndefined(initials) && initials.length > 0) {
+            if (initials && initials.length > 0) {
                 dispatch(ProfileDataAsyncActionCreator.loadBaseProfile(initials));
                 dispatch(ProfileDataAsyncActionCreator.loadLanguage(initials));
                 dispatch(ProfileDataAsyncActionCreator.loadQualification(initials));
@@ -107,7 +106,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteLanguage(initials: string, id: number) {
         return function (dispatch: redux.Dispatch<AbstractAction>) {
-            profileUpdateServiceClient.deleteLanguage(initials, id).then(value => {
+            profileUpdateServiceClient.deleteLanguage(initials, id).then(() => {
                     dispatch(entryDeleteAction(id, ProfileEntryTypeName.LANGUAGE as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -136,7 +135,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteQualification(initials: string, id: number) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.deleteQualification(initials, id).then(value => {
+            profileUpdateServiceClient.deleteQualification(initials, id).then(() => {
                     dispatch(entryDeleteAction(id, ProfileEntryTypeName.QUALIFICATION as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -166,7 +165,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteSector(initials: string, id: number) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.deleteSector(initials, id).then(value => {
+            profileUpdateServiceClient.deleteSector(initials, id).then(() => {
                     dispatch(entryDeleteAction(id, ProfileEntryTypeName.SECTOR as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -197,7 +196,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteKeySkill(initials: string, id: number) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.deleteSpecialField(initials, id).then(value => {
+            profileUpdateServiceClient.deleteSpecialField(initials, id).then(() => {
                     dispatch(entryDeleteAction(id, ProfileEntryTypeName.SPECIAL_FIELD as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -227,7 +226,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteCareer(initials: string, id: number) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.deleteCareer(initials, id).then(value => {
+            profileUpdateServiceClient.deleteCareer(initials, id).then(() => {
                     dispatch(entryDeleteAction(id, ProfileEntryTypeName.CAREER as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -258,7 +257,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteTraining(initials: string, id: number) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.deleteTraining(initials, id).then(value => {
+            profileUpdateServiceClient.deleteTraining(initials, id).then(() => {
                     dispatch(entryDeleteAction(id, ProfileEntryTypeName.TRAINING as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -289,7 +288,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteEducation(initials: string, id: number) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.deleteEducation(initials, id).then(value => {
+            profileUpdateServiceClient.deleteEducation(initials, id).then(() => {
                     dispatch(entryDeleteAction(id, ProfileEntryTypeName.EDUCATION as keyof Profile & Array<ProfileEntry>));
                 }
             ).catch(error => handleError(error));
@@ -319,7 +318,7 @@ export class ProfileDataAsyncActionCreator {
     public static deleteProfileSkill(initials: string, skill: ProfileSkill) {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient.deleteProfileSkill(initials, skill.id)
-                .then(value => dispatch(skillDeleteAction(skill.id)))
+                .then(() => dispatch(skillDeleteAction(skill.id)))
                 .then(success(`Skill ${skill.name} has been deleted.`))
                 .catch(error => handleError(error));
         };
@@ -353,7 +352,7 @@ export class ProfileDataAsyncActionCreator {
     @makeDeferrable(ActionType.AsyncDeleteEntry)
     public static deleteProject(initials: string, id: number) {
         return function (dispatch: redux.Dispatch) {
-            profileUpdateServiceClient.deleteProject(initials, id).then(value => {
+            profileUpdateServiceClient.deleteProject(initials, id).then(() => {
                     dispatch(projectDeleteAction(id));
                 }
             ).catch(error => handleError(error));

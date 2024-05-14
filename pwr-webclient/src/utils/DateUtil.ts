@@ -1,5 +1,4 @@
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
-import {isNullOrUndefined} from 'util';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 
 const optionsShortDisplay: DateTimeFormatOptions = {
@@ -35,8 +34,7 @@ const optionsFullDateTime: DateTimeFormatOptions = {
     minute: 'numeric'
 };
 
-let language = navigator.language;
-if (isNullOrUndefined(language)) language = 'de';
+let language = navigator.language || 'de';
 
 const format: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsShortDisplay);
 const formatTimeOnly: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsTimeOnly);
@@ -72,7 +70,7 @@ export function formatToShortDisplay(date: Date | string): string {
 
 export function formatToFullLocalizedDateTime(date: Date): string {
     date = verifyDataType(date);
-    if (isNullOrUndefined(date)) {
+    if (!date) {
         return '???';
     }
     return formatFullDateTime.format(date);
@@ -87,7 +85,7 @@ export function formatToFullLocalizedDateTime(date: Date): string {
  */
 export function formatFullLocalizedDate(date: Date): string {
     date = verifyDataType(date);
-    if (isNullOrUndefined(date)) {
+    if (!date) {
         return '???';
     }
     return formatFullDate.format(date);
@@ -110,7 +108,7 @@ export function formatToYear(date: number | string | Date | undefined) {
         return PowerLocalize.get('Today');
     }
     const newDate = new Date(date);
-    if (isNullOrUndefined(date)) {
+    if (!date) {
         return PowerLocalize.get('Today');
     }
     try {

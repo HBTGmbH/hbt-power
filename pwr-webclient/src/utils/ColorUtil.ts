@@ -1,8 +1,6 @@
 /**
  * Color that wraps around a CSS color description to allow linear interpolation between colors.
  */
-import {isNullOrUndefined} from 'util';
-
 export class Color {
     public r: number;
     public g: number;
@@ -35,7 +33,7 @@ export class Color {
         this.r = Math.round(r);
         this.g = Math.round(g);
         this.b = Math.round(b);
-        if (isNullOrUndefined(a)) {
+        if (!a) {
             a = 1.0;
         }
         this.a = Math.round(a);
