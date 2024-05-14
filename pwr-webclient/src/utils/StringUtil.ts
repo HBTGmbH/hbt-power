@@ -1,5 +1,5 @@
-export namespace StringUtils {
-    export function formatString(val: string, ...args: any[]): string {
+export class StringUtils {
+    public static formatString(val: string, ...args: any[]): string {
         return val.replace(/{(\d+)}/g, function (match, number) {
             return typeof args[number] != 'undefined'
                 ? args[number]
@@ -8,14 +8,10 @@ export namespace StringUtils {
         });
     }
 
-    export function trimURL(url: string) {
-        return url.substring(url.lastIndexOf('/') + 1);
-    }
-
     /**
      * 'Stolen' from material-ui/autocomplete
      */
-    export function filterFuzzy(searchText: string, key: string): boolean {
+    public static filterFuzzy(searchText: string, key: string): boolean {
         const compareString = key.toLowerCase();
         searchText = searchText.toLowerCase();
 
@@ -29,18 +25,14 @@ export namespace StringUtils {
         return searchTextIndex === searchText.length;
     }
 
-    export function noOpFilter(searchText: string, key: string): boolean {
-        return true;
-    }
-
-    export function defaultString(value?: string) {
+    public static defaultString(value?: string) {
         if (value) {
             return value;
         }
         return '';
     }
 
-    export function dateToString(date: Date) {
+    public static dateToString(date: Date) {
         if (date == null) {
             return '';
         }

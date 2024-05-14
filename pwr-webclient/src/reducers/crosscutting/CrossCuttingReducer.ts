@@ -4,9 +4,9 @@ import {SetLoginErrorAction, SetLoginStatusAction, SetRequestPendingAction} from
 import {AbstractAction} from '../BaseActions';
 
 
-export namespace CrossCuttingReducer {
+export class CrossCuttingReducer {
 
-    export function reduce(store = empty, action: AbstractAction): CrossCuttingStore {
+    public static reduce(store = empty, action: AbstractAction): CrossCuttingStore {
         if (action.type === ActionType.SetLoginError) {
             return {...store, ...{loginError: (action as SetLoginErrorAction).error}};
         }

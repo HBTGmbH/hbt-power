@@ -1,23 +1,21 @@
 import * as React from 'react';
-import {LanguageUtils} from '../../../utils/LanguageUtils';
+import {ISO639_2DataSet, LanguageUtils} from '../../../utils/LanguageUtils';
 import {Dialog, DialogContent, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {StringUtils} from '../../../utils/StringUtil';
-import ISOData = LanguageUtils.ISO639_2DataSet;
-import filterFuzzy = StringUtils.filterFuzzy;
 
 interface LocalizationSearcherProps {
     open: boolean;
 
     onClose?(): void;
 
-    onSelectIsoData?(data: ISOData): void;
+    onSelectIsoData?(data: ISO639_2DataSet): void;
 
     maxHeight?: string;
 }
 
 interface LocalizationSearcherState {
-    isoData: Array<ISOData>;
+    isoData: Array<ISO639_2DataSet>;
     selected: any;
     searchString: string;
 }
@@ -50,9 +48,9 @@ export class LocalizationSearcher extends React.Component<LocalizationSearcherPr
         });
     }
 
-    private static filterIsoData = (data: ISOData, searchString: string) => {
-        return data.int.some((value, index, array) => filterFuzzy(searchString, value)) ||
-            data.native.some(((value, index, array) => filterFuzzy(searchString, value)));
+    private static filterIsoData = (data: ISO639_2DataSet, searchString: string) => {
+        return data.int.some((value, index, array) => StringUtils.filterFuzzy(searchString, value)) ||
+            data.native.some(((value, index, array) => StringUtils.filterFuzzy(searchString, value)));
     };
 
     public handleSearchStringChange = (e: any) => {
@@ -67,11 +65,11 @@ export class LocalizationSearcher extends React.Component<LocalizationSearcherPr
         });
     };
 
-    private handleSelectIsoData = (isoData: ISOData) => {
+    private handleSelectIsoData = (isoData: ISO639_2DataSet) => {
         this.props.onSelectIsoData(isoData);
     };
 
-    private mapToListItem = (isoData: ISOData) => {
+    private mapToListItem = (isoData: ISO639_2DataSet) => {
         return <ListItem
             key={isoData.code}
             onClick={() => this.handleSelectIsoData(isoData)}

@@ -17,34 +17,22 @@ export interface SetLoginErrorAction {
     error: string;
 }
 
-export namespace CrossCuttingActionCreator {
+function SetRequestPending(requestPending: boolean): SetRequestPendingAction {
+    return {
+        type: ActionType.SetRequestPending,
+        requestPending: requestPending
+    };
+}
 
-    export function startRequest() {
-        return SetRequestPending(true);
-    }
-
-    export function endRequest() {
-        return SetRequestPending(false);
-    }
-
-    function SetRequestPending(requestPending: boolean): SetRequestPendingAction {
-        return {
-            type: ActionType.SetRequestPending,
-            requestPending: requestPending
-        };
-    }
-
-    export function SetLoginStatus(loginStatus: LoginStatus): SetLoginStatusAction {
-        return {
-            type: ActionType.SetLoginStatus,
-            loginStatus
-        };
-    }
-
-    export function SetLoginError(error: string): SetLoginErrorAction {
-        return {
-            type: ActionType.SetLoginError,
-            error
-        };
-    }
+export const CrossCuttingActionCreator = {
+    startRequest: () => SetRequestPending(true),
+    endRequest: () => SetRequestPending(false),
+    SetLoginStatus: (loginStatus: LoginStatus) => ({
+        type: ActionType.SetLoginStatus,
+        loginStatus
+    }),
+    SetLoginError: (error: string) => ({
+        type: ActionType.SetLoginError,
+        error
+    })
 }

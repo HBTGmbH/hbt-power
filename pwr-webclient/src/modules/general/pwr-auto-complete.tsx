@@ -5,7 +5,6 @@ import {StringUtils} from '../../utils/StringUtil';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import {ValidationError} from '../../utils/ValidationUtils';
-import filterFuzzy = StringUtils.filterFuzzy;
 import * as ReactDOM from "react-dom";
 
 // Documentation: https://github.com/TeamWertarbyte/material-ui-chip-input
@@ -72,7 +71,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         if (this.props.disableFiltering) {
             return this.props.data;
         } else {
-            return filter(this.props.data, value, filterFuzzy);
+            return filter(this.props.data, value, StringUtils.filterFuzzy);
         }
     };
 

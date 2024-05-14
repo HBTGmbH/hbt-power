@@ -1,17 +1,13 @@
 import {emptyViewProfileStore, ViewProfileStore} from '../../model/view/ViewProfileStore';
 import {ActionType} from '../ActionType';
-import {ViewProfileActions} from './ViewProfileActions';
 import {AbstractAction} from '../BaseActions';
 import * as Immutable from 'immutable';
 import {ViewCategory} from '../../model/view/ViewCategory';
+import {RemoveViewProfileAction, SetParentCategoryAction, SetSortInProgressAction, SetViewProfileAction} from './ViewProfileActions';
 
-export namespace ViewProfileReducer {
-    import SetViewProfileAction = ViewProfileActions.SetViewProfileAction;
-    import RemoveViewProfileAction = ViewProfileActions.RemoveViewProfileAction;
-    import SetSortInProgressAction = ViewProfileActions.SetSortInProgressAction;
-    import SetParentCategoryAction = ViewProfileActions.SetParentCategoryAction;
+export class ViewProfileReducer {
 
-    export function reduce(store = emptyViewProfileStore(), action: AbstractAction): ViewProfileStore {
+    public static reduce(store = emptyViewProfileStore(), action: AbstractAction): ViewProfileStore {
         switch (action.type) {
             case ActionType.SetViewProfile: {
                 let act: SetViewProfileAction = action as SetViewProfileAction;

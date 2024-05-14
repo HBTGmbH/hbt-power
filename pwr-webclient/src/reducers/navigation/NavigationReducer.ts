@@ -4,9 +4,9 @@ import {SetCurrentLocationAction, SetNavigationTargetAction} from './NavigationA
 import {AbstractAction} from '../BaseActions';
 
 
-export namespace NavigationReducer {
+export class NavigationReducer {
 
-    export function reduce(store = emptyNavigationStore(), action: AbstractAction): NavigationStore {
+    public static reduce(store = emptyNavigationStore(), action: AbstractAction): NavigationStore {
         switch (action.type) {
             case ActionType.SetCurrentLocation: {
                 let act: SetCurrentLocationAction = action as SetCurrentLocationAction;

@@ -4,9 +4,9 @@ import {AddOrReplaceBuildInfoAction, AddOrReplaceClientInfoAction} from './MetaD
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 import {AbstractAction} from '../BaseActions';
 
-export namespace MetaDataReducer {
+export class MetaDataReducer {
 
-    export function reduce(store: MetaDataStore = emptyMetaDataStore(), action: AbstractAction): MetaDataStore {
+    public static reduce(store: MetaDataStore = emptyMetaDataStore(), action: AbstractAction): MetaDataStore {
         switch (action.type) {
             case ActionType.AddOrReplaceBuildInfo: {
                 let act: AddOrReplaceBuildInfoAction = action as AddOrReplaceBuildInfoAction;

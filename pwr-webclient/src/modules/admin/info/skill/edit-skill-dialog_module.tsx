@@ -5,7 +5,7 @@ import {Button, Dialog, DialogContent, DialogTitle, Step, StepLabel, Stepper} fr
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {SkillSearcher} from '../../../general/skill-search_module';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
-import {SkillReducer} from '../../../../reducers/skill/SkillReducer';
+import {buildHierarchy} from '../../../../reducers/skill/SkillReducer';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import * as Immutable from 'immutable';
 import {SkillServiceClient} from '../../../../clients/SkillServiceClient';
@@ -97,7 +97,7 @@ class EditSkillDialogModule extends React.Component<EditSkillDialogProps & EditS
     private loadSkillHierarchy = () => {
 
         SkillServiceClient.instance().postCategorizeSkill(this.state.newSkillName)
-            .then(category => this.setState({skillHierarchy: this.state.newSkillName + ' => ' + SkillReducer.buildHierarchy(category)}))
+            .then(category => this.setState({skillHierarchy: this.state.newSkillName + ' => ' + buildHierarchy(category)}))
             .catch(error => console.error(error))
             .catch(() => this.setState({skillHierarchy: 'Not available.'}));
     };

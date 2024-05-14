@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Card, CardContent, CardHeader, List, ListItem, Popover} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {StringUtils} from '../../../utils/StringUtil';
-import formatString = StringUtils.formatString;
 import {APIAveragedSkill, APIConsultantClusterInfo} from '../../../model/statistics/ApiMetrics';
 
 
@@ -115,9 +114,9 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     title={skill.name}
                 />
                 <CardContent>
-                    {formatString('Der Skill {0} tritt {1} mal im Cluster auf.', skill.name, String(skill.numOccurances))}<br/>
-                    {formatString('Damit haben {0}% der Berater in diesem Cluster diesen Skill.', (skill.relativeOccurance * 100).toFixed(2))}<br/>
-                    {formatString('Das Durchschnittliche Skill-Level beträgt {0}/5.0.', skill.average.toFixed(2))}<br/>
+                    {StringUtils.formatString('Der Skill {0} tritt {1} mal im Cluster auf.', skill.name, String(skill.numOccurances))}<br/>
+                    {StringUtils.formatString('Damit haben {0}% der Berater in diesem Cluster diesen Skill.', (skill.relativeOccurance * 100).toFixed(2))}<br/>
+                    {StringUtils.formatString('Das Durchschnittliche Skill-Level beträgt {0}/5.0.', skill.average.toFixed(2))}<br/>
                 </CardContent>
             </Card>);
         }
@@ -167,7 +166,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.CommonSkills.Title')}
-                            subheader={formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills.length))}
+                            subheader={StringUtils.formatString(PowerLocalize.get('ClusterInfo.CommonSkills.Subtitle'), String(this.props.info.commonSkills.length))}
                         />
                         <CardContent className="row">
                             {this.renderCommonSkills()}
@@ -178,7 +177,7 @@ export class ConsultantClusterOverview extends React.Component<ConsultantCluster
                     <Card>
                         <CardHeader
                             title={PowerLocalize.get('ClusterInfo.Skills.Title')}
-                            subheader={formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills.length))}
+                            subheader={StringUtils.formatString(PowerLocalize.get('ClusterInfo.Skills.Subtitle'), String(this.props.info.clusterSkills.length))}
                         />
                         <CardContent>
                             <TCloud

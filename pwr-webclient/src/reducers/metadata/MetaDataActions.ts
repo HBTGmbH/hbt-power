@@ -1,7 +1,7 @@
 import {APIBuildInfo, BuildInfo, ofAPIBuildInfo, offlineBuildInfo} from '../../model/metadata/BuildInfo';
 import {ActionType} from '../ActionType';
 import axios from 'axios';
-import {MetaDataStore, MetaDataStoreKeys} from '../../model/metadata/MetaDataStore';
+import {MetaDataStoreKeys} from '../../model/metadata/MetaDataStore';
 import {ClientBuildInfo} from '../../model/metadata/ClientBuildInfo';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {ClientClient} from '../../clients/ClientClient';
@@ -22,12 +22,12 @@ export interface AddOrReplaceClientInfoAction extends AbstractAction {
 }
 
 
-export namespace MetaDataActionCreator {
+export class MetaDataActionCreator {
 
-    const profileServiceClient = ProfileServiceClient.instance();
-    const clientClient = new ClientClient();
+    private static readonly profileServiceClient = ProfileServiceClient.instance();
+    private static readonly clientClient = new ClientClient();
 
-    export function AddOrReplaceBuildInfo(service: string, buildInfo: BuildInfo): AddOrReplaceBuildInfoAction {
+    public static AddOrReplaceBuildInfo(service: string, buildInfo: BuildInfo): AddOrReplaceBuildInfoAction {
         return {
             type: ActionType.AddOrReplaceBuildInfo,
             service: service,
@@ -35,7 +35,7 @@ export namespace MetaDataActionCreator {
         };
     }
 
-    export function AddOrReplaceClientInfo(info: ClientBuildInfo): AddOrReplaceClientInfoAction {
+    public static AddOrReplaceClientInfo(info: ClientBuildInfo): AddOrReplaceClientInfoAction {
         return {
             type: ActionType.AddOrReplaceClientInfo,
             info: info
@@ -43,51 +43,51 @@ export namespace MetaDataActionCreator {
     }
 
 
-    export function FetchBuildInfo(service: string, serviceUrl: string) {
+    public static FetchBuildInfo(service: string, serviceUrl: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             axios.get(serviceUrl).then(response => {
                 let apiBuildInfo = response.data as APIBuildInfo;
-                dispatch(AddOrReplaceBuildInfo(service, ofAPIBuildInfo(apiBuildInfo)));
+                dispatch(MetaDataActionCreator.AddOrReplaceBuildInfo(service, ofAPIBuildInfo(apiBuildInfo)));
             }).catch(error => {
                 console.error(error);
-                dispatch(AddOrReplaceBuildInfo(service, offlineBuildInfo(service)));
+                dispatch(MetaDataActionCreator.AddOrReplaceBuildInfo(service, offlineBuildInfo(service)));
             });
         };
     }
 
-    const available = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
-        return buildInfo => dispatch(AddOrReplaceBuildInfo(service, ofAPIBuildInfo(buildInfo)));
+    private static available = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
+        return buildInfo => dispatch(MetaDataActionCreator.AddOrReplaceBuildInfo(service, ofAPIBuildInfo(buildInfo)));
     };
 
-    const notAvailable = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
-        return error => dispatch(AddOrReplaceBuildInfo(service, offlineBuildInfo(service)));
+    private static notAvailable = (service: string, dispatch: ThunkDispatch<any, any, any>) => {
+        return error => dispatch(MetaDataActionCreator.AddOrReplaceBuildInfo(service, offlineBuildInfo(service)));
     };
 
-    function FetchClientBuildInfo() {
+    private static FetchClientBuildInfo() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            clientClient.getClientBuildInfo()
-                .then(value => dispatch(AddOrReplaceClientInfo(value)))
+            MetaDataActionCreator.clientClient.getClientBuildInfo()
+                .then(value => dispatch(MetaDataActionCreator.AddOrReplaceClientInfo(value)))
                 .catch(error => {
                     console.error(error);
-                    dispatch(AddOrReplaceClientInfo(null));
+                    dispatch(MetaDataActionCreator.AddOrReplaceClientInfo(null));
                 });
         };
     }
 
-    export function FetchAllBuildInfo() {
+    public static FetchAllBuildInfo() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            profileServiceClient.getBuildInfo()
-                .then(available(MetaDataStoreKeys.KEY_PROFILE, dispatch))
-                .catch(notAvailable(MetaDataStoreKeys.KEY_PROFILE, dispatch));
+            MetaDataActionCreator.profileServiceClient.getBuildInfo()
+                .then(MetaDataActionCreator.available(MetaDataStoreKeys.KEY_PROFILE, dispatch))
+                .catch(MetaDataActionCreator.notAvailable(MetaDataStoreKeys.KEY_PROFILE, dispatch));
             SkillServiceClient.instance().getBuildInfo()
-                .then(available(MetaDataStoreKeys.KEY_SKILL, dispatch))
-                .catch(notAvailable(MetaDataStoreKeys.KEY_SKILL, dispatch));
+                .then(MetaDataActionCreator.available(MetaDataStoreKeys.KEY_SKILL, dispatch))
+                .catch(MetaDataActionCreator.notAvailable(MetaDataStoreKeys.KEY_SKILL, dispatch));
             ViewProfileServiceClient.instance().getBuildInfo()
-                .then(available(MetaDataStoreKeys.KEY_VIEW_PROFILE, dispatch))
-                .catch(notAvailable(MetaDataStoreKeys.KEY_VIEW_PROFILE, dispatch));
-            dispatch(FetchBuildInfo(MetaDataStoreKeys.KEY_STATISTICS, StatisticsServiceClient.instance().getBuildInfoURL()));
-            dispatch(FetchBuildInfo(MetaDataStoreKeys.KEY_REPORT, ReportServiceClient.instance().getBuildInfoURL()));
-            dispatch(FetchClientBuildInfo());
+                .then(MetaDataActionCreator.available(MetaDataStoreKeys.KEY_VIEW_PROFILE, dispatch))
+                .catch(MetaDataActionCreator.notAvailable(MetaDataStoreKeys.KEY_VIEW_PROFILE, dispatch));
+            dispatch(MetaDataActionCreator.FetchBuildInfo(MetaDataStoreKeys.KEY_STATISTICS, StatisticsServiceClient.instance().getBuildInfoURL()));
+            dispatch(MetaDataActionCreator.FetchBuildInfo(MetaDataStoreKeys.KEY_REPORT, ReportServiceClient.instance().getBuildInfoURL()));
+            dispatch(MetaDataActionCreator.FetchClientBuildInfo());
         };
     }
 }

@@ -5,7 +5,6 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
 import {getInverseCategoryHierarchy, SkillStore} from '../../../model/skill/SkillStore';
 import {StringUtils} from '../../../utils/StringUtil';
-import filterFuzzy = StringUtils.filterFuzzy;
 
 
 interface CategorySearcherProps {
@@ -78,7 +77,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
     private renderCategories = () => {
         let categories = this.props.categories;
         if (this.state.filterText !== '') {
-            categories = categories.filter(category => filterFuzzy(this.state.filterText, category.qualifier));
+            categories = categories.filter(category => StringUtils.filterFuzzy(this.state.filterText, category.qualifier));
         }
         categories.sort(Comparators.compareCategories);
         return categories.map(this.mapListItem);

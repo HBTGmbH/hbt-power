@@ -3,7 +3,6 @@
  */
 import {StringUtils} from '../utils/StringUtil';
 import deDE from './de-DE.json';
-import formatString = StringUtils.formatString;
 
 /**
  * Quick localizer that localizes localizations. For localizing locales.
@@ -45,7 +44,7 @@ export class PowerLocalize {
 
     public static getFormatted(field: string, ...args: any[]): string {
         let val = PowerLocalize.get(field);
-        return formatString(val, ...args);
+        return StringUtils.formatString(val, ...args);
     }
 
 

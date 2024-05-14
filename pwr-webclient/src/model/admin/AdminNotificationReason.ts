@@ -19,16 +19,16 @@ export enum AdminNotificationReason {
     DANGEROUS_SKILL_ADDED_BLACKLISTED
 }
 
-export namespace AdminNotificationReasonUtil {
+export class AdminNotificationReasonUtil {
 
-    export function keys(): Array<number> {
+    public static keys(): Array<number> {
         return Object.keys(AdminNotificationReason)
             .filter(key => !isNaN(Number(AdminNotificationReason[key])))
             .map(key => Number(key));
     }
 
-    export function fromString(reason: string): AdminNotificationReason {
-        for (let key in keys()) {
+    public static fromString(reason: string): AdminNotificationReason {
+        for (let key in AdminNotificationReasonUtil.keys()) {
             if (AdminNotificationReason[key] === reason) {
                 return key as any as number;
             }

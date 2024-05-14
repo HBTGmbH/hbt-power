@@ -16,11 +16,10 @@ import {
     TextField
 } from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {LanguageUtils} from '../../../utils/LanguageUtils';
 import {LocalizationSearcher} from './localization-searcher_module';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import ISOData = LanguageUtils.ISO639_2DataSet;
+import {ISO639_2DataSet} from '../../../utils/LanguageUtils';
 
 interface LocalizationTableProps {
     localizations: Immutable.List<LocalizedQualifier>;
@@ -119,7 +118,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         });
     };
 
-    private handleSearcherSelect = (data: ISOData) => {
+    private handleSearcherSelect = (data: ISO639_2DataSet) => {
         this.setState({
             locale: data.code
         });

@@ -1,6 +1,5 @@
 import {emptySkillStore, SkillStore} from '../../model/skill/SkillStore';
 import {ActionType} from '../ActionType';
-import {SkillActions} from './SkillActions';
 import {APISkillCategory} from '../../model/skill/SkillCategory';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
@@ -8,36 +7,32 @@ import {SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {SkillTreeNode} from '../../model/skill/SkillTreeNode';
 import {SkillTreeBuilder} from './SkillTreeBuilder';
 import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
+import {
+    AddCategoryToTreeAction,
+    AddSkillToTreeAction, FilterTreeAction, InitializeTreeAction,
+    MoveCategoryAction,
+    MoveSkillAction,
+    PartiallyUpdateSkillCategoryAction, ReadSkillHierarchyAction, RemoveSkillAction,
+    RemoveSkillCategoryAction, SetAddSkillStepAction, SetCurrentChoiceAction, SetTreeChildrenOpenAction, UpdateSkillServiceSkillAction
+} from './SkillActions';
 
-export namespace SkillReducer {
-    import AddCategoryToTreeAction = SkillActions.AddCategoryToTreeAction;
-    import AddSkillToTreeAction = SkillActions.AddSkillToTreeAction;
-    import ReadSkillHierarchyAction = SkillActions.ReadSkillHierarchyAction;
-    import SetAddSkillStepAction = SkillActions.SetAddSkillStepAction;
-    import SetCurrentChoiceAction = SkillActions.SetCurrentChoiceAction;
-    import PartiallyUpdateSkillCategoryAction = SkillActions.PartiallyUpdateSkillCategoryAction;
-    import RemoveSkillCategoryAction = SkillActions.RemoveSkillCategoryAction;
-    import MoveSkillAction = SkillActions.MoveSkillAction;
-    import RemoveSkillServiceSkillAction = SkillActions.RemoveSkillAction;
-    import UpdateSkillServiceSkillAction = SkillActions.UpdateSkillServiceSkillAction;
-    import SetTreeChildrenOpenAction = SkillActions.SetTreeChildrenOpenAction;
-    import FilterTreeAction = SkillActions.FilterTreeAction;
-    import InitializeTreeAction = SkillActions.InitializeTreeAction;
-    import MoveCategoryAction = SkillActions.MoveCategoryAction;
-
-    export function buildHierarchy(category: APISkillCategory): string {
-        if (!!(category)) {
-            if (!!(category.category)) {
-                return category.qualifier + ' => ' + buildHierarchy(category.category);
-            } else {
-                return category.qualifier;
-            }
+export function buildHierarchy(category: APISkillCategory): string {
+    if (!!(category)) {
+        if (!!(category.category)) {
+            return category.qualifier + ' => ' + buildHierarchy(category.category);
+        } else {
+            return category.qualifier;
         }
-        return '';
     }
+    return '';
+}
+
+export class SkillReducer {
 
 
-    function resetAddSkillDialog(skillStore: SkillStore): SkillStore {
+
+
+    private static resetAddSkillDialog(skillStore: SkillStore): SkillStore {
         return {
             ...skillStore,
             currentChoice: UnCategorizedSkillChoice.PROCEED_WITH_COMMENT,
@@ -58,7 +53,7 @@ export namespace SkillReducer {
      * @param skill updated skill
      * @returns {SkillStore} as a copy of the original SkillStore
      */
-    function addOrUpdateSkill(skillStore: SkillStore, skill: SkillServiceSkill): SkillStore {
+    private static addOrUpdateSkill(skillStore: SkillStore, skill: SkillServiceSkill): SkillStore {
         let skillsById = skillStore.skillsById.set(skill.id(), skill);
         let skillsByQualifier = skillStore.skillsByQualifier.set(skill.qualifier(), skill);
 
@@ -69,7 +64,7 @@ export namespace SkillReducer {
         }
     }
 
-    export function reduce(skillStore: SkillStore, action: AbstractAction): SkillStore {
+    public static reduce(skillStore: SkillStore, action: AbstractAction): SkillStore {
         if (!skillStore) {
             return emptySkillStore();
         }
@@ -125,7 +120,7 @@ export namespace SkillReducer {
                 root = SkillTreeNode.shallowCopy(root);
                 return {
                     ...skillStore,
-                    ...addOrUpdateSkill(skillStore, act.toAdd),
+                    ...SkillReducer.addOrUpdateSkill(skillStore, act.toAdd),
                     skillTreeRoot: root
                 }
             }
@@ -154,18 +149,18 @@ export namespace SkillReducer {
                 root.addSkillIdToTree(act.targetCategoryId, act.skillId);
                 root = SkillTreeNode.shallowCopy(root);
                 return {
-                    ...addOrUpdateSkill(skillStore, skill),
+                    ...SkillReducer.addOrUpdateSkill(skillStore, skill),
                     skillTreeRoot: root,
                 }
             }
             case ActionType.RemoveSkillServiceSkill: {
-                let act = action as RemoveSkillServiceSkillAction;
+                let act = action as RemoveSkillAction;
                 let skill = skillStore.skillsById.get(act.skillId);
                 let root = skillStore.skillTreeRoot;
                 root.removeSkillFromTree(skill.categoryId(), skill.id());
                 root = SkillTreeNode.shallowCopy(root);
                 return {
-                    ...addOrUpdateSkill(skillStore, skill),
+                    ...SkillReducer.addOrUpdateSkill(skillStore, skill),
                     skillTreeRoot: root
                 }
             }
@@ -183,7 +178,7 @@ export namespace SkillReducer {
             }
             case ActionType.UpdateSkillServiceSkill: {
                 let act = action as UpdateSkillServiceSkillAction;
-                return addOrUpdateSkill(skillStore, act.skill);
+                return SkillReducer.addOrUpdateSkill(skillStore, act.skill);
             }
             case ActionType.SetCurrentSkillName: {
                 const {value} = action as ChangeStringValueAction;
@@ -215,7 +210,7 @@ export namespace SkillReducer {
             }
             case ActionType.StepBackToSkillInfo: {
                 return {
-                    ...resetAddSkillDialog(skillStore),
+                    ...SkillReducer.resetAddSkillDialog(skillStore),
                     currentAddSkillStep: AddSkillStep.SKILL_INFO
                 }
             }
@@ -249,7 +244,7 @@ export namespace SkillReducer {
                 }
             }
             case ActionType.ResetAddSkillDialog: {
-                return resetAddSkillDialog(skillStore);
+                return SkillReducer.resetAddSkillDialog(skillStore);
             }
             case ActionType.SetNoCategoryReason: {
                 let {value} = action as ChangeStringValueAction;

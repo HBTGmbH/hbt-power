@@ -1,17 +1,13 @@
 import {emptyTemplateStore, TemplateStore} from './TemplateStore';
 import {ActionType} from '../ActionType';
-import {TemplateActions} from './TemplateActions';
+import {RemoveTemplateAction, SetPreviewAction, SetTemplateAction} from './TemplateActions';
 import {ReportPreviewFile} from '../../model/view/ReportPreviewFile';
 import {AbstractAction} from '../BaseActions';
 
 
-export namespace TemplateReducer {
+export class TemplateReducer {
 
-    import RemoveTemplateAction = TemplateActions.RemoveTemplateAction;
-    import SetTemplateAction = TemplateActions.SetTemplateAction;
-    import SetPreviewAction = TemplateActions.SetPreviewAction;
-
-    export function reduce(store: TemplateStore = emptyTemplateStore(), action: AbstractAction): TemplateStore {
+    public static reduce(store: TemplateStore = emptyTemplateStore(), action: AbstractAction): TemplateStore {
         switch (action.type) {
             case ActionType.SetTemplate: {
                 let act: SetTemplateAction = action as SetTemplateAction;

@@ -1,6 +1,6 @@
 import * as redux from 'redux';
 import {ApplicationState} from '../../reducerIndex';
-import {NavigationActionCreator} from '../../navigation/NavigationActionCreator';
+import {success} from '../../navigation/NavigationActionCreator';
 import {Language} from './model/Language';
 import {Profile} from './model/Profile';
 import {ProfileEntry} from './model/ProfileEntry';
@@ -29,7 +29,6 @@ import {AbstractAction} from '../../BaseActions';
 import {makeDeferrable} from '../../deferred/AsyncActionUnWrapper';
 import {ActionType} from '../../ActionType';
 import {ProfileEntryTypeName} from './model/ProfileEntryType';
-import success = NavigationActionCreator.success;
 import {ThunkDispatch} from 'redux-thunk';
 
 const profileUpdateServiceClient = ProfileUpdateServiceClient.instance();

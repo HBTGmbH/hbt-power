@@ -1,4 +1,3 @@
-import {ApplicationState} from '../reducerIndex';
 import {LoginStatus} from '../../model/LoginStatus';
 import {ConsultantClient} from '../profile-new/consultant/ConsultantClient';
 import {consultantUpdateAction} from '../profile-new/consultant/actions/ConsultantUpdateAction';
@@ -15,9 +14,9 @@ import {AuthenticationResult} from '@azure/msal-common';
 import {OIDCService} from '../../OIDCService';
 
 
-export namespace CrossCuttingAsyncActionCreator {
+export class CrossCuttingAsyncActionCreator {
 
-    function isAdmin( authResponse: AuthenticationResult): boolean {
+    static isAdmin( authResponse: AuthenticationResult): boolean {
         if (!authResponse.account) {
             return false;
         }
@@ -28,7 +27,7 @@ export namespace CrossCuttingAsyncActionCreator {
         return roles.indexOf('Power.Admin') >= 0;
     }
 
-    export function AsyncLogOutUser() {
+    public static AsyncLogOutUser() {
         return function(dispatch: ThunkDispatch<any, any, any>) {
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.INITIALS));
             dispatch(resetProfileStore());
@@ -37,10 +36,10 @@ export namespace CrossCuttingAsyncActionCreator {
         };
     }
 
-    export function AsyncRenewLogin(authResponse: AuthenticationResult) {
+    public static AsyncRenewLogin(authResponse: AuthenticationResult) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
             // If the user is an admin => validate admin authentication
-            if (isAdmin(authResponse)) {
+            if (CrossCuttingAsyncActionCreator.isAdmin(authResponse)) {
                 dispatch(AdminActionCreator.AsyncValidateAuthentication());
             }
             // Always make sure that the login status is set properly, even if its an admin
@@ -61,7 +60,7 @@ export namespace CrossCuttingAsyncActionCreator {
         };
     }
 
-    export function AsyncLoadProfile(initials: string) {
+    public static AsyncLoadProfile(initials: string) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
             ConsultantClient.instance().getConsultant(initials).then(consultant => {
                 dispatch(consultantUpdateAction(consultant));
@@ -87,9 +86,9 @@ export namespace CrossCuttingAsyncActionCreator {
         }
     }
 
-    export function AsyncLogInUser(authResponse: AuthenticationResult) {
+    public static AsyncLogInUser(authResponse: AuthenticationResult) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
-            if (isAdmin(authResponse)) {
+            if (CrossCuttingAsyncActionCreator.isAdmin(authResponse)) {
                 dispatch(AdminActionCreator.AsyncValidateAuthentication());
             }
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.SUCCESS));

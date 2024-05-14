@@ -9,7 +9,6 @@ import {NotificationDialog} from './notification-dialog_module';
 import {StringUtils} from '../../../utils/StringUtil';
 import Checkbox from '@material-ui/core/Checkbox/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup/FormGroup';
-import formatString = StringUtils.formatString;
 
 
 interface ProfileEntryNotificationTableLocalProps {
@@ -61,7 +60,7 @@ export class ProfileEntryNotificationTable extends React.Component<ProfileEntryN
                     className="cursor-pointer"
                     onClick={() => this.showNotificationDialog(key)}
                 >
-                    {formatString(
+                    {StringUtils.formatString(
                         PowerLocalize.get('NotificationInbox.NameEntityNotification.SubjectTextTemplate'),
                         notification.nameEntity.name(),
                         NameEntityUtil.typeToLocalizedType(notification.nameEntity))

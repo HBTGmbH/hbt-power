@@ -1,22 +1,14 @@
-export namespace LanguageUtils {
-    declare const ISO_639_2_DATA: any;
+export interface ISO639_2DataSet {
+    code: string;
+    int: Array<string>;
+    native: Array<string>;
+}
 
-    interface _ISO639_2Data {
-        int: string;
-        native: string;
-    }
+declare const ISO_639_2_DATA: any;
 
-    export interface ISO639_2DataSet {
-        code: string;
-        int: Array<string>;
-        native: Array<string>;
-    }
+export class LanguageUtils {
 
-    export function getISO639_2LanguageCode(code: string): _ISO639_2Data {
-        return ISO_639_2_DATA[code];
-    }
-
-    export function getAllISO639_2LanguageCodes(): Array<ISO639_2DataSet> {
+    public static getAllISO639_2LanguageCodes(): Array<ISO639_2DataSet> {
         let keys: Array<string> = Object.keys(ISO_639_2_DATA);
         let result: Array<ISO639_2DataSet> = [];
         keys.forEach((value, index, array) => {

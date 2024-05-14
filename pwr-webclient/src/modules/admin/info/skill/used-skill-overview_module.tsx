@@ -13,7 +13,6 @@ import {StringUtils} from '../../../../utils/StringUtil';
 import {UsedSkillInfoBox} from './used-skill-info-box';
 import {toArray} from '../../../../utils/ImmutableUtils';
 import {SuggestionAsyncActionCreator} from '../../../../reducers/suggestions/SuggestionAsyncActionCreator';
-import filterFuzzy = StringUtils.filterFuzzy;
 import {ThunkDispatch} from 'redux-thunk';
 
 
@@ -131,7 +130,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     render() {
         let res;
         if (this.state.filterString !== '') {
-            res = this.props.usedSkillNames.filter((value) => filterFuzzy(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
+            res = this.props.usedSkillNames.filter((value) => StringUtils.filterFuzzy(this.state.filterString, value)).sort(Comparators.getStringComparator(true));
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
