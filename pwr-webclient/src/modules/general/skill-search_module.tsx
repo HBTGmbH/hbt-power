@@ -66,7 +66,7 @@ export const SkillSearcher = (props: SkillSearcherProps) => {
         } else {
             props.onValueChange(searchText);
             setSearchText(searchText)
-            if (!searchText && searchText.trim().length > 0) {
+            if (!!searchText && searchText.trim().length > 0) {
                 SkillServiceClient.instance().getSearchSkill(searchText)
                     .then(skills => setSkills(skills))
                     .catch((error: any) => console.error((error)));

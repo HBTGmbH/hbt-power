@@ -39,7 +39,7 @@ export class MSALInstance {
     public getToken(): Promise<string> {
         const loginRequest: SilentRequest = {
             scopes: this.scopes,
-            redirectUri: 'http://localhost:3000/blank.html',
+            redirectUri: window.location.origin,
         }
         return this.msalInstance.acquireTokenSilent(loginRequest)
             .then(value => value.accessToken)
