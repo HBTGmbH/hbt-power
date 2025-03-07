@@ -45,10 +45,19 @@ interface ProfileEntryDialogDispatch {
 
 export interface ProfileEntryDialogState {
     searchText: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: Date | null;
+    endDate: Date | null;
     degree: string;
     langLevel: LanguageLevel;
+}
+
+function atHour12(date: Date | string | number | null): Date | null {
+    if (!date) {
+        return null;
+    }
+    let result = new Date(date);
+    result.setHours(12);
+    return result;
 }
 
 class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps & ProfileEntryDialogLocalProps & ProfileEntryDialogDispatch, ProfileEntryDialogState> {
@@ -135,19 +144,15 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         });
     };
 
-    private onStartDateChange = (date: Date) => {
-        const startDate = new Date(date);
-        startDate.setHours(12);
+    private onStartDateChange = (date: Date | null) => {
         this.setState({
-            startDate
+            startDate: atHour12(date)
         });
     };
 
-    private onEndDateChange = (date: Date) => {
-        let endDate = new Date(date);
-        endDate.setHours(12);
+    private onEndDateChange = (date: Date | null) => {
         this.setState({
-            endDate
+            endDate: atHour12(date)
         });
     };
 
