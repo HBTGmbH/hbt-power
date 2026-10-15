@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: pwr-skill-service
+  datasource:
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    url: ${DB_URL}
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+  jpa:
+    hibernate:
+      ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
+    properties:
+      hibernate:
+        search:
+          default:
+            directory_provider: filesystem
+            indexBase: /lucene-data
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+server:
+  port: 9003
+---
+spring:
+  profiles: localDev
+  datasource:
+    username: root
+    password: changeit
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/skill
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        search:
+          default:
+            directory_provider: filesystem
+            indexBase: ./target
+---
+spring:
+  profiles: test
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: ''
+    url: jdbc:h2:mem:datajpa
+    username: sa
+  jpa:
+    properties:
+      hibernate:
+        search:
+          default:
+            directory_provider: filesystem
+            indexBase: ./target
+    hibernate:
+      ddl-auto: create
