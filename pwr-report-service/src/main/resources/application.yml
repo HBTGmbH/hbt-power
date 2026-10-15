@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: pwr-report-service
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 128MB
+      max-request-size: 128MB
+  datasource:
+      username: ${DB_USER}
+      password: ${DB_PASS}
+      url: ${DB_URL}
+      driver-class-name: ${DB_DRIVER_CLASS_NAME}
+  jpa:
+      hibernate:
+        ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
+  main:
+    allow-bean-definition-overriding: true
+export:
+  # Datasource which is used to create the previews. Contains sample data.
+  xmlFilePath: ${PWR_REPORT_FILE_PATH}\xml\datasource.xml
+  # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
+  htmlLocalLocation: ${PWR_REPORT_FILE_PATH}\reports\preview\%s
+  # BIRT will need images on the filesystem. Images will be available here.
+  imgLocation: ${PWR_REPORT_FILE_PATH}\images
+server:
+  port: 9005
+management:
+  endpoints:
+    web:
+      cors:
+        allowed-origins: '*'
+        allowed-methods: '*'
+pwr-profile-service-url: http://pwr-profile-service:9004
+---
+spring:
+  profiles: localDev
+  datasource:
+    username: root
+    password: changeit
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/report
+  jpa:
+    hibernate:
+      ddl-auto: update
+export:
+  # Temporary location where the data source for the BIRT report generation can be found.
+  xmlFilePath: src\target\datasource.xml
+  # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
+  htmlLocalLocation: src\target\report\reports\preview\%s
+  # BIRT will need images on the filesystem. Images will be available here.
+  imgLocation: src\target\images
+pwr-profile-service-url: http://localhost:9004
