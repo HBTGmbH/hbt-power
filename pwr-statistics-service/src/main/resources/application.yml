@@ -1,0 +1,22 @@
+server:
+  port: 9007
+spring:
+  application:
+    name: pwr-statistics-service
+  redis:
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:6379}
+    password: ${DB_PASSWORD:redis}
+    database: ${DB_DATABASE:1}
+pwr-profile-service-url: http://pwr-profile-service:9004
+---
+spring:
+  config:
+    activate:
+      on-profile: localDev
+  redis:
+    host: localhost
+    port: 6379
+    database: 6
+    password: changeit
+pwr-profile-service-url: http://localhost:9004
