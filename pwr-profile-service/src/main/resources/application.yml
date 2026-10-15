@@ -1,0 +1,62 @@
+spring:
+    application:
+      name: pwr-profile-service
+    jackson:
+      serialization:
+        write_dates_as_timestamps: false
+    datasource:
+      username: ${DB_USER}
+      password: ${DB_PASS}
+      url: ${DB_URL}
+      driver-class-name: ${DB_DRIVER_CLASS_NAME:org.mariadb.jdbc.Driver}
+    jpa:
+      hibernate:
+        ddl-auto: ${DB_HIBERNATE_DDL_AUTO:none}
+    servlet:
+      multipart:
+        max-file-size: 32MB
+        max-request-size: 32MB
+server:
+    port: 9004
+logging:
+  level:
+    ROOT: info
+    de.hbt.pwr: debug
+    org.springframework.web: debug
+  file: profile-service.log
+# This service can be polite!
+isPolite: true
+default-chars-per-line: 32
+# The default is a docker-compose deployment; use hostnames
+pwr-skill-service-url: http://pwr-skill-service:9003
+# The default is a docker-compose deployment; use hostnames
+pwr-view-profile-service-url: http://pwr-view-profile-service:9008
+---
+spring:
+  profiles: docker
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: pwr-profile-service
+    password: changeit
+    url: jdbc:mysql://localhost:10004/profile?serverTimezone=Europe/Berlin
+  jpa:
+    hibernate:
+      ddl-auto: validate
+---
+# Use this with pwr-compose-deploy/start-dependencies.cmd
+spring:
+  profiles: localDev
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: changeit
+    url: jdbc:mysql://localhost:3306/profile
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+pwr-skill-service-url: http://localhost:9003
+pwr-view-profile-service-url: http://localhost:9008
+logging:
+  level:
+    org.springframework.web: DEBUG
