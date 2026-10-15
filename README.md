@@ -1,16 +1,126 @@
-# hbt-power
+# HBT Power
 
-Mono-repo combining the HBT Power (`pwr-*`) repositories. Each former repository lives in its own subfolder with its full history.
+| Folder                                                   | What                                | Local port | Stack                   |
+|----------------------------------------------------------|-------------------------------------|-----------:|-------------------------|
+| [`pwr-webclient`](pwr-webclient/README.md)               | React frontend                      |       3000 | React 18, MUI v4        |
+| [`pwr-profile-service`](pwr-profile-service/README.md)   | Consultants, profiles, admin        |       9004 | Spring Boot 2.2, MariaDB |
+| [`pwr-skill-service`](pwr-skill-service/README.MD)       | Skill tree and search               |       9003 | Spring Boot 2.2, MariaDB |
+| [`pwr-report-service`](pwr-report-service/README.md)     | Report generation (BIRT)            |       9005 | Spring Boot 2.2, MariaDB |
+| `pwr-statistics-service`                                 | Statistics                          |       9007 | Spring Boot 2.7, Redis  |
+| `pwr-view-profile-service`                               | View profiles and report templates  |       9008 | Spring Boot 2.2, Redis  |
+| `pwr-edge-service`                                       | Routing and auth                    |       9000 | Spring Cloud Gateway    |
 
-| Folder | Former repository |
-|---|---|
-| `pwr-compose-deploy/` | [HBTGmbH/pwr-compose-deploy](https://github.com/HBTGmbH/pwr-compose-deploy) |
-| `pwr-edge-service/` | [HBTGmbH/pwr-edge-service](https://github.com/HBTGmbH/pwr-edge-service) |
-| `pwr-profile-service/` | [HBTGmbH/pwr-profile-service](https://github.com/HBTGmbH/pwr-profile-service) |
-| `pwr-report-service/` | [HBTGmbH/pwr-report-service](https://github.com/HBTGmbH/pwr-report-service) |
-| `pwr-skill-service/` | [HBTGmbH/pwr-skill-service](https://github.com/HBTGmbH/pwr-skill-service) |
-| `pwr-statistics-service/` | [HBTGmbH/pwr-statistics-service](https://github.com/HBTGmbH/pwr-statistics-service) |
-| `pwr-view-profile-service/` | [HBTGmbH/pwr-view-profile-service](https://github.com/HBTGmbH/pwr-view-profile-service) |
-| `pwr-webclient/` | [HBTGmbH/pwr-webclient](https://github.com/HBTGmbH/pwr-webclient) |
+Infrastructure for local development (MariaDB, Redis) is defined in [`docker-compose.yaml`](docker-compose.yaml).
 
-Tags from the former repositories are prefixed with the repository name (e.g. `pwr-webclient-v1.0`).
+## Prerequisites
+
+- **JDK 13** e.g. Azul Zulu 13 (IntelliJ: *File → Project Structure → SDKs → + → Download JDK*).
+  Newer JDKs don't work: the Spring Boot 2.2 services use Lombok versions that fail to compile on JDK 16+.
+- **Node.js 20/22** and npm
+- **Podman** or **Docker** with compose support
+
+## IntelliJ setup
+
+1. Open the repository root in IntelliJ.
+2. Go to *File → Project Structure → Modules* and delete the root module.
+3. For each Java service (`pwr-*-service`): *+ → Import Module*, select its folder, choose *Import module from external model → Maven*.
+4. Import `pwr-webclient` via *+ → Import Module → Create module from existing sources*.
+5. Make the Maven build use JDK 13:
+   - *Settings → Build, Execution, Deployment → Build Tools → Maven → Runner*: tick **Delegate IDE build/run actions to Maven**
+
+The shared run configurations in [`.run/`](.run) are picked up automatically and appear in the *local development* folder of the run widget.
+
+## Run locally
+
+The `localDev` Spring profiles and the webclient's local mode talk to the services directly. The edge service and Azure login are bypassed.
+
+### 1. Start MariaDB and Redis
+
+```shell
+podman compose up -d
+```
+
+or, with Docker:
+
+```shell
+docker compose up -d
+```
+
+MariaDB on `3306` (`root` / `changeit`, databases `skill`, `profile`, `report`). Redis on `6379` (password `changeit`).
+
+### 2. Start the backend
+
+Run **`[localDev] Backend`** from the run widget. It starts all five services at once:
+
+| Run configuration                                                                     | Health check                                                         |
+|---------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| [`[localDev] Profile Server`](.run/[localDev]%20Profile%20Server.run.xml)             | [localhost:9004/actuator/health](http://localhost:9004/actuator/health) |
+| [`[localDev] Skill Service`](.run/[localDev]%20Skill%20Service.run.xml)               | [localhost:9003/actuator/health](http://localhost:9003/actuator/health) |
+| [`[localDev] Report Service`](.run/[localDev]%20Report%20Service.run.xml)             | [localhost:9005/actuator/health](http://localhost:9005/actuator/health) |
+| [`[localDev] Statistics service`](.run/[localDev]%20Statistics%20service.run.xml)     | [localhost:9007/actuator/health](http://localhost:9007/actuator/health) |
+| [`[localDev] View profile service`](.run/[localDev]%20View%20profile%20service.run.xml) | [localhost:9008/actuator/health](http://localhost:9008/actuator/health) |
+
+The edge service ([`[localDev] Edge Server`](.run/[localDev]%20Edge%20Server.run.xml)) isn't needed locally and isn't part of it.
+
+### 3. Start the webclient
+
+Run **`[localDev] Webclient`** ([`.run/[localDev] Webclient.run.xml`](.run/[localDev]%20Webclient.run.xml)), or from the terminal:
+
+```shell
+npm --prefix pwr-webclient install
+```
+
+```shell
+npm --prefix pwr-webclient run start:local
+```
+
+Open [localhost:3000](http://localhost:3000). Local boot is auto-authenticated as admin
+
+### Load test data (optional)
+
+The profile and skill services each have a Maven goal that inserts sample data into the local MariaDB:
+
+| Service                                                       | Sample data                                                                                |
+|---------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| [`pwr-profile-service`](pwr-profile-service/local-dev/seed.sql) | Consultant `mmu` with a filled profile and one project                                   |
+| [`pwr-skill-service`](pwr-skill-service/local-dev/seed.sql)     | Skill tree with the roots *Information Technology*, *Agriculture* and *Gaming* (91 skills) |
+
+In IntelliJ's Maven tool window, run *Plugins → sql → sql:execute* under the service. Or from a terminal whose `JAVA_HOME` points to JDK 13:
+
+```shell
+cd pwr-profile-service && ./mvnw sql:execute
+```
+
+```shell
+cd pwr-skill-service && ./mvnw sql:execute
+```
+
+The tables are **created by the services, so start the backend at least once before** seeding a fresh database.
+
+#### Report template
+
+The report service has a Maven goal that uploads the committed
+[`designfile_hbt_standard.rptdesign`](pwr-report-service/src/main/resources/templates/designfile_hbt_standard.rptdesign)
+as the template *HBT Standard (local)*
+
+```shell
+cd pwr-report-service && ./mvnw exec:exec
+```
+
+### Stop and reset
+
+```shell
+podman compose down
+```
+
+Reset MariaDB and Redis to an empty state (deletes all local data):
+
+```shell
+podman compose down -v
+```
+
+## Known issues
+
+- **Report service hangs on start with no output when run from IntelliJ:** a JDK 13 startup deadlock between IntelliJ attaching to the JVM and the signed BIRT jars.
+  Its run configuration therefore sets `-XX:+DisableAttachMechanism`, so IntelliJ's live Spring view (beans, health) isn't available for it.
+- **`Lombok … unsupported compiler` or `module jdk.compiler does not "opens" …`:** Maven or IntelliJ is building with a JDK newer than 13. Check the Maven runner JRE (see [IntelliJ setup](#intellij-setup)).

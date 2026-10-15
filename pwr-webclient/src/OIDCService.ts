@@ -3,6 +3,9 @@ import {CrossCuttingAsyncActionCreator} from './reducers/crosscutting/CrossCutti
 import {MSALInstance} from './MSALInstance';
 import {NavigationActionCreator} from './reducers/navigation/NavigationActionCreator';
 import {Paths} from './Paths';
+import {CONFIG} from './Config';
+
+const LOCAL_DEV_USER_NAME = 'Local Developer';
 
 export class OIDCService {
 
@@ -10,6 +13,10 @@ export class OIDCService {
     private static _instance?: OIDCService;
 
     constructor() {
+        if (CONFIG.LOCAL_DEV) {
+            console.warn('Local dev mode: Azure authentication is disabled');
+            return;
+        }
         this.msalInstance = MSALInstance.instance();
         this.msalInstance.accessMsal().handleRedirectPromise()
             .then(tokenResponse => {
@@ -38,10 +45,18 @@ export class OIDCService {
      * Performs a manual login request for a new user.
      */
     public login(): void {
+        if (CONFIG.LOCAL_DEV) {
+            store.dispatch(CrossCuttingAsyncActionCreator.AsyncLogInLocalUser(true) as any);
+            return;
+        }
         this.msalInstance.doLogin();
     }
 
     public logout(): void {
+        if (CONFIG.LOCAL_DEV) {
+            store.dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT) as any);
+            return;
+        }
         this.msalInstance.accessMsal().logoutRedirect({account: this.msalInstance.accessMsal().getActiveAccount()})
     }
 
@@ -51,6 +66,10 @@ export class OIDCService {
      * If that process does not work we redirect back to the login page.
      */
     public renewLogin(): void {
+        if (CONFIG.LOCAL_DEV) {
+            store.dispatch(CrossCuttingAsyncActionCreator.AsyncLogInLocalUser(false) as any);
+            return;
+        }
         console.log('Attempting to renew login');
         this.msalInstance.acquireTokenSilent()
             .then((response) => {
@@ -64,11 +83,20 @@ export class OIDCService {
             })
     }
 
-    public getToken(): Promise<string> {
+    /**
+     * Resolves to undefined in local dev mode, as there is no token to send.
+     */
+    public getToken(): Promise<string | undefined> {
+        if (CONFIG.LOCAL_DEV) {
+            return Promise.resolve(undefined);
+        }
         return this.msalInstance.getToken();
     }
 
     public getCurrentUserName(): string {
+        if (CONFIG.LOCAL_DEV) {
+            return LOCAL_DEV_USER_NAME;
+        }
         return this.msalInstance.accessMsal().getActiveAccount().name;
     }
 }

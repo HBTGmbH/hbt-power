@@ -26,7 +26,7 @@ for local development.
 ## Exploring the application
 
 1. Create a new run configuration, call it ``Profile Service (Local)``
-2. Set the system property ``spring.profiles.active`` to ``docker``
+2. Set the system property ``spring.profiles.active`` to ``localDev``
 3. Make sure the database you started in ``Getting Started`` is running
 4. Launch
 

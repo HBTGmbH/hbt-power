@@ -1,0 +1,29 @@
+# Infrastructure dependencies for running the pwr-* services locally.
+# Settings match the services' localDev Spring profiles.
+services:
+  # Used by pwr-skill-service, pwr-profile-service and pwr-report-service
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: changeit
+      TZ: Europe/Berlin
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./docker/mariadb/init:/docker-entrypoint-initdb.d:ro
+
+  # Used by pwr-view-profile-service and pwr-statistics-service
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --requirepass changeit
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mariadb-data: {}
+  redis-data: {}

@@ -130,6 +130,6 @@ export class PowerHttpClient {
 
     private getAxios = (): Promise<AxiosInstance> => {
         return OIDCService.instance().getToken()
-            .then(token => axios.create({headers: {Authorization: 'Bearer '+ token}, withCredentials: true}))
+            .then(token => axios.create({headers: token ? {Authorization: 'Bearer '+ token} : {}, withCredentials: true}))
     }
 }

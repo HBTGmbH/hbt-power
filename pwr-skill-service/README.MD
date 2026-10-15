@@ -4,11 +4,10 @@
 Please refer to pwr-profile-service for more information on how to set up a development environment for this service
 
 ## Setup
-As usual, this project comes with an IntelliJ project setup and 3 preconfigured
-IntelliJ run configuration. If you want to alter these run configurations, please clone and then
+As usual, this project comes with an IntelliJ project setup and preconfigured
+IntelliJ run configurations. If you want to alter these run configurations, please clone and then
 edit the clones configurations.
-* localDev for local development with service discovery
-* localDevNoEureka for local development without service discovery
+* localDev for local development
 * bootstrapDatabase to create the DB schema
 
 For more information, see pwr-profile-service

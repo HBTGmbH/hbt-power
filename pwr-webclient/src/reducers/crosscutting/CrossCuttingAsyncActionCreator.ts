@@ -86,6 +86,19 @@ export class CrossCuttingAsyncActionCreator {
         }
     }
 
+    /**
+     * Local dev mode only: log in without Azure, as a user with admin rights.
+     */
+    public static AsyncLogInLocalUser(navigateToProfileSelect: boolean) {
+        return function(dispatch: ThunkDispatch<any, any, any>) {
+            dispatch(AdminActionCreator.AsyncValidateAuthentication());
+            dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.SUCCESS));
+            if (navigateToProfileSelect) {
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.PROFILE_SELECT));
+            }
+        };
+    }
+
     public static AsyncLogInUser(authResponse: AuthenticationResult) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
             if (CrossCuttingAsyncActionCreator.isAdmin(authResponse)) {

@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="[localDev] Statistics service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="local development">
+    <option name="ACTIVE_PROFILES" value="localDev" />
+    <module name="pwr-statistics-service" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="de.hbt.pwr.StatisticsApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -9,9 +9,9 @@
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/pickers": "^3.2.10",
+    "@successtar/cogo-toast": "^5.0.6",
     "autosuggest-highlight": "^3.1.1",
     "axios": "0.19.0",
-    "@successtar/cogo-toast": "^5.0.6",
     "es6-promise": "4.2.8",
     "history": "4.10.1",
     "immutable": "3.8.2",
@@ -24,7 +24,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "4.2.0",
     "react-redux": "^9.1.0",
-    "react-router-dom": "5.2.0",
+    "react-router-dom": "5.3.4",
     "react-sortable-hoc": "2.0.0",
     "react-tagcloud": "2.3.3",
     "recharts": "2.7.3",
@@ -36,21 +36,53 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@types/react-router-dom": "^5.2.0",
     "@types/react-dropzone": "^5.1.0",
+    "@types/react-router-dom": "^5.2.0",
     "@types/react-sortable-hoc": "0.6.0",
     "@types/vis": "4.18.2",
-    "react-scripts-ts": "^3.1.0",
-    "redux-devtools-extension": "^2.13.9",
-    "@types/jest": "^27.5.2",
+    "http-proxy-middleware": "^2.0.10",
     "react-scripts": "^5.0.1",
+    "redux-devtools-extension": "^2.13.9",
     "typescript": "~5.3.3"
+  },
+  "overrides": {
+    "@material-ui/core": {
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "@types/react": "$@types/react"
+    },
+    "@material-ui/icons": {
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "@types/react": "$@types/react"
+    },
+    "@material-ui/pickers": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    },
+    "material-ui-chip-input": {
+      "@material-ui/core": "$@material-ui/core",
+      "react": "$react",
+      "react-dom": "$react-dom"
+    },
+    "react-sortable-hoc": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    },
+    "react-redux": {
+      "redux": "$redux"
+    },
+    "react-scripts": {
+      "typescript": "$typescript"
+    }
   },
   "scripts": {
     "compileInfo": "node ./compileBuildInfo.js",
     "start": "react-scripts start",
+    "start:local": "REACT_APP_LOCAL_DEV=true react-scripts start",
     "build": "CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

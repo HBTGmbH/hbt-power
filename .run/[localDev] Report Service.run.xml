@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="[localDev] Report Service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="local development">
+    <option name="ACTIVE_PROFILES" value="localDev" />
+    <option name="ENABLE_JMX_AGENT" value="false" />
+    <module name="pwr-report-service" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="de.hbt.HbtPowerReportServiceApplication" />
+    <option name="VM_PARAMETERS" value="-XX:+DisableAttachMechanism" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

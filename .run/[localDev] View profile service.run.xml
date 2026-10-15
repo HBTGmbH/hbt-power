@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="[localDev] View profile service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="local development">
+    <option name="ACTIVE_PROFILES" value="localDev" />
+    <module name="pwr-view-profile-service" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="de.hbt.pwr.view.ViewProfileServiceApplication" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="de.hbt.pwr.view.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="[localDev] Backend" type="CompoundRunConfigurationType" folderName="local development">
+    <toRun name="[localDev] Profile Server" type="SpringBootApplicationConfigurationType" />
+    <toRun name="[localDev] Skill Service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="[localDev] Report Service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="[localDev] Statistics service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="[localDev] View profile service" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
