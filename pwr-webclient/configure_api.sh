@@ -8,4 +8,4 @@ sed "s|#POWER_LOCALE_PATH|$POWER_LOCALE_PATH|g" /usr/share/nginx/html/config.js 
 sed "s|#POWER_IMAGE_PATH|$POWER_IMAGE_PATH|g" /usr/share/nginx/html/config.js -i
 sed "s|#POWER_AZURE_TENANT_ID|$POWER_AZURE_TENANT_ID|g" /usr/share/nginx/html/config.js -i
 sed "s|#POWER_AZURE_CLIENT_ID|$POWER_AZURE_CLIENT_ID|g" /usr/share/nginx/html/config.js -i
-nginx -g "daemon off;"
+exec nginx -g "daemon off;"
