@@ -22,6 +22,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>13</java.version>
+        <!-- Target of `mvn exec:exec` (local report template seed), override with -Dseed.viewProfileServiceUrl=... -->
+        <seed.viewProfileServiceUrl>http://localhost:9008</seed.viewProfileServiceUrl>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
     </properties>
@@ -150,6 +152,23 @@
                 <configuration>
                     <source>12</source>
                     <target>12</target>
+                </configuration>
+            </plugin>
+            <!--
+            Uploads the committed standard design file as a report template, like the admin upload dialog:
+            `mvn exec:exec`, or Plugins → exec → exec:exec in IntelliJ's Maven tool window.
+            Needs pwr-report-service and pwr-view-profile-service running with localDev. Not bound to any phase.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <executable>${java.home}/bin/java</executable>
+                    <arguments>
+                        <argument>${project.basedir}/local-dev/SeedReportTemplate.java</argument>
+                        <argument>${project.basedir}/src/main/resources/templates/designfile_hbt_standard.rptdesign</argument>
+                        <argument>${seed.viewProfileServiceUrl}</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

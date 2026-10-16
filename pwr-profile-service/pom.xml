@@ -134,6 +134,33 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
+            Inserts sample data into the local database (root docker-compose.yaml): `mvn sql:execute`, or
+            Plugins → sql → sql:execute in IntelliJ's Maven tool window. Not bound to any phase, so builds never run it.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <!-- 3.x needs Maven 3.6.3, the wrapper uses 3.6.0 -->
+                <version>1.5</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.mariadb.jdbc</groupId>
+                        <artifactId>mariadb-java-client</artifactId>
+                        <version>${mariadb.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <driver>org.mariadb.jdbc.Driver</driver>
+                    <url>jdbc:mariadb://localhost:3306/profile</url>
+                    <username>root</username>
+                    <password>changeit</password>
+                    <encoding>UTF-8</encoding>
+                    <srcFiles>
+                        <srcFile>${project.basedir}/local-dev/seed.sql</srcFile>
+                    </srcFiles>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
