@@ -8,6 +8,7 @@ on:
       - 'pwr-profile-service/**'
       - '!pwr-profile-service/local-dev/**'
       - '!pwr-profile-service/**/*.md'
+      - '.github/workflows/pwr-profile-service.yml'
   workflow_dispatch:
 
 concurrency:

@@ -129,6 +129,11 @@ public class SkillController {
                     Skill toCreate = Skill.of(qualifier);
                     return skillService.createSkillInCategory(toCreate, categoryService.getOther());
                 });
+        if (skill.getCategory() == null) {
+            log.info("Categorizing " + skill + " as 'Other'");
+            skill.setCategory(categoryService.getOther());
+            skill = skillRepository.save(skill);
+        }
         return ResponseEntity.ok(skill.getCategory());
     }
 
