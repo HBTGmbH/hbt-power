@@ -59,7 +59,12 @@ There are no webclient tests at the moment.
 
 ## CI
 
-One GitHub Actions workflow per folder (`.github/workflows/<folder>.yml`), path-filtered, running only on push to `main` (or manually): build with Zulu JDK 13 / Node 20, run tests, push the image to `ghcr.io/hbtgmbh/hbt-power/<folder>`. There are no PR checks.
+One GitHub Actions workflow per folder (`.github/workflows/<folder>.yml`), path-filtered (the same filter for `push` and `pull_request` via a YAML anchor). Each has two jobs:
+
+- **`check`** ("Build and test") on pull requests against `main`: build with Zulu JDK 13 / Node 20, run tests, build the image without pushing. Read-only token, dependency caches allowed.
+- **`publish`** on push to `main` (or manually): the same build, then push the image to `ghcr.io/hbtgmbh/hbt-power/<folder>`. Only this job has `packages: write`, and it uses no dependency cache, so nothing cached by a PR run can end up in an image.
+
+A PR only shows checks for the folders it touches. Workflow changes must pass actionlint and zizmor.
 
 ## GitHub workflow
 
