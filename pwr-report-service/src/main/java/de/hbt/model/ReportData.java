@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -36,6 +37,12 @@ public class ReportData {
     @Column(name = "create_date")
     LocalDate createDate;
 
+    /**
+     * Point in time the report was requested; null for reports created before this column existed
+     */
+    @Column(name = "created_at")
+    Instant createdAt;
+
     @Lob
     @Column(name = "data")
     protected byte[] data;
@@ -48,6 +55,7 @@ public class ReportData {
 
         this.reportStatus = ReportStatus.RUNNING;
         this.createDate = LocalDate.now();
+        this.createdAt = Instant.now();
     }
 
     @AllArgsConstructor
@@ -68,6 +76,8 @@ public class ReportData {
 
         LocalDate createDate;
 
+        Instant createdAt;
+
         public static ReportDataSlice toReportDataSlice(ReportData data) {
             return new ReportDataSlice(data.getId(),
                     data.getInitials(),
@@ -75,7 +85,8 @@ public class ReportData {
                     data.getReportStatus(),
                     data.getFileName(),
                     data.getTemplateId(),
-                    data.getCreateDate());
+                    data.getCreateDate(),
+                    data.getCreatedAt());
         }
     }
 }

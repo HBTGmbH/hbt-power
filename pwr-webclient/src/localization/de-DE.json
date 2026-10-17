@@ -349,6 +349,9 @@
   "Report.Template": "Template",
   "Report.UnknownTemplate": "Unbekanntes Template",
   "Report.Status": "Status",
-  "Report.CreateDate": "Erstellungsdatum",
+  "Report.CreateDate": "Erstellt am",
+  "Report.Status.Error": "Fehlgeschlagen",
+  "Report.Status.Error.Hint": "Das Dokument konnte nicht erstellt werden. Lösche den Eintrag und generiere das Dokument erneut. Tritt der Fehler wieder auf, wende dich an einen Admin.",
+  "Report.Status.Running": "Wird erstellt …",
   "Version.New": "Neue Version"
 }
