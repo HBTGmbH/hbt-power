@@ -14,10 +14,36 @@ Infrastructure for local development (MariaDB, Redis) is defined in [`docker-com
 
 ## Prerequisites
 
-- **JDK 13** e.g. Azul Zulu 13 (IntelliJ: *File → Project Structure → SDKs → + → Download JDK*).
+Works on macOS (Apple Silicon and Intel), Linux and Windows.
+
+- **JDK 13**, e.g. Azul Zulu 13 (IntelliJ: *File → Project Structure → SDKs → + → Download JDK*, or [azul.com/downloads](https://www.azul.com/downloads/?version=java-13-mts&package=jdk), native builds for arm64 and x64).
   Newer JDKs don't work: the Spring Boot 2.2 services use Lombok versions that fail to compile on JDK 16+.
-- **Node.js 20/22** and npm
-- **Podman** or **Docker** with compose support
+  Homebrew has no `zulu@13` cask.
+- **Node.js 20** (as in CI, pinned in [`pwr-webclient/.nvmrc`](pwr-webclient/.nvmrc)) with its bundled npm 10.
+  npm 11 (Node 24+) fails on `npm install` with a peer dependency conflict.
+- **Podman** or **Docker** with compose support (`podman compose`, `docker compose` or `docker-compose`, e.g. with Colima on macOS)
+
+### Version managers (optional)
+
+The repository root contains a `.java-version` for [jenv](https://www.jenv.be) and `pwr-webclient/.nvmrc` for [fnm](https://github.com/Schniz/fnm) (macOS, Linux and Windows) or nvm.
+
+jenv (macOS/Linux), after installing Zulu 13:
+
+```shell
+jenv add /path/to/zulu-13.jdk/Contents/Home   # macOS; on Linux the JDK directory itself
+eval "$(jenv init -)"                          # also add this line to ~/.zshrc
+jenv enable-plugin export                      # only works after jenv init
+```
+
+The `export` plugin sets `JAVA_HOME`. `./mvnw` needs it, otherwise on macOS it falls back to `/usr/libexec/java_home`, which picks the newest installed JDK instead of 13.
+
+fnm (`brew install fnm` or `winget install Schniz.fnm`), then in `~/.zshrc` (PowerShell: see the fnm README):
+
+```shell
+eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
+```
+
+`fnm install` in `pwr-webclient` installs the pinned Node version, `cd` switches to it automatically.
 
 ## IntelliJ setup
 
@@ -46,7 +72,8 @@ or, with Docker:
 docker compose up -d
 ```
 
-MariaDB on `3306` (`root` / `changeit`, databases `skill`, `profile`, `report`). Redis on `6379` (password `changeit`).
+MariaDB on `3307` (`root` / `changeit`, databases `skill`, `profile`, `report`). Redis on `6379` (password `changeit`).
+Both run in their own `hbt-power` network. MariaDB is published on `3307` instead of `3306` so it can run next to another local MySQL/MariaDB; inside the network it's `mariadb:3306`.
 
 ### 2. Start the backend
 
