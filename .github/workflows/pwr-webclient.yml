@@ -4,38 +4,84 @@ on:
   push:
     branches:
       - main
-    paths:
+    paths: &paths
       - 'pwr-webclient/**'
       - '!pwr-webclient/**/*.md'
       - '.github/workflows/pwr-webclient.yml'
+  pull_request:
+    branches:
+      - main
+    paths: *paths
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
-  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Superseded PR runs stop; runs on main queue, so every commit there gets its image
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   IMAGE: ghcr.io/hbtgmbh/hbt-power/pwr-webclient
 
+defaults:
+  run:
+    shell: bash
+    working-directory: pwr-webclient
+
 jobs:
-  build:
+  check:
+    name: Build and test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: pwr-webclient
+    timeout-minutes: 30
+    if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: pwr-webclient/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # Only checks that the image builds; images are published from main
+      - name: Build image
+        uses: docker/build-push-action@v7
+        with:
+          context: pwr-webclient
+          push: false
+
+  publish:
+    name: Build, test and publish image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write  # pushes the image to ghcr.io
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # No npm cache in the publishing job, so no cached package can end up in the image
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          package-manager-cache: false
 
       - name: Install dependencies
         run: npm ci
@@ -48,9 +94,8 @@ jobs:
         run: npm run compileInfo
         env:
           BUILD_TAG: ${{ github.workflow }}-${{ github.run_number }}
-
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -58,7 +103,7 @@ jobs:
 
       - name: Image tags and labels
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.IMAGE }}
           tags: |
@@ -66,7 +111,7 @@ jobs:
             type=sha
 
       - name: Build and push image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: pwr-webclient
           push: true
