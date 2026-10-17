@@ -66,6 +66,10 @@ One GitHub Actions workflow per folder (`.github/workflows/<folder>.yml`), path-
 
 A PR only shows checks for the folders it touches. Workflow changes must pass actionlint and zizmor.
 
+- **`lint-actions.yml`** ("Lint GitHub Actions") runs on every PR against `main` and every push to `main` that touches `.github/**`: actionlint with shellcheck and zizmor (online audits), with `contents: read` only. Locally: `uvx --from actionlint-py --with shellcheck-py actionlint` and `uvx zizmor --persona regular .` from the repository root.
+- **Pinning policy** in `.github/zizmor.yml`: first-party actions (`actions/*`, `github/*`, `docker/*` …) and `HBTGmbH/*` with a major tag (`@v7`), all others with the full commit SHA plus a `# vX.Y.Z` comment.
+- **Dependabot** (`.github/dependabot.yml`) opens a PR for new action versions once a week, at the earliest 7 days after a release (`cooldown`). For a new major version check that every input the workflow uses still exists in the new `action.yml`. Maven and npm are not covered.
+
 ## GitHub workflow
 
 - **Repository:** `HBTGmbH/hbt-power` (take the owner from `git remote get-url origin`). It is **public**.

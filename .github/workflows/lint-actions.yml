@@ -1,0 +1,61 @@
+name: Lint GitHub Actions
+
+on:
+  push:
+    branches:
+      - main
+    paths: &paths
+      - '.github/**'
+  pull_request:
+    branches:
+      - main
+    paths: *paths
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  actionlint:
+    name: actionlint with shellcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      # actionlint skips shellcheck without a message when it finds none, so
+      # the version is printed first: a missing shellcheck fails here instead.
+      - name: Show shellcheck version
+        run: uvx --from actionlint-py==1.7.12.25 --with shellcheck-py==0.11.0.1 shellcheck --version
+      - name: Run actionlint
+        run: uvx --from actionlint-py==1.7.12.25 --with shellcheck-py==0.11.0.1 actionlint -color
+
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      # The token enables the online audits (impostor-commit, known-vulnerable-actions,
+      # ref-confusion); zizmor reads .github/zizmor.yml on its own.
+      - name: Run zizmor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: uvx zizmor==1.30.1 --persona regular --format github .
+

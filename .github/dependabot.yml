@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    # "/" covers .github/workflows and a root action.yml only; every action in a
+    # subfolder needs its own entry, otherwise its pins are never updated.
+    directories:
+      - "/"
+    schedule:
+      interval: weekly
+    # A week between release and update PR gives a compromised release time to be
+    # noticed and pulled first; zizmor's dependabot-cooldown audit asks for it.
+    cooldown:
+      default-days: 7

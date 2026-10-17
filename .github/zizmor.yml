@@ -1,0 +1,22 @@
+# zizmor configuration.
+#
+# The unpinned-uses policy states this repository's pinning convention - configuration, not an
+# accepted finding. Accepted findings stay inline, next to the line they concern, as
+# "# zizmor: ignore[rule] reason": a global ignore here would also hide every future occurrence.
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        "actions/*": ref-pin
+        "github/*": ref-pin
+        "docker/*": ref-pin
+        "azure/*": ref-pin
+        "aws-actions/*": ref-pin
+        "google-github-actions/*": ref-pin
+        "hashicorp/*": ref-pin
+        "HBT-Healthcare/*": ref-pin
+        "HBTGmbH/*": ref-pin
+        "*": hash-pin
+  self-repository:
+    # the pinned actionlint rejects '$/' references, so local actions are referenced as './path' after actions/checkout
+    disable: true
