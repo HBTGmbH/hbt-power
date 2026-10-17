@@ -1,14 +1,5 @@
 # Getting Started
-* Download NodeJS 10
-* Download NPM
-* Clone this repository `git clone https://github.com/HBTGmbH/pwr-webclient`
-* Copy the `sample_config.js` into `config.js`. It should be preconfigured for the HBT Power Dev System (only reachable with a VPN connection)
-    * For experimenting purposes, you can switch to the HBT Power Production system by using `https://power.hbt.de` as base URL instead
-    of `https://power02.corp.hbt.de`.
-    * The config determines which APIs are called. It has to be set, otherwise you'll see a lot of errors.
-* `npm install`
-* `npm run start`
-* Open your browser, navigate to `localhost:3000/power`. You should see the HBT Power profile selection screen
+Setup and local run are described in the [root README](../README.md): `npm install`, then `npm run start:local` against the locally running services.
 
 ## Structure
 * All .tsx files are located in the `modules` directory

@@ -6,7 +6,7 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
-import {getImagePath} from '../../../API_CONFIG';
+import chartIcon from '../../../img/icon_chart.svg';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import OpenInNew from '@material-ui/icons/OpenInNew';
 import {ThunkDispatch} from 'redux-thunk';
@@ -73,7 +73,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
             return (<Paper className="dashboard-element">
                 <div className="vertical-align row">
                     <div className="col-md-3 col-sm-12 col-xs-12 vertical-align">
-                        <Avatar sizes={'80'} src={getImagePath() + '/icon_chart.svg'}/>
+                        <Avatar sizes={'80'} src={chartIcon}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
                         Standard-Skills, die diesem Profil fehlen: {this.renderMissingSkills()}

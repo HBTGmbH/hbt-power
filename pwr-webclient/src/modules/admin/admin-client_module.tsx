@@ -13,7 +13,7 @@ import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Paths} from '../../Paths';
 import {Link, Route} from 'react-router-dom';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {getImagePath} from '../../API_CONFIG';
+import logoNeg from '../../img/HBT002_Logo_neg.png';
 import {NotificationInbox} from './notification/notification-inbox_module';
 import {NotificationTrashbox} from './notification/notification-trashbox_module';
 import {ConsultantGrid} from './consultants/consultant-grid_module';
@@ -133,7 +133,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                                 <div className="vertical-align" style={{flexGrow: 1}}>
                                     <img className="img-responsive logo-small"
                                          alt="HBT Logo"
-                                         src={getImagePath() + '/HBT002_Logo_neg.png'}/>
+                                         src={logoNeg}/>
                                 </div>
                                 <IconButton color={'secondary'} onClick={this.props.logOutAdmin}>
                                     <Icon className={'material-icons'}> input</Icon>

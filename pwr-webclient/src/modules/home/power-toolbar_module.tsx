@@ -8,7 +8,7 @@ import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {ViewProfile} from '../../model/view/ViewProfile';
-import {getImagePath} from '../../API_CONFIG';
+import logoNeg from '../../img/HBT002_Logo_neg.png';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
@@ -117,7 +117,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private renderPower = () => {
         return (
             <div className="vertical-align" style={{height: '100%', flexGrow: 1}}>
-                <img alt="HBT Power Logo" className="img-responsive logo-small" src={getImagePath() + '/HBT002_Logo_neg.png'}/>
+                <img alt="HBT Power Logo" className="img-responsive logo-small" src={logoNeg}/>
             </div>
         );
     };

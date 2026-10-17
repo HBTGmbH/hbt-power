@@ -5,12 +5,10 @@ const POWER_SKILL_SERVICE_URL = "/api/pwr-skill-service";
 const POWER_VIEW_PROFILE_SERVICE_URL = "/api/pwr-view-profile-service";
 const POWER_REPORT_SERVICE_URL = "/api/pwr-report-service";
 const POWER_STATISTICS_SERVICE_URL = "/api/pwr-statistics-service";
-const POWER_IMAGE_PATH = "/img";
 
 const CLIENT_BUILD_INFO_LOCATION = "/build_info.json";
 
 const POWER_APP_PATH = "";
-const POWER_LOCALE_PATH = "/localization";
 
 const GLOBAL_OPTIONS = {
     defaultCharsPerLine: 32,
