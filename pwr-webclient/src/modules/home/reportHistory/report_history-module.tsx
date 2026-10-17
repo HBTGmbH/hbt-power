@@ -65,7 +65,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportHistoryDispatch {
         return {
             loadAllReportData: (initials: string) => dispatch(ReportAsyncActionCreator.loadAllReportData(initials)),
-            loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllFiles),
+            loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()),
             getReportFile: (reportData: ReportData) => dispatch(ReportAsyncActionCreator.getReportFile(reportData)),
             deleteReportFile: (id, cb) => dispatch(ReportAsyncActionCreator.deleteReportFile(id, cb))
         };
