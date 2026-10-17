@@ -102,10 +102,11 @@
         </dependency>
         <!-- For integrative tests -->
         <dependency>
-            <groupId>com.github.kstyrc</groupId>
+            <!-- Fork of com.github.kstyrc:embedded-redis that ships a redis-server for Apple Silicon -->
+            <groupId>com.github.codemonstur</groupId>
             <artifactId>embedded-redis</artifactId>
             <scope>test</scope>
-            <version>0.6</version>
+            <version>1.4.4</version>
         </dependency>
 	</dependencies>
 
