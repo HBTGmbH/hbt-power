@@ -76,7 +76,8 @@ A PR only shows checks for the folders it touches. Workflow changes must pass ac
   gh api graphql -f query='mutation { updateIssue(input: { id: "<node_id>", issueTypeId: "<type_id>" }) { issue { number issueType { name } } } }'
   # node_id: gh api repos/HBTGmbH/hbt-power/issues/NNN --jq .node_id
   ```
-- **Branches:** `feature/<issue>-<short-description>` (new capability) or `bug/<issue>-<short-description>` (defect), branched from an up-to-date `main`. One issue per branch and PR, no bundling. No direct pushes to `main`.
+- **Branches:** `feature/<issue>-<short-description>` (new capability) or `bug/<issue>-<short-description>` (defect), branched from an up-to-date `main`. One issue per branch and PR, no bundling, except for small fixes (next bullet). No direct pushes to `main`.
+- **Small fixes along the way:** fix small defects you come across directly in the current branch, as long as they don't put the current ticket at risk. Small means: an obvious defect, a few lines, cause and fix clear without further analysis, no change to an API contract, entity, Redis model or the edge path rules, and verifiable within the current test and click-through. Commit it separately with the current issue ID (`#12 - Nebenbei: …`) and list it in the PR under *Beschreibung*. Anything bigger, or anything that would delay or blur the current ticket, gets its own issue.
 - **Commit messages:** every commit starts with the issue ID, then ` - `, then a short description, e.g. `#12 - Skill-Suche ignoriert Groß-/Kleinschreibung`. Without an issue (typos, trivial housekeeping): `#noissue - …`.
 - **Pull requests:** fill in `.github/pull_request_template.md`, put `Closes #NNN` in the body, and include: *"Reviewed AGENTS.md; changes comply with architecture and security guidelines."*
 
@@ -115,5 +116,6 @@ Apply this at the end of each task to what the task changed, and report which it
 - [ ] `AGENTS.md` and `README.md` are updated in the same PR if a rule, command, port or prerequisite changed
 - [ ] No operating environment details in code, docs, commits, issue or PR (see GitHub workflow)
 - [ ] Every commit message starts with `#NNN - ` (or `#noissue - `)
+- [ ] Small fixes made along the way (see GitHub workflow) are listed in the PR
 - [ ] PR body follows the template, contains `Closes #NNN` and the compliance sentence
 - [ ] The fulfilled acceptance criteria are ticked off in the issue. A criterion that is not fulfilled stays open, and the PR says why
