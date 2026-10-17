@@ -19,8 +19,7 @@ import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
-import {CrossCuttingAsyncActionCreator} from '../../reducers/crosscutting/CrossCuttingAsyncActionCreator';
-import {withRouter} from 'react-router-dom';
+import {matchPath, withRouter} from 'react-router-dom';
 
 interface ToolbarProps {
     loggedInAsAdmin: boolean;
@@ -39,6 +38,7 @@ interface ToolbarProps {
  */
 interface ToolbarLocalProps {
     match?: any;
+    location?: any;
 }
 
 /**
@@ -60,8 +60,6 @@ interface ToolbarDispatch {
     loadConsultantClusterInfo(initials: string): void;
 
     loadSkillStatistics(): void;
-
-    changeConsultant(initials: string): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -94,7 +92,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
             loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages()),
-            changeConsultant: (initials: string) => dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials)),
         };
     }
 
@@ -123,6 +120,16 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                 <img alt="HBT Power Logo" className="img-responsive logo-small" src={getImagePath() + '/HBT002_Logo_neg.png'}/>
             </div>
         );
+    };
+
+    /**
+     * Switches to the consultant by changing the route; power-client_module loads the profile for the new initials.
+     * Stays on the current page unless it shows data that belongs to the previous consultant.
+     */
+    private changeConsultant = (initials: string) => {
+        const pagesForAnyConsultant = [Paths.USER_HOME, Paths.USER_PROFILE, Paths.USER_REPORTS, Paths.USER_SEARCH, Paths.USER_STATISTICS_SKILLS];
+        const currentPage = pagesForAnyConsultant.find(path => matchPath(this.props.location.pathname, {path, exact: true}));
+        this.props.navigateTo(Paths.build(currentPage || Paths.USER_HOME, {initials}));
     };
 
     private loadConsultantClusterInfo = (initials: string) => {
@@ -311,7 +318,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                         className="select-in-toolbar"
                                         value={initials}
                                         defaultValue=""
-                                        onChange={(event) => this.props.changeConsultant(event.target.value as string)}
+                                        onChange={(event) => this.changeConsultant(event.target.value as string)}
                                 >
                                     {
                                         this.props.consultantInfo.map(consultantInfo => <MenuItem key={consultantInfo.initials} value={consultantInfo.initials}>{consultantInfo.name}</MenuItem> )

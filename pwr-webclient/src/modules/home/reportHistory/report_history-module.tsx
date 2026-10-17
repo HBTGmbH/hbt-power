@@ -65,7 +65,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportHistoryDispatch {
         return {
             loadAllReportData: (initials: string) => dispatch(ReportAsyncActionCreator.loadAllReportData(initials)),
-            loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllFiles),
+            loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()),
             getReportFile: (reportData: ReportData) => dispatch(ReportAsyncActionCreator.getReportFile(reportData)),
             deleteReportFile: (id, cb) => dispatch(ReportAsyncActionCreator.deleteReportFile(id, cb))
         };
@@ -74,6 +74,12 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     componentDidMount() {
         this.loadAllData();
     };
+
+    componentDidUpdate(prevProps: Readonly<ReportHistoryProps>) {
+        if (prevProps.initials !== this.props.initials) {
+            this.loadAllReportData();
+        }
+    }
 
     private loadAllData() {
         if (!this.props.templates || this.props.templates.size === 0) {
@@ -84,7 +90,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     }
 
     private loadAllReportData = () => {
-        if (this.props.initials != null && this.props.initials != '') { // TODO reload initials
+        if (this.props.initials != null && this.props.initials != '') {
             this.props.loadAllReportData(this.props.initials);
         }
     };
