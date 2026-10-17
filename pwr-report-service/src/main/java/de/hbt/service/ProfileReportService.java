@@ -15,9 +15,12 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -26,11 +29,17 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
 @Slf4j
 @Service
 public class ProfileReportService {
+
+    /**
+     * Shown in the export document instead of the photo of a consultant without a profile picture
+     */
+    static final String PROFILE_PICTURE_PLACEHOLDER = "images/profile-picture-placeholder.png";
 
     private final DocBirtExportHandler docBirtExportHandler;
     private final DBFileStorageService storageService;
@@ -155,22 +164,39 @@ public class ProfileReportService {
     }
 
     private String saveImageOnDisk(String initials) {
-        ResponseEntity<byte[]> response = profilePictureClient.getPictureByInitials(initials);
-        String contentType = response.getHeaders().get("Content-Type").get(0);
+        ResponseEntity<byte[]> response;
+        try {
+            response = profilePictureClient.getPictureByInitials(initials);
+        } catch (HttpClientErrorException.NotFound e) {
+            log.info("[Export][{}] No profile picture, using placeholder", initials);
+            return savePlaceholderOnDisk(initials);
+        }
+        String contentType = response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
         String fileEnding = "";
-        if (contentType.equals("image/jpeg")) {
+        if ("image/jpeg".equals(contentType)) {
             fileEnding = ".jpeg";
         }
-        if (contentType.equals("image/jpg")) {
+        if ("image/jpg".equals(contentType)) {
             fileEnding = ".jpg";
         }
-        if (contentType.equals("image/png")) {
+        if ("image/png".equals(contentType)) {
             fileEnding = ".png";
         }
         try {
             File tempFile = File.createTempFile("foto_" + initials, fileEnding);
             tempFile.deleteOnExit();
             Files.write(tempFile.toPath(), response.getBody(), StandardOpenOption.WRITE);
+            return tempFile.getAbsolutePath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String savePlaceholderOnDisk(String initials) {
+        try (InputStream placeholder = new ClassPathResource(PROFILE_PICTURE_PLACEHOLDER).getInputStream()) {
+            File tempFile = File.createTempFile("foto_" + initials, ".png");
+            tempFile.deleteOnExit();
+            Files.copy(placeholder, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             return tempFile.getAbsolutePath();
         } catch (IOException e) {
             throw new RuntimeException(e);
