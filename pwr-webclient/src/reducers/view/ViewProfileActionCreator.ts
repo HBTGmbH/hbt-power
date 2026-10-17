@@ -248,8 +248,7 @@ export class ViewProfileActionCreator {
             dispatch(CrossCuttingActionCreator.startRequest());
             viewProfileClient.postReport(initials, viewProfileId, templateId)
                 .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                // FIXME@nt fill initials!
-                .then(() => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_REPORTS)))
+                .then(() => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.build(Paths.USER_REPORTS, {initials}))))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
                 .catch(() => Alerts.showError('Could not generate document!'));
