@@ -55,6 +55,7 @@ There are no webclient tests at the moment.
 - Redux state in `src/reducers`, components in `src/modules` (`admin`, `home` = profile editing, `general` = shared components).
 - Backend access goes through the axios wrappers in `src/clients` (`XyzServiceClient.instance()`), which handle the loading spinner, payload extraction and error alerts, and re-throw errors.
 - Runtime config: `config.js` contains `#PLACEHOLDER`s that `configure_api.sh` replaces from env vars when the nginx container starts. `start:local` sets `REACT_APP_LOCAL_DEV=true`, which serves `config.local.js` and proxies `/api/<service>` to the local ports (`src/setupProxy.js`) and skips Azure login (`CONFIG.LOCAL_DEV`).
+- Static files: images, CSS and data live in `src/` and are imported, so the build serves them with a content hash under `/static/`, which nginx (`default.conf`) caches as `immutable`. `public/` only holds `index.html` and `favicon.png`; everything outside `/static/` is served with `no-cache`.
 - Conventions: render user-facing text through `PowerLocalizer`; use string values in enums (Redux); prefer components from `modules/general`, e.g. `PwrButton` / `PwrIconButton` with the icon on the right, icon buttons need a tooltip.
 
 ## CI
@@ -107,7 +108,7 @@ Apply this at the end of each task to what the task changed, and report which it
 - [ ] **Database schema:** there is no Liquibase/Flyway, so an entity change comes with a SQL script for production (like `pwr-profile-service/fix-id-columns.sql`) and is listed under *Operations / Deployment Notes* in the PR
 
 ### Webclient (if UI changed)
-- [ ] User-facing text goes through `PowerLocalizer`; new keys are in `public/localization/de-DE.json`
+- [ ] User-facing text goes through `PowerLocalizer`; new keys are in `src/localization/de-DE.json`
 - [ ] Shared components from `modules/general` are reused: `PwrButton` / `PwrIconButton`, icon on the right, icon buttons with tooltip
 - [ ] Backend access only through the clients in `src/clients`; enums use string values
 - [ ] The change was clicked through with `npm run start:local` against the local backend

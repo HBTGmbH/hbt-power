@@ -1,10 +1,10 @@
+import ISO_639_2_DATA from './iso_639-2.json';
+
 export interface ISO639_2DataSet {
     code: string;
     int: Array<string>;
     native: Array<string>;
 }
-
-declare const ISO_639_2_DATA: any;
 
 export class LanguageUtils {
 

@@ -6,7 +6,7 @@ import {LoginStatus} from '../model/LoginStatus';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import TextField from '@material-ui/core/TextField/TextField';
 import {PowerLocalize} from '../localization/PowerLocalizer';
-import {getImagePath} from '../API_CONFIG';
+import logoPos from '../img/HBT002_Logo_pos.png';
 import {PwrRaisedButton} from './general/pwr-raised-button';
 import ArrowRight from '@material-ui/icons/ArrowRight';
 import {connect} from 'react-redux';
@@ -90,7 +90,7 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
                     <div className="vertical-align" style={{height: '100vh'}}>
                         <div style={{padding: '64px', backgroundColor: 'white'}}>
                             <div className="vertical-align">
-                                <img alt="HBT Power logo" className="img-responsive logo-medium" src={getImagePath() + '/HBT002_Logo_pos.png'}/>
+                                <img alt="HBT Power logo" className="img-responsive logo-medium" src={logoPos}/>
                             </div>
                             <div className="vertical-align">
                                 <h1>Profil Wählen</h1>
