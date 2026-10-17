@@ -152,7 +152,7 @@
                 </dependencies>
                 <configuration>
                     <driver>org.mariadb.jdbc.Driver</driver>
-                    <url>jdbc:mariadb://localhost:3306/profile</url>
+                    <url>jdbc:mariadb://localhost:3307/profile</url>
                     <username>root</username>
                     <password>changeit</password>
                     <encoding>UTF-8</encoding>

@@ -5,8 +5,12 @@ services:
   mariadb:
     image: mariadb:11
     restart: unless-stopped
+    networks:
+      - hbt-power
+    # Published on 3307 so it can run next to another local MySQL/MariaDB on 3306.
+    # Inside the hbt-power network it stays mariadb:3306.
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MARIADB_ROOT_PASSWORD: changeit
       TZ: Europe/Berlin
@@ -18,11 +22,17 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    networks:
+      - hbt-power
     command: redis-server --requirepass changeit
     ports:
       - "6379:6379"
     volumes:
       - redis-data:/data
+
+networks:
+  hbt-power:
+    name: hbt-power
 
 volumes:
   mariadb-data: {}
