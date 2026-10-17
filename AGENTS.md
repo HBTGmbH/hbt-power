@@ -60,3 +60,55 @@ There are no webclient tests at the moment.
 ## CI
 
 One GitHub Actions workflow per folder (`.github/workflows/<folder>.yml`), path-filtered, running only on push to `main` (or manually): build with Zulu JDK 13 / Node 20, run tests, push the image to `ghcr.io/hbtgmbh/hbt-power/<folder>`. There are no PR checks.
+
+## GitHub workflow
+
+- **Repository:** `HBTGmbH/hbt-power` (take the owner from `git remote get-url origin`). It is **public**.
+- **No operating environment details on GitHub:** no host names, deployment or management URLs, tenant/client IDs, connection strings, secrets, or queries against live systems in issues, PRs, commit messages, code, comments, docs or screenshots. Write „the production environment“, `<host>` instead. A later edit doesn't help: GitHub keeps the edit history and git keeps the commit.
+- **Issue structure:** current behaviour (*Ist-Zustand*, with references into the code), desired behaviour (*Wunsch*), and acceptance criteria as a checklist. Mockups (ASCII sketch or screenshot of the local webclient with seed data) and ` ```mermaid ` diagrams are welcome, e.g. a `sequenceDiagram` when a change crosses services, but not required.
+- **Issue type:** set after creation via GraphQL: `Task` `IT_kwDOAYn5ks4AV-6C`, `Bug` `IT_kwDOAYn5ks4AV-6D`, `Feature` `IT_kwDOAYn5ks4AV-6H`.
+  ```bash
+  gh api graphql -f query='mutation { updateIssue(input: { id: "<node_id>", issueTypeId: "<type_id>" }) { issue { number issueType { name } } } }'
+  # node_id: gh api repos/HBTGmbH/hbt-power/issues/NNN --jq .node_id
+  ```
+- **Branches:** `feature/<issue>-<short-description>` (new capability) or `bug/<issue>-<short-description>` (defect), branched from an up-to-date `main`. One issue per branch and PR, no bundling. No direct pushes to `main`.
+- **Commit messages:** every commit starts with the issue ID, then ` - `, then a short description, e.g. `#12 - Skill-Suche ignoriert Groß-/Kleinschreibung`. Without an issue (typos, trivial housekeeping): `#noissue - …`.
+- **Pull requests:** fill in `.github/pull_request_template.md`, put `Closes #NNN` in the body, and include: *"Reviewed AGENTS.md; changes comply with architecture and security guidelines."*
+
+## Definition of Ready
+
+Before writing any code:
+
+- [ ] An issue exists and its type is set (`Bug`, `Feature`, `Task`) before the branch is created
+- [ ] The issue describes the current behaviour (with references into the code), the desired behaviour, and acceptance criteria as a checklist
+- [ ] The acceptance criteria are reviewed: each one can be checked, and together they say when the issue is done. Gaps are closed in the issue before coding starts
+- [ ] `main` is checked out and up to date: `git checkout main && git pull`
+- [ ] A dedicated branch exists: `feature/<issue>-<short-description>` or `bug/<issue>-<short-description>`
+
+## Definition of Done
+
+Apply this at the end of each task to what the task changed, and report which items apply and whether each is satisfied. A task is done when all applicable items are true.
+
+### Build and tests
+- [ ] `./mvnw verify` passes in every changed `pwr-*-service` (JDK 13)
+- [ ] `npm run build` passes if `pwr-webclient` changed
+- [ ] All existing tests pass; new backend behaviour is covered by tests
+
+### Services
+- [ ] **API contracts:** if an endpoint changed, every caller is adjusted in the same PR: the `RestTemplate` clients in the other services and `pwr-webclient/src/clients`
+- [ ] **Edge security:** new or moved endpoints are checked against the path rules in `pwr-edge-service/.../filters/SecurityConfig.java`. The services check no permissions themselves; admin functionality must live under a path the edge restricts to `Power.Admin`
+- [ ] **Redis compatibility:** changes to Redis models (`ViewProfile`, `ReportTemplate`, statistics models) keep existing stored data readable: no renaming or removing fields without a migration
+- [ ] **Database schema:** there is no Liquibase/Flyway, so an entity change comes with a SQL script for production (like `pwr-profile-service/fix-id-columns.sql`) and is listed under *Operations / Deployment Notes* in the PR
+
+### Webclient (if UI changed)
+- [ ] User-facing text goes through `PowerLocalizer`; new keys are in `public/localization/de-DE.json`
+- [ ] Shared components from `modules/general` are reused: `PwrButton` / `PwrIconButton`, icon on the right, icon buttons with tooltip
+- [ ] Backend access only through the clients in `src/clients`; enums use string values
+- [ ] The change was clicked through with `npm run start:local` against the local backend
+
+### Documentation and pull request
+- [ ] `AGENTS.md` and `README.md` are updated in the same PR if a rule, command, port or prerequisite changed
+- [ ] No operating environment details in code, docs, commits, issue or PR (see GitHub workflow)
+- [ ] Every commit message starts with `#NNN - ` (or `#noissue - `)
+- [ ] PR body follows the template, contains `Closes #NNN` and the compliance sentence
+- [ ] The fulfilled acceptance criteria are ticked off in the issue. A criterion that is not fulfilled stays open, and the PR says why
