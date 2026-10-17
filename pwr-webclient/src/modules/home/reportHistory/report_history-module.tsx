@@ -75,6 +75,12 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         this.loadAllData();
     };
 
+    componentDidUpdate(prevProps: Readonly<ReportHistoryProps>) {
+        if (prevProps.initials !== this.props.initials) {
+            this.loadAllReportData();
+        }
+    }
+
     private loadAllData() {
         if (!this.props.templates || this.props.templates.size === 0) {
             this.loadAllTemplateData();
@@ -84,7 +90,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     }
 
     private loadAllReportData = () => {
-        if (this.props.initials != null && this.props.initials != '') { // TODO reload initials
+        if (this.props.initials != null && this.props.initials != '') {
             this.props.loadAllReportData(this.props.initials);
         }
     };
