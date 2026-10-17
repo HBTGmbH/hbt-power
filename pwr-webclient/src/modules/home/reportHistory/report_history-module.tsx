@@ -3,19 +3,19 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {connect} from 'react-redux';
 import {ReportData} from '../../../model/view/ReportData';
 import {ReportAsyncActionCreator} from '../../../reducers/report/ReportAsyncActionCreator';
-import {Icon, Paper, Table} from '@material-ui/core';
+import {CircularProgress, Icon, Paper, Table, Tooltip} from '@material-ui/core';
 
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
 import Button from '@material-ui/core/Button';
-import {Build, ErrorOutline} from '@material-ui/icons';
+import {ErrorOutline} from '@material-ui/icons';
 import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ThunkDispatch} from 'redux-thunk';
-import {formatFullLocalizedDate} from '../../../utils/DateUtil';
+import {formatFullLocalizedDate, formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 
 interface ReportHistoryLocalProps {
 }
@@ -114,6 +114,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     };
 
     private StatusDisplay = (reportData: ReportData) => {
+        const statusStyle: React.CSSProperties = {display: 'inline-flex', alignItems: 'center', marginLeft: '8px', marginTop: '5px', verticalAlign: 'middle'};
         let body: JSX.Element;
         const status = reportData.reportStatus;
         const id = reportData.id;
@@ -131,10 +132,20 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                     </Button>;
                 break;
             case 'ERROR':
-                body = <ErrorOutline color="secondary"/>;
+                body =
+                    <Tooltip title={PowerLocalize.get('Report.Status.Error.Hint')}>
+                        <span className="error-text" style={statusStyle}>
+                            <ErrorOutline style={{color: 'inherit', marginRight: '4px'}}/>
+                            {PowerLocalize.get('Report.Status.Error')}
+                        </span>
+                    </Tooltip>;
                 break;
             case 'RUNNING':
-                body = <Build color="secondary"/>;
+                body =
+                    <span style={statusStyle}>
+                        <CircularProgress size={20} style={{marginRight: '8px'}}/>
+                        {PowerLocalize.get('Report.Status.Running')}
+                    </span>;
                 break;
             default:
                 body = <span>{status}</span>;
@@ -199,7 +210,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                     <TableRow key={index}>
                                         <TableCell>{value.viewProfileName}</TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
-                                        <TableCell align="left">{formatFullLocalizedDate(value.createDate)}</TableCell>
+                                        <TableCell align="left">{value.createdAt ? formatToFullLocalizedDateTime(value.createdAt) : formatFullLocalizedDate(value.createDate)}</TableCell>
                                         <TableCell
                                             align="left">{this.StatusDisplay(value)}</TableCell>
                                     </TableRow>)

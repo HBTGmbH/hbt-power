@@ -6,4 +6,6 @@ export interface ReportData {
     fileName: string;
     templateId: string;
     createDate: Date;
+    /** null for reports created before the report service stored the time */
+    createdAt?: Date;
 }
