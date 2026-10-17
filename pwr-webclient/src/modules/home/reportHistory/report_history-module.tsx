@@ -15,6 +15,7 @@ import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ThunkDispatch} from 'redux-thunk';
+import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 
 interface ReportHistoryLocalProps {
 }
@@ -192,7 +193,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                     <TableRow key={index}>
                                         <TableCell>{value.viewProfileName}</TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
-                                        <TableCell align="left">{<>value.createDate</>}</TableCell>
+                                        <TableCell align="left">{formatFullLocalizedDate(value.createDate)}</TableCell>
                                         <TableCell
                                             align="left">{this.StatusDisplay(value)}</TableCell>
                                     </TableRow>)
