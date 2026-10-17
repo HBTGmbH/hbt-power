@@ -18,6 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import redis.embedded.RedisServer;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,21 +51,20 @@ public class ReportTemplateServiceIntegrationTest {
     private ReportTemplateRepository reportTemplateRepository;
 
     @BeforeClass
-    public static void setUpRedis() {
-        redisServer = RedisServer.builder()
+    public static void setUpRedis() throws IOException {
+        redisServer = RedisServer.newRedisServer()
                 .port(TEST_REDIS_PORT_INT)
-                //.redisExecProvider(customRedisExec) //com.github.kstyrc (not com.orange.redis-embedded)
                 .setting("maxmemory 128M") //maxheap 128M
                 .build();
     }
 
     @Before
-    public void startRedis() {
+    public void startRedis() throws IOException {
         redisServer.start();
     }
 
     @After
-    public void stopRedis() {
+    public void stopRedis() throws IOException {
         redisServer.stop();
     }
 

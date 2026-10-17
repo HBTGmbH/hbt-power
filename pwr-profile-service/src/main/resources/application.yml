@@ -39,7 +39,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     username: root
     password: changeit
-    url: jdbc:mysql://localhost:3306/profile
+    url: jdbc:mysql://localhost:3307/profile
   jpa:
     hibernate:
       ddl-auto: update

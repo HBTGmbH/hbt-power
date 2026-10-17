@@ -40,15 +40,15 @@ spring:
     username: root
     password: changeit
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/report
+    url: jdbc:mysql://localhost:3307/report
   jpa:
     hibernate:
       ddl-auto: update
 export:
   # Temporary location where the data source for the BIRT report generation can be found.
-  xmlFilePath: src\target\datasource.xml
+  xmlFilePath: src/target/datasource.xml
   # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
-  htmlLocalLocation: src\target\report\reports\preview\%s
+  htmlLocalLocation: src/target/report/reports/preview/%s
   # BIRT will need images on the filesystem. Images will be available here.
-  imgLocation: src\target\images
+  imgLocation: src/target/images
 pwr-profile-service-url: http://localhost:9004
