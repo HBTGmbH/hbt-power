@@ -1,5 +1,6 @@
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 import {PowerLocalize} from '../localization/PowerLocalizer';
+import moment from 'moment';
 
 const optionsShortDisplay: DateTimeFormatOptions = {
     year: 'numeric',
@@ -48,7 +49,7 @@ function verifyDataType(date: Date | string): Date {
         return null;
     }
     if (typeof date === 'string') {
-        return new Date(date);
+        return isLocalDate(date) ? fromLocalDate(date) : new Date(date);
     }
     return date;
 }
@@ -107,7 +108,7 @@ export function formatToYear(date: number | string | Date | undefined) {
     if (!date) {
         return PowerLocalize.get('Today');
     }
-    const newDate = new Date(date);
+    const newDate = typeof date === 'number' ? new Date(date) : verifyDataType(date);
     if (!date) {
         return PowerLocalize.get('Today');
     }
@@ -116,4 +117,38 @@ export function formatToYear(date: number | string | Date | undefined) {
     } catch (e) {
         return '?';
     }
+}
+
+/**
+ * A date without time and time zone, like Java's LocalDate, in ISO format: 'YYYY-MM-DD'.
+ * This is how the services send and expect LocalDate fields, so no time zone conversion happens.
+ */
+export type LocalDate = string;
+
+const LOCAL_DATE_FORMAT = 'YYYY-MM-DD';
+
+function isLocalDate(date: string): boolean {
+    return /^\d{4}-\d{2}-\d{2}$/.test(date);
+}
+
+export function today(): LocalDate {
+    return moment().format(LOCAL_DATE_FORMAT);
+}
+
+/**
+ * Takes the calendar date of a picked date in local time. Returns null for an empty date.
+ */
+export function toLocalDate(date: Date | null | undefined): LocalDate | null {
+    return !date ? null : moment(date).format(LOCAL_DATE_FORMAT);
+}
+
+/**
+ * Converts a local date to a Date at local midnight, e.g. for a date picker. Returns null for an empty date.
+ */
+export function fromLocalDate(date: LocalDate | null | undefined): Date | null {
+    return !date ? null : moment(date, LOCAL_DATE_FORMAT).toDate();
+}
+
+export function isInvalidDate(date: Date | null | undefined): boolean {
+    return !!date && isNaN(date.getTime());
 }

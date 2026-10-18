@@ -16,9 +16,10 @@ import {Qualification} from '../reducers/profile-new/profile/model/Qualification
 import {FurtherTraining} from '../reducers/profile-new/profile/model/FurtherTraining';
 import {ProfileEntry} from '../reducers/profile-new/profile/model/ProfileEntry';
 import {toIdx} from '../reducers/profile-new/profile/model/LanguageLevel';
+import {LocalDate} from './DateUtil';
 
 export const PROJECTS_BY_START_DATE = ComparatorBuilder
-    .comparing<Project>(nullSafe(t => t.startDate.getDate()))
+    .comparing<Project>(nullSafe(t => t.startDate))
     .definingNullAs(NullMode.HIGHEST)
     .build();
 
@@ -55,7 +56,7 @@ export class Comparators {
         return 1;
     }
 
-    public static compareDate(d1: Date, d2: Date) {
+    public static compareDate(d1: Date | LocalDate, d2: Date | LocalDate) {
         if (d1 > d2) return -1;
         if (d1 == d2) return 0;
         return 1;

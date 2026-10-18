@@ -21,6 +21,7 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrButton} from '../../general/pwr-button';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
+import {fromLocalDate, isInvalidDate, LocalDate, today, toLocalDate} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileEntryDialogProps {
@@ -45,19 +46,10 @@ interface ProfileEntryDialogDispatch {
 
 export interface ProfileEntryDialogState {
     searchText: string;
-    startDate: Date | null;
-    endDate: Date | null;
+    startDate: LocalDate | null;
+    endDate: LocalDate | null;
     degree: string;
     langLevel: LanguageLevel;
-}
-
-function atHour12(date: Date | string | number | null): Date | null {
-    if (!date) {
-        return null;
-    }
-    let result = new Date(date);
-    result.setHours(12);
-    return result;
 }
 
 class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps & ProfileEntryDialogLocalProps & ProfileEntryDialogDispatch, ProfileEntryDialogState> {
@@ -75,8 +67,8 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     private defaultState = (props) => {
         return {
             searchText: !!(props.entry) ? props.entry.nameEntity.name : '',
-            startDate: !!(props.entry) && !!(props.entry['startDate']) ? props.entry['startDate'] : new Date(),
-            endDate: !!(props.entry) && !!(props.entry['endDate']) ? props.entry['endDate'] : new Date(),
+            startDate: !!(props.entry) && !!(props.entry['startDate']) ? props.entry['startDate'] : today(),
+            endDate: !!(props.entry) && !!(props.entry['endDate']) ? props.entry['endDate'] : today(),
             degree: !!(props.entry) && !!(props.entry['degree']) ? props.entry['degree'] : EducationDegree.BACHELOR,
             langLevel: !!(props.entry) && !!(props.entry['level']) ? props.entry['level'] : LanguageLevel.BASIC,
         };
@@ -109,17 +101,17 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         if (!!oldProps.entry && !this.props.entry) {
             this.setState(this.defaultState({}));
         } else if (this.props.entry != oldProps.entry) {
-            let date: Date;
+            let date: LocalDate;
             if (oldProps.type === 'QUALIFICATION') {
-                date = this.props.entry && this.props.entry['date'] ? this.props.entry['date'] : new Date();
+                date = this.props.entry && this.props.entry['date'] ? this.props.entry['date'] : today();
             } else {
-                date = this.props.entry && this.props.entry['startDate'] ? this.props.entry['startDate'] : new Date();
+                date = this.props.entry && this.props.entry['startDate'] ? this.props.entry['startDate'] : today();
             }
 
             this.setState({
                 searchText: this.props.entry ? this.props.entry.nameEntity.name : '',
                 startDate: date,
-                endDate: this.props.entry && this.props.entry['endDate'] ? this.props.entry['endDate'] : new Date(),
+                endDate: this.props.entry && this.props.entry['endDate'] ? this.props.entry['endDate'] : today(),
                 degree: this.props.entry && this.props.entry['degree'] ? this.props.entry['degree'] : EducationDegree.BACHELOR,
                 langLevel: this.props.entry && this.props.entry['level'] ? this.props.entry['level'] : LanguageLevel.BASIC
             });
@@ -145,14 +137,20 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
     };
 
     private onStartDateChange = (date: Date | null) => {
+        if (isInvalidDate(date)) {
+            return;
+        }
         this.setState({
-            startDate: atHour12(date)
+            startDate: toLocalDate(date)
         });
     };
 
     private onEndDateChange = (date: Date | null) => {
+        if (isInvalidDate(date)) {
+            return;
+        }
         this.setState({
-            endDate: atHour12(date)
+            endDate: toLocalDate(date)
         });
     };
 
@@ -208,7 +206,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onStartDateChange}
-                                        placeholderDate={this.state.startDate}
+                                        placeholderDate={fromLocalDate(this.state.startDate)}
                                         label={'Start'}
                                         type={DatePickerType.MONTH_YEAR}
                                         disableOpenEnd
@@ -221,7 +219,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onEndDateChange}
-                                        placeholderDate={this.state.endDate}
+                                        placeholderDate={fromLocalDate(this.state.endDate)}
                                         label={'Ende'}
                                         type={DatePickerType.MONTH_YEAR}/>
                                 </Grid>
