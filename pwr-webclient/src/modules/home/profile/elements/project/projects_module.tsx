@@ -92,15 +92,8 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
         }
         return <div className="row" style={{scrollBehavior: 'smooth'}}>
             <ProjectUrlSync/>
-            {/* Stays below the fixed toolbar (64px); only the project list scrolls, the page does not scroll along
-                and "add project" stays visible */}
-            <div className="col-md-3" ref={this.projectRef} style={{
-                position: 'sticky',
-                top: '72px',
-                maxHeight: 'calc(100vh - 136px)',
-                display: 'flex',
-                flexDirection: 'column'
-            }}>
+            {/* List and form scroll on their own (index.css), so toolbar, tabs and "add project" stay visible */}
+            <div className="col-md-3 pwr-projects-list-pane" ref={this.projectRef}>
                 <List component="nav" style={{overflowY: 'auto', overscrollBehavior: 'contain'}}>
                     {/* The store keeps the projects newest first; sorting here would move them away from selectedProjectIndex */}
                     {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
@@ -115,7 +108,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
                     </ListItem>
                 </List>
             </div>
-            <div className="col-md-9" id="selected-project">
+            <div className="col-md-9 pwr-projects-form-pane" id="selected-project">
                 <SelectedProject/>
             </div>
         </div>;
