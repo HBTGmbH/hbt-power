@@ -336,3 +336,23 @@ body {
 .pwr-read-only .MuiChip-root.Mui-disabled {
     opacity: 1;
 }
+
+/* Projects tab: the project list keeps "add project" below its own scroll area */
+.pwr-projects-list-pane {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Side by side (Bootstrap md and up): list and form scroll on their own up to the bottom of the window, the page
+   does not scroll, so toolbar (64px) and tabs stay visible. 136px = space above the panes plus the bottom margin. */
+@media (min-width: 992px) {
+    .pwr-projects-list-pane,
+    .pwr-projects-form-pane {
+        height: calc(100vh - 136px);
+    }
+
+    .pwr-projects-form-pane {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+}
