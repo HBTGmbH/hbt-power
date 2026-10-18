@@ -313,6 +313,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <SkillSearcher
                         disabled={this.isEditDisabled()}
                         id="SelectedProject.SkillSearcher"
+                        fullWidth
                         label={PowerLocalize.get('Profile.Project.AddSkill')}
                         initialValue={this.state.skillSearchValue}
                         value={this.state.skillSearchValue}
