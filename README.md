@@ -123,6 +123,8 @@ cd pwr-skill-service && ./mvnw sql:execute
 ```
 
 The tables are **created by the services, so start the backend at least once before** seeding a fresh database.
+The skill service builds its search index on start, so **restart it after seeding** the skills (or call
+`POST http://localhost:9003/skill/lucene/index`); until then the skill suggestions stay empty.
 
 #### Report template
 
