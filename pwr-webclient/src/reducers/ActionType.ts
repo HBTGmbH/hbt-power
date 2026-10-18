@@ -154,6 +154,7 @@ export enum ActionType {
     SetEditingProject = '[Profile][Project] SetEditingProject',
     EditSelectedProject = '[Profile][Project] EditSelectedProject',
     CancelEditSelectedProject = '[Profile][Project] CancelEditSelectedProject',
+    DiscardProjectChanges = '[Profile][Project] DiscardProjectChanges',
     AddNewProject = '[Profile][Project] Add New Project to Profile',
 
     ResetProfileStore = '[Profile] Reset to Default',

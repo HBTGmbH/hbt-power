@@ -79,6 +79,15 @@ export function editSelectedProjectAction(): EditSelectedProjectAction {
     };
 }
 
+/**
+ * Leaves the edit mode and drops unsaved changes without asking, e.g. after confirming to leave the page.
+ */
+export function discardProjectChangesAction(): AbstractAction {
+    return {
+        type: ActionType.DiscardProjectChanges
+    };
+}
+
 export function cancelEditSelectedProjectAction(): CancelEditSelectedProjectAction {
     return {
         type: ActionType.CancelEditSelectedProject
