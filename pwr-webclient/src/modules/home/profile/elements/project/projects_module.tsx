@@ -102,11 +102,8 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
                 flexDirection: 'column'
             }}>
                 <List component="nav" style={{overflowY: 'auto', overscrollBehavior: 'contain'}}>
-                    {this.props.projects.sort((a, b) => {
-                        if (a.startDate > b.startDate) return -1;
-                        if (a.startDate < b.startDate) return 1;
-                        return 0;
-                    }).map((project, index) => this.renderProjectListItem(project, index))}
+                    {/* The store keeps the projects newest first; sorting here would move them away from selectedProjectIndex */}
+                    {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
                 </List>
                 <Divider/>
                 <List>

@@ -8,6 +8,8 @@ import {AbstractAction} from '../BaseActions';
 import {ThunkDispatch} from 'redux-thunk';
 
 import {createBrowserHistory} from 'history';
+import {matchPath} from 'react-router-dom';
+import {discardProjectChangesAction} from '../profile-new/profile/actions/ProjectActions';
 
 export const PWR_HISTORY = createBrowserHistory();
 
@@ -49,8 +51,6 @@ export const NavigationActionCreator = {
   DropNavigationTarget: (): AbstractAction => ({type: ActionType.DropNavigationTarget}),
   AsyncNavigateTo: (target: string) => {
     return function(dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
-      let state: ApplicationState = getState();
-      let currentLocation = state.navigationSlice.currentLocation;
       const hasChanges = storeHasUnsavedChanges(getState());
       if (target === Paths.USER_SPECIAL_LOGOUT) {
         if (hasChanges) {
@@ -59,9 +59,12 @@ export const NavigationActionCreator = {
           navigate(Paths.APP_ROOT, dispatch);
           dispatch(CrossCuttingAsyncActionCreator.AsyncLogOutUser());
         }
+        return;
       }
-      //  FIXME@nt this probably doesn't work anymore right now
-      if (currentLocation === Paths.USER_PROFILE && target !== Paths.USER_PROFILE && hasChanges) {
+      // Unsaved changes only exist in the profile (projects); ask before leaving it
+      const leavesProfile = !!matchPath(PWR_HISTORY.location.pathname, {path: Paths.USER_PROFILE})
+          && !matchPath(target, {path: Paths.USER_PROFILE});
+      if (hasChanges && leavesProfile) {
         dispatch(NavigationActionCreator.SetNavigationTarget(target));
       } else {
         navigate(target, dispatch);
@@ -71,6 +74,9 @@ export const NavigationActionCreator = {
   AsyncContinueToTarget: () => {
     return function(dispatch: ThunkDispatch<any, any, any>, getState: () => ApplicationState) {
       let target: string = getState().navigationSlice.targetLocation;
+      // The user decided to leave anyway: close the dialog and drop the unsaved changes, so they do not come up again
+      dispatch(NavigationActionCreator.DropNavigationTarget());
+      dispatch(discardProjectChangesAction());
       switch (target) {
         case Paths.USER_SPECIAL_LOGOUT: {
           navigate(Paths.APP_ROOT, dispatch);

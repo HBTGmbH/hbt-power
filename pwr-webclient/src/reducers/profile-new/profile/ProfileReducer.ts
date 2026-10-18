@@ -14,7 +14,7 @@ import {
     SelectProjectAction,
     SetEditingProjectAction
 } from './actions/ProjectActions';
-import {immutableUnshift, replaceAtIndex} from '../../../utils/ImmutableUtils';
+import {immutableUnshift} from '../../../utils/ImmutableUtils';
 import {PROJECTS_BY_START_DATE} from '../../../utils/Comparators';
 import {AbstractAction} from '../../BaseActions';
 import {
@@ -35,7 +35,8 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
         }
         case ActionType.LoadProfileAction: {
             const act = action as ProfileLoadAction;
-            return replaceProfile(store, act.profile);
+            const projects = [...(act.profile.projects || [])].sort(PROJECTS_NEWEST_FIRST);
+            return withSelectionById(replaceProfile(store, {...act.profile, projects}));
         }
         case ActionType.UpdateEntrySuccessful: {
             let profile = handleUpdateEntry(action as EntryUpdateAction, store.profile);
@@ -58,14 +59,14 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
             // 1. Replace the project collection with the saved project
             // 2. Reset the editing project
             // 3. Release edit mode
-            const profile = handleUpdateProject(action as ProjectUpdateAction, store.profile, store.selectedProjectIndex);
-            const updatedStore = replaceProfile(store, profile);
+            const saved = (action as ProjectUpdateAction).project;
+            const profile = handleUpdateProject(saved, store.profile);
             return {
-                ...updatedStore,
-                ...{
-                    isProjectEditing: false,
-                    selectedProject: getProject(updatedStore.selectedProjectIndex, updatedStore)
-                }
+                ...replaceProfile(store, profile),
+                isProjectEditing: false,
+                selectedProject: saved,
+                // The start date may have changed, so the project may have moved
+                selectedProjectIndex: profile.projects.findIndex(project => project.id === saved.id)
             };
         }
         case ActionType.DeleteProjectSuccessful: {
@@ -82,7 +83,7 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
         }
         case ActionType.LoadProjectsAction: {
             let profile = replaceProjects(action as ProjectLoadAction, store.profile);
-            return replaceProfile(store, profile);
+            return withSelectionById(replaceProfile(store, profile));
         }
         case ActionType.LoadBaseProfileAction: {
             let profile = handleBaseProfile(action as BaseProfileLoadAction, store.profile);
@@ -117,6 +118,12 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
                 return cancelEditMode(store);
             }
         }
+        case ActionType.DiscardProjectChanges: {
+            if (!store.selectedProject) {
+                return store;
+            }
+            return store.selectedProject.id === null ? cancelEditOnNewProject(store) : cancelEditMode(store);
+        }
         case ActionType.AddNewProject: {
             return handleAddProject(store);
         }
@@ -129,6 +136,32 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
 }
 
 const skillByName = ComparatorBuilder.comparing<ProfileSkill>(t => t.name).build();
+/**
+ * The one order of projects in the store and in the project list: newest start date first.
+ */
+const PROJECTS_NEWEST_FIRST = (a: Project, b: Project) => PROJECTS_BY_START_DATE(b, a);
+
+/**
+ * After the projects were replaced (load, reload), points the selection at the same project again, found by id.
+ * Outside the edit mode the selected project is refreshed with the loaded data.
+ */
+function withSelectionById(store: ProfileStore): ProfileStore {
+    const selected = store.selectedProject;
+    if (!selected) {
+        return store;
+    }
+    if (selected.id === null) {
+        // An unsaved new project is not part of loaded data: keep it in front
+        const withNewProject = store.profile.projects.indexOf(selected) >= 0 ? store : addProject(store, selected);
+        return {...withNewProject, selectedProjectIndex: withNewProject.profile.projects.indexOf(selected)};
+    }
+    const index = store.profile.projects.findIndex(project => project.id === selected.id);
+    if (index < 0) {
+        return {...store, selectedProject: null, selectedProjectIndex: -1, isProjectEditing: false};
+    }
+    const selectedProject = store.isProjectEditing ? selected : store.profile.projects[index];
+    return {...store, selectedProjectIndex: index, selectedProject};
+}
 const byName = ComparatorBuilder.comparing<ProfileEntry>(t => t.nameEntity.name).build();
 const byId = (id: number) => (other: ProfileEntry) => other.id !== id;
 
@@ -171,7 +204,7 @@ function replaceSkills(action: SkillLoadAction, profile: Profile): Profile {
 function replaceProjects(action: ProjectLoadAction, profile: Profile): Profile {
     let newProjects: Array<Project> = action
         .projects
-        .sort(PROJECTS_BY_START_DATE);
+        .sort(PROJECTS_NEWEST_FIRST);
     return {...profile, ...{projects: newProjects}};
 }
 
@@ -209,22 +242,25 @@ function handleDeleteSkill(action: SkillDeleteAction, profile: Profile): Profile
     return {...profile, ...{skills: newSkills}};
 }
 
-function handleUpdateProject(action: ProjectUpdateAction, profile: Profile, projectIndex): Profile {
-    const newProjects = replaceAtIndex(action.project, profile.projects, projectIndex);
+function handleUpdateProject(saved: Project, profile: Profile): Profile {
+    // Replace the saved project, or the unsaved new project (id null) it was created from
+    const newProjects = profile.projects.filter(project => project.id !== saved.id && project.id !== null);
+    newProjects.push(saved);
+    newProjects.sort(PROJECTS_NEWEST_FIRST);
     return {...profile, ...{projects: newProjects}};
 }
 
 function handleDeleteProject(action: ProjectDeleteAction, profile: Profile): Profile {
     let project = profile.projects;
     let newProjects = project.filter(s => s.id !== action.id);
-    newProjects.sort(PROJECTS_BY_START_DATE);
+    newProjects.sort(PROJECTS_NEWEST_FIRST);
     return {...profile, ...{projects: newProjects}};
 }
 
 function deleteProjectFromProfile(id: number, store: ProfileStore): ProfileStore {
     let project = store.profile.projects;
     let newProjects = project.filter(s => s.id !== id);
-    newProjects.sort(PROJECTS_BY_START_DATE);
+    newProjects.sort(PROJECTS_NEWEST_FIRST);
     return replaceProfile(store, {...store.profile, ...{projects: newProjects}});
 }
 
