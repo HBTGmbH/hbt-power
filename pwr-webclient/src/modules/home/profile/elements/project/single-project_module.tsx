@@ -245,6 +245,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         label={PowerLocalize.get('Profile.Project.Name')}
                         onValueChange={this.setName}
                         value={this.project().name}
+                        fullWidth
                     />
                     <PwrSpacer/>
                     <PwrInputField
