@@ -21,6 +21,11 @@ export class Paths {
     public static readonly USER_HOME = CONFIG.APP_PATH + '/app/:initials/home';
     public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/:initials/view/:id';
     public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/:initials/profile';
+    public static readonly USER_PROFILE_PROJECTS = CONFIG.APP_PATH + '/app/:initials/profile/projects';
+    public static readonly USER_PROFILE_NEW_PROJECT = CONFIG.APP_PATH + '/app/:initials/profile/projects/new';
+    public static readonly USER_PROFILE_PROJECT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId';
+    public static readonly USER_PROFILE_PROJECT_EDIT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId/edit';
+    public static readonly USER_PROFILE_SKILLS = CONFIG.APP_PATH + '/app/:initials/profile/skills';
     public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/:initials/reports';
     public static readonly USER_SEARCH = CONFIG.APP_PATH + '/app/:initials/search';
     public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/:initials/statistics/clusterinfo';

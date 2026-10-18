@@ -15,6 +15,7 @@ import {addNewProject, selectProject} from '../../../../../reducers/profile-new/
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {formatToShortDisplay} from '../../../../../utils/DateUtil';
+import {ProjectUrlSync} from './project-url-sync';
 
 interface ProjectsProps {
     projects: Array<Project>
@@ -90,6 +91,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
             return <React.Fragment/>;
         }
         return <div className="row" style={{scrollBehavior: 'smooth'}}>
+            <ProjectUrlSync/>
             {/* Stays below the fixed toolbar (64px); only the project list scrolls, the page does not scroll along
                 and "add project" stays visible */}
             <div className="col-md-3" ref={this.projectRef} style={{
