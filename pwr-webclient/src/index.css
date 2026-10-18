@@ -316,3 +316,23 @@ body {
 /*[class*="MuiInputAdornment-root"] {*/
 /*height: auto !important;*/
 /*}*/
+
+/* Read mode of an edit form: the fields stay disabled, but read like normal text instead of greyed out */
+.pwr-read-only .MuiInputBase-root.Mui-disabled,
+.pwr-read-only .MuiInputBase-input.Mui-disabled {
+    color: rgba(0, 0, 0, 0.87);
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.87);
+}
+
+.pwr-read-only .MuiFormLabel-root.Mui-disabled {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.pwr-read-only .MuiInput-underline.Mui-disabled:before {
+    border-bottom-style: solid;
+    border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+
+.pwr-read-only .MuiChip-root.Mui-disabled {
+    opacity: 1;
+}

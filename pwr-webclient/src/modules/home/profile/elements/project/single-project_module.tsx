@@ -6,7 +6,7 @@ import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new
 import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
-import {formatToYear, fromLocalDate, isInvalidDate, toLocalDate} from '../../../../../utils/DateUtil';
+import {fromLocalDate, isInvalidDate, toLocalDate} from '../../../../../utils/DateUtil';
 import {StringUtils} from '../../../../../utils/StringUtil';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
@@ -23,7 +23,7 @@ import {PwrProjectRoleAutocomplete} from '../../../../general/autocompletes/pwr-
 import {immutableRemove, immutableUnshift} from '../../../../../utils/ImmutableUtils';
 import {SkillSearcher} from '../../../../general/skill-search_module';
 import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
-import {PwrFormCaption, PwrFormSubCaption, PwrFormSubtitle} from '../../../../general/pwr-typography';
+import {PwrFormSubCaption} from '../../../../general/pwr-typography';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import {SkillChip} from '../skills/skill-chip_module';
 import Grid from '@material-ui/core/Grid/Grid';
@@ -98,27 +98,12 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         return this.props.editedProject;
     };
 
-    private title = () => {
-        const name = StringUtils.defaultString(this.project().name);
-        return PowerLocalize.getFormatted('Profile.Project.List.Title', name, this.client());
-    };
-
     private client = () => {
         return StringUtils.defaultString(nameEntityName(this.project().client));
     };
 
     private broker = () => {
         return StringUtils.defaultString(nameEntityName(this.project().broker));
-    };
-
-    private subtitle = () => {
-        const roleNames = this.project().projectRoles
-            .map(value => value.name)
-            .join(', ');
-
-        const start = formatToYear(this.project().startDate);
-        const end = formatToYear(this.project().endDate);
-        return PowerLocalize.getFormatted('Profile.Project.List.SubTitle', roleNames, start, end);
     };
 
 
@@ -231,11 +216,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
             return <span>{PowerLocalize.get('Profile.Project.NoneSelected')}</span>;
         }
         return (
-            <div>
-                <div>
-                    <PwrFormCaption>{this.title()}</PwrFormCaption>
-                    <PwrFormSubtitle>{this.subtitle()}</PwrFormSubtitle>
-                </div>
+            <div className={this.isEditDisabled() ? 'pwr-read-only' : ''}>
                 <div>
                     <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.GeneralData')}</PwrFormSubCaption>
                     <PwrSpacer/>
@@ -320,6 +301,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         onValueChange={skillSearchValue => this.setState({skillSearchValue})}
                         onNewRequest={name => this.addSkill(name)}
                     />
+                    <PwrSpacer/>
                     <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
                     <div className="Pwr-Content-Container">
                         {this.project().skills.map(skill => this.toSkillChip(skill))}
@@ -333,6 +315,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     </div>
                 }
 
+                <PwrSpacer/>
                 <div>
                     {this.isEditDisabled() &&
                     <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
