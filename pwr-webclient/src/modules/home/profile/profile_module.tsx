@@ -24,6 +24,9 @@ import {ProfileSkills} from './elements/skills/profile-skills_module';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
+import {matchPath} from 'react-router-dom';
+import {Paths} from '../../../Paths';
+import {projectsUrl} from './elements/project/project-url-sync';
 
 
 interface ProfileProps {
@@ -31,6 +34,7 @@ interface ProfileProps {
     activeConsultant: Consultant;
     profile: Profile;
     profilePictureSrc: string;
+    projectsTabUrl: string;
 }
 
 /**
@@ -40,7 +44,10 @@ interface ProfileProps {
  * and is being managed by redux.
  */
 interface ProfileLocalProps {
-
+    // Provided by the route
+    match?: any;
+    location?: any;
+    history?: any;
 }
 
 /**
@@ -49,8 +56,11 @@ interface ProfileLocalProps {
  * There is no need for a non-local state, as redux will manage this part.
  */
 interface ProfileLocalState {
-    tabValue: number;
 }
+
+const PROFILE_TAB = 0;
+const PROJECTS_TAB = 1;
+const SKILLS_TAB = 2;
 
 interface ProfileDispatch {
     loadFullProfile(initials: string): void;
@@ -62,18 +72,17 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     constructor(props: ProfileProps & ProfileLocalProps & ProfileDispatch) {
         super(props);
-        this.state = {
-            tabValue: 0,
-        };
+        this.state = {};
     }
 
-    static mapStateToProps(state: ApplicationState): ProfileProps {
+    static mapStateToProps(state: ApplicationState, ownProps: ProfileLocalProps): ProfileProps {
         const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             suggestions: state.suggestionStore,
             activeConsultant: state.profileStore.consultant,
             profile: state.profileStore.profile,
-            profilePictureSrc
+            profilePictureSrc,
+            projectsTabUrl: projectsUrl(ownProps.match.params.initials, state.profileStore)
         };
     }
 
@@ -132,23 +141,45 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return this.renderInfo(`${formatToShortDisplay(career.startDate)} - ${formatToShortDisplay(career.endDate)}`);
     };
 
+    /**
+     * The tab is part of the URL, so a reload or a link shows the same tab
+     */
+    private tabValue(): number {
+        const path = this.props.location.pathname;
+        if (matchPath(path, {path: Paths.USER_PROFILE_PROJECTS})) {
+            return PROJECTS_TAB;
+        }
+        if (matchPath(path, {path: Paths.USER_PROFILE_SKILLS})) {
+            return SKILLS_TAB;
+        }
+        return PROFILE_TAB;
+    }
+
+    private selectTab = (tab: number) => {
+        const initials = this.props.match.params.initials;
+        if (tab === PROJECTS_TAB) {
+            this.props.history.push(this.props.projectsTabUrl);
+        } else {
+            this.props.history.push(Paths.build(tab === SKILLS_TAB ? Paths.USER_PROFILE_SKILLS : Paths.USER_PROFILE, {initials}));
+        }
+    };
+
     render() {
+        const tabValue = this.tabValue();
         return <Paper className="mui-margin">
             <Tabs
-                value={this.state.tabValue}
+                value={tabValue}
                 centered
-                onChange={(e: any, v: any) => {
-                    this.setState({tabValue: v});
-                }}
+                onChange={(e: any, v: any) => this.selectTab(v)}
             >
-                <Tab textColor={'secondary'} value={0}
+                <Tab textColor={'secondary'} value={PROFILE_TAB}
                      label={PowerLocalize.get('ProfileModule.Tabs.Profile.Title')}/>
-                <Tab textColor={'primary'} value={1}
+                <Tab textColor={'primary'} value={PROJECTS_TAB}
                      label={PowerLocalize.get('ProfileModule.Tabs.Projects.Title')}/>
-                <Tab value={2} label="Skills"/>
+                <Tab value={SKILLS_TAB} label="Skills"/>
             </Tabs>
             <div>
-                {this.state.tabValue === 0 &&
+                {tabValue === PROFILE_TAB &&
                 <div className="mui-margin">
                     <Grid container direction={'row'} justify={'flex-start'} alignItems={'center'} spacing={8}>
                         <Grid
@@ -221,13 +252,13 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                 </div>
                 }
 
-                {this.state.tabValue === 1 &&
+                {tabValue === PROJECTS_TAB &&
                 <div className="mui-margin">
                     <Projects/>
                 </div>
                 }
 
-                {this.state.tabValue === 2 &&
+                {tabValue === SKILLS_TAB &&
                 <div className="mui-margin">
                     <ProfileSkills/>
                 </div>

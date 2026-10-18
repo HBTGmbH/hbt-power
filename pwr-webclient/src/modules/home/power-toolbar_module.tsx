@@ -127,8 +127,14 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
      * Stays on the current page unless it shows data that belongs to the previous consultant.
      */
     private changeConsultant = (initials: string) => {
-        const pagesForAnyConsultant = [Paths.USER_HOME, Paths.USER_PROFILE, Paths.USER_REPORTS, Paths.USER_SEARCH, Paths.USER_STATISTICS_SKILLS];
-        const currentPage = pagesForAnyConsultant.find(path => matchPath(this.props.location.pathname, {path, exact: true}));
+        const pagesForAnyConsultant = [Paths.USER_HOME, Paths.USER_PROFILE, Paths.USER_PROFILE_PROJECTS, Paths.USER_PROFILE_SKILLS,
+            Paths.USER_REPORTS, Paths.USER_SEARCH, Paths.USER_STATISTICS_SKILLS];
+        const pathname = this.props.location.pathname;
+        let currentPage = pagesForAnyConsultant.find(path => matchPath(pathname, {path, exact: true}));
+        if (!currentPage && matchPath(pathname, {path: Paths.USER_PROFILE_PROJECTS})) {
+            // A selected project belongs to the previous consultant: show the project list of the new one
+            currentPage = Paths.USER_PROFILE_PROJECTS;
+        }
         this.props.navigateTo(Paths.build(currentPage || Paths.USER_HOME, {initials}));
     };
 
