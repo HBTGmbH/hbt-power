@@ -89,6 +89,7 @@
   "Profile.Project.NoneSelected": "Kein Projekt Ausgewählt",
   "Profile.Project.List.Title": "{0} für {1}",
   "Profile.Project.List.SubTitle": "Tätig als {0} von {1} bis {2}",
+  "Profile.Project.List.Period": "{0} – {1}",
   "Profile.Project.GeneralData": "Projekt-Daten",
   "Profile.Project.Name": "Titel/Name",
   "Profile.Project.Description": "Beschreibung",
