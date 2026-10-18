@@ -13,6 +13,7 @@ interface PwrIconButtonProps extends PropsWithChildren {
 
     style?: any;
     autoFocus?: boolean;
+    disabled?: boolean;
     iconButtonProps?: IconButtonProps;
 }
 
@@ -41,15 +42,20 @@ export class PwrIconButton extends React.Component<PwrIconButtonProps, PwrIconBu
         return undefined;
     }
 
+    private button() {
+        return <IconButton {...this.props.iconButtonProps} id={this.buttonId()} autoFocus={this.props.autoFocus}
+                           aria-label={this.props.tooltip} disabled={this.props.disabled}
+                           onClick={this.props.onClick} style={this.props.style}
+        >
+            <Icon>{this.props.iconName}</Icon>
+        </IconButton>;
+    }
+
     render() {
         return <div style={{float: 'left'}} id={this.props.id}>
             <Tooltip title={this.props.tooltip}>
-                <IconButton {...this.props.iconButtonProps} id={this.buttonId()} autoFocus={this.props.autoFocus}
-                            aria-label={this.props.tooltip}
-                            onClick={this.props.onClick} style={this.props.style}
-                >
-                    <Icon>{this.props.iconName}</Icon>
-                </IconButton>
+                {/* A disabled button fires no events, so the tooltip needs a wrapping element */}
+                {this.props.disabled ? <span>{this.button()}</span> : this.button()}
             </Tooltip>
         </div>;
     }

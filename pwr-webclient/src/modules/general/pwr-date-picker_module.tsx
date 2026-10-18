@@ -94,6 +94,7 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
                     <PwrIconButton
                         iconName={'send'}
                         tooltip={'Open End'}
+                        disabled={this.props.disabled}
                         style={{fontSize: '1em', marginRight: 0}}
                         onClick={() => {
                             this.props.onChange(null);
