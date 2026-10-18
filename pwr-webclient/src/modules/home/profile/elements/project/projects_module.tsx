@@ -14,6 +14,7 @@ import Add from '@material-ui/icons/Add';
 import {addNewProject, selectProject} from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
+import {formatToShortDisplay} from '../../../../../utils/DateUtil';
 
 interface ProjectsProps {
     projects: Array<Project>
@@ -72,9 +73,15 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
     private renderProjectListItem = (project: Project, index: number) => {
         const name = StringUtils.defaultString(project.name);
         const client = StringUtils.defaultString(nameEntityName(project.client));
+        const period = PowerLocalize.getFormatted('Profile.Project.List.Period',
+            formatToShortDisplay(project.startDate), formatToShortDisplay(project.endDate));
         return <ListItem className={this.chooseClassName(index)} button key={project.id}
                          onClick={event => this.handleClick(index)}>
-            <ListItemText primary={PowerLocalize.getFormatted('Profile.Project.List.Title', name, client)}/>
+            <ListItemText primary={name}
+                          secondary={<>
+                              <span style={{display: 'block'}}>{period}</span>
+                              {client && <span style={{display: 'block'}}>{client}</span>}
+                          </>}/>
         </ListItem>;
     };
 
@@ -83,14 +90,24 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
             return <React.Fragment/>;
         }
         return <div className="row" style={{scrollBehavior: 'smooth'}}>
-            <div className="col-md-3" ref={this.projectRef}>
-                <List component="nav">
+            {/* Stays below the fixed toolbar (64px); only the project list scrolls, the page does not scroll along
+                and "add project" stays visible */}
+            <div className="col-md-3" ref={this.projectRef} style={{
+                position: 'sticky',
+                top: '72px',
+                maxHeight: 'calc(100vh - 136px)',
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
+                <List component="nav" style={{overflowY: 'auto', overscrollBehavior: 'contain'}}>
                     {this.props.projects.sort((a, b) => {
                         if (a.startDate > b.startDate) return -1;
                         if (a.startDate < b.startDate) return 1;
                         return 0;
                     }).map((project, index) => this.renderProjectListItem(project, index))}
-                    <Divider/>
+                </List>
+                <Divider/>
+                <List>
                     <ListItem button onClick={() => this.addNewProject()} disabled={!this.props.canAddProject}>
                         <ListItemIcon>
                             <Add/>
