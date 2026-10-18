@@ -1,14 +1,15 @@
 import {ProfileEntry} from './ProfileEntry';
 import {NameEntity} from './NameEntity';
+import {LocalDate} from '../../../../utils/DateUtil';
 
 export interface Education extends ProfileEntry {
-    startDate: Date;
-    endDate: Date;
+    startDate: LocalDate;
+    endDate: LocalDate;
     degree: string;
 }
 
 
-export function newEducation(id: number, nameEntity: NameEntity, startDate: Date, endDate: Date, degree: string): Education {
+export function newEducation(id: number, nameEntity: NameEntity, startDate: LocalDate, endDate: LocalDate, degree: string): Education {
     return {
         id: id,
         nameEntity: nameEntity,

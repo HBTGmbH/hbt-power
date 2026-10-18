@@ -338,7 +338,6 @@ export class ProfileDataAsyncActionCreator {
             const selectedProject = getState().profileStore.selectedProject;
             const initials = getState().profileStore.consultant.initials;
             profileUpdateServiceClient.saveProject(initials, selectedProject)
-                .then(restoreProjectDates)
                 .then(project => {
                     dispatch(projectUpdateSuccessAction(project));
                     dispatch(ProfileDataAsyncActionCreator.loadProfileSkills(initials));
@@ -362,26 +361,8 @@ export class ProfileDataAsyncActionCreator {
         return function (dispatch: redux.Dispatch) {
             profileUpdateServiceClient
                 .getProjects(initials)
-                .then(restoreProjectsDates)
                 .then(value => dispatch(projectLoadAction(value)))
                 .catch(error => handleError(error));
         };
     }
-}
-
-function restoreProjectsDates(projects: Array<Project>): Array<Project> {
-    return projects.map(project => restoreProjectDates(project));
-}
-
-function restoreProjectDates(project: Project): Project {
-    project.startDate = restoreDate(project.startDate as any);
-    project.endDate = restoreDate(project.endDate as any);
-    return project;
-}
-
-function restoreDate(dateString: string): Date {
-    if (!dateString) {
-        return null;
-    }
-    return new Date(dateString);
 }

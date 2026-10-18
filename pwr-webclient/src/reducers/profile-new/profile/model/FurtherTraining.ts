@@ -1,12 +1,13 @@
 import {ProfileEntry} from './ProfileEntry';
 import {NameEntity} from './NameEntity';
+import {LocalDate} from '../../../../utils/DateUtil';
 
 export interface FurtherTraining extends ProfileEntry {
-    startDate: Date;
-    endDate: Date;
+    startDate: LocalDate;
+    endDate: LocalDate;
 }
 
-export function newTraining(id: number, nameEntity: NameEntity, startDate: Date, endDate: Date): FurtherTraining {
+export function newTraining(id: number, nameEntity: NameEntity, startDate: LocalDate, endDate: LocalDate): FurtherTraining {
     return {
         id: id,
         nameEntity: nameEntity,
