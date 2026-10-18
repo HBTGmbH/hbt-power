@@ -5,7 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.search.annotations.Index;
+import org.apache.lucene.analysis.core.KeywordTokenizerFactory;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.RemoveDuplicatesTokenFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilterFactory;
+import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
+import org.apache.lucene.analysis.pattern.PatternTokenizerFactory;
+import org.apache.lucene.analysis.shingle.ShingleFilterFactory;
 import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Parameter;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -20,9 +29,84 @@ import java.util.Set;
 @Getter
 @Setter
 @Indexed
+@AnalyzerDefs({
+        // Words of a skill name: keeps terms like C++, C#, .NET or Node.js and additionally splits them
+        // (SpringBoot -> spring, boot, springboot; Java8 -> java, 8), case and accent insensitive
+        @AnalyzerDef(name = Skill.NAME_ANALYZER,
+                tokenizer = @TokenizerDef(factory = PatternTokenizerFactory.class,
+                        params = @Parameter(name = "pattern", value = "[\\s/,;()\\[\\]]+")),
+                filters = {
+                        @TokenFilterDef(factory = WordDelimiterFilterFactory.class, params = {
+                                @Parameter(name = "preserveOriginal", value = "1"),
+                                @Parameter(name = "generateWordParts", value = "1"),
+                                @Parameter(name = "generateNumberParts", value = "1"),
+                                @Parameter(name = "catenateWords", value = "1"),
+                                @Parameter(name = "splitOnCaseChange", value = "1"),
+                                @Parameter(name = "splitOnNumerics", value = "1"),
+                                @Parameter(name = "stemEnglishPossessive", value = "0")}),
+                        @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+                        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+                        @TokenFilterDef(factory = RemoveDuplicatesTokenFilterFactory.class)}),
+        // Index side of the type-ahead field: every word start of the name analyzer's terms
+        @AnalyzerDef(name = Skill.AUTOCOMPLETE_ANALYZER,
+                tokenizer = @TokenizerDef(factory = PatternTokenizerFactory.class,
+                        params = @Parameter(name = "pattern", value = "[\\s/,;()\\[\\]]+")),
+                filters = {
+                        @TokenFilterDef(factory = WordDelimiterFilterFactory.class, params = {
+                                @Parameter(name = "preserveOriginal", value = "1"),
+                                @Parameter(name = "generateWordParts", value = "1"),
+                                @Parameter(name = "generateNumberParts", value = "1"),
+                                @Parameter(name = "catenateWords", value = "1"),
+                                @Parameter(name = "splitOnCaseChange", value = "1"),
+                                @Parameter(name = "splitOnNumerics", value = "1"),
+                                @Parameter(name = "stemEnglishPossessive", value = "0")}),
+                        @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+                        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+                        // Spring Boot is also found as "SpringBoot" or "springbo"
+                        @TokenFilterDef(factory = ShingleFilterFactory.class, params = {
+                                @Parameter(name = "minShingleSize", value = "2"),
+                                @Parameter(name = "maxShingleSize", value = "3"),
+                                @Parameter(name = "tokenSeparator", value = ""),
+                                @Parameter(name = "outputUnigrams", value = "true")}),
+                        @TokenFilterDef(factory = EdgeNGramFilterFactory.class, params = {
+                                @Parameter(name = "minGramSize", value = "1"),
+                                @Parameter(name = "maxGramSize", value = "50")}),
+                        // JavaScript yields "jav" from javascript and from java: count it once, so Java ranks before it
+                        @TokenFilterDef(factory = RemoveDuplicatesTokenFilterFactory.class)}),
+        // Search input: split like a name, but not at case changes, since users type in any case ("jAv")
+        @AnalyzerDef(name = Skill.QUERY_ANALYZER,
+                tokenizer = @TokenizerDef(factory = PatternTokenizerFactory.class,
+                        params = @Parameter(name = "pattern", value = "[\\s/,;()\\[\\]]+")),
+                filters = {
+                        @TokenFilterDef(factory = WordDelimiterFilterFactory.class, params = {
+                                @Parameter(name = "preserveOriginal", value = "1"),
+                                @Parameter(name = "generateWordParts", value = "1"),
+                                @Parameter(name = "generateNumberParts", value = "1"),
+                                @Parameter(name = "splitOnCaseChange", value = "0"),
+                                @Parameter(name = "splitOnNumerics", value = "1"),
+                                @Parameter(name = "stemEnglishPossessive", value = "0")}),
+                        @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+                        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+                        @TokenFilterDef(factory = RemoveDuplicatesTokenFilterFactory.class)}),
+        // The whole name as one term, for exact matches
+        @AnalyzerDef(name = Skill.EXACT_ANALYZER,
+                tokenizer = @TokenizerDef(factory = KeywordTokenizerFactory.class),
+                filters = {
+                        @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+                        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
+})
 // Because we are using Entities as DTOs, we need to exclude these
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Skill {
+
+    public static final String NAME_ANALYZER = "skillName";
+    public static final String AUTOCOMPLETE_ANALYZER = "skillNameAutocomplete";
+    public static final String EXACT_ANALYZER = "skillNameExact";
+    public static final String QUERY_ANALYZER = "skillNameQuery";
+
+    public static final String FIELD_NAME = "qualifier";
+    public static final String FIELD_AUTOCOMPLETE = "qualifier_autocomplete";
+    public static final String FIELD_EXACT = "qualifier_exact";
 
 
     @Id
@@ -34,14 +118,19 @@ public class Skill {
     private SkillCategory category;
 
     @Column(name = "QUALIFIER")
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    @Fields({
+            @Field(name = FIELD_NAME, analyzer = @Analyzer(definition = NAME_ANALYZER), store = Store.YES),
+            @Field(name = FIELD_AUTOCOMPLETE, analyzer = @Analyzer(definition = AUTOCOMPLETE_ANALYZER)),
+            @Field(name = FIELD_EXACT, analyzer = @Analyzer(definition = EXACT_ANALYZER))
+    })
     private String qualifier;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "SKILL_QUALIFIERS",
             joinColumns = @JoinColumn(name = "skill_id"),
             inverseJoinColumns = @JoinColumn(name = "qualifiers_id"))
-    @IndexedEmbedded
+    // Localizations are searched in the same fields as the name, so they share term statistics and field length
+    @IndexedEmbedded(prefix = "", includePaths = {FIELD_NAME, FIELD_AUTOCOMPLETE, FIELD_EXACT})
     private Set<LocalizedQualifier> qualifiers = new HashSet<>();
 
     @Column(name = "is_custom")

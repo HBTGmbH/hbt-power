@@ -34,7 +34,12 @@ public class LocalizedQualifier {
      * The localized qualifier. UTF-8 encoding.
      */
     @Column(name = "QUALIFIER")
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    @Fields({
+            // not stored: the search returns the stored name of the skill, not the localization
+            @Field(name = Skill.FIELD_NAME, analyzer = @Analyzer(definition = Skill.NAME_ANALYZER)),
+            @Field(name = Skill.FIELD_AUTOCOMPLETE, analyzer = @Analyzer(definition = Skill.AUTOCOMPLETE_ANALYZER)),
+            @Field(name = Skill.FIELD_EXACT, analyzer = @Analyzer(definition = Skill.EXACT_ANALYZER))
+    })
     private String qualifier;
 
     @ManyToMany
