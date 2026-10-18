@@ -156,7 +156,8 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
     };
 
     renderSuggestion = (suggestion, {query, isHighlighted}) => {
-        if (suggestion === query) {
+        // Hide only the search term prepended by handleSuggestionDisplay, not a real entry that equals it
+        if (suggestion === query && this.props.data.indexOf(suggestion) < 0) {
             return null;
         }
         const matches = match(suggestion, query);
@@ -203,7 +204,9 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
             onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
             onSuggestionSelected: this.handleSuggestionSelected,
             getSuggestionValue: (v) => v,
-            renderSuggestion: this.renderSuggestion,
+            // New function on every render: react-autosuggest only re-renders an item when its props change, so the
+            // prepended (hidden) search term would stay hidden once the same text arrives as a real entry in data
+            renderSuggestion: (suggestion, params) => this.renderSuggestion(suggestion, params),
         };
 
         const onlyChipProps = {
