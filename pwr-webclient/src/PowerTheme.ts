@@ -31,9 +31,22 @@ const newPowerTheme: ThemeOptions = {
     props: {
         MuiPaper: {
             square: true
+        },
+        // Grey area instead of only an underline, so input fields are easy to spot (#56). Also used by the date pickers.
+        MuiTextField: {
+            variant: 'filled'
         }
     },
     overrides: {
+        // A grey area marks a field you can type in: disabled fields have none, so e.g. the read mode of a form
+        // is easy to tell apart from its edit mode
+        MuiFilledInput: {
+            root: {
+                '&$disabled': {
+                    backgroundColor: 'transparent'
+                }
+            }
+        },
         MuiInputAdornment: {
             root: {
                 height: 'auto'

@@ -147,7 +147,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         return (
             <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
                 <form style={{display: 'flex', flexWrap: 'wrap', padding: '8px'}} className="fullWidth">
-                    <FormControl>
+                    <FormControl variant="filled">
                         <InputLabel
                             htmlFor="ame-entity-overview-element-type">{PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}</InputLabel>
                         <Select value={this.state.selectedField}

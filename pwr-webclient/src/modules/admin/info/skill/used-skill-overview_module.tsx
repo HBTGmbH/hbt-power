@@ -148,7 +148,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                         value={this.state.filterString}
                         onChange={(e) => this.setState({filterString: e.target.value})}
                         label={PowerLocalize.get('Action.Search')}
-                        style={{paddingLeft: '8px', paddingBottom: '3px'}}
+                        style={{padding: '8px'}}
                     />
                 </Paper>
 

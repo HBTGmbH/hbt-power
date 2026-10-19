@@ -328,13 +328,25 @@ body {
     color: rgba(0, 0, 0, 0.54);
 }
 
-.pwr-read-only .MuiInput-underline.Mui-disabled:before {
+.pwr-read-only .MuiInput-underline.Mui-disabled:before,
+.pwr-read-only .MuiFilledInput-underline.Mui-disabled:before {
     border-bottom-style: solid;
     border-bottom-color: rgba(0, 0, 0, 0.12);
 }
 
 .pwr-read-only .MuiChip-root.Mui-disabled {
     opacity: 1;
+}
+
+/* Read-only fields outside of .pwr-read-only (e.g. report templates) are not editable either: no grey area */
+.MuiFilledInput-root:has(> .MuiFilledInput-input[readonly]) {
+    background-color: transparent;
+}
+
+/* Grey chips would blur into the grey area of filled fields */
+.MuiFilledInput-root .MuiChip-root {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.23);
 }
 
 /* Projects tab: the project list keeps "add project" below its own scroll area */
