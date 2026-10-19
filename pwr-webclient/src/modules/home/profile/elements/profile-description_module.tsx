@@ -84,7 +84,7 @@ class ProfileDescriptionModule extends React.Component<ProfileDescriptionProps &
                     fullWidth={true}
                     multiLine={true}
                     maxCharacters={PROFILE_DESCRIPTION_LENGTH}
-                    rows={10}
+                    rows={6}
                     onChange={(e: any, v) => this.handleTextChange(v)}
                     value={this.props.description}
                 />

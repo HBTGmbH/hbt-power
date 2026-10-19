@@ -101,16 +101,19 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     };
 
     render() {
+        // A full-width field only leaves room on the right for the toggle edit button
+        const fieldWidth = this.props.fullWidth ? (this.props.useToggleEditButton ? '85%' : '100%') : 256;
         let progressBar = <React.Fragment/>
         if (!this.props.hideProgress) {
-            progressBar = <div style={{width: this.props.fullWidth ? '100%' : 256}}>
-                <div style={{width: '85%', float: 'left', marginTop: '7px'}}>
+            // Below the field and as wide as it, the counter at its right end
+            progressBar = <div style={{width: fieldWidth, clear: 'both', display: 'flex', alignItems: 'center'}}>
+                <div style={{flex: 1}}>
                     <LinearProgress
                         variant={'determinate'}
                         value={(this.props.value.length / this.props.maxCharacters) * 100}
                     />
                 </div>
-                <div style={{width: '10%', float: 'left'}}>
+                <div style={{marginLeft: '8px'}}>
                     {this.props.value.length + '/' + this.props.maxCharacters}
                 </div>
             </div>
@@ -118,7 +121,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         return (
             <div>
                 <div style={{width: this.props.fullWidth ? '100%' : 350}}>
-                    <div style={{width: this.props.fullWidth ? '85%' : 256, float: 'left'}}>
+                    <div style={{width: fieldWidth, float: 'left'}}>
                         <TextField
                             className={this.props.className}
                             rows={this.props.rows}
