@@ -3,7 +3,6 @@ import * as React from 'react';
 import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Profile} from '../../../reducers/profile-new/profile/model/Profile';
 import Grid from '@material-ui/core/Grid/Grid';
@@ -106,6 +105,11 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         }
     }
 
+    private consultantName(): string {
+        const consultant = this.props.activeConsultant;
+        return consultant != null ? consultant.firstName + ' ' + consultant.lastName : 'No Name';
+    }
+
     private renderInfo(value: string) {
         return <span>
             {value}
@@ -181,44 +185,24 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
             <div>
                 {tabValue === PROFILE_TAB &&
                 <div className="mui-margin">
-                    <Grid container direction={'row'} justify={'flex-start'} alignItems={'center'} spacing={8}>
-                        <Grid
-                            item
-                            container
-                            direction={'column'}
-                            justify={'flex-start'}
-                            alignItems={'flex-start'}
-                            spacing={8}
-                            md={2}
-                            xs={12}
-                        >
-                            <Grid item md={12}>
-                                <Typography
-                                    className={'fullWidth'}
-                                    variant={'h6'}
-                                >
-                                    {
-                                        this.props.activeConsultant != null
-                                            ? this.props.activeConsultant.firstName + ' ' + this.props.activeConsultant.lastName
-                                            : 'No Name'
-                                    }
-                                </Typography>
-                            </Grid>
-                            <Grid item md={12}>
-                                <Avatar
-                                    src={this.props.profilePictureSrc}
-                                    style={{width: 90, height: 90}}
-                                />
-                            </Grid>
-                        </Grid>
-
-                        <Grid item md={6} xs={12}>
+                    {/* Photo on the left, name, title and promotional text next to it; stacked below md */}
+                    <Grid container spacing={2} alignItems={'stretch'}>
+                        {this.props.activeConsultant.profilePictureId &&
+                        <Grid item xs={12} md={'auto'} className="pwr-profile-picture-cell">
+                            {/* Square, centred and cropped to the full height of the header; hidden if it cannot be loaded */}
+                            <img className="pwr-profile-picture" src={this.props.profilePictureSrc}
+                                 alt={this.consultantName()}
+                                 onError={e => e.currentTarget.style.display = 'none'}/>
+                        </Grid>}
+                        <Grid item xs={12} md>
+                            <Typography variant={'h5'}>{this.consultantName()}</Typography>
+                            <Typography variant={'subtitle1'} color={'textSecondary'} gutterBottom>
+                                {this.props.activeConsultant.title}
+                            </Typography>
                             <ProfileDescription/>
                         </Grid>
-                        <Grid item md={11}>
-                            <Divider/>
-                        </Grid>
                     </Grid>
+                    <Divider style={{marginTop: '16px'}}/>
 
 
                     <Grid container spacing={2} className="mui-margin">

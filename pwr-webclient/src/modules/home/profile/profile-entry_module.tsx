@@ -161,8 +161,8 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
             <div className="pwr-profile-entry-container">
                 <ProfileEntryDialog open={this.state.open} onClose={this.handleDialogOnClose} type={this.props.type}
                                     entry={this.state.selectEntry}/>
-                <Grid container spacing={0} alignItems={'center'}>
-                    <Grid item md={9}>
+                <Grid container spacing={0} alignItems={'flex-start'}>
+                    <Grid item xs>
                         <PwrFormSubCaption>
                             {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Header`)}
                         </PwrFormSubCaption>
@@ -170,8 +170,10 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                             {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Info`)}
                         </p>
                     </Grid>
-                    <Grid item md={3}>
+                    {/* Right-aligned with the divider (edge="end") and level with the heading */}
+                    <Grid item>
                         <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}
+                                       iconButtonProps={{edge: 'end'}} style={{marginTop: '-10px'}}
                                        onClick={this.handleNewButton}/>
                     </Grid>
                     <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
