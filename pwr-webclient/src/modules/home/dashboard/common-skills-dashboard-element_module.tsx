@@ -16,7 +16,7 @@ interface CommonSkillsDashboardElementProps {
 }
 
 interface CommonSkillsDashboardElementLocalProps {
-
+    initials: string;
 }
 
 interface CommonSkillsDashboardElementLocalState {
@@ -24,7 +24,7 @@ interface CommonSkillsDashboardElementLocalState {
 }
 
 interface CommonSkillsDashboardElementDispatch {
-    navigateToStatistics(): void;
+    navigateTo(target: string): void;
 }
 
 class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDashboardElementProps & CommonSkillsDashboardElementLocalProps & CommonSkillsDashboardElementDispatch, CommonSkillsDashboardElementLocalState> {
@@ -37,9 +37,13 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): CommonSkillsDashboardElementDispatch {
         return {
-            navigateToStatistics: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_STATISTICS_SKILLS)),
+            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
         };
     }
+
+    private showSkillStatistics = () => {
+        this.props.navigateTo(Paths.build(Paths.USER_STATISTICS_SKILLS, {initials: this.props.initials}));
+    };
 
     private renderCommonSkills = () => {
         if (this.props.profileSkillMetrics.common.length === 0) {
@@ -70,7 +74,7 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                     <div className="col-md-3 col-sm-12">
                         <PwrRaisedButton color={'primary'} icon={<OpenInNew/>}
                                          text={PowerLocalize.get('Action.ShowMore')}
-                                         onClick={this.props.navigateToStatistics}/>
+                                         onClick={this.showSkillStatistics}/>
                     </div>
                 </div>
             </Paper>);

@@ -48,7 +48,8 @@ class SkillStatisticsModule extends React.Component<SkillStatisticsProps
     }
 
     componentDidMount(): void {
-
+        // Loads its data itself, so direct calls, reloads and every link show the charts
+        this.props.loadSkillStatistics();
     }
 
     static mapStateToProps(state: ApplicationState): SkillStatisticsProps {

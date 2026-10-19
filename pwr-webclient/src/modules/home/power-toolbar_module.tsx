@@ -59,7 +59,6 @@ interface ToolbarDispatch {
 
     loadConsultantClusterInfo(initials: string): void;
 
-    loadSkillStatistics(): void;
 }
 
 class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProps & ToolbarDispatch, ToolbarLocalState> {
@@ -91,7 +90,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             navigateToAdmin: () => dispatch(AdminActionCreator.AsyncNavigateToAdmin()),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
             loadConsultantClusterInfo: initials => dispatch(StatisticsActionCreator.AsyncRequestConsultantClusterInfo(initials)),
-            loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages()),
         };
     }
 
@@ -146,7 +144,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
     private loadSkillStatistics = (initials: string) => {
         this.handleMenuClose();
-        this.props.loadSkillStatistics();
         this.props.navigateTo(Paths.build(Paths.USER_STATISTICS_SKILLS, {initials}));
     };
 

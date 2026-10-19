@@ -134,10 +134,10 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                             <BaseDataDashboardElement greeting={this.state.greeting}/>
                         </div>
                         <div className="col-md-12">
-                            <CommonSkillsDashboardElement/>
+                            <CommonSkillsDashboardElement initials={initials}/>
                         </div>
                         <div className="col-md-12">
-                            <MissingCommonDashboardElement/>
+                            <MissingCommonDashboardElement initials={initials}/>
                         </div>
                         <div className="col-md-12 fullWidth">
                             <ProfileStatistics initials={initials}/>
