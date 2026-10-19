@@ -57,6 +57,7 @@ There are no webclient tests at the moment.
 - Runtime config: `config.js` contains `#PLACEHOLDER`s that `configure_api.sh` replaces from env vars when the nginx container starts. `start:local` sets `REACT_APP_LOCAL_DEV=true`, which serves `config.local.js` and proxies `/api/<service>` to the local ports (`src/setupProxy.js`) and skips Azure login (`CONFIG.LOCAL_DEV`).
 - Static files: images, CSS and data live in `src/` and are imported, so the build serves them with a content hash under `/static/`, which nginx (`default.conf`) caches as `immutable`. `public/` only holds `index.html` and `favicon.png`; everything outside `/static/` is served with `no-cache`.
 - Conventions: render user-facing text through `PowerLocalizer`; use string values in enums (Redux); prefer components from `modules/general`, e.g. `PwrButton` / `PwrIconButton` with the icon on the right, icon buttons need a tooltip.
+- Input fields use the Material-UI `filled` variant (grey area), set as default in `PowerTheme.ts`: don't set `variant` per field. Components the theme doesn't reach (`ChipInput`, `FormControl` around a `Select`) get `variant="filled"` explicitly. Disabled and read-only fields have no grey area, so read mode looks different from edit mode.
 
 ## CI
 

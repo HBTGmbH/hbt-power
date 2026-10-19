@@ -145,6 +145,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
                 disabled={this.props.disabled}
                 label={this.props.label}
                 fullWidth={true}
+                variant="filled"
                 clearInputValueOnChange
                 onUpdateInput={onChange}
                 onDelete={onDelete}

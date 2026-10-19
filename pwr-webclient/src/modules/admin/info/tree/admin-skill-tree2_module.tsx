@@ -432,6 +432,8 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
                     <Paper className="col-md-8">
                         <TextField
                             label={PowerLocalize.get('Action.Search')}
+                            margin={'dense'}
+                            style={{verticalAlign: 'middle'}}
                             onChange={(e: any) => {
                                 this.props.filter(e.target.value);
                             }}

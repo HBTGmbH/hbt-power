@@ -185,7 +185,6 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                     <TextField
                         id="createdDate"
                         fullWidth
-                        variant={'standard'}
                         InputProps={{
                             readOnly: true,
                             disableUnderline: true

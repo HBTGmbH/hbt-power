@@ -10,6 +10,7 @@ import {ProfileEntry} from '../../../reducers/profile-new/profile/model/ProfileE
 import Grid from '@material-ui/core/Grid/Grid';
 import Select from '@material-ui/core/Select/Select';
 import FormControl from '@material-ui/core/FormControl/FormControl';
+import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import {LanguageLevel, toLanguageLevel} from '../../../reducers/profile-new/profile/model/LanguageLevel';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import MenuItem from '@material-ui/core/MenuItem/MenuItem';
@@ -242,7 +243,8 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                             //lang level
                             !(this.props.type === 'LANGUAGE') ? <></> :
                                 <Grid item md={12} xs={12}>
-                                    <FormControl>
+                                    <FormControl variant="filled">
+                                        <InputLabel>{PowerLocalize.get('LanguageLevel.Singular')}</InputLabel>
                                         <Select
                                             value={this.state.langLevel}
                                             onChange={this.handleLangSelectChange}

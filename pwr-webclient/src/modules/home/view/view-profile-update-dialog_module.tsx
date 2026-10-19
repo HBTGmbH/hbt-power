@@ -98,15 +98,15 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
                 <DialogContent>
                     <TextField
                         className={'col-md-12'}
-                        variant={'outlined'}
-                        placeholder={'Neuer Name'}
+                        label={'Neuer Name'}
+                        margin={'dense'}
                         value={this.state.name}
                         onChange={this.changeName}
                     />
                     <TextField
                         className={'col-md-12'}
-                        variant={'outlined'}
-                        placeholder={'Neue Beschreibung'}
+                        label={'Neue Beschreibung'}
+                        margin={'dense'}
                         value={this.state.description}
                         onChange={this.changeDescription}
                     />
