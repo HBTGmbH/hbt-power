@@ -47,7 +47,7 @@ function parseTarget(pathname: string): UrlTarget {
  * Keeps the URL of the projects tab and the project selection in the store in sync, in both directions:
  * - Selecting, editing, saving, cancelling or adding a project changes the store, the URL follows.
  * - Reload, back/forward and links change the URL, the store follows through the same actions, so the
- *   confirmation for unsaved changes (DeferredActionMiddleware) applies. If it is rejected, the URL is reset.
+ *   confirmation for unsaved changes (UnsavedChangesDialog) applies. If it is rejected, the URL is reset.
  */
 export const ProjectUrlSync = () => {
     const dispatch = useDispatch();
@@ -55,7 +55,9 @@ export const ProjectUrlSync = () => {
     const location = useLocation();
     const {initials} = useParams<{ initials: string }>();
     const store = useSelector((state: ApplicationState) => state.profileStore);
-    const deferredPending = useSelector((state: ApplicationState) => !!state.deferred.deferredAction);
+    // A question is open (delete confirmation or unsaved changes): wait for the answer
+    const deferredPending = useSelector((state: ApplicationState) =>
+        !!state.deferred.deferredAction || state.navigationSlice.confirmDialogOpen);
 
     const storeUrl = projectsUrl(initials, store);
     const previousStoreUrl = useRef<string | null>(null);

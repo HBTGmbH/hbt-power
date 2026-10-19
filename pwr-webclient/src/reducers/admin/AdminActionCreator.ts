@@ -25,6 +25,7 @@ import {SkillActionCreator} from '../skill/SkillActionCreator';
 import {APISkillCategory} from '../../model/skill/SkillCategory';
 import {SkillNotificationAction} from '../../model/admin/SkillNotificationAction';
 import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import {confirmLeavingUnsavedChanges} from '../navigation/UnsavedChanges';
 import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {PowerApiError} from '../../clients/PowerHttpClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
@@ -211,8 +212,11 @@ export class AdminActionCreator {
 
     public static AsyncNavigateToAdmin() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));
-            dispatch(resetProfileStore());
+            // Resetting the profile would drop unsaved changes in a project: ask before anything happens
+            dispatch(confirmLeavingUnsavedChanges(() => {
+                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));
+                dispatch(resetProfileStore());
+            }));
         };
     }
 
