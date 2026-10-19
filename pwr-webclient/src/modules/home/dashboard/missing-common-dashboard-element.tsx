@@ -4,7 +4,6 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {Avatar, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
-import {StatisticsActionCreator} from '../../../reducers/statistics/StatisticsActionCreator';
 import {Paths} from '../../../Paths';
 import chartIcon from '../../../img/icon_chart.svg';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
@@ -17,7 +16,7 @@ interface MissingCommonDashboardElementProps {
 }
 
 interface MissingCommonDashboardElementLocalProps {
-
+    initials: string;
 }
 
 interface MissingCommonDashboardElementLocalState {
@@ -26,8 +25,6 @@ interface MissingCommonDashboardElementLocalState {
 
 interface MissingCommonDashboardElementDispatch {
     navigateTo(target: string): void;
-
-    loadSkillStatistics(): void;
 }
 
 class MissingCommonDashboardElementModule extends React.Component<MissingCommonDashboardElementProps & MissingCommonDashboardElementLocalProps & MissingCommonDashboardElementDispatch, MissingCommonDashboardElementLocalState> {
@@ -41,14 +38,11 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): MissingCommonDashboardElementDispatch {
         return {
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            loadSkillStatistics: () => dispatch(StatisticsActionCreator.AsyncRequestSkillUsages())
         };
     }
 
-    private loadSkillStatistics = () => {
-        // FIXME move this into the async action.
-        this.props.loadSkillStatistics();
-        this.props.navigateTo(Paths.USER_STATISTICS_SKILLS);
+    private showSkillStatistics = () => {
+        this.props.navigateTo(Paths.build(Paths.USER_STATISTICS_SKILLS, {initials: this.props.initials}));
     };
 
 
@@ -81,7 +75,7 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                     <div className="col-md-3 col-sm-12">
                         <PwrRaisedButton color={'primary'} icon={<OpenInNew/>}
                                          text={PowerLocalize.get('Action.ShowMore')}
-                                         onClick={() => this.loadSkillStatistics()}/>
+                                         onClick={this.showSkillStatistics}/>
                     </div>
                 </div>
             </Paper>);
