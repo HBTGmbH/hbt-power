@@ -32,17 +32,6 @@ export function confirmDeferredAction(): ConfirmDeferredActionAction {
     };
 }
 
-export function deferUnsavedChanges(action: AbstractAction): DeferActionAction {
-    return {
-        action: action,
-        header: PowerLocalize.get('ConfirmNavDialog.Title'),
-        msg: PowerLocalize.get('ConfirmNavDialog.Content'),
-        actionNOK: PowerLocalize.get('ConfirmNavDialog.Action.CancelNavigation'),
-        actionOK: PowerLocalize.get('ConfirmNavDialog.Action.NavigateAnyway'),
-        type: ActionType.DeferAction
-    };
-}
-
 export function deferDeleteEntry(action: AbstractAction): DeferActionAction {
     return {
         action: action,

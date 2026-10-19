@@ -107,8 +107,8 @@ export enum ActionType {
 
     // == Navigation
     SetCurrentLocation = '[Navigation] SetCurrentLocation',
-    SetNavigationTarget = '[Navigation] SetNavigationTarget',
-    DropNavigationTarget = '[Navigation] DropNavigationTarget',
+    OpenUnsavedChangesDialog = '[Navigation] OpenUnsavedChangesDialog',
+    CloseUnsavedChangesDialog = '[Navigation] CloseUnsavedChangesDialog',
 
     // == View Profile
     SetViewProfile = '[ViewProfile] SetViewProfile',

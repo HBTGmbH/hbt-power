@@ -9,6 +9,8 @@ export interface PwrButtonProps {
     icon?: JSX.Element;
     text: string;
     disabled?: boolean;
+    variant?: 'text' | 'outlined' | 'contained';
+    autoFocus?: boolean;
 
     onClick?(): void;
 }
@@ -20,6 +22,10 @@ export const PwrButton = (props: PwrButtonProps) => {
     return <Button
         disabled={props.disabled}
         color={props.color}
+        variant={props.variant}
+        autoFocus={props.autoFocus}
+        // Material-UI v4 with React 18: the focus ripple of an autofocused button starts before it is mounted and crashes
+        disableFocusRipple={props.autoFocus}
         onClick={handleSave}
     >
         {props.text}

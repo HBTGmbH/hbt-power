@@ -1,6 +1,6 @@
 import {emptyNavigationStore, NavigationStore} from '../../model/navigation/NavigationStore';
 import {ActionType} from '../ActionType';
-import {SetCurrentLocationAction, SetNavigationTargetAction} from './NavigationActionCreator';
+import {SetCurrentLocationAction} from './NavigationActionCreator';
 import {AbstractAction} from '../BaseActions';
 
 
@@ -13,22 +13,17 @@ export class NavigationReducer {
                 return {
                     ...store,
                     currentLocation: act.currentLocation,
-                    targetLocation: null,
-                    confirmDialogOpen: false,
                 }
             }
-            case ActionType.SetNavigationTarget: {
-                let act: SetNavigationTargetAction = action as SetNavigationTargetAction;
+            case ActionType.OpenUnsavedChangesDialog: {
                 return {
                     ...store,
-                    targetLocation: act.target,
                     confirmDialogOpen: true,
                 }
             }
-            case ActionType.DropNavigationTarget: {
+            case ActionType.CloseUnsavedChangesDialog: {
                 return {
                     ...store,
-                    targetLocation: null,
                     confirmDialogOpen: false,
                 }
             }
