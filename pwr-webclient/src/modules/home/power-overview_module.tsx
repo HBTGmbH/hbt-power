@@ -94,6 +94,14 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     }
 
     componentDidMount() {
+        this.props.requestSingleProfile(this.props.match.params.initials);
+    }
+
+    componentDidUpdate(prevProps: Readonly<PowerOverviewProps & PowerOverviewLocalProps & PowerOverviewDispatch>) {
+        // Switching the consultant keeps this component mounted
+        if (prevProps.match.params.initials !== this.props.match.params.initials) {
+            this.props.requestSingleProfile(this.props.match.params.initials);
+        }
     }
 
     private setViewDialogOpen(isOpen: boolean) {
@@ -132,7 +140,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                             <MissingCommonDashboardElement/>
                         </div>
                         <div className="col-md-12 fullWidth">
-                            <ProfileStatistics/>
+                            <ProfileStatistics initials={initials}/>
                         </div>
                     </div>
                 </div>

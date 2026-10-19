@@ -1,23 +1,23 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {NoStatisticsAvailable} from '../general/statistics/no-statistics-available_module.';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import Paper from '@material-ui/core/Paper';
 import {Color} from '../../utils/ColorUtil';
 import {Profile} from '../../reducers/profile-new/profile/model/Profile';
 import {Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip} from "recharts";
-import {APIProfileSkillMetric} from '../../model/statistics/ApiMetrics';
 
 
 interface ProfileStatisticsProps {
-    profileSkillMetrics: APIProfileSkillMetric;
     profile: Profile;
-    available: boolean;
+    /**
+     * The store holds the profile of the consultant with the given initials, not that of the one shown before.
+     */
+    profileLoaded: boolean;
 }
 
 interface ProfileStatisticsLocalProps {
-
+    initials: string;
 }
 
 interface ProfileStatisticsLocalState {
@@ -32,11 +32,11 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
     & ProfileStatisticsLocalProps
     & ProfileStatisticsDispatch, ProfileStatisticsLocalState> {
 
-    static mapStateToProps(state: ApplicationState): ProfileStatisticsProps {
+    static mapStateToProps(state: ApplicationState, ownProps: ProfileStatisticsLocalProps): ProfileStatisticsProps {
+        const {consultant, profile} = state.profileStore;
         return {
-            profileSkillMetrics: state.statisticsReducer.activeProfileMetric,
-            profile: state.profileStore.profile,
-            available: state.statisticsReducer.available
+            profile,
+            profileLoaded: consultant.initials === ownProps.initials && !!profile.id && profile.id === consultant.profileId
         };
     }
 
@@ -84,11 +84,10 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
     };
 
     render() {
-        if (!this.props.available) {
-            return <NoStatisticsAvailable/>;
-        }
-        if (!this.props.profileSkillMetrics)
+        // Counts the entries of the profile, so it does not depend on the statistics service
+        if (!this.props.profileLoaded) {
             return <div/>;
+        }
         return (
             <Paper className="dashboard-element">
                 <div className="col-md-12 vertical-align fullWidth">
