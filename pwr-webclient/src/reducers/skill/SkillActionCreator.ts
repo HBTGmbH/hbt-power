@@ -52,10 +52,11 @@ export class SkillActionCreator {
         };
     }
 
-    public static ReadSkillHierarchy(skill: APISkillServiceSkill): ReadSkillHierarchyAction {
+    public static ReadSkillHierarchy(skill: APISkillServiceSkill, requestedName: string = skill.qualifier): ReadSkillHierarchyAction {
         return {
             type: ActionType.ReadSkillHierarchy,
-            skill: skill
+            skill: skill,
+            requestedName: requestedName
         };
     }
 
@@ -228,7 +229,7 @@ export class SkillActionCreator {
             let state = getState();
             if (!state.skillReducer.categorieHierarchiesBySkillName.has(skillName)) {
                 skillClient.getSkillByName(skillName)
-                    .then((skill) => dispatch(SkillActionCreator.ReadSkillHierarchy(skill)))
+                    .then((skill) => dispatch(SkillActionCreator.ReadSkillHierarchy(skill, skillName)))
 
                     .catch((error: any) => SkillActionCreator.handleSkillServiceError(error));
             }

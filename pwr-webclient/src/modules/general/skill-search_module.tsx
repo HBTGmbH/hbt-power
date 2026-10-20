@@ -80,6 +80,8 @@ export const SkillSearcher = (props: SkillSearcherProps) => {
         label={props.label}
         id={props.id}
         data={skills}
+        // The skill service ranks the suggestions and also finds them by alias (K8S -> Kubernetes): no filtering here
+        disableFiltering
         searchTerm={searchText}
         onAdd={handleRequest}
         onSearchChange={requestSkills}

@@ -107,6 +107,9 @@ public class Skill {
     public static final String FIELD_NAME = "qualifier";
     public static final String FIELD_AUTOCOMPLETE = "qualifier_autocomplete";
     public static final String FIELD_EXACT = "qualifier_exact";
+    public static final String FIELD_ALIAS_NAME = "alias";
+    public static final String FIELD_ALIAS_AUTOCOMPLETE = "alias_autocomplete";
+    public static final String FIELD_ALIAS_EXACT = "alias_exact";
 
 
     @Id
@@ -146,6 +149,14 @@ public class Skill {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "SKILL_ALIAS", joinColumns = @JoinColumn(name = "skill_id"))
     @Column(name = "ALIAS", nullable = false, unique = true)
+    // Own fields, analyzed like the name: in the name fields every alias would lengthen the field and lower the score
+    // of a name match. Without norms, so that a skill with many aliases is found as well as one with a single alias.
+    @IndexedEmbedded(prefix = "")
+    @Fields({
+            @Field(name = FIELD_ALIAS_NAME, analyzer = @Analyzer(definition = NAME_ANALYZER), norms = Norms.NO),
+            @Field(name = FIELD_ALIAS_AUTOCOMPLETE, analyzer = @Analyzer(definition = AUTOCOMPLETE_ANALYZER), norms = Norms.NO),
+            @Field(name = FIELD_ALIAS_EXACT, analyzer = @Analyzer(definition = EXACT_ANALYZER), norms = Norms.NO)
+    })
     private Set<String> aliases = new HashSet<>();
 
 

@@ -168,7 +168,8 @@ export class SkillReducer {
                 let act = action as ReadSkillHierarchyAction;
                 if (!!(act.skill.category)) {
                     let map = skillStore.categorieHierarchiesBySkillName;
-                    map = map.set(act.skill.qualifier, act.skill.qualifier + ' => ' + buildHierarchy(act.skill.category));
+                    // Under the requested name, which may be an alias: the hierarchy then starts with the skill it belongs to
+                    map = map.set(act.requestedName, act.skill.qualifier + ' => ' + buildHierarchy(act.skill.category));
                     return {
                         ...skillStore,
                         categorieHierarchiesBySkillName: map

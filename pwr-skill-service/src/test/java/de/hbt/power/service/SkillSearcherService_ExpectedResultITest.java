@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,6 +53,18 @@ public class SkillSearcherService_ExpectedResultITest {
         Skill subversion = Skill.of("Apache Subversion");
         subversion.addLocale(Locale.GERMAN, "SVN");
         skillRepository.save(subversion);
+        skillWithAliases("PostgreSQL", "Postgres", "PSQL");
+        skillWithAliases("Microsoft Azure", "MS Azure", "Azure Cloud");
+        Skill kubernetes = skillRepository.findOneByQualifier("Kubernetes").get();
+        kubernetes.getAliases().add("K8S");
+        skillRepository.save(kubernetes);
+        // Many aliases must not push a skill down: Java stays ahead of JavaScript for "Jav"
+        Skill java = skillRepository.findOneByQualifier("Java").get();
+        java.getAliases().addAll(Arrays.asList("J2SE", "Java SE", "Java 11", "Java 17", "java8"));
+        skillRepository.save(java);
+        Skill javaScript = skillRepository.findOneByQualifier("JavaScript").get();
+        javaScript.getAliases().add("JS");
+        skillRepository.save(javaScript);
         skillSearcherService.buildSearchIndexSync();
     }
 
@@ -117,6 +130,55 @@ public class SkillSearcherService_ExpectedResultITest {
     }
 
     @Test
+    public void shouldFindByAlias() {
+        shouldFindFirst("K8S", "Kubernetes");
+        shouldFindFirst("k8s", "Kubernetes");
+        shouldFindFirst("Postgres", "PostgreSQL");
+        shouldFindFirst("psql", "PostgreSQL");
+    }
+
+    @Test
+    public void shouldNotMatchByASingleLetterOfASplitWord() {
+        // K8S splits into k, 8 and s, C++ into c: Kotlin or Kupfer start with k, Cube with c
+        assertThat(search("K8S")).containsExactly("Kubernetes");
+        assertThat(search("C++")).doesNotContain("Cube", "Kupfer");
+        // the 8 alone is no similar spelling of the 8 in K8S
+        assertThat(search("java8")).doesNotContain("Kubernetes");
+    }
+
+    @Test
+    public void shouldFindByWordStartOfAlias() {
+        shouldFindFirst("K8", "Kubernetes");
+        shouldFindFirst("Postg", "PostgreSQL");
+        shouldFindFirst("MS Az", "Microsoft Azure");
+    }
+
+    @Test
+    public void shouldFindTyposInAlias() {
+        shouldFindFirst("Postgers", "PostgreSQL");
+    }
+
+    @Test
+    public void shouldPutExactAliasFirst() {
+        shouldFindFirst("JS", "JavaScript");
+        shouldFindFirst("Java SE", "Java");
+        shouldFindFirst("java 11", "Java");
+        shouldFindFirst("Azure Cloud", "Microsoft Azure");
+    }
+
+    @Test
+    public void shouldSuggestOnlyTheCanonicalName() {
+        assertThat(search("K8S")).doesNotContain("K8S");
+        assertThat(search("Postgres")).doesNotContain("Postgres", "PSQL");
+    }
+
+    @Test
+    public void shouldReturnASkillOnce_whenNameAndAliasesMatch() {
+        assertThat(search("Azure")).containsOnlyOnce("Microsoft Azure");
+        assertThat(search("Postgre")).containsOnlyOnce("PostgreSQL");
+    }
+
+    @Test
     public void shouldIgnoreAccents() {
         shouldFindFirst("qualitatssicherung", "Qualitätssicherung");
         shouldFindFirst("Qualitäts", "Qualitätssicherung");
@@ -132,6 +194,12 @@ public class SkillSearcherService_ExpectedResultITest {
     public void shouldReturnNothingForBlankInput() {
         assertThat(search("")).isEmpty();
         assertThat(search("   ")).isEmpty();
+    }
+
+    private void skillWithAliases(String name, String... aliases) {
+        Skill skill = Skill.of(name);
+        skill.getAliases().addAll(Arrays.asList(aliases));
+        skillRepository.save(skill);
     }
 
     private List<String> search(String query) {

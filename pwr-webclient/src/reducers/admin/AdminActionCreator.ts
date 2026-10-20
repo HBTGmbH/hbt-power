@@ -340,7 +340,7 @@ export class AdminActionCreator {
                     if (!(skill.category)) {
                         dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY));
                     } else {
-                        dispatch(SkillActionCreator.ReadSkillHierarchy(skill));
+                        dispatch(SkillActionCreator.ReadSkillHierarchy(skill, notification.skill().name()));
                         dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY));
                     }
                 })
