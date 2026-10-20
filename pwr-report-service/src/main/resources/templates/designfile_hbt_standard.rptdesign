@@ -2025,7 +2025,7 @@
     </data-sets>
     <styles>
         <style name="report" id="4">
-            <property name="fontFamily">"Arial"</property>
+            <property name="fontFamily">"Simplon Norm"</property>
             <property name="fontSize">10pt</property>
         </style>
         <style name="crosstab-cell" id="5">
@@ -3549,7 +3549,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
             </list-property>
             <property name="pageBreakInterval">0</property>
             <column id="160867106234">
-                <property name="fontFamily">"Arial"</property>
+                <property name="fontFamily">"Simplon Norm"</property>
                 <property name="width">0.32in</property>
             </column>
             <column id="160866805"/>
@@ -3793,7 +3793,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                             <property name="backgroundRepeat">repeat</property>
                             <property name="backgroundSizeHeight">auto</property>
                             <property name="backgroundSizeWidth">auto</property>
-                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontFamily">"Simplon Norm"</property>
                             <property name="fontSize">10pt</property>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
@@ -4036,7 +4036,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4089,7 +4089,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4148,7 +4148,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4211,7 +4211,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4377,7 +4377,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4431,7 +4431,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4535,7 +4535,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10%</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4579,7 +4579,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
-                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontFamily">"Simplon Norm"</property>
                             <property name="fontSize">8pt</property>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
@@ -4634,7 +4634,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4678,7 +4678,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
-                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontFamily">"Simplon Norm"</property>
                             <property name="fontSize">8pt</property>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
@@ -4733,7 +4733,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4777,7 +4777,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
-                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontFamily">"Simplon Norm"</property>
                             <property name="fontSize">8pt</property>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
@@ -4832,7 +4832,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4876,7 +4876,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
-                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontFamily">"Simplon Norm"</property>
                             <property name="fontSize">8pt</property>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
@@ -4931,7 +4931,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -4975,7 +4975,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
-                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontFamily">"Simplon Norm"</property>
                             <property name="fontSize">8pt</property>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
@@ -5030,7 +5030,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="backgroundSizeHeight">auto</property>
                         <property name="backgroundSizeWidth">auto</property>
-                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontFamily">"Simplon Norm"</property>
                         <property name="fontSize">10pt</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
@@ -5073,7 +5073,7 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                             <property name="backgroundPositionX">0%</property>
                             <property name="backgroundPositionY">0%</property>
                             <property name="backgroundRepeat">repeat</property>
-                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontFamily">"Simplon Norm"</property>
                             <property name="fontSize">10%</property>
                             <property name="fontWeight">normal</property>
                             <property name="fontStyle">normal</property>
