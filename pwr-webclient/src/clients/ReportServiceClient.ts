@@ -32,6 +32,13 @@ export class ReportServiceClient extends PowerHttpClient {
         return this.get(url);
     }
 
+    /**
+     * Like getReportDataForUser, but without loading spinner and error alert: for polling while a report is created
+     */
+    public pollReportDataForUser(initials: string): Promise<ReportData[]> {
+        return this.getQuietly(this.base() + '/report/' + initials);
+    }
+
     public getReport(id): Promise<any> {
         const url = this.base() + '/report/file/' + id;
         this.beginRequest();

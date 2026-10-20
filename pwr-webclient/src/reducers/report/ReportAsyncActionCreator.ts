@@ -18,6 +18,17 @@ export class ReportAsyncActionCreator {
         };
     }
 
+    /**
+     * Reloads the reports while one is being created; a failed poll is ignored, the next one may succeed
+     */
+    public static pollReportData(initials: string) {
+        return function (dispatch: redux.Dispatch) {
+            reportServiceClient.pollReportDataForUser(initials)
+                .then(reportDataList => dispatch(reportLoadAction(reportDataList)))
+                .catch(() => undefined);
+        };
+    }
+
     public static deleteReportFile(id: number, cb: () => void) {
         return function (dispatch: redux.Dispatch) {
             reportServiceClient.deleteReport(id).then(res => {
