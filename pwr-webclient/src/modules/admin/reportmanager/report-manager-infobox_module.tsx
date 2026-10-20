@@ -1,17 +1,10 @@
+import {Divider, ExpansionPanel, ExpansionPanelActions, ExpansionPanelDetails, ExpansionPanelSummary, Icon, TextField, Typography} from '@material-ui/core';
 import * as React from 'react';
 import {Template} from '../../../model/view/Template';
-import Typography from '@material-ui/core/Typography/Typography';
 import {InfoPaper} from '../../general/info-paper_module.';
 import {PwrIconButton} from '../../general/pwr-icon-button';
-import TextField from '@material-ui/core/TextField/TextField';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions/ExpansionPanelActions';
-import Icon from '@material-ui/core/Icon/Icon';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import Divider from '@material-ui/core/Divider/Divider';
 import {connect} from 'react-redux';
 import {ThunkDispatch} from 'redux-thunk';
 
