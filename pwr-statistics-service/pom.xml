@@ -106,6 +106,8 @@
 				</executions>
 				<configuration>
 					<offline>true</offline>
+					<!-- git command instead of JGit: works with the shallow checkout in CI and in git worktrees -->
+					<useNativeGit>true</useNativeGit>
 					<generateGitPropertiesFile>true</generateGitPropertiesFile>
 					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
 					<includeOnlyProperties>

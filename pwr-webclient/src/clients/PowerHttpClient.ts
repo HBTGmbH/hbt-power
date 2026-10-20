@@ -53,6 +53,16 @@ export class PowerHttpClient {
             });
     }
 
+    /**
+     * Like get, but without loading spinner and error alert: for background information whose absence the caller
+     * shows itself
+     */
+    getQuietly<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios()
+            .then(client => client.get<R>(url, config))
+            .then(response => response.data);
+    }
+
     delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.delete(url, config)));
     }
