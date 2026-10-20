@@ -1,6 +1,5 @@
 package de.hbt.pwr.view.client.report;
 
-import de.hbt.pwr.view.model.UploadFileResponse;
 import de.hbt.pwr.view.client.report.model.ReportInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -24,13 +23,13 @@ public class ReportServiceClient {
     }
 
     /**
-     * Renders the design with the sample data of the report service as PDF and stores it there.
+     * Renders the report as PDF, only in memory: no entry in the report history.
      *
-     * @throws org.springframework.web.client.RestClientException if it cannot be rendered
+     * @throws org.springframework.web.client.HttpClientErrorException.UnprocessableEntity if the template cannot be
+     *                                                                                    rendered with this data
      */
-    public UploadFileResponse generatePdfPreview(String designFileId) {
-        return restTemplate.getForObject(pwrReportServiceUrl + "/pdf/{fileId}", UploadFileResponse.class,
-                Map.of("fileId", designFileId));
+    public byte[] renderPdfPreview(ReportInfo reportInfo) {
+        return restTemplate.postForObject(pwrReportServiceUrl + "/report/preview", reportInfo, byte[].class);
     }
 
     public ResponseEntity<String> generateReport(ReportInfo reportInfo, String type, Integer charsPerLine) {

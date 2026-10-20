@@ -86,17 +86,4 @@ public class ReportTemplateService {
         return null;
     }
 
-    @NotNull
-    public List<String> getAllPreviewFilenames() {
-        return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
-                .map(ReportTemplate::getPreviewId)
-                .collect(Collectors.toList());
-    }
-
-    public List<String> getAllPreviewTemplateIds() {
-        return createStreamFromIterator(reportTemplateRepository.findAll().iterator())
-                .map(reportTemplate -> reportTemplate.getPreviewId() != null ? reportTemplate.getId() : "")
-                .collect(Collectors.toList());
-    }
-
 }

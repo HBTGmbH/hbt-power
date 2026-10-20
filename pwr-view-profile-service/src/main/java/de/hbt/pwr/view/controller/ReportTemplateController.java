@@ -1,14 +1,11 @@
 package de.hbt.pwr.view.controller;
 
 import de.hbt.pwr.view.client.files.FileUploadClient;
-import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.UploadFileResponse;
 import de.hbt.pwr.view.service.ReportTemplateService;
-import de.hbt.pwr.view.service.TemplatePreviewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,14 +27,11 @@ public class ReportTemplateController {
 
     private FileUploadClient fileUploadClient;
 
-    private final TemplatePreviewService templatePreviewService;
-
     @Autowired
     public ReportTemplateController(ReportTemplateService reportTemplateService,
-                                    FileUploadClient fileUploadClient, TemplatePreviewService templatePreviewService) {
+                                    FileUploadClient fileUploadClient) {
         this.reportTemplateService = reportTemplateService;
         this.fileUploadClient = fileUploadClient;
-        this.templatePreviewService = templatePreviewService;
     }
 
     //---------------
@@ -71,7 +65,7 @@ public class ReportTemplateController {
             newTemplate.setCreatedDate(LocalDate.now());
             newTemplate.setFileId(designFileResponse.getFileId());
             newTemplate.setCreateUser(templateSlice.createUser);
-            // The preview is created on its first request (TemplatePreviewService)
+            // Previews are rendered live with the data of a view profile (ViewProfileController), none is stored
             newTemplate.setPreviewId("");
             ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
             return ResponseEntity.ok(template);
@@ -121,32 +115,6 @@ public class ReportTemplateController {
                 oldTemplate.getPreviewId());
 
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
-        templatePreviewService.templateChanged(id);
         return ResponseEntity.ok(template);
-    }
-
-    //---------------
-    // Preview
-    //---------------
-
-    /**
-     * The preview (PDF with sample data) of a template; a template without one gets it now. 404 if none can be
-     * rendered.
-     */
-    @GetMapping("preview/{id}")
-    public ResponseEntity<Resource> getPreview(@PathVariable String id) throws TemplateNotFoundException {
-        return templatePreviewService.previewFileId(id)
-                .map(fileUploadClient::serveFile)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("preview")
-    public ResponseEntity<List<String>> getAllPreviews() {
-        return ResponseEntity.ok(reportTemplateService.getAllPreviewFilenames());
-    }
-
-    @GetMapping("preview/ids")
-    public ResponseEntity<List<String>> getAllPreviewTemplateIds() {
-        return ResponseEntity.ok(reportTemplateService.getAllPreviewTemplateIds());
     }
 }
