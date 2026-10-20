@@ -3,6 +3,7 @@ package de.hbt.power.controller;
 import de.hbt.power.exception.SkillServiceException;
 import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
+import de.hbt.power.model.dto.SkillSuggestion;
 import de.hbt.power.model.dto.TCategoryNode;
 import de.hbt.power.repo.SkillCategoryRepository;
 import de.hbt.power.repo.SkillRepository;
@@ -113,6 +114,15 @@ public class SkillController {
         }
         List<String> suggestions = skillSearcherService.searchSkill(searchTerm, maxResults);
         return ResponseEntity.ok(suggestions);
+    }
+
+
+    @ApiOperation(value = "Fuzzy search for skills: name plus the alias that matched, if one matched better than the name",
+            response = SkillSuggestion.class, responseContainer = "List")
+    @GetMapping(value = "/suggestions")
+    public ResponseEntity<List<SkillSuggestion>> suggestSkills(@RequestParam("searchterm") String searchTerm,
+                                                               @RequestParam(required = false) Integer maxResults) {
+        return ResponseEntity.ok(skillSearcherService.suggestSkills(searchTerm, maxResults == null ? DEFAULT_MAX_RESULTS : maxResults));
     }
 
 

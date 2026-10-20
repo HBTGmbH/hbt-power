@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hbt.power.model.Skill;
+import de.hbt.power.model.dto.SkillSuggestion;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -212,6 +213,44 @@ public class SkillSearcherService_ExpectedResultITest {
         Skill skill = Skill.of(name);
         skill.getAliases().addAll(Arrays.asList(aliases));
         skillRepository.save(skill);
+    }
+
+    @Test
+    public void suggestions_showTheAliasThatMatched() {
+        shouldSuggestFirst("K8S", "Kubernetes", "K8S");
+        shouldSuggestFirst("k8s", "Kubernetes", "K8S");
+        shouldSuggestFirst("java 11", "Java", "Java 11");
+        shouldSuggestFirst("Postgers", "PostgreSQL", "Postgres");
+        shouldSuggestFirst("MS Az", "Microsoft Azure", "MS Azure");
+    }
+
+    @Test
+    public void suggestions_showNoAlias_whenTheNameMatchesAsWell() {
+        shouldSuggestFirst("Kuber", "Kubernetes", null);
+        shouldSuggestFirst("Java", "Java", null);
+        shouldSuggestFirst("Postgre", "PostgreSQL", null);
+        shouldSuggestFirst("Azure", "Microsoft Azure", null);
+    }
+
+    @Test
+    public void suggestions_showTheAliasWithoutSpacesAtTheEnds() {
+        shouldSuggestFirst("JS", "JavaScript", "JS");
+    }
+
+    @Test
+    public void suggestions_haveTheSameSkillsAndOrderAsTheSearch() {
+        for (String query : Arrays.asList("K8S", "Jav", "Kuber", "Postgers", "C++", "Spring Bo", "jir", "svn", "Qualitäts")) {
+            assertThat(skillSearcherService.suggestSkills(query, 10)).extracting(SkillSuggestion::getName)
+                    .as("suggestions for '%s'", query)
+                    .containsExactlyElementsOf(search(query));
+        }
+    }
+
+    private void shouldSuggestFirst(String query, String name, String matchingAlias) {
+        List<SkillSuggestion> suggestions = skillSearcherService.suggestSkills(query, 10);
+        assertThat(suggestions).as("Suggestions for '%s'", query).isNotEmpty();
+        assertThat(suggestions.get(0)).as("First suggestion for '%s': %s", query, suggestions)
+                .isEqualTo(new SkillSuggestion(name, matchingAlias));
     }
 
     private List<String> search(String query) {

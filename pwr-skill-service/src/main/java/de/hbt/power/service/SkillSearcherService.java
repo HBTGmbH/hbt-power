@@ -1,6 +1,7 @@
 package de.hbt.power.service;
 
 import de.hbt.power.model.Skill;
+import de.hbt.power.model.dto.SkillSuggestion;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.lucene.analysis.Analyzer;
@@ -13,6 +14,7 @@ import org.apache.lucene.search.Query;
 import org.hibernate.search.exception.EmptyQueryException;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
+import org.hibernate.search.engine.ProjectionConstants;
 import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -67,6 +72,47 @@ public class SkillSearcherService {
     }
 
     public List<String> searchSkill(String searchTerm, int maxResults) {
+        return search(searchTerm, maxResults).stream().map(hit -> hit.name).collect(Collectors.toList());
+    }
+
+    /**
+     * Like {@link #searchSkill(String, int)}, with the alias that matched the search term better than the name
+     */
+    public List<SkillSuggestion> suggestSkills(String searchTerm, int maxResults) {
+        List<Hit> hits = search(searchTerm, maxResults);
+        if (hits.isEmpty()) {
+            return emptyList();
+        }
+        FullTextEntityManager em = Search.getFullTextEntityManager(entityManager);
+        MatchLevel level = new MatchLevel(em, searchTerm);
+        return hits.stream()
+                .map(hit -> new SkillSuggestion(hit.name, matchingAlias(level, hit, em.find(Skill.class, hit.id))))
+                .collect(Collectors.toList());
+    }
+
+    private static String matchingAlias(MatchLevel level, Hit hit, Skill skill) {
+        if (skill == null || skill.getAliases() == null || skill.getAliases().isEmpty()) {
+            return null;
+        }
+        double byName = level.of(hit.name);
+        return skill.getAliases().stream()
+                .filter(alias -> level.of(alias) > byName)
+                .max(Comparator.comparingDouble(level::of).thenComparing(Comparator.comparingInt(String::length).reversed()))
+                .map(String::trim)
+                .orElse(null);
+    }
+
+    private static class Hit {
+        private final Integer id;
+        private final String name;
+
+        private Hit(Integer id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+    }
+
+    private List<Hit> search(String searchTerm, int maxResults) {
         if (!StringUtils.hasText(searchTerm)) {
             return emptyList();
         }
@@ -79,7 +125,7 @@ public class SkillSearcherService {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> doSearch(String searchTerm, int maxResults) throws EmptyQueryException {
+    private List<Hit> doSearch(String searchTerm, int maxResults) throws EmptyQueryException {
         FullTextEntityManager em = Search.getFullTextEntityManager(entityManager);
         QueryBuilder queryBuilder = em.getSearchFactory().buildQueryBuilder().forEntity(Skill.class).get();
         List<String> words = Arrays.stream(WORD_SEPARATOR.split(searchTerm.trim()))
@@ -111,13 +157,14 @@ public class SkillSearcherService {
                 }
             }
         }
-        return (List<String>) em.createFullTextQuery(query.createQuery(), Skill.class)
+        Set<String> names = new HashSet<>();
+        return ((List<Object[]>) em.createFullTextQuery(query.createQuery(), Skill.class)
                 .setMaxResults(maxResults)
-                .setProjection(Skill.FIELD_NAME)
-                .getResultList()
+                .setProjection(ProjectionConstants.ID, Skill.FIELD_NAME)
+                .getResultList())
                 .stream()
-                .map(o -> ((Object[]) o)[0].toString())
-                .distinct()
+                .map(row -> new Hit((Integer) row[0], row[1].toString()))
+                .filter(hit -> names.add(hit.name))
                 .collect(Collectors.toList());
     }
 
@@ -173,9 +220,13 @@ public class SkillSearcherService {
      * The terms of the search analyzer for a word: the word itself plus its parts, lower case and without accents
      */
     private static List<String> terms(FullTextEntityManager em, String word) {
+        return analyze(em, Skill.QUERY_ANALYZER, word);
+    }
+
+    private static List<String> analyze(FullTextEntityManager em, String analyzerName, String text) {
         List<String> terms = new ArrayList<>();
-        Analyzer analyzer = em.getSearchFactory().getAnalyzer(Skill.QUERY_ANALYZER);
-        try (TokenStream stream = analyzer.tokenStream(Skill.FIELD_AUTOCOMPLETE, word)) {
+        Analyzer analyzer = em.getSearchFactory().getAnalyzer(analyzerName);
+        try (TokenStream stream = analyzer.tokenStream("", text)) {
             CharTermAttribute term = stream.addAttribute(CharTermAttribute.class);
             stream.reset();
             while (stream.incrementToken()) {
@@ -186,5 +237,89 @@ public class SkillSearcherService {
             throw new UncheckedIOException(e);
         }
         return terms;
+    }
+
+    /**
+     * How well a text (a name or an alias) matches the search term, by the rules of the search: exact (3) before every
+     * word as a word start (2) before a similar spelling (below 1, the closer the higher), 0 if none applies.
+     */
+    private static class MatchLevel {
+        private final FullTextEntityManager em;
+        private final String exact;
+        private final List<List<String>> words;
+
+        MatchLevel(FullTextEntityManager em, String searchTerm) {
+            this.em = em;
+            this.exact = String.join("", analyze(em, Skill.EXACT_ANALYZER, searchTerm.trim()));
+            this.words = Arrays.stream(WORD_SEPARATOR.split(searchTerm.trim()))
+                    .filter(word -> !word.isEmpty())
+                    .map(word -> terms(em, word))
+                    .filter(terms -> !terms.isEmpty())
+                    .collect(Collectors.toList());
+        }
+
+        double of(String text) {
+            if (exact.equals(String.join("", analyze(em, Skill.EXACT_ANALYZER, text)))) {
+                return 3;
+            }
+            Set<String> wordStarts = new HashSet<>(analyze(em, Skill.AUTOCOMPLETE_ANALYZER, text));
+            if (!words.isEmpty() && words.stream().allMatch(terms -> isWordStart(terms, wordStarts))) {
+                return 2;
+            }
+            return similarity(analyze(em, Skill.NAME_ANALYZER, text));
+        }
+
+        /** Same rule as {@link #wordStart}: the whole word, or each of its parts with at least two characters */
+        private static boolean isWordStart(List<String> terms, Collection<String> wordStarts) {
+            String whole = terms.stream().max(Comparator.comparingInt(String::length)).get();
+            if (wordStarts.contains(whole)) {
+                return true;
+            }
+            List<String> parts = terms.stream().filter(t -> !t.equals(whole) && t.length() >= 2).collect(Collectors.toList());
+            return !parts.isEmpty() && wordStarts.containsAll(parts);
+        }
+
+        /** Same rule as {@link #similar}: first letter equal, edit distance up to 1 (up to 5 letters) or 2 */
+        private double similarity(List<String> textTerms) {
+            double best = 0;
+            for (List<String> terms : words) {
+                for (String term : terms) {
+                    if (term.length() < FUZZY_MIN_LENGTH) {
+                        continue;
+                    }
+                    int allowed = term.length() <= 5 ? 1 : 2;
+                    for (String candidate : textTerms) {
+                        if (!candidate.isEmpty() && candidate.charAt(0) == term.charAt(0)) {
+                            int distance = editDistance(term, candidate);
+                            if (distance <= allowed) {
+                                best = Math.max(best, 1 - 0.1 * (distance + 1));
+                            }
+                        }
+                    }
+                }
+            }
+            return best;
+        }
+
+        /** Damerau-Levenshtein distance (optimal string alignment), as Lucene's fuzzy query counts transpositions as one */
+        private static int editDistance(String a, String b) {
+            int[][] d = new int[a.length() + 1][b.length() + 1];
+            for (int i = 0; i <= a.length(); i++) {
+                d[i][0] = i;
+            }
+            for (int j = 0; j <= b.length(); j++) {
+                d[0][j] = j;
+            }
+            for (int i = 1; i <= a.length(); i++) {
+                for (int j = 1; j <= b.length(); j++) {
+                    int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                    d[i][j] = Math.min(Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
+                    if (i > 1 && j > 1 && a.charAt(i - 1) == b.charAt(j - 2) && a.charAt(i - 2) == b.charAt(j - 1)) {
+                        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+                    }
+                }
+            }
+            return d[a.length()][b.length()];
+        }
     }
 }
