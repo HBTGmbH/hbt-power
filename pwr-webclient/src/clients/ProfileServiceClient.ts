@@ -1,7 +1,6 @@
 import {APIConsultant} from '../model/APIProfile';
 import {AxiosRequestConfig} from 'axios';
 import {PowerHttpClient} from './PowerHttpClient';
-import {APIBuildInfo} from '../model/metadata/BuildInfo';
 import {APIAdminNotification} from '../model/admin/AdminNotification';
 import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
 import {SkillNotification} from '../model/admin/SkillNotification';
@@ -31,10 +30,6 @@ export class ProfileServiceClient extends PowerHttpClient {
 
     private base(): string {
         return POWER_PROFILE_SERVICE_URL;
-    }
-
-    public getBuildInfoURL() {
-        return this.base() + '/actuator/info';
     }
 
     public getConsultant = (initials: string): Promise<APIConsultant> => {
@@ -70,22 +65,6 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + '/suggestions/skills';
         this.beginRequest();
         return this.get(url);
-    };
-
-    public getBuildInfo = (): Promise<APIBuildInfo> => {
-        const url = this.base() + '/actuator/info';
-        this.beginRequest();
-        return this.get<APIBuildInfo>(url)
-            // Append swagger ref
-            .then(value => {
-                return ({
-                    ...value,
-                    build: {
-                        ...value.build,
-                        swaggerHref: this.base() + '/v2/api-docs'
-                    }
-                })
-            })
     };
 
     public getAdminNotifications = (): Promise<Array<APIAdminNotification>> => {

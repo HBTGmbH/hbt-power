@@ -30,10 +30,6 @@ export class StatisticsServiceClient extends PowerHttpClient {
         return POWER_STATISTICS_SERVICE_URL;
     }
 
-    public getBuildInfoURL() {
-        return this.base() + '/info';
-    }
-
 
     public getSkillUsagesAbsolute = (): Promise<Array<APISkillUsageMetric>> => {
         const url = this.base() + '/statistics/skill/usage/absolute';

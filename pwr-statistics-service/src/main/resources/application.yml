@@ -9,6 +9,12 @@ spring:
     password: ${DB_PASSWORD:redis}
     database: ${DB_DATABASE:1}
 pwr-profile-service-url: http://pwr-profile-service:9004
+management:
+  endpoints:
+    web:
+      exposure:
+        # Boot 2.7 publishes only health by default; info carries version and commit for the app info
+        include: health,info
 ---
 spring:
   config:

@@ -1,6 +1,7 @@
 // Picked up by react-scripts' dev server. Only active for `npm run start:local`.
 const path = require('path');
 const {createProxyMiddleware} = require('http-proxy-middleware');
+const {buildInfo} = require('../compileBuildInfo');
 
 // Same routing as ingress + pwr-edge-service: /api/<service>/** -> <service>/**
 const SERVICES = {
@@ -16,6 +17,13 @@ module.exports = function (app) {
         return;
     }
     app.get('/config.js', (req, res) => res.sendFile(path.resolve(__dirname, '../config.local.js')));
+    // The image gets build_info.json from the CI build; locally it describes the working copy
+    app.get('/build_info.json', (req, res) => res.json(buildInfo()));
+    // The edge itself only publishes its app info, under its own prefix (management.endpoints.web.base-path)
+    app.use('/api/pwr-edge-service', createProxyMiddleware({
+        target: 'http://localhost:9000',
+        pathRewrite: {'^/api': ''},
+    }));
     Object.entries(SERVICES).forEach(([service, port]) => {
         app.use(`/api/${service}`, createProxyMiddleware({
             target: `http://localhost:${port}`,

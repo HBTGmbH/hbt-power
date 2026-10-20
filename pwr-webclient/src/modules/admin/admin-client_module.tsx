@@ -27,6 +27,7 @@ import Divider from '@material-ui/core/Divider/Divider';
 import {ReportManager} from './reportmanager/report-manager_module';
 import {TemplateActionCreator} from '../../reducers/template/TemplateActionCreator';
 import {ProfileLoadingSpinner} from '../home/profile/profile-loading-spinner_module';
+import {AppInfoButton} from '../metadata/app-info_module';
 import {ThunkDispatch} from 'redux-thunk';
 
 
@@ -135,6 +136,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                                          alt="HBT Logo"
                                          src={logoNeg}/>
                                 </div>
+                                <AppInfoButton/>
                                 <IconButton color={'secondary'} onClick={this.props.logOutAdmin}>
                                     <Icon className={'material-icons'}> input</Icon>
                                 </IconButton>

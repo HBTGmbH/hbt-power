@@ -10,25 +10,6 @@ body {
 
 }
 
-.build-info-highlight {
-    font-family: Roboto, serif;
-    color: white;
-    size: 14pt;
-    text-transform: uppercase;
-}
-
-.build-info-normal {
-    font-family: Roboto, serif;
-    color: white;
-    size: 10pt;
-}
-
-.build-info-offline {
-    font-family: Roboto, serif;
-    color: #db8388;
-    size: 10pt;
-}
-
 .fullWidth {
     width: 100%
 }

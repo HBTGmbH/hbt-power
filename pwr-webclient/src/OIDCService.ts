@@ -7,6 +7,13 @@ import {CONFIG} from './Config';
 
 const LOCAL_DEV_USER_NAME = 'Local Developer';
 
+export interface LoggedInAccount {
+    name: string;
+    /** The login, usually the e-mail address */
+    username: string;
+    roles: Array<string>;
+}
+
 export class OIDCService {
 
     private readonly msalInstance: MSALInstance;
@@ -91,6 +98,21 @@ export class OIDCService {
             return Promise.resolve(undefined);
         }
         return this.msalInstance.getToken();
+    }
+
+    /**
+     * The account that is logged in, null if none is. In local dev mode the local user, who has admin rights.
+     */
+    public getCurrentAccount(): LoggedInAccount | null {
+        if (CONFIG.LOCAL_DEV) {
+            return {name: LOCAL_DEV_USER_NAME, username: '', roles: ['Power.User', 'Power.Admin']};
+        }
+        const account = this.msalInstance.accessMsal().getActiveAccount();
+        if (!account) {
+            return null;
+        }
+        const roles = (account.idTokenClaims && account.idTokenClaims.roles) || [];
+        return {name: account.name, username: account.username, roles};
     }
 
     public getCurrentUserName(): string {

@@ -101,9 +101,6 @@ export enum ActionType {
     ResetAddSkillDialog = '[Skill] ResetAddSkillDialog',
 
     // == Meta data
-    AddOrReplaceBuildInfo = '[MetaData] AddOrReplaceBuildInfo',
-    AddOrReplaceClientInfo = '[MetaData] AddOrReplaceClientInfo',
-    SetServiceAvaiabiltiy = '[MetaData] SetServiceAvaiabiltiy',
 
     // == Navigation
     SetCurrentLocation = '[Navigation] SetCurrentLocation',

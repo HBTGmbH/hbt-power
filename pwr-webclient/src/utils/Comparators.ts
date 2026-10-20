@@ -3,7 +3,6 @@ import {Skill} from '../model/Skill';
 import * as Immutable from 'immutable';
 import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillNode, SkillTreeNode} from '../model/skill/SkillTreeNode';
-import {BuildInfo} from '../model/metadata/BuildInfo';
 import {SkillServiceSkill} from '../model/skill/SkillServiceSkill';
 import {ComparatorBuilder, NullMode, nullSafe} from 'ts-comparator';
 import {Project} from '../reducers/profile-new/profile/model/Project';
@@ -41,15 +40,6 @@ export class Comparators {
         }
     }
 
-    public static getBuildInfoComparator(asc: boolean) {
-        if (asc) {
-            return (s1: BuildInfo, s2: BuildInfo) => Comparators.compareBuildInfo(s2, s1);
-        } else {
-            return (s1: BuildInfo, s2: BuildInfo) => Comparators.compareBuildInfo(s1, s2);
-        }
-    }
-
-
     public static compareString(s1: string, s2: string) {
         if (s1 > s2) return -1;
         if (s1 == s2) return 0;
@@ -84,10 +74,6 @@ export class Comparators {
 
     public static compareAdminNotification(a1: AdminNotification, a2: AdminNotification): number {
         return Comparators.compareDate(a1.occurrence(), a2.occurrence());
-    }
-
-    public static compareBuildInfo(b1: BuildInfo, b2: BuildInfo): number {
-        return Comparators.compareString(b1.name, b2.name);
     }
 
     public static compareEducationByEndDate(edu1: Education, edu2: Education): number {

@@ -62,6 +62,30 @@ class SecurityConfigTest {
                 .get().uri("/pwr-profile-service/admin/notifications").exchange().expectStatus().isForbidden();
     }
 
+    @Test
+    void appInfoOfTheEdgeNeedsAToken() {
+        webTestClient.get().uri("/pwr-edge-service/actuator/info").exchange().expectStatus().isUnauthorized();
+    }
+
+    @Test
+    void appInfoOfTheEdgeShowsVersionAndCommitButNoCommitter() {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .get().uri("/pwr-edge-service/actuator/info").exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.build.version").exists()
+                .jsonPath("$.git.commit.id").exists()
+                .jsonPath("$.git.commit.time").exists()
+                .jsonPath("$.git.commit.user").doesNotExist();
+    }
+
+    @Test
+    void onlyHealthAndInfoArePublished() {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.Admin")))
+                .get().uri("/pwr-edge-service/actuator/env").exchange()
+                .expectStatus().isNotFound();
+    }
+
     private void assertPassesSecurity(String role, String path) {
         var status = webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority(role)))
                 .get().uri(path).exchange()

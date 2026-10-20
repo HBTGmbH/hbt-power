@@ -4,7 +4,6 @@ import {APISkillServiceSkill, SkillServiceSkill} from '../model/skill/SkillServi
 import {AxiosRequestConfig} from 'axios';
 import {APISkillCategory, SkillCategory} from '../model/skill/SkillCategory';
 import {TCategoryNode} from '../model/skill/tree/TCategoryNode';
-import {APIBuildInfo} from '../model/metadata/BuildInfo';
 
 declare const POWER_SKILL_SERVICE_URL: string;
 
@@ -25,22 +24,6 @@ export class SkillServiceClient extends PowerHttpClient {
 
     private base = (): string => {
         return POWER_SKILL_SERVICE_URL;
-    };
-
-    public getBuildInfo = (): Promise<APIBuildInfo> => {
-        const url = this.base() + '/actuator/info';
-        this.beginRequest();
-        return this.get<APIBuildInfo>(url)
-            // Append swagger ref
-            .then(value => {
-                return ({
-                    ...value,
-                    build: {
-                        ...value.build,
-                        swaggerHref: this.base() + '/v2/api-docs'
-                    }
-                })
-            })
     };
 
     public getSkillByName = (name: string): Promise<APISkillServiceSkill> => {
