@@ -136,6 +136,21 @@ as the template *HBT Standard (local)*
 cd pwr-report-service && ./mvnw exec:exec
 ```
 
+#### Fonts in PDFs
+
+The templates use the HBT font Simplon Norm. It is licensed and therefore in no repository and no image. Without it,
+the PDF preview uses BIRT's built-in Times-Roman locally; the image falls back to Noto Sans. To see the real font
+locally, start the report service with the directory that holds the `.otf`/`.ttf` files (only the directory itself is
+read, not its subdirectories):
+
+```shell
+java -jar target/pwr-report-service-*.jar --spring.profiles.active=localDev \
+  "--export.font-directory=/path/to/Simplon Norm HBT"
+```
+
+`--export.fallback-font-directory=<dir>` sets the stand-in fonts (in the image: Noto Sans in
+`/usr/share/fonts/pwr-fallback`). The log shows the mapping at start (`[Fonts] Simplon Norm -> …`).
+
 ### Stop and reset
 
 ```shell
