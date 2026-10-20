@@ -45,14 +45,13 @@ const ComponentRow = (props: { info: ComponentInfo }) => {
     if (!info.available) {
         return <TableRow>
             <TableCell>{info.name}</TableCell>
-            <TableCell colSpan={3}>
+            <TableCell colSpan={2}>
                 <Typography color={'textSecondary'} variant={'body2'}>{PowerLocalize.get('AppInfo.Unavailable')}</Typography>
             </TableCell>
         </TableRow>;
     }
     return <TableRow>
         <TableCell>{info.name}</TableCell>
-        <TableCell>{info.version || '–'}</TableCell>
         <TableCell>
             {info.commitId
                 ? <Link href={COMMIT_URL + info.commitId} target={'_blank'} rel={'noopener noreferrer'}>
@@ -92,7 +91,6 @@ const AppInfoDialog = (props: { open: boolean, onClose(): void }) => {
                     <TableHead>
                         <TableRow>
                             <TableCell>{PowerLocalize.get('AppInfo.Component')}</TableCell>
-                            <TableCell>{PowerLocalize.get('AppInfo.Version')}</TableCell>
                             <TableCell>{PowerLocalize.get('AppInfo.Commit')}</TableCell>
                             <TableCell>{PowerLocalize.get('AppInfo.CommitTime')}</TableCell>
                         </TableRow>
@@ -109,7 +107,7 @@ const AppInfoDialog = (props: { open: boolean, onClose(): void }) => {
 };
 
 /**
- * Info icon for the app bar: shows who is logged in, and version and commit of every component
+ * Info icon for the app bar: shows who is logged in, and the commit of every component
  */
 export const AppInfoButton = () => {
     const [open, setOpen] = useState(false);

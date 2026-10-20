@@ -320,7 +320,6 @@
   "AppInfo.Roles": "Rollen",
   "AppInfo.Components": "Komponenten",
   "AppInfo.Component": "Komponente",
-  "AppInfo.Version": "Version",
   "AppInfo.Commit": "Commit",
   "AppInfo.CommitTime": "Commit-Datum",
   "AppInfo.Unavailable": "nicht erreichbar",
