@@ -32,6 +32,11 @@ public class SkillServiceException extends RuntimeException {
         return new SkillServiceException(ERR_SKILL_ALREADY_EXISTS, message, skill.getId());
     }
 
+    public static SkillServiceException aliasConflict(String alias, Skill owner) {
+        String message = "'" + alias + "' is already the name or an alias of skill " + owner.getQualifier() + ".";
+        return new SkillServiceException(ERR_ALIAS_CONFLICT, message, owner.getId());
+    }
+
     public static SkillServiceException skillNotFound(Integer id) {
         String message = "No skill for ID " + id + " found.";
         return new SkillServiceException(ERR_SKILL_NOT_FOUND, message, id);

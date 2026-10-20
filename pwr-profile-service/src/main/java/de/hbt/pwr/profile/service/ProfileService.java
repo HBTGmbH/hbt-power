@@ -1,18 +1,15 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
-import de.hbt.pwr.profile.model.profile.entries.Project;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
@@ -22,75 +19,107 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
 
+    private final SkillProfileClient skillProfileClient;
+
     private static Logger LOG = getLogger(ProfileService.class);
 
 
     @Autowired
-    public ProfileService(ProfileRepository profileRepository) {
+    public ProfileService(ProfileRepository profileRepository, SkillProfileClient skillProfileClient) {
         this.profileRepository = profileRepository;
+        this.skillProfileClient = skillProfileClient;
     }
 
+    /**
+     * Merges the skill <code>source</code> into the skill <code>target</code>, in the skill tree (the source becomes an
+     * alias of the target) and in all profiles and projects. Where a profile has both, the target keeps the higher
+     * rating and the versions of both. The optional <code>version</code> is added wherever the source was. Calling it
+     * again with the same arguments changes nothing.
+     */
     @Transactional
-    public List<Profile> renameAndMergeSkills(String oldName, String newName) {
-        LOG.info("Renaming skill from " + oldName + " to " + newName);
+    public List<Profile> mergeSkills(String source, String target, String version) {
+        String sourceName = source.trim();
+        String targetName = target.trim();
+        String addedVersion = version == null || version.trim().isEmpty() ? null : version.trim();
+        LOG.info("Merging skill " + sourceName + " into " + targetName + (addedVersion == null ? "" : " with version " + addedVersion));
+        // The skill service checks the merge (target exists, no conflicting alias) before any profile changes
+        skillProfileClient.mergeSkills(sourceName, targetName);
+        return mergeSkillsInProfiles(sourceName, targetName, addedVersion);
+    }
+
+    /**
+     * Like {@link #mergeSkills(String, String, String)}, but only in the profiles and projects, without the skill tree.
+     */
+    @Transactional
+    public List<Profile> mergeSkillsInProfiles(String source, String target, String version) {
         return profileRepository.findAll()
                 .stream()
-                .peek(profile -> renameSkillsInProfile(profile, oldName, newName))
+                .peek(profile -> new SkillMerger(source, target, version).mergeIn(profile))
                 .collect(Collectors.toList());
     }
 
-    private void renameSkillsInProfile(Profile profile, String oldName, String newName) {
-        SkillReNamer skillReNamer = new SkillReNamer(oldName, newName, profile.getSkills());
-        profile.setSkills(skillReNamer.execute());
+    /**
+     * Merges within one profile. Project skills are the same objects as the profile skills, so the profile goes
+     * first, and the projects then get the kept skill instead of the merged one.
+     */
+    private static class SkillMerger {
+        private final String sourceName;
+        private final String targetName;
+        private final String version;
+        private final Map<Skill, Skill> replacements = new IdentityHashMap<>();
 
-        Set<Project> newProjects = profile.getProjects().stream()
-                .peek(project -> renameSkillsInProject(project, oldName, newName))
-                .collect(Collectors.toSet());
-        profile.setProjects(newProjects);
-    }
-
-    private void renameSkillsInProject(Project project, String oldName, String newName) {
-        SkillReNamer skillReNamer = new SkillReNamer(oldName, newName, project.getSkills());
-        project.setSkills(skillReNamer.execute());
-    }
-
-    private class SkillReNamer {
-        private final String oldName;
-        private final String newName;
-        private final Set<Skill> skills;
-        private final Map<String, Skill> seenSkills;
-
-        public SkillReNamer(String oldName, String newName, Set<Skill> skills) {
-            this.oldName = oldName;
-            this.newName = newName;
-            this.skills = skills;
-            seenSkills = new HashMap<>();
+        SkillMerger(String sourceName, String targetName, String version) {
+            this.sourceName = sourceName;
+            this.targetName = targetName;
+            this.version = version;
         }
 
-        public Set<Skill> execute() {
-            return skills.stream()
-                    .peek(this::renameSkill)
-                    .filter(this::removeWhileAdaptingLevel)
-                    .collect(Collectors.toSet());
+        void mergeIn(Profile profile) {
+            profile.setSkills(merge(profile.getSkills()));
+            profile.getProjects().forEach(project -> project.setSkills(merge(project.getSkills().stream()
+                    .map(skill -> replacements.getOrDefault(skill, skill))
+                    .collect(Collectors.toList()))));
         }
 
-        private void renameSkill(Skill skill) {
-            if (skill.getName().equals(oldName)) {
-                skill.setName(newName);
-            }
-        }
-
-        private boolean removeWhileAdaptingLevel(Skill skill) {
-            boolean keep = true;
-            if (seenSkills.containsKey(skill.getName())) {
-                Skill concurrentSkill = seenSkills.get(skill.getName());
-                if (concurrentSkill.getRating() <= skill.getRating()) {
-                    concurrentSkill.setRating(skill.getRating());
+        /**
+         * Names and ratings change, which the hash codes depend on, so the result is a new set.
+         */
+        private Set<Skill> merge(Collection<Skill> skills) {
+            Skill kept = skills.stream().filter(skill -> targetName.equals(skill.getName())).findAny().orElse(null);
+            Set<Skill> result = Collections.newSetFromMap(new IdentityHashMap<>());
+            boolean merged = false;
+            for (Skill skill : skills) {
+                if (!isSource(skill)) {
+                    result.add(skill);
+                } else if (kept == null) {
+                    skill.setName(targetName);
+                    kept = skill;
+                    result.add(skill);
+                    merged = true;
+                } else {
+                    if (kept.getRating() == null || (skill.getRating() != null && skill.getRating() > kept.getRating())) {
+                        kept.setRating(skill.getRating());
+                    }
+                    versionsOf(kept).addAll(versionsOf(skill));
+                    replacements.put(skill, kept);
+                    merged = true;
                 }
-                keep = false;
             }
-            seenSkills.put(skill.getName(), skill);
-            return keep;
+            if (merged && version != null) {
+                versionsOf(kept).add(version);
+            }
+            return new HashSet<>(result);
+        }
+
+        private boolean isSource(Skill skill) {
+            return skill.getName() != null && skill.getName().equalsIgnoreCase(sourceName) && !skill.getName().equals(targetName);
+        }
+
+        private static Set<String> versionsOf(Skill skill) {
+            if (skill.getVersions() == null) {
+                skill.setVersions(new HashSet<>());
+            }
+            return skill.getVersions();
         }
     }
 }

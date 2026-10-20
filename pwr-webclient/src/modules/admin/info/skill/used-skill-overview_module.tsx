@@ -8,7 +8,7 @@ import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {SkillActionCreator} from '../../../../reducers/skill/SkillActionCreator';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
-import {EditSkillDialog} from './edit-skill-dialog_module';
+import {MergeSkillDialog} from './merge-skill-dialog_module';
 import {StringUtils} from '../../../../utils/StringUtil';
 import {UsedSkillInfoBox} from './used-skill-info-box';
 import {toArray} from '../../../../utils/ImmutableUtils';
@@ -71,6 +71,15 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
 
     public componentDidMount() {
         this.props.loadAllUsedSkills();
+    }
+
+    public componentDidUpdate(prevProps: UsedSkillOverviewProps) {
+        // A merged skill disappears from the list; its info box must go with it
+        const selected = this.state.selectedSkillName;
+        if (prevProps.usedSkillNames !== this.props.usedSkillNames && selected !== ''
+            && !this.props.usedSkillNames.includes(selected)) {
+            this.setState({selectedSkillName: ''});
+        }
     }
 
     private handleSkillSelect = (event: any, skillName: string) => {
@@ -137,10 +146,10 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         let skillUsageInfo: Array<ConsultantInfo> = toArray(this.props.skillUsageInfo.get(this.state.selectedSkillName));
         return (
             <div>
-                <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
-                                 skillToEdit={this.state.selectedSkillName}
-                                 open={this.state.editOpen}
-                                 onClose={this.closeEditDialog}
+                <MergeSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
+                                  skillToMerge={this.state.selectedSkillName}
+                                  open={this.state.editOpen}
+                                  onClose={this.closeEditDialog}
                 />
 
                 <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>

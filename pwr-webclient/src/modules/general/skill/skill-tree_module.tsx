@@ -161,7 +161,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             <ListItemIcon>
                 <Icon className="material-icons">label_outline</Icon>
             </ListItemIcon>
-            <ListItemText>
+            <ListItemText secondary={skill.aliases().isEmpty() ? undefined : skill.aliases().sort().join(', ')}>
                 {skill.qualifier()}
                 {skill.isCustom() ? <SkillTree.CustomIcon margin={'24px'}/> : false}
             </ListItemText>

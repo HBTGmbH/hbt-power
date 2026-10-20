@@ -121,9 +121,22 @@ public class AdminEndpoint {
         adminNotificationService.trashAllDeleted();
     }
 
-    @PatchMapping("/skills/name")
-    public ResponseEntity renameSkillInAllProfiles(@NotNull @RequestParam("oldname") String oldName, @NotNull @RequestParam("newname") String newName) {
-        profileService.renameAndMergeSkills(oldName, newName);
+    @ApiOperation(
+            value = "Merges a skill into another one, in the skill tree and in all profiles and projects",
+            notes = "The source becomes an alias of the target. Where a profile has both, the target keeps the higher " +
+                    "rating and the versions of both. The optional version is added wherever the source was. Idempotent."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Merged."),
+            @ApiResponse(code = 400, message = "Source and target are the same skill"),
+            @ApiResponse(code = 404, message = "The target is no skill"),
+            @ApiResponse(code = 409, message = "The source is an alias of another skill")
+    })
+    @PostMapping("/skills/merge")
+    public ResponseEntity mergeSkills(@NotNull @RequestParam("source") String source,
+                                      @NotNull @RequestParam("target") String target,
+                                      @RequestParam(value = "version", required = false) String version) {
+        profileService.mergeSkills(source, target, version);
         return noContent().build();
     }
 }

@@ -41,7 +41,9 @@ INSERT IGNORE INTO skill_category (id, qualifier, category_id, is_display, is_bl
     (900027, 'Gaming', NULL, 0, 0, 0),
     (900028, 'Game Development', 900027, 0, 0, 0),
     (900029, 'Esports', 900027, 0, 0, 0),
-    (900030, 'Tabletop Games', 900027, 0, 0, 0);
+    (900030, 'Tabletop Games', 900027, 0, 0, 0),
+    -- Unknown skills land here (CategoryService.getOther), the service fails without it
+    (900031, 'Other', NULL, 0, 0, 0);
 
 -- German category names; the localized_qualifier id equals the category id
 INSERT IGNORE INTO localized_qualifier (id, locale, qualifier) VALUES

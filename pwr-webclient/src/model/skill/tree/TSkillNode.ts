@@ -5,5 +5,6 @@ export interface TSkillNode {
     qualifier: string;
     qualifiers: Array<APILocalizedQualifier>;
     versions: Array<string>;
+    aliases?: Array<string>;
     custom: boolean;
 }

@@ -91,16 +91,18 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.delete(url);
     };
 
-    public renameSkill = (oldName: string, newName: string): Promise<void> => {
-        const url = this.base() + '/admin/skills/name';
-        const config = {
-            params: {
-                oldname: oldName,
-                newname: newName
-            }
+    /**
+     * Merges skill source into skill target in all profiles, projects and the skill tree. 400, 404 and 409 reject with
+     * a {@link PowerApiError} without an error alert, the caller explains them
+     */
+    public mergeSkill = (source: string, target: string, version?: string): Promise<void> => {
+        const url = this.base() + '/admin/skills/merge';
+        const params: any = {source, target};
+        if (version && version.trim().length > 0) {
+            params.version = version.trim();
         }
         this.beginRequest();
-        return this.patch(url, null, config);
+        return this.postExpecting(url, [400, 404, 409], null, {params});
     };
 
     public authenticateAdmin = (): Promise<void> => {

@@ -11,6 +11,7 @@ export interface APISkillServiceSkill {
     qualifiers?: Array<APILocalizedQualifier>;
     custom?: boolean;
     versions: string[];
+    aliases?: string[];
 }
 
 export class SkillServiceSkill {
@@ -20,6 +21,7 @@ export class SkillServiceSkill {
     private readonly _isCustom: boolean;
     private readonly _qualifiers: Immutable.List<LocalizedQualifier>;
     private readonly _versions: Immutable.List<string>;
+    private readonly _aliases: Immutable.List<string>;
 
     public id() {
         return this._id;
@@ -34,7 +36,7 @@ export class SkillServiceSkill {
     }
 
     public setCategoryId(categoryId: number): SkillServiceSkill {
-        return new SkillServiceSkill(this._id, this._qualifier, categoryId, this._isCustom, this._qualifiers, this._versions);
+        return new SkillServiceSkill(this._id, this._qualifier, categoryId, this._isCustom, this._qualifiers, this._versions, this._aliases);
     }
 
     public isCustom(): boolean {
@@ -49,13 +51,22 @@ export class SkillServiceSkill {
         return this._versions;
     };
 
-    constructor(id: number, qualifier: string, categoryId: number, isCustom: boolean, qualifiers: Immutable.List<LocalizedQualifier>, versions: Immutable.List<string>) {
+    /**
+     * Other spellings of the same skill, resolved to this skill by the skill service
+     */
+    public aliases(): Immutable.List<string> {
+        return this._aliases;
+    };
+
+    constructor(id: number, qualifier: string, categoryId: number, isCustom: boolean, qualifiers: Immutable.List<LocalizedQualifier>, versions: Immutable.List<string>,
+                aliases: Immutable.List<string> = Immutable.List<string>()) {
         this._id = id;
         this._qualifier = qualifier;
         this._categoryId = categoryId;
         this._isCustom = isCustom;
         this._qualifiers = qualifiers;
         this._versions = versions;
+        this._aliases = aliases;
     }
 
     public static forQualifier(qualifier: string) {
@@ -74,7 +85,8 @@ export class SkillServiceSkill {
             categoryId,
             api.custom,
             Immutable.List<LocalizedQualifier>(qualifiers),
-            Immutable.List<string>(api.versions));
+            Immutable.List<string>(api.versions),
+            Immutable.List<string>(api.aliases || []));
     }
 
     public static fromTSkillNode(node: TSkillNode, categoryId: number) {
@@ -84,7 +96,8 @@ export class SkillServiceSkill {
             categoryId,
             node.custom,
             Immutable.List<LocalizedQualifier>(qualifiers),
-            Immutable.List<string>(node.versions));
+            Immutable.List<string>(node.versions),
+            Immutable.List<string>(node.aliases || []));
     }
 
     public anyFuzzyMatch(searchTerm: string) {
@@ -94,6 +107,9 @@ export class SkillServiceSkill {
         let match = StringUtils.filterFuzzy(searchTerm, this.qualifier());
         this.qualifiers().forEach(qualifier => {
             match = match || StringUtils.filterFuzzy(searchTerm, qualifier.qualifier());
+        });
+        this.aliases().forEach(alias => {
+            match = match || StringUtils.filterFuzzy(searchTerm, alias);
         });
         return match;
     }

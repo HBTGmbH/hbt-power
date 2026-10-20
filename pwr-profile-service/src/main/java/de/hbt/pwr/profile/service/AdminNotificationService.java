@@ -147,7 +147,7 @@ public class AdminNotificationService {
     public void executeSkillNotificationEdit(SkillNotification skillNotification) {
         LOG.info("Executing skill notification edit for " + skillNotification);
         profileService
-                .renameAndMergeSkills(skillNotification.getSkill().getName(), skillNotification.getNewName())
+                .mergeSkillsInProfiles(skillNotification.getSkill().getName(), skillNotification.getNewName(), null)
                 .forEach(profileRepository::save);
         adminNotificationRepository.delete(skillNotification);
     }

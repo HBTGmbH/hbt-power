@@ -88,10 +88,10 @@ public class SkillController {
         return ResponseEntity.ok(skill);
     }
 
-    @ApiOperation(value = "Searches and returns a skill by qualifier", response = Skill.class)
+    @ApiOperation(value = "Searches and returns a skill by qualifier or alias", response = Skill.class)
     @GetMapping("/byName")
     public ResponseEntity<Skill> findSkillByQualifier(@RequestParam("qualifier") String qualifier) {
-        return skillRepository.findOneByQualifier(qualifier)
+        return skillService.findByNameOrAlias(qualifier)
                 .map((skill) -> {
                     // Trick/Hack: ensure parent categories are loaded by hibernate (lazy) - kr
                     SkillCategory cat = skill.getCategory();
@@ -124,7 +124,7 @@ public class SkillController {
     @ApiOperation(value = "Updates the category of the given skill. If no skill was found, the skill is created", response = SkillCategory.class)
     @PostMapping
     public ResponseEntity<SkillCategory> updateAndGetCategory(@RequestParam("qualifier") String qualifier) {
-        Skill skill = skillRepository.findOneByQualifier(qualifier)
+        Skill skill = skillService.findByNameOrAlias(qualifier)
                 .orElseGet(() -> {
                     Skill toCreate = Skill.of(qualifier);
                     return skillService.createSkillInCategory(toCreate, categoryService.getOther());

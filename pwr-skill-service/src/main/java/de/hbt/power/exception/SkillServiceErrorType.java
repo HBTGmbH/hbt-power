@@ -10,6 +10,7 @@ public enum SkillServiceErrorType {
     ERR_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND),
     ERR_SKILL_NOT_FOUND(HttpStatus.NOT_FOUND),
     ERR_SKILL_ALREADY_EXISTS(HttpStatus.CONFLICT),
+    ERR_ALIAS_CONFLICT(HttpStatus.CONFLICT),
     ERR_VALIDATION_FAILED(HttpStatus.BAD_REQUEST);
 
     private final HttpStatus status;
