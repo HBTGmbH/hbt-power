@@ -3,7 +3,6 @@ import {SortableEntryField, SortableEntryType} from '../model/view/NameComparabl
 import {AxiosRequestConfig} from 'axios';
 import {ViewProfile} from '../model/view/ViewProfile';
 import {ViewCategory} from '../model/view/ViewCategory';
-import {APIBuildInfo} from '../model/metadata/BuildInfo';
 
 declare const POWER_VIEW_PROFILE_SERVICE_URL;
 
@@ -25,26 +24,6 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     private base(): string {
         return POWER_VIEW_PROFILE_SERVICE_URL;
     }
-
-    public getBuildInfoURL() {
-        return this.base() + '/actuator/info';
-    }
-
-    public getBuildInfo = (): Promise<APIBuildInfo> => {
-        const url = this.base() + '/actuator/info';
-        this.beginRequest();
-        return this.get<APIBuildInfo>(url)
-            // Append swagger ref
-            .then(value => {
-                return ({
-                    ...value,
-                    build: {
-                        ...value.build,
-                        swaggerHref: this.base() + '/v2/api-docs'
-                    }
-                })
-            })
-    };
 
     /*
     

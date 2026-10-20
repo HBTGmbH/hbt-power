@@ -22,10 +22,6 @@ export class ReportServiceClient extends PowerHttpClient {
         return POWER_REPORT_SERVICE_URL;
     }
 
-    public getBuildInfoURL() {
-        return this.base() + '/actuator/info';
-    }
-
     public getReportURL(id: number): string {
         return this.base() + '/report/file/' + id;
     }

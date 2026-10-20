@@ -16,6 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import {ThunkDispatch} from 'redux-thunk';
 import {PwrProfilePicture} from '../general/pwr-profile-picture';
+import {AppInfoButton} from '../metadata/app-info_module';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {matchPath, withRouter} from 'react-router-dom';
@@ -287,6 +288,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         {this.renderMenu(initials)}
 
                         {this.renderPower()}
+                        <AppInfoButton/>
                         {
                             this.props.profilePictureId ?
                                 <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + initials}>
