@@ -73,6 +73,15 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         this.props.loadAllUsedSkills();
     }
 
+    public componentDidUpdate(prevProps: UsedSkillOverviewProps) {
+        // A merged skill disappears from the list; its info box must go with it
+        const selected = this.state.selectedSkillName;
+        if (prevProps.usedSkillNames !== this.props.usedSkillNames && selected !== ''
+            && !this.props.usedSkillNames.includes(selected)) {
+            this.setState({selectedSkillName: ''});
+        }
+    }
+
     private handleSkillSelect = (event: any, skillName: string) => {
         this.setState({
             selectedSkillName: skillName,
