@@ -84,6 +84,7 @@ public class SkillTreeMappingService {
             skillNode.setId(skill.getId());
             skillNode.setCustom(skill.isCustom());
             skillNode.setVersions(skill.getVersions());
+            skillNode.setAliases(skill.getAliases());
             // As this step is happening after all categories are mapped, we can safely add the skill now
             if (skill.getCategory() != null) {
                 // If this throws an exception, something is very wrong.

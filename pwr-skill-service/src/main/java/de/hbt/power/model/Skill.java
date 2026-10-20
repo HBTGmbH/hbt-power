@@ -139,6 +139,15 @@ public class Skill {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> versions = new HashSet<>();
 
+    /**
+     * Other spellings of this skill (K8S for Kubernetes). An alias is unique across all skills, ignoring case,
+     * and never the name of another skill; {@link de.hbt.power.service.SkillService} checks both.
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "SKILL_ALIAS", joinColumns = @JoinColumn(name = "skill_id"))
+    @Column(name = "ALIAS", nullable = false, unique = true)
+    private Set<String> aliases = new HashSet<>();
+
 
     public Skill(String qualifier, Set<LocalizedQualifier> qualifiers, SkillCategory category) {
         this.qualifier = qualifier;
