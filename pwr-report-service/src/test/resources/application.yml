@@ -7,11 +7,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-export:
-  # Temporary location where the data source for the BIRT report generation can be found.
-  xmlFilePath: target\xml\datasource.xml
-  # BIRT will need images on the filesystem. Images will be available here.
-  imgLocation: target\images
 eureka:
   client:
     enabled: false

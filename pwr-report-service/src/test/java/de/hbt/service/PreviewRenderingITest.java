@@ -1,38 +1,47 @@
 package de.hbt.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hbt.client.ProfilePictureClient;
 import de.hbt.config.ReportServiceConfig;
+import de.hbt.data.ReportDataRepository;
 import de.hbt.exceptions.ReportRenderException;
 import de.hbt.model.ReportInfo;
-import de.hbt.model.export.Profil;
+import de.hbt.model.ReportTemplate;
 import de.hbt.model.files.DBFile;
 import de.hbt.model.view.ViewProfile;
 import de.hbt.repository.DBFileRepository;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.transaction.Transactional;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Previews of report templates, rendered with the sample data of the preview data source (export.xmlFilePath).
+ * Live preview of a report: rendered as PDF with the data of a view profile, only in memory.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 @Import(TestConfiguration.class)
 class PreviewRenderingITest {
 
@@ -43,78 +52,92 @@ class PreviewRenderingITest {
     private DBFileRepository dbFileRepository;
 
     @Autowired
-    private ModelConvertService modelConvertService;
+    private ReportDataRepository reportDataRepository;
 
     @Autowired
     private ReportServiceConfig reportServiceConfig;
 
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private ProfilePictureClient profilePictureClient;
 
-    private String configuredXmlFilePath;
-    private File sampleData;
-
     @BeforeEach
-    @SneakyThrows
-    void writeSampleData() {
-        configuredXmlFilePath = reportServiceConfig.getXmlFilePath();
-        File picture = File.createTempFile("preview-picture", ".png");
-        Files.write(picture.toPath(), new ClassPathResource(ProfileReportService.PROFILE_PICTURE_PLACEHOLDER).getInputStream().readAllBytes());
+    void noProfilePicture() {
+        when(profilePictureClient.getPictureByInitials("tst"))
+                .thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND, "Not Found", HttpHeaders.EMPTY, null, null));
+    }
 
+    @SneakyThrows
+    private static byte[] standardTemplate() {
+        return new ClassPathResource("templates/designfile_hbt_standard.rptdesign").getInputStream().readAllBytes();
+    }
+
+    private ReportInfo reportInfo(byte[] design) {
+        DBFile file = dbFileRepository.saveAndFlush(new DBFile("design.rptdesign", "application/octet-stream", design));
         ReportInfo reportInfo = new ReportInfo();
         reportInfo.initials = "tst";
         reportInfo.name = "Erika Testerin";
+        reportInfo.reportTemplate = new ReportTemplate("Standard", "", file.getId(), "");
         reportInfo.viewProfile = new ViewProfile().toBuilder()
                 .id("1234")
                 .viewDescription("Beispiel")
                 .ownerInitials("tst")
                 .build();
-        Profil profile = modelConvertService.convert(reportInfo, picture.getAbsolutePath());
-
-        sampleData = File.createTempFile("preview-datasource", ".xml");
-        Marshaller marshaller = JAXBContext.newInstance(Profil.class).createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
-        marshaller.marshal(profile, sampleData);
-        reportServiceConfig.setXmlFilePath(sampleData.getAbsolutePath());
+        return reportInfo;
     }
 
-    @AfterEach
-    void restoreConfig() {
-        reportServiceConfig.setXmlFilePath(configuredXmlFilePath);
-        //noinspection ResultOfMethodCallIgnored
-        sampleData.delete();
+    private static void assertIsPdf(byte[] pdf) {
+        assertThat(pdf).hasSizeGreaterThan(1000);
+        assertThat(new String(Arrays.copyOf(pdf, 5), StandardCharsets.US_ASCII)).isEqualTo("%PDF-");
     }
 
+    @Test
+    @Transactional
+    void shouldRenderPdfOfStandardTemplateWithoutStoringAnything() {
+        ReportInfo reportInfo = reportInfo(standardTemplate());
+        long files = dbFileRepository.count();
+        long reports = reportDataRepository.count();
+
+        byte[] pdf = profileReportService.renderPdfPreview(reportInfo);
+
+        assertIsPdf(pdf);
+        assertThat(dbFileRepository.count()).isEqualTo(files);
+        assertThat(reportDataRepository.count()).isEqualTo(reports);
+    }
+
+    @Test
+    @Transactional
     @SneakyThrows
-    private DBFile persistStandardTemplate() {
-        byte[] design = new ClassPathResource("templates/designfile_hbt_standard.rptdesign").getInputStream().readAllBytes();
-        return dbFileRepository.saveAndFlush(new DBFile("designfile_hbt_standard.rptdesign", "application/octet-stream", design));
+    void previewEndpointReturnsPdfThatIsNotCached() {
+        ReportInfo reportInfo = reportInfo(standardTemplate());
+
+        byte[] pdf = mockMvc.perform(post("/report/preview")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(reportInfo)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+                .andReturn().getResponse().getContentAsByteArray();
+
+        assertIsPdf(pdf);
     }
 
     @Test
     @Transactional
-    void shouldRenderPdfPreviewOfStandardTemplate() {
-        DBFile design = persistStandardTemplate();
+    @SneakyThrows
+    void previewEndpointExplainsWhyATemplateCannotBeRendered() {
+        ReportInfo reportInfo = reportInfo("no design".getBytes(StandardCharsets.UTF_8));
 
-        String previewId = profileReportService.generatePDFFile(design.getId());
-
-        DBFile preview = dbFileRepository.findById(previewId).orElseThrow();
-        assertThat(preview.getFiletype()).isEqualTo("application/pdf");
-        assertThat(preview.getFilename()).startsWith("preview_").endsWith(".pdf");
-        assertThat(preview.getData()).hasSizeGreaterThan(1000);
-        assertThat(new String(Arrays.copyOf(preview.getData(), 5), StandardCharsets.US_ASCII)).isEqualTo("%PDF-");
-    }
-
-    @Test
-    @Transactional
-    void shouldRenderHtmlPreviewOfStandardTemplate() {
-        DBFile design = persistStandardTemplate();
-
-        String previewId = profileReportService.generateHTMLFile(design.getId());
-
-        DBFile preview = dbFileRepository.findById(previewId).orElseThrow();
-        assertThat(preview.getFiletype()).isEqualTo("text/html");
-        assertThat(new String(preview.getData(), StandardCharsets.UTF_8)).contains("<html");
+        mockMvc.perform(post("/report/preview")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(reportInfo)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("could not be opened")));
     }
 
     /**
@@ -125,14 +148,14 @@ class PreviewRenderingITest {
     @Transactional
     @SneakyThrows
     void shouldCancelRenderingOfDesignHigherThanThePage() {
-        String design = new String(new ClassPathResource("templates/designfile_hbt_standard.rptdesign").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String design = new String(standardTemplate(), StandardCharsets.UTF_8);
         byte[] tooHigh = design.replace("<property name=\"height\">9.1in</property>", "<property name=\"height\">9.32in</property>")
                 .getBytes(StandardCharsets.UTF_8);
-        DBFile file = dbFileRepository.saveAndFlush(new DBFile("too-high.rptdesign", "application/octet-stream", tooHigh));
+        ReportInfo reportInfo = reportInfo(tooHigh);
         long configuredTimeLimit = reportServiceConfig.getPreviewTimeLimitSeconds();
         reportServiceConfig.setPreviewTimeLimitSeconds(5);
         try {
-            assertThatThrownBy(() -> profileReportService.generatePDFFile(file.getId()))
+            assertThatThrownBy(() -> profileReportService.renderPdfPreview(reportInfo))
                     .isInstanceOf(ReportRenderException.class)
                     .hasMessageContaining("cancelled");
             // cancel() has to end BIRT's loop, not only the wait for it
@@ -141,16 +164,5 @@ class PreviewRenderingITest {
         } finally {
             reportServiceConfig.setPreviewTimeLimitSeconds(configuredTimeLimit);
         }
-    }
-
-    @Test
-    @Transactional
-    void shouldFailWithCauseWhenSampleDataIsMissing() {
-        DBFile design = persistStandardTemplate();
-        reportServiceConfig.setXmlFilePath(new File(sampleData.getParentFile(), "does-not-exist.xml").getAbsolutePath());
-
-        assertThatThrownBy(() -> profileReportService.generatePDFFile(design.getId()))
-                .isInstanceOf(ReportRenderException.class)
-                .hasCauseInstanceOf(Exception.class);
     }
 }

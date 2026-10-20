@@ -52,7 +52,10 @@ public class DBFileStorageService {
     }
 
 
+    /**
+     * Deleting a file that is already gone is fine (e.g. a template preview removed during clean-up)
+     */
     public void deleteFile(String fileId) {
-        dbFileRepository.deleteById(fileId);
+        dbFileRepository.findById(fileId).ifPresent(dbFileRepository::delete);
     }
 }
