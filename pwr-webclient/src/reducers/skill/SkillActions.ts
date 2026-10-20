@@ -17,6 +17,10 @@ export interface AddSkillToTreeAction extends AbstractAction {
 
 export interface ReadSkillHierarchyAction extends AbstractAction {
     skill: APISkillServiceSkill;
+    /**
+     * Name the hierarchy was requested for; differs from the skill's name when it is an alias of the skill
+     */
+    requestedName: string;
 }
 
 export interface SetAddSkillStepAction extends AbstractAction {
