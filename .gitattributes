@@ -1,0 +1,14 @@
+# Line endings: LF in the repository and in the working tree, CRLF only for Windows scripts (#46)
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary files: no line ending conversion, no text diff
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.jar binary
