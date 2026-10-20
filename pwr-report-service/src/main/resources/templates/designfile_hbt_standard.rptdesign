@@ -3774,7 +3774,6 @@ else{ "— " + dataSetRow["Kunde"] ;}</expression>
                         </cell>
                     </row>
                     <row id="160867106155">
-                        <property name="height">0.32%</property>
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
