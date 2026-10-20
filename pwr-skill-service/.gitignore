@@ -1,4 +1,6 @@
 target/
+# Lucene index of the localDev profile (application.yml)
+lucene-data/
 !.mvn/wrapper/maven-wrapper.jar
 
 

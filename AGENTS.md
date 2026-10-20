@@ -15,7 +15,7 @@ cd pwr-<name>-service
 
 The wrappers in view-profile and edge download `maven-wrapper.jar` on first use (it is gitignored there). Keep `mvnw` executable in Git (`git update-index --chmod=+x`).
 
-Tests need no running infrastructure (but stop a locally running skill service before testing it: its `localDev` profile and the tests share the Lucene index in `target`, and the search tests then find the seed data): the `test` profile uses in-memory H2, and `pwr-view-profile-service` starts an embedded Redis (`com.github.codemonstur:embedded-redis`, which ships binaries for macOS arm64/x64, Linux and Windows). Most tests are JUnit 4.
+Tests need no running infrastructure: the `test` profile uses in-memory H2, and `pwr-view-profile-service` starts an embedded Redis (`com.github.codemonstur:embedded-redis`, which ships binaries for macOS arm64/x64, Linux and Windows). Most tests are JUnit 4.
 
 Webclient (`pwr-webclient`, CRA/react-scripts, TypeScript). Node version is pinned in `pwr-webclient/.nvmrc` (20, as in CI); npm 11 fails to install the dependencies. Env vars in npm scripts go through `cross-env` so they work on Windows:
 
@@ -47,7 +47,7 @@ There are no webclient tests at the moment.
 - **Data flow:** profile service owns consultants and their profiles; skill service owns the skill tree and search. View-profile service builds editable "view profiles" (snapshots of a profile for one export) in Redis and sends them to the report service, which maps them onto the BIRT data model and renders the report (DOCX, stored in the report history). The report preview (generate dialog, report manager) takes the same path but is rendered as PDF in memory and not stored (`GET /view/{initials}/view/{viewProfileId}/{templateId}/preview` → `POST /report/preview`).
 - **Schema management:** no Liquibase/Flyway. `localDev` uses `ddl-auto: update`; production runs with `ddl-auto: none` (env `DB_HIBERNATE_DDL_AUTO`), so entity changes need hand-written SQL for production (see `pwr-profile-service/fix-id-columns.sql`).
 - **Version and commit:** every service publishes them at `GET /actuator/info` (`build` from the `build-info` goal, `git.commit` from the `git-commit-id-plugin`, only branch, commit id and time), the edge at `/pwr-edge-service/actuator/info`, the webclient in `build_info.json` (`compileBuildInfo.js`). Only `health` and `info` are published. The info icon in the app bar shows them, together with the logged-in account.
-- **Skill search** uses Hibernate Search/Lucene; the index is rebuilt via the `/skill/lucene/index` endpoint.
+- **Skill search** uses Hibernate Search/Lucene; the index is rebuilt on every start and via the `/skill/lucene/index` endpoint. Locally it lives in `pwr-skill-service/lucene-data` (gitignored), the tests keep theirs in memory (`local-heap`).
 - **Spring profile syntax differs by Boot version:** 2.2 services use `spring.profiles: localDev` in multi-document YAML, the 2.7 services (edge, statistics) use `spring.config.activate.on-profile`.
 - Java base packages differ per service (`de.hbt.pwr.profile`, `de.hbt.power`, `de.hbt`, `de.hbt.pwr.view`, `de.hbt.pwr`).
 
