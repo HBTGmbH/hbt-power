@@ -5,6 +5,7 @@ import {Template} from '../../../model/view/Template';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {ReportPreview} from './report-preview_module';
+import {PreviewSource, ReportPreviewSource} from './report-preview-source_module';
 import {UploadTemplateDialog} from './report-upload-template-dialog';
 import {ReportManagerInfoBox} from './report-manager-infobox_module';
 import {ThunkDispatch} from 'redux-thunk';
@@ -19,14 +20,13 @@ interface ReportManagerLocalProps {
 
 interface ReportManagerDispatch {
 
-    loadPreview(id: string): void;
-
     loadAllTemplates(): void;
 }
 
 interface ReportManagerState {
     selectedTemplate: Template;
     createDialogOpen: boolean;
+    previewSource: PreviewSource;
 }
 
 class ReportManagerModule extends React.Component<ReportManagerProps & ReportManagerLocalProps & ReportManagerDispatch, ReportManagerState> {
@@ -37,6 +37,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         this.state = {
             selectedTemplate: null,
             createDialogOpen: false,
+            previewSource: {initials: '', viewProfileId: ''},
         };
     }
 
@@ -48,7 +49,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportManagerDispatch {
         return {
-            loadPreview: (id: string) => dispatch(TemplateActionCreator.AsyncLoadPreview(id)),
             loadAllTemplates: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()),
         };
     }
@@ -69,6 +69,10 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         this.setState({
             createDialogOpen: false,
         });
+    };
+
+    private setPreviewSource = (previewSource: PreviewSource) => {
+        this.setState({previewSource});
     };
 
     private selectTemplate = (template: Template) => {
@@ -120,9 +124,15 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
             <div className={'col-md-6'} style={{height: '100%'}}>
                 <Paper style={{height: '100%'}}>
-                    <div style={{height: 'calc(100vh - 88px)'}}>
-                        <ReportPreview
-                            templateId={this.state.selectedTemplate != null ? this.state.selectedTemplate.id : ''}/>
+                    {/* Consultant and view profile whose data the preview shows, the preview fills the rest */}
+                    <div style={{height: 'calc(100vh - 88px)', display: 'flex', flexDirection: 'column'}}>
+                        <ReportPreviewSource value={this.state.previewSource} onChange={this.setPreviewSource}/>
+                        <div style={{flex: 1, minHeight: 0}}>
+                            <ReportPreview
+                                templateId={this.state.selectedTemplate != null ? this.state.selectedTemplate.id : ''}
+                                initials={this.state.previewSource.initials}
+                                viewProfileId={this.state.previewSource.viewProfileId}/>
+                        </div>
                     </div>
                 </Paper>
             </div>

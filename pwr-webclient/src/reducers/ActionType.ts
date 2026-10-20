@@ -131,7 +131,6 @@ export enum ActionType {
     ClearTemplates = '[ViewProfile] ClearTemplates',
     CreateTemplate = '[ViewProfile] CreateTemplate',
     ChangeTemplate = '[ViewProfile] ChangeTemplate',
-    SetPreview = '[ViewProfile] SetPreview',
     TemplateRequestFailed = '[ViewProfile] TemplateRequestFailed',
     AsyncDeleteTemplate = '[Async] DeleteTemplate',
 

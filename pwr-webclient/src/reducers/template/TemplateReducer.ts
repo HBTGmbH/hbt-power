@@ -1,7 +1,6 @@
 import {emptyTemplateStore, TemplateStore} from './TemplateStore';
 import {ActionType} from '../ActionType';
-import {RemoveTemplateAction, SetPreviewAction, SetTemplateAction} from './TemplateActions';
-import {ReportPreviewFile} from '../../model/view/ReportPreviewFile';
+import {RemoveTemplateAction, SetTemplateAction} from './TemplateActions';
 import {AbstractAction} from '../BaseActions';
 
 
@@ -36,22 +35,6 @@ export class TemplateReducer {
             case ActionType.TemplateRequestFailed: {
                 console.error('TemplateRequestFailed');
                 return store;
-            }
-            case ActionType.SetPreview : {
-                let act: SetPreviewAction = action as SetPreviewAction;
-                let temp: ReportPreviewFile = new ReportPreviewFile();
-                temp.templateId = act.templateId;
-                temp.filename = act.filename;
-                temp.content = act.content;
-                temp.file = act.file;
-                temp.id = '111';
-
-                let previews = store.previews;
-                previews.set(act.templateId, new ReportPreviewFile(temp));
-                return {
-                    ...store,
-                    previews,
-                }
             }
         }
         return store;

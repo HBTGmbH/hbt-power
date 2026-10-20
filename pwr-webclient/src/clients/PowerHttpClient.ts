@@ -35,6 +35,24 @@ export class PowerHttpClient {
                 .then(response => response.status === 404 ? {...response, data: null} : response) as AxiosPromise<R | null>));
     }
 
+    /**
+     * Like get, but the given error statuses are expected answers the caller shows itself: no error alert, the promise
+     * rejects with a {@link PowerApiError} carrying the status
+     */
+    getExpecting<R>(url: string, expectedStatuses: Array<number>, config?: AxiosRequestConfig): Promise<R> {
+        const isAnswer = (status: number) => (status >= 200 && status < 300) || expectedStatuses.includes(status);
+        return this.getAxios().then(client => this.executeRequest<AxiosResponse<R>>(
+            client.get<R>(url, {...config, validateStatus: isAnswer})
+                .then(response => ({...response, data: response})) as AxiosPromise<AxiosResponse<R>>))
+            .then(response => {
+                if (expectedStatuses.includes(response.status)) {
+                    const expected: PowerApiError = {status: response.status, error: response.statusText, message: ''};
+                    throw expected;
+                }
+                return response.data;
+            });
+    }
+
     delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.delete(url, config)));
     }
