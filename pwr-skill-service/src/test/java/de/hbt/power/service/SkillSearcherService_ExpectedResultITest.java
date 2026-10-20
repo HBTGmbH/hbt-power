@@ -28,7 +28,7 @@ public class SkillSearcherService_ExpectedResultITest {
     private static final String[] SKILLS = {
             "Java", "Java 8", "JavaScript", "Unity", "Kotlin", "Angular", "Kubernetes", "Spring", "Spring Boot",
             "C", "C#", "C++", ".NET", "ASP.NET Core", "Go", "Godot", "Argo CD", "Argus", "Mango", "Cube", "Tube",
-            "Kupfer", "Range", "Qualitätssicherung"
+            "Kupfer", "Range", "Qualitätssicherung", "JSON", "JSTL"
     };
 
     @Autowired
@@ -55,6 +55,9 @@ public class SkillSearcherService_ExpectedResultITest {
         skillRepository.save(subversion);
         skillWithAliases("PostgreSQL", "Postgres", "PSQL");
         skillWithAliases("Microsoft Azure", "MS Azure", "Azure Cloud");
+        // a word start in an alias of another skill must not outrank the same word start in a name
+        skillWithAliases("Lens", "Kubernetes Lens", "Kubernetes IDE");
+        skillWithAliases("Google Kubernetes Engine (GKE)", "GKE", "Google Kubernetes");
         Skill kubernetes = skillRepository.findOneByQualifier("Kubernetes").get();
         kubernetes.getAliases().add("K8S");
         skillRepository.save(kubernetes);
@@ -63,7 +66,8 @@ public class SkillSearcherService_ExpectedResultITest {
         java.getAliases().addAll(Arrays.asList("J2SE", "Java SE", "Java 11", "Java 17", "java8"));
         skillRepository.save(java);
         Skill javaScript = skillRepository.findOneByQualifier("JavaScript").get();
-        javaScript.getAliases().add("JS");
+        // with a trailing space, as in profiles
+        javaScript.getAliases().add("JS ");
         skillRepository.save(javaScript);
         skillSearcherService.buildSearchIndexSync();
     }
@@ -156,6 +160,13 @@ public class SkillSearcherService_ExpectedResultITest {
     @Test
     public void shouldFindTyposInAlias() {
         shouldFindFirst("Postgers", "PostgreSQL");
+    }
+
+    @Test
+    public void shouldPutAWordStartInTheNameBeforeOneInAnAlias() {
+        shouldFindFirst("Kuber", "Kubernetes");
+        shouldFindFirst("Kube", "Kubernetes");
+        shouldFindBefore("Kubernetes", "Kubernetes", "Lens", "Google Kubernetes Engine (GKE)");
     }
 
     @Test

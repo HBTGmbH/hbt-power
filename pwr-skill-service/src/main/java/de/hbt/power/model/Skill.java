@@ -9,6 +9,7 @@ import org.apache.lucene.analysis.core.KeywordTokenizerFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.RemoveDuplicatesTokenFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.TrimFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilterFactory;
 import org.apache.lucene.analysis.ngram.EdgeNGramFilterFactory;
 import org.apache.lucene.analysis.pattern.PatternTokenizerFactory;
@@ -88,10 +89,11 @@ import java.util.Set;
                         @TokenFilterDef(factory = LowerCaseFilterFactory.class),
                         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
                         @TokenFilterDef(factory = RemoveDuplicatesTokenFilterFactory.class)}),
-        // The whole name as one term, for exact matches
+        // The whole name as one term, for exact matches; spaces at the ends do not count ("JS " in profiles)
         @AnalyzerDef(name = Skill.EXACT_ANALYZER,
                 tokenizer = @TokenizerDef(factory = KeywordTokenizerFactory.class),
                 filters = {
+                        @TokenFilterDef(factory = TrimFilterFactory.class),
                         @TokenFilterDef(factory = LowerCaseFilterFactory.class),
                         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)})
 })
@@ -150,12 +152,14 @@ public class Skill {
     @CollectionTable(name = "SKILL_ALIAS", joinColumns = @JoinColumn(name = "skill_id"))
     @Column(name = "ALIAS", nullable = false, unique = true)
     // Own fields, analyzed like the name: in the name fields every alias would lengthen the field and lower the score
-    // of a name match. Without norms, so that a skill with many aliases is found as well as one with a single alias.
+    // of a name match. The search takes the better of name and alias, so many aliases cannot push a skill below its
+    // name match. With norms, as in the name fields: a word start within a long alias ("Kubernetes Lens") counts less
+    // than the same word start as a name ("Kubernetes").
     @IndexedEmbedded(prefix = "")
     @Fields({
-            @Field(name = FIELD_ALIAS_NAME, analyzer = @Analyzer(definition = NAME_ANALYZER), norms = Norms.NO),
-            @Field(name = FIELD_ALIAS_AUTOCOMPLETE, analyzer = @Analyzer(definition = AUTOCOMPLETE_ANALYZER), norms = Norms.NO),
-            @Field(name = FIELD_ALIAS_EXACT, analyzer = @Analyzer(definition = EXACT_ANALYZER), norms = Norms.NO)
+            @Field(name = FIELD_ALIAS_NAME, analyzer = @Analyzer(definition = NAME_ANALYZER)),
+            @Field(name = FIELD_ALIAS_AUTOCOMPLETE, analyzer = @Analyzer(definition = AUTOCOMPLETE_ANALYZER)),
+            @Field(name = FIELD_ALIAS_EXACT, analyzer = @Analyzer(definition = EXACT_ANALYZER))
     })
     private Set<String> aliases = new HashSet<>();
 

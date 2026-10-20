@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.DisjunctionMaxQuery;
 import org.apache.lucene.search.Query;
 
@@ -43,6 +44,8 @@ public class SkillSearcherService {
     private static final float EXACT_BOOST = 100f;
     private static final float WORD_START_BOOST = 10f;
     private static final int FUZZY_MIN_LENGTH = 4;
+    /** A match by alias counts a bit less than the same match by name: J brings Java before JavaScript (alias JS) */
+    private static final float ALIAS_BOOST = 0.5f;
 
     private final EntityManager entityManager;
 
@@ -159,10 +162,11 @@ public class SkillSearcherService {
 
     /**
      * The better of the two matches counts, not their sum: a skill whose name and alias both match ranks like one
-     * matching only by name
+     * matching only by name. A match by alias is weighted a bit lower, so that a name wins over an alias of similar
+     * length; an exact alias still comes first.
      */
     private static Query nameOrAlias(Query byName, Query byAlias) {
-        return new DisjunctionMaxQuery(Arrays.asList(byName, byAlias), 0f);
+        return new DisjunctionMaxQuery(Arrays.asList(byName, new BoostQuery(byAlias, ALIAS_BOOST)), 0f);
     }
 
     /**
