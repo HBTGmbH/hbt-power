@@ -23,6 +23,8 @@ interface ReportHistoryLocalProps {
 interface ReportHistoryDispatch {
     loadAllReportData(initials: string): void,
 
+    pollReportData(initials: string): void,
+
     loadAllTemplateData(): void,
 
     getReportFile(reportData: ReportData): void,
@@ -41,10 +43,17 @@ interface ReportHistoryState {
     initials: string;
 }
 
+/** While a report is being created ('RUNNING'), the list is reloaded at this interval */
+const POLL_INTERVAL_MS = 3000;
+/** Polling stops after this time, so a report stuck in 'RUNNING' (e.g. the service restarted) is not polled forever */
+const POLL_DURATION_MS = 5 * 60 * 1000;
+
 class ReportHistoryModule extends React.Component<ReportHistoryProps
     & ReportHistoryLocalProps
     & ReportHistoryDispatch, ReportHistoryState> {
 
+    private pollTimer: ReturnType<typeof setInterval> | undefined;
+    private pollUntil = 0;
 
     constructor(props: ReportHistoryProps & ReportHistoryLocalProps & ReportHistoryDispatch) {
         super(props);
@@ -65,6 +74,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportHistoryDispatch {
         return {
             loadAllReportData: (initials: string) => dispatch(ReportAsyncActionCreator.loadAllReportData(initials)),
+            pollReportData: (initials: string) => dispatch(ReportAsyncActionCreator.pollReportData(initials)),
             loadAllTemplateData: () => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()),
             getReportFile: (reportData: ReportData) => dispatch(ReportAsyncActionCreator.getReportFile(reportData)),
             deleteReportFile: (id, cb) => dispatch(ReportAsyncActionCreator.deleteReportFile(id, cb))
@@ -73,6 +83,23 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
 
     componentDidMount() {
         this.loadAllData();
+        this.pollUntil = Date.now() + POLL_DURATION_MS;
+        this.pollTimer = setInterval(this.pollWhileRunning, POLL_INTERVAL_MS);
+    };
+
+    componentWillUnmount() {
+        clearInterval(this.pollTimer);
+    }
+
+    private pollWhileRunning = () => {
+        if (Date.now() > this.pollUntil) {
+            clearInterval(this.pollTimer);
+            return;
+        }
+        const running = this.props.reports.some(report => report.reportStatus === 'RUNNING');
+        if (running && this.props.initials) {
+            this.props.pollReportData(this.props.initials);
+        }
     };
 
     componentDidUpdate(prevProps: Readonly<ReportHistoryProps>) {
@@ -184,17 +211,8 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
     render() {
         return (
             <div>
+                {/* No refresh button: the list reloads itself while a report is being created */}
                 <Paper className="mui-margin">
-                    <Button
-                        variant="contained"
-                        color="secondary" style={{marginLeft: '8px', marginTop: '5px'}}
-                        onMouseDown={() => {
-                            this.loadAllData();
-                        }}
-                    >
-                        <Icon className="material-icons">autorenew</Icon>
-                        {PowerLocalize.get('Action.Update')}
-                    </Button>
                     <Table aria-label="simple table">
                         <TableHead>
                             <TableRow key={-1}>
