@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.io.InputStream;
 
+import static org.mockito.Mockito.verify;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -54,7 +55,7 @@ public class AdminEndpointITest extends AbstractIntegrationTest {
      */
     @Test
     public void whenRenamingASkillInAllProfiles_shouldPersistAllChanges() {
-        adminEndpoint.renameSkillInAllProfiles("Warp", "Warp-Drive Development");
+        adminEndpoint.mergeSkills("Warp", "Warp-Drive Development", "2");
         entityManager.flush();
         Profile retrievedProfile = entityManager.find(Profile.class, sampleProfile.getId());
         assertThat(retrievedProfile.getSkills())
@@ -64,5 +65,10 @@ public class AdminEndpointITest extends AbstractIntegrationTest {
                 .flatExtracting(Project::getSkills)
                 .extracting(Skill::getName)
                 .doesNotContain("Warp");
+        assertThat(retrievedProfile.getSkills())
+                .filteredOn(skill -> skill.getName().equals("Warp-Drive Development"))
+                .flatExtracting(Skill::getVersions)
+                .contains("2");
+        verify(skillProfileClient).mergeSkills("Warp", "Warp-Drive Development");
     }
 }

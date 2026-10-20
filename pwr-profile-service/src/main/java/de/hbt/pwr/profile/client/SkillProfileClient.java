@@ -1,10 +1,12 @@
 package de.hbt.pwr.profile.client;
 
+import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.skill.SkillCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -20,5 +22,18 @@ public class SkillProfileClient {
     public SkillCategory updateAndGetCategory(String qualifier) {
         String url = pwrSkillServiceUrl + "/skill?qualifier=" + qualifier;
         return restTemplate.postForEntity(url, null, SkillCategory.class).getBody();
+    }
+
+    /**
+     * Merges skill <code>source</code> into skill <code>target</code> in the skill tree. Errors of the skill service
+     * (unknown target, conflicting alias) keep their status.
+     */
+    public void mergeSkills(String source, String target) {
+        try {
+            restTemplate.postForEntity(pwrSkillServiceUrl + "/admin/skill/merge?source={source}&target={target}",
+                    null, Void.class, source, target);
+        } catch (HttpStatusCodeException e) {
+            throw new WebApplicationException(e.getStatusCode(), e.getResponseBodyAsString());
+        }
     }
 }
