@@ -1,10 +1,10 @@
 /**
- * Version and commit of one component (webclient, edge or service), as published by the component itself
+ * Commit of one component (webclient, edge or service), as published by the component itself. The version in
+ * pom.xml / package.json is not maintained and not shown: the commit identifies the state (#77).
  */
 export interface ComponentInfo {
     name: string;
     available: boolean;
-    version?: string;
     /** Short commit hash */
     commitId?: string;
     commitTime?: Date;
@@ -24,9 +24,8 @@ export function toDate(value: unknown): Date | undefined {
     return isNaN(date.getTime()) ? undefined : date;
 }
 
-/** GET /actuator/info of a Spring Boot service (build-info and git.properties) */
+/** GET /actuator/info of a Spring Boot service (git.properties) */
 export interface ActuatorInfo {
-    build?: { version?: string; time?: unknown };
     git?: { branch?: string; commit?: { id?: string; time?: unknown } };
 }
 
@@ -34,7 +33,6 @@ export function ofActuatorInfo(name: string, info: ActuatorInfo): ComponentInfo 
     return {
         name,
         available: true,
-        version: info.build && info.build.version,
         commitId: info.git && info.git.commit && info.git.commit.id,
         commitTime: toDate(info.git && info.git.commit && info.git.commit.time),
     };
@@ -42,7 +40,6 @@ export function ofActuatorInfo(name: string, info: ActuatorInfo): ComponentInfo 
 
 /** build_info.json of the webclient (compileBuildInfo.js) */
 export interface ClientInfo {
-    version?: string;
     commit?: string;
     commitTime?: string;
 }
@@ -51,7 +48,6 @@ export function ofClientInfo(name: string, info: ClientInfo): ComponentInfo {
     return {
         name,
         available: true,
-        version: info.version,
         commitId: info.commit ? info.commit.substring(0, 7) : undefined,
         commitTime: toDate(info.commitTime),
     };
