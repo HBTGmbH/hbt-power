@@ -177,7 +177,8 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                     <div className="col-md-8">
                         <h4 className="row"
                             style={{marginLeft: '2px'}}> {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].name : ' '} </h4>
-                        <div className={'row'} style={{marginLeft: '2px', height: 'calc(100vh - 300px)'}}>
+                        {/* Full height of the screen: toolbar and template name above (~115px), description below (~35px) */}
+                        <div className={'row'} style={{marginLeft: '2px', height: 'calc(100vh - 150px)'}}>
                             <ReportPreview templateId={this.state.activeTemplateId}/>
                         </div>
 

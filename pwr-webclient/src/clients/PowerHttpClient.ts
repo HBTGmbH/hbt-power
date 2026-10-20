@@ -25,6 +25,16 @@ export class PowerHttpClient {
         return this.getAxios().then(client => this.executeRequest(client.get(url, config)));
     }
 
+    /**
+     * Like get, but "not found" is an expected answer: resolves with null instead of showing an error
+     */
+    getOrNull<R>(url: string, config?: AxiosRequestConfig): Promise<R | null> {
+        const notFoundIsAnAnswer = (status: number) => (status >= 200 && status < 300) || status === 404;
+        return this.getAxios().then(client => this.executeRequest<R | null>(
+            client.get<R>(url, {...config, validateStatus: notFoundIsAnAnswer})
+                .then(response => response.status === 404 ? {...response, data: null} : response) as AxiosPromise<R | null>));
+    }
+
     delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.delete(url, config)));
     }
@@ -108,7 +118,8 @@ export class PowerHttpClient {
                 };
             }
         }
-        if (!error.response.data) {
+        // Requests with responseType 'blob' get their error body as a Blob as well
+        if (!error.response.data || error.response.data instanceof Blob) {
             console.error('Intercepted server error', error.response);
             return {
                 status: error.response.status,

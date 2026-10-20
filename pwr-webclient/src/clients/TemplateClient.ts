@@ -59,9 +59,15 @@ export class TemplateClient extends PowerHttpClient {
         return this.get(url);
     }
 
-    public getPreviewURL(id: string): string {
-        return this.base() + '/template/preview/' + id;
-
+    /**
+     * The stored preview (PDF) of a template, null if it has none. Loaded with the token, so it can be shown through
+     * a blob URL; an iframe pointing at the API would not send the token.
+     */
+    public getPreviewPdf(id: string): Promise<Blob | null> {
+        const url = this.base() + '/template/preview/' + id;
+        this.beginRequest();
+        return this.getOrNull<Blob>(url, {responseType: 'blob'})
+            .then(blob => blob && blob.size > 0 ? new Blob([blob], {type: 'application/pdf'}) : null);
     }
 
     public getAllPreviews(): Promise<Array<string>> {

@@ -36,6 +36,10 @@ public class DBFileStorageService {
         }
     }
 
+    public DBFile storeFile(String filename, String fileType, byte[] data) {
+        return dbFileRepository.save(new DBFile(filename, fileType, data));
+    }
+
     public DBFile getFile(String fileId) {
         return dbFileRepository.findById(fileId)
                 .orElseThrow(() -> new StorageFileNotFoundException("File \'" + fileId + "\' was not found!"));

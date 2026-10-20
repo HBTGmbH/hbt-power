@@ -46,6 +46,7 @@ public class PdfRenderController {
             return ResponseEntity.ok(uploadFileResponse);
 
         } catch (Exception e) {
+            log.error("Rendering the PDF preview of {} failed", fileId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new UploadFileResponse(fileId, e.toString(), "", "", 0));
         }

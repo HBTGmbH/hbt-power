@@ -10,8 +10,6 @@ spring:
 export:
   # Temporary location where the data source for the BIRT report generation can be found.
   xmlFilePath: target\xml\datasource.xml
-  # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
-  htmlLocalLocation: target\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.
   imgLocation: target\images
 eureka:

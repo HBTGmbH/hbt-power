@@ -3,6 +3,7 @@ package de.hbt.controller;
 import de.hbt.model.files.UploadFileResponse;
 import de.hbt.service.DBFileStorageService;
 import de.hbt.service.ProfileReportService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
+@Slf4j
 @RestController
 @RequestMapping(value = "html")
 public class HtmlRenderController {
@@ -50,6 +52,7 @@ public class HtmlRenderController {
             return ResponseEntity.ok(uploadFileResponse);
 
         } catch (Exception e) {
+            log.error("Rendering the HTML preview of {} failed", fileId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadFileResponse("", e.toString(), "", "", 0));
         }
 
