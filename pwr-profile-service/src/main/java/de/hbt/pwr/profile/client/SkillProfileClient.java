@@ -26,8 +26,12 @@ public class SkillProfileClient {
     }
 
     public SkillCategory updateAndGetCategory(String qualifier) {
-        String url = pwrSkillServiceUrl + "/skill?qualifier=" + qualifier;
-        return restTemplate.postForEntity(url, null, SkillCategory.class).getBody();
+        URI uri = UriComponentsBuilder.fromHttpUrl(pwrSkillServiceUrl + "/skill")
+                .queryParam("qualifier", "{qualifier}")
+                .encode()
+                .buildAndExpand(qualifier)
+                .toUri();
+        return restTemplate.postForEntity(uri, null, SkillCategory.class).getBody();
     }
 
     /**

@@ -41,6 +41,17 @@ public class SkillProfileClientTest {
     }
 
     @Test
+    public void updateAndGetCategory_encodesTheName() {
+        server.expect(requestTo("http://skill/skill?qualifier=C%23"))
+                .andExpect(method(POST))
+                .andRespond(withSuccess("{\"qualifier\": \"Programming Languages\"}", MediaType.APPLICATION_JSON));
+
+        client.updateAndGetCategory("C#");
+
+        server.verify();
+    }
+
+    @Test
     public void mergeSkills_keepsStatusAndMessageOfTheSkillService() {
         server.expect(requestTo("http://skill/admin/skill/merge?source=OpenShift&target=Kubernetes"))
                 .andRespond(withStatus(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON)
