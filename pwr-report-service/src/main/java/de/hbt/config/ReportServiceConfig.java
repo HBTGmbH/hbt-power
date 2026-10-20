@@ -16,15 +16,15 @@ public class ReportServiceConfig {
     private String xmlFilePath;
 
     /**
-     * Used to temporary store generated previews.
-     */
-    private String htmlLocalLocation;
-
-    /**
      * Profile pictures are stored here. BIRT needs them on the filesystem, and this is where the
      * profile pictures are stored.
      */
     private String imgLocation;
 
     private boolean deleteDataSource = true;
+
+    /**
+     * Rendering a preview (PDF, HTML) is cancelled after this time, see BirtRendering
+     */
+    private long previewTimeLimitSeconds = 60;
 }

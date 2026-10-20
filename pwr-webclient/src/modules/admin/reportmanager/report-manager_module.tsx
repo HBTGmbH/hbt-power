@@ -1,15 +1,10 @@
+import {Divider, Icon, List, ListItem, ListItemText, Paper} from '@material-ui/core';
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {Template} from '../../../model/view/Template';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {ReportPreview} from './report-preview_module';
-import ListItem from '@material-ui/core/ListItem/ListItem';
-import Icon from '@material-ui/core/Icon/Icon';
-import ListItemText from '@material-ui/core/ListItemText/ListItemText';
-import Divider from '@material-ui/core/Divider/Divider';
-import Paper from '@material-ui/core/Paper/Paper';
-import List from '@material-ui/core/List/List';
 import {UploadTemplateDialog} from './report-upload-template-dialog';
 import {ReportManagerInfoBox} from './report-manager-infobox_module';
 import {ThunkDispatch} from 'redux-thunk';

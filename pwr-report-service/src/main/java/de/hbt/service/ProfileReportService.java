@@ -2,7 +2,6 @@ package de.hbt.service;
 
 import de.hbt.client.ProfilePictureClient;
 import de.hbt.config.ReportServiceConfig;
-import de.hbt.exceptions.StorageFileException;
 import de.hbt.model.ReportInfo;
 import de.hbt.model.ReportStatus;
 import de.hbt.model.export.Profil;
@@ -11,9 +10,6 @@ import de.hbt.model.export.birt.HtmlBirtExportHandler;
 import de.hbt.model.export.birt.PdfBirtExportHandler;
 import de.hbt.model.files.DBFile;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -31,6 +25,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Slf4j
 @Service
@@ -106,41 +102,30 @@ public class ProfileReportService {
         reportDataService.updateReportData(reportDataId, ReportStatus.ERROR);
     }
 
+    /**
+     * Renders the design as HTML with the sample data of the preview data source and stores it.
+     *
+     * @return id of the stored file
+     */
     public String generateHTMLFile(String designId) {
         DBFile file = storageService.getFile(designId);
-        InputStream designFileStream = new ByteArrayInputStream(file.getData());
-        String fullFilePath = htmlBirtExportHandler.exportProfile(designFileStream);
-        return saveFileInDB(fullFilePath, "text/html").getId();
+        byte[] html = htmlBirtExportHandler.exportProfile(new ByteArrayInputStream(file.getData()), reportServiceConfig.getXmlFilePath());
+        return storageService.storeFile(previewFilename("html"), "text/html", html).getId();
     }
 
+    /**
+     * Renders the design as PDF with the sample data of the preview data source and stores it.
+     *
+     * @return id of the stored file
+     */
     public String generatePDFFile(String designId) {
         DBFile file = storageService.getFile(designId);
-        InputStream designFileStream = new ByteArrayInputStream(file.getData());
-        String fullFilePath = pdfBirtExportHandler.exportProfile(designFileStream);
-
-        return saveFileInDB(fullFilePath, "application/pdf").getId();
+        byte[] pdf = pdfBirtExportHandler.exportProfile(new ByteArrayInputStream(file.getData()), reportServiceConfig.getXmlFilePath());
+        return storageService.storeFile(previewFilename("pdf"), "application/pdf", pdf).getId();
     }
 
-    private DBFile saveFileInDB(String filePath, String fileType) {
-        File file = new File(filePath);
-        FileItem fileItem = new DiskFileItem("file", fileType, false, file.getName(), (int) file.length(), file.getParentFile());
-        try {
-            InputStream input = new FileInputStream(file);
-            OutputStream os = fileItem.getOutputStream();
-            IOUtils.copy(input, os);
-        } catch (IOException ex) {
-            throw new StorageFileException("Could not convert File to MultipartFile");
-        }
-
-        MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-        DBFile f = storageService.storeFile(multipartFile);
-        try {
-            //noinspection ResultOfMethodCallIgnored
-            file.delete();
-        } catch (SecurityException e) {
-            throw new StorageFileException("Could not delete File after saving it.");
-        }
-        return f;
+    private static String previewFilename(String extension) {
+        return "preview_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + "." + extension;
     }
 
 

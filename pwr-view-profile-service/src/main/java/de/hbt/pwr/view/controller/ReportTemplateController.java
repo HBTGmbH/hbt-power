@@ -1,14 +1,12 @@
 package de.hbt.pwr.view.controller;
 
 import de.hbt.pwr.view.client.files.FileUploadClient;
-import de.hbt.pwr.view.client.report.ReportServiceClient;
 import de.hbt.pwr.view.exception.TemplateNotFoundException;
 import de.hbt.pwr.view.model.ReportTemplate;
 import de.hbt.pwr.view.model.UploadFileResponse;
 import de.hbt.pwr.view.service.ReportTemplateService;
+import de.hbt.pwr.view.service.TemplatePreviewService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -28,20 +26,18 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Controller
 public class ReportTemplateController {
 
-    private static final Logger LOG = LogManager.getLogger(ReportTemplateController.class);
-
     private final ReportTemplateService reportTemplateService;
 
     private FileUploadClient fileUploadClient;
 
-    private ReportServiceClient reportServiceClient;
+    private final TemplatePreviewService templatePreviewService;
 
     @Autowired
     public ReportTemplateController(ReportTemplateService reportTemplateService,
-                                    FileUploadClient fileUploadClient, ReportServiceClient reportServiceClient) {
+                                    FileUploadClient fileUploadClient, TemplatePreviewService templatePreviewService) {
         this.reportTemplateService = reportTemplateService;
         this.fileUploadClient = fileUploadClient;
-        this.reportServiceClient = reportServiceClient;
+        this.templatePreviewService = templatePreviewService;
     }
 
     //---------------
@@ -70,20 +66,13 @@ public class ReportTemplateController {
 
         if (designFileResponseEntity.getStatusCode() == HttpStatus.OK) {
             UploadFileResponse designFileResponse = designFileResponseEntity.getBody();
-            //ResponseEntity<UploadFileResponse> previewFileResponseEntity =
-            //      reportServiceClient.generatePdf(designFileResponse.getFileId());
-
-            //UploadFileResponse previewFileResponse = previewFileResponseEntity.getBody();
             newTemplate.setName(templateSlice.name);
             newTemplate.setDescription(templateSlice.description);
             newTemplate.setCreatedDate(LocalDate.now());
             newTemplate.setFileId(designFileResponse.getFileId());
             newTemplate.setCreateUser(templateSlice.createUser);
-            //if (previewFileResponseEntity.getStatusCode() == HttpStatus.OK) {
-            //    newTemplate.setPreviewId(previewFileResponse.getFileId());
-            //} else {
+            // The preview is created on its first request (TemplatePreviewService)
             newTemplate.setPreviewId("");
-            // }
             ReportTemplate template = reportTemplateService.saveTemplate(newTemplate);
             return ResponseEntity.ok(template);
         } else {
@@ -132,6 +121,7 @@ public class ReportTemplateController {
                 oldTemplate.getPreviewId());
 
         ReportTemplate template = reportTemplateService.updateTemplate(id, newTemplate);
+        templatePreviewService.templateChanged(id);
         return ResponseEntity.ok(template);
     }
 
@@ -139,19 +129,15 @@ public class ReportTemplateController {
     // Preview
     //---------------
 
+    /**
+     * The preview (PDF with sample data) of a template; a template without one gets it now. 404 if none can be
+     * rendered.
+     */
     @GetMapping("preview/{id}")
     public ResponseEntity<Resource> getPreview(@PathVariable String id) throws TemplateNotFoundException {
-        ReportTemplate template = reportTemplateService.getTemplate(id);
-        if (template != null) {
-            String filename = template.getPreviewId();
-            if (filename != null && !filename.equals("")) {
-
-                ResponseEntity<Resource> res = fileUploadClient.serveFile(filename);
-                LOG.debug("Preview Received for " + id + " is " + res.getBody().toString());
-                return res;
-            }
-        }
-        return ResponseEntity.notFound().build();
+        return templatePreviewService.previewFileId(id)
+                .map(fileUploadClient::serveFile)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("preview")

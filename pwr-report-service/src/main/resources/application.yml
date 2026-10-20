@@ -20,8 +20,6 @@ spring:
 export:
   # Datasource which is used to create the previews. Contains sample data.
   xmlFilePath: ${PWR_REPORT_FILE_PATH}\xml\datasource.xml
-  # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
-  htmlLocalLocation: ${PWR_REPORT_FILE_PATH}\reports\preview\%s
   # BIRT will need images on the filesystem. Images will be available here.
   imgLocation: ${PWR_REPORT_FILE_PATH}\images
 server:
@@ -47,8 +45,6 @@ spring:
 export:
   # Temporary location where the data source for the BIRT report generation can be found.
   xmlFilePath: src/target/datasource.xml
-  # Temporary location where the report will be stored during generation (as BIRT needs to render to fileystem)
-  htmlLocalLocation: src/target/report/reports/preview/%s
   # BIRT will need images on the filesystem. Images will be available here.
   imgLocation: src/target/images
 pwr-profile-service-url: http://localhost:9004
