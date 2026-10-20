@@ -30,6 +30,7 @@ import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
 import {PowerApiError} from '../../clients/PowerHttpClient';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
 import {Alerts} from '../../utils/Alerts';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {SuggestionAsyncActionCreator} from '../suggestions/SuggestionAsyncActionCreator';
 import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
@@ -411,12 +412,27 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncChangeSkillName(oldName: string, newName: string) {
+    /**
+     * Merges skill source into skill target: in all profiles and projects, and in the skill tree, where source becomes
+     * an alias of target. Expected rejections of the merge (400, 404, 409) are explained to the admin.
+     */
+    public static AsyncMergeSkill(source: string, target: string, version?: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            profileServiceClient.renameSkill(oldName, newName)
+            profileServiceClient.mergeSkill(source, target, version)
                 .then(() => dispatch(SuggestionAsyncActionCreator.requestAllSkills()))
-                .then(() => Alerts.showSuccess('Renamed ' + oldName + ' to ' + newName))
-                .catch(console.error);
+                .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Success', source, target)))
+                .catch((error: PowerApiError) => {
+                    const key = {
+                        400: 'AdminClient.Infos.UsedSkills.Merge.Error.Invalid',
+                        404: 'AdminClient.Infos.UsedSkills.Merge.Error.TargetNotFound',
+                        409: 'AdminClient.Infos.UsedSkills.Merge.Error.Conflict'
+                    }[error.status];
+                    if (key) {
+                        Alerts.showError(PowerLocalize.getFormatted(key, source, target, error.message));
+                    } else {
+                        console.error(error);
+                    }
+                });
         };
     }
 

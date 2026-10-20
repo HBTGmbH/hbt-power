@@ -8,7 +8,7 @@ import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {SkillActionCreator} from '../../../../reducers/skill/SkillActionCreator';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
-import {EditSkillDialog} from './edit-skill-dialog_module';
+import {MergeSkillDialog} from './merge-skill-dialog_module';
 import {StringUtils} from '../../../../utils/StringUtil';
 import {UsedSkillInfoBox} from './used-skill-info-box';
 import {toArray} from '../../../../utils/ImmutableUtils';
@@ -137,10 +137,10 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         let skillUsageInfo: Array<ConsultantInfo> = toArray(this.props.skillUsageInfo.get(this.state.selectedSkillName));
         return (
             <div>
-                <EditSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
-                                 skillToEdit={this.state.selectedSkillName}
-                                 open={this.state.editOpen}
-                                 onClose={this.closeEditDialog}
+                <MergeSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
+                                  skillToMerge={this.state.selectedSkillName}
+                                  open={this.state.editOpen}
+                                  onClose={this.closeEditDialog}
                 />
 
                 <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>

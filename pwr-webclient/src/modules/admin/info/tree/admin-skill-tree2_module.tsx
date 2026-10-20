@@ -19,6 +19,7 @@ import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator'
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Delete';
 import {PwrSkillVersionInfo} from '../../../general/pwr-skill-version-info_module';
+import {AliasList} from '../../../general/skill/alias-list_module';
 import {ThunkDispatch} from 'redux-thunk';
 
 interface AdminSkillTree2Props {
@@ -58,6 +59,10 @@ interface AdminSkillTree2Dispatch {
     addSkillLocalization(skillId: number, language: string, qualifier: string): void;
 
     deleteSkillLocalization(skillId: number, language: string): void;
+
+    addSkillAlias(skillId: number, alias: string): void;
+
+    deleteSkillAlias(skillId: number, alias: string): void;
 
     createCategory(parentId: number, qualifier: string): void;
 
@@ -122,6 +127,8 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
             deleteSkill: skillId => dispatch(SkillActionCreator.AsyncDeleteSkill(skillId)),
             addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddSkillLocale(skillId, language, qualifier)),
             deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.AsyncDeleteSkillLocale(skillId, language)),
+            addSkillAlias: (skillId, alias) => dispatch(SkillActionCreator.AsyncAddSkillAlias(skillId, alias)),
+            deleteSkillAlias: (skillId, alias) => dispatch(SkillActionCreator.AsyncDeleteSkillAlias(skillId, alias)),
             setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
@@ -276,6 +283,14 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
 
             <ListSubheader>Versionen</ListSubheader>
             <PwrSkillVersionInfo skillName={selectedSkill.qualifier()}/>
+            <ListSubheader>{PowerLocalize.get('AdminClient.Info.SkillTree.Alias.Title')}</ListSubheader>
+            <AliasList
+                key={selectedSkill.id()}
+                skillName={selectedSkill.qualifier()}
+                aliases={selectedSkill.aliases()}
+                onAliasAdd={alias => this.props.addSkillAlias(selectedSkill.id(), alias)}
+                onAliasDelete={alias => this.props.deleteSkillAlias(selectedSkill.id(), alias)}
+            />
             <ListSubheader>{selectedSkill.qualifier()}</ListSubheader>
             <LocalizationTable
                 localizations={selectedSkill.qualifiers()}

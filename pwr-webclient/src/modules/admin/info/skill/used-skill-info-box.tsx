@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
-import {Button, Icon, List, ListItem, ListSubheader, Paper} from '@material-ui/core';
+import {List, ListItem, ListSubheader, Paper} from '@material-ui/core';
+import CallMerge from '@material-ui/icons/CallMerge';
+import {PwrButton} from '../../../general/pwr-button';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {PwrIconHeader} from '../../../general/pwr-icon-header';
 
@@ -50,15 +52,13 @@ export class UsedSkillInfoBox extends React.Component<UsedSkillInfoBoxProps, Use
                 }
             </div>
             <div className="padding-left-32px">
-                <Button
+                <PwrButton
                     color={'primary'}
                     variant={'contained'}
+                    text={PowerLocalize.get('Action.Merge')}
+                    icon={<CallMerge/>}
                     onClick={() => this.props.onOpenEdit(this.props.skillName)}
-                    className="mui-margin"
-                >
-                    {PowerLocalize.get('Action.Edit')}
-                    <Icon className="material-icons">edit</Icon>
-                </Button>
+                />
             </div>
             <ListSubheader>{PowerLocalize.get('AdminClient.Infos.UsedSkills.UsedBy')}</ListSubheader>
             <List>

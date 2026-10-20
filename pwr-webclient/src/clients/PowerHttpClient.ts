@@ -75,6 +75,29 @@ export class PowerHttpClient {
         return this.getAxios().then(client => this.executeRequest(client.post(url, data, config)));
     }
 
+    /**
+     * Like post, but the given error statuses are expected answers the caller shows itself: no error alert, the promise
+     * rejects with a {@link PowerApiError} carrying the status and the message from the response body
+     */
+    postExpecting<R>(url: string, expectedStatuses: Array<number>, data?: any, config?: AxiosRequestConfig): Promise<R> {
+        const isAnswer = (status: number) => (status >= 200 && status < 300) || expectedStatuses.includes(status);
+        return this.getAxios().then(client => this.executeRequest<AxiosResponse<R>>(
+            client.post<R>(url, data, {...config, validateStatus: isAnswer})
+                .then(response => ({...response, data: response})) as AxiosPromise<AxiosResponse<R>>))
+            .then(response => {
+                if (expectedStatuses.includes(response.status)) {
+                    const body: any = response.data;
+                    const expected: PowerApiError = {
+                        status: response.status,
+                        error: response.statusText,
+                        message: (body && body.message) || ''
+                    };
+                    throw expected;
+                }
+                return response.data;
+            });
+    }
+
     put<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.put(url, data, config)));
     }

@@ -61,6 +61,24 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.delete(url, config);
     };
 
+    /**
+     * Adds another spelling to the skill. 400 (empty alias) and 409 (alias belongs to another skill or is the name of
+     * another skill) reject with a {@link PowerApiError} without an error alert, the caller explains them
+     */
+    public addSkillAlias = (skillId: number, alias: string): Promise<APISkillServiceSkill> => {
+        const url = this.base() + '/admin/skill/' + skillId + '/alias';
+        const config: AxiosRequestConfig = {params: {alias: alias}};
+        this.beginRequest();
+        return this.postExpecting(url, [400, 409], null, config);
+    };
+
+    public deleteSkillAlias = (skillId: number, alias: string): Promise<APISkillServiceSkill> => {
+        const url = this.base() + '/admin/skill/' + skillId + '/alias';
+        const config: AxiosRequestConfig = {params: {alias: alias}};
+        this.beginRequest();
+        return this.delete(url, config);
+    };
+
     public getSearchSkillURL = (): string => {
         return this.base() + '/skill/search';
 

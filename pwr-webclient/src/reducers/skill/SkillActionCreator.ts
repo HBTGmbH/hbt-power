@@ -14,6 +14,8 @@ import {Alerts} from '../../utils/Alerts';
 import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 import {SkillServiceClient} from '../../clients/SkillServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
+import {PowerApiError} from '../../clients/PowerHttpClient';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {
     AddCategoryToTreeAction,
     AddSkillToTreeAction,
@@ -341,6 +343,32 @@ export class SkillActionCreator {
             skillClient.addSkillLocale(skillId, language, qualifier)
                 .then((skill) => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
                 .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+        };
+    }
+
+    /**
+     * Adds another spelling to the skill. A conflict (the alias belongs to another skill or is the name of another
+     * skill) is explained to the admin, other errors are already shown by the client.
+     */
+    public static AsyncAddSkillAlias(skillId: number, alias: string) {
+        return function (dispatch: redux.Dispatch) {
+            skillClient.addSkillAlias(skillId, alias.trim())
+                .then(skill => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
+                .catch((error: PowerApiError) => {
+                    if (error.status === 409) {
+                        Alerts.showError(PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.Conflict', alias, error.message));
+                    } else if (error.status === 400) {
+                        Alerts.showError(PowerLocalize.get('AdminClient.Info.SkillTree.Alias.Invalid'));
+                    }
+                });
+        };
+    }
+
+    public static AsyncDeleteSkillAlias(skillId: number, alias: string) {
+        return function (dispatch: redux.Dispatch) {
+            skillClient.deleteSkillAlias(skillId, alias)
+                .then(skill => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
+                .catch(console.error);
         };
     }
 
