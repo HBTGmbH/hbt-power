@@ -7,6 +7,13 @@ pwr:
     report: http://pwr-report-service:9005
     view-profile: http://pwr-view-profile-service:9008
     statistics: http://pwr-statistics-service:9007
+management:
+  endpoints:
+    web:
+      # Like the services behind the edge, so the webclient reaches it as /api/pwr-edge-service/actuator/info
+      base-path: /pwr-edge-service/actuator
+      exposure:
+        include: health,info
 spring:
   servlet:
     multipart:

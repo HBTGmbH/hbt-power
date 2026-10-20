@@ -91,6 +91,31 @@
                     </execution>
                 </executions>
 			</plugin>
+			<!-- Commit of the build in git.properties; GET /actuator/info shows it (git.commit.id, git.commit.time).
+				 Same plugin as in Salat. Only branch, commit id and time: no names or e-mail addresses of committers. -->
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>4.9.10</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<offline>true</offline>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<includeOnlyProperties>
+						<includeOnlyProperty>^git.branch$</includeOnlyProperty>
+						<includeOnlyProperty>^git.commit.id$</includeOnlyProperty>
+						<includeOnlyProperty>^git.commit.id.abbrev$</includeOnlyProperty>
+						<includeOnlyProperty>^git.commit.time$</includeOnlyProperty>
+					</includeOnlyProperties>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
