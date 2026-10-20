@@ -38,7 +38,8 @@ spring:
         search:
           default:
             directory_provider: filesystem
-            indexBase: ./target
+            # Outside target, so neither `mvn clean` nor a test run touches it (gitignored)
+            indexBase: ./lucene-data
 ---
 spring:
   profiles: test
@@ -52,7 +53,7 @@ spring:
       hibernate:
         search:
           default:
-            directory_provider: filesystem
-            indexBase: ./target
+            # In memory: each test run has its own index, a locally running service keeps its own
+            directory_provider: local-heap
     hibernate:
       ddl-auto: create
