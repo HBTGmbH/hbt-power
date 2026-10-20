@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Avatar, Paper} from '@material-ui/core';
+import {Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
@@ -9,11 +9,11 @@ import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import Edit from '@material-ui/icons/Edit';
 import {ThunkDispatch} from 'redux-thunk';
-import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
+import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 import {withRouter} from 'react-router-dom';
 
 interface BaseDataDashboardElementProps {
-    profilePictureSrc: string;
+    profilePictureId: string;
     name: string;
     lastEdited: Date;
 }
@@ -29,11 +29,10 @@ interface BaseDataDashboardElementDispatch {
 class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardElementProps & BaseDataDashboardElementLocalProps & BaseDataDashboardElementDispatch, {}> {
 
     static mapStateToProps(state: ApplicationState): BaseDataDashboardElementProps {
-        const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             name: state.profileStore.consultant.firstName,
             lastEdited: new Date(state.profileStore.consultant.profileLastUpdated),
-            profilePictureSrc
+            profilePictureId: state.profileStore.consultant.profilePictureId
         };
     }
 
@@ -58,7 +57,7 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                         </span>
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
-                        <Avatar sizes={'80'} src={this.props.profilePictureSrc}/>
+                        <PwrProfilePicture pictureId={this.props.profilePictureId}/>
                     </div>
                     <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
                         {PowerLocalize.get('Overview.Base.LastEdited')}

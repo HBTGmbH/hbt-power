@@ -270,14 +270,11 @@ body {
     width: 100%;
 }
 
-/* Consultant tab: square profile picture, centred and cropped, as high as name, title and promotional text */
-.pwr-profile-picture {
-    display: block;
+/* Consultant tab: square profile picture (an Avatar, which centres and crops it), as high as name, title and
+   promotional text. Doubled class: Material-UI inserts its Avatar styles after this file */
+.MuiAvatar-root.pwr-profile-picture {
     width: 200px;
     height: 200px;
-    object-fit: cover;
-    object-position: center;
-    border-radius: 4px;
 }
 
 /* Next to the text (Material-UI md and up): the cell is stretched to the height of the text column, its width
@@ -288,7 +285,7 @@ body {
         max-width: 266px;
     }
 
-    .pwr-profile-picture {
+    .MuiAvatar-root.pwr-profile-picture {
         width: 100%;
         height: 100%;
     }
