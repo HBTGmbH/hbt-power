@@ -11,7 +11,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar/GridListTileBar';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import {ThunkDispatch} from 'redux-thunk';
-import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
+import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 
 /**
  * Properties that are managed by react-redux.
@@ -139,7 +139,6 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
 
 
     render() {
-        const imageSrc = ProfileServiceClient.instance().getProfilePictureUrl(this.props.consultantInfo.profilePictureId());
         return (
             <div>
                 {this.renderMenu()}
@@ -160,10 +159,10 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
                     style={{width: '300px', height: '300px', padding: 8}}
                 >
 
-                    <img className={this.props.consultantInfo.active() ? '' : 'disabled-consultant-img'}
-                         alt={`Profile picture of ${this.props.consultantInfo.initials()}`}
-                         src={imageSrc}
-                    />
+                    <PwrProfilePicture className={this.props.consultantInfo.active() ? '' : 'disabled-consultant-img'}
+                                       variant={'square'} style={{width: '100%', height: '100%'}}
+                                       alt={this.props.consultantInfo.getFullName()}
+                                       pictureId={this.props.consultantInfo.profilePictureId()}/>
                     <GridListTileBar
                         title={this.props.consultantInfo.getFullName()}
                         //actionIcon={this.renderMenu()

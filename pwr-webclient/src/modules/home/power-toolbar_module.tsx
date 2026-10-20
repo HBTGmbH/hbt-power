@@ -14,18 +14,16 @@ import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
-import Avatar from '@material-ui/core/Avatar/Avatar';
 import {ThunkDispatch} from 'redux-thunk';
-import {ProfileServiceClient} from '../../clients/ProfileServiceClient';
+import {PwrProfilePicture} from '../general/pwr-profile-picture';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {matchPath, withRouter} from 'react-router-dom';
 
 interface ToolbarProps {
     loggedInAsAdmin: boolean;
-    hasProfilePicture: boolean;
     statisticsAvailable: boolean;
-    profilePictureSrc: string;
+    profilePictureId: string;
     viewProfiles: Array<ViewProfile>;
     consultantInfo: ConsultantInfoDTO[];
 }
@@ -74,13 +72,11 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     }
 
     static mapStateToProps(state: ApplicationState, _: ToolbarLocalProps): ToolbarProps {
-        const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             loggedInAsAdmin: state.adminReducer.loginStatus === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available,
             viewProfiles: state.viewProfileSlice.viewProfiles.toArray(),
-            profilePictureSrc,
-            hasProfilePicture: !!state.profileStore.consultant.profilePictureId,
+            profilePictureId: state.profileStore.consultant.profilePictureId,
             consultantInfo: [...state.adminReducer.consultantInfo].sort((a, b) => a.name.localeCompare(b.name))
         };
     }
@@ -292,12 +288,10 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
                         {this.renderPower()}
                         {
-                            this.props.hasProfilePicture ?
+                            this.props.profilePictureId ?
                                 <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + initials}>
-                                    <Avatar
-                                      src={this.props.profilePictureSrc}
-                                      style={{width: 40, height: 40}}
-                                    />
+                                    <PwrProfilePicture pictureId={this.props.profilePictureId}
+                                                       style={{width: 40, height: 40}}/>
                                 </Tooltip>
                               : null
                         }

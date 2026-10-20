@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Dropzone from 'react-dropzone';
 import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
-import {Avatar} from '@material-ui/core';
+import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -61,9 +61,8 @@ export class ConsultantEditProfilePicture extends React.Component<ConsultantEdit
 
     private renderAvatar = () => {
         if (!!this.props.profilePictureId && !this.state.uploading) {
-            const url = ProfileServiceClient.instance().getProfilePictureUrl(this.props.profilePictureId);
             return <div style={{width: '200px', height: '200px'}}>
-                <Avatar src={url} style={{width: '100%', height: '100%'}}/>
+                <PwrProfilePicture pictureId={this.props.profilePictureId} style={{width: '100%', height: '100%'}}/>
                 <Fab color="primary"
                      aria-label="remove-consultant-picture"
                      onClick={this.handleDeleteProfilePicture}

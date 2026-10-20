@@ -54,6 +54,7 @@ There are no webclient tests at the moment.
 
 - Redux state in `src/reducers`, components in `src/modules` (`admin`, `home` = profile editing, `general` = shared components).
 - Backend access goes through the axios wrappers in `src/clients` (`XyzServiceClient.instance()`), which handle the loading spinner, payload extraction and error alerts, and re-throw errors.
+- Binary content (profile pictures, report previews) is loaded through these clients as a blob and shown through a blob URL, never as `src`/iframe URL pointing at the API: those requests carry no token and the edge rejects them. Profile pictures go through `PwrProfilePicture` (`modules/general`), which caches them per picture id.
 - Runtime config: `config.js` contains `#PLACEHOLDER`s that `configure_api.sh` replaces from env vars when the nginx container starts. `start:local` sets `REACT_APP_LOCAL_DEV=true`, which serves `config.local.js` and proxies `/api/<service>` to the local ports (`src/setupProxy.js`) and skips Azure login (`CONFIG.LOCAL_DEV`).
 - Static files: images, CSS and data live in `src/` and are imported, so the build serves them with a content hash under `/static/`, which nginx (`default.conf`) caches as `immutable`. `public/` only holds `index.html` and `favicon.png`; everything outside `/static/` is served with `no-cache`.
 - Conventions: render user-facing text through `PowerLocalizer`; use string values in enums (Redux); prefer components from `modules/general`, e.g. `PwrButton` / `PwrIconButton` with the icon on the right, icon buttons need a tooltip.

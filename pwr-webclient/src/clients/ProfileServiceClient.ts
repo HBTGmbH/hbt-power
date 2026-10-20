@@ -187,7 +187,14 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.get(url);
     }
 
-    getProfilePictureUrl(profilePictureId: string): string {
-        return  this.base() + `/profile-pictures/${profilePictureId}`;
+    /**
+     * A profile picture, null if there is none. Loaded with the token, so it can be shown through a blob URL; an img
+     * pointing at the API would not send the token. Use PwrProfilePicture, which also caches the pictures.
+     */
+    public getProfilePicture = (profilePictureId: string): Promise<Blob | null> => {
+        const url = this.base() + `/profile-pictures/${profilePictureId}`;
+        this.beginRequest();
+        return this.getOrNull<Blob>(url, {responseType: 'blob'})
+            .then(blob => blob && blob.size > 0 ? blob : null);
     }
 }

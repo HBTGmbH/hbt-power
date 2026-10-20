@@ -22,7 +22,7 @@ import {Projects} from './elements/project/projects_module';
 import {ProfileSkills} from './elements/skills/profile-skills_module';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
-import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
+import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 import {matchPath} from 'react-router-dom';
 import {Paths} from '../../../Paths';
 import {projectsUrl} from './elements/project/project-url-sync';
@@ -32,7 +32,6 @@ interface ProfileProps {
     suggestions: SuggestionStore;
     activeConsultant: Consultant;
     profile: Profile;
-    profilePictureSrc: string;
     projectsTabUrl: string;
 }
 
@@ -75,12 +74,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     }
 
     static mapStateToProps(state: ApplicationState, ownProps: ProfileLocalProps): ProfileProps {
-        const profilePictureSrc = ProfileServiceClient.instance().getProfilePictureUrl(state.profileStore.consultant.profilePictureId);
         return {
             suggestions: state.suggestionStore,
             activeConsultant: state.profileStore.consultant,
             profile: state.profileStore.profile,
-            profilePictureSrc,
             projectsTabUrl: projectsUrl(ownProps.match.params.initials, state.profileStore)
         };
     }
@@ -189,10 +186,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     <Grid container spacing={2} alignItems={'stretch'}>
                         {this.props.activeConsultant.profilePictureId &&
                         <Grid item xs={12} md={'auto'} className="pwr-profile-picture-cell">
-                            {/* Square, centred and cropped to the full height of the header; hidden if it cannot be loaded */}
-                            <img className="pwr-profile-picture" src={this.props.profilePictureSrc}
-                                 alt={this.consultantName()}
-                                 onError={e => e.currentTarget.style.display = 'none'}/>
+                            {/* Square, centred and cropped to the full height of the header */}
+                            <PwrProfilePicture className="pwr-profile-picture" variant={'rounded'}
+                                               pictureId={this.props.activeConsultant.profilePictureId}
+                                               alt={this.consultantName()}/>
                         </Grid>}
                         <Grid item xs={12} md>
                             <Typography variant={'h5'}>{this.consultantName()}</Typography>
