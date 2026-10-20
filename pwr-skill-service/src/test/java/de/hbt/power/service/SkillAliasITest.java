@@ -217,6 +217,27 @@ public class SkillAliasITest {
     }
 
     @Test
+    public void search_findsNewAliasAtOnce_andNoLongerARemovedOne() throws Exception {
+        assertThat(skillSearcherService.searchSkill("Steuermann", 10)).isEmpty();
+
+        addAlias(kubernetes, "Steuermann");
+        assertThat(skillSearcherService.searchSkill("Steuermann", 10)).containsExactly("Kubernetes");
+
+        mockMvc.perform(delete("/admin/skill/{id}/alias", kubernetes.getId()).param("alias", "Steuermann"))
+                .andExpect(status().isOk());
+        assertThat(skillSearcherService.searchSkill("Steuermann", 10)).isEmpty();
+    }
+
+    @Test
+    public void search_findsTheTargetByTheNameOfAMergedSkill() throws Exception {
+        skill("Kubernetes Lens", null);
+        mockMvc.perform(post("/admin/skill/merge").param("source", "Kubernetes Lens").param("target", "Kubernetes"))
+                .andExpect(status().isOk());
+
+        assertThat(skillSearcherService.searchSkill("Lens", 10)).containsExactly("Kubernetes");
+    }
+
+    @Test
     public void tree_containsAliases() throws Exception {
         addAlias(kubernetes, "K8S");
 
