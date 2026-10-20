@@ -1,70 +1,86 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Typography} from '@material-ui/core';
-import {TemplateClient} from '../../../clients/TemplateClient';
+import {CircularProgress, Typography} from '@material-ui/core';
+import {ViewProfileServiceClient} from '../../../clients/ViewProfileServiceClient';
+import {PowerApiError} from '../../../clients/PowerHttpClient';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 
 interface ReportPreviewLocalProps {
-    templateId: string,
+    templateId: string;
+    initials: string;
+    viewProfileId: string;
 }
 
 type PreviewState =
     | { status: 'loading' }
-    | { status: 'missing' }
-    | { status: 'failed' }
+    | { status: 'failed', textKey: string }
     | { status: 'loaded', url: string };
 
 const PreviewMessage = (props: { textKey: string }) =>
     <Typography color={'textSecondary'} style={{padding: '16px'}}>{PowerLocalize.get(props.textKey)}</Typography>;
 
 /**
- * Shows the stored PDF preview of a template. It is loaded with the token and shown through a blob URL: an iframe
- * pointing at the API directly would not send the token, and the edge would reject the request.
+ * 422: the template cannot be rendered with this data, e.g. an element higher than the page
+ */
+const failureTextKey = (error: PowerApiError) =>
+    error && error.status === 422 ? 'ReportPreview.CannotRender' : 'ReportPreview.Failed';
+
+/**
+ * Live preview of a report: the template filled with the data of the view profile, rendered as PDF by the report
+ * service and not stored. It is loaded with the token and shown through a blob URL: an iframe pointing at the API
+ * directly would not send the token, and the edge would reject the request. Rendered again only when template, consultant
+ * or view profile change.
  */
 export const ReportPreview = (props: ReportPreviewLocalProps) => {
     const [preview, setPreview] = useState<PreviewState>({status: 'loading'});
+    const complete = !!props.templateId && !!props.initials && !!props.viewProfileId;
 
     useEffect(() => {
-        if (!props.templateId) {
+        if (!complete) {
             return undefined;
         }
         let url: string | null = null;
         let current = true;
         setPreview({status: 'loading'});
-        TemplateClient.instance().getPreviewPdf(props.templateId)
+        ViewProfileServiceClient.instance().getReportPreview(props.initials, props.viewProfileId, props.templateId)
             .then(pdf => {
                 if (!current) {
-                    return;
-                }
-                if (!pdf) {
-                    setPreview({status: 'missing'});
                     return;
                 }
                 url = URL.createObjectURL(pdf);
                 setPreview({status: 'loaded', url});
             })
-            .catch(() => current && setPreview({status: 'failed'}));
+            .catch((error: PowerApiError) => current && setPreview({status: 'failed', textKey: failureTextKey(error)}));
         return () => {
             current = false;
             if (url) {
                 URL.revokeObjectURL(url);
             }
         };
-    }, [props.templateId]);
+    }, [complete, props.templateId, props.initials, props.viewProfileId]);
 
     if (!props.templateId) {
         return <PreviewMessage textKey={'ReportPreview.SelectTemplate'}/>;
     }
+    if (!complete) {
+        return <PreviewMessage textKey={'ReportPreview.SelectViewProfile'}/>;
+    }
     switch (preview.status) {
         case 'loading':
-            return <PreviewMessage textKey={'ReportPreview.Loading'}/>;
-        case 'missing':
-            return <PreviewMessage textKey={'ReportPreview.NotAvailable'}/>;
+            return <div style={{display: 'flex', alignItems: 'center', padding: '16px'}}>
+                <CircularProgress size={24}/>
+                <PreviewMessage textKey={'ReportPreview.Rendering'}/>
+            </div>;
         case 'failed':
-            return <PreviewMessage textKey={'ReportPreview.Failed'}/>;
+            return <PreviewMessage textKey={preview.textKey}/>;
         case 'loaded':
-            return <iframe src={preview.url} title={PowerLocalize.get('ReportPreview.Title')}
-                           style={{width: '100%', height: '100%', border: 'none'}}/>;
+            return <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+                <Typography variant={'caption'} color={'textSecondary'} style={{padding: '4px 8px'}}>
+                    {PowerLocalize.get('ReportPreview.PdfHint')}
+                </Typography>
+                <iframe src={preview.url} title={PowerLocalize.get('ReportPreview.Title')}
+                        style={{width: '100%', flex: 1, border: 'none'}}/>
+            </div>;
     }
 };

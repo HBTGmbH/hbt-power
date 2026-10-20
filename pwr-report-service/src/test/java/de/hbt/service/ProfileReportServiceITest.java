@@ -11,7 +11,6 @@ import de.hbt.repository.DBFileRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +30,7 @@ import javax.transaction.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -111,16 +111,20 @@ class ProfileReportServiceITest {
     void shouldUsePlaceholderWithoutProfilePicture() {
         Mockito.when(profilePictureClient.getPictureByInitials("tst"))
                 .thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND, "Not Found", HttpHeaders.EMPTY, null, null));
+        // The picture file is deleted after rendering, so it is read while the profile is converted
+        AtomicReference<byte[]> picture = new AtomicReference<>();
+        Mockito.doAnswer(invocation -> {
+            picture.set(Files.readAllBytes(Paths.get(invocation.<String>getArgument(1))));
+            return invocation.callRealMethod();
+        }).when(modelConvertService).convert(Mockito.any(), Mockito.anyString());
 
         Long reportDataId = generateReport();
 
         ReportData persistedData = reportDataService.getReportDataById(reportDataId);
         assertThat(persistedData.getReportStatus()).isEqualTo(ReportStatus.DONE);
         assertThat(persistedData.getData()).hasSizeGreaterThan(1000);
-        ArgumentCaptor<String> picturePath = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(modelConvertService).convert(Mockito.any(), picturePath.capture());
         byte[] placeholder = new ClassPathResource(ProfileReportService.PROFILE_PICTURE_PLACEHOLDER).getInputStream().readAllBytes();
-        assertThat(Files.readAllBytes(Paths.get(picturePath.getValue()))).isEqualTo(placeholder);
+        assertThat(picture.get()).isEqualTo(placeholder);
     }
 
     @Test

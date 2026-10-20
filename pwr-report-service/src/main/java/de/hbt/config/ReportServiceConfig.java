@@ -9,22 +9,13 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "export")
 public class ReportServiceConfig {
 
-
     /**
-     * datasource used for preview rendering. Contains some sample data that will be written into the sample.
+     * XML data source and profile picture of a rendering are temporary files; keep them for debugging with false
      */
-    private String xmlFilePath;
-
-    /**
-     * Profile pictures are stored here. BIRT needs them on the filesystem, and this is where the
-     * profile pictures are stored.
-     */
-    private String imgLocation;
-
     private boolean deleteDataSource = true;
 
     /**
-     * Rendering a preview (PDF, HTML) is cancelled after this time, see BirtRendering
+     * Rendering a PDF preview is cancelled after this time, see BirtRendering
      */
     private long previewTimeLimitSeconds = 60;
 }

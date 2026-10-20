@@ -28,10 +28,6 @@ export class TemplateActionCreator {
         dispatch(TemplateActions.SetTemplate(template));
     }
 
-    private static PreviewReceived(id: string, response: AxiosResponse, dispatch: redux.Dispatch) {
-        dispatch(TemplateActions.SetPreview(id, 'hardcoded filename', 'hardcoded content', response.data));
-    }
-
     public static DownloadFile(response: AxiosResponse) {
         console.info('File received');
         let blob: Blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
@@ -98,32 +94,6 @@ export class TemplateActionCreator {
         };
     }
 
-
-    public static AsyncLoadPreview(id: string) {
-        return function (dispatch: redux.Dispatch) {
-            if (id !== '') {
-                dispatch(CrossCuttingActionCreator.startRequest());
-                templateClient.getPreview(id)
-                    .then((response: AxiosResponse) => TemplateActionCreator.PreviewReceived(id, response.data, dispatch))
-                    .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
-
-                    .catch((error) => console.error(error))
-                    .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
-            }
-        };
-    }
-
-
-    public static AsyncLoadAllPreviews() {
-        return function (dispatch: redux.Dispatch) {
-            dispatch(CrossCuttingActionCreator.startRequest());
-            templateClient.getAllPreviews()
-                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
-
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
-        };
-    }
 
     public static AsyncLoadAllFiles() {
         return function (dispatch: redux.Dispatch) {

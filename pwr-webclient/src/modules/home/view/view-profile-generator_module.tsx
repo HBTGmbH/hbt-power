@@ -20,6 +20,7 @@ import {ThunkDispatch} from 'redux-thunk';
 
 
 interface ViewProfileGeneratorProps {
+    initials?: string;
     viewProfile?: ViewProfile;
     template?: Template;
     allTemplates?: Array<Template>;
@@ -53,6 +54,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileGeneratorLocalProps): ViewProfileGeneratorProps {
         return {
+            initials: state.profileStore.consultant.initials,
             viewProfile: state.viewProfileSlice.viewProfiles.get(localProps.viewProfileId),
             allTemplates: state.templateSlice.templates.toArray(),
         };
@@ -179,7 +181,9 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                             style={{marginLeft: '2px'}}> {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].name : ' '} </h4>
                         {/* Full height of the screen: toolbar and template name above (~115px), description below (~35px) */}
                         <div className={'row'} style={{marginLeft: '2px', height: 'calc(100vh - 150px)'}}>
-                            <ReportPreview templateId={this.state.activeTemplateId}/>
+                            <ReportPreview templateId={this.state.activeTemplateId}
+                                           initials={this.props.initials}
+                                           viewProfileId={this.props.viewProfileId}/>
                         </div>
 
                         <div className={'row'} style={{marginLeft: '2px'}}>

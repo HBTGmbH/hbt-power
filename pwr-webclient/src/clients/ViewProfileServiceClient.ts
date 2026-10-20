@@ -157,6 +157,18 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.post(url);
     }
 
+    /**
+     * The report as PDF with the data of the view profile, rendered live and not stored. Loaded with the token, so it
+     * can be shown through a blob URL; an iframe pointing at the API would not send the token.
+     * Rejects with status 422, without an error alert, if the template cannot be rendered with this data.
+     */
+    public getReportPreview(initials: string, viewProfileId: string, templateId: string): Promise<Blob> {
+        const url = this.base() + '/view/' + initials + '/view/' + viewProfileId + '/' + templateId + '/preview';
+        this.beginRequest();
+        return this.getExpecting<Blob>(url, [422], {responseType: 'blob'})
+            .then(blob => new Blob([blob], {type: 'application/pdf'}));
+    }
+
     public patchPartialUpdate(initials: string, viewProfileId: string, body: any): Promise<ViewProfile> {
         const url = this.base() + '/view/' + initials + '/view/' + viewProfileId + '/info';
         this.beginRequest();

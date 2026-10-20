@@ -6,7 +6,6 @@ import de.hbt.model.ReportInfo;
 import de.hbt.model.ReportStatus;
 import de.hbt.model.export.Profil;
 import de.hbt.model.export.birt.DocBirtExportHandler;
-import de.hbt.model.export.birt.HtmlBirtExportHandler;
 import de.hbt.model.export.birt.PdfBirtExportHandler;
 import de.hbt.model.files.DBFile;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.function.BiFunction;
 
 @Slf4j
 @Service
@@ -39,7 +37,6 @@ public class ProfileReportService {
 
     private final DocBirtExportHandler docBirtExportHandler;
     private final DBFileStorageService storageService;
-    private final HtmlBirtExportHandler htmlBirtExportHandler;
     private final PdfBirtExportHandler pdfBirtExportHandler;
     private final ReportDataService reportDataService;
     private final ModelConvertService modelConvertService;
@@ -49,13 +46,11 @@ public class ProfileReportService {
     @Autowired
     public ProfileReportService(DocBirtExportHandler docBirtExportHandler,
                                 DBFileStorageService storageService,
-                                HtmlBirtExportHandler htmlBirtExportHandler,
                                 PdfBirtExportHandler pdfBirtExportHandler,
                                 ReportDataService reportDataService,
                                 ModelConvertService modelConvertService, ReportServiceConfig reportServiceConfig, ProfilePictureClient profilePictureClient) {
         this.docBirtExportHandler = docBirtExportHandler;
         this.storageService = storageService;
-        this.htmlBirtExportHandler = htmlBirtExportHandler;
         this.pdfBirtExportHandler = pdfBirtExportHandler;
         this.reportDataService = reportDataService;
         this.modelConvertService = modelConvertService;
@@ -64,70 +59,69 @@ public class ProfileReportService {
     }
 
     /**
-     * Invokes asynchronous generation of the export document. Exports are always based on
-     * an XML data source that has been previously marshalled from the input data.
-     * This file has been created by the spawning thread and has to be deleted once this asynchronous
-     * action completes
+     * Invokes asynchronous generation of the export document (DOCX) and stores it in the report history.
      */
     @Async
     public void generateDocXExport(ReportInfo reportInfo, Long reportDataId) throws RuntimeException {
-        File xmlFile = null;
         try {
-            log.debug("[Export][{}] Incoming render request. ReportTemplateIdFileId: {}", reportInfo.initials, reportInfo.reportTemplate.fileId);
-            String pictureFilePath = saveImageOnDisk(reportInfo.initials);
-            DBFile dbFile = storageService.getFile(reportInfo.reportTemplate.fileId);
-            Profil profile = modelConvertService.convert(reportInfo, pictureFilePath);
-            log.debug("[Export][{}]Profile converted, now generationg XML datasource file.", reportInfo.initials);
-            xmlFile = marshalToXML(profile);
-            log.debug("[Export][{}] Creating report based on XML data source {}", reportInfo.initials, xmlFile.getAbsolutePath());
-            InputStream designFileStream = new ByteArrayInputStream(dbFile.getData());
-            byte[] reportContent = docBirtExportHandler.exportProfile(reportInfo.initials, xmlFile, designFileStream);
+            byte[] reportContent = render(reportInfo,
+                    (design, dataSource) -> docBirtExportHandler.exportProfile(reportInfo.initials, dataSource, design));
             log.debug("[Export][{}] Created .docx with {} bytes", reportInfo.initials, reportContent.length);
             reportDataService.updateReportData(reportDataId, reportContent);
             log.debug("[Export][{}] Completed", reportInfo.initials);
         } catch (Exception e) {
             log.error("[Export] Failed to create report", e);
             setReportDataError(reportDataId);
+        }
+    }
+
+    /**
+     * Renders the report as PDF, the same way as {@link #generateDocXExport}, but only in memory: nothing is stored.
+     *
+     * @throws de.hbt.exceptions.ReportRenderException if BIRT cannot render the template
+     */
+    public byte[] renderPdfPreview(ReportInfo reportInfo) {
+        byte[] pdf = render(reportInfo,
+                (design, dataSource) -> pdfBirtExportHandler.exportProfile(design, dataSource.getAbsolutePath()));
+        log.debug("[Preview][{}] Created PDF with {} bytes", reportInfo.initials, pdf.length);
+        return pdf;
+    }
+
+    /**
+     * Exports are always based on an XML data source that is marshalled from the report info, together with the
+     * profile picture on disk. Both are deleted afterwards.
+     */
+    private byte[] render(ReportInfo reportInfo, BiFunction<InputStream, File, byte[]> export) {
+        File picture = null;
+        File xmlFile = null;
+        try {
+            log.debug("[Export][{}] Incoming render request. ReportTemplateIdFileId: {}", reportInfo.initials, reportInfo.reportTemplate.fileId);
+            picture = saveImageOnDisk(reportInfo.initials);
+            DBFile dbFile = storageService.getFile(reportInfo.reportTemplate.fileId);
+            Profil profile = modelConvertService.convert(reportInfo, picture.getAbsolutePath());
+            xmlFile = marshalToXML(profile);
+            log.debug("[Export][{}] Creating report based on XML data source {}", reportInfo.initials, xmlFile.getAbsolutePath());
+            return export.apply(new ByteArrayInputStream(dbFile.getData()), xmlFile);
         } finally {
-            if (xmlFile != null && reportServiceConfig.isDeleteDataSource()) {
-                //noinspection ResultOfMethodCallIgnored
-                xmlFile.delete();
+            if (reportServiceConfig.isDeleteDataSource()) {
+                deleteQuietly(xmlFile);
+                deleteQuietly(picture);
             } else {
                 log.debug("[Export][{}] Data source not deleted", reportInfo.initials);
             }
         }
     }
 
+    private static void deleteQuietly(File file) {
+        if (file != null) {
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+        }
+    }
+
     private void setReportDataError(Long reportDataId) {
         reportDataService.updateReportData(reportDataId, ReportStatus.ERROR);
     }
-
-    /**
-     * Renders the design as HTML with the sample data of the preview data source and stores it.
-     *
-     * @return id of the stored file
-     */
-    public String generateHTMLFile(String designId) {
-        DBFile file = storageService.getFile(designId);
-        byte[] html = htmlBirtExportHandler.exportProfile(new ByteArrayInputStream(file.getData()), reportServiceConfig.getXmlFilePath());
-        return storageService.storeFile(previewFilename("html"), "text/html", html).getId();
-    }
-
-    /**
-     * Renders the design as PDF with the sample data of the preview data source and stores it.
-     *
-     * @return id of the stored file
-     */
-    public String generatePDFFile(String designId) {
-        DBFile file = storageService.getFile(designId);
-        byte[] pdf = pdfBirtExportHandler.exportProfile(new ByteArrayInputStream(file.getData()), reportServiceConfig.getXmlFilePath());
-        return storageService.storeFile(previewFilename("pdf"), "application/pdf", pdf).getId();
-    }
-
-    private static String previewFilename(String extension) {
-        return "preview_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + "." + extension;
-    }
-
 
     /**
      * Marshalls the profile into an XML file
@@ -148,7 +142,7 @@ public class ProfileReportService {
         }
     }
 
-    private String saveImageOnDisk(String initials) {
+    private File saveImageOnDisk(String initials) {
         ResponseEntity<byte[]> response;
         try {
             response = profilePictureClient.getPictureByInitials(initials);
@@ -171,18 +165,18 @@ public class ProfileReportService {
             File tempFile = File.createTempFile("foto_" + initials, fileEnding);
             tempFile.deleteOnExit();
             Files.write(tempFile.toPath(), response.getBody(), StandardOpenOption.WRITE);
-            return tempFile.getAbsolutePath();
+            return tempFile;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String savePlaceholderOnDisk(String initials) {
+    private File savePlaceholderOnDisk(String initials) {
         try (InputStream placeholder = new ClassPathResource(PROFILE_PICTURE_PLACEHOLDER).getInputStream()) {
             File tempFile = File.createTempFile("foto_" + initials, ".png");
             tempFile.deleteOnExit();
             Files.copy(placeholder, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            return tempFile.getAbsolutePath();
+            return tempFile;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

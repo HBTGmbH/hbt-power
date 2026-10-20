@@ -7,12 +7,9 @@ services:
     environment:
       DB_USER: pwr-report-service
       DB_PASS: changeit
-      PWR_REPORT_FILE_PATH: tmpdata
       DB_URL: jdbc:mariadb://report_db:3306/report
       DB_DRIVER_CLASS_NAME: org.mariadb.jdbc.Driver
       DB_HIBERNATE_DDL_AUTO: update
-    volumes:
-      - /imagelocation:/tmpdata/images # We need to mount the images because, for now, nginx has to deliver them, too
     depends_on:
       - report_db
   report_db:

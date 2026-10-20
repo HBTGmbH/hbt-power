@@ -24,13 +24,6 @@ export interface ChangeTemplateAction extends AbstractAction {
     user: string,
 }
 
-export interface SetPreviewAction extends AbstractAction {
-    templateId: string,
-    filename: string,
-    content: string,
-    file: File,
-}
-
 export class TemplateActions {
 
 
@@ -90,17 +83,5 @@ export class TemplateActions {
         return {
             type: ActionType.TemplateRequestFailed,
         };
-    }
-
-
-    public static SetPreview(templateId: string, filename: string, content: string, file: File): SetPreviewAction {
-        return {
-            type: ActionType.SetPreview,
-            templateId: templateId,
-            filename: filename,
-            content: content,
-            file: file,
-        };
-
     }
 }

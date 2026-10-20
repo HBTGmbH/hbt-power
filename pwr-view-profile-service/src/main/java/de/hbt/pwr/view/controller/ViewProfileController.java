@@ -14,11 +14,14 @@ import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.net.URI;
 import java.util.List;
@@ -172,15 +175,43 @@ public class ViewProfileController {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         ReportTemplate template =
                 (templateId.equals("-1") ? null : reportTemplateService.getTemplate(templateId));
-        ReportInfo reportInfo = ReportInfo.builder().viewProfile(viewProfile).initials(initials)
-                .name(viewProfile.getViewProfileInfo().getConsultantName())
-                .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate())
-                .reportTemplate(template).build();
-        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo, "DOC",
+        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo(initials, viewProfile, template), "DOC",
                 viewProfile.getViewProfileInfo().getCharsPerLine());
         URI location =
                 ofNullable(response).map(HttpEntity::getHeaders).map(HttpHeaders::getLocation)
                         .orElse(URI.create(""));
         return ResponseEntity.created(location).body(location.toString());
+    }
+
+    /**
+     * The report as PDF, rendered live with the data of the view profile, the same way as {@link #generateReport}.
+     * Nothing is stored. 422 with the reason as text if the template cannot be rendered with this data.
+     */
+    @ApiOperation(value = "Renders a preview of the report as PDF",
+            notes = "Same data as the generated report, but rendered as PDF and not stored in the report history.")
+    @GetMapping(path = "/{initials}/view/{viewProfileId}/{templateId}/preview")
+    public ResponseEntity<byte[]> previewReport(@PathVariable("initials") String initials,
+                                                @PathVariable("viewProfileId") String viewProfileId,
+                                                @PathVariable("templateId") String templateId) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        ReportTemplate template = reportTemplateService.getTemplate(templateId);
+        try {
+            byte[] pdf = reportServiceClient.renderPdfPreview(reportInfo(initials, viewProfile, template));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .cacheControl(CacheControl.noStore())
+                    .body(pdf);
+        } catch (HttpClientErrorException.UnprocessableEntity e) {
+            return ResponseEntity.unprocessableEntity()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getResponseBodyAsByteArray());
+        }
+    }
+
+    private static ReportInfo reportInfo(String initials, ViewProfile viewProfile, ReportTemplate template) {
+        return ReportInfo.builder().viewProfile(viewProfile).initials(initials)
+                .name(viewProfile.getViewProfileInfo().getConsultantName())
+                .birthDate(viewProfile.getViewProfileInfo().getConsultantBirthDate())
+                .reportTemplate(template).build();
     }
 }

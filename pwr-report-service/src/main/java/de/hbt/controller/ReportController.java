@@ -1,5 +1,6 @@
 package de.hbt.controller;
 
+import de.hbt.exceptions.ReportRenderException;
 import de.hbt.model.ReportData;
 import de.hbt.model.ReportInfo;
 import de.hbt.service.ProfileReportService;
@@ -8,7 +9,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,5 +78,28 @@ public class ReportController {
             throw new RuntimeException("Unsupported type " + type);
         }
         return ResponseEntity.ok("Started Report Generation");
+    }
+
+    /**
+     * The report as PDF, rendered live and only in memory: no entry in the report history, nothing stored.
+     */
+    @PostMapping(value = "/preview", consumes = "application/json")
+    public ResponseEntity<byte[]> preview(@RequestBody ReportInfo reportInfo) {
+        LOG.info("Rendering preview for " + reportInfo.initials);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .cacheControl(CacheControl.noStore())
+                .body(profileReportService.renderPdfPreview(reportInfo));
+    }
+
+    /**
+     * The template cannot be rendered with this data (e.g. an element higher than the page)
+     */
+    @ExceptionHandler(ReportRenderException.class)
+    public ResponseEntity<String> renderingFailed(ReportRenderException e) {
+        LOG.warn("Rendering failed", e);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(e.getMessage());
     }
 }
