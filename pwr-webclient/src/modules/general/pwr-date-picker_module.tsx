@@ -2,7 +2,6 @@ import * as React from 'react';
 import Icon from '@material-ui/core/Icon/Icon';
 import {DatePickerType} from '../../model/DatePickerType';
 import { KeyboardDatePicker } from '@material-ui/pickers'
-import Grid from '@material-ui/core/Grid/Grid';
 import {PwrIconButton} from './pwr-icon-button';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {DatePickerView} from '@material-ui/pickers/DatePicker/DatePicker';
@@ -73,38 +72,31 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
     };
 
     render() {
-        // spacing 1 = 8px: the 8 is still the Material-UI v3 value in pixels, in v4 it meant 64px and pushed the grid
-        // 32px beyond its parent on both sides, out of the screen on phones (#49)
-        return <Grid container item direction={'row'} justify={'flex-start'} alignItems={'flex-end'} spacing={1}>
-            <Grid item md>
-                <KeyboardDatePicker
-                    error={!!(this.props.error) ? this.props.error : false}
-                    autoOk
-                    disabled={this.props.disabled}
-                    views={this.getViews()}
-                    label={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
-                    placeholder={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
-                    value={this.props.placeholderDate}
-                    onChange={this.onChangeDate}
-                    format={this.getFormat()}
-                    openTo="year"
-                    keyboardIcon={<Icon className={'material-icons'}>date_range</Icon>}
-                />
-            </Grid>
+        // Field and open end button in one row, the button always 8 px next to the field, whatever the width of the
+        // surrounding grid (#40); a grid item would give the button its share of the width instead
+        return <div className="pwr-date-picker">
+            <KeyboardDatePicker
+                error={!!(this.props.error) ? this.props.error : false}
+                autoOk
+                disabled={this.props.disabled}
+                views={this.getViews()}
+                label={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
+                placeholder={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
+                value={this.props.placeholderDate}
+                onChange={this.onChangeDate}
+                format={this.getFormat()}
+                openTo="year"
+                keyboardIcon={<Icon className={'material-icons'}>date_range</Icon>}
+            />
             {this.props.disableOpenEnd ? <></> :
-                <Grid item md={2}>
-                    <PwrIconButton
-                        iconName={'send'}
-                        tooltip={'Open End'}
-                        disabled={this.props.disabled}
-                        style={{fontSize: '1em', marginRight: 0}}
-                        onClick={() => {
-                            this.props.onChange(null);
-                        }}>
-                        Open End
-                    </PwrIconButton>
-                </Grid>}
-        </Grid>;
+                <PwrIconButton
+                    iconName={'send'}
+                    tooltip={PowerLocalize.get('DatePicker.OpenEnd')}
+                    disabled={this.props.disabled}
+                    onClick={() => {
+                        this.props.onChange(null);
+                    }}/>}
+        </div>;
     }
 }
 

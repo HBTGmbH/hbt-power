@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Checkbox, Dialog, Icon, ListItemSecondaryAction} from '@material-ui/core';
+import {Checkbox, Dialog, Icon, ListItemSecondaryAction, Tooltip} from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {PwrButton} from '../pwr-button';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -7,7 +7,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
-import Typography from '@material-ui/core/Typography';
 import {Project} from '../../../reducers/profile-new/profile/model/Project';
 import {SuggestionServiceClient} from '../../../reducers/suggestions/client/SuggestionServiceClient';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -23,7 +22,22 @@ interface SuggestProjectSkillsState {
     dialogOpen: boolean;
     suggestedSkills: string[];
     selectedSkills: string[];
+    /** False until the first answer */
+    loaded: boolean;
 }
+
+/**
+ * What the recommendation depends on (ProfileService: other recent projects with the same client and similar roles,
+ * without the skills the project has already)
+ */
+function recommendationKey(project: Project): string {
+    const client = project.client ? project.client.name : '';
+    const roles = (project.projectRoles || []).map(role => role.name).sort().join('|');
+    const skills = (project.skills || []).map(skill => skill.name).sort().join('|');
+    return [client, roles, skills, project.startDate, project.endDate].join('#');
+}
+
+const RELOAD_DELAY_MS = 400;
 
 export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsProps, SuggestProjectSkillsState> {
     constructor(props) {
@@ -31,15 +45,40 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
         this.state = {
             dialogOpen: false,
             suggestedSkills: [],
-            selectedSkills: []
+            selectedSkills: [],
+            loaded: false
         };
+    }
+
+    private reloadTimer: ReturnType<typeof setTimeout> | null = null;
+    private unmounted = false;
+
+    componentDidMount() {
+        this.getRecommendedSkills();
+    }
+
+    componentDidUpdate(prevProps: SuggestProjectSkillsProps) {
+        // Client, roles, period and skills change while typing: load once the input rests
+        if (recommendationKey(prevProps.project) !== recommendationKey(this.props.project)) {
+            if (this.reloadTimer) {
+                clearTimeout(this.reloadTimer);
+            }
+            this.reloadTimer = setTimeout(this.getRecommendedSkills, RELOAD_DELAY_MS);
+        }
+    }
+
+    componentWillUnmount() {
+        this.unmounted = true;
+        if (this.reloadTimer) {
+            clearTimeout(this.reloadTimer);
+        }
     }
 
     openDialog = () => {
         this.setState({
-            dialogOpen: true
+            dialogOpen: true,
+            selectedSkills: []
         });
-        this.getRecommendedSkills();
     };
 
     closeDialog = () => {
@@ -49,10 +88,20 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
     };
 
     getRecommendedSkills = () => {
-        SuggestionServiceClient.instance().getSkillsRecommendation(this.props.project).then((skill) => {
-            const skillNames = skill.map(s => s.name).sort(compareNames);
-            this.setState({suggestedSkills: skillNames, selectedSkills: []});
-        });
+        this.reloadTimer = null;
+        const key = recommendationKey(this.props.project);
+        SuggestionServiceClient.instance().getSkillsRecommendation(this.props.project)
+            .then(skills => skills.map(s => s.name).sort(compareNames))
+            .catch(error => {
+                console.error('Skill suggestions not available', error);
+                return [] as string[];
+            })
+            .then(skillNames => {
+                // An answer to an older state of the project is dropped, a newer request is on its way
+                if (!this.unmounted && key === recommendationKey(this.props.project)) {
+                    this.setState({suggestedSkills: skillNames, loaded: true});
+                }
+            });
     };
 
 
@@ -82,14 +131,23 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
 
     render() {
         return (<div>
-            {/* A help for adding skills: a text button, so Save stays the only highlighted action of the form (#41) */}
-            <PwrButton color="primary" text={PowerLocalize.get('Profile.Project.SuggestSkills')}
-                       icon={<Icon className="material-icons">lightbulb</Icon>} onClick={this.openDialog}/>
+            {/* A help for adding skills: a text button, so Save stays the only highlighted action of the form (#41).
+                Disabled until loaded and without suggestions; the span lets the tooltip work on a disabled button */}
+            <Tooltip title={this.state.loaded && this.state.suggestedSkills.length === 0
+                ? PowerLocalize.get('Profile.Project.NoSkillSuggestions') : ''}>
+                <span>
+                    <PwrButton color="primary"
+                               text={this.state.loaded
+                                   ? PowerLocalize.getFormatted('Profile.Project.SuggestSkillsCount', this.state.suggestedSkills.length)
+                                   : PowerLocalize.get('Profile.Project.SuggestSkills')}
+                               icon={<Icon className="material-icons">lightbulb</Icon>}
+                               disabled={!this.state.loaded || this.state.suggestedSkills.length === 0}
+                               onClick={this.openDialog}/>
+                </span>
+            </Tooltip>
             <Dialog open={this.state.dialogOpen} onClose={this.closeDialog}>
                 <DialogTitle>{PowerLocalize.get('Profile.Project.SkillSugestions')}</DialogTitle>
                 <DialogContent>
-                    {this.state.suggestedSkills.length === 0 &&
-                    <Typography color="textSecondary">{PowerLocalize.get('Profile.Project.NoSkillSuggestions')}</Typography>}
                     <List>{
                         this.state.suggestedSkills.map((skill, index) => <div key={index}>
                             <ListItem>

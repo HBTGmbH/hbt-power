@@ -285,6 +285,13 @@ body {
     margin-left: 32px;
 }
 
+/* Date picker: the open end button always the tight space (8 px) next to the field (#40) */
+.pwr-date-picker {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
 /* Link with an icon after the text, e.g. a jump to another page (#40) */
 .pwr-link-with-icon {
     display: inline-flex;
