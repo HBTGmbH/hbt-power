@@ -20,6 +20,8 @@ import {AppInfoButton} from '../metadata/app-info_module';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {matchPath, withRouter} from 'react-router-dom';
+import {ProfileStore} from '../../reducers/profile-new/ProfileStore';
+import {projectsUrl} from './profile/elements/project/project-url-sync';
 
 interface ToolbarProps {
     loggedInAsAdmin: boolean;
@@ -27,6 +29,7 @@ interface ToolbarProps {
     profilePictureId: string;
     viewProfiles: Array<ViewProfile>;
     consultantInfo: ConsultantInfoDTO[];
+    profileStore: ProfileStore;
 }
 
 /**
@@ -47,6 +50,7 @@ interface ToolbarLocalProps {
  */
 interface ToolbarLocalState {
     menuOpen: boolean;
+    baseDataOpen: boolean;
     statisticsOpen: boolean;
     profilesOpen: boolean;
     menuAnchorEl: any;
@@ -66,6 +70,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         super(props);
         this.state = {
             menuOpen: false,
+            baseDataOpen: false,
             statisticsOpen: false,
             profilesOpen: false,
             menuAnchorEl: null,
@@ -78,7 +83,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             statisticsAvailable: state.statisticsReducer.available,
             viewProfiles: state.viewProfileSlice.viewProfiles.toArray(),
             profilePictureId: state.profileStore.consultant.profilePictureId,
-            consultantInfo: [...state.adminReducer.consultantInfo].sort((a, b) => a.name.localeCompare(b.name))
+            consultantInfo: [...state.adminReducer.consultantInfo].sort((a, b) => a.name.localeCompare(b.name)),
+            profileStore: state.profileStore
         };
     }
 
@@ -91,13 +97,16 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     }
 
     private handleMenuOpen = (event: any) => {
-        this.setState({menuOpen: true, menuAnchorEl: event.currentTarget});
+        // On a base data page its sub-navigation is open, so the current section is visible
+        const baseDataOpen = !!matchPath(this.props.location.pathname, {path: Paths.USER_PROFILE});
+        this.setState({menuOpen: true, menuAnchorEl: event.currentTarget, baseDataOpen});
     };
 
     private handleMenuClose = () => {
         this.setState({
             menuOpen: false,
             menuAnchorEl: null,
+            baseDataOpen: false,
             statisticsOpen: false,
             profilesOpen: false
         });
@@ -163,6 +172,35 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         </MenuItem>;
     };
 
+    private renderExpandIcon = (open: boolean) => {
+        return <Icon className="material-icons">{open ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}</Icon>;
+    };
+
+    /**
+     * The section of the base data page that the current URL shows: projects and skills have their own paths,
+     * everything else under the profile path is the consultant section.
+     */
+    private currentBaseDataSection(): string | undefined {
+        const pathname = this.props.location.pathname;
+        return [Paths.USER_PROFILE_PROJECTS, Paths.USER_PROFILE_SKILLS, Paths.USER_PROFILE]
+            .find(path => matchPath(pathname, {path}));
+    }
+
+    private renderBaseDataSection = (section: string, target: string, icon: string, localizationKey: string) => {
+        return <MenuItem
+            key={localizationKey}
+            selected={this.currentBaseDataSection() === section}
+            onClick={() => this.handleMenuNavigate(target)}
+        >
+            <ListItemIcon>
+                <Icon className="material-icons">{icon}</Icon>
+            </ListItemIcon>
+            <ListItemText>
+                {PowerLocalize.get(localizationKey)}
+            </ListItemText>
+        </MenuItem>;
+    };
+
     private renderMenu = (initials: string) => {
         return (<div>
 
@@ -181,15 +219,22 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             {PowerLocalize.get('Menu.Home')}
                         </ListItemText>
                     </MenuItem>
-                    <MenuItem
-                        key={'2'}
-                        onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_PROFILE, {initials}))}
-                    >
+                    <MenuItem key={'2'} button
+                              onClick={() => this.setState({baseDataOpen: !this.state.baseDataOpen})}>
                         <Icon className="material-icons">person</Icon>
                         <ListItemText>
                             {PowerLocalize.get('Menu.BaseData')}
                         </ListItemText>
+                        {this.renderExpandIcon(this.state.baseDataOpen)}
                     </MenuItem>
+                    <Collapse in={this.state.baseDataOpen}>
+                        {this.renderBaseDataSection(Paths.USER_PROFILE, Paths.build(Paths.USER_PROFILE, {initials}),
+                            'account_box', 'Menu.BaseData.Consultant')}
+                        {this.renderBaseDataSection(Paths.USER_PROFILE_PROJECTS, projectsUrl(initials, this.props.profileStore),
+                            'work', 'Menu.BaseData.Projects')}
+                        {this.renderBaseDataSection(Paths.USER_PROFILE_SKILLS, Paths.build(Paths.USER_PROFILE_SKILLS, {initials}),
+                            'star', 'Menu.BaseData.Skills')}
+                    </Collapse>
 
                     {this.props.viewProfiles.length > 0 ?
                         <div>
@@ -197,7 +242,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                       onClick={() => this.setState({profilesOpen: !this.state.profilesOpen})}>
                                 <Icon className="material-icons">remove_red_eye</Icon>
                                 <ListItemText>{PowerLocalize.get('Menu.ViewProfile')}</ListItemText>
-                                <Icon className="material-icons">keyboard_arrow_right</Icon>
+                                {this.renderExpandIcon(this.state.profilesOpen)}
                             </MenuItem>
                             <Collapse in={this.state.profilesOpen}>
                                 {this.props.viewProfiles.map(vp => this.renderViewProfile(vp, initials))}
@@ -213,7 +258,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                               onClick={() => this.setState({statisticsOpen: !this.state.statisticsOpen})}>
                                         <Icon className="material-icons">insert_chart</Icon>
                                         <ListItemText>{PowerLocalize.get('Menu.Statistics')}</ListItemText>
-                                        <Icon className="material-icons">keyboard_arrow_right</Icon>
+                                        {this.renderExpandIcon(this.state.statisticsOpen)}
                                     </MenuItem>
                                     <Collapse in={this.state.statisticsOpen}>
                                         <MenuItem

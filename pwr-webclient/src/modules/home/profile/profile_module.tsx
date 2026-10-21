@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {Divider, Paper, Tab, Tabs} from '@material-ui/core';
+import {Divider, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
@@ -25,14 +25,12 @@ import {ThunkDispatch} from 'redux-thunk';
 import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 import {matchPath} from 'react-router-dom';
 import {Paths} from '../../../Paths';
-import {projectsUrl} from './elements/project/project-url-sync';
 
 
 interface ProfileProps {
     suggestions: SuggestionStore;
     activeConsultant: Consultant;
     profile: Profile;
-    projectsTabUrl: string;
 }
 
 /**
@@ -45,7 +43,6 @@ interface ProfileLocalProps {
     // Provided by the route
     match?: any;
     location?: any;
-    history?: any;
 }
 
 /**
@@ -73,12 +70,11 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         this.state = {};
     }
 
-    static mapStateToProps(state: ApplicationState, ownProps: ProfileLocalProps): ProfileProps {
+    static mapStateToProps(state: ApplicationState, _: ProfileLocalProps): ProfileProps {
         return {
             suggestions: state.suggestionStore,
             activeConsultant: state.profileStore.consultant,
-            profile: state.profileStore.profile,
-            projectsTabUrl: projectsUrl(ownProps.match.params.initials, state.profileStore)
+            profile: state.profileStore.profile
         };
     }
 
@@ -143,7 +139,7 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     };
 
     /**
-     * The tab is part of the URL, so a reload or a link shows the same tab
+     * The section is part of the URL; the menu (power-toolbar_module) navigates between them
      */
     private tabValue(): number {
         const path = this.props.location.pathname;
@@ -156,29 +152,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return PROFILE_TAB;
     }
 
-    private selectTab = (tab: number) => {
-        const initials = this.props.match.params.initials;
-        if (tab === PROJECTS_TAB) {
-            this.props.history.push(this.props.projectsTabUrl);
-        } else {
-            this.props.history.push(Paths.build(tab === SKILLS_TAB ? Paths.USER_PROFILE_SKILLS : Paths.USER_PROFILE, {initials}));
-        }
-    };
-
     render() {
         const tabValue = this.tabValue();
         return <Paper className="mui-margin">
-            <Tabs
-                value={tabValue}
-                centered
-                onChange={(e: any, v: any) => this.selectTab(v)}
-            >
-                <Tab textColor={'secondary'} value={PROFILE_TAB}
-                     label={PowerLocalize.get('ProfileModule.Tabs.Profile.Title')}/>
-                <Tab textColor={'primary'} value={PROJECTS_TAB}
-                     label={PowerLocalize.get('ProfileModule.Tabs.Projects.Title')}/>
-                <Tab value={SKILLS_TAB} label="Skills"/>
-            </Tabs>
             <div>
                 {tabValue === PROFILE_TAB &&
                 <div className="mui-margin">
