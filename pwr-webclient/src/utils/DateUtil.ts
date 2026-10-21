@@ -43,6 +43,9 @@ const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat(language,
 const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsOnlyYear);
 const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDate);
 const formatFullDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDateTime);
+const formatNumericDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+});
 
 function verifyDataType(date: Date | string): Date {
     if (!date) {
@@ -75,6 +78,56 @@ export function formatToFullLocalizedDateTime(date: Date): string {
         return '???';
     }
     return formatFullDateTime.format(date);
+}
+
+const formatRelative = new Intl.RelativeTimeFormat(language, {numeric: 'auto'});
+
+/**
+ * Units for {@link formatToRelativeTime}: the largest unit whose threshold the distance reaches
+ */
+const RELATIVE_UNITS: Array<{ unit: Intl.RelativeTimeFormatUnit, seconds: number, from: number }> = [
+    {unit: 'year', seconds: 365 * 24 * 3600, from: 330 * 24 * 3600},
+    {unit: 'month', seconds: 30 * 24 * 3600, from: 26 * 24 * 3600},
+    {unit: 'day', seconds: 24 * 3600, from: 22 * 3600},
+    {unit: 'hour', seconds: 3600, from: 45 * 60},
+    {unit: 'minute', seconds: 60, from: 45},
+];
+
+/**
+ * Fuzzy time relative to now, e.g. "vor 3 Stunden", "gestern", "jetzt" (#121)
+ */
+export function formatToRelativeTime(date: Date | string, now: Date = new Date()): string {
+    const verified = verifyDataType(date);
+    if (!verified) {
+        return '???';
+    }
+    const seconds = (verified.getTime() - now.getTime()) / 1000;
+    const unit = RELATIVE_UNITS.find(candidate => Math.abs(seconds) >= candidate.from);
+    if (!unit) {
+        return formatRelative.format(0, 'second');
+    }
+    if (unit.unit === 'day') {
+        // Calendar days: 01:00 seen at 23:30 is today, not "gestern"
+        const days = calendarDays(verified, now);
+        return days === 0 ? formatRelative.format(Math.round(seconds / 3600), 'hour') : formatRelative.format(days, 'day');
+    }
+    return formatRelative.format(Math.round(seconds / unit.seconds), unit.unit);
+}
+
+function calendarDays(date: Date, now: Date): number {
+    const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    return Math.round((startOfDay(date) - startOfDay(now)) / (24 * 3600 * 1000));
+}
+
+/**
+ * Compact date and time, e.g. 21.10.2026, 21:28: for narrow places like a table cell on a phone
+ */
+export function formatToNumericDateTime(date: Date): string {
+    date = verifyDataType(date);
+    if (!date) {
+        return '???';
+    }
+    return formatNumericDateTime.format(date);
 }
 
 /**

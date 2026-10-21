@@ -449,3 +449,10 @@ body {
         display: none !important;
     }
 }
+
+/* Only on wide screens, e.g. the time column of the info dialog (#121) */
+@media (max-width: 599px) {
+    .pwr-only-wide {
+        display: none !important;
+    }
+}

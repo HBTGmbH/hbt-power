@@ -22,9 +22,11 @@ import {PwrButton} from '../general/pwr-button';
 import {AppInfoClient} from '../../clients/AppInfoClient';
 import {ComponentInfo} from '../../model/metadata/ComponentInfo';
 import {OIDCService} from '../../OIDCService';
-import {formatToFullLocalizedDateTime} from '../../utils/DateUtil';
+import {formatToNumericDateTime, formatToRelativeTime} from '../../utils/DateUtil';
 
 const COMMIT_URL = 'https://github.com/HBTGmbH/hbt-power/commit/';
+// Flush with the headings above; the dialog fits a phone that way (#121)
+const FIRST_COLUMN = {paddingLeft: 0};
 
 const LoggedIn = () => {
     const account = OIDCService.instance().getCurrentAccount();
@@ -41,26 +43,44 @@ const LoggedIn = () => {
     </>;
 };
 
+/**
+ * Fuzzy time reads faster ("vor 3 Stunden"); the exact time is in the tooltip (#121)
+ */
+const CommitTime = (props: { info: ComponentInfo }) => {
+    if (!props.info.commitTime) {
+        return null;
+    }
+    return <Tooltip title={formatToNumericDateTime(props.info.commitTime)}>
+        <Typography color={'textSecondary'} variant={'body2'} style={{whiteSpace: 'nowrap'}} component={'span'}>
+            {formatToRelativeTime(props.info.commitTime)}
+        </Typography>
+    </Tooltip>;
+};
+
 const ComponentRow = (props: { info: ComponentInfo }) => {
     const {info} = props;
     if (!info.available) {
         return <TableRow>
-            <TableCell>{info.name}</TableCell>
-            <TableCell colSpan={2}>
+            <TableCell style={FIRST_COLUMN}>{info.name}</TableCell>
+            <TableCell>
                 <Typography color={'textSecondary'} variant={'body2'}>{PowerLocalize.get('AppInfo.Unavailable')}</Typography>
             </TableCell>
+            <TableCell className="pwr-only-wide"/>
         </TableRow>;
     }
     return <TableRow>
-        <TableCell>{info.name}</TableCell>
+        <TableCell style={FIRST_COLUMN}>{info.name}</TableCell>
         <TableCell>
             {info.commitId
                 ? <Link href={COMMIT_URL + info.commitId} target={'_blank'} rel={'noopener noreferrer'}>
                     <span style={{fontFamily: 'monospace'}}>{info.commitId}</span>
                 </Link>
                 : '–'}
+            {/* Narrow screens: the time below the commit, so two columns fit on a phone (#121) */}
+            <div className="pwr-only-narrow"><CommitTime info={info}/></div>
         </TableCell>
-        <TableCell>{info.commitTime ? formatToFullLocalizedDateTime(info.commitTime) : '–'}</TableCell>
+        {/* Wide screens: the time in a column of its own */}
+        <TableCell className="pwr-only-wide"><CommitTime info={info}/></TableCell>
     </TableRow>;
 };
 
@@ -88,15 +108,14 @@ export const AppInfoDialog = (props: { open: boolean, onClose(): void }) => {
         <DialogContent>
             <Typography variant={'subtitle2'}>{PowerLocalize.get('AppInfo.LoggedIn')}</Typography>
             <LoggedIn/>
-            <Typography variant={'subtitle2'} style={{marginTop: '16px'}}>{PowerLocalize.get('AppInfo.Components')}</Typography>
             {!components
                 ? <Typography color={'textSecondary'}>{PowerLocalize.get('AppInfo.Loading')}</Typography>
-                : <Table size={'small'}>
+                : <Table size={'small'} style={{marginTop: '16px'}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>{PowerLocalize.get('AppInfo.Component')}</TableCell>
+                            <TableCell style={FIRST_COLUMN}>{PowerLocalize.get('AppInfo.Component')}</TableCell>
                             <TableCell>{PowerLocalize.get('AppInfo.Commit')}</TableCell>
-                            <TableCell>{PowerLocalize.get('AppInfo.CommitTime')}</TableCell>
+                            <TableCell className="pwr-only-wide">{PowerLocalize.get('AppInfo.CommitTime')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
