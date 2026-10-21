@@ -54,13 +54,13 @@ public class FileUploadController {
         return ResponseEntity.ok(dbFileStorageService.allFiles());
     }
 
+    /**
+     * Succeeds for a file that is already gone too: deleting a template deletes its files, a missing one must not
+     * make that fail (#112)
+     */
     @DeleteMapping("{fileId}")
     public ResponseEntity deleteFile(@PathVariable String fileId){
-        DBFile dbFile = dbFileStorageService.getFile(fileId);
-        if ( dbFile != null){
-            dbFileStorageService.deleteFile(fileId);
-        }
-
+        dbFileStorageService.deleteFile(fileId);
         return ResponseEntity.ok().build();
     }
 }
