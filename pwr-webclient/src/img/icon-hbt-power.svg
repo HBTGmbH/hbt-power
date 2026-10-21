@@ -8,11 +8,11 @@
   </defs>
   <g class="ink" fill="none" stroke="url(#hbt-split)" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter">
     <!-- keyboard from bottom left to top right, outline open where the handle crosses it -->
-    <path d="M61.91 71.81L24.43 109.28L52.72 137.57L90.19 100.09M71.81 61.91L109.28 24.43L137.57 52.72L100.09 90.19"/>
+    <path d="M59.08 74.64L24.43 109.28L52.72 137.57L87.36 102.92M74.64 59.08L109.28 24.43L137.57 52.72L102.92 87.36"/>
     <!-- keys at both ends -->
     <path d="M58.37 92.31L52.72 97.97M45.64 105.04L39.99 110.70M69.69 103.63L64.03 109.28M56.96 116.36L51.30 122.01M92.31 58.37L97.97 52.72M105.04 45.64L110.70 39.99M103.63 69.69L109.28 64.03M116.36 56.96L122.01 51.30"/>
-    <!-- hammer from top left to bottom right, lying on the keyboard -->
-    <path d="M59.79 28.67L73.93 42.82L42.82 73.93L28.67 59.79Z"/>
-    <line x1="58.37" y1="58.37" x2="123.43" y2="123.43"/>
+    <!-- hammer from top left to bottom right, lying on the keyboard: head and handle as outlines -->
+    <path d="M59.79 20.19L79.59 39.99L39.99 79.59L20.19 59.79Z"/>
+    <path d="M55.54 64.03L120.60 129.08L129.08 120.60L64.03 55.54"/>
   </g>
 </svg>
