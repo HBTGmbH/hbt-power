@@ -46,6 +46,8 @@ export const SkillSearcher = (props: SkillSearcherProps) => {
     props = {...defaultProps, ...props};
     const [searchText, setSearchText] = useState(props.initialValue);
     const [skills, setSkills] = useState([] as Array<string>);
+    // skill name -> alias by which the search found it
+    const [matchingAliases, setMatchingAliases] = useState(new Map<string, string>());
 
     useEffect(() => {
         if (props.value) {
@@ -67,8 +69,13 @@ export const SkillSearcher = (props: SkillSearcherProps) => {
             props.onValueChange(searchText);
             setSearchText(searchText)
             if (!!searchText && searchText.trim().length > 0) {
-                SkillServiceClient.instance().getSearchSkill(searchText)
-                    .then(skills => setSkills(skills))
+                SkillServiceClient.instance().getSkillSuggestions(searchText)
+                    .then(suggestions => {
+                        setSkills(suggestions.map(suggestion => suggestion.name));
+                        setMatchingAliases(new Map(suggestions
+                            .filter(suggestion => !!suggestion.matchingAlias)
+                            .map(suggestion => [suggestion.name, suggestion.matchingAlias] as [string, string])));
+                    })
                     .catch((error: any) => console.error((error)));
             }
         }
@@ -80,6 +87,7 @@ export const SkillSearcher = (props: SkillSearcherProps) => {
         label={props.label}
         id={props.id}
         data={skills}
+        suggestionHint={name => matchingAliases.get(name)}
         // The skill service ranks the suggestions and also finds them by alias (K8S -> Kubernetes): no filtering here
         disableFiltering
         searchTerm={searchText}

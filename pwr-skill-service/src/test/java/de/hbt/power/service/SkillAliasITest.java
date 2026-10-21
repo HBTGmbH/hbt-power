@@ -238,6 +238,19 @@ public class SkillAliasITest {
     }
 
     @Test
+    public void suggestions_endpoint_returnsNameAndMatchingAlias() throws Exception {
+        addAlias(kubernetes, "Steuermann");
+
+        mockMvc.perform(get("/skill/suggestions").param("searchterm", "steuermann").param("maxResults", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Kubernetes"))
+                .andExpect(jsonPath("$[0].matchingAlias").value("Steuermann"));
+        mockMvc.perform(get("/skill/suggestions").param("searchterm", "Kubernetes").param("maxResults", "5"))
+                .andExpect(jsonPath("$[0].name").value("Kubernetes"))
+                .andExpect(jsonPath("$[0].matchingAlias").doesNotExist());
+    }
+
+    @Test
     public void tree_containsAliases() throws Exception {
         addAlias(kubernetes, "K8S");
 

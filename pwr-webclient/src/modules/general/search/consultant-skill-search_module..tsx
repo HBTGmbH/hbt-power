@@ -20,6 +20,8 @@ interface ConsultantSkillSearchState {
     foundConsultants: Immutable.List<ConsultantSkillInfo>;
     currentSearchSkills: Immutable.List<string>;
     currentSuggestSkills: Array<string>;
+    // skill name -> alias by which the search found it
+    matchingAliases: Map<string, string>;
     searchTerm: string;
 }
 
@@ -34,6 +36,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
             foundConsultants: Immutable.List<ConsultantSkillInfo>(),
             currentSearchSkills: Immutable.List<string>(),
             currentSuggestSkills: [],
+            matchingAliases: new Map<string, string>(),
             searchTerm: ''
         };
     }
@@ -75,8 +78,13 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
             this.setState({
                 searchTerm: value
             });
-            SkillServiceClient.instance().getSearchSkill(value)
-                .then(currentSuggestSkills => this.setState({currentSuggestSkills}))
+            SkillServiceClient.instance().getSkillSuggestions(value)
+                .then(suggestions => this.setState({
+                    currentSuggestSkills: suggestions.map(suggestion => suggestion.name),
+                    matchingAliases: new Map(suggestions
+                        .filter(suggestion => !!suggestion.matchingAlias)
+                        .map(suggestion => [suggestion.name, suggestion.matchingAlias] as [string, string]))
+                }))
                 .catch((error: any) => console.error((error)));
         }
     };
@@ -99,6 +107,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
                 <PwrAutoComplete fullWidth={true}
                                  disableFiltering={true}
                                  data={this.state.currentSuggestSkills}
+                                 suggestionHint={name => this.state.matchingAliases.get(name)}
                                  searchTerm={this.state.searchTerm}
                                  chips={this.state.currentSearchSkills.toArray()}
                                  label={'Skills'}

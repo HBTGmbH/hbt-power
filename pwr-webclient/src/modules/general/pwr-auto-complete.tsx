@@ -48,6 +48,12 @@ export interface PwrAutoCompleteProps {
     validationError?: ValidationError;
     disableFiltering?: boolean;
 
+    /**
+     * Additional text shown after a suggestion, separated by " - ", e.g. the alias by which a skill was found. Not part
+     * of the value that is selected.
+     */
+    suggestionHint?(suggestion: string): string | null | undefined;
+
     onAdd?(item: string);
 
     onRemove?(item: string);
@@ -161,23 +167,28 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         if (suggestion === query && this.props.data.indexOf(suggestion) < 0) {
             return null;
         }
-        const matches = match(suggestion, query);
-        const parts = parse(suggestion, matches);
+        const hint = this.props.suggestionHint ? this.props.suggestionHint(suggestion) : null;
         return (
             <MenuItem selected={isHighlighted} component="div">
                 <div>
-                    {parts.map((part, index) => {
-                        return part.highlight ? (
-                            <span key={String(index)} style={{fontWeight: 500}}>{part.text}</span>
-                        ) : (
-                            <strong key={String(index)} style={{fontWeight: 300}}>
-                                {part.text}
-                            </strong>
-                        );
-                    })}
+                    {this.renderHighlighted(suggestion, query)}
+                    {/* " - " and not parentheses: many skill names end with an abbreviation in parentheses */}
+                    {hint && <span style={{opacity: 0.6}}> - {this.renderHighlighted(hint, query)}</span>}
                 </div>
             </MenuItem>
         );
+    };
+
+    private renderHighlighted = (text: string, query: string) => {
+        return parse(text, match(text, query)).map((part, index) => {
+            return part.highlight ? (
+                <span key={String(index)} style={{fontWeight: 500}}>{part.text}</span>
+            ) : (
+                <strong key={String(index)} style={{fontWeight: 300}}>
+                    {part.text}
+                </strong>
+            );
+        });
     };
 
     handleSuggestionSelected = (event, {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}) => {
