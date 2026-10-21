@@ -160,7 +160,9 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
         const full = [hints,
             check.lastEdited ? PowerLocalize.getFormatted('ConsultantTile.ProfileCheck.Changed',
                 formatToNumericDateTime(new Date(check.lastEdited))) : null,
-            onlyConfirmed].filter(part => !!part).join(' · ');
+            onlyConfirmed,
+            check.lastConfirmed ? PowerLocalize.getFormatted('ConsultantTile.ProfileCheck.LastConfirmed',
+                formatToRelativeTime(check.lastConfirmed)) : null].filter(part => !!part).join(' · ');
         return <Tooltip title={full}>
             <span>
                 {onlyConfirmed ? onlyConfirmed + ' · ' : ''}{hints}

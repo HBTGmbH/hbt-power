@@ -521,6 +521,7 @@
   "ConsultantTile.ProfileCheck.Hints": "{0} Hinweise",
   "ConsultantTile.ProfileCheck.Changed": "zuletzt geändert am {0}",
   "ConsultantTile.ProfileCheck.OnlyConfirmed": "{0}× nur bestätigt",
+  "ConsultantTile.ProfileCheck.LastConfirmed": "zuletzt bestätigt {0}",
   "Generator.Outdated.Title": "Dein Profil ist nicht ganz auf Stand. Generieren geht trotzdem; vorher aktualisieren?",
   "Report.History": "Bisher generierte Profile",
   "Report.ViewProfile": "View-Profil",
