@@ -16,8 +16,10 @@ import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/
 import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
 import {getRandomGreeting} from '../../model/PwrConstants';
 import {Paths} from '../../Paths';
-import {PwrRaisedButton} from '../general/pwr-raised-button';
+import {PwrButton} from '../general/pwr-button';
+import {PwrRow} from '../general/pwr-form-section';
 import Add from '@material-ui/icons/Add';
+import History from '@material-ui/icons/History';
 import {ThunkDispatch} from 'redux-thunk';
 import {withRouter} from 'react-router-dom';
 
@@ -163,14 +165,15 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     onSave={this.handleCreateViewProfile}
                                     type="new"
                                 />
-                                <div className={'col-md-6'}>
-                                    <PwrRaisedButton color={'primary'} onClick={() => this.setViewDialogOpen(true)}
-                                                     icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
-                                </div>
-                                <div className={'col-md-6'}>
-                                    <PwrRaisedButton color={'primary'}
-                                                     onClick={() => this.props.navigateTo(Paths.build(Paths.USER_REPORTS, {initials}))}
-                                                     icon={<></>} text={PowerLocalize.get('Report.History')}/>
+                                {/* Text buttons: the highlighted action is "Generieren" on each card (#41) */}
+                                <div className="mui-margin">
+                                    <PwrRow>
+                                        <PwrButton color={'primary'} onClick={() => this.setViewDialogOpen(true)}
+                                                   icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
+                                        <PwrButton color={'primary'}
+                                                   onClick={() => this.props.navigateTo(Paths.build(Paths.USER_REPORTS, {initials}))}
+                                                   icon={<History/>} text={PowerLocalize.get('Report.History')}/>
+                                    </PwrRow>
                                 </div>
                                 <div className="row">
                                     {this.props.viewProfiles.map(viewProfile => {
