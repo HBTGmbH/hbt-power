@@ -17,14 +17,21 @@ import {ProfileEntry} from '../reducers/profile-new/profile/model/ProfileEntry';
 import {toIdx} from '../reducers/profile-new/profile/model/LanguageLevel';
 import {LocalDate} from './DateUtil';
 
+/**
+ * Order of names in lists: without regard to case, umlauts with their base letter, numbers by value (Java 8 before
+ * Java 11)
+ */
+const NAME_COLLATOR = new Intl.Collator('de', {sensitivity: 'accent', numeric: true});
+
+export const compareNames = (name1: string, name2: string): number => NAME_COLLATOR.compare(name1 || '', name2 || '');
+
 export const PROJECTS_BY_START_DATE = ComparatorBuilder
     .comparing<Project>(nullSafe(t => t.startDate))
     .definingNullAs(NullMode.HIGHEST)
     .build();
 
-export const PROFILE_SKILLS_BY_NAME = ComparatorBuilder
-    .comparing<ProfileSkill>(skill => skill.name)
-    .build();
+export const PROFILE_SKILLS_BY_NAME = (skill1: ProfileSkill, skill2: ProfileSkill): number =>
+    compareNames(skill1.name, skill2.name);
 
 export const NAME_ENTITY_BY_NAME = ComparatorBuilder
     .comparing<NameEntity>(n => n.name)
@@ -40,10 +47,11 @@ export class Comparators {
         }
     }
 
+    /**
+     * Descending by {@link compareNames}: callers pass (s2, s1) for ascending order
+     */
     public static compareString(s1: string, s2: string) {
-        if (s1 > s2) return -1;
-        if (s1 == s2) return 0;
-        return 1;
+        return compareNames(s2, s1);
     }
 
     public static compareDate(d1: Date | LocalDate, d2: Date | LocalDate) {

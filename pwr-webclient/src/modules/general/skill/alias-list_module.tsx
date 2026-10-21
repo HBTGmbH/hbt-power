@@ -4,6 +4,7 @@ import * as Immutable from 'immutable';
 import {List, ListItem, ListItemSecondaryAction, ListItemText, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrIconButton} from '../pwr-icon-button';
+import {compareNames} from '../../../utils/Comparators';
 
 interface AliasListProps {
     /** Name of the skill the aliases belong to */
@@ -30,7 +31,7 @@ export const AliasList = (props: AliasListProps) => {
         }
     };
 
-    const sortedAliases = props.aliases.sort((a, b) => a.localeCompare(b, 'de', {sensitivity: 'base'}));
+    const sortedAliases = props.aliases.sort(compareNames);
 
     return <div style={{paddingLeft: '16px', paddingRight: '16px'}}>
         {sortedAliases.isEmpty()
