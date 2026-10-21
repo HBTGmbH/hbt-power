@@ -7,6 +7,7 @@ import {SkillNode, SkillTreeNode} from '../../../model/skill/SkillTreeNode';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import {PwrTree, PwrTreeNode} from '../tree/pwr-tree';
 import Label from '@material-ui/icons/Label';
+import {compareNames} from '../../../utils/Comparators';
 
 interface SkillTreeProps {
     root: SkillTreeNode;
@@ -161,7 +162,7 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             <ListItemIcon>
                 <Icon className="material-icons">label_outline</Icon>
             </ListItemIcon>
-            <ListItemText secondary={skill.aliases().isEmpty() ? undefined : skill.aliases().sort().join(', ')}>
+            <ListItemText secondary={skill.aliases().isEmpty() ? undefined : skill.aliases().sort(compareNames).join(', ')}>
                 {skill.qualifier()}
                 {skill.isCustom() ? <SkillTree.CustomIcon margin={'24px'}/> : false}
             </ListItemText>

@@ -10,6 +10,7 @@ import Divider from '@material-ui/core/Divider';
 import {Project} from '../../../reducers/profile-new/profile/model/Project';
 import {SuggestionServiceClient} from '../../../reducers/suggestions/client/SuggestionServiceClient';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {compareNames} from '../../../utils/Comparators';
 
 interface SuggestProjectSkillsProps {
     project: Project;
@@ -48,7 +49,7 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
 
     getRecommendedSkills = () => {
         SuggestionServiceClient.instance().getSkillsRecommendation(this.props.project).then((skill) => {
-            const skillNames = skill.map(s => s.name);
+            const skillNames = skill.map(s => s.name).sort(compareNames);
             this.setState({suggestedSkills: skillNames, selectedSkills: []});
         });
     };

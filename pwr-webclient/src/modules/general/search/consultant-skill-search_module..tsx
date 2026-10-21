@@ -5,6 +5,7 @@ import {APISkill} from '../../../model/APIProfile';
 import {PwrAutoComplete} from '../pwr-auto-complete';
 import {StatisticsServiceClient} from '../../../clients/StatisticsServiceClient';
 import {SkillServiceClient} from '../../../clients/SkillServiceClient';
+import {compareNames} from '../../../utils/Comparators';
 
 
 interface ConsultantSkillInfo {
@@ -91,7 +92,7 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
 
     private renderConsultantInfo = (consultant: ConsultantSkillInfo) => {
         let res: string = consultant.fullName;
-        consultant.skills.forEach(skill => {
+        [...consultant.skills].sort((skill1, skill2) => compareNames(skill1.name, skill2.name)).forEach(skill => {
             res += ' / ';
             res += skill.name;
             res += ': ';

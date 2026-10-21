@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,6 +52,20 @@ public class ViewProfileSkillSortTests {
         setUpSkillsInDisplayData();
         viewProfileSortService.sortSkillsInDisplayByName(viewProfile, 0, true);
         assertThat(viewProfile.getDisplayCategories().get(0).getDisplaySkills()).containsExactly(skillA, skillB, skillC, skillD);
+    }
+
+    @Test
+    public void skillsInDisplayCategoryShouldBeSortedAlphabetically_ignoringCase_withUmlautsAndNumbersInOrder() {
+        Category category = new Category("Category");
+        List<String> names = Arrays.asList("Zabbix", "jQuery", "Java 11", "Ärztesoftware", "Java 8", "Apache Ant", "kotlin.test", "Java");
+        // the builder adds each skill to its display category
+        names.forEach(name -> Skill.builder().name(name).rating(3).displayCategory(category).build());
+        viewProfile.getDisplayCategories().add(category);
+
+        viewProfileSortService.sortSkillsInDisplayByName(viewProfile, 0, true);
+
+        assertThat(viewProfile.getDisplayCategories().get(0).getDisplaySkills()).extracting(Skill::getName)
+                .containsExactly("Apache Ant", "Ärztesoftware", "Java", "Java 8", "Java 11", "jQuery", "kotlin.test", "Zabbix");
     }
 
     @Test

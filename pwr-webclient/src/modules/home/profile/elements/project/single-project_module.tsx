@@ -31,6 +31,7 @@ import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-sk
 import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
 import {Alerts} from '../../../../../utils/Alerts';
 import {ThunkDispatch} from 'redux-thunk';
+import {PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
 
 interface ProjectProps {
     initials: string;
@@ -304,7 +305,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <PwrSpacer/>
                     <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
                     <div className="Pwr-Content-Container">
-                        {this.project().skills.map(skill => this.toSkillChip(skill))}
+                        {[...this.project().skills].sort(PROFILE_SKILLS_BY_NAME).map(skill => this.toSkillChip(skill))}
                     </div>
                 </div>
                 {
