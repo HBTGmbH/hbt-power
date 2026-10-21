@@ -383,6 +383,16 @@ body {
     border-bottom-color: white;
 }
 
+.pwr-consultant-select-field {
+    width: 280px;
+    max-width: 100%;
+}
+
+.pwr-profile-select-message {
+    max-width: 280px;
+    text-align: center;
+}
+
 .pwr-consultant-select-popper {
     width: 320px !important;
     max-width: 90vw;

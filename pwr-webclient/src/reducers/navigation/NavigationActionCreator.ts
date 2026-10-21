@@ -40,6 +40,14 @@ export function navigate(to: string, dispatch: ThunkDispatch<any, any, any>): vo
   dispatch(NavigationActionCreator.SetCurrentLocation(to));
 }
 
+/**
+ * Like navigate, but replaces the current history entry: for redirects, so going back doesn't land on them again
+ */
+export function navigateReplacing(to: string, dispatch: ThunkDispatch<any, any, any>): void {
+  PWR_HISTORY.replace(to);
+  dispatch(NavigationActionCreator.SetCurrentLocation(to));
+}
+
 export const NavigationActionCreator = {
   showSuccess: (msg: string) => Alerts.showSuccess(msg),
   success: (msg: string) => (response: any) => {

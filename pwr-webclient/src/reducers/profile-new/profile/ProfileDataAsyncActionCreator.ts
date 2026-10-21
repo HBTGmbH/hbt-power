@@ -84,8 +84,10 @@ export class ProfileDataAsyncActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             if (!!initials && initials.length > 0) {
                 profileUpdateServiceClient.getFullProfile(initials).then(value => {
-                    dispatch(profileLoadAction(value));
-                });
+                    if (value) {
+                        dispatch(profileLoadAction(value));
+                    }
+                }).catch(error => console.error('Failed to load profile', error));
             }
         };
     }

@@ -83,10 +83,13 @@ export class ProfileUpdateServiceClient extends PowerHttpClient {
 
     // ---------------------- LOAD
 
-    public getFullProfile(initials: string): Promise<Profile> {
+    /**
+     * Null if there is no profile with these initials: AsyncLoadProfile reports that (#135)
+     */
+    public getFullProfile(initials: string): Promise<Profile | null> {
         const url = this.getFullProfileUrl(initials);
         this.beginRequest();
-        return this.get(url);
+        return this.getOrNull(url);
     }
 
     public getBaseProfile(initials: string): Promise<BaseProfile> {
