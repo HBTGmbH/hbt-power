@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField/TextField';
 import {PowerLocalize} from '../localization/PowerLocalizer';
 import iconPower from '../img/icon-hbt-power.svg';
 import {PwrRaisedButton} from './general/pwr-raised-button';
+import {PwrSpacer} from './general/pwr-spacer_module';
 import ArrowRight from '@material-ui/icons/ArrowRight';
 import Link from '@material-ui/core/Link/Link';
 import {connect} from 'react-redux';
@@ -99,17 +100,19 @@ class ProfileSelectModule extends React.Component<ProfileSelectDispatch & Profil
                             <div className="vertical-align">
                                 <h1>{PowerLocalize.get('ProfileSelect.Title')}</h1>
                             </div>
-                            <div className="vertical-align pwr-margin-bottom">
+                            <div className="vertical-align">
                                 <div className="fittingContainer">
                                     <div className="vertical-align">
                                         {this.renderInputField()}
                                     </div>
                                 </div>
                             </div>
-                            <div className="vertical-align pwr-margin-bottom">
+                            <PwrSpacer size="tight"/>
+                            <div className="vertical-align">
                                 <PwrRaisedButton color="primary" icon={<ArrowRight/>} onClick={this.openProfile}
                                                  text={PowerLocalize.get('ProfileSelect.Open')}/>
                             </div>
+                            <PwrSpacer size="tight"/>
                             {
                                 this.props.isAdmin && <div className="vertical-align">
                                     <Link component="button" variant="body1" onClick={this.openAdminArea}>

@@ -38,7 +38,6 @@ interface ProfileEntryDispatch {
 interface ProfileEntryState {
     editId: number;
     selectEntry: ProfileEntry;
-    deleteConfirm: boolean;
     searchText: string;
     addNew: boolean;
     open: boolean;
@@ -55,7 +54,6 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.state = {
             editId: -1,
             selectEntry: null,
-            deleteConfirm: false,
             searchText: '',
             addNew: false,
             open: false,
@@ -66,7 +64,6 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
         this.setState({
             editId: -1,
             selectEntry: null,
-            deleteConfirm: false,
             searchText: '',
             addNew: false,
             open: false,
@@ -162,19 +159,23 @@ class ProfileEntryModule extends React.Component<ProfileEntryProps & ProfileEntr
                 <ProfileEntryDialog open={this.state.open} onClose={this.handleDialogOnClose} type={this.props.type}
                                     entry={this.state.selectEntry}/>
                 <Grid container spacing={0} alignItems={'flex-start'}>
-                    <Grid item xs>
-                        <PwrFormSubCaption>
-                            {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Header`)}
-                        </PwrFormSubCaption>
+                    {/* Heading and add button in one row; the button right-aligned with the divider (edge="end") */}
+                    <Grid item xs={12} container alignItems={'center'} wrap={'nowrap'}>
+                        <Grid item xs>
+                            <PwrFormSubCaption>
+                                {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Header`)}
+                            </PwrFormSubCaption>
+                        </Grid>
+                        <Grid item>
+                            <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}
+                                           iconButtonProps={{edge: 'end'}}
+                                           onClick={this.handleNewButton}/>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
                         <p>
                             {PowerLocalize.get(`ProfileEntryType.${this.props.type}.Info`)}
                         </p>
-                    </Grid>
-                    {/* Right-aligned with the divider (edge="end") and level with the heading */}
-                    <Grid item>
-                        <PwrIconButton iconName={'add'} tooltip={PowerLocalize.get('Action.Add')}
-                                       iconButtonProps={{edge: 'end'}} style={{marginTop: '-10px'}}
-                                       onClick={this.handleNewButton}/>
                     </Grid>
                     <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
                         <Divider variant={'fullWidth'}

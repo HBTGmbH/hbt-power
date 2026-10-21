@@ -177,7 +177,6 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                         onProfilePictureIdChange={this.setProfilePictureId}
                     >
                         <LimitedTextField
-                            className="pwr-margin-top pwr-margin-bottom"
                             maxCharacters={100}
                             hideProgress={true}
                             value={this.state.consultantInfo.initials()}

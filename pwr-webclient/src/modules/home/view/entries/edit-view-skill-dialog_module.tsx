@@ -5,6 +5,7 @@ import {ViewProfile} from '../../../../model/view/ViewProfile';
 import {ViewCategory} from '../../../../model/view/ViewCategory';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
+import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {ViewProfileActionCreator} from '../../../../reducers/view/ViewProfileActionCreator';
 import {connect} from 'react-redux';
@@ -75,7 +76,7 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
     private renderParents = () => {
         return this.props.parents.map(parent =>
             <div key={parent.name}>
-                <span className="bold-mui" style={{marginLeft: '40px'}}>|</span><br/>
+                <span className="bold-mui pwr-category-tree-connector">|</span><br/>
                 <FormControlLabel label={parent.name} control={<Checkbox
                     color={'primary'}
                     checked={this.isDisplayCategoryOf(parent.name)}
@@ -90,11 +91,11 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
                            onClose={this.props.onClose}
                            fullWidth={true}
             >
-                <DialogTitle>{'Display Category for ' + this.props.skill.name}</DialogTitle>
+                <DialogTitle>{PowerLocalize.getFormatted('ViewProfile.SkillCategory.Title', this.props.skill.name)}</DialogTitle>
                 <DialogContent>
-                    Current Category Tree (Selected is display)
-                    <PwrSpacer double/>
-                    <span className="bold-mui" style={{marginLeft: '40px'}}>{this.props.skill.name}</span>
+                    {PowerLocalize.get('ViewProfile.SkillCategory.Description')}
+                    <PwrSpacer/>
+                    <span className="bold-mui pwr-category-tree-connector">{this.props.skill.name}</span>
                     {this.renderParents()}
                 </DialogContent>
             </Dialog>;

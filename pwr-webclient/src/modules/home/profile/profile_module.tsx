@@ -23,6 +23,7 @@ import {ProfileSkills} from './elements/skills/profile-skills_module';
 import {formatToShortDisplay} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
 import {PwrProfilePicture} from '../../general/pwr-profile-picture';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {matchPath} from 'react-router-dom';
 import {Paths} from '../../../Paths';
 
@@ -175,34 +176,42 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             <ProfileDescription/>
                         </Grid>
                     </Grid>
-                    <Divider style={{marginTop: '16px'}}/>
-
-
-                    <Grid container spacing={2} className="mui-margin">
+                    {/* Spacing scale (#40): the entry blocks are sections, 32 px apart (16 px grid gap + 16 px below each) */}
+                    <PwrSpacer/>
+                    <Divider/>
+                    <PwrSpacer/>
+                    <Grid container spacing={2}>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'LANGUAGE'}
                                                  renderSingleElementInfo={this.renderLanguageInfo}/>
+                            <PwrSpacer/>
                         </Grid>
                         < Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'TRAINING'}
                                                  renderSingleElementInfo={this.renderTrainingInfo}/>
+                            <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'EDUCATION'}
                                                  renderSingleElementInfo={this.renderEducationInfo}/>
+                            <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'QUALIFICATION'}
                                                  renderSingleElementInfo={this.renderQualificationInfo}/>
+                            <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderEmpty}/>
+                            <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'SPECIAL_FIELD'} renderSingleElementInfo={this.renderEmpty}/>
+                            <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <ProfileEntryElement type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>
+                            <PwrSpacer/>
                         </Grid>
                     </Grid>
 

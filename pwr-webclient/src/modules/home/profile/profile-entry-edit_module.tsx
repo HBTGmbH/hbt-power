@@ -189,7 +189,8 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                     {PowerLocalize.get(`ProfileEntryType.${this.props.type}.EditHeader`)}
                 </DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={1}>
+                    {/* Fields of one group: 16 px apart (#40) */}
+                    <Grid container spacing={2}>
                         <Grid item md={12} xs={12}>
                             <PwrAutoComplete
                                 validationError={error}

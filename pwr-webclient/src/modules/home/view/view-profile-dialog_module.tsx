@@ -8,7 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
+import {PwrFormSection, PwrRow} from '../../general/pwr-form-section';
 import Fab from '@material-ui/core/Fab/Fab';
 import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 
@@ -139,6 +140,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   fullWidth={true}
                                   label={PowerLocalize.get('ViewProfileDialog.Name')}
                 />
+                <PwrSpacer/>
                 <LimitedTextField onChange={this.changeDescription}
                                   maxCharacters={PROFILE_DESCRIPTION_LENGTH}
                                   value={this.state.description}
@@ -147,30 +149,32 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   rows={4}
                                   label={PowerLocalize.get('ViewProfileDialog.Description')}
                 />
+                <PwrSpacer/>
                 <TextField onChange={() => this.changeLocale}
                            value={this.state.locale}
                            label={PowerLocalize.get('ViewProfileDialog.Locale')}
                            disabled={this.props.type === 'edit'}
                 />
-                <div>
-                    <ListSubheader>Chars per Line</ListSubheader>
-                    <Fab
-                        style={{width: '40px', height: '40px', padding: '0', marginRight: '15px'}}
-                        color={'primary'}
-                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0) ? (this.state.charsPerLine - 1) : 0)}
-                    >
-                        <RemoveIcon/>
+                <PwrFormSection title={PowerLocalize.get('ViewProfileDialog.CharsPerLine')}>
+                    <PwrRow>
+                        <Fab
+                            size={'small'}
+                            color={'primary'}
+                            onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0) ? (this.state.charsPerLine - 1) : 0)}
+                        >
+                            <RemoveIcon/>
 
-                    </Fab>
-                    {this.state.charsPerLine}
-                    <Fab
-                        style={{width: '40px', height: '40px', padding: '0', marginLeft: '15px'}}
-                        color={'primary'}
-                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100) ? (this.state.charsPerLine + 1) : 100)}
-                    >
-                        <AddIcon/>
-                    </Fab>
-                </div>
+                        </Fab>
+                        {this.state.charsPerLine}
+                        <Fab
+                            size={'small'}
+                            color={'primary'}
+                            onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100) ? (this.state.charsPerLine + 1) : 100)}
+                        >
+                            <AddIcon/>
+                        </Fab>
+                    </PwrRow>
+                </PwrFormSection>
             </DialogContent>
             <DialogActions>
                 {this.renderActions()}
