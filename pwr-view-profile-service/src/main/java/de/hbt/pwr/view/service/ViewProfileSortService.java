@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import de.hbt.pwr.view.util.NameOrder;
 import java.util.Comparator;
 
 /**
@@ -42,8 +43,8 @@ public class ViewProfileSortService {
     private static final Comparator<StartEndDateComparable> EndDateDesc = EndDateAsc.reversed();
 
 
-    private static final Comparator<NameComparable> ByNameAsc = Comparator.comparing(NameComparable::getName);
-    private static final Comparator<NameComparable> ByNameDesc = Comparator.comparing(NameComparable::getName).reversed();
+    private static final Comparator<NameComparable> ByNameAsc = Comparator.comparing(NameComparable::getName, NameOrder.NAMES);
+    private static final Comparator<NameComparable> ByNameDesc = ByNameAsc.reversed();
 
     /**
      * Returns a comparator that compares {@link Skill} by {@link Skill#getName()}
