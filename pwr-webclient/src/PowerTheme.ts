@@ -52,6 +52,18 @@ const newPowerTheme: ThemeOptions = {
                 height: 'auto'
             }
         },
+        // Card buttons in line with the card header (16 px) (#41)
+        MuiCardActions: {
+            root: {
+                padding: '8px 16px 16px'
+            }
+        },
+        // Dialog buttons in line with the fields of the dialog content (24 px), 16 px below them (#41)
+        MuiDialogActions: {
+            root: {
+                padding: '8px 24px 16px'
+            }
+        },
         // Multi-line fields can be made taller or shorter by dragging their corner (#107). Fields with a fixed
         // number of rows only: an auto-sizing one recomputes its height on every input
         MuiInputBase: {

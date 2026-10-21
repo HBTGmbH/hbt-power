@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Checkbox, Dialog, Icon, ListItemSecondaryAction, Tooltip} from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {PwrButton} from '../pwr-button';
+import {PwrFormActions} from '../pwr-form-actions';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import List from '@material-ui/core/List';
@@ -163,10 +164,12 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
                     }</List>
                 </DialogContent>
                 <DialogActions>
-                    <PwrButton color="primary" text={PowerLocalize.get('Action.Cancel')} onClick={this.closeDialog}/>
-                    {/* Takes the selected skills into the form; Save in the form stores them */}
-                    <PwrButton variant="contained" color="primary" text={PowerLocalize.get('Action.Apply')}
-                               onClick={this.acceptSkills}/>
+                    {/* Takes the selected skills into the form, Save in the form stores them; the button bar of the forms (#41) */}
+                    <PwrFormActions editing noSpace
+                                    saveText={PowerLocalize.get('Action.Apply')} saveIcon={'playlist_add'}
+                                    saveDisabled={this.state.selectedSkills.length === 0}
+                                    onSave={this.acceptSkills}
+                                    onCancel={this.closeDialog}/>
                 </DialogActions>
             </Dialog>
         </div>);

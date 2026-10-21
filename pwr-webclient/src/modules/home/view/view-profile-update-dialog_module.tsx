@@ -7,7 +7,7 @@ import {Dialog} from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
-import {PwrButton} from '../../general/pwr-button';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import TextField from '@material-ui/core/TextField';
@@ -127,10 +127,12 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
                     />
                 </DialogContent>
                 <DialogActions>
-                    <PwrButton color={'primary'} text={PowerLocalize.get('Action.Cancel')} onClick={this.props.onClose}/>
-                    <PwrButton variant={'contained'} color={'primary'} text={PowerLocalize.get('ViewProfileUpdate.Update')}
-                               onClick={() => this.updateViewProfile()}
-                               disabled={this.state.name.length === 0 || this.state.description.length === 0}/>
+                    {/* The same button bar as the forms (#41) */}
+                    <PwrFormActions editing noSpace
+                                    saveText={PowerLocalize.get('ViewProfileUpdate.Update')} saveIcon={'refresh'}
+                                    saveDisabled={this.state.name.length === 0 || this.state.description.length === 0}
+                                    onSave={() => this.updateViewProfile()}
+                                    onCancel={this.props.onClose}/>
                 </DialogActions>
             </Dialog>
         );

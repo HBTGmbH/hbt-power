@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Button, Dialog, Icon, TextField} from '@material-ui/core';
+import {Dialog, TextField} from '@material-ui/core';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -39,11 +40,11 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     constructor(props: ViewProfileDialogProps) {
         super(props);
-        this.resetState(props);
+        this.state = this.initialState(props);
     }
 
-    private resetState = (props: ViewProfileDialogProps) => {
-        this.state = {
+    private initialState = (props: ViewProfileDialogProps): ViewProfileDialogState => {
+        return {
             name: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.name) ? '' : props.viewProfile.viewProfileInfo.name,
             description: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.viewDescription) ? '' : props.viewProfile.viewProfileInfo.viewDescription,
             charsPerLine: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.charsPerLine) ? 45 : props.viewProfile.viewProfileInfo.charsPerLine,
@@ -74,7 +75,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     };
 
     private closeAndReset = () => {
-        this.resetState(this.props);
+        this.setState(this.initialState(this.props));
         this.props.onClose();
     };
 
@@ -82,39 +83,10 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         if (!!(this.props.onSave)) {
             this.props.onSave(this.state.name, this.state.description, this.state.charsPerLine);
         }
-    };
-
-    private renderActions = () => {
-        let actions = [];
-        let label: string;
-        let icon: string;
-        if (this.props.type === 'edit') {
-            label = PowerLocalize.get('Action.Save');
-            icon = 'save';
-        } else {
-            label = PowerLocalize.get('Action.Create');
-            icon = 'add';
+        if (this.props.type !== 'edit') {
+            // The next view profile starts empty again
+            this.setState(this.initialState(this.props));
         }
-        actions.push(
-            <Button
-                variant={'text'}
-                color={'primary'}
-                onClick={this.closeAndSave}
-                key={'CloseAndSafe'}
-            >
-                {label}
-                <Icon className="material-icons">{icon}</Icon>
-            </Button>);
-        actions.push(
-            <Button
-                variant={'text'}
-                onClick={this.props.onClose}
-                key={'Close'}
-            >
-                <Icon className="material-icons">close</Icon>
-                {PowerLocalize.get('Action.Close')}
-            </Button>);
-        return actions;
     };
 
     private renderTitle = () => {
@@ -177,7 +149,12 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                 </PwrFormSection>
             </DialogContent>
             <DialogActions>
-                {this.renderActions()}
+                {/* The same button bar as the forms (#41) */}
+                <PwrFormActions editing noSpace
+                                saveText={PowerLocalize.get(this.props.type === 'edit' ? 'Action.Save' : 'Action.Create')}
+                                saveIcon={this.props.type === 'edit' ? 'save' : 'add'}
+                                onSave={this.closeAndSave}
+                                onCancel={this.closeAndReset}/>
             </DialogActions>
         </Dialog>;
     }

@@ -16,6 +16,12 @@ interface PwrFormActionsProps {
     /** Only where deleting is possible; asks first through makeDeferrable like before */
     onDelete?(): void;
     saveDisabled?: boolean;
+    /** Label and Material icon of the main action in edit mode, Save by default (e.g. Create, Apply in dialogs) */
+    saveText?: string;
+    saveIcon?: string;
+    /** Label and Material icon of the main action in read mode, Edit by default (e.g. Generate on a view profile) */
+    editText?: string;
+    editIcon?: string;
     /** Further secondary actions, after the main actions */
     children?: ReactNode;
     /** Inside DialogActions, which brings its own space */
@@ -47,14 +53,14 @@ export const PwrFormActions = (props: PwrFormActionsProps) => {
         {!props.noSpace && <PwrSpacer size="section"/>}
         <div className={classes.bar}>
             {props.editing && props.onSave &&
-            <PwrButton variant="contained" color="primary" text={PowerLocalize.get('Action.Save')}
-                       icon={<Icon className="material-icons">save</Icon>}
+            <PwrButton variant="contained" color="primary" text={props.saveText || PowerLocalize.get('Action.Save')}
+                       icon={<Icon className="material-icons">{props.saveIcon || 'save'}</Icon>}
                        disabled={props.saveDisabled} onClick={props.onSave}/>}
             {props.editing && props.onCancel &&
             <PwrButton color="primary" text={PowerLocalize.get('Action.Cancel')} onClick={props.onCancel}/>}
             {!props.editing && props.onEdit &&
-            <PwrButton variant="contained" color="primary" text={PowerLocalize.get('Action.Edit')}
-                       icon={<Icon className="material-icons">edit</Icon>} onClick={props.onEdit}/>}
+            <PwrButton variant="contained" color="primary" text={props.editText || PowerLocalize.get('Action.Edit')}
+                       icon={<Icon className="material-icons">{props.editIcon || 'edit'}</Icon>} onClick={props.onEdit}/>}
             {props.children}
             {props.onDelete &&
             <PwrButton color="default" className={classes.delete} text={PowerLocalize.get('Action.Delete')}

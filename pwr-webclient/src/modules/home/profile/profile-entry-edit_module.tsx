@@ -20,7 +20,7 @@ import {DatePickerType} from '../../../model/DatePickerType';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
-import {PwrButton} from '../../general/pwr-button';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
 import {fromLocalDate, isInvalidDate, LocalDate, today, toLocalDate} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
@@ -258,10 +258,10 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <PwrButton icon={null} color={'primary'} text={PowerLocalize.get('Action.Cancel')}
-                               onClick={this.props.onClose}/>
-                    <PwrButton icon={null} color={'primary'} disabled={!!error} text={PowerLocalize.get('Action.Save')}
-                               onClick={()=>this.handleSave()}/>
+                    {/* The same button bar as the forms (#41) */}
+                    <PwrFormActions editing noSpace saveDisabled={!!error}
+                                    onSave={() => this.handleSave()}
+                                    onCancel={this.props.onClose}/>
                 </DialogActions>
             </Dialog>
         );

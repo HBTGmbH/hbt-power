@@ -2,7 +2,9 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Button, Card, CardActions, CardHeader, Icon} from '@material-ui/core';
+import {Card, CardActions, CardHeader, Icon} from '@material-ui/core';
+import {PwrFormActions} from '../../general/pwr-form-actions';
+import {PwrButton} from '../../general/pwr-button';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileDialog} from './view-profile-dialog_module';
@@ -106,46 +108,20 @@ class ViewCardModule extends React.Component<ViewCardProps
                     subheader={PowerLocalize.get('ViewProfileCard.Subtitle') + formatFullLocalizedDate(this.props.viewProfile.viewProfileInfo.creationDate)}
                 />
                 <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
+                {/* The button bar of the forms (#41): Generate highlighted (the export document is the goal of a view
+                    profile), Edit and Edit info as text buttons, Delete set apart on the right with its question */}
                 <CardActions>
-                    <div>
-                        <Button
-                            style={{marginLeft: '8px', marginTop: '5px'}}
-                            variant={'contained'}
-                            className="mui-margin"
-                            onClick={() => this.setDialogOpen(true)}
-                        >
-                            <Icon className="material-icons">info</Icon>
-                            {PowerLocalize.get('ViewProfileCard.Action.EditInfo')}
-                        </Button>
-                        <Button
-                            style={{marginLeft: '8px', marginTop: '5px'}}
-                            variant={'contained'}
-                            className="mui-margin"
-                            onClick={() => this.props.navigateTo(Paths.build(Paths.USER_VIEW_PROFILE, {id: this.props.viewProfileId, initials}))}
-                        >
-                            <Icon className="material-icons">edit</Icon>
-                            {PowerLocalize.get('ViewProfileCard.Action.Edit')}
-                        </Button>
-                        <Button
-                            style={{marginLeft: '8px', marginTop: '5px', backgroundColor: '#ff8e01'}}
-                            variant={'contained'}
-                            className="mui-margin pwr-btn-error"
-                            onClick={() => this.props.deleteViewProfile(this.props.viewProfileId)}
-                        >
-                            <Icon className="material-icons">delete</Icon>
-                            {PowerLocalize.get('Action.Delete')}
-                        </Button>
-                        <Button
-                            style={{marginLeft: '8px', marginTop: '5px'}}
-                            variant={'contained'}
-                            className="mui-margin"
-                            color={'primary'}
-                            onClick={() => this.setGeneratorOpen(true)}
-                        >
-                            <Icon className="material-icons">open_in_new</Icon>
-                            {PowerLocalize.get('Action.Generate.Word')}
-                        </Button>
-                    </div>
+                    <PwrFormActions editing={false} noSpace
+                                    editText={PowerLocalize.get('Action.Generate.Word')} editIcon={'open_in_new'}
+                                    onEdit={() => this.setGeneratorOpen(true)}
+                                    onDelete={() => this.props.deleteViewProfile(this.props.viewProfileId)}>
+                        <PwrButton color={'primary'} text={PowerLocalize.get('Action.Edit')}
+                                   icon={<Icon className="material-icons">edit</Icon>}
+                                   onClick={() => this.props.navigateTo(Paths.build(Paths.USER_VIEW_PROFILE, {id: this.props.viewProfileId, initials}))}/>
+                        <PwrButton color={'primary'} text={PowerLocalize.get('ViewProfileCard.Action.EditInfo')}
+                                   icon={<Icon className="material-icons">info</Icon>}
+                                   onClick={() => this.setDialogOpen(true)}/>
+                    </PwrFormActions>
                 </CardActions>
             </Card>);
     }
