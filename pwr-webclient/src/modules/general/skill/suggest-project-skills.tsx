@@ -1,12 +1,13 @@
 import * as React from 'react';
-import {Checkbox, Dialog, ListItemSecondaryAction} from '@material-ui/core';
+import {Checkbox, Dialog, Icon, ListItemSecondaryAction} from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
+import {PwrButton} from '../pwr-button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
 import {Project} from '../../../reducers/profile-new/profile/model/Project';
 import {SuggestionServiceClient} from '../../../reducers/suggestions/client/SuggestionServiceClient';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -81,12 +82,14 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
 
     render() {
         return (<div>
-            <Button variant="contained" color="primary" onClick={this.openDialog}>
-                {PowerLocalize.get('Action.Show')}
-            </Button>
+            {/* A help for adding skills: a text button, so Save stays the only highlighted action of the form (#41) */}
+            <PwrButton color="primary" text={PowerLocalize.get('Profile.Project.SuggestSkills')}
+                       icon={<Icon className="material-icons">lightbulb</Icon>} onClick={this.openDialog}/>
             <Dialog open={this.state.dialogOpen} onClose={this.closeDialog}>
                 <DialogTitle>{PowerLocalize.get('Profile.Project.SkillSugestions')}</DialogTitle>
-                <DialogContent style={{overflow:'scroll'}}>
+                <DialogContent>
+                    {this.state.suggestedSkills.length === 0 &&
+                    <Typography color="textSecondary">{PowerLocalize.get('Profile.Project.NoSkillSuggestions')}</Typography>}
                     <List>{
                         this.state.suggestedSkills.map((skill, index) => <div key={index}>
                             <ListItem>
@@ -102,12 +105,10 @@ export class SuggestProjectSkills extends React.Component<SuggestProjectSkillsPr
                     }</List>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" color="primary" onClick={this.acceptSkills}>
-                        {PowerLocalize.get('Action.Save')}
-                    </Button>
-                    <Button variant="contained" onClick={this.closeDialog}>
-                        {PowerLocalize.get('Action.Close')}
-                    </Button>
+                    <PwrButton color="primary" text={PowerLocalize.get('Action.Cancel')} onClick={this.closeDialog}/>
+                    {/* Takes the selected skills into the form; Save in the form stores them */}
+                    <PwrButton variant="contained" color="primary" text={PowerLocalize.get('Action.Apply')}
+                               onClick={this.acceptSkills}/>
                 </DialogActions>
             </Dialog>
         </div>);

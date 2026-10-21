@@ -347,6 +347,11 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         onValueChange={skillSearchValue => this.setState({skillSearchValue})}
                         onNewRequest={name => this.addSkill(name)}
                     />
+                    {/* Suggestions belong to adding skills: right below the search, only in edit mode */}
+                    {this.isEditEnabled() && <>
+                        <PwrSpacer size="tight"/>
+                        <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
+                    </>}
                     <PwrSpacer/>
                     <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
                     <PwrSpacer size="tight"/>
@@ -354,12 +359,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         {this.displayedSkills().map(skill => this.toSkillChip(skill))}
                     </PwrRow>
                 </PwrFormSection>
-                {
-                    this.isEditEnabled() &&
-                    <PwrFormSection title={PowerLocalize.get('Profile.Project.SkillSugestions')}>
-                        <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
-                    </PwrFormSection>
-                }
                 <PwrFormActions editing={this.isEditEnabled()}
                                 onEdit={this.beginEdit}
                                 onSave={this.save}
