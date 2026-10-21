@@ -52,6 +52,9 @@ export const SkillSearcher = (props: SkillSearcherProps) => {
     useEffect(() => {
         if (props.value) {
             requestSkills(props.value);
+        } else if (props.value === '') {
+            // The parent cleared the value, e.g. after adding a skill: clear the field too
+            setSearchText('');
         }
     }, [props.value])
 

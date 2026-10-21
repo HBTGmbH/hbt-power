@@ -103,6 +103,7 @@
   "Profile.Project.SkillSugestions": "Skillvorschläge",
   "Profile.Skills.AddSkillCaption": "Skill Hinzufügen",
   "Profile.Skills.AddSkillErrorCaption": "Ein Skill benötigt einen Namen!",
+  "Profile.Skills.AlreadyExists": "Skill „{0}“ ist bereits vorhanden.",
   "Profile.Skills.MySkillsCaption": "Meine Skills",
   "Profile.Skills.UnassessedSkillsCaption": "Unbewertete Skills",
   "Profile.Skills.CategoryTemplate": "Kategorie: {0}",

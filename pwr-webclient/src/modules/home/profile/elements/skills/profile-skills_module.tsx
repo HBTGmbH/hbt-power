@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {newProfileSkill, ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
-import {PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
+import {findSkillByName, PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
 import {AddSkill} from './add-skill_module';
 import {Grid, Theme, withTheme} from '@material-ui/core';
 import {PwrFormSubCaption} from '../../../../general/pwr-typography';
@@ -77,10 +77,15 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     };
 
     private handleAddSkill = (name: string, rating: number) => {
-        if (name === "") {
+        const trimmedName = name.trim();
+        const existing = findSkillByName(this.props.skills, trimmedName);
+        if (trimmedName === "") {
             Alerts.showError(PowerLocalize.get('Profile.Skills.AddSkillErrorCaption'))
-        } else if (!this.props.skills.some(skill => skill.name === name)) {
-            this.props.saveSkill(this.props.initials, newProfileSkill(name, rating, []));
+        } else if (existing) {
+            // Saving it would overwrite rating and versions of the existing skill
+            Alerts.showInfo(PowerLocalize.getFormatted('Profile.Skills.AlreadyExists', existing.name));
+        } else {
+            this.props.saveSkill(this.props.initials, newProfileSkill(trimmedName, rating, []));
         }
     };
 

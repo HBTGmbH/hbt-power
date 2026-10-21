@@ -31,7 +31,7 @@ import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-sk
 import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
 import {Alerts} from '../../../../../utils/Alerts';
 import {ThunkDispatch} from 'redux-thunk';
-import {PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
+import {findSkillByName, PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
 
 interface ProjectProps {
     initials: string;
@@ -187,7 +187,13 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         this.props.saveSelectedProject();
     };
 
-    private addSkill = (skillName) => {
+    private addSkill = (skillName: string) => {
+        const existing = findSkillByName(this.project().skills, skillName);
+        if (existing) {
+            this.setState({skillSearchValue: ''});
+            Alerts.showInfo(PowerLocalize.getFormatted('Profile.Skills.AlreadyExists', existing.name));
+            return;
+        }
         const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0, versions: []};
         const skills = immutableUnshift(newSkill, this.project().skills);
         this.setState({skillSearchValue: ''});
