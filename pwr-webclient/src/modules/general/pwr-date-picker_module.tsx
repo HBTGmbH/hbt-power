@@ -73,7 +73,9 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
     };
 
     render() {
-        return <Grid container item direction={'row'} justify={'flex-start'} alignItems={'flex-end'} spacing={8}>
+        // spacing 1 = 8px: the 8 is still the Material-UI v3 value in pixels, in v4 it meant 64px and pushed the grid
+        // 32px beyond its parent on both sides, out of the screen on phones (#49)
+        return <Grid container item direction={'row'} justify={'flex-start'} alignItems={'flex-end'} spacing={1}>
             <Grid item md>
                 <KeyboardDatePicker
                     error={!!(this.props.error) ? this.props.error : false}

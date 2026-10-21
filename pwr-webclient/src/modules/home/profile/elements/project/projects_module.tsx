@@ -6,11 +6,15 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import * as redux from 'redux';
 import {SelectedProject} from './single-project_module';
 import {StringUtils} from '../../../../../utils/StringUtil';
-import {Divider, List} from '@material-ui/core';
+import {Divider, List, useMediaQuery} from '@material-ui/core';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Add from '@material-ui/icons/Add';
+import ChevronRight from '@material-ui/icons/ChevronRight';
+import {useHistory, useParams} from 'react-router-dom';
+import {Paths} from '../../../../../Paths';
+import {PwrButton} from '../../../../general/pwr-button';
 import {addNewProject, selectProject} from '../../../../../reducers/profile-new/profile/actions/ProjectActions';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
@@ -21,6 +25,14 @@ interface ProjectsProps {
     projects: Array<Project>
     selectedIndex: number;
     canAddProject: boolean;
+    hasSelectedProject: boolean;
+}
+
+interface ProjectsLocalProps {
+    /** Below 992px (Bootstrap md): list or form, never both (master-detail) */
+    narrow: boolean;
+
+    showList(): void;
 }
 
 interface ProjectsLocalState {
@@ -32,7 +44,7 @@ interface ProjectsDispatch {
     addNewProject(): void;
 }
 
-class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, ProjectsLocalState> {
+class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps & ProjectsDispatch, ProjectsLocalState> {
     private projectRef;
 
     constructor(props) {
@@ -44,7 +56,8 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
         return {
             projects: state.profileStore.profile.projects,
             selectedIndex: state.profileStore.selectedProjectIndex,
-            canAddProject: !state.profileStore.selectedProject || state.profileStore.selectedProject.id !== null
+            canAddProject: !state.profileStore.selectedProject || state.profileStore.selectedProject.id !== null,
+            hasSelectedProject: !!state.profileStore.selectedProject
         };
     }
 
@@ -83,12 +96,55 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
                               <span style={{display: 'block'}}>{period}</span>
                               {client && <span style={{display: 'block'}}>{client}</span>}
                           </>}/>
+            {this.props.narrow && <ChevronRight color="action"/>}
         </ListItem>;
     };
+
+    private renderAddProject = () => {
+        return <List>
+            <ListItem button onClick={() => this.addNewProject()} disabled={!this.props.canAddProject}>
+                <ListItemIcon>
+                    <Add/>
+                </ListItemIcon>
+                <ListItemText primary={PowerLocalize.get('Profile.Project.AddProject')}/>
+            </ListItem>
+        </List>;
+    };
+
+    /**
+     * Narrow screens: the list or the selected project, each in full width. The URL decides (#42), so the browser's
+     * back button returns to the list, and leaving unsaved changes asks first (#44).
+     */
+    private renderNarrow() {
+        if (this.props.hasSelectedProject) {
+            return <div className="row">
+                <ProjectUrlSync/>
+                <div className="col-12 pwr-projects-narrow-pane" id="selected-project">
+                    <PwrButton color="primary" variant="text" text={PowerLocalize.get('Profile.Project.BackToList')}
+                               onClick={this.props.showList}/>
+                    <SelectedProject/>
+                </div>
+            </div>;
+        }
+        return <div className="row">
+            <ProjectUrlSync/>
+            <div className="col-12 pwr-projects-narrow-pane">
+                {/* on top, so it is reachable without scrolling past the list */}
+                {this.renderAddProject()}
+                <Divider/>
+                <List component="nav">
+                    {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
+                </List>
+            </div>
+        </div>;
+    }
 
     render() {
         if (!this.props.projects) {
             return <React.Fragment/>;
+        }
+        if (this.props.narrow) {
+            return this.renderNarrow();
         }
         return <div className="row" style={{scrollBehavior: 'smooth'}}>
             <ProjectUrlSync/>
@@ -99,14 +155,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
                     {this.props.projects.map((project, index) => this.renderProjectListItem(project, index))}
                 </List>
                 <Divider/>
-                <List>
-                    <ListItem button onClick={() => this.addNewProject()} disabled={!this.props.canAddProject}>
-                        <ListItemIcon>
-                            <Add/>
-                        </ListItemIcon>
-                        <ListItemText primary={PowerLocalize.get('Profile.Project.AddProject')}/>
-                    </ListItem>
-                </List>
+                {this.renderAddProject()}
             </div>
             <div className="col-md-9 pwr-projects-form-pane" id="selected-project">
                 <SelectedProject/>
@@ -115,4 +164,16 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsDispatch, P
     }
 }
 
-export const Projects = connect(ProjectsModule.mapStateToProps, ProjectsModule.mapDispatchToProps)(ProjectsModule);
+const ConnectedProjects = connect(ProjectsModule.mapStateToProps, ProjectsModule.mapDispatchToProps)(ProjectsModule);
+
+/** Bootstrap md, as the columns of the desktop layout */
+const NARROW = '(max-width: 991.98px)';
+
+export const Projects = () => {
+    const narrow = useMediaQuery(NARROW);
+    const history = useHistory();
+    const {initials} = useParams<{ initials: string }>();
+    // a navigation, not an action: PWR_HISTORY.block asks before unsaved changes are left
+    const showList = () => history.push(Paths.build(Paths.USER_PROFILE_PROJECTS, {initials}));
+    return <ConnectedProjects narrow={narrow} showList={showList}/>;
+};
