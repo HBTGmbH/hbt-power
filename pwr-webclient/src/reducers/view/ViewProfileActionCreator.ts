@@ -13,6 +13,8 @@ import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
 import {Paths} from '../../Paths';
 import {ViewProfileServiceClient} from '../../clients/ViewProfileServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
+import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {RemoveViewProfileAction, SetParentCategoryAction, SetSortInProgressAction, SetViewProfileAction} from './ViewProfileActions';
 
 const viewProfileClient = ViewProfileServiceClient.instance();
@@ -217,17 +219,19 @@ export class ViewProfileActionCreator {
     }
 
 
+    /**
+     * Asks first (DeferredActionMiddleware). The client runs the loading indicator and shows a failure.
+     */
+    @makeDeferrable(ActionType.AsyncDeleteViewProfile)
     public static AsyncDeleteViewProfile(id: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
-            let initials = getState().profileStore.consultant.initials;
+            const initials = getState().profileStore.consultant.initials;
             viewProfileClient.deleteViewProfile(initials, id)
-                .then(() => dispatch(ViewProfileActionCreator.RemoveViewProfile(id)))
-                .then(() => Alerts.showSuccess('View profile deleted!'))
-                .then(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not delete view profile!'));
+                .then(() => {
+                    dispatch(ViewProfileActionCreator.RemoveViewProfile(id));
+                    Alerts.showSuccess(PowerLocalize.get('ViewProfile.Deleted'));
+                })
+                .catch((error) => console.error(error));
         };
     }
 

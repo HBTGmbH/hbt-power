@@ -253,6 +253,7 @@
   "UnsavedChanges.Action.Discard": "Änderungen verwerfen",
   "UnsavedChanges.Action.KeepEditing": "Weiter bearbeiten",
   "ViewProfile.Create": "View Profil erstellen",
+  "ViewProfile.Deleted": "View-Profil gelöscht.",
   "ViewProfileDialog.Description": "View-Profil Beschreibung",
   "ViewProfileDialog.Name": "View-Profil Name",
   "ViewProfileDialog.Title.Create": "View Profil Erstellen",
