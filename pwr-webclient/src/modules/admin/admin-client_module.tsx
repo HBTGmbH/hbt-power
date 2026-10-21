@@ -11,7 +11,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Paths} from '../../Paths';
-import {Link, Route} from 'react-router-dom';
+import {Route} from 'react-router-dom';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import logoNeg from '../../img/HBT002_Logo_neg.png';
 import {NotificationInbox} from './notification/notification-inbox_module';
@@ -79,6 +79,8 @@ interface AdminClientDispatch {
 
     navigateToSkillStatistics(): void;
 
+    navigateTo(target: string): void;
+
     logOutAdmin(): void;
 }
 
@@ -110,6 +112,9 @@ class AdminClientModule extends React.Component<AdminClientProps
             },
             navigateToSkillStatistics: () => {
                 dispatch(AdminActionCreator.AsyncNavigateToStatistics());
+            },
+            navigateTo: (target: string) => {
+                dispatch(NavigationActionCreator.AsyncNavigateTo(target));
             },
             logOutAdmin: () => {
                 dispatch(AdminActionCreator.AsyncLogOutAdmin());
@@ -200,33 +205,27 @@ class AdminClientModule extends React.Component<AdminClientProps
                                 </ListItem>
                                 <Divider/>
                                 <ListSubheader>Informationen</ListSubheader>
-                                <List>
-                                    <Link to={Paths.ADMIN_INFO_NAME_ENTITY} key={'Link01'}
-                                          style={{textDecoration: 'none'}}>
-                                        <ListItem
-                                            button
-                                            key="AdminClient.Menu.Info.ProfileElements"
-                                        >
-                                            <ListItemIcon>
-                                                <Icon className="material-icons">dehaze</Icon>
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
-                                        </ListItem>
-                                    </Link>
-                                    <Link to={Paths.ADMIN_INFO_SKILLTREE} style={{textDecoration: 'none'}}>
-                                        <ListItem
-                                            button
-                                            key="AdminClient.Menu.Info.SkillTree"
-                                        >
-                                            <ListItemIcon>
-                                                <Icon className="material-icons">device_hub</Icon>
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={PowerLocalize.get('AdminClient.Menu.Info.SkillTree')}/>
-                                        </ListItem>
-                                    </Link>
-                                </List>
+                                {/* Navigate like the other entries: a router Link is an <a> and shows the link color */}
+                                <ListItem
+                                    button
+                                    key="AdminClient.Menu.Info.ProfileElements"
+                                    onClick={() => this.props.navigateTo(Paths.ADMIN_INFO_NAME_ENTITY)}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">dehaze</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
+                                </ListItem>
+                                <ListItem
+                                    button
+                                    key="AdminClient.Menu.Info.SkillTree"
+                                    onClick={() => this.props.navigateTo(Paths.ADMIN_INFO_SKILLTREE)}
+                                >
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">device_hub</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.SkillTree')}/>
+                                </ListItem>
                                 <Divider/>
                                 <ListSubheader>Statistiken</ListSubheader>
                                 <ListItem
