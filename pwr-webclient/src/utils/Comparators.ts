@@ -25,6 +25,14 @@ const NAME_COLLATOR = new Intl.Collator('de', {sensitivity: 'accent', numeric: t
 
 export const compareNames = (name1: string, name2: string): number => NAME_COLLATOR.compare(name1 || '', name2 || '');
 
+/**
+ * The skill with the same name, as the profile service matches them: without regard to case and surrounding spaces
+ */
+export const findSkillByName = <T extends { name: string }>(skills: ReadonlyArray<T>, name: string): T | undefined => {
+    const normalized = (name || '').trim().toLowerCase();
+    return skills.find(skill => (skill.name || '').trim().toLowerCase() === normalized);
+};
+
 export const PROJECTS_BY_START_DATE = ComparatorBuilder
     .comparing<Project>(nullSafe(t => t.startDate))
     .definingNullAs(NullMode.HIGHEST)
