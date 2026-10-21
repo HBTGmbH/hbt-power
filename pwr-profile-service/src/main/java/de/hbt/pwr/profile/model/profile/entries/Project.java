@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.model.profile.entries;
 
+import de.hbt.pwr.profile.model.HBTPowerConstants;
 import de.hbt.pwr.profile.model.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,6 +55,7 @@ public class Project {
 
     private LocalDate endDate;
 
+    @Column(length = HBTPowerConstants.PROJECT_DESCRIPTION_LENGTH)
     private String description;
 
     /**
