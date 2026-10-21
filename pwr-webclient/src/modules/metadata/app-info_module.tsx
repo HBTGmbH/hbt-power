@@ -22,7 +22,7 @@ import {PwrButton} from '../general/pwr-button';
 import {AppInfoClient} from '../../clients/AppInfoClient';
 import {ComponentInfo} from '../../model/metadata/ComponentInfo';
 import {OIDCService} from '../../OIDCService';
-import {formatToNumericDateTime} from '../../utils/DateUtil';
+import {formatToNumericDateTime, formatToRelativeTime} from '../../utils/DateUtil';
 
 const COMMIT_URL = 'https://github.com/HBTGmbH/hbt-power/commit/';
 // Flush with the headings above; the dialog fits a phone that way (#121)
@@ -62,10 +62,13 @@ const ComponentRow = (props: { info: ComponentInfo }) => {
                     <span style={{fontFamily: 'monospace'}}>{info.commitId}</span>
                 </Link>
                 : '–'}
+            {/* Fuzzy time reads faster ("vor 3 Stunden"); the exact time is in the tooltip */}
             {info.commitTime &&
-            <Typography color={'textSecondary'} variant={'body2'} style={{whiteSpace: 'nowrap'}}>
-                {formatToNumericDateTime(info.commitTime)}
-            </Typography>}
+            <Tooltip title={formatToNumericDateTime(info.commitTime)}>
+                <Typography color={'textSecondary'} variant={'body2'} style={{whiteSpace: 'nowrap'}}>
+                    {formatToRelativeTime(info.commitTime)}
+                </Typography>
+            </Tooltip>}
         </TableCell>
     </TableRow>;
 };
