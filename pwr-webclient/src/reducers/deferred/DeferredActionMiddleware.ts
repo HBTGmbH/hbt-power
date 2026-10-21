@@ -67,6 +67,11 @@ const deferredActions: DeferrableAction<ApplicationState>[] = [
         type: ActionType.AsyncDeleteViewProfile,
         condition: unconditional,
         makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteReport,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
     }
 ];
 

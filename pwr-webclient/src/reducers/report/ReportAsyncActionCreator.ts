@@ -3,6 +3,8 @@ import {ReportServiceClient} from '../../clients/ReportServiceClient';
 import {reportLoadAction} from './ReportActions';
 import {AxiosResponse} from 'axios';
 import {ReportData} from '../../model/view/ReportData';
+import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
+import {ActionType} from '../ActionType';
 
 const reportServiceClient = ReportServiceClient.instance();
 
@@ -29,6 +31,10 @@ export class ReportAsyncActionCreator {
         };
     }
 
+    /**
+     * Asks first (DeferredActionMiddleware), like deleting anything else
+     */
+    @makeDeferrable(ActionType.AsyncDeleteReport)
     public static deleteReportFile(id: number, cb: () => void) {
         return function (dispatch: redux.Dispatch) {
             reportServiceClient.deleteReport(id).then(res => {

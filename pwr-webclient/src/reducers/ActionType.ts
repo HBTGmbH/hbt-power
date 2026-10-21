@@ -131,6 +131,7 @@ export enum ActionType {
     TemplateRequestFailed = '[ViewProfile] TemplateRequestFailed',
     AsyncDeleteTemplate = '[Async] DeleteTemplate',
     AsyncDeleteViewProfile = '[Async] DeleteViewProfile',
+    AsyncDeleteReport = '[Async] DeleteReport',
 
     // == Profile Actions
     SetDescription = '[Profile] Set Description',
