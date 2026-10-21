@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {AppBar, FormControl, Icon, IconButton, Menu, MenuItem, Select} from '@material-ui/core';
+import {AppBar, Divider, FormControl, Icon, IconButton, Menu, MenuItem, Select} from '@material-ui/core';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {LoginStatus} from '../../model/LoginStatus';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
@@ -15,8 +15,7 @@ import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import {ThunkDispatch} from 'redux-thunk';
-import {PwrProfilePicture} from '../general/pwr-profile-picture';
-import {AppInfoButton} from '../metadata/app-info_module';
+import {AppInfoButton, LoggedInUserAvatar} from '../metadata/app-info_module';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {matchPath, withRouter} from 'react-router-dom';
@@ -26,7 +25,6 @@ import {projectsUrl} from './profile/elements/project/project-url-sync';
 interface ToolbarProps {
     loggedInAsAdmin: boolean;
     statisticsAvailable: boolean;
-    profilePictureId: string;
     viewProfiles: Array<ViewProfile>;
     consultantInfo: ConsultantInfoDTO[];
     profileStore: ProfileStore;
@@ -82,7 +80,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             loggedInAsAdmin: state.adminReducer.loginStatus === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available,
             viewProfiles: state.viewProfileSlice.viewProfiles.toArray(),
-            profilePictureId: state.profileStore.consultant.profilePictureId,
             consultantInfo: [...state.adminReducer.consultantInfo].sort((a, b) => a.name.localeCompare(b.name)),
             profileStore: state.profileStore
         };
@@ -154,7 +151,13 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     };
 
     private logOutUser = () => {
+        this.handleMenuClose();
         this.props.navigateTo(Paths.USER_SPECIAL_LOGOUT);
+    };
+
+    private navigateToAdmin = () => {
+        this.handleMenuClose();
+        this.props.navigateToAdmin();
     };
 
     private renderViewProfile = (viewProfile: ViewProfile, initials: string) => {
@@ -308,6 +311,20 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </ListItemText>
 
                     </MenuItem>
+                    <Divider/>
+                    {this.props.loggedInAsAdmin &&
+                    <MenuItem key={'8'} onClick={this.navigateToAdmin}>
+                        <Icon className="material-icons">admin_panel_settings</Icon>
+                        <ListItemText>
+                            {PowerLocalize.get('Tooolbar.ToAdminOverview')}
+                        </ListItemText>
+                    </MenuItem>}
+                    <MenuItem key={'9'} onClick={this.logOutUser}>
+                        <Icon className="material-icons">input</Icon>
+                        <ListItemText>
+                            {PowerLocalize.get('Tooolbar.LogOut')}
+                        </ListItemText>
+                    </MenuItem>
                 </Menu>
             </div>
         );
@@ -333,28 +350,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         {this.renderMenu(initials)}
 
                         {this.renderPower()}
-                        <AppInfoButton/>
-                        {
-                            this.props.profilePictureId ?
-                                <Tooltip title={PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + initials}>
-                                    <PwrProfilePicture pictureId={this.props.profilePictureId}
-                                                       style={{width: 40, height: 40}}/>
-                                </Tooltip>
-                              : null
-                        }
-                        {
-                            this.props.loggedInAsAdmin ?
-                                <Tooltip title={PowerLocalize.get('Tooolbar.ToAdminOverview')}>
-                                    <IconButton
-                                        style={{'color': 'white'}}
-                                        className="material-icons"
-                                        onClick={() => this.props.navigateToAdmin()}
-                                    >
-                                        home
-                                    </IconButton>
-                                </Tooltip>
-                                : null
-                        }
                         {
                             this.props.loggedInAsAdmin && this.props.consultantInfo.length >= 1 ?
                               <FormControl>
@@ -371,6 +366,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                               </FormControl>
                               : null
                         }
+                        {/* From the right: log out, logged in user, info, colleagues */}
+                        <AppInfoButton/>
+                        <LoggedInUserAvatar/>
                         <Tooltip title={PowerLocalize.get('Tooolbar.LogOut')}>
                             <IconButton
                                 style={{'color': 'white'}}
