@@ -47,7 +47,7 @@ export class TemplateActionCreator {
 
     public static AsyncChangeTemplate(template: Template) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
-            templateClient.changeTemplate(template.id)
+            templateClient.changeTemplate(template)
                 .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))
                 .catch(() => dispatch(TemplateActions.TemplateRequestFailed()))
                 .catch((error: AxiosError) => console.error(error));
