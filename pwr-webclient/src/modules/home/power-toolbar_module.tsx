@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {AppBar, Divider, FormControl, Icon, IconButton, Menu, MenuItem, Select} from '@material-ui/core';
+import {AppBar, Divider, Icon, IconButton, Menu, MenuItem} from '@material-ui/core';
+import {ConsultantSelect} from './consultant-select';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {LoginStatus} from '../../model/LoginStatus';
 import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActionCreator';
@@ -381,18 +382,8 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         <PwrBrand/>
                         {
                             this.props.loggedInAsAdmin && this.props.consultantInfo.length >= 1 ?
-                              <FormControl>
-                                <Select rowsMax={15}
-                                        className="select-in-toolbar"
-                                        value={initials}
-                                        defaultValue=""
-                                        onChange={(event) => this.changeConsultant(event.target.value as string)}
-                                >
-                                    {
-                                        this.props.consultantInfo.map(consultantInfo => <MenuItem key={consultantInfo.initials} value={consultantInfo.initials}>{consultantInfo.name}</MenuItem> )
-                                    }
-                                </Select>
-                              </FormControl>
+                              <ConsultantSelect consultants={this.props.consultantInfo} initials={initials}
+                                                onSelect={this.changeConsultant}/>
                               : null
                         }
                         {/* From the right: log out, logged in user, info, colleagues */}
