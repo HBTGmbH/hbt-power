@@ -43,6 +43,20 @@ const LoggedIn = () => {
     </>;
 };
 
+/**
+ * Fuzzy time reads faster ("vor 3 Stunden"); the exact time is in the tooltip (#121)
+ */
+const CommitTime = (props: { info: ComponentInfo }) => {
+    if (!props.info.commitTime) {
+        return null;
+    }
+    return <Tooltip title={formatToNumericDateTime(props.info.commitTime)}>
+        <Typography color={'textSecondary'} variant={'body2'} style={{whiteSpace: 'nowrap'}} component={'span'}>
+            {formatToRelativeTime(props.info.commitTime)}
+        </Typography>
+    </Tooltip>;
+};
+
 const ComponentRow = (props: { info: ComponentInfo }) => {
     const {info} = props;
     if (!info.available) {
@@ -51,25 +65,22 @@ const ComponentRow = (props: { info: ComponentInfo }) => {
             <TableCell>
                 <Typography color={'textSecondary'} variant={'body2'}>{PowerLocalize.get('AppInfo.Unavailable')}</Typography>
             </TableCell>
+            <TableCell className="pwr-only-wide"/>
         </TableRow>;
     }
     return <TableRow>
         <TableCell style={FIRST_COLUMN}>{info.name}</TableCell>
-        {/* Time below the commit: two columns fit on a phone (#121) */}
         <TableCell>
             {info.commitId
                 ? <Link href={COMMIT_URL + info.commitId} target={'_blank'} rel={'noopener noreferrer'}>
                     <span style={{fontFamily: 'monospace'}}>{info.commitId}</span>
                 </Link>
                 : '–'}
-            {/* Fuzzy time reads faster ("vor 3 Stunden"); the exact time is in the tooltip */}
-            {info.commitTime &&
-            <Tooltip title={formatToNumericDateTime(info.commitTime)}>
-                <Typography color={'textSecondary'} variant={'body2'} style={{whiteSpace: 'nowrap'}}>
-                    {formatToRelativeTime(info.commitTime)}
-                </Typography>
-            </Tooltip>}
+            {/* Narrow screens: the time below the commit, so two columns fit on a phone (#121) */}
+            <div className="pwr-only-narrow"><CommitTime info={info}/></div>
         </TableCell>
+        {/* Wide screens: the time in a column of its own */}
+        <TableCell className="pwr-only-wide"><CommitTime info={info}/></TableCell>
     </TableRow>;
 };
 
@@ -97,14 +108,14 @@ export const AppInfoDialog = (props: { open: boolean, onClose(): void }) => {
         <DialogContent>
             <Typography variant={'subtitle2'}>{PowerLocalize.get('AppInfo.LoggedIn')}</Typography>
             <LoggedIn/>
-            <Typography variant={'subtitle2'} style={{marginTop: '16px'}}>{PowerLocalize.get('AppInfo.Components')}</Typography>
             {!components
                 ? <Typography color={'textSecondary'}>{PowerLocalize.get('AppInfo.Loading')}</Typography>
-                : <Table size={'small'}>
+                : <Table size={'small'} style={{marginTop: '16px'}}>
                     <TableHead>
                         <TableRow>
                             <TableCell style={FIRST_COLUMN}>{PowerLocalize.get('AppInfo.Component')}</TableCell>
                             <TableCell>{PowerLocalize.get('AppInfo.Commit')}</TableCell>
+                            <TableCell className="pwr-only-wide">{PowerLocalize.get('AppInfo.CommitTime')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
