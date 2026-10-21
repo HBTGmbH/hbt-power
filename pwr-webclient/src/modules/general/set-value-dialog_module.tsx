@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Button, Dialog, DialogContent, DialogTitle, TextField} from '@material-ui/core';
+import {Dialog, DialogContent, DialogTitle, TextField} from '@material-ui/core';
+import {PwrFormActions} from './pwr-form-actions';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
@@ -52,19 +53,9 @@ export class SetValueDialog extends React.Component<SetValueDialogProps, SetValu
                 />
             </DialogContent>
             <DialogActions>
-                <Button
-                    variant={'text'}
-                    color={'primary'}
-                    onClick={this.invokeOk}
-
-                >
-                    {PowerLocalize.get('Action.OK')}
-                </Button>
-                <Button
-                    variant={'text'}
-                    color={'secondary'}
-                    onClick={this.props.onClose}
-                >{PowerLocalize.get('Action.Close')}</Button>
+                <PwrFormActions editing noSpace saveText={PowerLocalize.get('Action.Apply')} saveIcon="check"
+                                saveDisabled={this.state.value.trim().length === 0}
+                                onSave={this.invokeOk} onCancel={this.props.onClose}/>
             </DialogActions>
         </Dialog>);
     }

@@ -194,12 +194,13 @@ export class AdminActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteTrashedNotifications)
     public static AsyncDeleteTrashed() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.deleteTrashedNotifications()
                 .then(ignored => {
                     dispatch(AdminActionCreator.AsyncRequestTrashedNotifications());
-                    Alerts.showSuccess('Notifications successfully deleted!');
+                    Alerts.showSuccess(PowerLocalize.get('Notifications.TrashDeleted'));
                 }).catch(console.error);
         };
     }
@@ -228,11 +229,12 @@ export class AdminActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteNotificationEntry)
     public static AsyncNotificationInvokeDelete(notificationId: number) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.invokeNotificationDelete(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
-                .then(() => Alerts.showSuccess('Success'))
+                .then(() => Alerts.showSuccess(PowerLocalize.get('Notifications.EntryDeleted')))
                 .catch(console.error);
         };
     }

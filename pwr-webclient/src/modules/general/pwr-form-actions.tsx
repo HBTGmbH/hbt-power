@@ -22,7 +22,7 @@ interface PwrFormActionsProps {
     /** Label and Material icon of the main action in read mode, Edit by default (e.g. Generate on a view profile) */
     editText?: string;
     editIcon?: string;
-    /** Further secondary actions, after the main actions */
+    /** Further secondary actions, after the main action and before Cancel (e.g. Zurück in a wizard) */
     children?: ReactNode;
     /** Inside DialogActions, which brings its own space */
     noSpace?: boolean;
@@ -56,15 +56,58 @@ export const PwrFormActions = (props: PwrFormActionsProps) => {
             <PwrButton variant="contained" color="primary" text={props.saveText || PowerLocalize.get('Action.Save')}
                        icon={<Icon className="material-icons">{props.saveIcon || 'save'}</Icon>}
                        disabled={props.saveDisabled} onClick={props.onSave}/>}
-            {props.editing && props.onCancel &&
-            <PwrButton color="primary" text={PowerLocalize.get('Action.Cancel')} onClick={props.onCancel}/>}
             {!props.editing && props.onEdit &&
             <PwrButton variant="contained" color="primary" text={props.editText || PowerLocalize.get('Action.Edit')}
                        icon={<Icon className="material-icons">{props.editIcon || 'edit'}</Icon>} onClick={props.onEdit}/>}
             {props.children}
+            {props.editing && props.onCancel &&
+            <PwrButton color="primary" text={PowerLocalize.get('Action.Cancel')} onClick={props.onCancel}/>}
             {props.onDelete &&
             <PwrButton color="default" className={classes.delete} text={PowerLocalize.get('Action.Delete')}
                        icon={<Icon className="material-icons">delete</Icon>} onClick={props.onDelete}/>}
         </div>
     </>;
+};
+
+interface PwrConfirmActionsProps {
+    confirmText: string;
+    onConfirm(): void;
+    /** Abbrechen by default */
+    rejectText?: string;
+    onReject(): void;
+    /** Deleting, discarding: the confirming action in the error colour */
+    destructive?: boolean;
+    /** Which action has the focus, so Enter triggers it; none by default */
+    autoFocus?: 'confirm' | 'reject';
+}
+
+const useConfirmStyles = makeStyles(theme => ({
+    bar: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: theme.spacing(1),
+        width: '100%',
+    },
+    destructive: {
+        backgroundColor: theme.palette.error.main,
+        color: theme.palette.error.contrastText,
+        '&:hover': {
+            backgroundColor: theme.palette.error.dark,
+        },
+    },
+}));
+
+/**
+ * Button bar of a confirmation dialog (#134), inside DialogActions: the confirming action highlighted like the main
+ * action of a form, in the error colour if it destroys something; the rejecting one as a text button next to it.
+ */
+export const PwrConfirmActions = (props: PwrConfirmActionsProps) => {
+    const classes = useConfirmStyles();
+    return <div className={classes.bar}>
+        <PwrButton variant="contained" color="primary" className={props.destructive ? classes.destructive : undefined}
+                   text={props.confirmText} autoFocus={props.autoFocus === 'confirm'} onClick={props.onConfirm}/>
+        <PwrButton color="primary" text={props.rejectText || PowerLocalize.get('Action.Cancel')}
+                   autoFocus={props.autoFocus === 'reject'} onClick={props.onReject}/>
+    </div>;
 };

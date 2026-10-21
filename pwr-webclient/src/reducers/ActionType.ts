@@ -132,6 +132,12 @@ export enum ActionType {
     AsyncDeleteTemplate = '[Async] DeleteTemplate',
     AsyncDeleteViewProfile = '[Async] DeleteViewProfile',
     AsyncDeleteReport = '[Async] DeleteReport',
+    AsyncDeleteTreeSkill = '[Async] DeleteTreeSkill',
+    AsyncDeleteSkillAlias = '[Async] DeleteSkillAlias',
+    AsyncDeleteSkillLocale = '[Async] DeleteSkillLocale',
+    AsyncDeleteCategoryLocale = '[Async] DeleteCategoryLocale',
+    AsyncDeleteNotificationEntry = '[Async] DeleteNotificationEntry',
+    AsyncDeleteTrashedNotifications = '[Async] DeleteTrashedNotifications',
 
     // == Profile Actions
     SetDescription = '[Profile] Set Description',

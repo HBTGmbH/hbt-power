@@ -12,8 +12,7 @@ import {SkillServiceClient} from '../../../../clients/SkillServiceClient';
 import {APISkillServiceSkill} from '../../../../model/skill/SkillServiceSkill';
 import {PwrButton} from '../../../general/pwr-button';
 import ArrowBack from '@material-ui/icons/ArrowBack';
-import ArrowForward from '@material-ui/icons/ArrowForward';
-import CallMerge from '@material-ui/icons/CallMerge';
+import {PwrFormActions} from '../../../general/pwr-form-actions';
 
 interface MergeSkillDialogProps {
     open: boolean;
@@ -167,28 +166,14 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
             {renderStep()}
         </DialogContent>
         <DialogActions>
-            <PwrButton
-                color={'default'}
-                variant={'text'}
-                text={PowerLocalize.get('Action.Cancel')}
-                onClick={props.onClose}
-            />
-            <PwrButton
-                color={'primary'}
-                variant={'text'}
-                disabled={step === STEP_OVERVIEW}
-                text={PowerLocalize.get('Action.Back')}
-                icon={<ArrowBack/>}
-                onClick={stepBack}
-            />
-            <PwrButton
-                color={'primary'}
-                variant={'contained'}
-                disabled={nextDisabled}
-                text={step === STEP_CONFIRM ? PowerLocalize.get('Action.Merge') : PowerLocalize.get('Action.Next')}
-                icon={step === STEP_CONFIRM ? <CallMerge/> : <ArrowForward/>}
-                onClick={stepForth}
-            />
+            {/* The button bar of the forms (#134): Next (Merge in the last step) highlighted, Back and Cancel next to it */}
+            <PwrFormActions editing noSpace saveDisabled={nextDisabled}
+                            saveText={step === STEP_CONFIRM ? PowerLocalize.get('Action.Merge') : PowerLocalize.get('Action.Next')}
+                            saveIcon={step === STEP_CONFIRM ? 'call_merge' : 'arrow_forward'}
+                            onSave={stepForth} onCancel={props.onClose}>
+                {step !== STEP_OVERVIEW &&
+                <PwrButton color={'primary'} text={PowerLocalize.get('Action.Back')} icon={<ArrowBack/>} onClick={stepBack}/>}
+            </PwrFormActions>
         </DialogActions>
     </Dialog>;
 };

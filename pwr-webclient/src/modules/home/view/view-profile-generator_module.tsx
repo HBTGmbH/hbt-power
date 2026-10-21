@@ -2,7 +2,8 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Button, Dialog, Icon, List, ListItem,} from '@material-ui/core';
+import {Dialog, DialogActions, List, ListItem} from '@material-ui/core';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {Template} from '../../../model/view/Template';
@@ -12,8 +13,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import {ReportPreview} from '../../admin/reportmanager/report-preview_module';
 import {PwrSelectableList} from '../../general/Pwr-selecable-list';
-import AppBar from '@material-ui/core/AppBar/AppBar';
-import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {ThunkDispatch} from 'redux-thunk';
@@ -106,7 +105,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
 
         if (this.props.allTemplates.length === 0) {
             items.push(
-                <p key={'noTemp'}> Keine Templates vorhanden.</p>
+                <p key={'noTemp'}>{PowerLocalize.get('Generator.NoTemplates')}</p>
             );
         }
         this.props.allTemplates.map((value, index) => {
@@ -143,29 +142,6 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
             >
                 <DialogTitle>{PowerLocalize.get('Generator.Title')}</DialogTitle>
                 <DialogContent>
-                    <AppBar>
-                        <Toolbar>
-                            <Button
-                                color={'secondary'}
-                                variant={'outlined'}
-                                className="mui-margin"
-                                disabled={this.state.activeTemplateId === ''}
-                                onClick={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
-                            >
-                                <Icon className="material-icons">open_in_new</Icon>
-                                {PowerLocalize.get('Action.Generate.Word')}
-                            </Button>
-
-                            <Button
-                                variant={'outlined'}
-                                color={'secondary'}
-                                onClick={this.props.onClose}
-                            >
-                                <Icon className="material-icons">close</Icon>
-                                {PowerLocalize.get('Action.Close')}
-                            </Button>
-                        </Toolbar>
-                    </AppBar>
                     <div className="col-md-4">
                         <h4 className="row">{PowerLocalize.get('Generator.TemplateList')}</h4>
                         <div className="row">
@@ -179,23 +155,30 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                     <div className="col-md-8">
                         <h4 className="row"
                             style={{marginLeft: '2px'}}> {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].name : ' '} </h4>
-                        {/* Full height of the screen: toolbar and template name above (~115px), description below (~35px) */}
-                        <div className={'row'} style={{marginLeft: '2px', height: 'calc(100vh - 150px)'}}>
+                        {/* Full height of the screen: title and template name above (~130px), description and button bar below (~110px) */}
+                        <div className={'row'} style={{marginLeft: '2px', height: 'calc(100vh - 240px)'}}>
                             <ReportPreview templateId={this.state.activeTemplateId}
                                            initials={this.props.initials}
                                            viewProfileId={this.props.viewProfileId}/>
                         </div>
 
                         <div className={'row'} style={{marginLeft: '2px'}}>
-                            {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].description : PowerLocalize.get('Generator.DescriptionPlaceholder')}
-
-                            {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].createUser + '  |  ' : ' '}
-                            {this.state.activeTemplateId !== '' ? this.props.allTemplates[this.state.activeTemplateNumber].createdDate : ' '}
+                            {this.state.activeTemplateId !== ''
+                                ? [this.props.allTemplates[this.state.activeTemplateNumber].description,
+                                    this.props.allTemplates[this.state.activeTemplateNumber].createUser,
+                                    this.props.allTemplates[this.state.activeTemplateNumber].createdDate].filter(part => !!part).join('  |  ')
+                                : PowerLocalize.get('Generator.DescriptionPlaceholder')}
                         </div>
 
                     </div>
                 </DialogContent>
-
+                {/* The button bar of the forms (#134) instead of an app bar of its own */}
+                <DialogActions>
+                    <PwrFormActions editing noSpace saveText={PowerLocalize.get('Action.Generate.Word')} saveIcon="open_in_new"
+                                    saveDisabled={this.state.activeTemplateId === ''}
+                                    onSave={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
+                                    onCancel={this.closeAndReset}/>
+                </DialogActions>
             </Dialog>
         );
     }
