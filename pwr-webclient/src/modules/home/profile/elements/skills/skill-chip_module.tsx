@@ -1,11 +1,21 @@
 import * as React from 'react';
 import {CSSProperties} from 'react';
-import {Chip} from '@material-ui/core';
+import {Chip, Tooltip} from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import UndoIcon from '@material-ui/icons/Undo';
 import {StarRating} from '../../../../star-rating_module.';
 import Avatar from '@material-ui/core/Avatar/Avatar';
 import Popover from '@material-ui/core/Popover/Popover';
 import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
+import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 
+/**
+ * Change of a skill against the saved state, shown while a project is being edited
+ */
+export enum SkillChange {
+    ADDED = 'ADDED',
+    REMOVED = 'REMOVED'
+}
 
 interface SkillChipLocalProps {
     skill: ProfileSkill;
@@ -15,10 +25,16 @@ interface SkillChipLocalProps {
     showRating?: boolean;
     canChangeRating?: boolean;
     disabled?: boolean;
+    change?: SkillChange;
 
     onRatingChange?(newRating: number, skill: ProfileSkill): void;
 
     onDelete(skill: ProfileSkill): void;
+
+    /**
+     * Brings back a removed skill (change REMOVED)
+     */
+    onRestore?(skill: ProfileSkill): void;
 }
 
 interface SkillChipLocalState {
@@ -67,8 +83,22 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
         if (this.props.disabled) {
             return undefined;
         }
+        if (this.props.change === SkillChange.REMOVED) {
+            return () => this.props.onRestore(this.skill());
+        }
         return () => this.handleDelete();
     };
+
+    private tooltip(): string {
+        switch (this.props.change) {
+            case SkillChange.ADDED:
+                return PowerLocalize.get('Profile.Project.Skill.Added');
+            case SkillChange.REMOVED:
+                return PowerLocalize.get('Profile.Project.Skill.Removed');
+            default:
+                return '';
+        }
+    }
 
     private RatingChanger = () => {
         if (this.props.canChangeRating) {
@@ -88,18 +118,29 @@ export class SkillChip extends React.Component<SkillChipLocalProps, SkillChipLoc
 
 
     render() {
+        const change = this.props.change;
+        const changeClass = change === SkillChange.ADDED ? ' pwr-skill-chip-added'
+            : change === SkillChange.REMOVED ? ' pwr-skill-chip-removed' : '';
         return (
             <div>
-                <Chip
-                    clickable={!this.props.disabled}
-                    color={'primary'}
-                    avatar={<this.Avatar/>}
-                    label={this.skill().name}
-                    style={this.props.style}
-                    className={this.props.className}
-                    onDelete={this.makeDeleteHandler()}
-                    onClick={this.showInfo}
-                />
+                {/* Title only for a changed skill: an empty title shows no tooltip */}
+                <Tooltip title={this.tooltip()}>
+                    <Chip
+                        clickable={!this.props.disabled}
+                        color={change === SkillChange.ADDED ? 'secondary' : change === SkillChange.REMOVED ? 'default' : 'primary'}
+                        variant={change === SkillChange.REMOVED ? 'outlined' : 'default'}
+                        // An avatar, even an empty one, would hide the icon
+                        avatar={this.props.showRating ? <this.Avatar/> : undefined}
+                        icon={change === SkillChange.ADDED ? <AddIcon/> : undefined}
+                        label={this.skill().name}
+                        style={this.props.style}
+                        className={(this.props.className || '') + changeClass}
+                        onDelete={this.makeDeleteHandler()}
+                        deleteIcon={change === SkillChange.REMOVED
+                            ? <UndoIcon aria-label={PowerLocalize.get('Profile.Project.Skill.Restore')}/> : undefined}
+                        onClick={this.showInfo}
+                    />
+                </Tooltip>
                 <this.RatingChanger/>
             </div>
         );
