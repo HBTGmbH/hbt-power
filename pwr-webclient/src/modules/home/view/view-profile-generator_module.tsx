@@ -2,7 +2,10 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Dialog, DialogActions, List, ListItem} from '@material-ui/core';
+import {Dialog, DialogActions, Icon, Link, List, ListItem, Typography} from '@material-ui/core';
+import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
+import {ProfileCheckHint, ProfileCheckHintType} from '../../../model/check/ProfileCheck';
+import {hintLink, hintText} from '../../general/profile-check/profile-check-hints';
 import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
@@ -35,6 +38,8 @@ interface ViewProfileGeneratorLocalProps {
 interface ViewProfileGeneratorState {
     activeTemplateId: string;
     activeTemplateNumber: number;
+    /** Outdated parts of the profile (#139); generating stays possible */
+    outdatedHints?: Array<ProfileCheckHint>;
 }
 
 
@@ -76,6 +81,50 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
 
     componentDidMount(): void {
         this.props.loadAllTemplates();
+        if (this.props.open) {
+            this.loadOutdatedHints();
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<ViewProfileGeneratorProps & ViewProfileGeneratorLocalProps & ViewProfileGeneratorDispatch>): void {
+        if (this.props.open && !prevProps.open) {
+            this.loadOutdatedHints();
+        }
+    }
+
+    private loadOutdatedHints() {
+        if (!this.props.initials) {
+            return;
+        }
+        ProfileServiceClient.instance().getProfileCheck(this.props.initials)
+            .then(check => this.setState({outdatedHints: check.hints.filter(hint => hint.type === ProfileCheckHintType.OUTDATED)}))
+            .catch(() => this.setState({outdatedHints: []}));
+    }
+
+    /**
+     * Before an export: outdated parts of the profile, each with the jump to where it is edited
+     */
+    private renderOutdatedHints() {
+        const hints = this.state.outdatedHints;
+        if (!hints || hints.length === 0) {
+            return null;
+        }
+        return <div className="pwr-generator-outdated">
+            <Typography variant={'subtitle2'}>
+                <Icon className="material-icons pwr-generator-outdated-icon">update</Icon>
+                {PowerLocalize.get('Generator.Outdated.Title')}
+            </Typography>
+            {hints.map((hint, index) =>
+                <div key={index}>
+                    <Link component="button" variant="body2"
+                          onClick={() => {
+                              this.closeAndReset();
+                              this.props.navigateTo(hintLink(hint, this.props.initials));
+                          }}>
+                        {hintText(hint)}
+                    </Link>
+                </div>)}
+        </div>;
     }
 
 
@@ -142,6 +191,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
             >
                 <DialogTitle>{PowerLocalize.get('Generator.Title')}</DialogTitle>
                 <DialogContent>
+                    {this.renderOutdatedHints()}
                     <div className="col-md-4">
                         <h4 className="row">{PowerLocalize.get('Generator.TemplateList')}</h4>
                         <div className="row">

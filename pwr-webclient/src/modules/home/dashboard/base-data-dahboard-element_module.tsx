@@ -1,15 +1,16 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Paper} from '@material-ui/core';
+import {Paper, Tooltip} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
-import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
+import {formatToFullLocalizedDateTime, formatToRelativeTime} from '../../../utils/DateUtil';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import Edit from '@material-ui/icons/Edit';
 import {ThunkDispatch} from 'redux-thunk';
 import {PwrProfilePicture} from '../../general/pwr-profile-picture';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {withRouter} from 'react-router-dom';
 
 interface BaseDataDashboardElementProps {
@@ -59,11 +60,17 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                     <div className="col-md-12 vertical-align fullWidth">
                         <PwrProfilePicture pictureId={this.props.profilePictureId}/>
                     </div>
+                    {/* One line, fuzzy time (#139), the exact time in the tooltip; field space before the button */}
                     <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
-                        {PowerLocalize.get('Overview.Base.LastEdited')}
+                        <span>
+                            {PowerLocalize.get('Overview.Base.LastEdited')}{' '}
+                            <Tooltip title={formatToFullLocalizedDateTime(this.props.lastEdited)}>
+                                <span>{formatToRelativeTime(this.props.lastEdited)}</span>
+                            </Tooltip>
+                        </span>
                     </div>
-                    <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
-                        {formatToFullLocalizedDateTime(this.props.lastEdited)}
+                    <div className="col-md-12">
+                        <PwrSpacer/>
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
                         <PwrRaisedButton color={'primary'} icon={<Edit/>} text={PowerLocalize.get('Profile.BaseData.Edit')}

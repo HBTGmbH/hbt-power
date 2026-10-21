@@ -26,6 +26,8 @@ import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {matchPath} from 'react-router-dom';
 import {Paths} from '../../../Paths';
+import {profileSectionAnchor} from '../../general/profile-check/profile-check-hints';
+import {ProfileSection} from '../../../model/check/ProfileCheck';
 
 
 interface ProfileProps {
@@ -90,6 +92,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         if (prevProps.activeConsultant.initials !== this.props.activeConsultant.initials) {
             this.props.loadFullProfile(this.props.activeConsultant.initials);
         }
+        // Again once the profile is there: the sections above grow and push the target down
+        if (this.hash(prevProps) !== this.hash(this.props) || prevProps.profile !== this.props.profile) {
+            this.scrollToSection();
+        }
     }
 
     componentDidMount() {
@@ -97,6 +103,27 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         if (!!this.props.activeConsultant.initials) {
             this.props.loadFullProfile(this.props.activeConsultant.initials);
         }
+        this.scrollToSection();
+    }
+
+    private hash(props: ProfileLocalProps): string {
+        return (props.location && props.location.hash) || '';
+    }
+
+    /**
+     * A hint of the profile check (#139) links a section as #profile-section-…
+     */
+    private scrollToSection() {
+        const id = this.hash(this.props).replace(/^#/, '');
+        if (!id) {
+            return;
+        }
+        window.setTimeout(() => {
+            const section = document.getElementById(id);
+            if (section) {
+                section.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        }, 0);
     }
 
     private consultantName(): string {
@@ -173,7 +200,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             <Typography variant={'subtitle1'} color={'textSecondary'} gutterBottom>
                                 {this.props.activeConsultant.title}
                             </Typography>
-                            <ProfileDescription/>
+                            <div id={profileSectionAnchor(ProfileSection.DESCRIPTION)} className="pwr-profile-section-anchor">
+                                <ProfileDescription/>
+                            </div>
                         </Grid>
                     </Grid>
                     {/* Spacing scale (#40): the entry blocks are sections, 32 px apart (16 px grid gap + 16 px below each) */}
@@ -182,35 +211,49 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                     <PwrSpacer/>
                     <Grid container spacing={2}>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'LANGUAGE'}
-                                                 renderSingleElementInfo={this.renderLanguageInfo}/>
+                            <div id={profileSectionAnchor(ProfileSection.LANGUAGES)} className="pwr-profile-section-anchor">
+                                <ProfileEntryElement type={'LANGUAGE'}
+                                                     renderSingleElementInfo={this.renderLanguageInfo}/>
+                            </div>
                             <PwrSpacer/>
                         </Grid>
                         < Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'TRAINING'}
-                                                 renderSingleElementInfo={this.renderTrainingInfo}/>
+                            <div id={profileSectionAnchor(ProfileSection.TRAININGS)} className="pwr-profile-section-anchor">
+                                <ProfileEntryElement type={'TRAINING'}
+                                                     renderSingleElementInfo={this.renderTrainingInfo}/>
+                            </div>
                             <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'EDUCATION'}
-                                                 renderSingleElementInfo={this.renderEducationInfo}/>
+                            <div id={profileSectionAnchor(ProfileSection.EDUCATION)} className="pwr-profile-section-anchor">
+                                <ProfileEntryElement type={'EDUCATION'}
+                                                     renderSingleElementInfo={this.renderEducationInfo}/>
+                            </div>
                             <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'QUALIFICATION'}
-                                                 renderSingleElementInfo={this.renderQualificationInfo}/>
+                            <div id={profileSectionAnchor(ProfileSection.QUALIFICATIONS)} className="pwr-profile-section-anchor">
+                                <ProfileEntryElement type={'QUALIFICATION'}
+                                                     renderSingleElementInfo={this.renderQualificationInfo}/>
+                            </div>
                             <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderEmpty}/>
+                            <div id={profileSectionAnchor(ProfileSection.SECTORS)} className="pwr-profile-section-anchor">
+                                <ProfileEntryElement type={'SECTOR'} renderSingleElementInfo={this.renderEmpty}/>
+                            </div>
                             <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'SPECIAL_FIELD'} renderSingleElementInfo={this.renderEmpty}/>
+                            <div id={profileSectionAnchor(ProfileSection.SPECIAL_FIELDS)} className="pwr-profile-section-anchor">
+                                <ProfileEntryElement type={'SPECIAL_FIELD'} renderSingleElementInfo={this.renderEmpty}/>
+                            </div>
                             <PwrSpacer/>
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <ProfileEntryElement type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>
+                            <div id={profileSectionAnchor(ProfileSection.CAREER)} className="pwr-profile-section-anchor">
+                                <ProfileEntryElement type={'CAREER'} renderSingleElementInfo={this.renderCareerInfo}/>
+                            </div>
                             <PwrSpacer/>
                         </Grid>
                     </Grid>

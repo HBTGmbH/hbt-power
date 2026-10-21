@@ -395,4 +395,50 @@ public class ProfileEntryServiceTest {
     }
 
     // TODO Skill löschen wenn er im Project enthalten ist ?!!?
+
+    // ------------------------------------------------------------------------------- timestamps of the check (#139)
+
+    @Test
+    public void changingAnEntry_countsAsProfileUpdate() {
+        Profile profile = new Profile();
+        LanguageSkill language = LanguageSkill.builder().level(LanguageSkillLevel.ADVANCED).language(NameEntity.builder().name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
+        profileEntryUpdate(language);
+        profileEntryService.updateProfileEntry(language, profile, NameEntityType.LANGUAGE);
+        assertThat(profile.getLastEdited()).isNotNull();
+        assertThat(profile.getSkillsLastEdited()).isNull();
+    }
+
+    @Test
+    public void addingAndDeletingASkill_setsSkillsLastEdited() {
+        skillExisting(8L, "skillOne", 1);
+        Profile p = new Profile();
+        Skill skill = profileEntryService.updateProfileSkills(Skill.builder().id(8L).name("skillOne").rating(1).build(), p);
+        assertThat(p.getSkillsLastEdited()).isNotNull();
+        p.setSkillsLastEdited(null);
+
+        profileEntryService.deleteSkill(skill.getId(), p);
+
+        assertThat(p.getSkillsLastEdited()).isNotNull();
+        assertThat(p.getLastEdited()).isNotNull();
+    }
+
+    @Test
+    public void savingAProject_setsItsLastEdited() {
+        Profile p = new Profile();
+        Project project = new Project();
+        project.setName("Kundenportal");
+        Project saved = profileEntryService.updateProject(project, p);
+        assertThat(saved.getLastEdited()).isNotNull();
+        assertThat(p.getLastEdited()).isEqualTo(saved.getLastEdited());
+    }
+
+    @Test
+    public void newSkillOfAProject_setsSkillsLastEdited() {
+        Profile p = new Profile();
+        Project project = new Project();
+        project.setName("Kundenportal");
+        project.setSkills(new HashSet<>(Arrays.asList(Skill.builder().name("Kotlin").rating(3).build())));
+        profileEntryService.updateProject(project, p);
+        assertThat(p.getSkillsLastEdited()).isNotNull();
+    }
 }

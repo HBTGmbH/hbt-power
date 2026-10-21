@@ -12,6 +12,7 @@ import {ViewProfileDialog} from './view/view-profile-dialog_module';
 import {BaseDataDashboardElement} from './dashboard/base-data-dahboard-element_module';
 import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-element_module';
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
+import {ProfileCheckDashboardElement} from './dashboard/profile-check-dashboard-element';
 import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
 import {getRandomGreeting} from '../../model/PwrConstants';
@@ -134,6 +135,10 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                     <div className="row">
                         <div className="col-md-12">
                             <BaseDataDashboardElement greeting={this.state.greeting}/>
+                        </div>
+                        {/* Right after the welcome: what is missing or outdated (#139) */}
+                        <div className="col-md-12">
+                            <ProfileCheckDashboardElement initials={initials}/>
                         </div>
                         <div className="col-md-12">
                             <CommonSkillsDashboardElement initials={initials}/>

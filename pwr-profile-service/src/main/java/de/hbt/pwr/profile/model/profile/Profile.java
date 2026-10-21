@@ -32,6 +32,16 @@ public class Profile {
 
     private LocalDateTime lastEdited;
 
+    /**
+     * When a skill of the profile was last added, changed or removed; null before #139 (then lastEdited counts)
+     */
+    private LocalDateTime skillsLastEdited;
+
+    /**
+     * When the consultant last confirmed the profile as up to date without changing it (#139)
+     */
+    private LocalDateTime lastConfirmed;
+
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     @JoinColumn(name = "PROFILE_ID")

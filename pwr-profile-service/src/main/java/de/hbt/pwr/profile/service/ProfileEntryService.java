@@ -56,6 +56,8 @@ public class ProfileEntryService {
     // TODO 2: Result Messages
     // TODO 3: Leere Name Entity/Validierung von fachlichen Daten
     public <Entry extends ProfileEntry> Entry updateProfileEntry(Entry profileEntry, Profile profile, NameEntityType nameEntityType) {
+        // Every change counts as a profile update, not only the description and projects (#139)
+        profile.setLastEdited(LocalDateTime.now());
         NameEntity nameEntity = validateNameEntity(profileEntry.getNameEntity(), nameEntityType);
         profileEntry.setNameEntity(nameEntity);
         if (profileEntry.getId() != null) {
@@ -69,9 +71,11 @@ public class ProfileEntryService {
 
     public void deleteEntryWithId(Long id, Profile profile, NameEntityType nameEntityType) {
         nameEntityType.getEntryCollection(profile).removeIf(profileEntry -> profileEntry.getId().equals(id));
+        profile.setLastEdited(LocalDateTime.now());
     }
 
     public Skill updateProfileSkills(Skill skill, Profile profile) {
+        skillsEdited(profile);
         Optional<Skill> concurrent = profile.getSkills()
                 .stream().filter(s -> hasEqualName(s, skill))
                 .findAny();
@@ -99,7 +103,8 @@ public class ProfileEntryService {
         return skill.getName().toLowerCase().equals(otherSkill.getName().toLowerCase());
     }
 
-    private Skill handleProjectSkill(Skill skill, Set<Skill> profileSkills) {
+    private Skill handleProjectSkill(Skill skill, Profile profile) {
+        Set<Skill> profileSkills = profile.getSkills();
         skill.setName(skill.getName().trim());
         Skill finalSkill = skill;
         Skill inPro = profileSkills.stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase())).findAny().orElse(null);
@@ -110,6 +115,7 @@ public class ProfileEntryService {
             }
             profileSkills.add(skill);
             skillProfileClient.updateAndGetCategory(skill.getName());
+            profile.setSkillsLastEdited(LocalDateTime.now());
         } else {
             skill = inPro;
         }
@@ -119,7 +125,7 @@ public class ProfileEntryService {
     private Set<Skill> updateProjectSkills(Project project, Profile profile) {
         Set<Skill> projectSkills = project.getSkills();
         Set<Skill> profileSkills = profile.getSkills();
-        projectSkills = projectSkills.stream().map(s -> handleProjectSkill(s, profileSkills)).collect(Collectors.toSet());
+        projectSkills = projectSkills.stream().map(s -> handleProjectSkill(s, profile)).collect(Collectors.toSet());
         project.getSkills().clear();
         project.getSkills().addAll(projectSkills);
         return profileSkills;
@@ -133,6 +139,16 @@ public class ProfileEntryService {
                 .findAny()
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Skill with id: " + id + " was not found!"));
         p.getSkills().remove(toRemove);
+        skillsEdited(p);
+    }
+
+    /**
+     * The profile check (#139) asks for a skill update every few months
+     */
+    private void skillsEdited(Profile profile) {
+        LocalDateTime now = LocalDateTime.now();
+        profile.setSkillsLastEdited(now);
+        profile.setLastEdited(now);
     }
 
     private NameEntity validateNameEntity(NameEntity nameEntity, NameEntityType type) {
@@ -177,7 +193,10 @@ public class ProfileEntryService {
             updateProjectSkills(project, profile);
         }
 
-        profile.setLastEdited(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        profile.setLastEdited(now);
+        // The profile check (#139) asks for an update of the project references once a year
+        project.setLastEdited(now);
 
         // persist new project or merge existing one
         log.debug("saving project");
@@ -194,5 +213,6 @@ public class ProfileEntryService {
                 .filter(project -> project.getId().equals(id)).findAny()
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Project with id: " + id + " ws not found!"));
         p.getProjects().remove(remove);
+        p.setLastEdited(LocalDateTime.now());
     }
 }

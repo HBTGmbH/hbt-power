@@ -5,7 +5,7 @@ import {ApplicationState} from '../../reducers/reducerIndex';
 import Paper from '@material-ui/core/Paper';
 import {Color} from '../../utils/ColorUtil';
 import {Profile} from '../../reducers/profile-new/profile/model/Profile';
-import {Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip} from "recharts";
+import {Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 
 interface ProfileStatisticsProps {
@@ -46,38 +46,35 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
 
 
     private renderElementCounts = () => {
-        let langCount: number = 0, secCount: number = 0, qualCount: number = 0, edCount: number = 0,
-            trainCount: number = 0, careerCount: number = 0, keySkillCount: number = 0;
-        if (!!this.props.profile) {
-            langCount = !!this.props.profile.languages ? this.props.profile.languages.length : 0;
-            secCount = !!this.props.profile.sectors ? this.props.profile.sectors.length : 0;
-            qualCount = !!this.props.profile.qualification ? this.props.profile.qualification.length : 0;
-            edCount = !!this.props.profile.education ? this.props.profile.education.length : 0;
-            trainCount = !!this.props.profile['trainingEntries'] ? this.props.profile['trainingEntries'].length : 0; // TODO wrong variable Name
-            careerCount = !!this.props.profile['careerEntries'] ? this.props.profile['careerEntries'].length : 0; // TODO wrong variable Name
-            keySkillCount = !!this.props.profile.specialFieldEntries ? this.props.profile.specialFieldEntries.length : 0;
-        }
+        const profile = this.props.profile;
+        const count = (entries: Array<any> | undefined) => (!!entries ? entries.length : 0);
         const data = [
-            {name: PowerLocalize.get('Language.Plural'), value: langCount},
-            {name: PowerLocalize.get('Sector.Plural'), value: secCount},
-            {name: PowerLocalize.get('Qualification.Plural'), value: qualCount},
-            {name: PowerLocalize.get('Education.Plural'), value: edCount},
-            {name: PowerLocalize.get('Training.Plural'), value: trainCount},
-            {name: PowerLocalize.get('Career.Plural'), value: careerCount},
-            {name: PowerLocalize.get('SpecialField.Plural'), value: keySkillCount},
+            {name: PowerLocalize.get('Language.Plural'), value: count(profile.languages)},
+            {name: PowerLocalize.get('Training.Plural'), value: count(profile['trainingEntries'])}, // TODO wrong variable Name
+            {name: PowerLocalize.get('Education.Plural'), value: count(profile.education)},
+            {name: PowerLocalize.get('Qualification.Plural'), value: count(profile.qualification)},
+            {name: PowerLocalize.get('Sector.Plural'), value: count(profile.sectors)},
+            {name: PowerLocalize.get('SpecialField.Plural'), value: count(profile.specialFieldEntries)},
+            {name: PowerLocalize.get('Career.Plural'), value: count(profile['careerEntries'])}, // TODO wrong variable Name
+            {name: PowerLocalize.get('Skill.Plural'), value: count(profile.skills)},
+            {name: PowerLocalize.get('Project.Plural'), value: count(profile.projects)},
         ];
+        // Bar length log(n + 1): many skills don't squeeze the other sections, 0 stays an empty bar, 1 a short one.
+        // The label and the tooltip show the real count.
+        const bars = data.map(entry => ({...entry, length: Math.log10(entry.value + 1)}));
+        // Horizontal bars (#139): the names stay readable on a narrow card, the count stands at the end of each bar
         return (
-            <ResponsiveContainer minHeight={200} maxHeight={400}>
-                <BarChart layout="horizontal" data={data}>
-                    <XAxis dataKey="name"/>
-                    <YAxis/>
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <Tooltip />
-                    <Bar
-                        dataKey="value"
-                        fill={Color.HBT_2017_DARK_BLUE.toCSSRGBString()}
-                        layout="horizontal"
-                    />
+            <ResponsiveContainer width="100%" height={bars.length * 32 + 32}>
+                <BarChart layout="vertical" data={bars} margin={{top: 8, right: 40, bottom: 8, left: 8}}>
+                    {/* Fixed up to 100 entries, so profiles compare; more entries stretch it */}
+                    <XAxis type="number" hide domain={[0, (dataMax: number) => Math.max(dataMax, Math.log10(101))]}/>
+                    <YAxis type="category" dataKey="name" width={170} tickLine={false} axisLine={false}/>
+                    <Tooltip cursor={{fill: 'rgba(0, 0, 0, 0.04)'}}
+                             formatter={(_: any, name: string, item: any) => [item.payload.value, name]}/>
+                    <Bar dataKey="length" name={PowerLocalize.get('ProfileStatistics.Count')}
+                         fill={Color.HBT_2017_DARK_BLUE.toCSSRGBString()} barSize={16} isAnimationActive={false}>
+                        <LabelList dataKey="value" position="right"/>
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
         );
@@ -92,16 +89,16 @@ class ProfileStatisticsModule extends React.Component<ProfileStatisticsProps
             <Paper className="dashboard-element">
                 <div className="col-md-12 vertical-align fullWidth">
                     <span style={{fontSize: '16px', fontWeight: 'bold', marginTop: '8px'}}>
-                        Profil-Daten-Überblick
+                        {PowerLocalize.get('ProfileStatistics.Title')}
                     </span>
                 </div>
                 <div className="col-md-12 vertical-align fullWidth">
-                    Gibt dir einen kurzen Überblick über den Befüllungsgrad deines Profils.
+                    {PowerLocalize.get('ProfileStatistics.Description')}
                 </div>
-                <div style={{paddingRight: '10%', paddingLeft: '5%'}}>
+                {/* Below the floating header columns, so the card grows with the chart */}
+                <div style={{clear: 'both', padding: '8px 16px 16px'}}>
                     {this.renderElementCounts()}
                 </div>
-                <div style={{marginBottom: '35px'}}/>
             </Paper>);
     }
 }
