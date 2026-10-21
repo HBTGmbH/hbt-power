@@ -30,5 +30,14 @@ export class ConsultantClient extends PowerHttpClient {
         this.beginRequest();
         return this.get(url);
     }
+
+    /**
+     * Null if there is no consultant with these initials, without an error alert (#135)
+     */
+    public findConsultant(initials: string): Promise<Consultant | null> {
+        const url = this.base() + '/consultants/' + encodeURIComponent(initials);
+        this.beginRequest();
+        return this.getOrNull(url);
+    }
 }
 

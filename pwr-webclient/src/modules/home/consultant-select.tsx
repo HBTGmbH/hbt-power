@@ -7,6 +7,8 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 interface ConsultantSelectProps {
     consultants: Array<ConsultantInfoDTO>;
     initials: string;
+    /** A labelled form field (profile select, #135) instead of the white field in the app bar */
+    label?: string;
 
     onSelect(initials: string): void;
 }
@@ -25,13 +27,14 @@ function matches(consultant: ConsultantInfoDTO, input: string): boolean {
 const WidePopper = (props: PopperProps) => <Popper {...props} className="pwr-consultant-select-popper" placement="bottom-start"/>;
 
 /**
- * Colleague selection in the app bar (admins): typing filters the list by name and initials (#131)
+ * Colleague selection for admins, in the app bar and in the profile select: typing filters the list by name and
+ * initials (#131)
  */
 export const ConsultantSelect = (props: ConsultantSelectProps) => {
     const selected = props.consultants.find(consultant => consultant.initials === props.initials) || null;
     // Explicit types: one consultant, never empty (disableClearable), no free text
     return <Autocomplete<ConsultantInfoDTO, false, true, false>
-        className="pwr-consultant-select"
+        className={props.label ? 'pwr-consultant-select-field' : 'pwr-consultant-select'}
         options={props.consultants}
         value={selected}
         disableClearable
@@ -52,7 +55,9 @@ export const ConsultantSelect = (props: ConsultantSelectProps) => {
                 props.onSelect(consultant.initials);
             }
         }}
-        renderInput={params => <TextField {...params} variant="standard"
-                                          inputProps={{...params.inputProps, 'aria-label': PowerLocalize.get('Toolbar.SelectConsultant')}}/>}
+        renderInput={params => props.label
+            ? <TextField {...params} label={props.label}/>
+            : <TextField {...params} variant="standard"
+                         inputProps={{...params.inputProps, 'aria-label': PowerLocalize.get('Toolbar.SelectConsultant')}}/>}
     />;
 };
