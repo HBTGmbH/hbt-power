@@ -16,7 +16,6 @@ import StepLabel from '@material-ui/core/StepLabel/StepLabel';
 import StepContent from '@material-ui/core/StepContent/StepContent';
 import HelpOutline from '@material-ui/icons/HelpOutline';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {SkillServiceClient} from '../../../../../clients/SkillServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
 
 interface AddSkill_ModuleProps {
@@ -32,7 +31,6 @@ interface AddSkill_ModuleDispatch {
 }
 
 interface AddSkill_ModuleState {
-    skills: Array<string>;
     skillRating: number;
     skillName: string;
     progressState: number;
@@ -46,7 +44,6 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
     constructor(props: AddSkill_ModuleProps & AddSkill_ModuleLocalProps & AddSkill_ModuleDispatch) {
         super(props);
         this.state = {
-            skills: [],
             skillRating: 1,
             skillName: '',
             progressState: 0,
@@ -77,9 +74,6 @@ export class AddSkill_Module extends React.Component<AddSkill_ModuleProps & AddS
             skillName: data
         });
         if (!!(data) && data.trim().length > 0) {
-            SkillServiceClient.instance().getSearchSkill(data)
-                .then(skills => this.setState({skills}))
-                .catch((error: any) => console.error((error)));
             this.requestSkillHierarchy(data);
         }
     };

@@ -4,6 +4,7 @@ import {APISkillServiceSkill, SkillServiceSkill} from '../model/skill/SkillServi
 import {AxiosRequestConfig} from 'axios';
 import {APISkillCategory, SkillCategory} from '../model/skill/SkillCategory';
 import {TCategoryNode} from '../model/skill/tree/TCategoryNode';
+import {SkillSuggestion} from '../model/skill/SkillSuggestion';
 
 declare const POWER_SKILL_SERVICE_URL: string;
 
@@ -79,21 +80,18 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.delete(url, config);
     };
 
-    public getSearchSkillURL = (): string => {
-        return this.base() + '/skill/search';
-
-    };
-
-    public getSearchSkill = (searchTerm: string): Promise<Array<string>> => {
-        let config: AxiosRequestConfig = {
+    /**
+     * Skill suggestions for a search term, each with the alias that matched, if one matched better than the name
+     */
+    public getSkillSuggestions = (searchTerm: string): Promise<Array<SkillSuggestion>> => {
+        const config: AxiosRequestConfig = {
             params: {
                 maxResults: 10,
                 searchterm: searchTerm
             }
         };
-        const url = this.getSearchSkillURL();
-        return this.get(url, config);
-    }
+        return this.get(this.base() + '/skill/suggestions', config);
+    };
 
     public getCategoryById = (id: number): Promise<APISkillCategory> => {
         const url = this.base() + '/category/' + id;
