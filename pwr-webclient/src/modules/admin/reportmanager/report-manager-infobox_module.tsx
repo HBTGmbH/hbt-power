@@ -149,6 +149,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                     <TextField
                         id="description"
                         multiline
+                        rows={4}
                         fullWidth
                         InputProps={{
                             readOnly: !this.state.edit,

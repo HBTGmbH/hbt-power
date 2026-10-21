@@ -144,6 +144,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   value={this.state.description}
                                   fullWidth={true}
                                   multiLine={true}
+                                  rows={4}
                                   label={PowerLocalize.get('ViewProfileDialog.Description')}
                 />
                 <TextField onChange={() => this.changeLocale}
