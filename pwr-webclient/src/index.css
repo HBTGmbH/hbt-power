@@ -33,6 +33,14 @@ body {
     margin: 2px;
 }
 
+/* Logged in user in the app bar (#105) */
+.pwr-logged-in-avatar {
+    background-color: #46E6E6 !important;
+    color: #191E55 !important;
+    font-size: 18px !important;
+    margin: 0 4px;
+}
+
 /* Skills of a project being edited that the next save removes (#103) */
 .pwr-skill-chip-removed .MuiChip-label {
     color: rgba(0, 0, 0, 0.6);

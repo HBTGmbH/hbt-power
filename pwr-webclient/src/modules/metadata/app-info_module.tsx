@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {
+    Avatar,
     Dialog,
     DialogActions,
     DialogContent,
@@ -119,4 +120,33 @@ export const AppInfoButton = () => {
         </Tooltip>
         <AppInfoDialog open={open} onClose={() => setOpen(false)}/>
     </>;
+};
+
+/**
+ * Initials of an account name: "Klaus Richarz" and "Richarz, Klaus" both become "KR"
+ */
+export function accountInitials(name: string): string {
+    const trimmed = (name || '').trim();
+    const ordered = trimmed.includes(',') ? trimmed.split(',').reverse().join(' ') : trimmed;
+    const words = ordered.split(/\s+/).filter(word => word.length > 0);
+    if (words.length === 0) {
+        return '?';
+    }
+    const letters = words.length === 1 ? words[0][0] : words[0][0] + words[words.length - 1][0];
+    return letters.toUpperCase();
+}
+
+/**
+ * The logged in account for the app bar. Not the opened profile: which consultant belongs to an account is unknown.
+ */
+export const LoggedInUserAvatar = () => {
+    const account = OIDCService.instance().getCurrentAccount();
+    if (!account) {
+        return null;
+    }
+    const title = PowerLocalize.get('Toolbar.LoggedInAs') + ' ' + account.name
+        + (account.username ? ' (' + account.username + ')' : '');
+    return <Tooltip title={title}>
+        <Avatar className="pwr-logged-in-avatar" role={'img'} aria-label={title}>{accountInitials(account.name)}</Avatar>
+    </Tooltip>;
 };
