@@ -24,6 +24,7 @@ import {NavigationActionCreator} from '../../reducers/navigation/NavigationActio
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
 import Divider from '@material-ui/core/Divider/Divider';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import {ReportManager} from './reportmanager/report-manager_module';
 import {TemplateActionCreator} from '../../reducers/template/TemplateActionCreator';
 import {ProfileLoadingSpinner} from '../home/profile/profile-loading-spinner_module';
@@ -138,9 +139,12 @@ class AdminClientModule extends React.Component<AdminClientProps
                                 </div>
                                 <AppInfoButton/>
                                 <LoggedInUserAvatar/>
-                                <IconButton color={'secondary'} onClick={this.props.logOutAdmin}>
-                                    <Icon className={'material-icons'}> input</Icon>
-                                </IconButton>
+                                <Tooltip title={PowerLocalize.get('Tooolbar.LogOut')}>
+                                    <IconButton color={'secondary'} aria-label={PowerLocalize.get('Tooolbar.LogOut')}
+                                                onClick={this.props.logOutAdmin}>
+                                        <Icon className={'material-icons'}> input</Icon>
+                                    </IconButton>
+                                </Tooltip>
                             </Toolbar>
                         </AppBar>
                     </Paper>
