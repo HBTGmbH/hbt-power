@@ -159,9 +159,10 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         }
         return <MenuItem
             key={viewProfile.id}
+            className="pwr-menu-subitem"
             onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_VIEW_PROFILE, {id: viewProfile.id, initials}))}
         >
-            <ListItemText>
+            <ListItemText inset>
                 {text}
             </ListItemText>
         </MenuItem>;
@@ -184,6 +185,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private renderBaseDataSection = (section: string, target: string, icon: string, localizationKey: string) => {
         return <MenuItem
             key={localizationKey}
+            className="pwr-menu-subitem"
             selected={this.currentBaseDataSection() === section}
             onClick={() => this.handleMenuNavigate(target)}
         >
@@ -209,14 +211,18 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         key={'1'}
                         onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_HOME, {initials}))}
                     >
-                        <Icon className="material-icons">home</Icon>
+                        <ListItemIcon>
+                            <Icon className="material-icons">home</Icon>
+                        </ListItemIcon>
                         <ListItemText>
                             {PowerLocalize.get('Menu.Home')}
                         </ListItemText>
                     </MenuItem>
                     <MenuItem key={'2'} button
                               onClick={() => this.setState({baseDataOpen: !this.state.baseDataOpen})}>
-                        <Icon className="material-icons">person</Icon>
+                        <ListItemIcon>
+                            <Icon className="material-icons">person</Icon>
+                        </ListItemIcon>
                         <ListItemText>
                             {PowerLocalize.get('Menu.BaseData')}
                         </ListItemText>
@@ -235,7 +241,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         <div>
                             <MenuItem key={'3'} button
                                       onClick={() => this.setState({profilesOpen: !this.state.profilesOpen})}>
-                                <Icon className="material-icons">remove_red_eye</Icon>
+                                <ListItemIcon>
+                                    <Icon className="material-icons">remove_red_eye</Icon>
+                                </ListItemIcon>
                                 <ListItemText>{PowerLocalize.get('Menu.ViewProfile')}</ListItemText>
                                 {this.renderExpandIcon(this.state.profilesOpen)}
                             </MenuItem>
@@ -251,13 +259,16 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                 <div>
                                     <MenuItem key={'5'} button
                                               onClick={() => this.setState({statisticsOpen: !this.state.statisticsOpen})}>
-                                        <Icon className="material-icons">insert_chart</Icon>
+                                        <ListItemIcon>
+                                            <Icon className="material-icons">insert_chart</Icon>
+                                        </ListItemIcon>
                                         <ListItemText>{PowerLocalize.get('Menu.Statistics')}</ListItemText>
                                         {this.renderExpandIcon(this.state.statisticsOpen)}
                                     </MenuItem>
                                     <Collapse in={this.state.statisticsOpen}>
                                         <MenuItem
                                             key="Menu.Statistics.Network.Clusterinfo"
+                                            className="pwr-menu-subitem"
                                             onClick={() => this.loadConsultantClusterInfo(initials)}
                                         >
                                             <ListItemIcon>
@@ -269,6 +280,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                                         </MenuItem>
                                         <MenuItem
                                             key="Menu.Statistics.Skills"
+                                            className="pwr-menu-subitem"
                                             onClick={() => this.loadSkillStatistics(initials)}
                                         >
                                             <ListItemIcon>
@@ -287,7 +299,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         key={'6'}
                         onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_REPORTS, {initials}))}
                     >
-                        <Icon className="material-icons">folder</Icon>
+                        <ListItemIcon>
+                            <Icon className="material-icons">folder</Icon>
+                        </ListItemIcon>
                         <ListItemText>
                             {PowerLocalize.get('Menu.Reports')}
                         </ListItemText>
@@ -297,7 +311,9 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         key={'7'}
                         onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_SEARCH, {initials}))}
                     >
-                        <Icon className="material-icons">search</Icon>
+                        <ListItemIcon>
+                            <Icon className="material-icons">search</Icon>
+                        </ListItemIcon>
                         <ListItemText>
                             {PowerLocalize.get('Menu.Search')}
                         </ListItemText>
@@ -306,13 +322,17 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                     <Divider/>
                     {this.props.loggedInAsAdmin &&
                     <MenuItem key={'8'} onClick={this.navigateToAdmin}>
-                        <Icon className="material-icons">admin_panel_settings</Icon>
+                        <ListItemIcon>
+                            <Icon className="material-icons">admin_panel_settings</Icon>
+                        </ListItemIcon>
                         <ListItemText>
                             {PowerLocalize.get('Tooolbar.ToAdminOverview')}
                         </ListItemText>
                     </MenuItem>}
                     <MenuItem key={'9'} onClick={this.logOutUser}>
-                        <Icon className="material-icons">input</Icon>
+                        <ListItemIcon>
+                            <Icon className="material-icons">input</Icon>
+                        </ListItemIcon>
                         <ListItemText>
                             {PowerLocalize.get('Tooolbar.LogOut')}
                         </ListItemText>
