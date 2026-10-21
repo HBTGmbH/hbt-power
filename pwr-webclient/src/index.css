@@ -417,3 +417,10 @@ body {
         overscroll-behavior: contain;
     }
 }
+
+/* No info icon on narrow screens (#127): the app bar has little room there */
+@media (max-width: 599px) {
+    .pwr-app-info-button {
+        display: none !important;
+    }
+}

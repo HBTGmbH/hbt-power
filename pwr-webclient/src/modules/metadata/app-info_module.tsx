@@ -114,7 +114,8 @@ export const AppInfoButton = () => {
     const [open, setOpen] = useState(false);
     return <>
         <Tooltip title={PowerLocalize.get('AppInfo.Tooltip')}>
-            <IconButton style={{color: 'white'}} aria-label={PowerLocalize.get('AppInfo.Tooltip')} onClick={() => setOpen(true)}>
+            <IconButton className="pwr-app-info-button" style={{color: 'white'}} aria-label={PowerLocalize.get('AppInfo.Tooltip')}
+                        onClick={() => setOpen(true)}>
                 <Icon className="material-icons">info_outline</Icon>
             </IconButton>
         </Tooltip>
