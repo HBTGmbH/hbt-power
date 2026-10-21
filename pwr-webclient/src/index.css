@@ -365,12 +365,38 @@ body {
     width: 100vw;
 }
 
-.select-in-toolbar .MuiSelect-select {
+/* Colleague selection in the app bar (#131): white on Dunkelblau, the list wider than the field */
+.pwr-consultant-select {
+    width: 240px;
+}
+
+.pwr-consultant-select .MuiInputBase-input,
+.pwr-consultant-select .MuiAutocomplete-popupIndicator {
     color: white;
 }
 
-.select-in-toolbar .MuiSelect-icon {
-    color: white;
+.pwr-consultant-select .MuiInput-underline:before {
+    border-bottom-color: rgba(255, 255, 255, 0.6);
+}
+
+.pwr-consultant-select .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom-color: white;
+}
+
+.pwr-consultant-select-popper {
+    width: 320px !important;
+    max-width: 90vw;
+}
+
+.pwr-consultant-select-initials {
+    color: rgba(0, 0, 0, 0.54);
+    margin-left: 8px;
+}
+
+@media (max-width: 599px) {
+    .pwr-consultant-select {
+        width: 140px;
+    }
 }
 
 /*[class*="MuiInputAdornment-root"] {*/
