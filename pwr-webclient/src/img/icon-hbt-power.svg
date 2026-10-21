@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 162 162" width="162" height="162" role="img" aria-label="Hammer auf einem Zahnrad">
-  <title>HBT icon: Hammer auf einem Zahnrad (HBT Power)</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 162 162" width="162" height="162" role="img" aria-label="Hammer und Tastatur, gekreuzt">
+  <title>HBT icon: Hammer und Tastatur, gekreuzt (HBT Power)</title>
   <defs>
     <linearGradient id="hbt-split" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="162" y2="0">
       <stop offset="50%" stop-color="#5F6EF0"/>
@@ -7,10 +7,12 @@
     </linearGradient>
   </defs>
   <g class="ink" fill="none" stroke="url(#hbt-split)" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter">
-    <!-- gear: eight teeth, one closed outline -->
-    <path d="M67.50 22.54L69.74 9.89L92.26 9.89L94.50 22.54A60 60 0 0 1 112.80 30.12L123.32 22.75L139.25 38.68L131.88 49.20A60 60 0 0 1 139.46 67.50L152.11 69.74L152.11 92.26L139.46 94.50A60 60 0 0 1 131.88 112.80L139.25 123.32L123.32 139.25L112.80 131.88A60 60 0 0 1 94.50 139.46L92.26 152.11L69.74 152.11L67.50 139.46A60 60 0 0 1 49.20 131.88L38.68 139.25L22.75 123.32L30.12 112.80A60 60 0 0 1 22.54 94.50L9.89 92.26L9.89 69.74L22.54 67.50A60 60 0 0 1 30.12 49.20L22.75 38.68L38.68 22.75L49.20 30.12A60 60 0 0 1 67.50 22.54Z"/>
-    <!-- hammer: head rotated 45 degrees, handle towards the lower left -->
-    <path d="M121.75 77.02L109.02 89.75L72.25 52.98L84.98 40.25Z"/>
-    <line x1="90.64" y1="71.36" x2="50" y2="112"/>
+    <!-- keyboard from bottom left to top right, outline open where the handle crosses it -->
+    <path d="M61.91 71.81L24.43 109.28L52.72 137.57L90.19 100.09M71.81 61.91L109.28 24.43L137.57 52.72L100.09 90.19"/>
+    <!-- keys at both ends -->
+    <path d="M58.37 92.31L52.72 97.97M45.64 105.04L39.99 110.70M69.69 103.63L64.03 109.28M56.96 116.36L51.30 122.01M92.31 58.37L97.97 52.72M105.04 45.64L110.70 39.99M103.63 69.69L109.28 64.03M116.36 56.96L122.01 51.30"/>
+    <!-- hammer from top left to bottom right, lying on the keyboard -->
+    <path d="M59.79 28.67L73.93 42.82L42.82 73.93L28.67 59.79Z"/>
+    <line x1="58.37" y1="58.37" x2="123.43" y2="123.43"/>
   </g>
 </svg>
