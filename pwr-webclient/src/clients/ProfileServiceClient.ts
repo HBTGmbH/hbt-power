@@ -5,6 +5,7 @@ import {APIAdminNotification} from '../model/admin/AdminNotification';
 import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
 import {SkillNotification} from '../model/admin/SkillNotification';
 import {ConsultantInfoDTO} from '../model/ConsultantInfoDTO';
+import {ProfileCheck, ProfileCheckSummary, ProfileConfirmation} from '../model/check/ProfileCheck';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -178,4 +179,31 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.getOrNull<Blob>(url, {responseType: 'blob'})
             .then(blob => blob && blob.size > 0 ? blob : null);
     }
+
+    // ------------------------------------------------------------------------------------- profile check (#139)
+
+    /**
+     * In the background, without spinner and alert: the card stays away if the check fails
+     */
+    public getProfileCheck = (initials: string): Promise<ProfileCheck> => {
+        return this.getQuietly(this.base() + '/profile/' + encodeURIComponent(initials) + '/check');
+    };
+
+    /**
+     * "My profile is up to date"; the edge service adds who confirmed
+     */
+    public confirmProfile = (initials: string): Promise<ProfileCheck> => {
+        this.beginRequest();
+        return this.post(this.base() + '/profile/' + encodeURIComponent(initials) + '/check/confirmation');
+    };
+
+    /** Admins only (edge: /admin/**) */
+    public getProfileCheckSummaries = (): Promise<Array<ProfileCheckSummary>> => {
+        return this.getQuietly(this.base() + '/admin/profile-checks');
+    };
+
+    /** Admins only (edge: /admin/**) */
+    public getProfileConfirmations = (initials: string): Promise<Array<ProfileConfirmation>> => {
+        return this.getQuietly(this.base() + '/admin/profile-checks/' + encodeURIComponent(initials) + '/confirmations');
+    };
 }

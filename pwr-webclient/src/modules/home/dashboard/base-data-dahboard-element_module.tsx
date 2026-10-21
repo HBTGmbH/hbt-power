@@ -1,11 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import {Paper} from '@material-ui/core';
+import {Paper, Tooltip} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
 import {Paths} from '../../../Paths';
-import {formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
+import {formatToFullLocalizedDateTime, formatToRelativeTime} from '../../../utils/DateUtil';
 import {PwrRaisedButton} from '../../general/pwr-raised-button';
 import Edit from '@material-ui/icons/Edit';
 import {ThunkDispatch} from 'redux-thunk';
@@ -62,8 +62,11 @@ class BaseDataDashboardElementModule extends React.Component<BaseDataDashboardEl
                     <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
                         {PowerLocalize.get('Overview.Base.LastEdited')}
                     </div>
+                    {/* Fuzzy time for how up to date the profile is (#139), the exact time in the tooltip */}
                     <div className="col-md-12 vertical-align fullWidth" style={{marginTop: '8px'}}>
-                        {formatToFullLocalizedDateTime(this.props.lastEdited)}
+                        <Tooltip title={formatToFullLocalizedDateTime(this.props.lastEdited)}>
+                            <span>{formatToRelativeTime(this.props.lastEdited)}</span>
+                        </Tooltip>
                     </div>
                     <div className="col-md-12 vertical-align fullWidth">
                         <PwrRaisedButton color={'primary'} icon={<Edit/>} text={PowerLocalize.get('Profile.BaseData.Edit')}

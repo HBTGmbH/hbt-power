@@ -381,6 +381,25 @@ body {
     max-width: 100%;
 }
 
+/* Generate dialog: outdated parts of the profile before an export (#139) */
+.pwr-generator-outdated {
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    border-left: 4px solid #ff8e01;
+    background-color: rgba(255, 142, 1, 0.08);
+}
+
+.pwr-generator-outdated-icon {
+    vertical-align: middle;
+    margin-right: 8px;
+    color: #ff8e01;
+}
+
+/* Jump from the profile check (#139): stop below the fixed app bar */
+.pwr-profile-section-anchor {
+    scroll-margin-top: 80px;
+}
+
 .pwr-profile-select-message {
     max-width: 280px;
     text-align: center;

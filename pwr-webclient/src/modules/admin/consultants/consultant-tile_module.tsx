@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {GridListTile, Icon, Menu, MenuItem} from '@material-ui/core';
+import {GridListTile, Icon, Menu, MenuItem, Tooltip} from '@material-ui/core';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditDialog} from './consultant-edit-dialog_module';
@@ -12,6 +12,8 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import {ThunkDispatch} from 'redux-thunk';
 import {PwrProfilePicture} from '../../general/pwr-profile-picture';
+import {ProfileCheckSummary} from '../../../model/check/ProfileCheck';
+import {formatToNumericDateTime, formatToRelativeTime} from '../../../utils/DateUtil';
 
 /**
  * Properties that are managed by react-redux.
@@ -33,6 +35,8 @@ interface ConsultantTileProps {
  */
 interface ConsultantTileLocalProps {
     initials: string;
+    /** How up to date the profile is (#139); undefined while loading or for inactive consultants */
+    profileCheck?: ProfileCheckSummary;
 }
 
 /**
@@ -138,6 +142,33 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
     };
 
 
+    /**
+     * Number of hints, last change and how often the profile was only confirmed since (fuzzy, exact in the tooltip)
+     */
+    private renderProfileCheck = () => {
+        const check = this.props.profileCheck;
+        if (!check) {
+            return undefined;
+        }
+        const hints = check.hintCount === 0
+            ? PowerLocalize.get('ConsultantTile.ProfileCheck.AllGood')
+            : PowerLocalize.getFormatted('ConsultantTile.ProfileCheck.Hints', check.hintCount);
+        const onlyConfirmed = check.confirmationsSinceLastChange > 0
+            ? PowerLocalize.getFormatted('ConsultantTile.ProfileCheck.OnlyConfirmed', check.confirmationsSinceLastChange)
+            : null;
+        // Short on the tile, which cuts long lines; everything with the exact time in the tooltip
+        const full = [hints,
+            check.lastEdited ? PowerLocalize.getFormatted('ConsultantTile.ProfileCheck.Changed',
+                formatToNumericDateTime(new Date(check.lastEdited))) : null,
+            onlyConfirmed].filter(part => !!part).join(' · ');
+        return <Tooltip title={full}>
+            <span>
+                {onlyConfirmed ? onlyConfirmed + ' · ' : ''}{hints}
+                {check.lastEdited && <> · {formatToRelativeTime(check.lastEdited)}</>}
+            </span>
+        </Tooltip>;
+    };
+
     render() {
         return (
             <div>
@@ -165,6 +196,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
                                        pictureId={this.props.consultantInfo.profilePictureId()}/>
                     <GridListTileBar
                         title={this.props.consultantInfo.getFullName()}
+                        subtitle={this.renderProfileCheck()}
                         //actionIcon={this.renderMenu()
                         actionIcon={
                             <Button onClick={this.handleMenuClick}>

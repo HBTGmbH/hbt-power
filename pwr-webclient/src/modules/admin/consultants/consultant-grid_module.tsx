@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {Button, Checkbox, GridList, Icon} from '@material-ui/core';
+import {Button, Checkbox, GridList, Icon, InputLabel, MenuItem, Select} from '@material-ui/core';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import * as Immutable from 'immutable';
 import {ConsultantTile} from './consultant-tile_module';
@@ -11,6 +11,8 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import FormControl from '@material-ui/core/FormControl/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {ThunkDispatch} from 'redux-thunk';
+import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
+import {ProfileCheckSummary} from '../../../model/check/ProfileCheck';
 
 interface ConsultantGridProps {
     consultantsByInitials: Immutable.Map<string, ConsultantInfo>;
@@ -20,9 +22,14 @@ interface ConsultantGridLocalProps {
 
 }
 
+type ConsultantSort = 'name' | 'profileCheck';
+
 interface ConsultantGridLocalState {
     createDialogOpen: boolean;
     showInactive: boolean;
+    /** Profile check per initials (#139); empty while loading or if it failed */
+    summaries: Immutable.Map<string, ProfileCheckSummary>;
+    sort: ConsultantSort;
 }
 
 interface ConsultantGridDispatch {
@@ -38,7 +45,9 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
         super(props);
         this.state = {
             createDialogOpen: false,
-            showInactive: false
+            showInactive: false,
+            summaries: Immutable.Map<string, ProfileCheckSummary>(),
+            sort: 'name',
         };
     }
 
@@ -55,8 +64,28 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
     }
 
     public componentDidMount() {
-        this.props.refreshConsultants();
+        this.refresh();
     }
+
+    private refresh = () => {
+        this.props.refreshConsultants();
+        ProfileServiceClient.instance().getProfileCheckSummaries()
+            .then(summaries => this.setState({
+                summaries: Immutable.Map<string, ProfileCheckSummary>(summaries.map(summary => [summary.initials, summary]))
+            }))
+            .catch(() => this.setState({summaries: Immutable.Map<string, ProfileCheckSummary>()}));
+    };
+
+    /**
+     * Most hints first, on a tie the one with more outdated hints. Consultants without a check (inactive) last.
+     */
+    private sortKey = (consultant: ConsultantInfo): string | number => {
+        if (this.state.sort === 'name') {
+            return consultant.lastName();
+        }
+        const summary = this.state.summaries.get(consultant.initials());
+        return summary ? -(summary.hintCount * 1000 + summary.outdatedCount) : 1;
+    };
 
     private showDialog = () => {
         this.setState({
@@ -89,7 +118,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                         variant={'contained'}
                         style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
 
-                        onClick={this.props.refreshConsultants}
+                        onClick={this.refresh}
                     >
                         <Icon className="material-icons">refresh</Icon>
                         {PowerLocalize.get('Action.Update')}
@@ -107,9 +136,17 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                             control={<Checkbox
                                 checked={this.state.showInactive}
                                 onChange={(e: object, v: boolean) => this.setState({showInactive: v})}/>}
-                            label={'Show inactive'}
+                            label={PowerLocalize.get('ConsultantGrid.ShowInactive')}
                         />
 
+                    </FormControl>
+                    <FormControl variant="filled" style={{marginTop: '10px', marginBottom: '10px', minWidth: '200px'}}>
+                        <InputLabel id="consultant-sort-label">{PowerLocalize.get('ConsultantGrid.Sort')}</InputLabel>
+                        <Select labelId="consultant-sort-label" value={this.state.sort}
+                                onChange={(e) => this.setState({sort: e.target.value as ConsultantSort})}>
+                            <MenuItem value={'name'}>{PowerLocalize.get('ConsultantGrid.Sort.Name')}</MenuItem>
+                            <MenuItem value={'profileCheck'}>{PowerLocalize.get('ConsultantGrid.Sort.ProfileCheck')}</MenuItem>
+                        </Select>
                     </FormControl>
                 </div>
                 <div className="row">
@@ -121,10 +158,11 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                         {
                             this.props.consultantsByInitials
                                 .filter(this.filterInactive)
-                                .sortBy(value => value.lastName())
+                                .sortBy(this.sortKey)
                                 .map(consultantInfo => {
                                     return <ConsultantTile key={'ConsultantTile.' + consultantInfo.initials()}
-                                                           initials={consultantInfo.initials()}/>;
+                                                           initials={consultantInfo.initials()}
+                                                           profileCheck={this.state.summaries.get(consultantInfo.initials())}/>;
                                 }).toArray()
                         }
                     </GridList>
