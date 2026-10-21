@@ -2,6 +2,8 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './css/bootstrap.css';
+// Icon font from the build instead of Google: works in every browser and sends nothing to a third party (#109)
+import 'material-icons/iconfont/filled.css';
 import './index.css';
 import {ApplicationState, store} from './reducers/reducerIndex';
 import {AppWrapper} from './app-wrapper-module';
