@@ -21,6 +21,17 @@ export interface LoggedInAccount {
     /** The login, usually the e-mail address */
     username: string;
     roles: Array<string>;
+    /** The initials of the own profile, from the claim mailnickname; undefined if the token has none (#135) */
+    initials?: string;
+}
+
+/**
+ * The claim with the initials, regardless of how its name is cased
+ */
+function initialsClaim(claims: object | undefined): string | undefined {
+    const key = Object.keys(claims || {}).find(name => name.toLowerCase() === 'mailnickname');
+    const value = key ? claims[key] : undefined;
+    return typeof value === 'string' && value.trim().length > 0 ? value.trim().toLowerCase() : undefined;
 }
 
 export class OIDCService {
@@ -144,7 +155,7 @@ export class OIDCService {
             return null;
         }
         const roles = (account.idTokenClaims && account.idTokenClaims.roles) || [];
-        return {name: account.name, username: account.username, roles};
+        return {name: account.name, username: account.username, roles, initials: initialsClaim(account.idTokenClaims)};
     }
 
     public getCurrentUserName(): string {

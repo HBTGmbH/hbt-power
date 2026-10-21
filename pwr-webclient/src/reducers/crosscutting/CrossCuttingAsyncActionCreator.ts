@@ -3,11 +3,12 @@ import {ConsultantClient} from '../profile-new/consultant/ConsultantClient';
 import {consultantUpdateAction} from '../profile-new/consultant/actions/ConsultantUpdateAction';
 import {StatisticsActionCreator} from '../statistics/StatisticsActionCreator';
 import {ViewProfileActionCreator} from '../view/ViewProfileActionCreator';
-import {NavigationActionCreator} from '../navigation/NavigationActionCreator';
+import {NavigationActionCreator, navigateReplacing} from '../navigation/NavigationActionCreator';
+import {Alerts} from '../../utils/Alerts';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {Paths} from '../../Paths';
 import {CrossCuttingActionCreator} from './CrossCuttingActionCreator';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
-import {PowerApiError} from '../../clients/PowerHttpClient';
 import {ThunkDispatch} from 'redux-thunk';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {AuthenticationResult} from '@azure/msal-common';
@@ -62,27 +63,18 @@ export class CrossCuttingAsyncActionCreator {
 
     public static AsyncLoadProfile(initials: string) {
         return function(dispatch: ThunkDispatch<any, any, any>) {
-            ConsultantClient.instance().getConsultant(initials).then(consultant => {
+            ConsultantClient.instance().findConsultant(initials).then(consultant => {
+                if (!consultant) {
+                    // Unknown initials, e.g. from an old link: back to the selection, a clear message instead of errors (#135)
+                    Alerts.showError(PowerLocalize.getFormatted('ProfileSelect.NoProfileFor', initials));
+                    navigateReplacing(Paths.PROFILE_SELECT, dispatch);
+                    return;
+                }
                 dispatch(consultantUpdateAction(consultant));
                 dispatch(StatisticsActionCreator.AsyncGetProfileStatistics(initials));
                 dispatch(StatisticsActionCreator.AsyncCheckAvailability());
                 dispatch(ViewProfileActionCreator.AsyncLoadAllViewProfiles());
-            }).catch((error: PowerApiError | string) => {
-                // FIXME@nt handle this error.
-                console.error('Failed to Load Profile', error);
-                // let errorMessage = `Login als ${initials} nicht möglich.`;
-                // if (typeof error === 'string') {
-                //     if (error.startsWith('InteractionRequiredAuthError: AADSTS50058')) {
-                //         // Brave shield prevent setting of a cookie
-                //         errorMessage = `Login als ${initials} nicht möglich: Ein Browser-Plugin verhindert das setzen des Session Cookies.`;
-                //     }
-                // } else if (error.status === 404) {
-                //     errorMessage = `Profil für ${initials} existiert nicht.`;
-                // }
-                // dispatch(CrossCuttingActionCreator.SetLoginError(errorMessage));
-                // dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.REJECTED));
-                // dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
-            });
+            }).catch(error => console.error('Failed to load profile', error));
         }
     }
 
