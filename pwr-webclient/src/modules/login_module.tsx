@@ -73,8 +73,11 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
                 <div>
                     <div className="vertical-align" style={{height: '100vh'}}>
                         <div style={{padding: '64px', backgroundColor: 'white'}}>
+                            {/* Dark only behind the icon, its colours are made for Dunkelblau (#125) */}
                             <div className="vertical-align">
-                                <img alt={PowerLocalize.get('App.Name')} className="pwr-login-icon" src={iconPower}/>
+                                <div className="pwr-login-icon-tile">
+                                    <img alt={PowerLocalize.get('App.Name')} className="pwr-login-icon" src={iconPower}/>
+                                </div>
                             </div>
                             <div className="vertical-align">
                                 <h1>{PowerLocalize.get('Login.Title')}</h1>

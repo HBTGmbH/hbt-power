@@ -292,6 +292,8 @@
   "App.Name": "Power",
   "Login.LoginAzure": "Login mit Microsoft365",
   "Login.AdminSpace": "Admin-Bereich",
+  "ProfileSelect.Title": "Profil wählen",
+  "ProfileSelect.Open": "Öffnen",
   "HBT.CompanyPosition": "HBT Stellung",
   "Profile.Description": "Werbetext",
   "Tooolbar.LogOut": "Ausloggen",
