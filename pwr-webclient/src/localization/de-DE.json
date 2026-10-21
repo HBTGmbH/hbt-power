@@ -50,7 +50,7 @@
   "Title.Singular": "Titel",
   "Toolbar.LoggedInAs": "Angemeldet als",
   "Overview.ViewProfiles.Title": "View-Profile",
-  "Overview.ViewProfiles.Description": "View-Profile Ordnen die ungeordneten Profildaten und ermöglichen eine Profilgenerierung",
+  "Overview.ViewProfiles.Description": "Ein View-Profil stellt aus deinem Profil die Projekte, Skills und weiteren Angaben zusammen, die zu einer bestimmten Anfrage oder Rolle passen; daraus entsteht das Exportdokument.",
   "Overview.ViewProfiles.Subtitle": "Übersicht",
   "Overview.Base.LastEdited": "Deine letzte Profilaktualisierung war am",
   "Profile.Description.AllowedCharacterText": "{0}/{1} Zeichen",
