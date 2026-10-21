@@ -104,7 +104,7 @@
   "Profile.Project.Skills": "Skills",
   "Profile.Project.AddSkill": "Skill Hinzufügen",
   "Profile.Project.SkillsInProject": "Skills dieses Projektes",
-  "Profile.Project.ClientCaption": "Client",
+  "Profile.Project.ClientCaption": "Kunde",
   "Profile.Project.SkillAdded": "Skill '{0}' wurde vorläufig hinzugefügt.",
   "Profile.Project.Skill.Added": "Neu, wird beim Speichern hinzugefügt",
   "Profile.Project.Skill.Removed": "Entfernt, fällt beim Speichern weg. Mit ↶ zurückholen",
