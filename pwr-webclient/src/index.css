@@ -188,6 +188,32 @@ body {
     height: 48px
 }
 
+/* Brand in the app bar (#123): the name disappears on narrow screens, the icon stays */
+.pwr-brand {
+    flex-grow: 1;
+    height: 100%;
+}
+
+.pwr-brand-icon {
+    height: 44px;
+    width: 44px;
+    margin: 0 8px;
+}
+
+.pwr-brand-name {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 500;
+    margin-left: 12px;
+    white-space: nowrap;
+}
+
+@media (max-width: 599px) {
+    .pwr-brand-name {
+        display: none;
+    }
+}
+
 .logo-medium {
     height: 92px
 }

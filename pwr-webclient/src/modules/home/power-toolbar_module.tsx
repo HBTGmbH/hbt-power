@@ -8,7 +8,7 @@ import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {ViewProfile} from '../../model/view/ViewProfile';
-import logoNeg from '../../img/HBT002_Logo_neg.png';
+import {PwrBrand} from '../general/pwr-brand';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
@@ -114,14 +114,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         this.props.navigateTo(target);
     };
 
-
-    private renderPower = () => {
-        return (
-            <div className="vertical-align" style={{height: '100%', flexGrow: 1}}>
-                <img alt="HBT Power Logo" className="img-responsive logo-small" src={logoNeg}/>
-            </div>
-        );
-    };
 
     /**
      * Switches to the consultant by changing the route; power-client_module loads the profile for the new initials.
@@ -349,7 +341,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </IconButton>
                         {this.renderMenu(initials)}
 
-                        {this.renderPower()}
+                        <PwrBrand/>
                         {
                             this.props.loggedInAsAdmin && this.props.consultantInfo.length >= 1 ?
                               <FormControl>
