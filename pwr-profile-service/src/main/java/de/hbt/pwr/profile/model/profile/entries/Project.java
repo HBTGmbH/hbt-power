@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,6 +56,11 @@ public class Project {
 
     private String description;
 
+    /**
+     * When the project was last saved; null for projects saved before #139
+     */
+    private LocalDateTime lastEdited;
+
     public Project(String name, NameEntity client, NameEntity broker, Set<NameEntity> projectRoles, Set<Skill> skills, LocalDate startDate, LocalDate endDate, String description) {
         this.name = name;
         this.client = client;
@@ -77,6 +83,14 @@ public class Project {
 
     public Long getId() {
         return id;
+    }
+
+    public LocalDateTime getLastEdited() {
+        return lastEdited;
+    }
+
+    public void setLastEdited(LocalDateTime lastEdited) {
+        this.lastEdited = lastEdited;
     }
 
     public void setId(Long id) {

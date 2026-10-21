@@ -9,7 +9,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -61,5 +63,36 @@ public class SkillProfileClientTest {
                 .isInstanceOf(WebApplicationException.class)
                 .hasFieldOrPropertyWithValue("status", HttpStatus.CONFLICT)
                 .hasMessage("'OpenShift' is already an alias");
+    }
+
+    @Test
+    public void skillTreeIndex_knowsSkillsAndAliasesAndOnlyTheDirectSkillsOfOtherAreUnsorted() {
+        server.expect(requestTo("http://skill/skill/tree"))
+                .andExpect(method(GET))
+                .andRespond(withSuccess("{\"id\": -1, \"qualifier\": \"##ROOT##\", \"childSkills\": [], \"childCategories\": ["
+                        + "{\"id\": 1, \"qualifier\": \"Programming Languages\", \"childCategories\": [],"
+                        + " \"childSkills\": [{\"qualifier\": \"Java\", \"aliases\": [\"Java SE\"]}]},"
+                        + "{\"id\": 2, \"qualifier\": \"Other\","
+                        + " \"childSkills\": [{\"qualifier\": \"Zebra-Tool\", \"aliases\": []}],"
+                        + " \"childCategories\": [{\"id\": 3, \"qualifier\": \"Sorted below Other\", \"childCategories\": [],"
+                        + " \"childSkills\": [{\"qualifier\": \"Ant-Tool\", \"aliases\": []}]}]}"
+                        + "]}", MediaType.APPLICATION_JSON));
+
+        SkillTreeIndex index = client.getSkillTreeIndex().orElseThrow(AssertionError::new);
+
+        assertThat(index.isUnsorted("java")).isFalse();
+        assertThat(index.isUnsorted(" Java SE ")).isFalse();
+        assertThat(index.isUnsorted("Zebra-Tool")).isTrue();
+        assertThat(index.isUnsorted("Ant-Tool")).isFalse();
+        assertThat(index.isUnsorted("Unknown")).isTrue();
+        server.verify();
+    }
+
+    @Test
+    public void skillTreeIndex_isEmptyWhenTheSkillServiceFails() {
+        server.expect(requestTo("http://skill/skill/tree"))
+                .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+        assertThat(client.getSkillTreeIndex()).isEmpty();
     }
 }

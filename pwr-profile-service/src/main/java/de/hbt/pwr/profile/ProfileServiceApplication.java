@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Clock;
+
 @SpringBootApplication
 @EnableScheduling
 public class ProfileServiceApplication {
@@ -17,5 +19,13 @@ public class ProfileServiceApplication {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    /**
+     * Replaced by a fixed clock in tests of the profile check (#139)
+     */
+    @Bean
+    public Clock clock() {
+        return Clock.systemDefaultZone();
     }
 }
