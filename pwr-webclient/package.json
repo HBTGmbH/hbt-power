@@ -16,6 +16,7 @@
     "history": "4.10.1",
     "immutable": "3.8.2",
     "isomorphic-fetch": "2.2.1",
+    "material-icons": "1.13.14",
     "material-ui-chip-input": "^1.0.0-beta.7",
     "moment": "^2.29.4",
     "randomcolor": "0.5.4",
