@@ -437,3 +437,10 @@ body {
         display: none !important;
     }
 }
+
+/* Only on narrow screens, e.g. the menu entry that replaces the info icon there (#127) */
+@media (min-width: 600px) {
+    .pwr-only-narrow {
+        display: none !important;
+    }
+}
