@@ -33,6 +33,12 @@ body {
     margin: 2px;
 }
 
+/* Skills of a project being edited that the next save removes (#103) */
+.pwr-skill-chip-removed .MuiChip-label {
+    color: rgba(0, 0, 0, 0.6);
+    text-decoration: line-through;
+}
+
 .margin-5px {
     margin: 5px;
 }

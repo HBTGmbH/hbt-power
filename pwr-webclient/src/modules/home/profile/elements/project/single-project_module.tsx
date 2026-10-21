@@ -25,7 +25,7 @@ import {SkillSearcher} from '../../../../general/skill-search_module';
 import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
 import {PwrFormSubCaption} from '../../../../general/pwr-typography';
 import {PwrSpacer} from '../../../../general/pwr-spacer_module';
-import {SkillChip} from '../skills/skill-chip_module';
+import {SkillChange, SkillChip} from '../skills/skill-chip_module';
 import Grid from '@material-ui/core/Grid/Grid';
 import {SuggestProjectSkills} from '../../../../general/skill/suggest-project-skills';
 import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-company-autocomplete-module';
@@ -37,6 +37,10 @@ interface ProjectProps {
     initials: string;
     editedProject: Project;
     isEditing: boolean;
+    /**
+     * Skills of the project as saved, while it is being edited (empty for a new project), otherwise null
+     */
+    savedSkills: Array<ProfileSkill> | null;
 }
 
 
@@ -74,10 +78,17 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
 
     static mapStateToProps(state: ApplicationState): ProjectProps {
         const initials = !!(state.profileStore.consultant) ? state.profileStore.consultant.initials : '';
+        const edited = state.profileStore.selectedProject;
+        let savedSkills: Array<ProfileSkill> | null = null;
+        if (edited && state.profileStore.isProjectEditing) {
+            const saved = state.profileStore.profile.projects.find(project => edited.id !== null && project.id === edited.id);
+            savedSkills = saved ? saved.skills : [];
+        }
         return {
             initials: initials,
-            editedProject: state.profileStore.selectedProject,
-            isEditing: state.profileStore.isProjectEditing
+            editedProject: edited,
+            isEditing: state.profileStore.isProjectEditing,
+            savedSkills
         };
     }
 
@@ -194,27 +205,59 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
             Alerts.showInfo(PowerLocalize.getFormatted('Profile.Skills.AlreadyExists', existing.name));
             return;
         }
-        const newSkill: ProfileSkill = {id: null, name: skillName, rating: 0, versions: []};
-        const skills = immutableUnshift(newSkill, this.project().skills);
+        const skills = immutableUnshift(this.toProjectSkill(skillName), this.project().skills);
         this.setState({skillSearchValue: ''});
         this.props.updateEditingProject({...this.project(), skills});
         Alerts.showSuccess(PowerLocalize.getFormatted("Profile.Project.SkillAdded", skillName));
     };
+
+    /**
+     * A skill removed before saving comes back as it was saved, everything else is new
+     */
+    private toProjectSkill(skillName: string): ProfileSkill {
+        const saved = findSkillByName(this.props.savedSkills || [], skillName);
+        return saved || {id: null, name: skillName, rating: 0, versions: []};
+    }
 
     private removeSkill = (skillName: string) => {
         const skills = this.project().skills.filter(skill => skill.name !== skillName);
         this.props.updateEditingProject({...this.project(), ...{skills: skills}});
     };
 
+    private restoreSkill = (skill: ProfileSkill) => {
+        this.props.updateEditingProject({...this.project(), skills: immutableUnshift(skill, this.project().skills)});
+    };
+
+    private skillChange(skill: ProfileSkill): SkillChange | undefined {
+        const savedSkills = this.props.savedSkills;
+        if (!savedSkills) {
+            return undefined;
+        }
+        if (!findSkillByName(savedSkills, skill.name)) {
+            return SkillChange.ADDED;
+        }
+        return findSkillByName(this.project().skills, skill.name) ? undefined : SkillChange.REMOVED;
+    }
+
+    /**
+     * The skills of the project; while editing also the removed ones, so they can be seen and brought back until saving
+     */
+    private displayedSkills(): Array<ProfileSkill> {
+        const removed = (this.props.savedSkills || [])
+            .filter(saved => !findSkillByName(this.project().skills, saved.name));
+        return [...this.project().skills, ...removed].sort(PROFILE_SKILLS_BY_NAME);
+    }
+
     private toSkillChip(skill: ProfileSkill) {
         return <SkillChip key={skill.name} className="margin-2px" disabled={this.isEditDisabled()} skill={skill}
+                          change={this.skillChange(skill)}
                           onDelete={skill => this.removeSkill(skill.name)}
+                          onRestore={this.restoreSkill}
                           canChangeRating={false}/>;
     }
 
     private handleAddSkills = (skills: string[]) => {
-        const mappedSkills = skills.map(s => ({id: null, name: s, rating: 0, versions: []}));
-        const projectSkills = [...this.project().skills, ...mappedSkills];
+        const projectSkills = [...this.project().skills, ...skills.map(name => this.toProjectSkill(name))];
         this.props.updateEditingProject({...this.project(), ...{skills: projectSkills}});
     };
 
@@ -309,7 +352,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     <PwrSpacer/>
                     <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
                     <div className="Pwr-Content-Container">
-                        {[...this.project().skills].sort(PROFILE_SKILLS_BY_NAME).map(skill => this.toSkillChip(skill))}
+                        {this.displayedSkills().map(skill => this.toSkillChip(skill))}
                     </div>
                 </div>
                 {
