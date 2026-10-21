@@ -133,12 +133,12 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
             <div>
                 <div className="col-md-5 col-md-offset-1">
                     <div className="row">
-                        {/* First: what is missing or outdated (#139) */}
-                        <div className="col-md-12">
-                            <ProfileCheckDashboardElement initials={initials}/>
-                        </div>
                         <div className="col-md-12">
                             <BaseDataDashboardElement greeting={this.state.greeting}/>
+                        </div>
+                        {/* Right after the welcome: what is missing or outdated (#139) */}
+                        <div className="col-md-12">
+                            <ProfileCheckDashboardElement initials={initials}/>
                         </div>
                         <div className="col-md-12">
                             <CommonSkillsDashboardElement initials={initials}/>

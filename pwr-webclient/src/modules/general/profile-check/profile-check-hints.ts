@@ -55,7 +55,8 @@ function reasonText(reason: string, values: { [key: string]: any }): string {
         case 'FEW_SKILLS':
             return PowerLocalize.getFormatted('ProfileCheck.Reason.FewSkills', values.skillCount, values.minSkills);
         case 'SHORT_DESCRIPTION':
-            return PowerLocalize.getFormatted('ProfileCheck.Reason.ShortDescription', values.descriptionLength, values.minDescriptionLength);
+            // No character counts in the texts: the thresholds are configuration, not a goal to count towards
+            return PowerLocalize.get('ProfileCheck.Reason.ShortDescription');
         default:
             return PowerLocalize.get('ProfileCheck.Reason.NoRole');
     }
@@ -69,7 +70,7 @@ export function hintText(hint: ProfileCheckHint): string {
         case ProfileCheckHintCode.DESCRIPTION_MISSING:
             return PowerLocalize.get('ProfileCheck.DescriptionMissing');
         case ProfileCheckHintCode.DESCRIPTION_SHORT:
-            return PowerLocalize.getFormatted('ProfileCheck.DescriptionShort', values.length, values.minLength);
+            return PowerLocalize.get('ProfileCheck.DescriptionShort');
         case ProfileCheckHintCode.PROJECT_INCOMPLETE:
             return PowerLocalize.getFormatted('ProfileCheck.ProjectIncomplete', hint.projectName || '',
                 (values.reasons || []).map((reason: string) => reasonText(reason, values)).join(', '));
