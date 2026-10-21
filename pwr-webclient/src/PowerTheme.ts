@@ -52,6 +52,13 @@ const newPowerTheme: ThemeOptions = {
                 height: 'auto'
             }
         },
+        // Multi-line fields can be made taller or shorter by dragging their corner (#107). Fields with a fixed
+        // number of rows only: an auto-sizing one recomputes its height on every input
+        MuiInputBase: {
+            inputMultiline: {
+                resize: 'vertical'
+            }
+        },
         MuiTabs: {
             root: {
                 color: '#fff',
