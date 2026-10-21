@@ -268,7 +268,9 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         }
         return (
             <div className={this.isEditDisabled() ? 'pwr-read-only' : ''}>
-                {/* Spacing scale (#40): fields of a group 16 px apart, sections 32 px */}
+                {/* Spacing scale (#40): fields of a group 16 px apart, sections 32 px. At the top the tight space, so the
+                    first field is level with the first project of the list */}
+                <PwrSpacer size="tight"/>
                 <PwrFormSection first>
                     <PwrInputField
                         disabled={this.isEditDisabled()}
