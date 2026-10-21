@@ -33,6 +33,11 @@ body {
     margin: 2px;
 }
 
+/* Entries below an expandable menu entry (#119): indented, their texts in line with each other */
+.pwr-menu-subitem {
+    padding-left: 32px !important;
+}
+
 /* Logged in user in the app bar (#105) */
 .pwr-logged-in-avatar {
     background-color: #46E6E6 !important;
