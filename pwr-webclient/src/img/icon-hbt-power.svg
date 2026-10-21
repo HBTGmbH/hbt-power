@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 162 162" width="162" height="162" role="img" aria-label="Hammer auf einem Zahnrad">
+  <title>HBT icon: Hammer auf einem Zahnrad (HBT Power)</title>
+  <defs>
+    <linearGradient id="hbt-split" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="162" y2="0">
+      <stop offset="50%" stop-color="#5F6EF0"/>
+      <stop offset="50%" stop-color="#46E6E6"/>
+    </linearGradient>
+  </defs>
+  <g class="ink" fill="none" stroke="url(#hbt-split)" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter">
+    <!-- gear: eight teeth, one closed outline -->
+    <path d="M67.50 22.54L69.74 9.89L92.26 9.89L94.50 22.54A60 60 0 0 1 112.80 30.12L123.32 22.75L139.25 38.68L131.88 49.20A60 60 0 0 1 139.46 67.50L152.11 69.74L152.11 92.26L139.46 94.50A60 60 0 0 1 131.88 112.80L139.25 123.32L123.32 139.25L112.80 131.88A60 60 0 0 1 94.50 139.46L92.26 152.11L69.74 152.11L67.50 139.46A60 60 0 0 1 49.20 131.88L38.68 139.25L22.75 123.32L30.12 112.80A60 60 0 0 1 22.54 94.50L9.89 92.26L9.89 69.74L22.54 67.50A60 60 0 0 1 30.12 49.20L22.75 38.68L38.68 22.75L49.20 30.12A60 60 0 0 1 67.50 22.54Z"/>
+    <!-- hammer: head rotated 45 degrees, handle towards the lower left -->
+    <path d="M121.75 77.02L109.02 89.75L72.25 52.98L84.98 40.25Z"/>
+    <line x1="90.64" y1="71.36" x2="50" y2="112"/>
+  </g>
+</svg>
