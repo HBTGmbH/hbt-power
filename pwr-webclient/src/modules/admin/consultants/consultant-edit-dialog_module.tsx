@@ -1,14 +1,15 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {Dialog, DialogActions} from '@material-ui/core';
+import {Dialog, DialogActions, Icon, Link} from '@material-ui/core';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
-import {PwrIconButton} from '../../general/pwr-icon-button';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {ThunkDispatch} from 'redux-thunk';
 
 /**
@@ -146,20 +147,6 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
 
 
     render() {
-        let dialogActions = [
-            <PwrIconButton key="save" iconName={'save'} tooltip={PowerLocalize.get('Action.Save')}
-                           onClick={this.saveAndClose}/>,
-            <PwrIconButton key="edit" iconName={'edit'} tooltip={PowerLocalize.get('ConsultantTile.EditProfile')}
-                           onClick={() => this.props.redirectToUser(this.props.initials)}/>,
-            <PwrIconButton key="close" iconName={'close'} tooltip={PowerLocalize.get('Action.Exit')}
-                           onClick={this.resetAndClose}/>
-        ]
-        if (!this.props.consultantInfo.active()) {
-            const deleteButton = <PwrIconButton key="delete" iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
-                                                onClick={this.deleteConsultant}/>;
-            dialogActions = [deleteButton, ...dialogActions]
-        }
-
         return (<div>
             <Dialog
                 scroll="paper"
@@ -171,6 +158,13 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
                     id="ConsultantTile.EditConsultant.Dialog.Title">{PowerLocalize.get('ConsultantTile.EditConsultant')}
                 </DialogTitle>
                 <DialogContent dividers={true} style={{width: '400px', 'overflowX': 'hidden'}}>
+                    {/* Jump to the consultant's profile: a link, not one of the form's actions */}
+                    <Link component="button" variant="body1" className="pwr-link-with-icon"
+                          onClick={() => this.props.redirectToUser(this.props.initials)}>
+                        {PowerLocalize.get('ConsultantEdit.OpenProfile')}
+                        <Icon className="material-icons" fontSize="small">open_in_new</Icon>
+                    </Link>
+                    <PwrSpacer/>
                     <ConsultantEditFields
                         firstName={this.state.consultantInfo.firstName()}
                         lastName={this.state.consultantInfo.lastName()}
@@ -187,7 +181,11 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
                     />
                 </DialogContent>
                 <DialogActions>
-                    {dialogActions}
+                    {/* Button bar (#41): Save highlighted, Cancel next to it, Delete set apart (inactive consultants only) */}
+                    <PwrFormActions editing noSpace
+                                    onSave={this.saveAndClose}
+                                    onCancel={this.resetAndClose}
+                                    onDelete={this.props.consultantInfo.active() ? undefined : this.deleteConsultant}/>
                 </DialogActions>
             </Dialog>
         </div>);

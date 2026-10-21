@@ -7,7 +7,9 @@ import {Dialog} from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
+import {PwrFormActions} from '../../general/pwr-form-actions';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -93,23 +95,24 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
         return (
             <Dialog open={this.props.open} onClose={this.props.onClose}>
                 <DialogTitle>
-                    ViewProfile mit den neuen Daten aktualisieren!
+                    {PowerLocalize.get('ViewProfileUpdate.Title')}
                 </DialogTitle>
                 <DialogContent>
+                    {/* Fields 16 px apart (#40) */}
                     <TextField
-                        className={'col-md-12'}
-                        label={'Neuer Name'}
-                        margin={'dense'}
+                        fullWidth
+                        label={PowerLocalize.get('ViewProfileUpdate.NewName')}
                         value={this.state.name}
                         onChange={this.changeName}
                     />
+                    <PwrSpacer/>
                     <TextField
-                        className={'col-md-12'}
-                        label={'Neue Beschreibung'}
-                        margin={'dense'}
+                        fullWidth
+                        label={PowerLocalize.get('ViewProfileUpdate.NewDescription')}
                         value={this.state.description}
                         onChange={this.changeDescription}
                     />
+                    <PwrSpacer/>
 
                     <FormControlLabel
                         control={
@@ -120,16 +123,16 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
                                 color="primary"
                             />
                         }
-                        label="Dieses ViewProfil behalten"
+                        label={PowerLocalize.get('ViewProfileUpdate.KeepOld')}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant={'contained'}
-                        color={'primary'}
-                        onClick={() => this.updateViewProfile()}
-                        disabled={this.state.name.length === 0 || this.state.description.length === 0}
-                    >Confirm</Button>
+                    {/* The same button bar as the forms (#41) */}
+                    <PwrFormActions editing noSpace
+                                    saveText={PowerLocalize.get('ViewProfileUpdate.Update')} saveIcon={'refresh'}
+                                    saveDisabled={this.state.name.length === 0 || this.state.description.length === 0}
+                                    onSave={() => this.updateViewProfile()}
+                                    onCancel={this.props.onClose}/>
                 </DialogActions>
             </Dialog>
         );

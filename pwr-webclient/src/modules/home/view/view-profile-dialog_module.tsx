@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Button, Dialog, Icon, TextField} from '@material-ui/core';
+import {Dialog, TextField} from '@material-ui/core';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -8,7 +9,8 @@ import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
+import {PwrFormSection, PwrRow} from '../../general/pwr-form-section';
 import Fab from '@material-ui/core/Fab/Fab';
 import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 
@@ -38,11 +40,11 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     constructor(props: ViewProfileDialogProps) {
         super(props);
-        this.resetState(props);
+        this.state = this.initialState(props);
     }
 
-    private resetState = (props: ViewProfileDialogProps) => {
-        this.state = {
+    private initialState = (props: ViewProfileDialogProps): ViewProfileDialogState => {
+        return {
             name: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.name) ? '' : props.viewProfile.viewProfileInfo.name,
             description: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.viewDescription) ? '' : props.viewProfile.viewProfileInfo.viewDescription,
             charsPerLine: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.charsPerLine) ? 45 : props.viewProfile.viewProfileInfo.charsPerLine,
@@ -73,7 +75,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
     };
 
     private closeAndReset = () => {
-        this.resetState(this.props);
+        this.setState(this.initialState(this.props));
         this.props.onClose();
     };
 
@@ -81,39 +83,10 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         if (!!(this.props.onSave)) {
             this.props.onSave(this.state.name, this.state.description, this.state.charsPerLine);
         }
-    };
-
-    private renderActions = () => {
-        let actions = [];
-        let label: string;
-        let icon: string;
-        if (this.props.type === 'edit') {
-            label = PowerLocalize.get('Action.Save');
-            icon = 'save';
-        } else {
-            label = PowerLocalize.get('Action.Create');
-            icon = 'add';
+        if (this.props.type !== 'edit') {
+            // The next view profile starts empty again
+            this.setState(this.initialState(this.props));
         }
-        actions.push(
-            <Button
-                variant={'text'}
-                color={'primary'}
-                onClick={this.closeAndSave}
-                key={'CloseAndSafe'}
-            >
-                {label}
-                <Icon className="material-icons">{icon}</Icon>
-            </Button>);
-        actions.push(
-            <Button
-                variant={'text'}
-                onClick={this.props.onClose}
-                key={'Close'}
-            >
-                <Icon className="material-icons">close</Icon>
-                {PowerLocalize.get('Action.Close')}
-            </Button>);
-        return actions;
     };
 
     private renderTitle = () => {
@@ -139,6 +112,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   fullWidth={true}
                                   label={PowerLocalize.get('ViewProfileDialog.Name')}
                 />
+                <PwrSpacer/>
                 <LimitedTextField onChange={this.changeDescription}
                                   maxCharacters={PROFILE_DESCRIPTION_LENGTH}
                                   value={this.state.description}
@@ -147,33 +121,40 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   rows={4}
                                   label={PowerLocalize.get('ViewProfileDialog.Description')}
                 />
+                <PwrSpacer/>
                 <TextField onChange={() => this.changeLocale}
                            value={this.state.locale}
                            label={PowerLocalize.get('ViewProfileDialog.Locale')}
                            disabled={this.props.type === 'edit'}
                 />
-                <div>
-                    <ListSubheader>Chars per Line</ListSubheader>
-                    <Fab
-                        style={{width: '40px', height: '40px', padding: '0', marginRight: '15px'}}
-                        color={'primary'}
-                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0) ? (this.state.charsPerLine - 1) : 0)}
-                    >
-                        <RemoveIcon/>
+                <PwrFormSection title={PowerLocalize.get('ViewProfileDialog.CharsPerLine')}>
+                    <PwrRow>
+                        <Fab
+                            size={'small'}
+                            color={'primary'}
+                            onClick={() => this.changeCharsPerLine((this.state.charsPerLine > 0) ? (this.state.charsPerLine - 1) : 0)}
+                        >
+                            <RemoveIcon/>
 
-                    </Fab>
-                    {this.state.charsPerLine}
-                    <Fab
-                        style={{width: '40px', height: '40px', padding: '0', marginLeft: '15px'}}
-                        color={'primary'}
-                        onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100) ? (this.state.charsPerLine + 1) : 100)}
-                    >
-                        <AddIcon/>
-                    </Fab>
-                </div>
+                        </Fab>
+                        {this.state.charsPerLine}
+                        <Fab
+                            size={'small'}
+                            color={'primary'}
+                            onClick={() => this.changeCharsPerLine((this.state.charsPerLine < 100) ? (this.state.charsPerLine + 1) : 100)}
+                        >
+                            <AddIcon/>
+                        </Fab>
+                    </PwrRow>
+                </PwrFormSection>
             </DialogContent>
             <DialogActions>
-                {this.renderActions()}
+                {/* The same button bar as the forms (#41) */}
+                <PwrFormActions editing noSpace
+                                saveText={PowerLocalize.get(this.props.type === 'edit' ? 'Action.Save' : 'Action.Create')}
+                                saveIcon={this.props.type === 'edit' ? 'save' : 'add'}
+                                onSave={this.closeAndSave}
+                                onCancel={this.closeAndReset}/>
             </DialogActions>
         </Dialog>;
     }

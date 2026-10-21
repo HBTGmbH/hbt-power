@@ -63,6 +63,15 @@ export class PowerHttpClient {
             .then(response => response.data);
     }
 
+    /**
+     * Like post, but without loading spinner and error alert: for background information the caller shows itself
+     */
+    postQuietly<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+        return this.getAxios()
+            .then(client => client.post<R>(url, data, config))
+            .then(response => response.data);
+    }
+
     delete<R>(url: string, config?: AxiosRequestConfig): Promise<R> {
         return this.getAxios().then(client => this.executeRequest(client.delete(url, config)));
     }

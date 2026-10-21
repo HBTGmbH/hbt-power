@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {Button, Dialog, DialogActions} from '@material-ui/core';
+import {Dialog, DialogActions} from '@material-ui/core';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
@@ -130,26 +131,6 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
     };
 
 
-    private readonly dialogActions = [
-        <Button
-            key="save"
-            variant={'text'}
-            color={'primary'}
-            onClick={this.saveAndReset}
-        >
-            Speichern
-        </Button>
-        ,
-        <Button
-            key="exit"
-            variant={'text'}
-            color={'primary'}
-            onClick={this.closeAndReset}
-        >
-           Schließen
-        </Button>,
-    ];
-
     render() {
         return (<div>
             <Dialog
@@ -177,7 +158,6 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                         onProfilePictureIdChange={this.setProfilePictureId}
                     >
                         <LimitedTextField
-                            className="pwr-margin-top pwr-margin-bottom"
                             maxCharacters={100}
                             hideProgress={true}
                             value={this.state.consultantInfo.initials()}
@@ -187,7 +167,11 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                     </ConsultantEditFields>
                 </DialogContent>
                 <DialogActions>
-                    {this.dialogActions}
+                    {/* The same button bar as the forms (#41) */}
+                    <PwrFormActions editing noSpace
+                                    saveText={PowerLocalize.get('Action.Create')} saveIcon={'person_add'}
+                                    onSave={this.saveAndReset}
+                                    onCancel={this.closeAndReset}/>
                 </DialogActions>
             </Dialog>
         </div>);

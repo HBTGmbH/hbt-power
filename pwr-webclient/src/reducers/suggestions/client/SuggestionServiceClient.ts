@@ -86,10 +86,12 @@ export class SuggestionServiceClient extends PowerHttpClient {
         return this.get(url);
     };
 
+    /**
+     * In the background while a project is edited (#41): no loading spinner, the caller handles a failure
+     */
     public getSkillsRecommendation = (project: Project): Promise<Array<ProfileSkill>> => {
         const url = this.base() + '/suggestions/skillRecommendation';
-        this.beginRequest();
-        return this.post(url, project);
+        return this.postQuietly(url, project);
     };
 
 }

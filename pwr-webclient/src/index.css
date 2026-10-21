@@ -29,10 +29,6 @@ body {
     width: 400px;
 }
 
-.margin-2px {
-    margin: 2px;
-}
-
 /* Entries below an expandable menu entry (#119): indented, their texts in line with each other */
 .pwr-menu-subitem {
     padding-left: 32px !important;
@@ -289,18 +285,28 @@ body {
     margin-left: 32px;
 }
 
-.pwr-btn-error {
-    background-color: #ff8e01;
-    color: white;
+/* Date picker: the open end button always the tight space (8 px) next to the field (#40) */
+.pwr-date-picker {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
 }
+
+/* Link with an icon after the text, e.g. a jump to another page (#40) */
+.pwr-link-with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Category tree in the view profile skill dialog: the connector and the skill indented to the checkboxes */
+.pwr-category-tree-connector {
+    margin-left: 40px;
+}
+
 
 .pwr-flat-warn-button {
     color: #ff8e01 !important;
-}
-
-.report-text-field {
-    margin: 4px;
-    padding: 2px;
 }
 
 .Report-Uploader {
@@ -339,19 +345,6 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.pwr-spacer-small {
-    margin-top: 4px;
-    margin-bottom: 4px;
-}
-
-.pwr-margin-bottom {
-    margin-bottom: 8px !important;
-}
-
-.pwr-margin-top {
-    margin-top: 8px !important;
 }
 
 .hbt-schild-background {

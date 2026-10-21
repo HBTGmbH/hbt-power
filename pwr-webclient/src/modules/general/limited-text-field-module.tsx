@@ -119,7 +119,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
             </div>
         }
         return (
-            <div>
+            // flow-root: the box encloses its floated field, so the space around it counts (#40)
+            <div style={{display: 'flow-root'}}>
                 <div style={{width: this.props.fullWidth ? '100%' : 350}}>
                     <div style={{width: fieldWidth, float: 'left'}}>
                         <TextField

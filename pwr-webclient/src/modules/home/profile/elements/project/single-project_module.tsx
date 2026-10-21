@@ -5,7 +5,8 @@ import {ApplicationState} from '../../../../../reducers/reducerIndex';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {NameEntity} from '../../../../../reducers/profile-new/profile/model/NameEntity';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
-import {PwrIconButton} from '../../../../general/pwr-icon-button';
+import {PwrFormActions} from '../../../../general/pwr-form-actions';
+import {PwrFormSection, PwrRow} from '../../../../general/pwr-form-section';
 import {fromLocalDate, isInvalidDate, toLocalDate} from '../../../../../utils/DateUtil';
 import {StringUtils} from '../../../../../utils/StringUtil';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
@@ -249,7 +250,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
     }
 
     private toSkillChip(skill: ProfileSkill) {
-        return <SkillChip key={skill.name} className="margin-2px" disabled={this.isEditDisabled()} skill={skill}
+        return <SkillChip key={skill.name} disabled={this.isEditDisabled()} skill={skill}
                           change={this.skillChange(skill)}
                           onDelete={skill => this.removeSkill(skill.name)}
                           onRestore={this.restoreSkill}
@@ -267,7 +268,10 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         }
         return (
             <div className={this.isEditDisabled() ? 'pwr-read-only' : ''}>
-                <div>
+                {/* Spacing scale (#40): fields of a group 16 px apart, sections 32 px. At the top the tight space, so the
+                    first field is level with the first project of the list */}
+                <PwrSpacer size="tight"/>
+                <PwrFormSection first>
                     <PwrInputField
                         disabled={this.isEditDisabled()}
                         id="project-title"
@@ -288,7 +292,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         rows={4}
                     />
                     <PwrSpacer/>
-                    <Grid container spacing={1} justify={'flex-start'}>
+                    <Grid container spacing={2} justify={'flex-start'}>
                         <Grid item>
                             <PwrDatePicker label={PowerLocalize.get('Profile.Project.StartDate')}
                                            disabled={this.isEditDisabled()}
@@ -307,7 +311,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                             />
                         </Grid>
                     </Grid>
-
                     <PwrSpacer/>
                     <PwrProjectRoleAutocomplete fullWidth={true}
                                                 multi={true}
@@ -319,11 +322,8 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                                                 label={PowerLocalize.get('Profile.Project.ProjectRoles')}
                                                 items={this.project().projectRoles}>
                     </PwrProjectRoleAutocomplete>
-                </div>
-                <PwrSpacer/>
-                <div>
-                    <PwrFormSubCaption>Client</PwrFormSubCaption>
-                    <PwrSpacer/>
+                </PwrFormSection>
+                <PwrFormSection title={PowerLocalize.get('Profile.Project.ClientCaption')}>
                     <PwrCompanyAutocomplete fullWidth={true}
                                             label={PowerLocalize.get('Profile.Project.Client')}
                                             searchTerm={this.client()}
@@ -335,10 +335,8 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                                             searchTerm={this.broker()}
                                             disabled={this.isEditDisabled()}
                                             onSearchChange={this.setBrokerName}/>
-                </div>
-                <PwrSpacer/>
-                <div>
-                    <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.Skills')}</PwrFormSubCaption>
+                </PwrFormSection>
+                <PwrFormSection title={PowerLocalize.get('Profile.Project.Skills')}>
                     <SkillSearcher
                         disabled={this.isEditDisabled()}
                         id="SelectedProject.SkillSearcher"
@@ -349,34 +347,25 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         onValueChange={skillSearchValue => this.setState({skillSearchValue})}
                         onNewRequest={name => this.addSkill(name)}
                     />
+                    {/* Suggestions belong to adding skills: right below the search, only in edit mode */}
+                    {this.isEditEnabled() && <>
+                        <PwrSpacer size="tight"/>
+                        <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
+                    </>}
                     <PwrSpacer/>
                     <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
-                    <div className="Pwr-Content-Container">
+                    <PwrSpacer size="tight"/>
+                    <PwrRow>
                         {this.displayedSkills().map(skill => this.toSkillChip(skill))}
-                    </div>
-                </div>
-                {
-                    this.isEditEnabled() &&
-                    <div>
-                        <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillSugestions')}</PwrFormSubCaption>
-                        <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
-                    </div>
-                }
-
+                    </PwrRow>
+                </PwrFormSection>
+                <PwrFormActions editing={this.isEditEnabled()}
+                                onEdit={this.beginEdit}
+                                onSave={this.save}
+                                onCancel={this.cancelEdit}
+                                onDelete={this.isDeleteEnabled() ? this.deleteButtonPress : undefined}/>
+                {/* Room below the buttons at the end of the scroll area */}
                 <PwrSpacer/>
-                <div>
-                    {this.isEditDisabled() &&
-                    <PwrIconButton iconName={'edit'} tooltip={PowerLocalize.get('Action.Edit')}
-                                   onClick={this.beginEdit}/>}
-                    {this.isEditEnabled() &&
-                    <PwrIconButton iconName={'save'} tooltip={PowerLocalize.get('Action.Save')} onClick={this.save}/>}
-                    {this.isEditEnabled() &&
-                    <PwrIconButton iconName={'cancel'} tooltip={PowerLocalize.get('Action.Cancel')}
-                                   onClick={this.cancelEdit}/>}
-                    {this.isDeleteEnabled() &&
-                    <PwrIconButton iconName={'delete'} tooltip={PowerLocalize.get('Action.Delete')}
-                                   onClick={this.deleteButtonPress}/>}
-                </div>
             </div>
         );
     }
