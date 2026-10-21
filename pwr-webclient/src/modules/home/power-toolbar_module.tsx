@@ -15,7 +15,7 @@ import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Collapse from '@material-ui/core/Collapse/Collapse';
 import {ThunkDispatch} from 'redux-thunk';
-import {AppInfoButton, LoggedInUserAvatar} from '../metadata/app-info_module';
+import {AppInfoButton, AppInfoDialog, LoggedInUserAvatar} from '../metadata/app-info_module';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {matchPath, withRouter} from 'react-router-dom';
@@ -48,6 +48,7 @@ interface ToolbarLocalProps {
  */
 interface ToolbarLocalState {
     menuOpen: boolean;
+    appInfoOpen: boolean;
     baseDataOpen: boolean;
     statisticsOpen: boolean;
     profilesOpen: boolean;
@@ -68,6 +69,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         super(props);
         this.state = {
             menuOpen: false,
+            appInfoOpen: false,
             baseDataOpen: false,
             statisticsOpen: false,
             profilesOpen: false,
@@ -145,6 +147,11 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private logOutUser = () => {
         this.handleMenuClose();
         this.props.navigateTo(Paths.USER_SPECIAL_LOGOUT);
+    };
+
+    private openAppInfo = () => {
+        this.handleMenuClose();
+        this.setState({appInfoOpen: true});
     };
 
     private navigateToAdmin = () => {
@@ -320,6 +327,15 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
 
                     </MenuItem>
                     <Divider/>
+                    {/* Only on narrow screens, where the info icon in the app bar is hidden (#127) */}
+                    <MenuItem key={'7a'} className="pwr-only-narrow" onClick={this.openAppInfo}>
+                        <ListItemIcon>
+                            <Icon className="material-icons">info_outline</Icon>
+                        </ListItemIcon>
+                        <ListItemText>
+                            {PowerLocalize.get('AppInfo.Title')}
+                        </ListItemText>
+                    </MenuItem>
                     {this.props.loggedInAsAdmin &&
                     <MenuItem key={'8'} onClick={this.navigateToAdmin}>
                         <ListItemIcon>
@@ -360,6 +376,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             <Icon className="material-icons">menu</Icon>
                         </IconButton>
                         {this.renderMenu(initials)}
+                        <AppInfoDialog open={this.state.appInfoOpen} onClose={() => this.setState({appInfoOpen: false})}/>
 
                         <PwrBrand/>
                         {

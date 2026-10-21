@@ -64,7 +64,10 @@ const ComponentRow = (props: { info: ComponentInfo }) => {
     </TableRow>;
 };
 
-const AppInfoDialog = (props: { open: boolean, onClose(): void }) => {
+/**
+ * Who is logged in, and the commit of every component. Opened by the info icon, on narrow screens by the menu (#127)
+ */
+export const AppInfoDialog = (props: { open: boolean, onClose(): void }) => {
     const [components, setComponents] = useState<Array<ComponentInfo> | null>(null);
 
     // Loaded on every opening: after a deployment it shows what runs now
@@ -114,7 +117,8 @@ export const AppInfoButton = () => {
     const [open, setOpen] = useState(false);
     return <>
         <Tooltip title={PowerLocalize.get('AppInfo.Tooltip')}>
-            <IconButton style={{color: 'white'}} aria-label={PowerLocalize.get('AppInfo.Tooltip')} onClick={() => setOpen(true)}>
+            <IconButton className="pwr-app-info-button" style={{color: 'white'}} aria-label={PowerLocalize.get('AppInfo.Tooltip')}
+                        onClick={() => setOpen(true)}>
                 <Icon className="material-icons">info_outline</Icon>
             </IconButton>
         </Tooltip>
