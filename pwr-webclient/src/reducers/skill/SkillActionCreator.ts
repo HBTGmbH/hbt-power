@@ -30,6 +30,7 @@ import {
     SetTreeChildrenOpenAction,
     UpdateSkillServiceSkillAction
 } from './SkillActions';
+import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 
 const skillClient = SkillServiceClient.instance();
 
@@ -281,6 +282,7 @@ export class SkillActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteCategoryLocale)
     public static AsyncDeleteLocale(categoryId: number, language: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteLocaleFromCategory(categoryId, language)
@@ -324,6 +326,7 @@ export class SkillActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteTreeSkill)
     public static AsyncDeleteSkill(skillId: number) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteCustomSkill(skillId)
@@ -365,6 +368,7 @@ export class SkillActionCreator {
         };
     }
 
+    @makeDeferrable(ActionType.AsyncDeleteSkillAlias)
     public static AsyncDeleteSkillAlias(skillId: number, alias: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteSkillAlias(skillId, alias)
@@ -380,6 +384,7 @@ export class SkillActionCreator {
      * @param skillId of the skill whose locale is to be deleted
      * @param language defines which locale from the skill is deleted
      */
+    @makeDeferrable(ActionType.AsyncDeleteSkillLocale)
     public static AsyncDeleteSkillLocale(skillId: number, language: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteSkillLocale(skillId, language)

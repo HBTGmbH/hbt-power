@@ -4,7 +4,7 @@ import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} fr
 import Warning from '@material-ui/icons/Warning';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {PwrButton} from '../general/pwr-button';
+import {PwrConfirmActions} from '../general/pwr-form-actions';
 import {Color} from '../../utils/ColorUtil';
 import {discardUnsavedChanges, keepUnsavedChanges} from '../../reducers/navigation/UnsavedChanges';
 
@@ -46,9 +46,10 @@ export const UnsavedChangesDialog = () => {
             <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
-            <PwrButton color={'default'} text={PowerLocalize.get('UnsavedChanges.Action.Discard')} onClick={discard}/>
-            <PwrButton color={'primary'} variant={'contained'} autoFocus
-                       text={PowerLocalize.get('UnsavedChanges.Action.KeepEditing')} onClick={keep}/>
+            {/* Discarding confirms the question and destroys the changes; keeping stays the default with the focus */}
+            <PwrConfirmActions destructive confirmText={PowerLocalize.get('UnsavedChanges.Action.Discard')} onConfirm={discard}
+                               rejectText={PowerLocalize.get('UnsavedChanges.Action.KeepEditing')} onReject={keep}
+                               autoFocus="reject"/>
         </DialogActions>
     </Dialog>;
 };

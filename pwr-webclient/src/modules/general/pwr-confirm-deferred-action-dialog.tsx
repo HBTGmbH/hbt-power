@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import * as redux from 'redux';
-import {Button, Dialog, DialogContentText, DialogTitle} from '@material-ui/core';
+import {Dialog, DialogContentText, DialogTitle} from '@material-ui/core';
+import {PwrConfirmActions} from './pwr-form-actions';
 import DialogActions from '@material-ui/core/DialogActions';
 import {confirmDeferredAction, rejectDeferredAction} from '../../reducers/deferred/DeferredActions';
 import {connect} from 'react-redux';
@@ -75,12 +76,9 @@ class PwrConfirmDeferredActionDialogModule extends React.Component<ConfirmDeferr
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button color='primary' onClick={this.props.rejectAction}>
-                    {this.props.actionNOK}
-                </Button>
-                <Button color='primary' onClick={this.props.confirmAction}>
-                    {this.props.actionOK}
-                </Button>
+                {/* Only deleting is deferred, so the confirmation is always destructive */}
+                <PwrConfirmActions destructive confirmText={this.props.actionOK} onConfirm={this.props.confirmAction}
+                                   rejectText={this.props.actionNOK} onReject={this.props.rejectAction}/>
             </DialogActions>
         </Dialog>);
     }

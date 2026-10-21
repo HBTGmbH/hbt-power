@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {Button, Dialog, DialogContent, DialogTitle, FormControl, Radio, RadioGroup, Step, StepLabel, Stepper, TextField} from '@material-ui/core';
+import {Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Radio, RadioGroup, Step, StepLabel, Stepper, TextField} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {NameEntityUtil} from '../../../utils/NameEntityUtil';
@@ -9,6 +9,8 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
 import {provideValueTo} from '../../../utils/ReactUtils';
 import {ThunkDispatch} from 'redux-thunk';
+import {PwrButton} from '../../general/pwr-button';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 
 // TODO radio button ohne form
 /**
@@ -178,38 +180,28 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
 
     };
 
+    /**
+     * The button bar of the forms (#134): Next (Execute in the last step) highlighted, Back and Cancel next to it
+     */
     private renderStepperControl = () => {
-        return <div style={{marginTop: 12}}>
-            <Button
-                id="NotificationActionDialog.Prev"
-                variant={'text'}
-                disabled={this.state.stepIndex === 0}
-                onClick={this.backStep}
-                style={{marginRight: 12}}
-            >
-                {PowerLocalize.get('Action.Previous')}
-            </Button>
-            <Button
-                id="NotificationActionDialog.Next"
-                variant={'contained'}
-                color={'primary'}
-                onClick={this.progressStep}
-            >
-                {this.stepperHasFinished() ? PowerLocalize.get('Action.Execute') : PowerLocalize.get('Action.Next')}
-            </Button>
-        </div>;
+        const finished = this.stepperHasFinished();
+        return <PwrFormActions editing noSpace
+                               saveText={finished ? PowerLocalize.get('Action.Execute') : PowerLocalize.get('Action.Next')}
+                               saveIcon={finished ? 'check' : 'arrow_forward'}
+                               onSave={this.progressStep} onCancel={this.closeDialog}>
+            {this.state.stepIndex > 0 &&
+            <PwrButton color={'primary'} text={PowerLocalize.get('Action.Previous')} onClick={this.backStep}/>}
+        </PwrFormActions>;
     };
 
     private renderStepperContentIndex0 = () => {
         return (
             <div>
-                Im Profil von <strong>{this.props.notification.adminNotification.initials()}</strong> wurde der neue
-                Bezeichner <strong>
-                {this.props.notification.nameEntity.name()}</strong> hinzugefügt.
-                Dies betrifft den
-                Eintragstyp <strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity)}</strong>
+                {PowerLocalize.get('NotificationDialog.Info.Profile')}<strong>{this.props.notification.adminNotification.initials()}</strong>
+                {PowerLocalize.get('NotificationDialog.Info.NameEntity')}<strong>{this.props.notification.nameEntity.name()}</strong>
+                {PowerLocalize.get('NotificationDialog.Info.Type')}<strong>{NameEntityUtil.typeToLocalizedType(this.props.notification.nameEntity)}</strong>.
                 <br/>
-                Bitte wählen sie im nächsten Schritt eine Aktion.
+                {PowerLocalize.get('NotificationDialog.Info.ChooseAction')}
             </div>);
     };
 
@@ -285,8 +277,10 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
                 <DialogContent id="NotificationDialog.Content">
                     {this.renderStepperContent()}
                     {this.renderStepper()}
-                    {this.renderStepperControl()}
                 </DialogContent>
+                <DialogActions>
+                    {this.renderStepperControl()}
+                </DialogActions>
             </Dialog>;
         }
         return <></>;

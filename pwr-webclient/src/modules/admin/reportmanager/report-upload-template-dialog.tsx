@@ -4,7 +4,10 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import Dropzone from 'react-dropzone';
 import CloudUpload from '@material-ui/icons/CloudUpload';
-import {AppBar, Button, Dialog, DialogContent, Icon, LinearProgress, Paper, TextField, Toolbar, Typography} from '@material-ui/core';
+import {Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, TextField, Typography} from '@material-ui/core';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {PwrFormActions} from '../../general/pwr-form-actions';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {ThunkDispatch} from 'redux-thunk';
 import {OIDCService} from '../../../OIDCService';
 
@@ -29,7 +32,6 @@ interface ReportUploadTemplateState {
     fileName: string;
     tempName: string;
     tempDescription: string;
-    tempInitials: string;
     file: File;
     previewTemplateId: string;
 }
@@ -63,7 +65,6 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
             fileName: '',
             tempName: '',
             tempDescription: '',
-            tempInitials: '',
             file: null,
             previewTemplateId: '',
         };
@@ -93,113 +94,46 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
         }
     };
 
-    // noinspection JSUnusedLocalSymbols
-    private Progress = () => this.props.pending ?
-        <LinearProgress variant="determinate" value={this.props.progressPercent}/> : <></>;
-
-    private renderUpload = () => {
-        return <div style={{padding: '2em'}} className={'Report-Uploader'}>
-            <Typography className={'vertical-align'}>Template hochladen</Typography>
-            <div className="Report-Uploader">
-                <div style={{width: '100%'}}>
-                    <div className="Aligner">
-                        <Dropzone
-                            onDrop={this.handleFileDrop}
-                            multiple={false}
-                            accept=".rptdesign"
-                        >
-                            <div className="Aligner" style={{height: '100%', textAlign: 'center'}}>
-                                {this.state.file ?
-                                    <span>
-                                        Selected File:<br/>
-                                        {this.state.file.name}
-                                    </span> :
-                                    <div className="Aligner"><CloudUpload/></div>}
-                            </div>
-                        </Dropzone>
-                    </div>
-                </div>
-            </div>
-            {this.isValidFile() === false ? <div className={'row'}>Select a .rptdesing file</div> :
-                <div>
-                    <div className={'Aligner'}>
-                        <TextField
-                            label={'Name'}
-                            onChange={(e: any) => {
-                                this.setState({tempName: e.target.value});
-                            }
-                            }
-                        />
-                    </div>
-                    <div className={'Aligner'}>
-                        <TextField
-                            label={'Description'}
-                            onChange={(e: any) => {
-                                this.setState({tempDescription: e.target.value});
-                            }
-                            }
-                        />
-                    </div>
-                    <div className={'Aligner'}>
-                        <TextField
-                            label={'Initials'}
-                            onChange={(e: any) => {
-                                this.setState({tempInitials: e.target.value});
-                            }}
-                        />
-                    </div>
-
-                    <div className={'Aligner'}>
-                        <Button
-                            style={{marginTop: '10px'}}
-                            variant={'contained'}
-                            className={'vertical-align'}
-                            color={'primary'}
-                            onClick={() => {
-                                this.uploadTemplate();
-                            }}
-                        >
-                            <Icon>send</Icon>
-                            Upload
-                        </Button>
-                    </div>
-                </div>
-            }
-            <div>
-                <this.Progress/>
-            </div>
-
-        </div>;
+    private canUpload = (): boolean => {
+        return this.isValidFile() && this.state.tempName.trim().length > 0 && !this.props.pending;
     };
 
+    /**
+     * A dialog like the other form dialogs (#134): drop zone, name and description, the button bar below
+     */
     render() {
-        return <Dialog
-            onClose={() => {
-                this.props.onClose();
-            }}
-            fullScreen
-            open={this.props.open}
-        >
+        return <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth maxWidth={'sm'}>
+            <DialogTitle>{PowerLocalize.get('TemplateUpload.Title')}</DialogTitle>
             <DialogContent>
-                <AppBar style={{height: '60px'}}>
-                    <Toolbar>
-                        <Button variant={'contained'} style={{margin: '5px'}} onClick={() => {
-                            this.props.onClose();
-                        }}><Icon>close</Icon></Button>
-                        <Typography variant={'body1'} style={{marginLeft: '5em'}}
-                                    color={'textSecondary'}> {this.state.tempName}</Typography>
-                    </Toolbar>
-                </AppBar>
-                <div style={{height: 'calc(100vh - 60px)', paddingTop: '60px'}}>
-                    <div className={'col-md-3'}>
-                        <Paper>
-                            {this.renderUpload()}
-                        </Paper>
+                <Dropzone onDrop={this.handleFileDrop} multiple={false} accept=".rptdesign"
+                          style={{width: '100%', minHeight: '120px', border: '2px dashed rgba(0, 0, 0, 0.3)', borderRadius: '4px', cursor: 'pointer'}}>
+                    <div className="Aligner" style={{minHeight: '120px', textAlign: 'center', flexDirection: 'column'}}>
+                        <CloudUpload/>
+                        <Typography>
+                            {this.state.file
+                                ? PowerLocalize.getFormatted('TemplateUpload.SelectedFile', this.state.file.name)
+                                : PowerLocalize.get('TemplateUpload.DropHint')}
+                        </Typography>
                     </div>
-
-                </div>
-
+                </Dropzone>
+                {this.state.file && !this.isValidFile() &&
+                <Typography color="error">{PowerLocalize.get('TemplateUpload.WrongFile')}</Typography>}
+                <PwrSpacer/>
+                <TextField fullWidth label={PowerLocalize.get('TemplateUpload.Name')} value={this.state.tempName}
+                           onChange={(e: any) => this.setState({tempName: e.target.value})}/>
+                <PwrSpacer/>
+                <TextField fullWidth multiline label={PowerLocalize.get('TemplateUpload.Description')}
+                           value={this.state.tempDescription}
+                           onChange={(e: any) => this.setState({tempDescription: e.target.value})}/>
+                {this.props.pending && <>
+                    <PwrSpacer/>
+                    <LinearProgress variant="determinate" value={this.props.progressPercent}/>
+                </>}
             </DialogContent>
+            <DialogActions>
+                <PwrFormActions editing noSpace saveText={PowerLocalize.get('TemplateUpload.Upload')} saveIcon="cloud_upload"
+                                saveDisabled={!this.canUpload()} onSave={this.uploadTemplate} onCancel={this.props.onClose}/>
+            </DialogActions>
         </Dialog>;
     }
 }

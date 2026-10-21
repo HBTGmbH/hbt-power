@@ -1,9 +1,9 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {
-    Button,
     CircularProgress,
     Dialog,
+    DialogActions,
     DialogContent,
     DialogTitle,
     FormControl,
@@ -24,6 +24,8 @@ import {AdminNotificationReason} from '../../../model/admin/AdminNotificationRea
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ThunkDispatch} from 'redux-thunk';
+import {PwrButton} from '../../general/pwr-button';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 
 interface SkillNotificationModuleProps {
     status: SkillNotificationEditStatus;
@@ -126,7 +128,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
                 />
             </div>
             <div className="vertical-align">
-                Fetching information for skill '{this.props.skillName}'
+                {PowerLocalize.getFormatted('SkillNotificationDialog.Fetching', this.props.skillName)}
             </div>
         </div>;
     };
@@ -137,21 +139,23 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
 
                 this.props.reason === AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN ?
                     <p>
-                        The previously unknown skill <strong>{this.props.skillName}</strong> was added to the profile
-                        of <strong>{this.props.initials}</strong>.
+                        {PowerLocalize.get('SkillNotificationDialog.UnknownSkill.Before')}<strong>{this.props.skillName}</strong>
+                        {PowerLocalize.get('SkillNotificationDialog.Profile.Before')}<strong>{this.props.initials}</strong>
+                        {PowerLocalize.get('SkillNotificationDialog.UnknownSkill.After')}
                     </p>
                     :
                     <p>
-                        The skill <strong>{this.props.skillName}</strong> was added to the profile
-                        of <strong>{this.props.initials}</strong> but the category is blacklisted.
+                        {PowerLocalize.get('SkillNotificationDialog.BlacklistedSkill.Before')}<strong>{this.props.skillName}</strong>
+                        {PowerLocalize.get('SkillNotificationDialog.Profile.Before')}<strong>{this.props.initials}</strong>
+                        {PowerLocalize.get('SkillNotificationDialog.BlacklistedSkill.After')}
                     </p>
             }
             {
-                this.props.comment ? <p>A comment was provided: {this.props.comment}</p> : false
+                this.props.comment ? <p>{PowerLocalize.get('SkillNotificationDialog.Comment')} {this.props.comment}</p> : false
             }
             {
                 this.props.skillEdited ?
-                    <p>The new skill name will be <strong>{this.props.newSkillName}</strong></p> : false
+                    <p>{PowerLocalize.get('SkillNotificationDialog.NewName')} <strong>{this.props.newSkillName}</strong></p> : false
             }
         </div>;
     };
@@ -160,7 +164,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         return <div>
             <FormControl>
                 <p>
-                    Please choose one of the action below to resolve the notification.
+                    {PowerLocalize.get('SkillNotificationDialog.ChooseAction')}
                 </p>
 
                 <RadioGroup
@@ -171,12 +175,12 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
                     }}
                 >
                     <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_OK.toString()}/>}
-                                      label="Accept Skill"/>
+                                      label={PowerLocalize.get('SkillNotificationDialog.Action.Accept')}/>
                     <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_EDIT.toString()}/>}
-                                      label="Edit Skill"/>
+                                      label={PowerLocalize.get('SkillNotificationDialog.Action.Edit')}/>
                     <FormControlLabel value=""
                                       control={<Radio value={SkillNotificationAction.ACTION_DELETE.toString()}/>}
-                                      label="Delete Skill"/>
+                                      label={PowerLocalize.get('SkillNotificationDialog.Action.Delete')}/>
 
                 </RadioGroup>
             </FormControl>
@@ -187,7 +191,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         return <div>
             <this.SkillInfo/>
             <p>
-                The skill has the following category:
+                {PowerLocalize.get('SkillNotificationDialog.Category')}
                 <span className="highlighted-category"> {this.props.hierarchy}</span>
             </p>
             <this.NotificationActions/>
@@ -206,7 +210,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
                 //status="loading"
             />
             <p>
-                Categorization pending...
+                {PowerLocalize.get('SkillNotificationDialog.Categorizing')}
             </p>
         </div>;
     };
@@ -215,12 +219,9 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         return <div>
             <this.SkillInfo/>
             <p>
-                This skill was not yet categorized.
-                <Button
-                    variant={'text'}
-                    color={'secondary'}
-                    onClick={() => this.props.categorizeSkill(this.props.skillName)}
-                >Categorize now.</Button>
+                {PowerLocalize.get('SkillNotificationDialog.NotCategorized')}
+                <PwrButton color={'primary'} text={PowerLocalize.get('SkillNotificationDialog.CategorizeNow')}
+                           onClick={() => this.props.categorizeSkill(this.props.skillName)}/>
             </p>
             <this.NotificationActions/>
         </div>;
@@ -231,7 +232,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         return <div>
             <this.SkillInfo/>
             <p>
-                Categorization failed. Reason: <span className="error-text">{this.props.error}</span>
+                {PowerLocalize.get('SkillNotificationDialog.CategorizeFailed')} <span className="error-text">{this.props.error}</span>
             </p>
             <this.NotificationActions/>
         </div>;
@@ -239,13 +240,13 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
 
     private renderError = () => {
         return <div className="error-text">
-            An error occurred: {this.props.error}
+            {PowerLocalize.get('SkillNotificationDialog.Error')} {this.props.error}
         </div>;
     };
 
     private renderSuccess = () => {
         return <div style={{textAlign: 'center'}}>
-            Success<br/>
+            {PowerLocalize.get('SkillNotificationDialog.Success')}<br/>
             <IconButton
                 className="icon-ok-button ,material-icons"
                 //className="material-icons"
@@ -258,7 +259,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
     private renderEdit = () => {
         return <div className="vcenter">
             <p>
-                The skill name may now be changed. This change affects all non-view profiles.
+                {PowerLocalize.get('SkillNotificationDialog.Edit.Hint')}
             </p>
             <SkillSearcher
                 id="SkillNotificationDialog.SkillSearcher"
@@ -268,8 +269,7 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
                 onNewRequest={this.props.changeNewSkillName}
             />
             <p>
-                Consider validating the skill category after change; If you are sure the changed skill is correct, this
-                is not necessary.
+                {PowerLocalize.get('SkillNotificationDialog.Edit.ValidateHint')}
             </p>
         </div>;
     };
@@ -323,14 +323,14 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         }
         let steps = [
             <Step key="SkillNotDlg.Step0">
-                <StepLabel>Information Resolving</StepLabel>
+                <StepLabel>{PowerLocalize.get('SkillNotificationDialog.Step.Fetching')}</StepLabel>
             </Step>,
             <Step key="SkillNotDlg.Step1">
-                <StepLabel>Information</StepLabel>
+                <StepLabel>{PowerLocalize.get('SkillNotificationDialog.Step.Info')}</StepLabel>
             </Step>
         ];
         if (displayLastStepper) steps.push(<Step key="SkillNotDlg.Step2">
-            <StepLabel>Edit Skill</StepLabel>
+            <StepLabel>{PowerLocalize.get('SkillNotificationDialog.Step.Edit')}</StepLabel>
         </Step>);
 
         return (<Stepper activeStep={index}>
@@ -338,46 +338,37 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
         </Stepper>);
     };
 
+    /**
+     * The button bar of the forms (#134): the step's main action highlighted, Cancel next to it
+     */
     private renderController = () => {
+        const actions = (saveText: string, onSave: () => void, saveDisabled = false, extra?: JSX.Element) =>
+            <PwrFormActions editing noSpace saveText={saveText} saveIcon="arrow_forward" saveDisabled={saveDisabled}
+                            onSave={onSave} onCancel={this.props.closeAndReset}>
+                {extra}
+            </PwrFormActions>;
         switch (this.props.status) {
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_PENDING:
-                return (<Button
-                    variant={'contained'}
-                    color={'secondary'}
-                    onClick={() => this.props.categorizeSkill(this.props.skillName)}
-                    disabled={true}
-                >Categorize</Button>);
+                return actions(PowerLocalize.get('SkillNotificationDialog.Categorize'),
+                    () => this.props.categorizeSkill(this.props.skillName), true);
             case SkillNotificationEditStatus.DISPLAY_INFO_NO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY:
             case SkillNotificationEditStatus.DISPLAY_INFO_CATEGORY_ERROR:
-                let label = this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT ? 'Continue' : 'Finish';
-                return (<Button
-                    variant={'contained'}
-                    color={'secondary'}
-                    onClick={this.props.progressFromActionSelection}
-                >{label}</Button>);
+                const label = this.props.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT
+                    ? PowerLocalize.get('Action.Next')
+                    : PowerLocalize.get('Action.Finish');
+                return actions(label, this.props.progressFromActionSelection);
             case SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG:
-                return (
-                    <div>
-                        <Button
-                            variant={'contained'}
-                            color={'primary'}
-
-                            onClick={() => this.props.categorizeSkill(this.props.newName)}
-                        >Validate</Button>
-                        <Button
-                            variant={'contained'}
-                            color={'secondary'}
-                            style={{marginLeft: '8px'}}
-                            onClick={this.props.invokeSkillNotificationEditAction}
-                        >Finish</Button>
-                    </div>
-                );
+                return actions(PowerLocalize.get('Action.Finish'), this.props.invokeSkillNotificationEditAction, false,
+                    <PwrButton color={'primary'} text={PowerLocalize.get('SkillNotificationDialog.Validate')}
+                               onClick={() => this.props.categorizeSkill(this.props.newName)}/>);
             case SkillNotificationEditStatus.DISPLAY_ERROR:
             case SkillNotificationEditStatus.DISPLAY_SUCCESS:
+                return <PwrFormActions editing noSpace saveText={PowerLocalize.get('Action.Close')} saveIcon="close"
+                                       onSave={this.props.closeAndReset}/>;
             case SkillNotificationEditStatus.FETCHING_DATA:
             default:
-                return <div/>;
+                return null;
         }
     };
 
@@ -394,8 +385,10 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
             <DialogContent id="SkillNotificationDialog.Content">
                 {this.renderContent()}
                 {this.renderStepper()}
-                {this.renderController()}
             </DialogContent>
+            <DialogActions>
+                {this.renderController()}
+            </DialogActions>
         </Dialog>;
     }
 }

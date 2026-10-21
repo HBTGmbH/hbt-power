@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Button, Dialog} from '@material-ui/core';
+import {Dialog, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
+import {PwrConfirmActions} from '../pwr-form-actions';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 
@@ -25,24 +26,16 @@ export class CategoryDeleteConfirmation extends React.Component<CategoryDeleteCo
 
     render() {
         return (
-            <Dialog
-                open={this.props.open}
-                //modal={true}
-            >
-                Do you really want to delete <strong>{this.props.category.qualifier}</strong> including its
-                child categories?
-
+            <Dialog open={this.props.open} onClose={this.props.onDeclineDelete}>
+                <DialogTitle>{PowerLocalize.get('CategoryDelete.Title')}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {PowerLocalize.getFormatted('CategoryDelete.Content', this.props.category.qualifier)}
+                    </DialogContentText>
+                </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant={'text'}
-                        color={'primary'}
-                        onClick={this.props.onDeclineDelete}
-                    >{PowerLocalize.get('Action.No')}</Button>,
-                    <Button
-                        variant={'text'}
-                        color={'secondary'}
-                        onClick={this.props.onAcceptDelete}
-                    >{PowerLocalize.get('Action.Yes')}</Button>
+                    <PwrConfirmActions destructive confirmText={PowerLocalize.get('Action.Delete')}
+                                       onConfirm={this.props.onAcceptDelete} onReject={this.props.onDeclineDelete}/>
                 </DialogActions>
             </Dialog>);
     }

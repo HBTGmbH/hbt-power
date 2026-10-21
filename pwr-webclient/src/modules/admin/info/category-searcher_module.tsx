@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {SkillCategory} from '../../../model/skill/SkillCategory';
-import {Dialog, DialogContent, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
+import {Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, TextField} from '@material-ui/core';
+import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {Comparators} from '../../../utils/Comparators';
 import {getInverseCategoryHierarchy, SkillStore} from '../../../model/skill/SkillStore';
@@ -90,7 +91,7 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
             onClose={this.props.onClose}
             aria-labelledby="category-search-dlg-title"
         >
-            <DialogTitle id="category-search-dlg-title">Kategorie Suchen</DialogTitle>
+            <DialogTitle id="category-search-dlg-title">{PowerLocalize.get('CategorySearcher.Title')}</DialogTitle>
             <DialogContent>
                 <TextField
                     label={PowerLocalize.get('Action.Search')}
@@ -101,6 +102,10 @@ export class CategorySearcher extends React.Component<CategorySearcherProps, Cat
                     {this.renderCategories()}
                 </List>
             </DialogContent>
+            {/* Choosing a category is the action itself; Cancel as in the other dialogs (#134) */}
+            <DialogActions>
+                <PwrFormActions editing noSpace onCancel={this.props.onClose}/>
+            </DialogActions>
         </Dialog>);
     }
 }

@@ -72,6 +72,36 @@ const deferredActions: DeferrableAction<ApplicationState>[] = [
         type: ActionType.AsyncDeleteReport,
         condition: unconditional,
         makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteTreeSkill,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteSkillAlias,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteSkillLocale,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteCategoryLocale,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteNotificationEntry,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
+    },
+    {
+        type: ActionType.AsyncDeleteTrashedNotifications,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
     }
 ];
 
