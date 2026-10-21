@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 162 162" width="162" height="162" role="img" aria-label="Hammer und Tastatur, gekreuzt">
-  <title>HBT icon: Hammer und Tastatur, gekreuzt (HBT Power)</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 162 162" width="162" height="162" role="img" aria-label="Blitz im Kreis">
+  <title>HBT icon: Blitz im Kreis (Power)</title>
   <defs>
     <linearGradient id="hbt-split" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="162" y2="0">
       <stop offset="50%" stop-color="#5F6EF0"/>
@@ -7,12 +7,9 @@
     </linearGradient>
   </defs>
   <g class="ink" fill="none" stroke="url(#hbt-split)" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter">
-    <!-- keyboard from bottom left to top right, outline open where the handle crosses it -->
-    <path d="M59.08 74.64L24.43 109.28L52.72 137.57L87.36 102.92M74.64 59.08L109.28 24.43L137.57 52.72L102.92 87.36"/>
-    <!-- keys at both ends -->
-    <path d="M58.37 92.31L52.72 97.97M45.64 105.04L39.99 110.70M69.69 103.63L64.03 109.28M56.96 116.36L51.30 122.01M92.31 58.37L97.97 52.72M105.04 45.64L110.70 39.99M103.63 69.69L109.28 64.03M116.36 56.96L122.01 51.30"/>
-    <!-- hammer from top left to bottom right, lying on the keyboard: head and handle as outlines -->
-    <path d="M59.79 20.19L79.59 39.99L39.99 79.59L20.19 59.79Z"/>
-    <path d="M55.54 64.03L120.60 129.08L129.08 120.60L64.03 55.54"/>
+    <!-- circle -->
+    <circle cx="81" cy="81" r="72"/>
+    <!-- bolt, one closed outline -->
+    <path d="M97.5 26.25L52.5 89.25L79.5 89.25L63 135.75L109.5 69.75L82.5 69.75Z"/>
   </g>
 </svg>

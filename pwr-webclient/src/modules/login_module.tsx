@@ -1,4 +1,4 @@
-import logoPos from '../img/HBT002_Logo_pos.png';
+import iconPower from '../img/icon-hbt-power.svg';
 import {LoginStatus} from '../model/LoginStatus';
 import {connect} from 'react-redux';
 import * as React from 'react';
@@ -74,7 +74,7 @@ class Login_module extends React.Component<LoginProps & LoginLocalProps & LoginD
                     <div className="vertical-align" style={{height: '100vh'}}>
                         <div style={{padding: '64px', backgroundColor: 'white'}}>
                             <div className="vertical-align">
-                                <img alt="HBT Power Logo" className="img-responsive logo-medium" src={logoPos}/>
+                                <img alt={PowerLocalize.get('App.Name')} className="pwr-login-icon" src={iconPower}/>
                             </div>
                             <div className="vertical-align">
                                 <h1>{PowerLocalize.get('Login.Title')}</h1>

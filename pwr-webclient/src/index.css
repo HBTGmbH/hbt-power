@@ -214,6 +214,12 @@ body {
     }
 }
 
+/* The icon alone, large, on the login and profile selection pages (#125) */
+.pwr-login-icon {
+    height: 160px;
+    width: 160px;
+}
+
 .logo-medium {
     height: 92px
 }
