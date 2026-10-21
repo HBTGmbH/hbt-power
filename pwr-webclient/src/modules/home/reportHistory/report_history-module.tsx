@@ -9,7 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
-import Button from '@material-ui/core/Button';
+import {PwrButton} from '../../general/pwr-button';
+import {PwrIconButton} from '../../general/pwr-icon-button';
 import {ErrorOutline} from '@material-ui/icons';
 import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
@@ -126,37 +127,18 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
         this.props.loadAllTemplateData();
     };
 
-    private ReportDeleteButton = (id: number) => {
-        return <Button
-            style={{marginLeft: '8px', marginTop: '5px', backgroundColor: '#ff8e01'}}
-            variant={'contained'}
-            className="mui-margin pwr-btn-error"
-            onMouseDown={() => {
-                this.deleteReport(id);
-            }}
-        >
-            <Icon className="material-icons">delete</Icon>
-            {PowerLocalize.get('Action.Delete')}
-        </Button>;
-    };
 
     private StatusDisplay = (reportData: ReportData) => {
-        const statusStyle: React.CSSProperties = {display: 'inline-flex', alignItems: 'center', marginLeft: '8px', marginTop: '5px', verticalAlign: 'middle'};
+        const statusStyle: React.CSSProperties = {display: 'inline-flex', alignItems: 'center'};
         let body: JSX.Element;
         const status = reportData.reportStatus;
-        const id = reportData.id;
 
         switch (status) {
             case 'DONE':
                 body =
-                    <Button
-                        variant="contained"
-                        color="primary" style={{marginLeft: '8px', marginTop: '5px'}}
-                        onClick={() => this.downloadReport(reportData)}
-                    >
-                        <Icon className="material-icons">get_app</Icon>
-                        {PowerLocalize.get('Action.Download')}
-                    </Button>;
+                    <PwrButton color="primary" text={PowerLocalize.get('Action.Download')}
+                               icon={<Icon className="material-icons">get_app</Icon>}
+                               onClick={() => this.downloadReport(reportData)}/>;
                 break;
             case 'ERROR':
                 body =
@@ -178,10 +160,7 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                 body = <span>{status}</span>;
                 break;
         }
-        return <div>
-            {body}
-            {this.ReportDeleteButton(id)}
-        </div>;
+        return body;
     };
 
     downloadReport = (reportData: ReportData) => {
@@ -216,10 +195,11 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                     <Table aria-label="simple table">
                         <TableHead>
                             <TableRow key={-1}>
-                                <TableCell>{PowerLocalize.get('Overview.ViewProfiles.Title')}</TableCell>
+                                <TableCell>{PowerLocalize.get('Report.ViewProfile')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.Template')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.CreateDate')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.Status')}</TableCell>
+                                <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -231,6 +211,11 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                         <TableCell align="left">{value.createdAt ? formatToFullLocalizedDateTime(value.createdAt) : formatFullLocalizedDate(value.createDate)}</TableCell>
                                         <TableCell
                                             align="left">{this.StatusDisplay(value)}</TableCell>
+                                        {/* An icon in a column of its own: in a list of many documents a button per row would dominate (#41) */}
+                                        <TableCell align="right" padding="checkbox">
+                                            <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')}
+                                                           onClick={() => this.deleteReport(value.id)}/>
+                                        </TableCell>
                                     </TableRow>)
                             }
                         </TableBody>

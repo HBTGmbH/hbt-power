@@ -82,10 +82,10 @@ export class ViewProfileActionCreator {
             };
             viewProfileClient.postViewProfile(initials, body)
                 .then((viewProfile) => ViewProfileActionCreator.succeedAndRead(viewProfile, dispatch))
-                .then(() => Alerts.showSuccess('View Profile created.'))
+                .then(() => Alerts.showSuccess(PowerLocalize.get('ViewProfile.Created')))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not create view profile!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Create')));
         };
     }
 
@@ -99,10 +99,10 @@ export class ViewProfileActionCreator {
             };
             viewProfileClient.createChangedViewProfile(initials, oldId, body)
                 .then(viewProfile => ViewProfileActionCreator.succeedAndRead(viewProfile, dispatch))
-                .then(() => Alerts.showSuccess('View Profile created.'))
+                .then(() => Alerts.showSuccess(PowerLocalize.get('ViewProfile.Created')))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not create view profile!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Create')));
         };
     }
 
@@ -116,7 +116,7 @@ export class ViewProfileActionCreator {
                 .then(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not move entry'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Move')));
         };
     }
 
@@ -131,7 +131,7 @@ export class ViewProfileActionCreator {
                 .then(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not move entries!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.MoveAll')));
         };
     }
 
@@ -144,7 +144,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not toggle entry!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Toggle')));
         };
     }
 
@@ -156,7 +156,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not toggle entry!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Toggle')));
         };
     }
 
@@ -169,7 +169,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not sort entry!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Sort')));
         };
     }
 
@@ -182,7 +182,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not toggle skill!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.ToggleSkill')));
         };
     }
 
@@ -200,7 +200,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not set display category!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.DisplayCategory')));
         };
     }
 
@@ -214,7 +214,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not sort view profile!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.SortProfile')));
         };
     }
 
@@ -242,7 +242,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not load view profile!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Load')));
         };
     }
 
@@ -255,7 +255,7 @@ export class ViewProfileActionCreator {
                 .then(() => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.build(Paths.USER_REPORTS, {initials}))))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not generate document!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Generate')));
         };
     }
 
@@ -272,7 +272,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not update view profiles!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Update')));
         };
     }
 
@@ -288,7 +288,7 @@ export class ViewProfileActionCreator {
                 .then((response) => response.forEach(id => dispatch(ViewProfileActionCreator.AsyncLoadViewProfile(id))))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not load view profiles!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.LoadAll')));
         };
     }
 
@@ -301,7 +301,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not set description!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Description')));
         };
     }
 
@@ -311,7 +311,7 @@ export class ViewProfileActionCreator {
                 .then((response) => dispatch(ViewProfileActionCreator.SetParentForSkill(response)))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not get parents for skill: ' + skill.name + '!'));
+                .catch(() => Alerts.showError(PowerLocalize.getFormatted('ViewProfile.Error.SkillParents', skill.name)));
         };
     }
 
@@ -323,7 +323,7 @@ export class ViewProfileActionCreator {
                 .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError('Could not change enable!'));
+                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Enable')));
         };
     }
 }
