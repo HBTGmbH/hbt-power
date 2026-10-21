@@ -1,7 +1,22 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Icon, List, ListItem, ListItemIcon, ListItemText, Paper, Tooltip, Typography} from '@material-ui/core';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Icon,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Paper,
+    Tooltip,
+    Typography
+} from '@material-ui/core';
+import {PwrConfirmActions} from '../../general/pwr-form-actions';
 import {makeStyles} from '@material-ui/core/styles';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {LoginStatus} from '../../../model/LoginStatus';
@@ -98,6 +113,7 @@ export const ProfileCheckDashboardElement = (props: { initials: string }) => {
     const dispatch = useDispatch();
     const isAdmin = useSelector((state: ApplicationState) => state.adminReducer.loginStatus === LoginStatus.SUCCESS);
     const [check, setCheck] = useState<ProfileCheck | null>(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     useEffect(() => {
         let current = true;
@@ -122,10 +138,11 @@ export const ProfileCheckDashboardElement = (props: { initials: string }) => {
 
     const confirm = () => ProfileServiceClient.instance().confirmProfile(props.initials)
         .then(result => {
+            setConfirmOpen(false);
             setCheck(result);
             Alerts.showSuccess(PowerLocalize.get('ProfileCheck.Confirmed'));
         })
-        .catch(() => undefined);
+        .catch(() => setConfirmOpen(false));
 
     return <Paper className={'dashboard-element ' + classes.card}>
         <Typography className={classes.title}>{PowerLocalize.get('ProfileCheck.Title')}</Typography>
@@ -163,9 +180,20 @@ export const ProfileCheckDashboardElement = (props: { initials: string }) => {
             <Tooltip title={PowerLocalize.get('ProfileCheck.Confirm.Hint')}>
                 <span>
                     <PwrButton color={'primary'} text={PowerLocalize.get('ProfileCheck.Confirm')}
-                               icon={<Icon className="material-icons">task_alt</Icon>} onClick={confirm}/>
+                               icon={<Icon className="material-icons">task_alt</Icon>} onClick={() => setConfirmOpen(true)}/>
                 </span>
             </Tooltip>
+            {/* Asks first, like deleting: the confirmation is logged and silences the outdated hints for a while */}
+            <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} maxWidth={'sm'}>
+                <DialogTitle>{PowerLocalize.get('ProfileCheck.Confirm.Title')}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{PowerLocalize.get('ProfileCheck.Confirm.Content')}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <PwrConfirmActions confirmText={PowerLocalize.get('ProfileCheck.Confirm.Action')} onConfirm={confirm}
+                                       onReject={() => setConfirmOpen(false)}/>
+                </DialogActions>
+            </Dialog>
         </>}
         {isAdmin && <ConfirmationLog initials={props.initials} check={check}/>}
     </Paper>;
