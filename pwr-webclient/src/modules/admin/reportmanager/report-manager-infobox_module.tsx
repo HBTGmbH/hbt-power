@@ -1,4 +1,4 @@
-import {Divider, ExpansionPanel, ExpansionPanelActions, ExpansionPanelDetails, ExpansionPanelSummary, Icon, TextField, Typography} from '@material-ui/core';
+import {Divider, TextField} from '@material-ui/core';
 import * as React from 'react';
 import {Template} from '../../../model/view/Template';
 import {InfoPaper} from '../../general/info-paper_module.';
@@ -101,14 +101,6 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                 newTemplate.description = value;
                 this.setState({template: newTemplate});
                 break;
-            case 'fileId':
-                newTemplate.fileId = value;
-                this.setState({template: newTemplate});
-                break;
-            case 'previewId':
-                newTemplate.previewId = value;
-                this.setState({template: newTemplate});
-                break;
             case 'createUser':
                 newTemplate.createUser = value;
                 this.setState({template: newTemplate});
@@ -187,64 +179,17 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                         margin="normal"
                     />
                 </div>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary>
-                        <Icon>arrow_drop_down</Icon>
-                        <Typography variant={'button'}>Advanced</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                        <div className={'report-text-field col-md-12'}>
-                            <TextField
-                                id="standard-name"
-                                fullWidth
-                                InputProps={{
-                                    readOnly: true,
-                                    disableUnderline: true,
-                                }}
-                                label="ID"
-                                value={this.state.template.id}
-                                margin="normal"
-                            />
-                        </div>
-                        <div className={'report-text-field col-md-12'}>
-                            <TextField
-                                id="fileId"
-                                fullWidth
-                                InputProps={{
-                                    readOnly: !this.state.edit,
-                                    disableUnderline: !this.state.edit
-                                }}
-                                label="fileId"
-                                value={this.state.template.fileId}
-                                onChange={(e: any) => this.handleChange('fileId', e.target.value)}
-                                margin="normal"
-                            />
-                        </div>
-                        <div className={'report-text-field col-md-12'}>
-                            <TextField
-                                id="previewId"
-                                fullWidth
-                                InputProps={{
-                                    readOnly: !this.state.edit,
-                                    disableUnderline: !this.state.edit
-                                }}
-                                label="previewId"
-                                value={this.state.template.previewId}
-                                onChange={(e: any) => this.handleChange('previewId', e.target.value)}
-                                margin="normal"
-                            />
-                        </div>
-                    </ExpansionPanelDetails>
-                    <Divider/>
-                    <ExpansionPanelActions>
-                        <PwrIconButton iconName={'settings'} tooltip={'Bearbeiten'}
-                                       onClick={this.toggleEdit}/>
-                        <PwrIconButton iconName={'save'} tooltip={'Bestätigen'}
-                                       onClick={this.changeTemplateData}/>
-                        <PwrIconButton iconName={'delete'} tooltip={'Löschen'}
-                                       onClick={this.deleteTemplate}/>
-                    </ExpansionPanelActions>
-                </ExpansionPanel>
+                {/* No technical ids (#111): the template id is only used in URLs, fileId points to the BIRT file and
+                    must not be edited by hand, previewId is a leftover of stored previews */}
+                <Divider/>
+                <div style={{display: 'flex', justifyContent: 'flex-end', padding: '8px 0'}}>
+                    <PwrIconButton iconName={'settings'} tooltip={'Bearbeiten'}
+                                   onClick={this.toggleEdit}/>
+                    <PwrIconButton iconName={'save'} tooltip={'Bestätigen'}
+                                   onClick={this.changeTemplateData}/>
+                    <PwrIconButton iconName={'delete'} tooltip={'Löschen'}
+                                   onClick={this.deleteTemplate}/>
+                </div>
             </div>
         </InfoPaper>;
     }
