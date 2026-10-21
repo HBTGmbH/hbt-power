@@ -33,6 +33,11 @@ body {
     margin: 2px;
 }
 
+/* Entries below an expandable menu entry (#119): indented, their texts in line with each other */
+.pwr-menu-subitem {
+    padding-left: 32px !important;
+}
+
 /* Logged in user in the app bar (#105) */
 .pwr-logged-in-avatar {
     background-color: #46E6E6 !important;
@@ -186,6 +191,45 @@ body {
 
 .logo-small {
     height: 48px
+}
+
+/* Brand in the app bar (#123): the name disappears on narrow screens, the icon stays */
+.pwr-brand {
+    flex-grow: 1;
+    height: 100%;
+}
+
+.pwr-brand-icon {
+    height: 44px;
+    width: 44px;
+    margin: 0 8px;
+}
+
+.pwr-brand-name {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 500;
+    margin-left: 12px;
+    white-space: nowrap;
+}
+
+@media (max-width: 599px) {
+    .pwr-brand-name {
+        display: none;
+    }
+}
+
+/* The icon alone, large, on the login and profile selection pages (#125); dark only behind it */
+.pwr-login-icon {
+    display: block;
+    height: 160px;
+    width: 160px;
+}
+
+.pwr-login-icon-tile {
+    background-color: #191E55;
+    border-radius: 50%;
+    padding: 16px;
 }
 
 .logo-medium {
@@ -389,5 +433,19 @@ body {
     .pwr-projects-form-pane {
         overflow-y: auto;
         overscroll-behavior: contain;
+    }
+}
+
+/* No info icon on narrow screens (#127): the app bar has little room there */
+@media (max-width: 599px) {
+    .pwr-app-info-button {
+        display: none !important;
+    }
+}
+
+/* Only on narrow screens, e.g. the menu entry that replaces the info icon there (#127) */
+@media (min-width: 600px) {
+    .pwr-only-narrow {
+        display: none !important;
     }
 }

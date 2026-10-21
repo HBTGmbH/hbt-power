@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 162 162" width="162" height="162" role="img" aria-label="Blitz im Kreis">
+  <title>HBT icon: Blitz im Kreis (Power)</title>
+  <defs>
+    <linearGradient id="hbt-split" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="162" y2="0">
+      <stop offset="50%" stop-color="#5F6EF0"/>
+      <stop offset="50%" stop-color="#46E6E6"/>
+    </linearGradient>
+  </defs>
+  <g class="ink" fill="none" stroke="url(#hbt-split)" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter">
+    <!-- circle -->
+    <circle cx="81" cy="81" r="72"/>
+    <!-- bolt, one closed outline -->
+    <path d="M97.5 26.25L52.5 89.25L79.5 89.25L63 135.75L109.5 69.75L82.5 69.75Z"/>
+  </g>
+</svg>

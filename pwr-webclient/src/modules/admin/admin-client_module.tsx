@@ -13,7 +13,7 @@ import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Paths} from '../../Paths';
 import {Route} from 'react-router-dom';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import logoNeg from '../../img/HBT002_Logo_neg.png';
+import {PwrBrand} from '../general/pwr-brand';
 import {NotificationInbox} from './notification/notification-inbox_module';
 import {NotificationTrashbox} from './notification/notification-trashbox_module';
 import {ConsultantGrid} from './consultants/consultant-grid_module';
@@ -137,11 +137,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                     <Paper elevation={3}>
                         <AppBar>
                             <Toolbar>
-                                <div className="vertical-align" style={{flexGrow: 1}}>
-                                    <img className="img-responsive logo-small"
-                                         alt="HBT Logo"
-                                         src={logoNeg}/>
-                                </div>
+                                <PwrBrand/>
                                 <AppInfoButton/>
                                 <LoggedInUserAvatar/>
                                 <Tooltip title={PowerLocalize.get('Tooolbar.LogOut')}>
