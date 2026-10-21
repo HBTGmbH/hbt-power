@@ -22,9 +22,11 @@ import {PwrButton} from '../general/pwr-button';
 import {AppInfoClient} from '../../clients/AppInfoClient';
 import {ComponentInfo} from '../../model/metadata/ComponentInfo';
 import {OIDCService} from '../../OIDCService';
-import {formatToFullLocalizedDateTime} from '../../utils/DateUtil';
+import {formatToNumericDateTime} from '../../utils/DateUtil';
 
 const COMMIT_URL = 'https://github.com/HBTGmbH/hbt-power/commit/';
+// Flush with the headings above; the dialog fits a phone that way (#121)
+const FIRST_COLUMN = {paddingLeft: 0};
 
 const LoggedIn = () => {
     const account = OIDCService.instance().getCurrentAccount();
@@ -45,22 +47,26 @@ const ComponentRow = (props: { info: ComponentInfo }) => {
     const {info} = props;
     if (!info.available) {
         return <TableRow>
-            <TableCell>{info.name}</TableCell>
-            <TableCell colSpan={2}>
+            <TableCell style={FIRST_COLUMN}>{info.name}</TableCell>
+            <TableCell>
                 <Typography color={'textSecondary'} variant={'body2'}>{PowerLocalize.get('AppInfo.Unavailable')}</Typography>
             </TableCell>
         </TableRow>;
     }
     return <TableRow>
-        <TableCell>{info.name}</TableCell>
+        <TableCell style={FIRST_COLUMN}>{info.name}</TableCell>
+        {/* Time below the commit: two columns fit on a phone (#121) */}
         <TableCell>
             {info.commitId
                 ? <Link href={COMMIT_URL + info.commitId} target={'_blank'} rel={'noopener noreferrer'}>
                     <span style={{fontFamily: 'monospace'}}>{info.commitId}</span>
                 </Link>
                 : '–'}
+            {info.commitTime &&
+            <Typography color={'textSecondary'} variant={'body2'} style={{whiteSpace: 'nowrap'}}>
+                {formatToNumericDateTime(info.commitTime)}
+            </Typography>}
         </TableCell>
-        <TableCell>{info.commitTime ? formatToFullLocalizedDateTime(info.commitTime) : '–'}</TableCell>
     </TableRow>;
 };
 
@@ -91,9 +97,8 @@ const AppInfoDialog = (props: { open: boolean, onClose(): void }) => {
                 : <Table size={'small'}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>{PowerLocalize.get('AppInfo.Component')}</TableCell>
+                            <TableCell style={FIRST_COLUMN}>{PowerLocalize.get('AppInfo.Component')}</TableCell>
                             <TableCell>{PowerLocalize.get('AppInfo.Commit')}</TableCell>
-                            <TableCell>{PowerLocalize.get('AppInfo.CommitTime')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

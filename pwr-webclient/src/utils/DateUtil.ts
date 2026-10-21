@@ -43,6 +43,9 @@ const formatDayAndMonth: Intl.DateTimeFormat = new Intl.DateTimeFormat(language,
 const formatOnlyYear: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsOnlyYear);
 const formatFullDate: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDate);
 const formatFullDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, optionsFullDateTime);
+const formatNumericDateTime: Intl.DateTimeFormat = new Intl.DateTimeFormat(language, {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+});
 
 function verifyDataType(date: Date | string): Date {
     if (!date) {
@@ -75,6 +78,17 @@ export function formatToFullLocalizedDateTime(date: Date): string {
         return '???';
     }
     return formatFullDateTime.format(date);
+}
+
+/**
+ * Compact date and time, e.g. 21.10.2026, 21:28: for narrow places like a table cell on a phone
+ */
+export function formatToNumericDateTime(date: Date): string {
+    date = verifyDataType(date);
+    if (!date) {
+        return '???';
+    }
+    return formatNumericDateTime.format(date);
 }
 
 /**

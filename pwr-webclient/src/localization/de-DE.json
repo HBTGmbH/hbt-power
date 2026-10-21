@@ -346,7 +346,6 @@
   "AppInfo.Components": "Komponenten",
   "AppInfo.Component": "Komponente",
   "AppInfo.Commit": "Commit",
-  "AppInfo.CommitTime": "Commit-Datum",
   "AppInfo.Unavailable": "nicht erreichbar",
   "AppInfo.Loading": "Wird geladen …",
   "Action.Exit": "Schließen (Ohne Speichern)",
