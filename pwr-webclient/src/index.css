@@ -357,6 +357,13 @@ body {
     flex-direction: column;
 }
 
+/* One pane at a time below Bootstrap md (#49): some room to the edge of the card, which also holds the negative
+   margins of Material-UI grids (spacing) inside the screen */
+.pwr-projects-narrow-pane {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
 /* Side by side (Bootstrap md and up): list and form scroll on their own up to the bottom of the window, the page
    does not scroll, so toolbar (64px) and tabs stay visible. 136px = space above the panes plus the bottom margin. */
 @media (min-width: 992px) {

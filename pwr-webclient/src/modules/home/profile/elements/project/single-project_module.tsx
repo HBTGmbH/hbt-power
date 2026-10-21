@@ -219,8 +219,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         return (
             <div className={this.isEditDisabled() ? 'pwr-read-only' : ''}>
                 <div>
-                    <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.GeneralData')}</PwrFormSubCaption>
-                    <PwrSpacer/>
                     <PwrInputField
                         disabled={this.isEditDisabled()}
                         id="project-title"
