@@ -49,6 +49,14 @@ interface ViewProfileEntriesProps<T extends IViewEntry> {
      * The entries can't be switched, e.g. the skills of a category switched off (#159): faded, their own state kept
      */
     locked?: boolean;
+    /**
+     * Keys of the opened entries (ViewProfileEntries.keyOf), kept outside when something else opens them too, e.g. all
+     * skill categories at once (#165); the table's own otherwise
+     */
+    expanded?: Array<string>;
+
+    /** With expanded: gets the change as an update of the keys, so clicks in quick succession don't overwrite each other */
+    onExpandedChange?(update: (expanded: Array<string>) => Array<string>): void;
     /** The column last sorted by, kept outside when the sorting sits outside (heading); the table's own otherwise */
     sortedColumn?: SortedColumn;
 
@@ -173,17 +181,29 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
         }
     };
 
-    private entryKey(entry: T): string {
+    /** Key of an entry, the same when it moves */
+    public static keyOf(movableEntryType: string, entry: IViewEntry): string {
         const id = (entry as any).id;
-        return this.props.movableEntryType + '_' + entry.name + (id != null ? '_' + id : '');
+        return movableEntryType + '_' + entry.name + (id != null ? '_' + id : '');
+    }
+
+    private entryKey(entry: T): string {
+        return ViewProfileEntries.keyOf(this.props.movableEntryType, entry);
+    }
+
+    private expandedKeys(): Array<string> {
+        return this.props.expanded || this.state.expanded;
     }
 
     private toggleExpanded = (entry: T) => {
         const key = this.entryKey(entry);
         // From the previous state: clicks in quick succession must not overwrite each other
-        this.setState(state => ({
-            expanded: state.expanded.includes(key) ? state.expanded.filter(k => k !== key) : [...state.expanded, key],
-        }));
+        const update = (expanded: Array<string>) => expanded.includes(key) ? expanded.filter(k => k !== key) : [...expanded, key];
+        if (this.props.expanded && this.props.onExpandedChange) {
+            this.props.onExpandedChange(update);
+        } else {
+            this.setState(state => ({expanded: update(state.expanded)}));
+        }
     };
 
     private expandable(): boolean {
@@ -288,7 +308,7 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
                 helperClass="pwr-view-entries-drag-helper"
                 hideSortableGhost={false}
                 entries={entries}
-                expanded={this.state.expanded}
+                expanded={this.expandedKeys()}
                 useDragHandle={true}
                 onSortStart={this.onSortStart}
                 {...{onSortOver: this.onSortOver} as any}

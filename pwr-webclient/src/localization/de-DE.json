@@ -327,6 +327,8 @@
   "ViewProfileOverview.Count": "{0} von {1} erscheinen im Exportdokument",
   "ViewProfileOverview.Expand": "Aufklappen",
   "ViewProfileOverview.Collapse": "Zuklappen",
+  "ViewProfileOverview.ExpandAll": "Alle Kategorien aufklappen",
+  "ViewProfileOverview.CollapseAll": "Alle Kategorien zuklappen",
   "ViewProfileOverview.SkillCount.One": "1 Skill",
   "ViewProfileOverview.SkillCount.Other": "{0} Skills",
   "ViewProfileOverview.Empty": "Keine Einträge",

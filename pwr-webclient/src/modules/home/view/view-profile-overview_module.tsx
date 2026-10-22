@@ -19,7 +19,8 @@ import {PwrButton} from '../../general/pwr-button';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PwrFormCaption, PwrFormSubtitle} from '../../general/pwr-typography';
 import {ComparableEntryButton} from './entries/comprable-entry-button_module';
-import {SortedColumn, SortedColumnContext} from './entries/view-profile-entries_module';
+import {SortedColumn, SortedColumnContext, ViewProfileEntries} from './entries/view-profile-entries_module';
+import {PwrIconButton} from '../../general/pwr-icon-button';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 
 
@@ -45,6 +46,8 @@ interface ViewProfileOverviewLocalState {
     updateDialogOpen: boolean;
     /** Label of the sorting of the skill categories, if they are still in that order */
     categoriesSortedBy: string;
+    /** Keys of the opened skill categories (ViewProfileEntries.keyOf) */
+    expandedCategories: Array<string>;
 }
 
 interface ViewProfileOverviewDispatch {
@@ -83,8 +86,28 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             generatorOpen: false,
             updateDialogOpen: false,
             categoriesSortedBy: null,
+            expandedCategories: [],
         };
     }
+
+    private categoryKeys(): Array<string> {
+        return (this.props.viewProfile.displayCategories || []).map(category => ViewProfileEntries.keyOf('DISPLAY_CATEGORY', category));
+    }
+
+    private allCategoriesExpanded(): boolean {
+        const keys = this.categoryKeys();
+        return keys.length > 0 && keys.every(key => this.state.expandedCategories.includes(key));
+    }
+
+    /** All skill categories open, or all closed if they are already open (#165) */
+    private toggleAllCategories = () => {
+        const expand = !this.allCategoriesExpanded();
+        this.setState({expandedCategories: expand ? this.categoryKeys() : []});
+    };
+
+    private changeExpandedCategories = (update: (expanded: Array<string>) => Array<string>) => {
+        this.setState(state => ({expandedCategories: update(state.expandedCategories)}));
+    };
 
     /** Shared by the sorting in the heading of the skills and the cards, which clear it when moved by hand */
     private categoriesSorted(): SortedColumn {
@@ -283,7 +306,9 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     {this.renderSection('PROJECTS', <ViewProfileProjectsOverview viewProfileId={viewProfileId}/>)}
                     {/* The categories are cards without a header row: their sorting goes into the heading */}
                     {this.renderSection('SKILLS',
-                        <ViewProfileSkillOverview viewProfileId={viewProfileId} sortedColumn={this.categoriesSorted()}/>,
+                        <ViewProfileSkillOverview viewProfileId={viewProfileId} sortedColumn={this.categoriesSorted()}
+                                                  expanded={this.state.expandedCategories}
+                                                  onExpandedChange={this.changeExpandedCategories}/>,
                         <div className="pwr-view-profile-section-actions">
                             {/* Versions of all skills on or off, on the page and in the export (#151) */}
                             <Tooltip title={PowerLocalize.get('ViewProfileOverview.SkillVersions.Tooltip')}>
@@ -293,6 +318,11 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                                                                    checked={this.props.viewProfile.showSkillVersions}
                                                                    onChange={(e: any) => this.props.setShowSkillVersions(viewProfileId, e.target.checked)}/>}/>
                             </Tooltip>
+                            <PwrIconButton iconName={this.allCategoriesExpanded() ? 'unfold_less' : 'unfold_more'}
+                                           tooltip={PowerLocalize.get(this.allCategoriesExpanded()
+                                               ? 'ViewProfileOverview.CollapseAll' : 'ViewProfileOverview.ExpandAll')}
+                                           iconButtonProps={{size: 'small', 'aria-expanded': this.allCategoriesExpanded()}}
+                                           onClick={this.toggleAllCategories}/>
                             <Typography variant="body2" component="span" className="pwr-view-profile-section-sort">
                                 <SortedColumnContext.Provider value={this.categoriesSorted()}>
                                     <ComparableEntryButton sortableEntryType={SortableEntryType.DISPLAY_CATEGORY}
