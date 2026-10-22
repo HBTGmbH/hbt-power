@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Button, Dialog, Icon, Paper, Tooltip, Typography} from '@material-ui/core';
+import {Button, Dialog, Icon, LinearProgress, Paper, Tooltip, Typography} from '@material-ui/core';
 import {ViewProfileEntriesOverview} from './view-profile-entries-overview_module';
 import {ViewProfileProjectsOverview} from './view-profile-projects-overview_module';
 import {ProfileGenerator} from './view-profile-generator_module';
@@ -26,6 +26,8 @@ import {SortableEntryType} from '../../../model/view/NameComparableType';
 interface ViewProfileOverviewProps {
     viewProfile: ViewProfile;
     isInProgress: boolean;
+    /** Changes are being saved in the background */
+    saving: boolean;
 }
 
 
@@ -57,7 +59,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileOverviewLocalProps): ViewProfileOverviewProps {
         return {
             viewProfile: state.viewProfileSlice.viewProfiles.get(localProps.match.params.id),
-            isInProgress: state.viewProfileSlice.sortInProgress
+            isInProgress: state.viewProfileSlice.sortInProgress,
+            saving: state.crossCutting.backgroundRequests > 0,
         };
     }
 
@@ -206,6 +209,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                         </Button>
                     </Tooltip>)}
             </nav>
+            {/* Saving: a thin bar at the lower edge instead of the overlay; only after a moment, so quick saves don't flash */}
+            {this.props.saving && <LinearProgress className="pwr-view-profile-saving"/>}
         </Paper>;
     }
 

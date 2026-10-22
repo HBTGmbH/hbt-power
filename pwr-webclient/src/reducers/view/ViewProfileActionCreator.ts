@@ -67,9 +67,16 @@ export class ViewProfileActionCreator {
     }
 
     private static succeedAndRead(viewProfileResponse: ViewProfile, dispatch: redux.Dispatch) {
-        let viewProfile: ViewProfile = new ViewProfile(viewProfileResponse);
-        dispatch(ViewProfileActionCreator.SetViewProfile(viewProfile));
+        ViewProfileActionCreator.read(viewProfileResponse, dispatch);
         dispatch(CrossCuttingActionCreator.endRequest());
+    }
+
+    /**
+     * The state after an edit saved in the background (#149, PowerHttpClient.patchInBackground): no loading overlay
+     * to end
+     */
+    private static read(viewProfileResponse: ViewProfile, dispatch: redux.Dispatch) {
+        dispatch(ViewProfileActionCreator.SetViewProfile(new ViewProfile(viewProfileResponse)));
     }
 
     public static AsyncCreateViewProfile(name: string, description: string) {
@@ -109,14 +116,12 @@ export class ViewProfileActionCreator {
     public static AsyncMoveEntry(id: string, movableEntry: string, sourceIndex: number, targetIndex: number) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(ViewProfileActionCreator.SetSortInProgress(true));
             viewProfileClient.patchMoveEntry(initials, id, movableEntry, sourceIndex, targetIndex)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .then(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)))
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error; the page must not stay blocked
                 .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Move')));
+                .finally(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)));
         };
     }
 
@@ -124,71 +129,60 @@ export class ViewProfileActionCreator {
                                          movableEntry: string, sourceIndex: number, targetIndex: number) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            dispatch(CrossCuttingActionCreator.startRequest());
             dispatch(ViewProfileActionCreator.SetSortInProgress(true));
             viewProfileClient.patchMoveNestedEntry(initials, id, container, containerIndex, movableEntry, sourceIndex, targetIndex)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .then(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)))
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error; the page must not stay blocked
                 .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.MoveAll')));
+                .finally(() => dispatch(ViewProfileActionCreator.SetSortInProgress(false)));
         };
     }
 
     public static AsyncToggleNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number,
                                            toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.patchToggleNestedEntry(initials, id, container, containerIndex, toggleableEntry, index, isEnabled)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Toggle')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncToggleEntry(id: string, toggleableEntry: string, index: number, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.patchToggleEntry(initials, id, toggleableEntry, index, isEnabled)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Toggle')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncAutoSortEntry(id: string, entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
             viewProfileClient.patchSortEntry(initials, id, entryType, field, config)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Sort')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncToggleSkill(viewProfileId: string, skillName: string, isEnabled: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'skill-name': skillName}};
             viewProfileClient.patchToggleSkill(initials, viewProfileId, isEnabled, config)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.ToggleSkill')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncSetDisplayCategory(viewProfileId: string, skillName: string, newDisplayCategoryName: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {
                 params: {
@@ -197,24 +191,21 @@ export class ViewProfileActionCreator {
                 }
             };
             viewProfileClient.patchSetDisplayCategory(initials, viewProfileId, config)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.DisplayCategory')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
     public static AsyncAutoSortNestedEntry(id: string, container: string, containerIndex: number,
                                              entryType: SortableEntryType, field: SortableEntryField, doAscending: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'do-ascending': doAscending}};
             viewProfileClient.patchSortNestedEntry(initials, id, container, containerIndex, entryType, field, config)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.SortProfile')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
@@ -295,13 +286,11 @@ export class ViewProfileActionCreator {
     public static AsyncSetDescription(description: string, viewProfileId: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            dispatch(CrossCuttingActionCreator.startRequest());
             let config: AxiosRequestConfig = {headers: {'Content-Type': 'text/plain'}};
             viewProfileClient.patchDescription(initials, viewProfileId, description, config)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Description')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 
@@ -320,10 +309,9 @@ export class ViewProfileActionCreator {
             let initials = getState().profileStore.consultant.initials;
             let config: AxiosRequestConfig = {params: {'skill-name': skillName, 'version-name': versionName}};
             viewProfileClient.patchToggleVersion(initials, id, skillName, versionName, isEnabled, config)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Enable')));
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 }
