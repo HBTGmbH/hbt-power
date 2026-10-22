@@ -17,7 +17,7 @@ import {IViewEntry} from '../../../model/view/IViewEntry';
 import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PwrButton} from '../../general/pwr-button';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
-import {PwrFormSubtitle} from '../../general/pwr-typography';
+import {PwrFormCaption, PwrFormSubtitle} from '../../general/pwr-typography';
 import {ComparableEntryButton} from './entries/comprable-entry-button_module';
 import {SortedColumn, SortedColumnContext, ViewProfileEntries} from './entries/view-profile-entries_module';
 import {PwrIconButton} from '../../general/pwr-icon-button';
@@ -223,6 +223,10 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             (category.displaySkills || []).map(skill => category.enabled && skill.enabled));
         return [
             {
+                key: 'GENERAL',
+                title: PowerLocalize.get('ViewProfileOverview.General'),
+            },
+            {
                 key: 'MASTER_DATA',
                 title: PowerLocalize.get('ViewProfileOverview.MasterData'),
                 ...count(masterData.flatMap(entries => (entries || []).map(entry => entry.enabled))),
@@ -268,16 +272,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             <div className="pwr-view-profile-title-row">
                 <div className="pwr-view-profile-title">
                     <PwrFormSubtitle>{PowerLocalize.get('ViewProfileOverview.Caption')}</PwrFormSubtitle>
-                    <PwrSpacer size="tight"/>
-                    {/* Name and note are changed here, saved when the field loses the focus (#179) */}
-                    <TextField id="pwr-view-profile-name" fullWidth label={PowerLocalize.get('ViewProfileDialog.Name')}
-                               value={this.state.currentName} inputProps={{maxLength: 250}}
-                               onChange={e => this.setState({currentName: e.target.value, nameDirty: true})}
-                               onBlur={this.handleNameBlur}/>
+                    <PwrFormCaption>{viewProfile.viewProfileInfo.name}</PwrFormCaption>
                 </div>
-                {/* Language of the skill and category names, for the whole view profile (#174) */}
-                <LocalizationSelect value={viewProfile.localization} className="pwr-view-localization-select"
-                                    onChange={language => this.props.setLocalization(viewProfile.id, language)}/>
                 <div className="pwr-view-profile-actions">
                     <PwrFormActions editing={false} noSpace
                                     editText={PowerLocalize.get('Action.Generate.Word')} editIcon={'open_in_new'}
@@ -288,27 +284,70 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     </PwrFormActions>
                 </div>
             </div>
-            <PwrSpacer/>
-            {/* Grows up to three lines, so the header that stays on top doesn't take the page */}
-            <TextField id="pwr-view-profile-note" fullWidth multiline maxRows={3} label={PowerLocalize.get('ViewProfileDialog.Description')}
-                       value={this.state.currentNote} inputProps={{maxLength: PROFILE_DESCRIPTION_LENGTH}}
-                       onChange={e => this.setState({currentNote: e.target.value, noteDirty: true})}
-                       onBlur={this.handleNoteBlur}/>
             <PwrSpacer size="tight"/>
             <nav className="pwr-view-profile-nav" aria-label={PowerLocalize.get('ViewProfileOverview.Sections')}>
-                {this.sections().map(section =>
-                    <Tooltip key={section.key}
-                             title={PowerLocalize.getFormatted('ViewProfileOverview.Count', section.enabled, section.total)}>
-                        <Button color="primary" href={'#' + sectionAnchor(section.key)}
-                                onClick={(e: React.MouseEvent) => this.jumpTo(e, sectionAnchor(section.key))}>
-                            {section.title}
-                            <span className="pwr-view-profile-nav-count">{section.enabled + '/' + section.total}</span>
-                        </Button>
-                    </Tooltip>)}
+                {this.sections().map(section => {
+                    const jump = <Button key={section.key} color="primary" href={'#' + sectionAnchor(section.key)}
+                                         onClick={(e: React.MouseEvent) => this.jumpTo(e, sectionAnchor(section.key))}>
+                        {section.title}
+                        {section.total !== undefined &&
+                        <span className="pwr-view-profile-nav-count">{section.enabled + '/' + section.total}</span>}
+                    </Button>;
+                    // Only sections with entries say how many of them are in the export
+                    return section.total === undefined ? jump :
+                        <Tooltip key={section.key}
+                                 title={PowerLocalize.getFormatted('ViewProfileOverview.Count', section.enabled, section.total)}>
+                            {jump}
+                        </Tooltip>;
+                })}
             </nav>
             {/* Saving: a thin bar at the lower edge instead of the overlay; only after a moment, so quick saves don't flash */}
             {this.props.saving && <LinearProgress className="pwr-view-profile-saving"/>}
         </Paper>;
+    }
+
+    /**
+     * Name, language, note and promotional text (#179): the first section of the content, not in the header, which
+     * stays on top while scrolling. Each saved on its own, when it changes or loses the focus.
+     */
+    private renderGeneral(viewProfile: ViewProfile) {
+        return <section id={sectionAnchor('GENERAL')} className="pwr-view-profile-general">
+            <div className="pwr-view-profile-section-title">
+                <Typography variant="h6">{PowerLocalize.get('ViewProfileOverview.General')}</Typography>
+            </div>
+            <PwrSpacer/>
+            <div className="pwr-view-profile-general-row">
+                <TextField id="pwr-view-profile-name" className="pwr-view-profile-name"
+                           label={PowerLocalize.get('ViewProfileDialog.Name')}
+                           value={this.state.currentName} inputProps={{maxLength: 250}}
+                           onChange={e => this.setState({currentName: e.target.value, nameDirty: true})}
+                           onBlur={this.handleNameBlur}/>
+                {/* Language of the skill and category names, for the whole view profile (#174) */}
+                <LocalizationSelect value={viewProfile.localization} className="pwr-view-localization-select"
+                                    onChange={language => this.props.setLocalization(viewProfile.id, language)}/>
+            </div>
+            <PwrSpacer/>
+            <TextField id="pwr-view-profile-note" fullWidth multiline minRows={2} maxRows={6}
+                       label={PowerLocalize.get('ViewProfileDialog.Description')}
+                       value={this.state.currentNote} inputProps={{maxLength: PROFILE_DESCRIPTION_LENGTH}}
+                       onChange={e => this.setState({currentNote: e.target.value, noteDirty: true})}
+                       onBlur={this.handleNoteBlur}/>
+            <PwrSpacer/>
+            {/* Always editable, saved when it loses the focus, as in the profile (#157) */}
+            <div onBlur={this.handleDescriptionBlur}>
+                <LimitedTextField
+                    maxCharacters={PROFILE_DESCRIPTION_LENGTH}
+                    label={PowerLocalize.get('Profile.Description')}
+                    value={this.state.currentDescription}
+                    fullWidth={true}
+                    rows={6}
+                    multiLine={true}
+                    onChange={(e, v) => {
+                        this.setState({currentDescription: v, descriptionDirty: true});
+                    }}
+                />
+            </div>
+        </section>;
     }
 
     private renderSection(key: SectionKey, content: React.ReactNode, actions?: React.ReactNode) {
@@ -356,20 +395,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                 {this.renderHeader(this.props.viewProfile)}
 
                 <Paper className="pwr-view-profile-content">
-                    {/* Always editable, saved when it loses the focus, as in the profile (#157) */}
-                    <div onBlur={this.handleDescriptionBlur}>
-                        <LimitedTextField
-                            maxCharacters={PROFILE_DESCRIPTION_LENGTH}
-                            label={PowerLocalize.get('Profile.Description')}
-                            value={this.state.currentDescription}
-                            fullWidth={true}
-                            rows={6}
-                            multiLine={true}
-                            onChange={(e, v) => {
-                                this.setState({currentDescription: v, descriptionDirty: true});
-                            }}
-                        />
-                    </div>
+                    {this.renderGeneral(this.props.viewProfile)}
                     {this.renderSection('MASTER_DATA', <ViewProfileEntriesOverview viewProfileId={viewProfileId}/>)}
                     {this.renderSection('PROJECTS', <ViewProfileProjectsOverview viewProfileId={viewProfileId}/>)}
                     {/* The categories are cards without a header row: their sorting goes into the heading */}
@@ -406,14 +432,14 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     }
 }
 
-type SectionKey = 'MASTER_DATA' | 'PROJECTS' | 'SKILLS';
+type SectionKey = 'GENERAL' | 'MASTER_DATA' | 'PROJECTS' | 'SKILLS';
 
 interface Section {
     key: SectionKey;
     title: string;
-    /** In the export */
-    enabled: number;
-    total: number;
+    /** In the export; not for the general section, which has no entries */
+    enabled?: number;
+    total?: number;
 }
 
 function count(enabled: Array<boolean>): { enabled: number, total: number } {

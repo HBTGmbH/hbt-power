@@ -320,6 +320,7 @@
   "ViewProfileLocalization.Language": "{0} ({1})",
   "ViewProfileCard.Subtitle": "Erstellt am ",
   "ViewProfileOverview.Caption": "View-Profil",
+  "ViewProfileOverview.General": "Allgemein",
   "ViewProfileOverview.MasterData": "Stammdaten",
   "ViewProfileOverview.Projects": "Projekte",
   "ViewProfileOverview.Skills": "Skills",

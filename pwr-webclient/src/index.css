@@ -664,8 +664,6 @@ label.pwr-category-level-label {
 
 .pwr-view-profile-title {
     min-width: 0;
-    /* The name field takes the room the language and the buttons leave */
-    flex: 1 1 320px;
 }
 
 .pwr-view-profile-actions {
@@ -677,9 +675,15 @@ label.pwr-category-level-label {
     min-width: 300px;
 }
 
-/* In the title row right before the buttons */
-.pwr-view-profile-title-row > .pwr-view-localization-select {
-    margin-left: auto;
+/* Name and language of the view profile side by side (#179); below each other when narrow */
+.pwr-view-profile-general-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.pwr-view-profile-general-row > .pwr-view-profile-name {
+    flex: 1 1 320px;
 }
 
 /* The text of the first jump in line with the title: a text button has 8px padding */
