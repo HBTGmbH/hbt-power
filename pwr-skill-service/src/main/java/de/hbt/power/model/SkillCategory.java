@@ -27,7 +27,9 @@ public class SkillCategory {
     @Column(name = "qualifier")
     private String qualifier;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // Eager: the JSON of a category otherwise has no localizations (null for a collection that was not loaded), which
+    // the admin skill tree can't read after changing a category (#93)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "SKILL_CATEGORY_QUALIFIERS",
             joinColumns = @JoinColumn(name = "qualifiers_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_category_id")

@@ -3,7 +3,7 @@ import {ActionType} from '../ActionType';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
-import {AxiosError, AxiosResponse} from 'axios';
+import {AxiosError} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
@@ -388,7 +388,7 @@ export class SkillActionCreator {
     public static AsyncDeleteSkillLocale(skillId: number, language: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteSkillLocale(skillId, language)
-                .then((response: AxiosResponse) => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(response.data))))
+                .then((skill) => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
                 .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }

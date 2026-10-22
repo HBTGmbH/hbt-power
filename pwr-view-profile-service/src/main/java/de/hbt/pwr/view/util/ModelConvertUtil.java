@@ -1,10 +1,7 @@
 package de.hbt.pwr.view.util;
 
 import de.hbt.pwr.view.client.profile.model.*;
-import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
-import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.entries.*;
-import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -82,29 +79,6 @@ public class ModelConvertUtil {
     @NotNull
     public static Skill mapFlatSkill(@NotNull ProfileSkill skill) {
         return Skill.builder().name(skill.getName()).rating(skill.getRating()).enabled(true).build();
-    }
-
-    @NotNull
-    private static Category mapCategory(SkillServiceCategory skillServiceCategory, String locale) {
-        Category category = new Category();
-        category.setId(skillServiceCategory.getId() != null ? skillServiceCategory.getId().longValue() : -1);
-        category.setName(skillServiceCategory.getLocalizedQualifier(locale));
-        category.setIsDisplay(skillServiceCategory.getDisplay());
-        category.setEnabled(true);
-        return category;
-    }
-
-    /**
-     * Maps a skill so that a partial skill tree with all parents mapped is created.
-     */
-    @NotNull
-    public static Skill mapSkill(SkillServiceSkill skillServiceSkill, ProfileSkill profileSkill, String locale) {
-        Skill skill = new Skill();
-        skill.setId(skillServiceSkill.getId() != null ? skillServiceSkill.getId().longValue() : -1);
-        skill.setEnabled(true);
-        skill.setName(skillServiceSkill.getQualifier());
-        skill.setRating(profileSkill.getRating());
-        return skill;
     }
 
 

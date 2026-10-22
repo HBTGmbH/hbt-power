@@ -130,7 +130,8 @@ public class Skill {
     })
     private String qualifier;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    // Eager: the JSON of a skill otherwise has no localizations (null for a collection that was not loaded, #93)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "SKILL_QUALIFIERS",
             joinColumns = @JoinColumn(name = "skill_id"),
             inverseJoinColumns = @JoinColumn(name = "qualifiers_id"))
@@ -177,6 +178,8 @@ public class Skill {
     }
 
     public void addLocale(Locale locale, String qualifier) {
+        // One localization per language, as for categories
+        removeLocale(locale);
         this.qualifiers.add(new LocalizedQualifier(locale.getISO3Language(), qualifier));
     }
 

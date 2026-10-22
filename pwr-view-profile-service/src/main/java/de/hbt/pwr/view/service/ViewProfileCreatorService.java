@@ -226,7 +226,7 @@ public class ViewProfileCreatorService {
         }
         Skill skill = new Skill(
                 serviceSkill.getId() != null ? serviceSkill.getId().longValue() : -1,
-                serviceSkill.getLocalizedQualifier(DEFAULT_LOCALE),
+                serviceSkill.getQualifier(),
                 profileSkill.getRating(),
                 true,
                 null
@@ -296,7 +296,7 @@ public class ViewProfileCreatorService {
     private Category mapCategory(SkillServiceCategory category) {
         Category newCategory = new Category();
         newCategory.setId(category.getId() != null ? category.getId().longValue() : -1);
-        newCategory.setName(category.getLocalizedQualifier(DEFAULT_LOCALE)); // TODO
+        newCategory.setName(category.getQualifier());
         newCategory.setIsDisplay(true);
 
         return newCategory;
