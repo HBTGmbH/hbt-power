@@ -160,8 +160,9 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
                 <RadioGroup
                     name="notificationAction"
                     //valueSelected={this.props.skillNotificationSelectedAction}
-                    onChange={(event: any, value: string /* not really a string, it likes to think it is one */) => {
-                        this.props.setSkillNotificationAction(value as any);
+                    onChange={(event: any, value: string) => {
+                        // The radio value is the enum's number as a string; compared with the enum it has to be a number
+                        this.props.setSkillNotificationAction(Number(value) as SkillNotificationAction);
                     }}
                 >
                     <FormControlLabel value="" control={<Radio value={SkillNotificationAction.ACTION_OK.toString()}/>}

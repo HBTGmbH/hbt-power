@@ -9,6 +9,7 @@ import {AdminActionCreator} from '../admin/AdminActionCreator';
 import {Alerts} from '../../utils/Alerts';
 import {TemplateClient} from '../../clients/TemplateClient';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
+import {confirmDeleteByName} from '../deferred/DeferredActions';
 import {ReportServiceClient} from '../../clients/ReportServiceClient';
 import {ThunkDispatch} from 'redux-thunk';
 
@@ -54,8 +55,9 @@ export class TemplateActionCreator {
         };
     }
 
-    @makeDeferrable(ActionType.AsyncDeleteTemplate)
-    public static AsyncDeleteTemplate(id: string) {
+    /** The name of the template has to be entered twice (#181) */
+    @makeDeferrable(ActionType.AsyncDeleteTemplate, (id: string, name: string) => confirmDeleteByName('Template', name))
+    public static AsyncDeleteTemplate(id: string, name: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             templateClient.deleteTemplate(id)
                 .then(() => dispatch(TemplateActionCreator.AsyncLoadAllTemplates()))

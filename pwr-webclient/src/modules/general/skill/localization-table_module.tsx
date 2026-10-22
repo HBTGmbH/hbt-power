@@ -36,7 +36,8 @@ interface LocalizationTableProps {
 
     onLocaleAdd?(locale: string, qualifier: string): void;
 
-    onLocaleDelete?(locale: string): void;
+    /** The qualifier is named in the confirmation and has to be entered twice (#181) */
+    onLocaleDelete?(locale: string, qualifier: string): void;
 }
 
 interface LocalizationTableState {
@@ -50,7 +51,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
     public static defaultProps: Partial<LocalizationTableProps> = {
         onLocaleAdd: (locale, qualifier) => {
         },
-        onLocaleDelete: (locale) => {
+        onLocaleDelete: (locale, qualifier) => {
         }
     };
 
@@ -75,7 +76,7 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
             <TableCell>{localizedQualifier.qualifier()}</TableCell>
             <TableCell padding="checkbox">
                 <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')}
-                               onClick={() => this.props.onLocaleDelete(localizedQualifier.locale())}/>
+                               onClick={() => this.props.onLocaleDelete(localizedQualifier.locale(), localizedQualifier.qualifier())}/>
             </TableCell>
         </TableRow>;
     };

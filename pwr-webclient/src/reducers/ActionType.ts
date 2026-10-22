@@ -134,6 +134,8 @@ export enum ActionType {
     AsyncDeleteViewProfile = '[Async] DeleteViewProfile',
     AsyncDeleteReport = '[Async] DeleteReport',
     AsyncDeleteTreeSkill = '[Async] DeleteTreeSkill',
+    AsyncDeleteTreeCategory = '[Async] DeleteTreeCategory',
+    AsyncDeleteConsultant = '[Async] DeleteConsultant',
     AsyncDeleteSkillAlias = '[Async] DeleteSkillAlias',
     AsyncDeleteSkillLocale = '[Async] DeleteSkillLocale',
     AsyncDeleteCategoryLocale = '[Async] DeleteCategoryLocale',

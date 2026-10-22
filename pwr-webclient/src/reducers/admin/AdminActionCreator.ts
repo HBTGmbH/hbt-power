@@ -34,6 +34,7 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {SuggestionAsyncActionCreator} from '../suggestions/SuggestionAsyncActionCreator';
 import {AbstractAction, ChangeBoolValueAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
+import {confirmDeleteByName} from '../deferred/DeferredActions';
 import {ThunkDispatch} from 'redux-thunk';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
@@ -229,8 +230,12 @@ export class AdminActionCreator {
         };
     }
 
-    @makeDeferrable(ActionType.AsyncDeleteNotificationEntry)
-    public static AsyncNotificationInvokeDelete(notificationId: number) {
+    /**
+     * The name of the identifier or skill has to be entered twice (#181): it goes from every profile that uses it
+     */
+    @makeDeferrable(ActionType.AsyncDeleteNotificationEntry, (notificationId: number, name: string, skill?: boolean) =>
+        confirmDeleteByName(skill ? 'SkillNotification' : 'Notification', name))
+    public static AsyncNotificationInvokeDelete(notificationId: number, name: string, skill?: boolean) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.invokeNotificationDelete(notificationId)
                 .then(() => dispatch(AdminActionCreator.AsyncRequestNotifications()))
@@ -403,7 +408,8 @@ export class AdminActionCreator {
                     dispatch(AdminActionCreator.AsyncNotificationInvokeOK(ApplicationState.selectedSkillNotification.adminNotification().id()));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
                 } else if (ApplicationState.skillNotificationSelectedAction === SkillNotificationAction.ACTION_DELETE) {
-                    dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(ApplicationState.selectedSkillNotification.adminNotification().id()));
+                    const notification = ApplicationState.selectedSkillNotification;
+                    dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(notification.adminNotification().id(), notification.skill().name(), true));
                     dispatch(AdminActionCreator.CloseAndResetSkillNotificationDlg());
                 } else if (ApplicationState.skillNotificationSelectedAction === SkillNotificationAction.ACTION_EDIT) {
                     dispatch(AdminActionCreator.SetSkillNotificationEditStatus(SkillNotificationEditStatus.DISPLAY_EDIT_DIALOG));
@@ -438,8 +444,10 @@ export class AdminActionCreator {
         };
     }
 
-    @makeDeferrable(ActionType.AsyncDeleteEntry)
-    public static AsyncDeleteConsultant(initials: string) {
+    /** The initials have to be entered twice (#181); the profile and the view profiles go with the consultant */
+    @makeDeferrable(ActionType.AsyncDeleteConsultant,
+        (initials: string, fullName: string) => confirmDeleteByName('Consultant', initials, fullName))
+    public static AsyncDeleteConsultant(initials: string, fullName: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.deleteConsultant(initials)
                 .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))

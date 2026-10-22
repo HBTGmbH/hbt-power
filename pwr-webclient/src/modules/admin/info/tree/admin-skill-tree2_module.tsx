@@ -9,7 +9,6 @@ import {InfoPaper} from '../../../general/info-paper_module.';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {LocalizationTable} from '../../../general/skill/localization-table_module';
 import {SkillServiceSkill} from '../../../../model/skill/SkillServiceSkill';
-import {CategoryDeleteConfirmation} from '../../../general/skill/category-delete-confirmation_module';
 import {SkillTreeNode} from '../../../../model/skill/SkillTreeNode';
 import {CategorySearcher} from '../category-searcher_module';
 import {SetValueDialog} from '../../../general/set-value-dialog_module';
@@ -40,8 +39,6 @@ interface AdminSkillTree2LocalState {
     selectedSkillId: number;
     categoryNameOpen: boolean;
     skillNameOpen: boolean;
-    deleteConfirmationOpen: boolean;
-    categoryToDeleteId: number;
     categorySearcherOpen: boolean;
     moveCategorySearcher: boolean;
 
@@ -56,19 +53,19 @@ interface AdminSkillTree2Dispatch {
 
     addLocalization(categoryId: number, language: string, qualifier: string): void;
 
-    deleteLocalization(categoryId: number, language: string): void;
+    deleteLocalization(categoryId: number, language: string, translation: string, categoryName: string): void;
 
     addSkillLocalization(skillId: number, language: string, qualifier: string): void;
 
-    deleteSkillLocalization(skillId: number, language: string): void;
+    deleteSkillLocalization(skillId: number, language: string, translation: string, skillName: string): void;
 
     addSkillAlias(skillId: number, alias: string): void;
 
-    deleteSkillAlias(skillId: number, alias: string): void;
+    deleteSkillAlias(skillId: number, alias: string, skillName: string): void;
 
     createCategory(parentId: number, qualifier: string): void;
 
-    deleteCategory(categoryId: number): void;
+    deleteCategory(categoryId: number, name: string, categoryCount: number, skillCount: number): void;
 
     moveCategory(newCategoryId: number, selectedCategoryId: number): void;
 
@@ -76,7 +73,7 @@ interface AdminSkillTree2Dispatch {
 
     createSkill(qualifier: string, categoryId: number): void;
 
-    deleteSkill(skillId: number): void;
+    deleteSkill(skillId: number, name: string): void;
 
     toggleOpen(categoryId: number): void;
 
@@ -124,8 +121,6 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
             selectedCategoryId: this.NO_ID,
             selectedSkillId: this.NO_ID,
             categoryNameOpen: false,
-            deleteConfirmationOpen: false,
-            categoryToDeleteId: this.NO_ID,
             categorySearcherOpen: false,
             skillNameOpen: false,
             moveCategorySearcher: false,
@@ -147,17 +142,20 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
         return {
             loadTree: () => dispatch(SkillActionCreator.AsyncLoadTree()),
             addLocalization: (categoryId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddLocale(categoryId, language, qualifier)),
-            deleteLocalization: (categoryId, language) => dispatch(SkillActionCreator.AsyncDeleteLocale(categoryId, language)),
+            deleteLocalization: (categoryId, language, translation, categoryName) =>
+                dispatch(SkillActionCreator.AsyncDeleteLocale(categoryId, language, translation, categoryName)),
             createCategory: (parentId, qualifier) => dispatch(SkillActionCreator.AsyncCreateCategory(qualifier, parentId)),
-            deleteCategory: categoryId => dispatch(SkillActionCreator.AsyncDeleteCategory(categoryId)),
+            deleteCategory: (categoryId, name, categoryCount, skillCount) =>
+                dispatch(SkillActionCreator.AsyncDeleteCategory(categoryId, name, categoryCount, skillCount)),
             moveCategory: (newCategoryId, selectedCategoryId) => dispatch(SkillActionCreator.AsyncMoveCategory(newCategoryId, selectedCategoryId)),
             moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.AsyncMoveSkill(skillId, newCategory, oldCategory)),
             createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.AsyncCreateSkill(qualifier, categoryId)),
-            deleteSkill: skillId => dispatch(SkillActionCreator.AsyncDeleteSkill(skillId)),
+            deleteSkill: (skillId, name) => dispatch(SkillActionCreator.AsyncDeleteSkill(skillId, name)),
             addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddSkillLocale(skillId, language, qualifier)),
-            deleteSkillLocalization: (skillId, language) => dispatch(SkillActionCreator.AsyncDeleteSkillLocale(skillId, language)),
+            deleteSkillLocalization: (skillId, language, translation, skillName) =>
+                dispatch(SkillActionCreator.AsyncDeleteSkillLocale(skillId, language, translation, skillName)),
             addSkillAlias: (skillId, alias) => dispatch(SkillActionCreator.AsyncAddSkillAlias(skillId, alias)),
-            deleteSkillAlias: (skillId, alias) => dispatch(SkillActionCreator.AsyncDeleteSkillAlias(skillId, alias)),
+            deleteSkillAlias: (skillId, alias, skillName) => dispatch(SkillActionCreator.AsyncDeleteSkillAlias(skillId, alias, skillName)),
             setIsDisplayCategory: (categoryId, isDisplay) => dispatch(SkillActionCreator.AsyncSetIsDisplay(categoryId, isDisplay)),
             toggleOpen: (categoryId) => dispatch(SkillActionCreator.SetTreeChildrenOpen(categoryId)),
             filter: (searchTerm) => dispatch(SkillActionCreator.FilterTree(searchTerm)),
@@ -253,16 +251,18 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
         this.props.addLocalization(this.state.selectedCategoryId, language, qualifier);
     };
 
-    private handleDeleteCategoryLocale = (language: string) => {
-        this.props.deleteLocalization(this.state.selectedCategoryId, language);
+    private handleDeleteCategoryLocale = (language: string, translation: string) => {
+        const category = this.getSelectedCategory();
+        this.props.deleteLocalization(category.id, language, translation, category.qualifier);
     };
 
     private handleAddSkillLocale = (language: string, qualifier: string) => {
         this.props.addSkillLocalization(this.state.selectedSkillId, language, qualifier);
     };
 
-    private handleDeleteSkillLocale = (language: string) => {
-        this.props.deleteSkillLocalization(this.state.selectedSkillId, language);
+    private handleDeleteSkillLocale = (language: string, translation: string) => {
+        const skill = this.getSelectedSkill();
+        this.props.deleteSkillLocalization(skill.id(), language, translation, skill.qualifier());
     };
 
 
@@ -275,19 +275,6 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
     private closeNameDialog = () => {
         this.setState({
             categoryNameOpen: false
-        });
-    };
-
-    private openDeleteConfirmation = (categoryId: number) => {
-        this.setState({
-            categoryToDeleteId: categoryId,
-            deleteConfirmationOpen: true
-        });
-    };
-
-    private closeDeleteConfirmation = () => {
-        this.setState({
-            deleteConfirmationOpen: false
         });
     };
 
@@ -315,18 +302,36 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
         this.closeSkillNameDialog();
     };
 
-    private handleDeleteCategory = () => {
-        this.props.deleteCategory(this.state.categoryToDeleteId);
-        // A selected entry in it goes with it: applyUrl leaves the selection once the tree no longer contains it
-        this.setState({
-            categoryToDeleteId: this.NO_ID,
-            deleteConfirmationOpen: false
-        });
+    /**
+     * Subcategories and skills below a category, all levels deep: they go with it, so the confirmation names them
+     */
+    private static countBelow(node: SkillTreeNode, categoryId: number): { categories: number, skills: number } {
+        if (node.skillCategoryId === categoryId) {
+            return node.childNodes.reduce((count, child) => {
+                const below = AdminSkillTree2Module.countBelow(child, child.skillCategoryId);
+                return {categories: count.categories + 1 + below.categories, skills: count.skills + below.skills};
+            }, {categories: 0, skills: node.skillNodes.length});
+        }
+        for (const child of node.childNodes) {
+            const below = AdminSkillTree2Module.countBelow(child, categoryId);
+            if (below) {
+                return below;
+            }
+        }
+        return null;
+    }
+
+    private handleDeleteCategory = (categoryId: number) => {
+        const category = this.props.categoriesById.get(categoryId);
+        const below = AdminSkillTree2Module.countBelow(this.props.root, categoryId) || {categories: 0, skills: 0};
+        // Asks first (makeDeferrable); a selected entry in it goes with it: applyUrl leaves the selection once the
+        // tree no longer contains it
+        this.props.deleteCategory(categoryId, category.qualifier, below.categories, below.skills);
     };
 
     private handleDeleteSkill = (skillId: number) => {
         // Asks first (makeDeferrable); if it was selected, applyUrl leaves the selection once it is gone
-        this.props.deleteSkill(skillId);
+        this.props.deleteSkill(skillId, this.props.skillsById.get(skillId).qualifier());
     };
 
     private openMoveCategorySearcher = () => {
@@ -396,7 +401,7 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                     skillName={selectedSkill.qualifier()}
                     aliases={selectedSkill.aliases()}
                     onAliasAdd={alias => this.props.addSkillAlias(selectedSkill.id(), alias)}
-                    onAliasDelete={alias => this.props.deleteSkillAlias(selectedSkill.id(), alias)}
+                    onAliasDelete={alias => this.props.deleteSkillAlias(selectedSkill.id(), alias, selectedSkill.qualifier())}
                 />
             </PwrFormSection>
             <PwrFormSection title={PowerLocalize.get('AdminClient.Info.SkillTree.Category.Localizations')}>
@@ -480,7 +485,6 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
     </ListItem>;
 
     render() {
-        const categoryToDelete = this.props.categoriesById.get(this.state.categoryToDeleteId);
         return (
             <div>
                 <SetValueDialog
@@ -495,12 +499,6 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                     onClose={this.closeSkillNameDialog}
                     onOk={this.handleCreateSkill}
                 />
-                {categoryToDelete && <CategoryDeleteConfirmation
-                    category={categoryToDelete}
-                    open={this.state.deleteConfirmationOpen}
-                    onDeclineDelete={this.closeDeleteConfirmation}
-                    onAcceptDelete={this.handleDeleteCategory}
-                />}
                 <div className="row ">
                     <Paper className="col-md-8">
                         <TextField
@@ -530,7 +528,7 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                             onNestedListToggle={this.props.toggleOpen}
                             onSkillSelect={this.handleSkillSelect}
                             onSkillDelete={this.handleDeleteSkill}
-                            onCategoryDelete={this.openDeleteConfirmation}
+                            onCategoryDelete={this.handleDeleteCategory}
                             categoriesById={this.props.categoriesById}
                             skillsById={this.props.skillsById}
                             selectedSkillId={this.state.selectedSkillId}
