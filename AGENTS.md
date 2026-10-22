@@ -120,7 +120,7 @@ Apply this at the end of each task to what the task changed, and report which it
 ### Services
 - [ ] **API contracts:** if an endpoint changed, every caller is adjusted in the same PR: the `RestTemplate` clients in the other services and `pwr-webclient/src/clients`
 - [ ] **Edge security:** new or moved endpoints are checked against the path rules in `pwr-edge-service/.../filters/SecurityConfig.java`. The services check no permissions themselves; admin functionality must live under a path the edge restricts to `Power.Admin`
-- [ ] **Redis compatibility:** changes to Redis models (`ViewProfile`, `ReportTemplate`, statistics models) keep existing stored data readable: no renaming or removing fields without a migration
+- [ ] **Redis compatibility:** changes to Redis models (`ViewProfile`, `ReportTemplate`, statistics models) keep existing stored data readable. Spring Data Redis stores an object as a hash with one entry per field, reads only the fields of the model and rewrites the whole hash on save. So renaming a field or changing its type needs a migration; removing one doesn't (the old entry is passed over and goes with the next save, #179); a new field is missing in old data and needs a default
 - [ ] **Database schema:** there is no Liquibase/Flyway. New tables and columns are added by Hibernate on start (`ddl-auto: update`); a change it can't do (rename, drop, type change, data migration) comes with a SQL script for production (like `pwr-profile-service/fix-id-columns.sql`). Every schema change is listed under *Operations / Deployment Notes* in the PR
 
 ### Webclient (if UI changed)

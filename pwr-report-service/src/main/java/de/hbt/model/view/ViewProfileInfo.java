@@ -26,6 +26,4 @@ public class ViewProfileInfo {
 
     private LocalDate creationDate;
 
-    private Integer charsPerLine;
-
 }
