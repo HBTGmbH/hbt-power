@@ -26,7 +26,7 @@ public class ProfileCheckProperties {
     /**
      * The description (advertising text) is too short below this many characters
      */
-    private int minDescriptionLength = 500;
+    private int minDescriptionLength = 300;
 
     /**
      * A project reference is incomplete below this many skills

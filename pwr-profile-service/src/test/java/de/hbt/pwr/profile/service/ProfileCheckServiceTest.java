@@ -33,6 +33,7 @@ public class ProfileCheckServiceTest {
 
     private static final LocalDateTime NOW = LocalDateTime.of(2026, 10, 22, 12, 0);
     private static final LocalDate TODAY = NOW.toLocalDate();
+    private static final String TEXT_300 = String.join("", Collections.nCopies(300, "x"));
     private static final String TEXT_500 = String.join("", Collections.nCopies(500, "x"));
 
     private ProfileCheckService service;
@@ -81,16 +82,16 @@ public class ProfileCheckServiceTest {
     @Test
     public void descriptionBelowMinimumIsShort() {
         Profile profile = completeProfile();
-        profile.setDescription(TEXT_500.substring(1));
+        profile.setDescription(TEXT_300.substring(1));
         ProfileCheckHint hint = single(check(profile), Code.DESCRIPTION_SHORT);
         assertThat(hint.getType()).isEqualTo(Type.MISSING);
-        assertThat(hint.getValues()).containsEntry("length", 499).containsEntry("minLength", 500);
+        assertThat(hint.getValues()).containsEntry("length", 299).containsEntry("minLength", 300);
     }
 
     @Test
     public void descriptionAtMinimumIsEnough() {
         Profile profile = completeProfile();
-        profile.setDescription(TEXT_500);
+        profile.setDescription(TEXT_300);
         assertThat(hints(check(profile), Code.DESCRIPTION_SHORT)).isEmpty();
     }
 

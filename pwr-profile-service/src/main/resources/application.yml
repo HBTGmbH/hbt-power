@@ -36,7 +36,7 @@ profile-check:
   # Sections that need at least one entry: LANGUAGES, QUALIFICATIONS, TRAININGS, EDUCATION, SECTORS, CAREER,
   # SPECIAL_FIELDS, SKILLS, PROJECTS
   required-sections: LANGUAGES, EDUCATION, CAREER, TRAININGS, SECTORS, SKILLS, PROJECTS
-  min-description-length: 500
+  min-description-length: 300
   min-project-skills: 5
   min-project-description-length: 500
   projects-max-age-months: 12
