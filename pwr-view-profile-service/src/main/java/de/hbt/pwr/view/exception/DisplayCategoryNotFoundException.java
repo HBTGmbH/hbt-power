@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Indicates that a {@link de.hbt.pwr.view.model.skill.Category} is neither a direct nor indirect parent
- * to a {@link de.hbt.pwr.view.model.skill.Skill}
+ * Indicates that a {@link de.hbt.pwr.view.model.skill.Category} is no display category of the skill tree on the way
+ * from a {@link de.hbt.pwr.view.model.skill.Skill} up (#197)
  */
 public class DisplayCategoryNotFoundException extends RuntimeException {
 
@@ -24,7 +24,7 @@ public class DisplayCategoryNotFoundException extends RuntimeException {
     private final String wantedCategory;
 
     public DisplayCategoryNotFoundException(String viewProfileId, String skillName, String wantedCategory) {
-        super("Could not find " + wantedCategory + " as a direct or indirect category of the skill " + skillName + " in the view profile id=" + viewProfileId);
+        super("Could not find " + wantedCategory + " as a display category of the skill " + skillName + " or above it in the view profile id=" + viewProfileId);
         this.viewProfileId = viewProfileId;
         this.skillName = skillName;
         this.wantedCategory = wantedCategory;
@@ -35,7 +35,7 @@ public class DisplayCategoryNotFoundException extends RuntimeException {
     @AllArgsConstructor
     static class InnerError {
         private static final String CODE = "NotAParent";
-        private static final String RESTRICTION = "Display category must be (in)direct parent of the skill";
+        private static final String RESTRICTION = "Display category must be marked as such in the skill tree and be the skill's category or above it";
         private String viewProfileId;
         private String skillName;
         private String targetCategoryName;

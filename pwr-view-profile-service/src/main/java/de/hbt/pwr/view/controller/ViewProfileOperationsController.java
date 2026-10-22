@@ -274,15 +274,15 @@ public class ViewProfileOperationsController {
     }
 
     @ApiOperation(value = "Sets the display category of a skill",
-            notes = "Sets the display category of a skill provided the display category is a direct or indirect parent " +
-                    "to the skill. ",
+            notes = "Sets the display category of a skill provided the skill tree marks the category as display " +
+                    "category and it is the skill's own category or one above it (#197).",
             tags = {"skill"},
             response = ViewProfile.class,
             httpMethod = "PATCH",
             produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
-            @ApiResponse(code = 400, message = "The category was not direct or indirect parent to the skill", response = ServiceError.class),
+            @ApiResponse(code = 400, message = "The category is no display category of the skill or above it", response = ServiceError.class),
             @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
             @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
     })
@@ -316,7 +316,8 @@ public class ViewProfileOperationsController {
 
     @ApiOperation(value = "Moves the skills of a display category into another category",
             notes = "Moves the skills of the display category that hang at or below the target category in the skill " +
-                    "tree into it; the others stay (#171). This operation is persistent.",
+                    "tree into it; the others stay (#171). The target must be a display category of the skill tree " +
+                    "(#197). This operation is persistent.",
             response = ViewProfile.class,
             tags = {"skill"},
             httpMethod = "PATCH",
@@ -542,8 +543,9 @@ public class ViewProfileOperationsController {
     }
 
 
-    @ApiOperation(value = "Returns the parents of the skill",
-            notes = "Creates a map with the parents of the skill by numbers. the index 0 is for the direct parent of the skill, 1 for its parents...",
+    @ApiOperation(value = "Returns the display categories of the skill",
+            notes = "Creates a map with the display categories (#197) from the skill's own category upwards by numbers: " +
+                    "index 0 is the lowest, 1 the next one above...",
             tags = {"category"},
             produces = "application/json",
             httpMethod = "GET")

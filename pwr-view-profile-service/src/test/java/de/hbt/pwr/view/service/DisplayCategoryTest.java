@@ -3,6 +3,7 @@ package de.hbt.pwr.view.service;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
+import de.hbt.pwr.view.exception.DisplayCategoryNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -60,7 +62,7 @@ public class DisplayCategoryTest {
     }
 
     /**
-     * A display category can be changed and is changed to the correct category
+     * A display category can be changed and is changed to the correct category, a display category above the skill
      */
     @Test
     public void displayCategoryShouldChange() {
@@ -94,7 +96,8 @@ public class DisplayCategoryTest {
      */
     @Test
     public void skillIsOnceInAnExistingDisplayCategory() {
-        SkillServiceCategory serviceCategory2 = new SkillServiceCategory(2, category2Name);
+        SkillServiceCategory serviceCategory2 = new SkillServiceCategory(category2Name, null, true);
+        serviceCategory2.setId(2);
         SkillServiceCategory serviceCategory1 = new SkillServiceCategory(category1Name, serviceCategory2, true);
         serviceCategory1.setId(1);
         shouldReturnSkillServiceSkill(new SkillServiceSkill(skill1Name, serviceCategory1));
@@ -106,8 +109,53 @@ public class DisplayCategoryTest {
         assertThat(viewProfile.getDisplayCategories()).containsExactly(category2);
     }
 
+    /**
+     * Only display categories of the skill tree (#197): a category above the skill that is not marked is refused, and
+     * the skill stays where it is
+     */
+    @Test
+    public void aCategoryThatIsNoDisplayCategoryIsRefused() {
+        SkillServiceCategory notMarked = new SkillServiceCategory(5, "NotMarked");
+        SkillServiceCategory cat1 = new SkillServiceCategory(category1Name, notMarked, true);
+        cat1.setId(1);
+        shouldReturnSkillServiceSkill(new SkillServiceSkill(skill1Name, cat1));
+
+        assertThatThrownBy(() -> viewProfileService.setDisplayCategory(viewProfile, skill1Name, "NotMarked"))
+                .isInstanceOf(DisplayCategoryNotFoundException.class);
+        assertThat(viewProfile.findSkillByName(skill1Name).get().getDisplayCategory()).isSameAs(category1);
+    }
+
+    /**
+     * A name that is none of the skill's categories: the exception meant for it, no NullPointerException (#197)
+     */
+    @Test
+    public void aCategoryThatIsNotAboveTheSkillIsRefused() {
+        shouldReturnSkillServiceSkill(makeServiceSkill());
+
+        assertThatThrownBy(() -> viewProfileService.setDisplayCategory(viewProfile, skill1Name, "Elsewhere"))
+                .isInstanceOf(DisplayCategoryNotFoundException.class);
+    }
+
+    /**
+     * The display categories a skill can be shown in, from its own upwards, without the ones not marked (#197)
+     */
+    @Test
+    public void parentsAreTheDisplayCategoriesAboveTheSkill() {
+        SkillServiceCategory top = new SkillServiceCategory("Top", null, true);
+        top.setId(10);
+        SkillServiceCategory notMarked = new SkillServiceCategory("NotMarked", top, false);
+        notMarked.setId(11);
+        SkillServiceCategory own = new SkillServiceCategory("Own", notMarked, true);
+        own.setId(12);
+        shouldReturnSkillServiceSkill(new SkillServiceSkill(skill1Name, own));
+
+        assertThat(viewProfileService.getParentsForSkill(skill1Name).values()).extracting(Category::getName)
+                .containsExactly("Own", "Top");
+    }
+
     private SkillServiceSkill makeServiceSkill() {
-        SkillServiceCategory cat3 = new SkillServiceCategory(3, category3Name);
+        SkillServiceCategory cat3 = new SkillServiceCategory(category3Name, null, true);
+        cat3.setId(3);
         SkillServiceCategory cat1 = new SkillServiceCategory(category1Name, cat3, true);
         cat1.setId(4);
 
