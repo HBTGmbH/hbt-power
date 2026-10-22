@@ -67,7 +67,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     static mapStateToProps(state: ApplicationState): NameEntityOverviewProps {
         return {
             sectors: state.suggestionStore.allIndustrialSectors.sort(NAME_ENTITY_BY_NAME),
-            keySkills: state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
+            keySkills: state.suggestionStore.allSpecialFields.sort(NAME_ENTITY_BY_NAME),
             careers: state.suggestionStore.allCareers.sort(NAME_ENTITY_BY_NAME),
             educations: state.suggestionStore.allEducations.sort(NAME_ENTITY_BY_NAME),
             qualifications: state.suggestionStore.allQualifications.sort(NAME_ENTITY_BY_NAME),
