@@ -8,6 +8,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import {PwrTree, PwrTreeNode} from '../tree/pwr-tree';
 import Label from '@material-ui/icons/Label';
 import {compareNames} from '../../../utils/Comparators';
+import {PwrIconButton} from '../pwr-icon-button';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface SkillTreeProps {
     root: SkillTreeNode;
@@ -29,6 +31,16 @@ interface SkillTreeProps {
      * @param skillId of the clicked skill
      */
     onSkillSelect?(skillId: number): void;
+
+    /**
+     * Without it no trash icon: deleting an own skill from the tree (#180), the caller asks first
+     */
+    onSkillDelete?(skillId: number): void;
+
+    /**
+     * See onSkillDelete, for own categories
+     */
+    onCategoryDelete?(categoryId: number): void;
 
     /**
      * Lookup for categories; Always has to be in sync with the skill tree; All Ids in the skill tree
@@ -69,19 +81,17 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         }
     };
 
-    private static CustomIcon = (props: { margin: string }) => <Icon
-        className="material-icons"
-        style={{marginLeft: props.margin, position: 'absolute', top: '12px'}}
-    >
-        extension
-    </Icon>;
+    private static CustomIcon = () => <Icon className="material-icons" fontSize="small">extension</Icon>;
 
-    private static DisplayIcon = (props: { margin: string }) => <Icon
-        className="material-icons"
-        style={{marginLeft: props.margin, position: 'absolute', top: '12px'}}
-    >
-        airplay
-    </Icon>;
+    private static DisplayIcon = () => <Icon className="material-icons" fontSize="small">airplay</Icon>;
+
+    /**
+     * Trash icon of an entry, as in the other lists of the app (#180); the click must not select the entry
+     */
+    private static DeleteIcon = (props: { onDelete(): void }) =>
+        <span className="pwr-skill-tree-delete" onClick={event => event.stopPropagation()}>
+            <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')} onClick={props.onDelete}/>
+        </span>;
 
     private getSkill = (skillId: number): SkillServiceSkill => {
         return this.props.skillsById.get(skillId);
@@ -156,37 +166,31 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
                 <Icon className="material-icons">label_outline</Icon>
             </ListItemIcon>
             <ListItemText secondary={skill.aliases().isEmpty() ? undefined : skill.aliases().sort(compareNames).join(', ')}>
-                {skill.qualifier()}
-                {skill.isCustom() ? <SkillTree.CustomIcon margin={'24px'}/> : false}
+                <span className="pwr-skill-tree-label">
+                    {skill.qualifier()}
+                    {skill.isCustom() && <SkillTree.CustomIcon/>}
+                </span>
             </ListItemText>
+            {skill.isCustom() && this.props.onSkillDelete &&
+            <SkillTree.DeleteIcon onDelete={() => this.props.onSkillDelete(skillId)}/>}
         </React.Fragment>;
     };
 
     private renderCategoryElement = (categoryId: number): JSX.Element => {
         let skillCategory = this.props.categoriesById.get(categoryId);
-
-        let currentMargin = 24;
-        let customIcon = null;
-        let displayIcon = null;
-
-        if (skillCategory.isCustom) {
-            customIcon = <SkillTree.CustomIcon margin={currentMargin + 'px'}/>;
-            currentMargin += 24;
-        }
-        if (skillCategory.isDisplay) {
-            displayIcon = <SkillTree.DisplayIcon margin={currentMargin + 'px'}/>;
-            currentMargin += 24;
-        }
-
         return <React.Fragment>
             <ListItemIcon>
                 <Label/>
             </ListItemIcon>
             <ListItemText>
-                {skillCategory.qualifier}
-                {customIcon}
-                {displayIcon}
+                <span className="pwr-skill-tree-label">
+                    {skillCategory.qualifier}
+                    {skillCategory.isCustom && <SkillTree.CustomIcon/>}
+                    {skillCategory.isDisplay && <SkillTree.DisplayIcon/>}
+                </span>
             </ListItemText>
+            {skillCategory.isCustom && this.props.onCategoryDelete &&
+            <SkillTree.DeleteIcon onDelete={() => this.props.onCategoryDelete(categoryId)}/>}
         </React.Fragment>;
     };
 

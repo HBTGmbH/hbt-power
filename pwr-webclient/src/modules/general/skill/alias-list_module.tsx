@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {useState} from 'react';
 import * as Immutable from 'immutable';
-import {List, ListItem, ListItemSecondaryAction, ListItemText, TextField} from '@material-ui/core';
+import {List, ListItem, ListItemSecondaryAction, ListItemText, TextField, Typography} from '@material-ui/core';
+import {PwrSpacer} from '../pwr-spacer_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrIconButton} from '../pwr-icon-button';
 import {compareNames} from '../../../utils/Comparators';
@@ -33,9 +34,11 @@ export const AliasList = (props: AliasListProps) => {
 
     const sortedAliases = props.aliases.sort(compareNames);
 
-    return <div style={{paddingLeft: '16px', paddingRight: '16px'}}>
+    return <div>
         {sortedAliases.isEmpty()
-            ? <p>{PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.None', props.skillName)}</p>
+            ? <Typography variant="body2" color="textSecondary">
+                {PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.None', props.skillName)}
+            </Typography>
             : <List dense>
                 {sortedAliases.map(alias => <ListItem key={alias}>
                     <ListItemText primary={alias}/>
@@ -48,6 +51,7 @@ export const AliasList = (props: AliasListProps) => {
                     </ListItemSecondaryAction>
                 </ListItem>).toArray()}
             </List>}
+        <PwrSpacer size="tight"/>
         <div style={{display: 'flex', alignItems: 'center'}}>
             <TextField
                 label={PowerLocalize.get('AdminClient.Info.SkillTree.Alias.New')}
@@ -58,7 +62,6 @@ export const AliasList = (props: AliasListProps) => {
                         add();
                     }
                 }}
-                margin={'dense'}
                 style={{flexGrow: 1}}
             />
             <PwrIconButton

@@ -4,9 +4,13 @@ import {LocalizedQualifier} from '../../../model/skill/LocalizedQualifier';
 import {
     Dialog,
     DialogContent,
+    DialogContentText,
     DialogTitle,
+    FormControl,
     Icon,
-    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
     Table,
     TableBody,
     TableCell,
@@ -15,14 +19,16 @@ import {
     TextField
 } from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {LocalizationSearcher} from './localization-searcher_module';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrButton} from '../pwr-button';
 import {PwrIconButton} from '../pwr-icon-button';
 import {PwrFormActions} from '../pwr-form-actions';
 import {PwrSpacer} from '../pwr-spacer_module';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import {ISO639_2DataSet} from '../../../utils/LanguageUtils';
+
+/**
+ * Languages a localization can have (#180), ISO 639-2 like the skill service expects
+ */
+const LANGUAGES = ['deu', 'eng'];
 
 interface LocalizationTableProps {
     localizations: Immutable.List<LocalizedQualifier>;
@@ -37,7 +43,6 @@ interface LocalizationTableState {
     addOpen: boolean;
     locale: string;
     qualifier: string;
-    searcherOpen: boolean;
 }
 
 export class LocalizationTable extends React.Component<LocalizationTableProps, LocalizationTableState> {
@@ -54,22 +59,23 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         this.state = {
             addOpen: false,
             locale: '',
-            qualifier: '',
-            searcherOpen: false
+            qualifier: ''
         };
     }
+
+    private static languageName = (code: string) => {
+        return LANGUAGES.includes(code) ? PowerLocalize.get('LocalizationTable.Language.' + code) : code;
+    };
 
     private mapLocalizedRow = (localizedQualifier: LocalizedQualifier) => {
         return <TableRow
             key={localizedQualifier.id()}
         >
-            <TableCell>{localizedQualifier.locale()}</TableCell>
+            <TableCell>{LocalizationTable.languageName(localizedQualifier.locale())}</TableCell>
             <TableCell>{localizedQualifier.qualifier()}</TableCell>
-            <TableCell>
-                <div>
-                    <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')}
-                                   onClick={() => this.props.onLocaleDelete(localizedQualifier.locale())}/>
-                </div>
+            <TableCell padding="checkbox">
+                <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')}
+                               onClick={() => this.props.onLocaleDelete(localizedQualifier.locale())}/>
             </TableCell>
         </TableRow>;
     };
@@ -88,40 +94,9 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
         });
     };
 
-    private setLocale = (val: string) => {
-        this.setState({
-            locale: val
-        });
-    };
-
-    private setQualifier = (val: string) => {
-        this.setState({
-            qualifier: val
-        });
-    };
-
     private invokeAdd = () => {
-        this.props.onLocaleAdd(this.state.locale, this.state.qualifier);
+        this.props.onLocaleAdd(this.state.locale, this.state.qualifier.trim());
         this.closeDialog();
-    };
-
-    private closeSearcher = () => {
-        this.setState({
-            searcherOpen: false
-        });
-    };
-
-    private openSearcher = () => {
-        this.setState({
-            searcherOpen: true
-        });
-    };
-
-    private handleSearcherSelect = (data: ISO639_2DataSet) => {
-        this.setState({
-            locale: data.code
-        });
-        this.closeSearcher();
     };
 
     render() {
@@ -130,76 +105,54 @@ export class LocalizationTable extends React.Component<LocalizationTableProps, L
                 <Dialog
                     open={this.state.addOpen}
                     onClose={this.closeDialog}
+                    fullWidth
                 >
                     <DialogTitle>
                         {PowerLocalize.getFormatted('LocalizationTable.Title.Template', this.props.termToLocalize)}
                     </DialogTitle>
                     <DialogContent>
-                        <LocalizationSearcher
-                            open={this.state.searcherOpen}
-                            onClose={this.closeSearcher}
-                            onSelectIsoData={this.handleSearcherSelect}
-                        />
-                        {PowerLocalize.get('LocalizationTable.Content.Description')}<br/>
-                        <PwrButton color={'primary'} text={PowerLocalize.get('LocalizationTable.Content.LocalesLinkName')}
-                                   icon={<Icon className="material-icons">open_in_new</Icon>}
-                                   onClick={() => window.open('https://www.loc.gov/standards/iso639-2/php/code_list.php')}/><br/>
-                        {PowerLocalize.get('LocalizationTable.Content.LocalizationRemarks')}
-                        <PwrSpacer/>
-                        <div>
-                            <div>
-                                <TextField
-                                    label={PowerLocalize.get('LocalizationTable.Input.Language')}
+                        <DialogContentText>{PowerLocalize.get('LocalizationTable.Content.Description')}</DialogContentText>
+                        <FormControl variant="filled" fullWidth>
+                            <InputLabel id="pwr-localization-language">{PowerLocalize.get('LocalizationTable.Input.Language')}</InputLabel>
+                            <Select labelId="pwr-localization-language"
                                     value={this.state.locale}
-                                    onChange={(e) => this.setLocale(e.target.value)}
-                                />
-                                <Tooltip title={PowerLocalize.get('Action.Search')}>
-                                    <IconButton
-                                        className="material-icons"
-                                        onClick={this.openSearcher}
-                                    >
-                                        search
-                                    </IconButton>
-                                </Tooltip>
-                            </div>
-                            <PwrSpacer/>
-                            <div>
-                                <TextField
-                                    label={PowerLocalize.get('LocalizationTable.Input.Qualifier')}
-                                    value={this.state.qualifier}
-                                    onChange={(e) => this.setQualifier(e.target.value)}
-                                />
-                            </div>
-                        </div>
+                                    onChange={(event: React.ChangeEvent<{ value: unknown }>) =>
+                                        this.setState({locale: event.target.value as string})}>
+                                {LANGUAGES.map(code =>
+                                    <MenuItem key={code} value={code}>
+                                        {PowerLocalize.getFormatted('LocalizationTable.Language', LocalizationTable.languageName(code), code)}
+                                    </MenuItem>)}
+                            </Select>
+                        </FormControl>
+                        <PwrSpacer/>
+                        <TextField
+                            fullWidth
+                            label={PowerLocalize.get('LocalizationTable.Input.Qualifier')}
+                            value={this.state.qualifier}
+                            onChange={(e) => this.setState({qualifier: e.target.value})}
+                        />
                     </DialogContent>
                     <DialogActions>
                         <PwrFormActions editing noSpace saveText={PowerLocalize.get('Action.Add')} saveIcon="add"
-                                        saveDisabled={!this.state.locale.trim() || !this.state.qualifier.trim()}
+                                        saveDisabled={!this.state.locale || !this.state.qualifier.trim()}
                                         onSave={this.invokeAdd} onCancel={this.closeDialog}/>
                     </DialogActions>
                 </Dialog>
-                <Table>
+                {!this.props.localizations.isEmpty() && <Table size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell>{PowerLocalize.get('LocalizationTable.Column.Language')}</TableCell>
                             <TableCell>{PowerLocalize.get('LocalizationTable.Column.Qualifier')}</TableCell>
-                            <TableCell/>
+                            <TableCell padding="checkbox"/>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         <>{this.props.localizations.map(this.mapLocalizedRow)}</>
                     </TableBody>
-                </Table>
-                <div className="vertical-align fullWidth">
-                    <Tooltip title={PowerLocalize.get('Action.Add')}>
-                        <IconButton
-                            className="material-icons"
-                            onClick={this.openDialog}
-                        >
-                            add
-                        </IconButton>
-                    </Tooltip>
-                </div>
+                </Table>}
+                <PwrSpacer size="tight"/>
+                <PwrButton color="primary" text={PowerLocalize.get('LocalizationTable.Action.Add')}
+                           icon={<Icon className="material-icons">add</Icon>} onClick={this.openDialog}/>
             </div>
         );
     }

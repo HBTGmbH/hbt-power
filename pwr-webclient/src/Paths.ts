@@ -12,6 +12,9 @@ export class Paths {
     public static readonly ADMIN_TEMPLATES = CONFIG.APP_PATH + '/admin/home/templates';
     public static readonly ADMIN_STATISTICS_SKILL = CONFIG.APP_PATH + '/admin/home/statistics/skills';
     public static readonly ADMIN_INFO_SKILLTREE = CONFIG.APP_PATH + '/admin/home/info/skilltree';
+    /** The slug is only for reading, the ID selects (#180) */
+    public static readonly ADMIN_INFO_SKILLTREE_SKILL = CONFIG.APP_PATH + '/admin/home/info/skilltree/skill/:skillId/:slug?';
+    public static readonly ADMIN_INFO_SKILLTREE_CATEGORY = CONFIG.APP_PATH + '/admin/home/info/skilltree/category/:categoryId/:slug?';
     public static readonly ADMIN_INFO_NAME_ENTITY = CONFIG.APP_PATH + '/admin/home/info/names';
 
     public static readonly USER_SPECIAL_LOGOUT = '##LOGOUT_USER##';
@@ -34,8 +37,9 @@ export class Paths {
     public static build(path: string, params: Record<string, string>): string {
         let result = path;
         for (let key in params) {
-            result = result.replace(`:${key}`, params[key]);
+            result = result.replace(`:${key}?`, params[key]).replace(`:${key}`, params[key]);
         }
-        return result;
+        // An optional parameter without a value leaves no empty segment
+        return result.replace(/\/:[a-zA-Z]+\?/g, '').replace(/\/$/, '');
     }
 }
