@@ -4,6 +4,7 @@ import {AxiosError, AxiosRequestConfig} from 'axios';
 import {
     AddNameEntityUsageInfoAction,
     AddSkillUsageInfoAction,
+    ForgetSkillUsageInfoAction,
     ReceiveConsultantClusterInfoAction,
     ReceiveProfileSkillMetrics,
     ReceiveScatterSkillsAction,
@@ -76,6 +77,16 @@ export class StatisticsActionCreator {
             type: ActionType.AddSkillUsageInfo,
             consultantInfos: consultants,
             skillName: skillName
+        };
+    }
+
+    /**
+     * Who uses a skill is loaded once per skill; after a change of the profiles (merge) it has to be loaded again
+     */
+    public static ForgetSkillUsageInfo(...skillNames: Array<string>): ForgetSkillUsageInfoAction {
+        return {
+            type: ActionType.ForgetSkillUsageInfo,
+            skillNames: skillNames
         };
     }
 

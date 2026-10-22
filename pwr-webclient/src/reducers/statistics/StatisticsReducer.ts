@@ -2,6 +2,7 @@ import {emptyStatisticsStore, StatisticsStore} from '../../model/statistics/Stat
 import {
     AddNameEntityUsageInfoAction,
     AddSkillUsageInfoAction,
+    ForgetSkillUsageInfoAction,
     ReceiveConsultantClusterInfoAction,
     ReceiveProfileSkillMetrics,
     ReceiveScatterSkillsAction,
@@ -71,6 +72,13 @@ export class StatisticsReducer {
         }
     }
 
+    public static ForgetSkillUsageInfo(store: StatisticsStore, action: ForgetSkillUsageInfoAction): StatisticsStore {
+        return {
+            ...store,
+            skillUsageInfo: action.skillNames.reduce((info, skillName) => info.delete(skillName), store.skillUsageInfo),
+        }
+    }
+
     public static reduce(store = emptyStatisticsStore(), action: AbstractAction): StatisticsStore {
         switch (action.type) {
             case ActionType.ReceiveRelativeSkillUsageMetrics:
@@ -97,6 +105,8 @@ export class StatisticsReducer {
                 return StatisticsReducer.AddNameEntityUsageInfo(store, action as AddNameEntityUsageInfoAction);
             case ActionType.AddSkillUsageInfo:
                 return StatisticsReducer.AddSkillUsageInfo(store, action as AddSkillUsageInfoAction);
+            case ActionType.ForgetSkillUsageInfo:
+                return StatisticsReducer.ForgetSkillUsageInfo(store, action as ForgetSkillUsageInfoAction);
             default:
                 return store;
         }

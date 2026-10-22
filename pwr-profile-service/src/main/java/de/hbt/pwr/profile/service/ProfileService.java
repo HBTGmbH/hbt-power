@@ -1,6 +1,7 @@
 package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.client.SkillProfileClient;
+import de.hbt.pwr.profile.client.StatisticsClient;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
@@ -8,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,13 +24,17 @@ public class ProfileService {
 
     private final SkillProfileClient skillProfileClient;
 
+    private final StatisticsClient statisticsClient;
+
     private static Logger LOG = getLogger(ProfileService.class);
 
 
     @Autowired
-    public ProfileService(ProfileRepository profileRepository, SkillProfileClient skillProfileClient) {
+    public ProfileService(ProfileRepository profileRepository, SkillProfileClient skillProfileClient,
+                          StatisticsClient statisticsClient) {
         this.profileRepository = profileRepository;
         this.skillProfileClient = skillProfileClient;
+        this.statisticsClient = statisticsClient;
     }
 
     /**
@@ -52,10 +59,29 @@ public class ProfileService {
      */
     @Transactional
     public List<Profile> mergeSkillsInProfiles(String source, String target, String version) {
-        return profileRepository.findAll()
+        List<Profile> profiles = profileRepository.findAll()
                 .stream()
                 .peek(profile -> new SkillMerger(source, target, version).mergeIn(profile))
                 .collect(Collectors.toList());
+        refreshStatisticsAfterCommit();
+        return profiles;
+    }
+
+    /**
+     * The statistics keep a copy of the profiles, which shows the admin who uses a skill (#205). They read the profiles
+     * from this service, so only once the merge is committed.
+     */
+    private void refreshStatisticsAfterCommit() {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            statisticsClient.refreshConsultants();
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                statisticsClient.refreshConsultants();
+            }
+        });
     }
 
     /**

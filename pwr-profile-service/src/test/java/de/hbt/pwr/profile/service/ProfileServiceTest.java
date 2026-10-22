@@ -2,6 +2,7 @@ package de.hbt.pwr.profile.service;
 
 
 import de.hbt.pwr.profile.client.SkillProfileClient;
+import de.hbt.pwr.profile.client.StatisticsClient;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
@@ -10,6 +11,8 @@ import de.hbt.pwr.profile.model.profile.entries.Project;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Set;
@@ -27,13 +30,15 @@ public class ProfileServiceTest {
 
     private ProfileRepository profileRepository;
     private SkillProfileClient skillProfileClient;
+    private StatisticsClient statisticsClient;
     private ProfileService profileService;
 
     @Before
     public void setUp() throws Exception {
         profileRepository = mock(ProfileRepository.class);
         skillProfileClient = mock(SkillProfileClient.class);
-        profileService = new ProfileService(profileRepository, skillProfileClient);
+        statisticsClient = mock(StatisticsClient.class);
+        profileService = new ProfileService(profileRepository, skillProfileClient, statisticsClient);
     }
 
     private static Skill skill(String name, int rating, String... versions) {
@@ -180,5 +185,48 @@ public class ProfileServiceTest {
 
         assertThat(profile.getSkills()).extracting(Skill::getName).containsExactly("OpenShift");
         verify(profileRepository, never()).findAll();
+        verify(statisticsClient, never()).refreshConsultants();
+    }
+
+    /**
+     * The statistics read the profiles from this service, so they may only refresh once the merge is committed (#205)
+     */
+    @Test
+    public void whenMergingInATransaction_shouldRefreshTheStatisticsOnlyAfterTheCommit() {
+        when(profileRepository.findAll()).thenReturn(singletonList(profileWithSkills("Java 8")));
+        TransactionSynchronizationManager.initSynchronization();
+        try {
+            profileService.mergeSkills("Java 8", "Java", null);
+            verify(statisticsClient, never()).refreshConsultants();
+
+            TransactionSynchronizationManager.getSynchronizations().forEach(TransactionSynchronization::afterCommit);
+        } finally {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
+        verify(statisticsClient).refreshConsultants();
+    }
+
+    @Test
+    public void whenMergingInAnUnsuccessfulTransaction_shouldNotRefreshTheStatistics() {
+        when(profileRepository.findAll()).thenReturn(singletonList(profileWithSkills("Java 8")));
+        TransactionSynchronizationManager.initSynchronization();
+        try {
+            profileService.mergeSkills("Java 8", "Java", null);
+
+            TransactionSynchronizationManager.getSynchronizations()
+                    .forEach(sync -> sync.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK));
+        } finally {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
+        verify(statisticsClient, never()).refreshConsultants();
+    }
+
+    @Test
+    public void whenRenamingASkillInTheProfiles_shouldRefreshTheStatistics() {
+        when(profileRepository.findAll()).thenReturn(singletonList(profileWithSkills("Java 8")));
+
+        profileService.mergeSkillsInProfiles("Java 8", "Java", null);
+
+        verify(statisticsClient).refreshConsultants();
     }
 }

@@ -422,12 +422,17 @@ export class AdminActionCreator {
 
     /**
      * Merges skill source into skill target: in all profiles and projects, and in the skill tree, where source becomes
-     * an alias of target. Expected rejections of the merge (400, 404, 409) are explained to the admin.
+     * an alias of target. Expected rejections of the merge (400, 404, 409) are explained to the admin. The profile
+     * service has refreshed the statistics when the merge returns, so who uses source and target is loaded again (#205).
      */
     public static AsyncMergeSkill(source: string, target: string, version?: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.mergeSkill(source, target, version)
-                .then(() => dispatch(SuggestionAsyncActionCreator.requestAllSkills()))
+                .then(() => {
+                    dispatch(SuggestionAsyncActionCreator.requestAllSkills());
+                    dispatch(StatisticsActionCreator.ForgetSkillUsageInfo(source, target));
+                    dispatch(StatisticsActionCreator.AsyncRequestSkillUsageInfo(target));
+                })
                 .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Success', source, target)))
                 .catch((error: PowerApiError) => {
                     const key = {
