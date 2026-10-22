@@ -6,6 +6,7 @@ import {PwrIconButton} from './pwr-icon-button';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {DatePickerView} from '@material-ui/pickers/DatePicker/DatePicker';
 import {Moment} from 'moment/moment';
+import {PwrMonthPicker} from './pwr-month-picker';
 
 interface PwrDatePickerProps {
     onChange(date: Date): void;
@@ -71,11 +72,16 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
         return views;
     };
 
-    render() {
-        // Field and open end button in one row, the button always 8 px next to the field, whatever the width of the
-        // surrounding grid (#40); a grid item would give the button its share of the width instead
-        return <div className="pwr-date-picker">
-            <KeyboardDatePicker
+    private renderPicker() {
+        if (this.props.type === DatePickerType.MONTH_YEAR) {
+            // Month and year in one popover instead of a two step dialog (#143)
+            return <PwrMonthPicker value={this.props.placeholderDate}
+                                   label={!!this.props.placeholderDate ? this.props.label : PowerLocalize.get('Today')}
+                                   disabled={this.props.disabled}
+                                   error={this.props.error}
+                                   onChange={this.props.onChange}/>;
+        }
+        return <KeyboardDatePicker
                 error={!!(this.props.error) ? this.props.error : false}
                 autoOk
                 disabled={this.props.disabled}
@@ -87,7 +93,16 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
                 format={this.getFormat()}
                 openTo="year"
                 keyboardIcon={<Icon className={'material-icons'}>date_range</Icon>}
-            />
+                okLabel={PowerLocalize.get('Action.OK')}
+                cancelLabel={PowerLocalize.get('Action.Cancel')}
+            />;
+    }
+
+    render() {
+        // Field and open end button in one row, the button always 8 px next to the field, whatever the width of the
+        // surrounding grid (#40); a grid item would give the button its share of the width instead
+        return <div className="pwr-date-picker">
+            {this.renderPicker()}
             {this.props.disableOpenEnd ? <></> :
                 <PwrIconButton
                     iconName={'send'}
