@@ -225,6 +225,10 @@ public class ModelConvertService {
         List<ViewSkill> skills = new ArrayList<>();
         for (int i = 0; i < viewProfile.getDisplayCategories().size(); i++) {
             ViewCategory viewCategory = viewProfile.getDisplayCategories().get(i);
+            // A category switched off brings none of its skills (#159); null from older data counts as on
+            if (Boolean.FALSE.equals(viewCategory.getEnabled())) {
+                continue;
+            }
             for (ViewSkill viewSkill : viewCategory.getDisplaySkills()) {
                 displayCategoryNamesBySkill.put(viewSkill.getName(), viewCategory.getName());
                 groupIndexBySkillName.put(viewSkill.getName(), i);

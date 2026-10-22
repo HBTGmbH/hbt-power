@@ -331,6 +331,7 @@
   "ViewProfileOverview.SkillCount.Other": "{0} Skills",
   "ViewProfileOverview.Empty": "Keine Einträge",
   "ViewProfileOverview.SortCategories": "Kategorien nach Name sortieren",
+  "ViewProfileOverview.CategoryOff": "Die Kategorie ist ausgeschaltet: Ihre Skills erscheinen nicht im Exportdokument. Ihre Auswahl bleibt für das Wiedereinschalten erhalten.",
   "ViewProfileOverview.SkillVersions": "Versionen",
   "ViewProfileOverview.SkillVersions.Tooltip": "Versionen der Skills auf dieser Seite und im Exportdokument zeigen",
   "ViewProfileOverview.DisplayCategory": "Anzeige-Kategorie wählen",
