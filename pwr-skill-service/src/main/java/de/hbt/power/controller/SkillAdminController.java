@@ -97,6 +97,9 @@ public class SkillAdminController {
     @ApiOperation(value = "Creates a new skill in the provided category", response = Skill.class)
     @PostMapping("/category/{categoryId}")
     public ResponseEntity<Skill> createSkillInCategory(@RequestBody Skill skill, @PathVariable("categoryId") Integer categoryId) {
+        if (skill.getQualifier() == null || skill.getQualifier().trim().isEmpty()) {
+            throw SkillServiceException.validationFailed("skill.qualifier", "Qualifier is empty.");
+        }
         SkillCategory skillCategory = requireSkillCategory(categoryId);
         Optional<Skill> concurrent = skillRepository.findOneByQualifier(skill.getQualifier());
         if (concurrent.isPresent()) {

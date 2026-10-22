@@ -132,6 +132,14 @@ public class SkillTreeAdminPathsITest {
     }
 
     @Test
+    public void skillWithoutName_isRejected() throws Exception {
+        mockMvc.perform(post("/admin/skill/category/{categoryId}", category.getId())
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"_qualifier\":\"Docker\"}"))
+                .andExpect(status().isBadRequest());
+        assertThat(skillRepository.findAll()).extracting(Skill::getQualifier).containsExactly("Kubernetes");
+    }
+
+    @Test
     public void treeChanges_workUnderAdmin() throws Exception {
         mockMvc.perform(post("/admin/category/{parentId}", category.getId())
                         .contentType(MediaType.APPLICATION_JSON).content("{\"qualifier\":\"Created\"}"))

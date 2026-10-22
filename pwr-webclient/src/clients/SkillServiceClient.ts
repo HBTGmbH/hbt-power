@@ -1,5 +1,5 @@
 import {PowerHttpClient} from './PowerHttpClient';
-import {APISkillServiceSkill, SkillServiceSkill} from '../model/skill/SkillServiceSkill';
+import {APISkillServiceSkill} from '../model/skill/SkillServiceSkill';
 
 import {AxiosRequestConfig} from 'axios';
 import {APISkillCategory, SkillCategory} from '../model/skill/SkillCategory';
@@ -172,9 +172,9 @@ export class SkillServiceClient extends PowerHttpClient {
 
     public postNewSkill = (categoryId: number, qualifier: string): Promise<APISkillServiceSkill> => {
         const url = this.base() + '/admin/skill/category/' + categoryId;
-        let skill: SkillServiceSkill = SkillServiceSkill.forQualifier(qualifier);
+        // Only the name: the model's fields are private (`_qualifier`), as JSON the skill had no name
         this.beginRequest();
-        return this.post(url, skill);
+        return this.post(url, {qualifier: qualifier});
     };
 
     public deleteCustomSkill = (skillId: number) => {
