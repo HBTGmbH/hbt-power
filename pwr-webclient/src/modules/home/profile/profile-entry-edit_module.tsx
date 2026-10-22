@@ -22,7 +22,7 @@ import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions/DialogActions';
 import {PwrFormActions} from '../../general/pwr-form-actions';
 import {validateNonEmptyProfileEntry} from '../../../utils/ValidationUtils';
-import {fromLocalDate, isInvalidDate, LocalDate, today, toLocalDate} from '../../../utils/DateUtil';
+import {LocalDate, today} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
 
 interface ProfileEntryDialogProps {
@@ -137,21 +137,15 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
         });
     };
 
-    private onStartDateChange = (date: Date | null) => {
-        if (isInvalidDate(date)) {
-            return;
-        }
+    private onStartDateChange = (date: LocalDate | null) => {
         this.setState({
-            startDate: toLocalDate(date)
+            startDate: date
         });
     };
 
-    private onEndDateChange = (date: Date | null) => {
-        if (isInvalidDate(date)) {
-            return;
-        }
+    private onEndDateChange = (date: LocalDate | null) => {
         this.setState({
-            endDate: toLocalDate(date)
+            endDate: date
         });
     };
 
@@ -208,7 +202,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onStartDateChange}
-                                        placeholderDate={fromLocalDate(this.state.startDate)}
+                                        value={this.state.startDate}
                                         label={'Start'}
                                         type={DatePickerType.MONTH_YEAR}
                                         disableOpenEnd
@@ -221,7 +215,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 <Grid item md={11} xs={11}>
                                     <PwrDatePicker
                                         onChange={this.onEndDateChange}
-                                        placeholderDate={fromLocalDate(this.state.endDate)}
+                                        value={this.state.endDate}
                                         label={'Ende'}
                                         type={DatePickerType.MONTH_YEAR}/>
                                 </Grid>

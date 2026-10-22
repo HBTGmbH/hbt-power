@@ -7,7 +7,7 @@ import {NameEntity} from '../../../../../reducers/profile-new/profile/model/Name
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
 import {PwrFormActions} from '../../../../general/pwr-form-actions';
 import {PwrFormSection, PwrRow} from '../../../../general/pwr-form-section';
-import {fromLocalDate, isInvalidDate, toLocalDate} from '../../../../../utils/DateUtil';
+import {LocalDate} from '../../../../../utils/DateUtil';
 import {StringUtils} from '../../../../../utils/StringUtil';
 import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
@@ -136,19 +136,13 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         this.props.updateEditingProject(project);
     };
 
-    private setEndDate = (endDate: Date | null) => {
-        if (isInvalidDate(endDate)) {
-            return;
-        }
-        const project = {...this.project(), endDate: toLocalDate(endDate)};
+    private setEndDate = (endDate: LocalDate | null) => {
+        const project = {...this.project(), endDate};
         this.props.updateEditingProject(project);
     };
 
-    private setStartDate = (startDate: Date | null) => {
-        if (isInvalidDate(startDate)) {
-            return;
-        }
-        const project = {...this.project(), startDate: toLocalDate(startDate)};
+    private setStartDate = (startDate: LocalDate | null) => {
+        const project = {...this.project(), startDate};
         this.props.updateEditingProject(project);
     };
 
@@ -299,7 +293,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                             <PwrDatePicker label={PowerLocalize.get('Profile.Project.StartDate')}
                                            disabled={this.isEditDisabled()}
                                            onChange={this.setStartDate}
-                                           placeholderDate={fromLocalDate(this.project().startDate)}
+                                           value={this.project().startDate}
                                            type={DatePickerType.MONTH_YEAR}
                                            disableOpenEnd
                             />
@@ -308,7 +302,7 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                             <PwrDatePicker label={PowerLocalize.get('Profile.Project.EndDate')}
                                            disabled={this.isEditDisabled()}
                                            onChange={this.setEndDate}
-                                           placeholderDate={fromLocalDate(this.project().endDate)}
+                                           value={this.project().endDate}
                                            type={DatePickerType.MONTH_YEAR}
                             />
                         </Grid>

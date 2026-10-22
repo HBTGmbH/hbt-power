@@ -7,7 +7,7 @@ import {ViewTraining} from '../../../../model/view/ViewTraining';
 import {IViewEntry} from '../../../../model/view/IViewEntry';
 import {ComparableEntryButton} from './comprable-entry-button_module';
 import {SortableEntryType} from '../../../../model/view/NameComparableType';
-import {formatToShortDisplay} from '../../../../utils/DateUtil';
+import {formatToShortDisplay, LocalDate} from '../../../../utils/DateUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {ViewEntryColumn} from './view-profile-entries_module';
 
@@ -20,7 +20,7 @@ export const RATING_WIDTH = '88px';
 /** Three small version chips in a line */
 export const VERSIONS_WIDTH = '128px';
 
-type Dated = IViewEntry & { startDate: Date, endDate: Date };
+type Dated = IViewEntry & { startDate: LocalDate, endDate: LocalDate };
 
 /**
  * A name of the skill tree with its localization in the language of the view profile (#174) as a second line; none

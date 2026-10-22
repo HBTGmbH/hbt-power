@@ -1,5 +1,6 @@
 import {ViewProjectRole} from './ViewProjectRole';
 import {ViewSkill} from './ViewSkill';
+import {LocalDate} from '../../utils/DateUtil';
 
 export class ViewProject {
     id: number;
@@ -7,15 +8,15 @@ export class ViewProject {
     description: string;
     client: string;
     broker: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: LocalDate;
+    endDate: LocalDate;
     projectRoles: Array<ViewProjectRole>;
     skills: Array<ViewSkill>;
     enabled: boolean;
 
 
-    constructor(id: number, name: string, description: string, client: string, broker: string, startDate: Date,
-                endDate: Date, projectRoles: Array<ViewProjectRole>, skills: Array<ViewSkill>, enabled: boolean) {
+    constructor(id: number, name: string, description: string, client: string, broker: string, startDate: LocalDate,
+                endDate: LocalDate, projectRoles: Array<ViewProjectRole>, skills: Array<ViewSkill>, enabled: boolean) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -34,8 +35,8 @@ export class ViewProject {
             viewProject.description,
             viewProject.client,
             viewProject.broker,
-            !viewProject.startDate ? null : new Date(viewProject.startDate),
-            !viewProject.endDate ? null : new Date(viewProject.endDate),
+            viewProject.startDate,
+            viewProject.endDate,
             viewProject.projectRoles,
             viewProject.skills,
             viewProject.enabled);

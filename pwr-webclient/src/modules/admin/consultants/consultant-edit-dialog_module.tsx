@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
+import {LocalDate} from '../../../utils/DateUtil';
 import {Dialog, DialogActions, Icon, Link} from '@material-ui/core';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
@@ -118,7 +119,7 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
         });
     };
 
-    private setBirthDate = (val: Date) => {
+    private setBirthDate = (val: LocalDate | null) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.setBirthDate(val)
         });

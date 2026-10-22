@@ -1,4 +1,5 @@
 import {APIConsultant} from './APIProfile';
+import {LocalDate, today} from '../utils/DateUtil';
 
 export class ConsultantInfo {
 
@@ -6,7 +7,7 @@ export class ConsultantInfo {
     private readonly _firstName: string;
     private readonly _lastName: string;
     private readonly _title: string;
-    private readonly _birthDate: Date;
+    private readonly _birthDate: LocalDate;
     private readonly _active: boolean;
     private readonly _profilePictureId: string;
 
@@ -46,7 +47,7 @@ export class ConsultantInfo {
         return this._birthDate;
     };
 
-    public setBirthDate(birthDate: Date): ConsultantInfo {
+    public setBirthDate(birthDate: LocalDate): ConsultantInfo {
         return new ConsultantInfo(this.initials(), this.firstName(), this.lastName(), this.title(), birthDate, this.active(), this.profilePictureId());
     }
 
@@ -69,7 +70,7 @@ export class ConsultantInfo {
 
 
     private constructor(initials: string, firstName: string, lastName: string, title: string,
-                        birthDate: Date, active: boolean, profilePictureId: string) {
+                        birthDate: LocalDate, active: boolean, profilePictureId: string) {
         this._initials = initials;
         this._firstName = firstName;
         this._lastName = lastName;
@@ -81,7 +82,7 @@ export class ConsultantInfo {
 
     public static fromAPI(apiConsultant: APIConsultant) {
         return new ConsultantInfo(apiConsultant.initials, apiConsultant.firstName, apiConsultant.lastName,
-            apiConsultant.title, new Date(apiConsultant.birthDate), apiConsultant.active, apiConsultant.profilePictureId);
+            apiConsultant.title, apiConsultant.birthDate, apiConsultant.active, apiConsultant.profilePictureId);
     }
 
     public toAPI(): APIConsultant {
@@ -91,13 +92,13 @@ export class ConsultantInfo {
             firstName: this.firstName(),
             lastName: this.lastName(),
             title: this.title(),
-            birthDate: this.birthDate() ? this.birthDate().toISOString() : null,
+            birthDate: this.birthDate(),
             profilePictureId: this.profilePictureId()
         };
     }
 
     public static empty() {
-        return new ConsultantInfo('', '', '', '', new Date(), true, '');
+        return new ConsultantInfo('', '', '', '', today(), true, '');
     }
 
     /**
