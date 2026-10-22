@@ -58,6 +58,10 @@ export interface PwrAutoCompleteProps {
 
     onRemove?(item: string);
 
+    /**
+     * The text in the field changed. navigation: through the arrow keys or by picking a suggestion, not by typing, so
+     * there is nothing new to search for
+     */
     onSearchChange(selectedItem: string, navigation?: boolean): void;
 }
 
@@ -100,13 +104,16 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
         });
     };
 
-    handleChange = (event: any, newValue: string) => {
+    handleChange = (event: any, newValue: string, method: string) => {
 
         let searchTerm: string = newValue;
         let navigation: boolean = false;
         if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             navigation = true;
             searchTerm = this.props.searchTerm;
+        } else if (method === 'enter' || method === 'click') {
+            // A picked suggestion: searching for it again would open the list again once the answer arrives (#184)
+            navigation = true;
         }
 
         this.props.onSearchChange(searchTerm, navigation);
@@ -230,7 +237,7 @@ export class PwrAutoCompleteModule extends React.Component<PwrAutoCompleteProps 
             placeholder: this.props.label,
             value: this.props.searchTerm || '',
             chips: this.props.chips,
-            onChange: (event, {newValue}) => this.handleChange(event, newValue),
+            onChange: (event, {newValue, method}) => this.handleChange(event, newValue, method),
         };
 
         let inputProps;
