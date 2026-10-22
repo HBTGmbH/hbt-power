@@ -172,7 +172,6 @@ public class ViewProfileCreatorService {
         viewProfileInfo.setOwnerInitials(initials);
         viewProfileInfo.setViewDescription(viewDescription);
         viewProfileInfo.setName(name);
-        viewProfileInfo.setCharsPerLine(45);
         setConsultantData(viewProfileInfo, initials);
         return viewProfileInfo;
     }

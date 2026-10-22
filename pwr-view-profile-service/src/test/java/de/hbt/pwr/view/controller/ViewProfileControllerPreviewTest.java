@@ -98,7 +98,7 @@ public class ViewProfileControllerPreviewTest {
         assertThat(reportInfo.getValue().getViewProfile()).isSameAs(viewProfile);
         assertThat(reportInfo.getValue().getReportTemplate()).isSameAs(template);
         // Nothing is stored in the report history
-        verify(reportServiceClient, never()).generateReport(any(), any(), any());
+        verify(reportServiceClient, never()).generateReport(any(), any());
     }
 
     @Test

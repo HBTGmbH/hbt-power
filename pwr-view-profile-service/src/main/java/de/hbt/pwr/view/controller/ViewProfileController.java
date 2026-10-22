@@ -175,8 +175,7 @@ public class ViewProfileController {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         ReportTemplate template =
                 (templateId.equals("-1") ? null : reportTemplateService.getTemplate(templateId));
-        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo(initials, viewProfile, template), "DOC",
-                viewProfile.getViewProfileInfo().getCharsPerLine());
+        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo(initials, viewProfile, template), "DOC");
         URI location =
                 ofNullable(response).map(HttpEntity::getHeaders).map(HttpHeaders::getLocation)
                         .orElse(URI.create(""));

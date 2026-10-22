@@ -252,20 +252,14 @@ export class ViewProfileActionCreator {
         };
     }
 
-    public static AsyncUpdateViewProfile(viewProfileId: string, description: string, name: string, charsPerLine: number) {
+    /** Name or note of the view profile, saved in the background from its page (#179) */
+    public static AsyncSetInfo(viewProfileId: string, name: string, viewDescription: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
-            let data = {
-                viewDescription: description,
-                name: name,
-                charsPerLine: charsPerLine
-            };
-            dispatch(CrossCuttingActionCreator.startRequest());
-            viewProfileClient.patchPartialUpdate(initials, viewProfileId, data)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
-                .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Update')));
+            viewProfileClient.patchInfo(initials, viewProfileId, name, viewDescription)
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
         };
     }
 

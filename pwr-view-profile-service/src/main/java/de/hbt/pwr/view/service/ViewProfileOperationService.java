@@ -208,9 +208,6 @@ public class ViewProfileOperationService {
             viewProfile.getViewProfileInfo()
                     .setViewDescription(viewProfileInfo.getViewDescription());
         }
-        if (viewProfileInfo.getCharsPerLine() != null) {
-            viewProfile.getViewProfileInfo().setCharsPerLine(viewProfileInfo.getCharsPerLine());
-        }
     }
 
     private Category toCategory(SkillServiceCategory serviceCategory) {

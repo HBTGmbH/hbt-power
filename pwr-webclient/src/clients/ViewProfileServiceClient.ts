@@ -166,10 +166,12 @@ export class ViewProfileServiceClient extends PowerHttpClient {
             .then(blob => new Blob([blob], {type: 'application/pdf'}));
     }
 
-    public patchPartialUpdate(initials: string, viewProfileId: string, body: any): Promise<ViewProfile> {
+    /**
+     * Name and note of the view profile (#179), always both: the service reads a missing text as empty and stores it
+     */
+    public patchInfo(initials: string, viewProfileId: string, name: string, viewDescription: string): Promise<ViewProfile> {
         const url = this.base() + '/view/' + initials + '/view/' + viewProfileId + '/info';
-        this.beginRequest();
-        return this.patch(url, body);
+        return this.patchInBackground(url, {name, viewDescription});
     }
 
     public patchDescription(initials: string, viewProfileId: string, description: string, config: AxiosRequestConfig): Promise<ViewProfile> {

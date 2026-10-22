@@ -13,7 +13,7 @@ interface LocalizationSelectProps {
     onChange(language: string | null): void;
 }
 
-/** The value of „Keine“: a Select needs a string */
+/** The value of „Ohne“: a Select needs a string */
 const NONE = '';
 
 let instances = 0;
@@ -31,7 +31,7 @@ export const LocalizationSelect = (props: LocalizationSelectProps) => {
         let active = true;
         SkillServiceClient.instance().getLocalizationLanguages()
             .then(result => active && setLanguages(result))
-            // Without the list only „Keine“ is offered
+            // Without the list only „Ohne“ is offered
             .catch(error => console.error(error));
         return () => {
             active = false;
@@ -42,7 +42,7 @@ export const LocalizationSelect = (props: LocalizationSelectProps) => {
         ? [...languages, {code: props.value, name: props.value}]
         : languages;
     return <FormControl variant="filled" className={props.className}>
-        {/* Shrunk: „Keine“ is a value of its own, the field is never empty */}
+        {/* Shrunk: „Ohne“ is a value of its own, the field is never empty */}
         <InputLabel id={labelId} shrink>{PowerLocalize.get('ViewProfileLocalization.Label')}</InputLabel>
         <Select labelId={labelId}
                 displayEmpty

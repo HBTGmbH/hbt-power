@@ -517,8 +517,9 @@ label.pwr-category-level-label {
     resize: none;
 }
 
-/* Read-only fields outside of .pwr-read-only (e.g. report templates) are not editable either: no grey area */
-.MuiFilledInput-root:has(> .MuiFilledInput-input[readonly]) {
+/* Read-only fields outside of .pwr-read-only (e.g. report templates) are not editable either: no grey area. Not
+   the hidden copy that a growing text area (maxRows) measures itself with, which is read-only too */
+.MuiFilledInput-root:has(> .MuiFilledInput-input[readonly]:not([aria-hidden])) {
     background-color: transparent;
 }
 
@@ -669,14 +670,20 @@ label.pwr-category-level-label {
     flex: 0 0 auto;
 }
 
-/* Wide enough for „Keine (Namen aus dem Skill-Baum)“; doubled against the min-width of FormControl */
+/* Wide enough for its label and „Deutsch (deu)“; doubled against the min-width of FormControl */
 .pwr-view-localization-select.pwr-view-localization-select {
-    min-width: 300px;
+    min-width: 240px;
 }
 
-/* In the title row right before the buttons */
-.pwr-view-profile-title-row > .pwr-view-localization-select {
-    margin-left: auto;
+/* Name and language of the view profile side by side (#179); below each other when narrow */
+.pwr-view-profile-general-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.pwr-view-profile-general-row > .pwr-view-profile-name {
+    flex: 1 1 320px;
 }
 
 /* The text of the first jump in line with the title: a text button has 8px padding */
@@ -685,6 +692,19 @@ label.pwr-category-level-label {
     flex-wrap: wrap;
     gap: 8px;
     margin-left: -8px;
+}
+
+/* A button that is a link (the jumps, #179): not underlined, framed or recoloured by Bootstrap's link styles;
+   Material-UI marks the keyboard focus itself */
+a.MuiButton-root:hover,
+a.MuiButton-root:focus {
+    text-decoration: none;
+    outline: none;
+}
+
+a.MuiButton-textPrimary:hover,
+a.MuiButton-textPrimary:focus {
+    color: #191e55;
 }
 
 .pwr-view-profile-nav-count {

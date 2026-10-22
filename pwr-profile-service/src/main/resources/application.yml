@@ -26,7 +26,6 @@ logging:
   file: profile-service.log
 # This service can be polite!
 isPolite: true
-default-chars-per-line: 32
 # The default is a docker-compose deployment; use hostnames
 pwr-skill-service-url: http://pwr-skill-service:9003
 # The default is a docker-compose deployment; use hostnames

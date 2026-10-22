@@ -32,12 +32,12 @@ public class ReportServiceClient {
         return restTemplate.postForObject(pwrReportServiceUrl + "/report/preview", reportInfo, byte[].class);
     }
 
-    public ResponseEntity<String> generateReport(ReportInfo reportInfo, String type, Integer charsPerLine) {
-        return restTemplate.exchange(pwrReportServiceUrl + "/report?type={type}&charsperline={charsPerLine}",
+    public ResponseEntity<String> generateReport(ReportInfo reportInfo, String type) {
+        return restTemplate.exchange(pwrReportServiceUrl + "/report?type={type}",
                 HttpMethod.POST,
                 new HttpEntity<>(reportInfo),
                 String.class,
-                Map.of("type", type, "charsPerLine", charsPerLine)
+                Map.of("type", type)
         );
     }
 }

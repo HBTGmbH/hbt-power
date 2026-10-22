@@ -9,7 +9,6 @@ const CLIENT_BUILD_INFO_LOCATION = "/build_info.json";
 const POWER_APP_PATH = "";
 
 const GLOBAL_OPTIONS = {
-    defaultCharsPerLine: 32,
     greetings: ["Moin", "Hallo", "Ahoi", "Willkommen"]
 };
 
