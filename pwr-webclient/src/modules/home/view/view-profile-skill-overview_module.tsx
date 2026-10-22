@@ -10,7 +10,7 @@ import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
-import {Chip, Icon, Link} from '@material-ui/core';
+import {Chip, Link} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrRow} from '../../general/pwr-form-section';
 import {ThunkDispatch} from 'redux-thunk';
@@ -119,13 +119,12 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
         if (!skill.versions || skill.versions.length === 0) {
             return '–';
         }
-        // Click a version to show or hide it in the export; a shown one is filled and ticked
+        // Click a version to show or hide it in the export; a hidden one is grey and struck through
         return <PwrRow>
             {skill.versions.map(version =>
-                <Chip key={version.name} size="small" clickable label={version.name}
-                      color={version.enabled ? 'primary' : 'default'}
-                      variant={version.enabled ? 'default' : 'outlined'}
-                      icon={version.enabled ? <Icon className="material-icons">done</Icon> : undefined}
+                <Chip key={version.name} size="small" clickable variant="outlined" label={version.name}
+                      className={version.enabled ? undefined : 'pwr-view-version-hidden'}
+                      aria-label={PowerLocalize.getFormatted('ViewProfileOverview.Version', version.name)}
                       aria-pressed={version.enabled}
                       onClick={() => this.handleVersionToggle(skill.name, version.name, !version.enabled)}/>)}
         </PwrRow>;
@@ -157,6 +156,8 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             },
             {
                 header: PowerLocalize.get('ViewEntryField.Versions'),
+                // More room than the name, so a few versions fit in one line
+                width: 'minmax(0, 1.5fr)',
                 render: skill => this.renderVersions(skill),
             },
         ];

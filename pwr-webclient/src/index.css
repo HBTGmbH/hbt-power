@@ -720,6 +720,16 @@ body {
     padding: 0 8px 8px 8px;
 }
 
+/* A version hidden in the export: like a skill removed by the next save (#103) */
+.pwr-view-version-hidden .MuiChip-label {
+    color: rgba(0, 0, 0, 0.38);
+    text-decoration: line-through;
+}
+
+.MuiChip-outlined.pwr-view-version-hidden {
+    border-color: rgba(0, 0, 0, 0.12);
+}
+
 /* The edge of the card closes the list of its skills, no line below the last one */
 .pwr-view-entries-card-details .pwr-view-entries-item:last-child {
     border-bottom: none;
