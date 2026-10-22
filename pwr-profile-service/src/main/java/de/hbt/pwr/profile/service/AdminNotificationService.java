@@ -134,9 +134,11 @@ public class AdminNotificationService {
         // notification without deleting the skill.
         // This problem is ignored by decisions for now.
 
+        String skillName = notification.getSkill().getName();
+        // The notifications first: they reference the skills that go next
+        adminNotificationRepository.deleteAll(adminNotificationRepository.findSkillNotificationsBySkillName(skillName));
         // Delete the skill and all skills that have the same name (might happen).
-        deleteSkillsWithSameName(notification.getSkill().getName());
-        adminNotificationRepository.deleteBySkillName(notification.getSkill().getName());
+        deleteSkillsWithSameName(skillName);
     }
 
     /**
@@ -198,6 +200,8 @@ public class AdminNotificationService {
             // Remove all skills from all projects.
             profile.getProjects().forEach(project -> project.getSkills().removeAll(toRemove));
         });
+        // Removed from the profile, a skill would stay behind without one (no orphan removal)
+        skillRepository.deleteAll(toRemove);
     }
 
     private void deleteReferencingEntries(Profile profile, NameEntity nameEntity) {

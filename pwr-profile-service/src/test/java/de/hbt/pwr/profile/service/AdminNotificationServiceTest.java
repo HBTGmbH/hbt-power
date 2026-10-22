@@ -266,6 +266,46 @@ public class AdminNotificationServiceTest extends AbstractIntegrationTest {
     }
 
     /**
+     * Deleting a skill notification (#187) removes the skill from every profile and project that uses it and deletes
+     * every notification about that skill name; other skills and their notifications stay
+     */
+    @Test
+    @Transactional
+    public void skillNotificationDeleteActionRemovesSkillEverywhere() {
+        Skill delete1 = newSkill("Delete1", 1);
+        Skill keep1 = newSkill("Keep1", 2);
+        Project project = new Project();
+        project.setSkills(new HashSet<>(Arrays.asList(delete1, keep1)));
+        projectRepository.saveAndFlush(project);
+        Profile profile1 = new Profile();
+        profile1.setSkills(new HashSet<>(Arrays.asList(delete1, keep1)));
+        profile1.getProjects().add(project);
+        profile1 = profileRepository.saveAndFlush(profile1);
+
+        Skill delete2 = newSkill("Delete1", 3);
+        Profile profile2 = new Profile();
+        profile2.setSkills(new HashSet<>(Collections.singletonList(delete2)));
+        profile2 = profileRepository.saveAndFlush(profile2);
+
+        SkillNotification notification = (SkillNotification) adminNotificationRepository.saveAndFlush(
+                adminNotificationService.createUnknownSkillNotification(profile1, delete1));
+        adminNotificationRepository.saveAndFlush(adminNotificationService.createUnknownSkillNotification(profile2, delete2));
+        AdminNotification keepNotification = adminNotificationRepository.saveAndFlush(
+                adminNotificationService.createUnknownSkillNotification(profile1, keep1));
+
+        notification.executeDeleteAction(adminNotificationService);
+        adminNotificationRepository.flush();
+
+        assertThat(adminNotificationRepository.findAll()).containsExactly(keepNotification);
+        assertThat(skillRepository.findAllByName("Delete1")).isEmpty();
+        Profile retrieved1 = profileRepository.findById(profile1.getId()).orElseThrow(IllegalStateException::new);
+        assertThat(retrieved1.getSkills()).containsExactly(keep1);
+        assertThat(retrieved1.getProjects().iterator().next().getSkills()).containsExactly(keep1);
+        Profile retrieved2 = profileRepository.findById(profile2.getId()).orElseThrow(IllegalStateException::new);
+        assertThat(retrieved2.getSkills()).isEmpty();
+    }
+
+    /**
      * Validates that the {@link AdminNotificationService#fixNameEntity(Long, NameEntity, AdminNotification)} correctly
      * renames only the affected {@link NameEntity} objects.
      */
