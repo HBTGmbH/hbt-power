@@ -265,19 +265,18 @@ public class ViewProfileOperationService {
 
             Category newDisplayCategory = getNewDisplayCategory(name, newDisplayCategoryName);
             if (newDisplayCategory != null) {
-                skill.setDisplayCategory(newDisplayCategory);
-                if (viewProfile.getDisplayCategories().stream().noneMatch(
-                        category -> category.getId().equals(newDisplayCategory.getId()))) {
-                    newDisplayCategory.getDisplaySkills().add(skill);
-                    newDisplayCategory.setIsDisplay(true);
-                    newDisplayCategory.setEnabled(true);
-                    viewProfile.getDisplayCategories().add(newDisplayCategory);
-                } else {
-                    viewProfile.getDisplayCategories().stream()
-                            .filter(category -> category.getId().equals(newDisplayCategory.getId()))
-                            .findAny()
-                            .ifPresent(category -> category.getDisplaySkills().add(skill));
-                }
+                // The category of the view profile if it has it, the new one otherwise
+                Category target = viewProfile.getDisplayCategories().stream()
+                        .filter(category -> category.getId().equals(newDisplayCategory.getId()))
+                        .findAny()
+                        .orElseGet(() -> {
+                            newDisplayCategory.setIsDisplay(true);
+                            newDisplayCategory.setEnabled(true);
+                            viewProfile.getDisplayCategories().add(newDisplayCategory);
+                            return newDisplayCategory;
+                        });
+                // Adds the skill to it, once (#160: it was added a second time before)
+                skill.setDisplayCategory(target);
             }
         }
         LOG.debug(viewProfile.getDisplayCategories().toString());

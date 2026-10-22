@@ -10,7 +10,8 @@ import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
-import {Chip} from '@material-ui/core';
+import {Chip, Typography} from '@material-ui/core';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PwrIconButton} from '../../general/pwr-icon-button';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrRow} from '../../general/pwr-form-section';
@@ -116,14 +117,14 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
         this.props.toggleVersion(this.props.viewProfileId, skillName, versionName, isEnabled);
     };
 
-    private renderVersions(skill: ViewSkill) {
+    private renderVersions(skill: ViewSkill, locked: boolean) {
         if (!skill.versions || skill.versions.length === 0) {
             return '–';
         }
         // Click a version to show or hide it in the export; a hidden one is grey and struck through
         return <PwrRow>
             {skill.versions.map(version =>
-                <Chip key={version.name} size="small" clickable variant="outlined" label={version.name}
+                <Chip key={version.name} size="small" clickable variant="outlined" label={version.name} disabled={locked}
                       className={version.enabled ? undefined : 'pwr-view-version-hidden'}
                       aria-label={PowerLocalize.getFormatted('ViewProfileOverview.Version', version.name)}
                       aria-pressed={version.enabled}
@@ -132,6 +133,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
     }
 
     private skillColumns(categoryIndex: number): Array<ViewEntryColumn<ViewSkill>> {
+        const locked = !this.props.viewProfile.displayCategories[categoryIndex].enabled;
         const columns: Array<ViewEntryColumn<ViewSkill>> = [
             {
                 header: <ComparableNestedEntryButton
@@ -154,7 +156,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                 width: DATE_WIDTH,
                 render: skill => skill.rating,
             },
-            this.versionsColumn,
+            {...this.versionsColumn, render: skill => this.renderVersions(skill, locked)},
             {
                 // The name switches the skill (#152), so the choice of the display category has its own button
                 header: null,
@@ -166,24 +168,32 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             },
         ];
         // Versions off for the whole view profile (#151): no column, the others get its width
-        return this.props.viewProfile.showSkillVersions ? columns : columns.filter(column => column !== this.versionsColumn);
+        return this.props.viewProfile.showSkillVersions ? columns : columns.filter(column => column.header !== this.versionsColumn.header);
     }
 
     private readonly versionsColumn: ViewEntryColumn<ViewSkill> = {
         header: PowerLocalize.get('ViewEntryField.Versions'),
         // More room than the name, so a few versions fit in one line
         width: 'minmax(0, 1.5fr)',
-        render: skill => this.renderVersions(skill),
+        render: skill => this.renderVersions(skill, false),
     };
 
-    private renderDetails = (category: ViewCategory, categoryIndex: number) => <ViewProfileEntries
+    private renderDetails = (category: ViewCategory, categoryIndex: number) => <>
+        {/* Switched off, the category brings none of its skills into the export (#159); their own state stays */}
+        {!category.enabled && <>
+            <Typography variant="body2" color="textSecondary">{PowerLocalize.get('ViewProfileOverview.CategoryOff')}</Typography>
+            <PwrSpacer size="tight"/>
+        </>}
+        <ViewProfileEntries
+        locked={!category.enabled}
         movableEntryType="SKILL"
         toggleableEntryType="SKILL"
         columns={this.skillColumns(categoryIndex)}
         entries={category.displaySkills}
         onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('DISPLAY_CATEGORY', categoryIndex, type, sourceIndex, targetIndex)}
         onToggle={(type, index, isEnabled) => this.handleSkillToggle(category.displaySkills, index, isEnabled)}
-    />;
+    />
+    </>;
 
     private categoryColumns(): Array<ViewEntryColumn<ViewCategory>> {
         return [

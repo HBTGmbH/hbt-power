@@ -72,6 +72,40 @@ public class DisplayCategoryTest {
     }
 
 
+    /**
+     * Into a category the view profile doesn't have yet: the skill is in it once (#160)
+     */
+    @Test
+    public void skillIsOnceInANewDisplayCategory() {
+        shouldReturnSkillServiceSkill(makeServiceSkill());
+        viewProfile = viewProfileService.setDisplayCategory(viewProfile, skill1Name, category3Name);
+
+        Category category3 = viewProfile.getDisplayCategories().stream()
+                .filter(category -> category.getName().equals(category3Name)).findFirst().orElseThrow(AssertionError::new);
+        assertThat(category3.getDisplaySkills()).extracting(Skill::getName).containsExactly(skill1Name);
+        assertThat(category3.getEnabled()).isTrue();
+        assertThat(viewProfile.findSkillByName(skill1Name).get().getDisplayCategory()).isSameAs(category3);
+        // The old category lost its only skill and is gone
+        assertThat(viewProfile.getDisplayCategories()).extracting(Category::getName).doesNotContain(category1Name);
+    }
+
+    /**
+     * Into a category the view profile has: the skill is in it once, and points to that category (#160)
+     */
+    @Test
+    public void skillIsOnceInAnExistingDisplayCategory() {
+        SkillServiceCategory serviceCategory2 = new SkillServiceCategory(2, category2Name);
+        SkillServiceCategory serviceCategory1 = new SkillServiceCategory(category1Name, serviceCategory2, true);
+        serviceCategory1.setId(1);
+        shouldReturnSkillServiceSkill(new SkillServiceSkill(skill1Name, serviceCategory1));
+
+        viewProfile = viewProfileService.setDisplayCategory(viewProfile, skill1Name, category2Name);
+
+        assertThat(category2.getDisplaySkills()).extracting(Skill::getName).containsExactly(skill2Name, skill1Name);
+        assertThat(viewProfile.findSkillByName(skill1Name).get().getDisplayCategory()).isSameAs(category2);
+        assertThat(viewProfile.getDisplayCategories()).containsExactly(category2);
+    }
+
     private SkillServiceSkill makeServiceSkill() {
         SkillServiceCategory cat3 = new SkillServiceCategory(3, category3Name);
         SkillServiceCategory cat1 = new SkillServiceCategory(category1Name, cat3, true);
