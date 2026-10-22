@@ -343,24 +343,24 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                                             onSearchChange={this.setBrokerName}/>
                 </PwrFormSection>
                 <PwrFormSection title={PowerLocalize.get('Profile.Project.Skills')}>
-                    <SkillSearcher
-                        disabled={this.isEditDisabled()}
-                        id="SelectedProject.SkillSearcher"
-                        fullWidth
-                        label={PowerLocalize.get('Profile.Project.AddSkill')}
-                        initialValue={this.state.skillSearchValue}
-                        value={this.state.skillSearchValue}
-                        onValueChange={skillSearchValue => this.setState({skillSearchValue})}
-                        onNewRequest={name => this.addSkill(name)}
-                    />
-                    {/* Suggestions belong to adding skills: right below the search, only in edit mode */}
+                    {/* Adding skills only in edit mode (#145): in read mode the section shows just the skills */}
                     {this.isEditEnabled() && <>
+                        <SkillSearcher
+                            id="SelectedProject.SkillSearcher"
+                            fullWidth
+                            label={PowerLocalize.get('Profile.Project.AddSkill')}
+                            initialValue={this.state.skillSearchValue}
+                            value={this.state.skillSearchValue}
+                            onValueChange={skillSearchValue => this.setState({skillSearchValue})}
+                            onNewRequest={name => this.addSkill(name)}
+                        />
+                        {/* Suggestions belong to adding skills: right below the search */}
                         <PwrSpacer size="tight"/>
                         <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
+                        <PwrSpacer/>
+                        <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
+                        <PwrSpacer size="tight"/>
                     </>}
-                    <PwrSpacer/>
-                    <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
-                    <PwrSpacer size="tight"/>
                     <PwrRow>
                         {this.displayedSkills().map(skill => this.toSkillChip(skill))}
                     </PwrRow>
