@@ -13,7 +13,6 @@ import {PwrDatePicker} from '../../../../general/pwr-date-picker_module';
 import {DatePickerType} from '../../../../../model/DatePickerType';
 import {connect} from 'react-redux';
 import {nameEntityName} from '../../../../../utils/NullSafeUtils';
-import {PwrInputField} from '../../../../general/pwr-input-field';
 import {
     cancelEditSelectedProjectAction,
     editSelectedProjectAction,
@@ -33,6 +32,8 @@ import {PwrCompanyAutocomplete} from '../../../../general/autocompletes/pwr-comp
 import {Alerts} from '../../../../../utils/Alerts';
 import {ThunkDispatch} from 'redux-thunk';
 import {findSkillByName, PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
+import {LimitedTextField} from '../../../../general/limited-text-field-module';
+import {PROJECT_DESCRIPTION_LENGTH, PROJECT_NAME_LENGTH} from '../../../../../model/PwrConstants';
 
 interface ProjectProps {
     initials: string;
@@ -272,23 +273,28 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                     first field is level with the first project of the list */}
                 <PwrSpacer size="tight"/>
                 <PwrFormSection first>
-                    <PwrInputField
+                    {/* Maximum length as in the other forms (#141); no counter in read mode */}
+                    <LimitedTextField
                         disabled={this.isEditDisabled()}
+                        hideProgress={this.isEditDisabled()}
                         id="project-title"
                         label={PowerLocalize.get('Profile.Project.Name')}
-                        onValueChange={this.setName}
-                        value={this.project().name}
+                        maxCharacters={PROJECT_NAME_LENGTH}
+                        onChange={(_, name) => this.setName(name)}
+                        value={this.project().name || ''}
                         fullWidth
                     />
                     <PwrSpacer/>
-                    <PwrInputField
+                    <LimitedTextField
                         disabled={this.isEditDisabled()}
+                        hideProgress={this.isEditDisabled()}
                         id="project-description"
                         label={PowerLocalize.get('Profile.Project.Description')}
-                        value={this.project().description}
-                        onValueChange={this.setDescription}
+                        maxCharacters={PROJECT_DESCRIPTION_LENGTH}
+                        onChange={(_, description) => this.setDescription(description)}
+                        value={this.project().description || ''}
                         fullWidth
-                        multiline
+                        multiLine
                         rows={4}
                     />
                     <PwrSpacer/>

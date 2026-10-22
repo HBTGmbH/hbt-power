@@ -19,6 +19,11 @@ public class HBTPowerConstants {
      */
     public static final int PROFILE_DESCRIPTION_LENGTH = 4000;
 
+    /**
+     * As in the production database, which already has varchar(4000); without it Hibernate creates varchar(255) (#141)
+     */
+    public static final int PROJECT_DESCRIPTION_LENGTH = 4000;
+
 
     private static Integer DEFAULT_CHARS_PER_LINE;
 
