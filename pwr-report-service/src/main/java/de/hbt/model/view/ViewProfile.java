@@ -45,6 +45,9 @@ public class ViewProfile {
 
     private List<ViewCategory> displayCategories = new ArrayList<>();
 
+    /** Versions of the skills in the export (#151); null from older view profile services counts as shown */
+    private Boolean showSkillVersions = true;
+
     public String getId() {
         return id;
     }

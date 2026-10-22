@@ -25,6 +25,11 @@ import java.util.stream.Stream;
 
     void restore(ViewProfile viewProfile) {
 
+        // Stored before #151: versions shown, as they were
+        if (viewProfile.getShowSkillVersions() == null) {
+            viewProfile.setShowSkillVersions(true);
+        }
+
         viewProfile.getDisplayCategories().forEach(category -> {
             category.getDisplaySkills().forEach(skill -> {
                 skill.setDisplayCategory(category);

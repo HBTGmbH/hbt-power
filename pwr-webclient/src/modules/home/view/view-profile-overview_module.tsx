@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Button, Dialog, Icon, LinearProgress, Paper, Tooltip, Typography} from '@material-ui/core';
+import {Button, Dialog, FormControlLabel, Icon, LinearProgress, Paper, Switch, Tooltip, Typography} from '@material-ui/core';
 import {ViewProfileEntriesOverview} from './view-profile-entries-overview_module';
 import {ViewProfileProjectsOverview} from './view-profile-projects-overview_module';
 import {ProfileGenerator} from './view-profile-generator_module';
@@ -50,6 +50,8 @@ interface ViewProfileOverviewDispatch {
     generate(viewProfileId: string, templateId: string): void;
 
     setDescription(description: string, viewProfileId: string): void;
+
+    setShowSkillVersions(viewProfileId: string, show: boolean): void;
 }
 
 class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
@@ -67,7 +69,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ViewProfileOverviewDispatch {
         return {
             generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, '2')),
-            setDescription: (description, viewProfileId) => dispatch(ViewProfileActionCreator.AsyncSetDescription(description, viewProfileId))
+            setDescription: (description, viewProfileId) => dispatch(ViewProfileActionCreator.AsyncSetDescription(description, viewProfileId)),
+            setShowSkillVersions: (viewProfileId, show) => dispatch(ViewProfileActionCreator.AsyncSetShowSkillVersions(viewProfileId, show))
         };
     }
 
@@ -280,14 +283,24 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     {/* The categories are cards without a header row: their sorting goes into the heading */}
                     {this.renderSection('SKILLS',
                         <ViewProfileSkillOverview viewProfileId={viewProfileId} sortedColumn={this.categoriesSorted()}/>,
-                        <Typography variant="body2" component="span" className="pwr-view-profile-section-sort">
-                            <SortedColumnContext.Provider value={this.categoriesSorted()}>
-                                <ComparableEntryButton sortableEntryType={SortableEntryType.DISPLAY_CATEGORY}
-                                                       sortableEntryField="name"
-                                                       label={PowerLocalize.get('ViewProfileOverview.SortCategories')}
-                                                       viewProfileId={viewProfileId}/>
-                            </SortedColumnContext.Provider>
-                        </Typography>)}
+                        <div className="pwr-view-profile-section-actions">
+                            {/* Versions of all skills on or off, on the page and in the export (#151) */}
+                            <Tooltip title={PowerLocalize.get('ViewProfileOverview.SkillVersions.Tooltip')}>
+                                <FormControlLabel className="pwr-view-profile-switch-label"
+                                                  label={<Typography variant="body2">{PowerLocalize.get('ViewProfileOverview.SkillVersions')}</Typography>}
+                                                  control={<Switch size="small" color="primary"
+                                                                   checked={this.props.viewProfile.showSkillVersions}
+                                                                   onChange={(e: any) => this.props.setShowSkillVersions(viewProfileId, e.target.checked)}/>}/>
+                            </Tooltip>
+                            <Typography variant="body2" component="span" className="pwr-view-profile-section-sort">
+                                <SortedColumnContext.Provider value={this.categoriesSorted()}>
+                                    <ComparableEntryButton sortableEntryType={SortableEntryType.DISPLAY_CATEGORY}
+                                                           sortableEntryField="name"
+                                                           label={PowerLocalize.get('ViewProfileOverview.SortCategories')}
+                                                           viewProfileId={viewProfileId}/>
+                                </SortedColumnContext.Provider>
+                            </Typography>
+                        </div>)}
                 </Paper>
             </div>);
         }

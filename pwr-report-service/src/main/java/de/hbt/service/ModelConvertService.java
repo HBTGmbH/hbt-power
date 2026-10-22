@@ -231,6 +231,8 @@ public class ModelConvertService {
                 skills.add(viewSkill);
             }
         }
+        // Versions of all skills can be switched off at once (#151)
+        boolean showVersions = !Boolean.FALSE.equals(viewProfile.getShowSkillVersions());
         return skills.stream().filter(ViewEntry::getEnabled).map(viewSkill -> {
             Skill sExport = new Skill();
             sExport.setBezeichnung(toSynonymSet(viewSkill.getName()));
@@ -241,7 +243,7 @@ public class ModelConvertService {
                     .filter(ViewSkillVersion::isEnabled)
                     .map(ViewSkillVersion::getName)
                     .collect(Collectors.joining(", "));
-            if (!collect.equals("")) {
+            if (showVersions && !collect.equals("")) {
                 sExport.setVersions(collect);
             }
             return sExport;

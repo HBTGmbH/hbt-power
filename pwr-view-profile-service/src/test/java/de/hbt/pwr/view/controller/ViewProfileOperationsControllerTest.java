@@ -114,6 +114,15 @@ public class ViewProfileOperationsControllerTest {
     }
 
     @Test
+    public void setsShowSkillVersionsAndReturns200() throws Exception {
+        String url = urlBasePath() + "SKILL/versions/false";
+
+        patchAndAssertStatus200(url);
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService).should(times(1)).setShowSkillVersions(viewProfileReturned, false);
+    }
+
+    @Test
     public void enabledAllEntriesAndReturns200() throws Exception {
         ProfileEntryType profileEntryType = ProfileEntryType.CAREER;
         String url = urlBasePath() + profileEntryType + "/all/visibility/" + isVisible;

@@ -16,6 +16,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ViewProfileRestoreAspectTest {
 
+    @Test
+    public void shouldShowSkillVersions_whenStoredWithoutTheSetting() {
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setShowSkillVersions(null);
+        new ViewProfileRestoreAspect().restore(viewProfile);
+        assertThat(viewProfile.getShowSkillVersions()).isTrue();
+    }
+
+    @Test
+    public void shouldKeepHiddenSkillVersions() {
+        ViewProfile viewProfile = new ViewProfile();
+        viewProfile.setShowSkillVersions(false);
+        new ViewProfileRestoreAspect().restore(viewProfile);
+        assertThat(viewProfile.getShowSkillVersions()).isFalse();
+    }
+
     private List<Category> executeMerge(List<Category> categories) {
         ViewProfile viewProfile = new ViewProfile();
         viewProfile.setDisplayCategories(categories);

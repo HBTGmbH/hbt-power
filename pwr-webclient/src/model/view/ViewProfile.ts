@@ -30,6 +30,8 @@ export class ViewProfile {
     projectRoles: Array<ViewProjectRole>;
     projects: Array<ViewProject>;
     displayCategories: Array<ViewCategory>;
+    /** Versions of the skills on the page and in the export (#151) */
+    showSkillVersions: boolean;
 
     private skillDisplayCategories: Map<string, ViewCategory>;
 
@@ -48,6 +50,8 @@ export class ViewProfile {
         this.projectRoles = viewProfile.projectRoles;
         this.projects = viewProfile.projects.map(ViewProject.of);
         this.displayCategories = viewProfile.displayCategories;
+        // Missing in view profiles from before #151: shown, as they were
+        this.showSkillVersions = viewProfile.showSkillVersions !== false;
 
         this.skillDisplayCategories = new Map();
         this.gatherParents();

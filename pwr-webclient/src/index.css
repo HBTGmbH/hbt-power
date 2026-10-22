@@ -650,6 +650,21 @@ body {
     font-weight: 500;
 }
 
+/* Actions in the heading of a section (#151): the versions switch and the sorting */
+.pwr-view-profile-section-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+}
+
+/* A label of Material-UI: without the bold and the space below that Bootstrap gives every label */
+label.pwr-view-profile-switch-label {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
 /* Sorting in the heading is an action: Dunkelblau like the other actions, also its arrow */
 .pwr-view-profile-section-sort .MuiTableSortLabel-root,
 .pwr-view-profile-section-sort .MuiTableSortLabel-root.MuiTableSortLabel-active,
