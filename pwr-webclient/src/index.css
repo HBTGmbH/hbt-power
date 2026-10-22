@@ -241,6 +241,28 @@ body {
     filter: alpha(opacity=40);
 }
 
+/* Picture of a consultant tile that opens the profile (#193) */
+.consultant-tile-picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.consultant-tile-picture:hover img {
+    filter: brightness(1.1);
+}
+
+/* ButtonBase takes away the outline, so the focus frame lies over the picture: white with the primary colour around, visible on
+   light and dark pictures */
+.consultant-tile-picture-focus::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 3px #191E55;
+    pointer-events: none;
+}
+
 .dashboard-element {
     padding: 8px;
     margin-top: 8px;

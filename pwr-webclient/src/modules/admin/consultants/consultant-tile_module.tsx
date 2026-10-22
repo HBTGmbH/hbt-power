@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {GridListTile, Icon, Menu, MenuItem, Tooltip} from '@material-ui/core';
+import {ButtonBase, GridListTile, Icon, Menu, MenuItem, Tooltip} from '@material-ui/core';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditDialog} from './consultant-edit-dialog_module';
@@ -171,6 +171,30 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
         </Tooltip>;
     };
 
+    /**
+     * The picture opens the profile like "Profil bearbeiten" in the menu (#193); not for inactive consultants, whose
+     * menu entry is disabled as well
+     */
+    private renderPicture = () => {
+        const info = this.props.consultantInfo;
+        const picture = <PwrProfilePicture className={info.active() ? '' : 'disabled-consultant-img'}
+                                           variant={'square'} style={{width: '100%', height: '100%'}}
+                                           alt={info.getFullName()}
+                                           pictureId={info.profilePictureId()}/>;
+        if (!info.active()) {
+            return picture;
+        }
+        const openProfile = PowerLocalize.getFormatted('ConsultantTile.OpenProfile',
+            info.firstName() + ' ' + info.lastName());
+        return <Tooltip title={openProfile}>
+            <ButtonBase className="consultant-tile-picture" focusVisibleClassName="consultant-tile-picture-focus"
+                        aria-label={openProfile}
+                        onClick={() => this.props.redirectToUser(this.props.initials)}>
+                {picture}
+            </ButtonBase>
+        </Tooltip>;
+    };
+
     render() {
         return (
             <div>
@@ -182,7 +206,6 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
                 />
                 <GridListTile
                     key={'ConsultantTile.' + this.props.initials}
-                    title={this.props.consultantInfo.getFullName()}
 
                     /*actionPosition="right"
                     titlePosition="top"
@@ -191,13 +214,12 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
                     rows={1}
                     style={{width: '300px', height: '300px', padding: 8}}
                 >
-
-                    <PwrProfilePicture className={this.props.consultantInfo.active() ? '' : 'disabled-consultant-img'}
-                                       variant={'square'} style={{width: '100%', height: '100%'}}
-                                       alt={this.props.consultantInfo.getFullName()}
-                                       pictureId={this.props.consultantInfo.profilePictureId()}/>
+                    {this.renderPicture()}
                     <GridListTileBar
-                        title={this.props.consultantInfo.getFullName()}
+                        // The full name on hover, since the bar cuts a long one; the picture has its own tooltip
+                        title={<span title={this.props.consultantInfo.getFullName()}>
+                            {this.props.consultantInfo.getFullName()}
+                        </span>}
                         subtitle={this.renderProfileCheck()}
                         //actionIcon={this.renderMenu()
                         actionIcon={

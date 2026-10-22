@@ -177,6 +177,7 @@
   "SkillNotificationDialog.Step.Edit": "Skill bearbeiten",
   "ConsultantTile.EditProfile": "Profil bearbeiten",
   "ConsultantTile.EditConsultant": "Berater bearbeiten",
+  "ConsultantTile.OpenProfile": "Profil von {0} öffnen",
   "ConsultantTile.CreateConsultant": "Neuer Berater",
   "UserLogin.InvalidName": "Ungültiges Kürzel",
   "SkillTree.SearchAndAddSkill": "Skill suchen/hinzufügen",
