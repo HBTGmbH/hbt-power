@@ -566,3 +566,200 @@ body {
         display: none !important;
     }
 }
+
+/* View profile (#149): one page, a header that stays below the app bar with the actions and the jumps to the sections */
+.pwr-view-profile-header {
+    position: sticky;
+    top: 64px;
+    z-index: 3;
+    margin: 8px;
+    padding: 16px;
+}
+
+@media (max-width: 599px) {
+    .pwr-view-profile-header {
+        top: 56px;
+    }
+}
+
+.pwr-view-profile-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+}
+
+.pwr-view-profile-title {
+    min-width: 0;
+}
+
+.pwr-view-profile-actions {
+    flex: 0 0 auto;
+}
+
+/* The text of the first jump in line with the title: a text button has 8px padding */
+.pwr-view-profile-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: -8px;
+}
+
+.pwr-view-profile-nav-count {
+    margin-left: 8px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.pwr-view-profile-content {
+    margin: 8px;
+    padding: 16px;
+}
+
+/* Sections of the page: a line above, the title with more weight than the groups below it; actions (sorting) on
+   the right of the title */
+.pwr-view-profile-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.pwr-view-profile-section-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+}
+
+.pwr-view-profile-section-title .MuiTypography-h6 {
+    font-weight: 500;
+}
+
+/* Sorting in the heading is an action: Dunkelblau like the other actions, also its arrow */
+.pwr-view-profile-section-sort .MuiTableSortLabel-root,
+.pwr-view-profile-section-sort .MuiTableSortLabel-root.MuiTableSortLabel-active,
+.pwr-view-profile-section-sort .MuiTableSortLabel-root.MuiTableSortLabel-active .MuiTableSortLabel-icon {
+    color: #191E55;
+}
+
+/* Groups of entries, two per row from Material-UI md up */
+.pwr-view-groups {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+}
+
+@media (min-width: 960px) {
+    .pwr-view-groups {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Entries of a view profile: one CSS grid template per table (drag handle, switch, name, fixed columns), the header
+   on the same lines as the cells */
+.pwr-view-entries-row {
+    display: grid;
+    align-items: center;
+    column-gap: 8px;
+    min-height: 40px;
+    padding: 0 8px;
+    /* px, not rem: Bootstrap sets the root font size to 10px */
+    font-size: 14px;
+    line-height: 1.43;
+}
+
+.pwr-view-entries-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.pwr-view-entries-head {
+    min-height: 32px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.pwr-view-entries-cell {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Hidden in the export: the content fades, switch and handle stay as they are */
+.pwr-view-entry-disabled .pwr-view-entries-cell {
+    opacity: 0.45;
+}
+
+/* Light, so the handles of all rows don't dominate; dark under the mouse */
+.pwr-view-entries-handle.material-icons {
+    display: block;
+    color: rgba(0, 0, 0, 0.38);
+    cursor: grab;
+}
+
+.pwr-view-entries-handle.material-icons:hover {
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.pwr-view-entry-title {
+    font-weight: 500;
+}
+
+/* Details of a project: below its name (8px padding + 32px handle + 40px switch + 2 × 8px gap) */
+.pwr-view-entries-details {
+    padding: 8px 8px 24px 96px;
+}
+
+.pwr-view-entries-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.pwr-view-entries-card-details {
+    padding: 0 8px 8px 8px;
+}
+
+/* Narrow screens: no room for the fixed columns next to the name. They go below it, one per line; handle, switch
+   and the expand button stay on the first line. Overrides the template set on the row. */
+@media (max-width: 599px) {
+    .pwr-view-entries-row {
+        grid-template-columns: 32px 40px minmax(0, 1fr) !important;
+    }
+
+    .pwr-view-entries-expandable {
+        grid-template-columns: 32px 40px minmax(0, 1fr) 40px !important;
+    }
+
+    .pwr-view-entries-secondary {
+        grid-column: 3 / -1;
+        color: rgba(0, 0, 0, 0.6);
+    }
+
+    .pwr-view-entries-expand {
+        grid-column: 4;
+        grid-row: 1;
+    }
+
+    .pwr-view-entries-details {
+        padding-left: 8px;
+    }
+}
+
+/* Where the dragged entry lands: dashed, its content hidden (#149) */
+.pwr-view-entries-drop-target {
+    outline: 2px dashed rgba(25, 30, 85, 0.5);
+    outline-offset: -2px;
+    background-color: rgba(25, 30, 85, 0.04);
+}
+
+.pwr-view-entries-drop-target > * {
+    visibility: hidden;
+}
+
+/* The entry being dragged hangs at the body, above the sticky header */
+.pwr-view-entries-drag-helper {
+    z-index: 1200;
+    background-color: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}

@@ -3,20 +3,17 @@ import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
-import {Button, ListSubheader} from '@material-ui/core';
-import {ViewProfileEntries} from './entries/view-profile-entries_module';
+import {ViewEntryColumn, ViewProfileEntries} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewProject} from '../../../model/view/ViewProject';
 import {ViewSkill} from '../../../model/view/ViewSkill';
+import {ViewProjectRole} from '../../../model/view/ViewProjectRole';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
-import {EntryRenderers} from './entries/EntryRenderers';
-import {formatToShortDisplay} from '../../../utils/DateUtil';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography/Typography';
+import {DATE_WIDTH, EntryRenderers} from './entries/EntryRenderers';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {PwrFormSubCaption} from '../../general/pwr-typography';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {ThunkDispatch} from 'redux-thunk';
-
 
 interface ViewProfileProjectsOverviewProps {
     viewProfile: ViewProfile;
@@ -24,10 +21,6 @@ interface ViewProfileProjectsOverviewProps {
 
 interface ViewProfileProjectsOverviewLocalProps {
     viewProfileId: string;
-}
-
-interface ViewProfileProjectsOverviewLocalState {
-
 }
 
 interface ViewProfileProjectsOverviewDispatch {
@@ -42,7 +35,7 @@ interface ViewProfileProjectsOverviewDispatch {
 
 class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProjectsOverviewProps
     & ViewProfileProjectsOverviewLocalProps
-    & ViewProfileProjectsOverviewDispatch, ViewProfileProjectsOverviewLocalState> {
+    & ViewProfileProjectsOverviewDispatch> {
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileProjectsOverviewLocalProps): ViewProfileProjectsOverviewProps {
         return {
@@ -66,13 +59,6 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
     }
 
 
-    private renderSkill = (entry: ViewSkill) => {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'ViewSkill_' + entry.name}>{entry.name}</td>);
-        res.push(<td key={'ViewSkill_' + entry.name + '_rating'}>{entry.rating}</td>);
-        return res;
-    };
-
     private handleNestedMove = (container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, sourceIndex: number, targetIndex: number) => {
         this.props.moveNestedEntry(this.props.viewProfileId, container, containerIndex, type, sourceIndex, targetIndex);
     };
@@ -89,81 +75,89 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
         this.props.toggleEntry(this.props.viewProfileId, type, index, isEnabled);
     };
 
+    private skillColumns(projectIndex: number): Array<ViewEntryColumn<ViewSkill>> {
+        return [
+            {
+                header: <ComparableNestedEntryButton
+                    container="PROJECT"
+                    sortableEntryType={SortableEntryType.SKILL}
+                    sortableEntryField="name"
+                    viewProfileId={this.props.viewProfileId}
+                    label={PowerLocalize.get('ViewEntryField.Name')}
+                    containerIndex={projectIndex}/>,
+                render: skill => skill.name,
+            },
+            {
+                header: <ComparableNestedEntryButton
+                    container="PROJECT"
+                    sortableEntryType={SortableEntryType.SKILL}
+                    sortableEntryField="rating"
+                    viewProfileId={this.props.viewProfileId}
+                    label={PowerLocalize.get('ViewEntryField.Rating')}
+                    containerIndex={projectIndex}/>,
+                width: DATE_WIDTH,
+                render: skill => skill.rating,
+            },
+        ];
+    }
 
-    private renderProjects = (entry: ViewProject, entryIndex: number) => {
-        let res: Array<JSX.Element> = [];
-        res.push(
-            <td key={'ViewProject_' + entry.name + entry.broker + entry.client}>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary
-                        title={entry.name}
-                    >
-                        <Typography style={{flexBasis: '33.33%'}} variant={'h5'}>{entry.name}</Typography>
-                        <Typography
-                            variant={'caption'}>{'From ' + formatToShortDisplay(entry.startDate) + ' to ' + formatToShortDisplay(entry.endDate)}</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails
-                    >
-                        <ListSubheader>Skills</ListSubheader>
-                        <ViewProfileEntries
-                            movableEntryType="SKILL"
-                            toggleableEntryType="SKILL"
-                            renderEntry={this.renderSkill}
-                            headers={[<ComparableNestedEntryButton
-                                container="PROJECT"
-                                sortableEntryType={SortableEntryType.SKILL}
-                                sortableEntryField="name"
-                                viewProfileId={this.props.viewProfileId}
-                                label="Name"
-                                containerIndex={entryIndex}/>,
-                                <ComparableNestedEntryButton
-                                    container="PROJECT"
-                                    sortableEntryType={SortableEntryType.SKILL}
-                                    sortableEntryField="rating"
-                                    viewProfileId={this.props.viewProfileId}
-                                    label="Rating"
-                                    containerIndex={entryIndex}
-                                />]}
-                            entries={entry.skills}
-                            onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', entryIndex, type, sourceIndex, targetIndex)}
-                            onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', entryIndex, type, index, isEnabled)}
-                        />
-                        <ListSubheader>Project Roles</ListSubheader>
-                        <ViewProfileEntries
-                            movableEntryType="ROLE"
-                            toggleableEntryType="ROLE"
-                            renderEntry={EntryRenderers.renderProjectRole}
-                            moveDisabled={true}
-                            headers={['Name']}
-                            entries={entry.projectRoles}
-                            onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', entryIndex, type, sourceIndex, targetIndex)}
-                            onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', entryIndex, type, index, isEnabled)}
-                        />
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
-            </td>);
-        return res;
-    };
+    private readonly roleColumns: Array<ViewEntryColumn<ViewProjectRole>> = [{
+        header: PowerLocalize.get('ViewEntryField.Name'),
+        render: role => role.name,
+    }];
 
+    private renderDetails = (project: ViewProject, projectIndex: number) => <div className="pwr-view-groups">
+        <section>
+            <PwrFormSubCaption>{PowerLocalize.get('Skill.Plural')}</PwrFormSubCaption>
+            <PwrSpacer size="tight"/>
+            <ViewProfileEntries
+                movableEntryType="SKILL"
+                toggleableEntryType="SKILL"
+                columns={this.skillColumns(projectIndex)}
+                entries={project.skills}
+                emptyText={PowerLocalize.get('ViewProfileOverview.Empty')}
+                onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', projectIndex, type, sourceIndex, targetIndex)}
+                onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', projectIndex, type, index, isEnabled)}
+            />
+        </section>
+        <section>
+            <PwrFormSubCaption>{PowerLocalize.get('ProjectRole.Plural')}</PwrFormSubCaption>
+            <PwrSpacer size="tight"/>
+            <ViewProfileEntries
+                movableEntryType="ROLE"
+                toggleableEntryType="ROLE"
+                moveDisabled={true}
+                columns={this.roleColumns}
+                entries={project.projectRoles}
+                emptyText={PowerLocalize.get('ViewProfileOverview.Empty')}
+                onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('PROJECT', projectIndex, type, sourceIndex, targetIndex)}
+                onToggle={(type, index, isEnabled) => this.handleNestedToggle('PROJECT', projectIndex, type, index, isEnabled)}
+            />
+        </section>
+    </div>;
+
+    private projectColumns(): Array<ViewEntryColumn<ViewProject>> {
+        return [
+            {
+                header: PowerLocalize.get('ViewEntryField.Name'),
+                render: project => <span className="pwr-view-entry-title">{project.name}</span>,
+            },
+            EntryRenderers.startDate(SortableEntryType.PROJECT, this.props.viewProfileId),
+            EntryRenderers.endDate(SortableEntryType.PROJECT, this.props.viewProfileId),
+        ];
+    }
 
     render() {
-        return (<div className="row">
-            <div className="col-md-12 fullWidth">
-                <ViewProfileEntries
-                    movableEntryType="PROJECT"
-                    toggleableEntryType="PROJECT"
-                    renderEntry={this.renderProjects}
-                    headers={[<span>
-                        <Button variant={'text'} disabled={true}>Name</Button>
-                        {EntryRenderers.renderStartDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
-                        {EntryRenderers.renderEndDate(SortableEntryType.PROJECT, this.props.viewProfileId)}
-                            </span>]}
-                    entries={this.props.viewProfile.projects}
-                    onMove={this.handleMove}
-                    onToggle={this.handleToggle}
-                />
-            </div>
-        </div>);
+        return <ViewProfileEntries
+            movableEntryType="PROJECT"
+            toggleableEntryType="PROJECT"
+            columns={this.projectColumns()}
+            renderDetails={this.renderDetails}
+            entries={this.props.viewProfile.projects}
+            emptyText={PowerLocalize.get('ViewProfileOverview.Empty')}
+            onMove={this.handleMove}
+            onToggle={this.handleToggle}
+        />;
     }
 }
 
