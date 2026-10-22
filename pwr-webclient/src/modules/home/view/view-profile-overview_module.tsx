@@ -19,6 +19,7 @@ import {PwrButton} from '../../general/pwr-button';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PwrFormCaption, PwrFormSubtitle} from '../../general/pwr-typography';
 import {ComparableEntryButton} from './entries/comprable-entry-button_module';
+import {SortedColumn, SortedColumnContext} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 
 
@@ -39,6 +40,8 @@ interface ViewProfileOverviewLocalState {
     descriptionDisabled: boolean;
     generatorOpen: boolean;
     updateDialogOpen: boolean;
+    /** Label of the sorting of the skill categories, if they are still in that order */
+    categoriesSortedBy: string;
 }
 
 interface ViewProfileOverviewDispatch {
@@ -72,7 +75,13 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             descriptionDisabled: true,
             generatorOpen: false,
             updateDialogOpen: false,
+            categoriesSortedBy: null,
         };
+    }
+
+    /** Shared by the sorting in the heading of the skills and the cards, which clear it when moved by hand */
+    private categoriesSorted(): SortedColumn {
+        return {label: this.state.categoriesSortedBy, setLabel: label => this.setState({categoriesSortedBy: label})};
     }
 
     private readonly headerRef = React.createRef<HTMLDivElement>();
@@ -264,12 +273,15 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     {this.renderSection('MASTER_DATA', <ViewProfileEntriesOverview viewProfileId={viewProfileId}/>)}
                     {this.renderSection('PROJECTS', <ViewProfileProjectsOverview viewProfileId={viewProfileId}/>)}
                     {/* The categories are cards without a header row: their sorting goes into the heading */}
-                    {this.renderSection('SKILLS', <ViewProfileSkillOverview viewProfileId={viewProfileId}/>,
+                    {this.renderSection('SKILLS',
+                        <ViewProfileSkillOverview viewProfileId={viewProfileId} sortedColumn={this.categoriesSorted()}/>,
                         <Typography variant="body2" component="span" className="pwr-view-profile-section-sort">
-                            <ComparableEntryButton sortableEntryType={SortableEntryType.DISPLAY_CATEGORY}
-                                                   sortableEntryField="name"
-                                                   label={PowerLocalize.get('ViewProfileOverview.SortCategories')}
-                                                   viewProfileId={viewProfileId}/>
+                            <SortedColumnContext.Provider value={this.categoriesSorted()}>
+                                <ComparableEntryButton sortableEntryType={SortableEntryType.DISPLAY_CATEGORY}
+                                                       sortableEntryField="name"
+                                                       label={PowerLocalize.get('ViewProfileOverview.SortCategories')}
+                                                       viewProfileId={viewProfileId}/>
+                            </SortedColumnContext.Provider>
                         </Typography>)}
                 </Paper>
             </div>);

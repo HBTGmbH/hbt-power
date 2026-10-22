@@ -4,7 +4,7 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {ViewSkill} from '../../../model/view/ViewSkill';
-import {ViewEntryColumn, ViewProfileEntries} from './entries/view-profile-entries_module';
+import {SortedColumn, ViewEntryColumn, ViewProfileEntries} from './entries/view-profile-entries_module';
 import {DATE_WIDTH} from './entries/EntryRenderers';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
@@ -21,6 +21,8 @@ interface ViewProfileSkillOverviewProps {
 
 interface ViewProfileSkillOverviewLocalProps {
     viewProfileId: string;
+    /** The sorting of the categories sits in the heading of the section */
+    sortedColumn: SortedColumn;
 }
 
 interface ViewProfileSkillOverviewLocalState {
@@ -200,6 +202,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             <ViewProfileEntries
                 cards
                 hideHeader
+                sortedColumn={this.props.sortedColumn}
                 movableEntryType="DISPLAY_CATEGORY"
                 toggleableEntryType="DISPLAY_CATEGORY"
                 columns={this.categoryColumns()}

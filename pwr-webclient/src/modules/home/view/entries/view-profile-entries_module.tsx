@@ -45,6 +45,8 @@ interface ViewProfileEntriesProps<T extends IViewEntry> {
     emptyText?: string;
     /** No header row, e.g. when the sorting sits in the heading of the section */
     hideHeader?: boolean;
+    /** The column last sorted by, kept outside when the sorting sits outside (heading); the table's own otherwise */
+    sortedColumn?: SortedColumn;
 
     /** Content below an entry, opened by the button at its end or by clicking the entry; closed at first */
     renderDetails?(entry: T, entryIndex: number): ReactNode;
@@ -101,6 +103,10 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
         this.setState({sortedColumn: label});
     };
 
+    private sorted(): SortedColumn {
+        return this.props.sortedColumn || {label: this.state.sortedColumn, setLabel: this.setSortedColumn};
+    }
+
     /** The entry being dragged, which stays in the list as the dashed drop target */
     private dropTarget: HTMLElement = null;
 
@@ -153,6 +159,8 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
         }
         if (data.oldIndex !== data.newIndex) {
             this.props.onMove(this.props.movableEntryType, data.oldIndex, data.newIndex);
+            // Moved by hand: no longer sorted by any column, so no arrow
+            this.sorted().setLabel(null);
         }
     };
 
@@ -256,7 +264,7 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
         }
         return <div>
             {!this.props.hideHeader &&
-            <SortedColumnContext.Provider value={{label: this.state.sortedColumn, setLabel: this.setSortedColumn}}>
+            <SortedColumnContext.Provider value={this.sorted()}>
                 {this.renderHeader()}
             </SortedColumnContext.Provider>}
             <this.SortableList
