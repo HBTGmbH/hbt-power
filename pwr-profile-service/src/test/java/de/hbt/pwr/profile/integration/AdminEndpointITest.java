@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.io.InputStream;
 
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -70,5 +71,7 @@ public class AdminEndpointITest extends AbstractIntegrationTest {
                 .flatExtracting(Skill::getVersions)
                 .contains("2");
         verify(skillProfileClient).mergeSkills("Warp", "Warp-Drive Development");
+        // The test's transaction is rolled back, so the statistics would read the profiles from before (#205)
+        verify(statisticsClient, never()).refreshConsultants();
     }
 }

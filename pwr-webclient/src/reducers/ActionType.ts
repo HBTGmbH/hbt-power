@@ -74,6 +74,7 @@ export enum ActionType {
     ReceiveScatterSkills = '[Statistics] ReceiveScatterSkills',
     AddNameEntityUsageInfo = '[Statistics] AddNameEntityUsageInfo',
     AddSkillUsageInfo = '[Statistics] AddSkillUsageInfo',
+    ForgetSkillUsageInfo = '[Statistics] ForgetSkillUsageInfo',
 
     // == Skill reducer
     AddCategoryToTree = '[Skill] AddCategoryToTree',

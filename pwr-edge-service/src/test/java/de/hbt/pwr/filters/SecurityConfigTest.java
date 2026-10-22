@@ -151,6 +151,20 @@ class SecurityConfigTest {
                 Arguments.of(HttpMethod.DELETE, "/pwr-report-service/admin/file/1"));
     }
 
+    /**
+     * Reloading the consultants of the statistics (#205)
+     */
+    @Test
+    void statisticsRefreshAsUserIsForbidden() {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .post().uri("/pwr-statistics-service/admin/consultants/refresh").exchange().expectStatus().isForbidden();
+    }
+
+    @Test
+    void statisticsRefreshAsAdminPassesSecurity() {
+        assertPassesSecurity("Power.Admin", HttpMethod.POST, "/pwr-statistics-service/admin/consultants/refresh");
+    }
+
     @ParameterizedTest
     @MethodSource("templateChanges")
     void templateChangeAsUserIsForbidden(HttpMethod method, String path) {

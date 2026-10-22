@@ -50,8 +50,12 @@ public class AsyncInformationService {
         return new StatisticsConfig(); // fixme@nt move this to config properties
     }
 
-    @Async
-    void refreshConsultantData() {
+    /**
+     * Replaces the stored consultants by the current ones of the profile service. Returns when done, so a caller of
+     * {@link de.hbt.pwr.controller.StatisticsAdminController} reads current data afterwards (#205). Synchronized: the
+     * hourly refresh and a requested one must not delete each other's consultants.
+     */
+    public synchronized void refreshConsultantData() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("Starting async refresh task for consultant data.");

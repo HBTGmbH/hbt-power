@@ -39,3 +39,8 @@ export interface AddSkillUsageInfoAction extends AbstractAction {
     skillName: string;
     consultantInfos: Array<ConsultantInfo>;
 }
+
+export interface ForgetSkillUsageInfoAction extends AbstractAction {
+    type: ActionType;
+    skillNames: Array<string>;
+}
