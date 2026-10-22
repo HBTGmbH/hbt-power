@@ -716,6 +716,12 @@ body {
     color: rgba(0, 0, 0, 0.87);
 }
 
+/* Bootstrap gives every checkbox a margin; inside a Material-UI switch (overflow hidden) the browser then scrolls the
+   switch by it when it gets the focus, and the switch jumps up by 4px */
+.MuiSwitch-root input[type=checkbox] {
+    margin: 0;
+}
+
 /* The name is the label of the switch (#152) */
 .pwr-view-entries-label {
     display: block;
