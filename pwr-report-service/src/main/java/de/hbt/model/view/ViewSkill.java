@@ -11,6 +11,8 @@ import java.util.List;
 @Setter
 public class ViewSkill implements ViewEntry {
     private String name;
+    /** The name in the language of the view profile (#174), null for the name of the skill tree */
+    private String localizedName;
     private Integer rating;
     private Boolean enabled;
 
