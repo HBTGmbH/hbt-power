@@ -1,12 +1,10 @@
 package de.hbt.power.controller;
 
-import de.hbt.power.exception.SkillServiceException;
 import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
 import de.hbt.power.model.dto.LocalizationLanguage;
 import de.hbt.power.model.dto.SkillSuggestion;
 import de.hbt.power.model.dto.TCategoryNode;
-import de.hbt.power.repo.SkillCategoryRepository;
 import de.hbt.power.repo.SkillRepository;
 import de.hbt.power.service.CategoryService;
 import de.hbt.power.service.LocalizationService;
@@ -20,16 +18,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-import static de.hbt.power.exception.SkillServiceException.categoryNotFound;
 import static de.hbt.power.exception.SkillServiceException.skillNotFound;
-import static de.hbt.power.util.SkillServiceUtil.peek;
 
 
 /**
- * Contains mappings for the skill resource.
+ * Reading the skill tree, plus what a consultant does while editing a profile: putting a new skill into "Other" and adding
+ * a version. Everything else that changes the tree is in {@link SkillAdminController} (#178).
  */
 @RestController()
 @RequestMapping("/skill")
@@ -40,8 +36,6 @@ public class SkillController {
     private static final Integer DEFAULT_MAX_RESULTS = 20;
 
     private final SkillRepository skillRepository;
-
-    private final SkillCategoryRepository skillCategoryRepository;
 
     private final SkillSearcherService skillSearcherService;
 
@@ -56,11 +50,9 @@ public class SkillController {
     @Autowired
     public SkillController(
             SkillRepository skillRepository,
-            SkillCategoryRepository skillCategoryRepository,
             SkillSearcherService skillSearcherService, SkillService skillService, CategoryService categoryService, SkillTreeMappingService skillTreeMappingService,
             LocalizationService localizationService) {
         this.skillRepository = skillRepository;
-        this.skillCategoryRepository = skillCategoryRepository;
         this.skillSearcherService = skillSearcherService;
         this.skillService = skillService;
         this.categoryService = categoryService;
@@ -73,27 +65,12 @@ public class SkillController {
                 .orElseThrow(() -> skillNotFound(id));
     }
 
-    private SkillCategory requireSkillCategory(Integer id) {
-        return skillCategoryRepository.findById(id)
-                .orElseThrow(() -> categoryNotFound(id));
-    }
-
     @ApiOperation(value = "Returns a skill by ID", response = Skill.class)
     @GetMapping("/{skillId}")
     public ResponseEntity<Skill> getSkill(@PathVariable Integer skillId) {
         return ResponseEntity.ok(requireSkill(skillId));
     }
 
-
-    @ApiOperation(value = "Moves a skill to a different category", response = Skill.class)
-    @PatchMapping("/{id}/category/{category_id}")
-    public ResponseEntity<Skill> moveSkill(@PathVariable("id") Integer skillId, @PathVariable("category_id") Integer newParentId) {
-        Skill skill = requireSkill(skillId);
-        SkillCategory skillCategory = requireSkillCategory(newParentId);
-        log.info("Moving " + skill + " to " + skillCategory);
-        skill = skillService.moveSkillToCategory(skill, skillCategory);
-        return ResponseEntity.ok(skill);
-    }
 
     @ApiOperation(value = "Searches and returns a skill by qualifier or alias", response = Skill.class)
     @GetMapping("/byName")
@@ -154,72 +131,12 @@ public class SkillController {
     }
 
 
-    @ApiOperation(value = "Rebuilds the lucene index")
-    @PostMapping("/lucene/index")
-    public void buildIndex() {
-        log.info("Rebuilding Lucene index.");
-        skillSearcherService.buildSearchIndex();
-    }
-
-
-    @ApiOperation(value = "Creates a new skill in the provided category", response = Skill.class)
-    @PostMapping("/category/{categoryId}")
-    public ResponseEntity<Skill> createSkillInCategory(@RequestBody Skill skill, @PathVariable("categoryId") Integer categoryId) {
-        SkillCategory skillCategory = requireSkillCategory(categoryId);
-        Optional<Skill> concurrent = skillRepository.findOneByQualifier(skill.getQualifier());
-        if (concurrent.isPresent()) {
-            throw SkillServiceException.skillAlreadyExists(concurrent.get());
-        }
-        log.info("Creating " + skill + " in " + skillCategory.toString());
-        skill.setId(null);
-        skillService.createSkillInCategory(skill, skillCategory);
-        return ResponseEntity.ok(skill);
-    }
-
-
-    @ApiOperation(value = "Permanently deletes a skill")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSkill(@PathVariable("id") Integer skillId) {
-        skillRepository.findById(skillId)
-                .map(peek(s -> log.info("Deleting skill " + s)))
-                .ifPresent(skillRepository::delete);
-        return ResponseEntity.noContent().build();
-    }
-
-    @ApiOperation(value = "Adds a locale to the given skill")
-    @PostMapping("/{id}/locale/{language}")
-    public ResponseEntity<Skill> addLocale(@PathVariable("id") Integer skillId,
-                                           @PathVariable("language") String language,
-                                           @RequestParam("qualifier") String qualifier) {
-        Skill skill = requireSkill(skillId);
-        log.info("Adding locale{language='" + language + "', qualifier='" + qualifier + "'} to " + skill.toString());
-        skillService.addLocaleToSkill(skill, qualifier, language);
-        return ResponseEntity.ok(skill);
-    }
-
-    @ApiOperation(value = "Deletes a locale from the given skill")
-    @DeleteMapping("/{id}/locale/{language}")
-    public ResponseEntity<Skill> deleteLocale(@PathVariable("id") Integer skillId, @PathVariable("language") String language) {
-        Skill skill = requireSkill(skillId);
-        log.info("Removing locale for language '" + language + "' from " + skill.toString());
-        skillService.removeLocaleFromSkill(skill, language);
-        return ResponseEntity.ok(skill);
-    }
-
     @ApiOperation(value = "Adds a version to a skill")
     @PostMapping("{id}/version")
     public ResponseEntity<Set<String>> addVersion(@PathVariable("id") Integer skillId, @RequestBody String version) {
         Skill skill = requireSkill(skillId);
         skillService.addVersion(skill, version);
         return ResponseEntity.ok(skill.getVersions());
-    }
-
-    @ApiOperation(value = "Deletes a version from a skill")
-    @DeleteMapping("{id}/version")
-    public ResponseEntity<Void> deleteVersion(@PathVariable("id") Integer skillId, @RequestBody String version) {
-        Skill skill = requireSkill(skillId);
-        skillService.deleteVersion(skill, version);
-        return ResponseEntity.ok().build();
     }
 
     @ApiOperation(value = "Returns the languages with localizations of skills or categories (ISO 639-2 code and German name)")

@@ -1,13 +1,19 @@
 package de.hbt.pwr.filters;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
@@ -16,7 +22,7 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
  * Checks the path rules of {@link SecurityConfig}. Authorized requests are routed to a port nobody listens on, so
  * they fail behind the security filter, which is enough to tell them apart from 401/403.
  */
-@SpringBootTest(properties = "pwr.url.profile=http://localhost:1")
+@SpringBootTest(properties = {"pwr.url.profile=http://localhost:1", "pwr.url.skill=http://localhost:1"})
 @AutoConfigureWebTestClient
 class SecurityConfigTest {
 
@@ -86,10 +92,58 @@ class SecurityConfigTest {
                 .expectStatus().isNotFound();
     }
 
+    /**
+     * Every change to the skill tree (#178)
+     */
+    static Stream<Arguments> skillTreeChanges() {
+        return Stream.of(
+                Arguments.of(HttpMethod.POST, "/pwr-skill-service/admin/category/1"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-skill-service/admin/category/1"),
+                Arguments.of(HttpMethod.PATCH, "/pwr-skill-service/admin/category/1/category/2"),
+                Arguments.of(HttpMethod.PATCH, "/pwr-skill-service/admin/category/1/display/true"),
+                Arguments.of(HttpMethod.POST, "/pwr-skill-service/admin/category/1/locale?lang=deu&qualifier=x"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-skill-service/admin/category/1/locale/deu"),
+                Arguments.of(HttpMethod.POST, "/pwr-skill-service/admin/skill/category/1"),
+                Arguments.of(HttpMethod.PATCH, "/pwr-skill-service/admin/skill/1/category/2"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-skill-service/admin/skill/1"),
+                Arguments.of(HttpMethod.POST, "/pwr-skill-service/admin/skill/1/locale/deu?qualifier=x"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-skill-service/admin/skill/1/locale/deu"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-skill-service/admin/skill/1/version"),
+                Arguments.of(HttpMethod.POST, "/pwr-skill-service/admin/skill/lucene/index"),
+                Arguments.of(HttpMethod.POST, "/pwr-skill-service/admin/skill/1/alias?alias=x"),
+                Arguments.of(HttpMethod.POST, "/pwr-skill-service/admin/skill/merge?source=a&target=b"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("skillTreeChanges")
+    void skillTreeChangeAsUserIsForbidden(HttpMethod method, String path) {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .method(method).uri(path).exchange().expectStatus().isForbidden();
+    }
+
+    @ParameterizedTest
+    @MethodSource("skillTreeChanges")
+    void skillTreeChangeAsAdminPassesSecurity(HttpMethod method, String path) {
+        assertPassesSecurity("Power.Admin", method, path);
+    }
+
+    /**
+     * While editing a profile a consultant puts a new skill into "Other" and adds versions (#178)
+     */
+    @Test
+    void newSkillAndVersionAsUserPassSecurity() {
+        assertPassesSecurity("Power.User", HttpMethod.POST, "/pwr-skill-service/skill?qualifier=Helm");
+        assertPassesSecurity("Power.User", HttpMethod.POST, "/pwr-skill-service/skill/1/version");
+    }
+
     private void assertPassesSecurity(String role, String path) {
+        assertPassesSecurity(role, HttpMethod.GET, path);
+    }
+
+    private void assertPassesSecurity(String role, HttpMethod method, String path) {
         var status = webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority(role)))
-                .get().uri(path).exchange()
+                .method(method).uri(path).exchange()
                 .returnResult(Void.class).getStatus();
-        assertThat(status.value()).isNotIn(401, 403);
+        assertThat(status.value()).as(method + " " + path).isNotIn(401, 403);
     }
 }

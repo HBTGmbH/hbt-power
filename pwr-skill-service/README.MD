@@ -27,4 +27,4 @@ You will need to perform the following setup steps:
 1. Set the property ```hibernate.search.default.directory_provider=local```
 2. Set the property ```hibernate.search.default.indexBase=<some directory>```
 3. Launch the service
-4. Call the ``/skill/lucene/index`` endpoint
+4. Call the ``/admin/skill/lucene/index`` endpoint

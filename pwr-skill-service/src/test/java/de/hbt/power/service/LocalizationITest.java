@@ -123,14 +123,14 @@ public class LocalizationITest {
 
     @Test
     public void skillLocalization_canBeAddedReplacedAndRemoved() throws Exception {
-        mockMvc.perform(post("/skill/{id}/locale/{language}", skill.getId(), "deu").param("qualifier", "Anforderungsanalyse"))
+        mockMvc.perform(post("/admin/skill/{id}/locale/{language}", skill.getId(), "deu").param("qualifier", "Anforderungsanalyse"))
                 .andExpect(status().isOk());
-        mockMvc.perform(post("/skill/{id}/locale/{language}", skill.getId(), "deu").param("qualifier", "Anforderungsmanagement"))
+        mockMvc.perform(post("/admin/skill/{id}/locale/{language}", skill.getId(), "deu").param("qualifier", "Anforderungsmanagement"))
                 .andExpect(status().isOk());
 
         assertThat(storedSkillLocalizations()).containsOnly(entry("deu", "Anforderungsmanagement"));
 
-        mockMvc.perform(delete("/skill/{id}/locale/{language}", skill.getId(), "deu"))
+        mockMvc.perform(delete("/admin/skill/{id}/locale/{language}", skill.getId(), "deu"))
                 .andExpect(status().isOk());
 
         assertThat(storedSkillLocalizations()).isEmpty();
@@ -138,14 +138,14 @@ public class LocalizationITest {
 
     @Test
     public void categoryLocalization_canBeAddedReplacedAndRemoved() throws Exception {
-        mockMvc.perform(post("/category/{id}/locale", category.getId()).param("lang", "deu").param("qualifier", "Anforderungen"))
+        mockMvc.perform(post("/admin/category/{id}/locale", category.getId()).param("lang", "deu").param("qualifier", "Anforderungen"))
                 .andExpect(status().isOk());
-        mockMvc.perform(post("/category/{id}/locale", category.getId()).param("lang", "deu").param("qualifier", "Anforderungsmanagement"))
+        mockMvc.perform(post("/admin/category/{id}/locale", category.getId()).param("lang", "deu").param("qualifier", "Anforderungsmanagement"))
                 .andExpect(status().isOk());
 
         assertThat(storedCategoryLocalizations()).containsOnly(entry("deu", "Anforderungsmanagement"));
 
-        mockMvc.perform(delete("/category/{id}/locale/{language}", category.getId(), "deu"))
+        mockMvc.perform(delete("/admin/category/{id}/locale/{language}", category.getId(), "deu"))
                 .andExpect(status().isOk());
 
         assertThat(storedCategoryLocalizations()).isEmpty();
@@ -156,9 +156,9 @@ public class LocalizationITest {
      */
     @Test
     public void responses_containTheLocalizations() throws Exception {
-        mockMvc.perform(post("/skill/{id}/locale/{language}", skill.getId(), "deu").param("qualifier", "Anforderungsmanagement"))
+        mockMvc.perform(post("/admin/skill/{id}/locale/{language}", skill.getId(), "deu").param("qualifier", "Anforderungsmanagement"))
                 .andExpect(status().isOk());
-        mockMvc.perform(post("/category/{id}/locale", category.getId()).param("lang", "deu").param("qualifier", "Anforderungen"))
+        mockMvc.perform(post("/admin/category/{id}/locale", category.getId()).param("lang", "deu").param("qualifier", "Anforderungen"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/skill/{id}", skill.getId()))
@@ -171,7 +171,7 @@ public class LocalizationITest {
         mockMvc.perform(get("/category/{id}", category.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.qualifiers[0].qualifier").value("Anforderungen"));
-        mockMvc.perform(patch("/category/{id}/display/{isDisplay}", category.getId(), true))
+        mockMvc.perform(patch("/admin/category/{id}/display/{isDisplay}", category.getId(), true))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.display").value(true))
                 .andExpect(jsonPath("$.qualifiers[0].qualifier").value("Anforderungen"));
@@ -188,9 +188,9 @@ public class LocalizationITest {
                 .andExpect(jsonPath("$[?(@.code == 'eng')]").isEmpty())
                 .andExpect(jsonPath("$[?(@.code == 'fra')]").isEmpty());
 
-        mockMvc.perform(post("/skill/{id}/locale/{language}", skill.getId(), "eng").param("qualifier", "Requirements Engineering"))
+        mockMvc.perform(post("/admin/skill/{id}/locale/{language}", skill.getId(), "eng").param("qualifier", "Requirements Engineering"))
                 .andExpect(status().isOk());
-        mockMvc.perform(post("/category/{id}/locale", category.getId()).param("lang", "fra").param("qualifier", "Exigences"))
+        mockMvc.perform(post("/admin/category/{id}/locale", category.getId()).param("lang", "fra").param("qualifier", "Exigences"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/skill/locales"))
@@ -198,9 +198,9 @@ public class LocalizationITest {
                 .andExpect(jsonPath("$[?(@.code == 'eng')].name").value("Englisch"))
                 .andExpect(jsonPath("$[?(@.code == 'fra')].name").value("Französisch"));
 
-        mockMvc.perform(delete("/skill/{id}/locale/{language}", skill.getId(), "eng"))
+        mockMvc.perform(delete("/admin/skill/{id}/locale/{language}", skill.getId(), "eng"))
                 .andExpect(status().isOk());
-        mockMvc.perform(delete("/category/{id}/locale/{language}", category.getId(), "fra"))
+        mockMvc.perform(delete("/admin/category/{id}/locale/{language}", category.getId(), "fra"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/skill/locales"))
