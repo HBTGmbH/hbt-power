@@ -138,7 +138,7 @@ export class SkillServiceClient extends PowerHttpClient {
     public patchSetIsDisplayCategory = (categoryId: number, isDisplay: boolean): Promise<APISkillCategory> => {
         const url = this.base() + '/category/' + categoryId + '/display/' + isDisplay;
         this.beginRequest();
-        return this.post(url);
+        return this.patch(url);
     };
 
     public postLocaleToCategory = (categoryId: number, locale: string, qualifier: string): Promise<APISkillCategory> => {
@@ -159,15 +159,15 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.delete(url);
     };
 
-    public addSkillLocale = (categoryId: number, language: string, qualifier: string): Promise<APISkillServiceSkill> => {
-        const url = this.base() + '/skill/' + categoryId + '/locale/' + language;
-        let config: AxiosRequestConfig = {params: {qualifier: qualifier}};
+    public addSkillLocale = (skillId: number, language: string, qualifier: string): Promise<APISkillServiceSkill> => {
+        const url = this.base() + '/skill/' + skillId + '/locale/' + language;
+        const config: AxiosRequestConfig = {params: {qualifier: qualifier}};
         this.beginRequest();
-        return this.post(url);
+        return this.post(url, null, config);
     };
 
-    public deleteSkillLocale = (categoryId: number, language: string) => {
-        const url = this.base() + '/skill/' + categoryId + '/locale/' + language;
+    public deleteSkillLocale = (skillId: number, language: string): Promise<APISkillServiceSkill> => {
+        const url = this.base() + '/skill/' + skillId + '/locale/' + language;
         this.beginRequest();
         return this.delete(url);
     };
