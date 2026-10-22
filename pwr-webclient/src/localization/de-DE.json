@@ -316,7 +316,7 @@
   "ViewProfileDialog.Name": "Name",
   "ViewProfileDialog.Title.Create": "View-Profil erstellen",
   "ViewProfileLocalization.Label": "Sprache der Bezeichnungen",
-  "ViewProfileLocalization.None": "Keine (Namen aus dem Skill-Baum)",
+  "ViewProfileLocalization.None": "Ohne",
   "ViewProfileLocalization.Language": "{0} ({1})",
   "ViewProfileCard.Subtitle": "Erstellt am ",
   "ViewProfileOverview.Caption": "View-Profil",

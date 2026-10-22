@@ -670,9 +670,9 @@ label.pwr-category-level-label {
     flex: 0 0 auto;
 }
 
-/* Wide enough for „Keine (Namen aus dem Skill-Baum)“; doubled against the min-width of FormControl */
+/* Wide enough for its label and „Deutsch (deu)“; doubled against the min-width of FormControl */
 .pwr-view-localization-select.pwr-view-localization-select {
-    min-width: 300px;
+    min-width: 240px;
 }
 
 /* Name and language of the view profile side by side (#179); below each other when narrow */
