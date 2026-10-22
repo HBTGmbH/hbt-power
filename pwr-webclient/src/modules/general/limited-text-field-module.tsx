@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {FormEvent} from 'react';
-import {Icon, IconButton, LinearProgress, TextField} from '@material-ui/core';
+import {Collapse, Icon, IconButton, LinearProgress, TextField, Tooltip} from '@material-ui/core';
+import {PwrButton} from './pwr-button';
+import {PwrSpacer} from './pwr-spacer_module';
 
 interface LimitedTextFieldProps {
     maxCharacters: number;
@@ -48,10 +50,19 @@ interface LimitedTextFieldProps {
     hideProgress?: boolean;
 
     className?: string;
+
+    /**
+     * Help for filling in the field (#147): a help icon in the lower right corner of the field, which shows this
+     * content below the field. Only while the field is enabled.
+     */
+    help?: React.ReactNode;
+    helpOpenLabel?: string;
+    helpCloseLabel?: string;
 }
 
 interface LimitedTextFieldState {
     errorText: string;
+    helpOpen: boolean;
 }
 
 /**
@@ -62,7 +73,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     constructor(props: LimitedTextFieldProps) {
         super(props);
         this.state = {
-            errorText: null
+            errorText: null,
+            helpOpen: false,
         };
     }
 
@@ -100,6 +112,37 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
             this.props.onToggleEdit(true);
     };
 
+    private toggleHelp = () => {
+        this.setState({helpOpen: !this.state.helpOpen});
+    };
+
+    private hasHelp(): boolean {
+        return !!this.props.help && !this.props.disabled;
+    }
+
+    private renderHelpButton() {
+        const label = this.state.helpOpen ? this.props.helpCloseLabel : this.props.helpOpenLabel;
+        // Lower right corner, left of the resize handle of a text area
+        return <div className="pwr-limited-text-field-help-button">
+            <Tooltip title={label || ''}>
+                <IconButton size="small" color={this.state.helpOpen ? 'primary' : 'default'} aria-label={label}
+                            aria-expanded={this.state.helpOpen} onClick={this.toggleHelp}>
+                    <Icon className="material-icons">{this.state.helpOpen ? 'help' : 'help_outline'}</Icon>
+                </IconButton>
+            </Tooltip>
+        </div>;
+    }
+
+    private renderHelp() {
+        return <Collapse in={this.state.helpOpen}>
+            <div className="pwr-limited-text-field-help" style={{width: this.props.fullWidth ? '100%' : 256}}>
+                {this.props.help}
+                <PwrSpacer size="tight"/>
+                <PwrButton color="primary" text={this.props.helpCloseLabel || ''} onClick={this.toggleHelp}/>
+            </div>
+        </Collapse>;
+    }
+
     render() {
         // A full-width field only leaves room on the right for the toggle edit button
         const fieldWidth = this.props.fullWidth ? (this.props.useToggleEditButton ? '85%' : '100%') : 256;
@@ -122,7 +165,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
             // flow-root: the box encloses its floated field, so the space around it counts (#40)
             <div style={{display: 'flow-root'}}>
                 <div style={{width: this.props.fullWidth ? '100%' : 350}}>
-                    <div style={{width: fieldWidth, float: 'left'}}>
+                    <div style={{width: fieldWidth, float: 'left', position: 'relative'}}>
                         <TextField
                             className={this.props.className}
                             rows={this.props.rows}
@@ -134,7 +177,10 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                             fullWidth={this.props.fullWidth}
                             error={this.state.errorText !== null}
                             label={this.props.label}
+                            // Room for the help icon, so the text never runs under it
+                            inputProps={this.hasHelp() ? {style: {paddingRight: 40}} : undefined}
                         />
+                        {this.hasHelp() && this.renderHelpButton()}
                     </div>
 
                     {
@@ -152,6 +198,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                     }
                 </div>
                 {progressBar}
+                {this.hasHelp() && this.renderHelp()}
             </div>
         );
     }
