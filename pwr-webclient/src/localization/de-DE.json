@@ -310,7 +310,7 @@
   "ViewProfileUpdate.KeepOld": "Dieses View-Profil behalten",
   "ViewProfileUpdate.Update": "Aktualisieren",
   "ViewProfile.SkillCategory.Title": "Anzeige-Kategorie für {0}",
-  "ViewProfile.SkillCategory.Description": "Kategorien des Skills von unten nach oben; die markierte erscheint im Profil als Überschrift.",
+  "ViewProfile.SkillCategory.Description": "Die Kategorien des Skills im Skill-Baum, von oben nach unten. Die gewählte steht im Exportdokument als Überschrift über dem Skill.",
   "ViewProfileDialog.Description": "Beschreibung",
   "ViewProfileDialog.Name": "Name",
   "ViewProfileDialog.Title.Create": "View-Profil erstellen",
