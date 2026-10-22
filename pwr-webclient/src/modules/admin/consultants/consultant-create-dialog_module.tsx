@@ -136,6 +136,8 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
         return (<div>
             <Dialog
                 scroll={"paper"}
+                fullWidth
+                maxWidth="sm"
                 title={PowerLocalize.get('ConsultantTile.CreateConsultant')}
                 open={this.props.show}
                 onClose={this.closeAndReset}
@@ -143,7 +145,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                 <DialogTitle>
                     {PowerLocalize.get('ConsultantTile.CreateConsultant')}
                 </DialogTitle>
-                <DialogContent dividers={true} style={{width: '400px', 'overflowX': 'hidden'}}>
+                <DialogContent dividers={true}>
                     <ConsultantEditFields
                         firstName={this.state.consultantInfo.firstName()}
                         lastName={this.state.consultantInfo.lastName()}
@@ -159,6 +161,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
                         onProfilePictureIdChange={this.setProfilePictureId}
                     >
                         <LimitedTextField
+                            fullWidth
                             maxCharacters={100}
                             hideProgress={true}
                             value={this.state.consultantInfo.initials()}

@@ -2,8 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {LocalDate} from '../../../utils/DateUtil';
-import {Dialog, DialogActions, Icon, Link} from '@material-ui/core';
-import {PwrSpacer} from '../../general/pwr-spacer_module';
+import {Dialog, DialogActions, Icon, Link, Typography} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
@@ -152,21 +151,26 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
         return (<div>
             <Dialog
                 scroll="paper"
+                fullWidth
+                maxWidth="sm"
                 id={'ConsultantTile.EditConsultant.Dialog'}
+                aria-labelledby="ConsultantTile.EditConsultant.Dialog.Title"
                 open={this.props.show}
                 onClose={this.closeDialog}
             >
-                <DialogTitle
-                    id="ConsultantTile.EditConsultant.Dialog.Title">{PowerLocalize.get('ConsultantTile.EditConsultant')}
-                </DialogTitle>
-                <DialogContent dividers={true} style={{width: '400px', 'overflowX': 'hidden'}}>
-                    {/* Jump to the consultant's profile: a link, not one of the form's actions */}
-                    <Link component="button" variant="body1" className="pwr-link-with-icon"
+                {/* Jump to the consultant's profile on the right of the title (#195): a link, not one of the form's
+                    actions */}
+                <DialogTitle disableTypography className="pwr-dialog-title-with-link">
+                    <Typography variant="h6" id="ConsultantTile.EditConsultant.Dialog.Title">
+                        {PowerLocalize.get('ConsultantTile.EditConsultant')}
+                    </Typography>
+                    <Link component="button" variant="body2" className="pwr-link-with-icon"
                           onClick={() => this.props.redirectToUser(this.props.initials)}>
                         {PowerLocalize.get('ConsultantEdit.OpenProfile')}
                         <Icon className="material-icons" fontSize="small">open_in_new</Icon>
                     </Link>
-                    <PwrSpacer/>
+                </DialogTitle>
+                <DialogContent dividers={true}>
                     <ConsultantEditFields
                         firstName={this.state.consultantInfo.firstName()}
                         lastName={this.state.consultantInfo.lastName()}

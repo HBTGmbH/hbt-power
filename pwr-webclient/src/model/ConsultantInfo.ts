@@ -1,5 +1,5 @@
 import {APIConsultant} from './APIProfile';
-import {LocalDate, today} from '../utils/DateUtil';
+import {LocalDate} from '../utils/DateUtil';
 
 export class ConsultantInfo {
 
@@ -98,7 +98,8 @@ export class ConsultantInfo {
     }
 
     public static empty() {
-        return new ConsultantInfo('', '', '', '', today(), true, '');
+        // No birth date: a default would create a consultant born today (#195)
+        return new ConsultantInfo('', '', '', '', null, true, '');
     }
 
     /**
