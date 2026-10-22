@@ -299,9 +299,60 @@ body {
     gap: 4px;
 }
 
-/* Category tree in the view profile skill dialog: the connector and the skill indented to the checkboxes */
-.pwr-category-tree-connector {
-    margin-left: 40px;
+/* Display category of a skill (#161): its categories as a tree from the top down. Each level is indented by 28px
+   and joined to the one above by a fine angle from that level's radio button (centre 8px from the start of the
+   level: label -11px, radio padding 9px, half of 20px) to its own. Rows are 40px high. */
+.pwr-category-tree {
+    flex-wrap: nowrap;
+}
+
+.pwr-category-level {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding-left: calc(var(--pwr-depth) * 28px);
+}
+
+.pwr-category-level + .pwr-category-level::before {
+    content: '';
+    position: absolute;
+    left: calc((var(--pwr-depth) - 1) * 28px + 8px);
+    top: -10px;
+    width: 16px;
+    height: 30px;
+    border-left: 1px solid rgba(0, 0, 0, 0.23);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.23);
+    border-bottom-left-radius: 4px;
+}
+
+/* A label of Material-UI: without the bold and the space below that Bootstrap gives every label; px, not rem */
+label.pwr-category-level-label {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.pwr-category-level-label .MuiFormControlLabel-label {
+    font-size: 14px;
+}
+
+.pwr-category-level-selected .MuiFormControlLabel-label {
+    font-weight: 500;
+    color: #191E55;
+}
+
+/* The skill at the bottom: not selectable, a marker where the radio buttons are */
+.pwr-category-skill-marker {
+    display: inline-flex;
+    justify-content: center;
+    width: 38px;
+    margin-left: -11px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.pwr-category-level-skill {
+    font-weight: 500;
 }
 
 
