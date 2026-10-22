@@ -26,6 +26,11 @@ const useStyles = makeStyles(theme => ({
     month: {
         minWidth: 0,
         textTransform: 'none',
+        // Keyboard focus without the focus ripple (see below): a clear outline instead
+        '&.Mui-focusVisible': {
+            outline: '2px solid ' + theme.palette.primary.main,
+            outlineOffset: 2,
+        },
     },
     current: {
         // This month, as orientation; the selected one is filled
@@ -160,6 +165,9 @@ export const PwrMonthPicker = (props: PwrMonthPickerProps) => {
                                 variant={isSelected(month) ? 'contained' : isCurrent(month) ? 'outlined' : 'text'}
                                 className={classes.month + (isCurrent(month) && !isSelected(month) ? ' ' + classes.current : '')}
                                 autoFocus={isSelected(month)}
+                                // Material-UI v4 with React 18: the focus ripple of an autofocused button starts before
+                                // it is mounted and crashes, as soon as the popover is opened with the keyboard
+                                disableFocusRipple
                                 aria-label={PowerLocalize.get('Month.' + (month + 1)) + ' ' + year}
                                 onClick={() => choose(month)}>
                             {PowerLocalize.get('Month.Short.' + (month + 1))}
