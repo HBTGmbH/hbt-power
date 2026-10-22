@@ -446,6 +446,22 @@ body {
     opacity: 1;
 }
 
+/* Disabled fields show only their value, no buttons (#145). The calendar button keeps its space, so the fields next to
+   it don't move between read and edit mode; a chip without its delete icon moves nothing. */
+.MuiInputBase-root.Mui-disabled .MuiInputAdornment-root {
+    visibility: hidden;
+}
+
+.MuiInputBase-root.Mui-disabled .MuiChip-deleteIcon,
+.MuiChip-root.Mui-disabled .MuiChip-deleteIcon {
+    display: none;
+}
+
+/* Nor the resize handle of text areas (#107) */
+.MuiInputBase-root.Mui-disabled textarea {
+    resize: none;
+}
+
 /* Read-only fields outside of .pwr-read-only (e.g. report templates) are not editable either: no grey area */
 .MuiFilledInput-root:has(> .MuiFilledInput-input[readonly]) {
     background-color: transparent;
@@ -471,17 +487,48 @@ body {
 }
 
 /* Side by side (Bootstrap md and up): list and form scroll on their own up to the bottom of the window, the page
-   does not scroll, so toolbar (64px) and tabs stay visible. 136px = space above the panes plus the bottom margin. */
+   does not scroll, so the toolbar stays visible. 78px = 70px above the cards (toolbar and its space) plus 8px
+   below them, as on their sides (#145). */
 @media (min-width: 992px) {
     .pwr-projects-list-pane,
     .pwr-projects-form-pane {
-        height: calc(100vh - 136px);
+        height: calc(100vh - 78px);
     }
 
-    .pwr-projects-form-pane {
+    /* Each card fills its pane; the form card scrolls in itself, so its shadow stays in place (#145) */
+    .pwr-projects-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pwr-projects-form-card {
         overflow-y: auto;
         overscroll-behavior: contain;
     }
+}
+
+/* Right card without a selected project (#145): the next step in the middle */
+.pwr-projects-empty {
+    flex: 1 1 auto;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+}
+
+.pwr-projects-empty-icon.material-icons {
+    font-size: 48px;
+    color: rgba(0, 0, 0, 0.38);
+    margin-bottom: 8px;
+}
+
+/* Room between the edge of the form card and its fields */
+.pwr-projects-form-card {
+    padding: 0 16px;
 }
 
 /* No info icon on narrow screens (#127): the app bar has little room there */

@@ -128,6 +128,7 @@ export const PwrMonthPicker = (props: PwrMonthPickerProps) => {
             placeholder={PowerLocalize.get('MonthPicker.Placeholder')}
             onChange={event => changeText(event.target.value)}
             InputProps={{
+                // Hidden in a disabled field (read mode), but keeps its space, so fields don't move (#145, index.css)
                 endAdornment: <InputAdornment position="end">
                     <Tooltip title={PowerLocalize.get('MonthPicker.Open')}>
                         <span>

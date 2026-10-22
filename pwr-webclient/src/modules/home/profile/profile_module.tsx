@@ -182,6 +182,12 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     render() {
         const tabValue = this.tabValue();
+        if (tabValue === PROJECTS_TAB) {
+            // List and form are cards of their own (#145), not one card around both
+            return <div className="mui-margin">
+                <Projects/>
+            </div>;
+        }
         return <Paper className="mui-margin">
             <div>
                 {tabValue === PROFILE_TAB &&
@@ -258,12 +264,6 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                         </Grid>
                     </Grid>
 
-                </div>
-                }
-
-                {tabValue === PROJECTS_TAB &&
-                <div className="mui-margin">
-                    <Projects/>
                 </div>
                 }
 

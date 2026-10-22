@@ -63,7 +63,6 @@ interface ProjectDispatch {
     cancelEdit();
 
     // Persistent Actions
-    deleteProject(initials: string, id: number): void;
 
     saveSelectedProject(): void;
 }
@@ -96,7 +95,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProjectDispatch {
         return {
-            deleteProject: (initials, id) => dispatch(ProfileDataAsyncActionCreator.deleteProject(initials, id)),
             saveSelectedProject: () => dispatch(ProfileDataAsyncActionCreator.saveSelectedProject()),
             updateEditingProject: (project: Project) => dispatch(setEditingProjectAction(project)),
             beginEdit: () => dispatch(editSelectedProjectAction()),
@@ -104,9 +102,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         };
     };
 
-    private deleteButtonPress = () => {
-        this.props.deleteProject(this.props.initials, this.project().id);
-    };
 
     private project = (): Project => {
         return this.props.editedProject;
@@ -129,9 +124,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         return this.props.isEditing;
     }
 
-    private isDeleteEnabled() {
-        return !!this.project().id;
-    }
 
     private setName = (name: string) => {
         const project = {...this.project(), name};
@@ -343,33 +335,33 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                                             onSearchChange={this.setBrokerName}/>
                 </PwrFormSection>
                 <PwrFormSection title={PowerLocalize.get('Profile.Project.Skills')}>
-                    <SkillSearcher
-                        disabled={this.isEditDisabled()}
-                        id="SelectedProject.SkillSearcher"
-                        fullWidth
-                        label={PowerLocalize.get('Profile.Project.AddSkill')}
-                        initialValue={this.state.skillSearchValue}
-                        value={this.state.skillSearchValue}
-                        onValueChange={skillSearchValue => this.setState({skillSearchValue})}
-                        onNewRequest={name => this.addSkill(name)}
-                    />
-                    {/* Suggestions belong to adding skills: right below the search, only in edit mode */}
+                    {/* Adding skills only in edit mode (#145): in read mode the section shows just the skills */}
                     {this.isEditEnabled() && <>
+                        <SkillSearcher
+                            id="SelectedProject.SkillSearcher"
+                            fullWidth
+                            label={PowerLocalize.get('Profile.Project.AddSkill')}
+                            initialValue={this.state.skillSearchValue}
+                            value={this.state.skillSearchValue}
+                            onValueChange={skillSearchValue => this.setState({skillSearchValue})}
+                            onNewRequest={name => this.addSkill(name)}
+                        />
+                        {/* Suggestions belong to adding skills: right below the search */}
                         <PwrSpacer size="tight"/>
                         <SuggestProjectSkills project={this.project()} onAcceptSkills={this.handleAddSkills}/>
+                        <PwrSpacer/>
+                        <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
+                        <PwrSpacer size="tight"/>
                     </>}
-                    <PwrSpacer/>
-                    <PwrFormSubCaption>{PowerLocalize.get('Profile.Project.SkillsInProject')}</PwrFormSubCaption>
-                    <PwrSpacer size="tight"/>
                     <PwrRow>
                         {this.displayedSkills().map(skill => this.toSkillChip(skill))}
                     </PwrRow>
                 </PwrFormSection>
+                {/* Deleting lives in the project list, as an icon like the other entries (#145) */}
                 <PwrFormActions editing={this.isEditEnabled()}
                                 onEdit={this.beginEdit}
                                 onSave={this.save}
-                                onCancel={this.cancelEdit}
-                                onDelete={this.isDeleteEnabled() ? this.deleteButtonPress : undefined}/>
+                                onCancel={this.cancelEdit}/>
                 {/* Room below the buttons at the end of the scroll area */}
                 <PwrSpacer/>
             </div>
