@@ -694,6 +694,19 @@ label.pwr-category-level-label {
     margin-left: -8px;
 }
 
+/* A button that is a link (the jumps, #179): not underlined, framed or recoloured by Bootstrap's link styles;
+   Material-UI marks the keyboard focus itself */
+a.MuiButton-root:hover,
+a.MuiButton-root:focus {
+    text-decoration: none;
+    outline: none;
+}
+
+a.MuiButton-textPrimary:hover,
+a.MuiButton-textPrimary:focus {
+    color: #191e55;
+}
+
 .pwr-view-profile-nav-count {
     margin-left: 8px;
     color: rgba(0, 0, 0, 0.54);
