@@ -3,7 +3,9 @@ import {Project} from '../../../../../reducers/profile-new/profile/model/Project
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
-import * as redux from 'redux';
+import {ThunkDispatch} from 'redux-thunk';
+import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
+import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {SelectedProject} from './single-project_module';
 import {StringUtils} from '../../../../../utils/StringUtil';
 import {Divider, List, useMediaQuery, Paper} from '@material-ui/core';
@@ -26,6 +28,7 @@ interface ProjectsProps {
     selectedIndex: number;
     canAddProject: boolean;
     hasSelectedProject: boolean;
+    initials: string;
 }
 
 interface ProjectsLocalProps {
@@ -42,6 +45,9 @@ interface ProjectsDispatch {
     selectProject(index: number): void;
 
     addNewProject(): void;
+
+    /** Asks first (makeDeferrable), like deleting other entries */
+    deleteProject(initials: string, id: number): void;
 }
 
 class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps & ProjectsDispatch, ProjectsLocalState> {
@@ -57,14 +63,16 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
             projects: state.profileStore.profile.projects,
             selectedIndex: state.profileStore.selectedProjectIndex,
             canAddProject: !state.profileStore.selectedProject || state.profileStore.selectedProject.id !== null,
-            hasSelectedProject: !!state.profileStore.selectedProject
+            hasSelectedProject: !!state.profileStore.selectedProject,
+            initials: state.profileStore.consultant.initials,
         };
     }
 
-    static mapDispatchToProps(dispatch: redux.Dispatch): ProjectsDispatch {
+    static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProjectsDispatch {
         return {
             selectProject: index => dispatch(selectProject(index)),
-            addNewProject: () => dispatch(addNewProject())
+            addNewProject: () => dispatch(addNewProject()),
+            deleteProject: (initials, id) => dispatch(ProfileDataAsyncActionCreator.deleteProject(initials, id)),
         };
     }
 
@@ -91,6 +99,14 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
             formatToShortDisplay(project.startDate), formatToShortDisplay(project.endDate));
         return <ListItem className={this.chooseClassName(index)} button key={project.id}
                          onClick={event => this.handleClick(index)}>
+            {/* Delete as an icon in the list, as with the other entries of the profile (#145); not for a new,
+                unsaved project, which "cancel" removes. The click must not select the project. */}
+            <ListItemIcon className="pwr-project-list-delete" onClick={event => event.stopPropagation()}>
+                {project.id !== null && project.id !== undefined
+                    ? <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')}
+                                     onClick={() => this.props.deleteProject(this.props.initials, project.id)}/>
+                    : <span/>}
+            </ListItemIcon>
             <ListItemText primary={name}
                           secondary={<>
                               <span style={{display: 'block'}}>{period}</span>

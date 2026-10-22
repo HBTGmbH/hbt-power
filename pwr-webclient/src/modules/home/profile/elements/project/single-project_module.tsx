@@ -63,7 +63,6 @@ interface ProjectDispatch {
     cancelEdit();
 
     // Persistent Actions
-    deleteProject(initials: string, id: number): void;
 
     saveSelectedProject(): void;
 }
@@ -96,7 +95,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ProjectDispatch {
         return {
-            deleteProject: (initials, id) => dispatch(ProfileDataAsyncActionCreator.deleteProject(initials, id)),
             saveSelectedProject: () => dispatch(ProfileDataAsyncActionCreator.saveSelectedProject()),
             updateEditingProject: (project: Project) => dispatch(setEditingProjectAction(project)),
             beginEdit: () => dispatch(editSelectedProjectAction()),
@@ -104,9 +102,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         };
     };
 
-    private deleteButtonPress = () => {
-        this.props.deleteProject(this.props.initials, this.project().id);
-    };
 
     private project = (): Project => {
         return this.props.editedProject;
@@ -129,9 +124,6 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         return this.props.isEditing;
     }
 
-    private isDeleteEnabled() {
-        return !!this.project().id;
-    }
 
     private setName = (name: string) => {
         const project = {...this.project(), name};
@@ -365,11 +357,11 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         {this.displayedSkills().map(skill => this.toSkillChip(skill))}
                     </PwrRow>
                 </PwrFormSection>
+                {/* Deleting lives in the project list, as an icon like the other entries (#145) */}
                 <PwrFormActions editing={this.isEditEnabled()}
                                 onEdit={this.beginEdit}
                                 onSave={this.save}
-                                onCancel={this.cancelEdit}
-                                onDelete={this.isDeleteEnabled() ? this.deleteButtonPress : undefined}/>
+                                onCancel={this.cancelEdit}/>
                 {/* Room below the buttons at the end of the scroll area */}
                 <PwrSpacer/>
             </div>

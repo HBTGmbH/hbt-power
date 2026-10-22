@@ -70,8 +70,14 @@ export function reduceProfile(store: ProfileStore = emptyStore, action: Abstract
             };
         }
         case ActionType.DeleteProjectSuccessful: {
-            let profile = handleDeleteProject(action as ProjectDeleteAction, store.profile);
-            return {...store, ...{profile: profile, selectedProject: null, selectedProjectIndex: -1}};
+            const deletedId = (action as ProjectDeleteAction).id;
+            const profile = handleDeleteProject(action as ProjectDeleteAction, store.profile);
+            const selected = store.selectedProject;
+            if (!selected || selected.id === deletedId) {
+                return {...store, profile, selectedProject: null, selectedProjectIndex: -1, isProjectEditing: false};
+            }
+            // Deleted from the list while another project is open (#145): keep it and its unsaved changes
+            return {...store, profile, selectedProjectIndex: profile.projects.findIndex(project => project.id === selected.id)};
         }
         case ActionType.LoadEntriesAction: {
             let profile = replaceField(action as EntryLoadAction, store.profile);
