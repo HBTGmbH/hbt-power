@@ -8,7 +8,8 @@ import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import {SelectedProject} from './single-project_module';
 import {StringUtils} from '../../../../../utils/StringUtil';
-import {Divider, List, useMediaQuery, Paper} from '@material-ui/core';
+import {Divider, Icon, List, Paper, Typography, useMediaQuery} from '@material-ui/core';
+import {PwrSpacer} from '../../../../general/pwr-spacer_module';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -116,6 +117,22 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
         </ListItem>;
     };
 
+    /**
+     * Right card without a selection (#145): centred, what to do next, with the button to add a reference
+     */
+    private renderNothingSelected = () => {
+        const hasProjects = this.props.projects.length > 0;
+        return <div className="pwr-projects-empty">
+            <Icon className="material-icons pwr-projects-empty-icon">work_outline</Icon>
+            <Typography color="textSecondary">
+                {PowerLocalize.get(hasProjects ? 'Profile.Project.Empty.Select' : 'Profile.Project.Empty.First')}
+            </Typography>
+            <PwrSpacer/>
+            <PwrButton color="primary" variant="contained" text={PowerLocalize.get('Profile.Project.AddProject')}
+                       icon={<Add/>} disabled={!this.props.canAddProject} onClick={this.addNewProject}/>
+        </div>;
+    };
+
     private renderAddProject = () => {
         return <List>
             <ListItem button onClick={() => this.addNewProject()} disabled={!this.props.canAddProject}>
@@ -182,7 +199,7 @@ class ProjectsModule extends React.Component<ProjectsProps & ProjectsLocalProps 
             </div>
             <div className="col-md-9 pwr-projects-form-pane" id="selected-project">
                 <Paper className="pwr-projects-card pwr-projects-form-card">
-                    <SelectedProject/>
+                    {this.props.hasSelectedProject ? <SelectedProject/> : this.renderNothingSelected()}
                 </Paper>
             </div>
         </div>;
