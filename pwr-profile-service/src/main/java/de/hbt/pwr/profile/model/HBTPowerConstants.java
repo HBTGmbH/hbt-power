@@ -3,7 +3,6 @@ package de.hbt.pwr.profile.model;
 
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.Project;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,17 +22,5 @@ public class HBTPowerConstants {
      * As in the production database, which already has varchar(4000); without it Hibernate creates varchar(255) (#141)
      */
     public static final int PROJECT_DESCRIPTION_LENGTH = 4000;
-
-
-    private static Integer DEFAULT_CHARS_PER_LINE;
-
-    public static Integer getDefaultCharsPerLine() {
-        return DEFAULT_CHARS_PER_LINE;
-    }
-
-    @Value("${default-chars-per-line}")
-    public synchronized void setDefaultCharsPerLine(Integer value) {
-        DEFAULT_CHARS_PER_LINE = value;
-    }
 
 }
