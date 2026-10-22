@@ -45,6 +45,10 @@ interface ViewProfileEntriesProps<T extends IViewEntry> {
     emptyText?: string;
     /** No header row, e.g. when the sorting sits in the heading of the section */
     hideHeader?: boolean;
+    /**
+     * The entries can't be switched, e.g. the skills of a category switched off (#159): faded, their own state kept
+     */
+    locked?: boolean;
     /** The column last sorted by, kept outside when the sorting sits outside (heading); the table's own otherwise */
     sortedColumn?: SortedColumn;
 
@@ -201,12 +205,14 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
         const expandable = this.expandable();
         // The name (first column) is the label of the switch (#152): clicking it shows or hides the entry
         const switchId = 'pwr-view-entry-' + this.instance + '-' + entryIndex;
-        return <div className={this.rowClass() + (entry.enabled ? '' : ' pwr-view-entry-disabled')}
+        return <div className={this.rowClass() + (entry.enabled && !this.props.locked ? '' : ' pwr-view-entry-disabled')
+            + (this.props.locked ? ' pwr-view-entry-locked' : '')}
                     style={{gridTemplateColumns: this.template()}}>
             <div>{this.props.moveDisabled ? null : <this.DragHandle/>}</div>
             <div>
                 <Switch size="small" color="primary"
                         id={switchId}
+                        disabled={this.props.locked}
                         checked={entry.enabled}
                         onChange={(e: any) => this.handleToggle(entryIndex, e.target.checked)}
                 />

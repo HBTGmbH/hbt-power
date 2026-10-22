@@ -737,6 +737,11 @@ label.pwr-view-profile-switch-label {
     margin: 0;
 }
 
+/* Entries that can't be switched, e.g. the skills of a category switched off (#159): the name is no longer clickable */
+.pwr-view-entry-locked .pwr-view-entries-label {
+    cursor: default;
+}
+
 /* The name is the label of the switch (#152) */
 .pwr-view-entries-label {
     display: block;
