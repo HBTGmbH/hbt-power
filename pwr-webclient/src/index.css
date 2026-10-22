@@ -64,10 +64,6 @@ body {
     padding-left: 16px;
 }
 
-.padding-left-32px {
-    padding-left: 32px;
-}
-
 .pwr-selected-list-item {
     background-color: rgba(0, 0, 0, 0.3) !important;
 }
@@ -161,11 +157,6 @@ body {
     position: fixed;
     top: 80px;
     width: 404px;
-}
-
-#admin-info-panel {
-    position: fixed;
-    width: 444px;
 }
 
 .sticky-top {
