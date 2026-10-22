@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -168,64 +169,108 @@ public class ViewProfileImporterSkillTest {
     }
 
     /**
-     * Validates that the default behavior for skill display categories works as intended.
-     * The default behavior uses the category that is second highest in the tree (without root)
-     * as a display category.
+     * Without a display category above it, a skill stays at the category it hangs at, even alone (#169). Before, the
+     * second highest category was taken.
      */
     @Test
-    public void shouldSetDisplayCategoryToSecondHighestInTree() {
+    public void shouldKeepTheOwnCategoryWithoutDisplayCategoryAbove() {
         SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
         SkillServiceCategory secondHighest = new SkillServiceCategory("SecondHighest", highest);
         SkillServiceCategory center = new SkillServiceCategory("Center", secondHighest);
         SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center);
-        SkillServiceSkill skillServiceSkill = new SkillServiceSkill("TestSkill", lowest);
-        given(skillServiceClient.getSkillByName(skillServiceSkill.getQualifier())).willReturn(skillServiceSkill);
-        profile.getSkills().add(new ProfileSkill("TestSkill"));
-        given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
+        givenSkills(skill("TestSkill", lowest));
 
         ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
 
-        Category category = new Category(-1L,secondHighest.getQualifier(), true,  true);
-
-        assertThat(viewProfile.getDisplayCategories()).containsExactlyInAnyOrder(category);
+        assertThat(displayCategoryNames(viewProfile)).containsExactly("Lowest");
     }
 
+    /**
+     * Categories with too few skills pass them on to the display category above, where they count together (#169)
+     */
     @Test
-    public void shouldSetAllDirectAndDirectSkillsAsDisplaySkills() {
+    public void shouldBringSmallCategoriesTogetherInTheDisplayCategoryAbove() {
         SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
-        SkillServiceCategory secondHighest = new SkillServiceCategory("SecondHighest", highest);
+        SkillServiceCategory secondHighest = new SkillServiceCategory("SecondHighest", highest, true);
         SkillServiceCategory center = new SkillServiceCategory("Center", secondHighest);
         SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center);
         SkillServiceCategory lowest2 = new SkillServiceCategory("Lowest2", center);
-
-        SkillServiceSkill testSkill1 = new SkillServiceSkill("Fizzing", lowest);
-        testSkill1.setId(-1);
-        SkillServiceSkill testSkill2 = new SkillServiceSkill("Buzzing", center);
-        testSkill2.setId(-1);
-        SkillServiceSkill testSkill3 = new SkillServiceSkill("Fooing", secondHighest);
-        testSkill3.setId(-1);
-        SkillServiceSkill testSkill4 = new SkillServiceSkill("Baring", lowest2);
-        testSkill4.setId(-1);
-
-        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
-        profile.getSkills().add(new ProfileSkill(testSkill2.getQualifier()));
-        profile.getSkills().add(new ProfileSkill(testSkill3.getQualifier()));
-        profile.getSkills().add(new ProfileSkill(testSkill4.getQualifier()));
-
-        given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
-        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
-        given(skillServiceClient.getSkillByName(testSkill2.getQualifier())).willReturn(testSkill2);
-        given(skillServiceClient.getSkillByName(testSkill3.getQualifier())).willReturn(testSkill3);
-        given(skillServiceClient.getSkillByName(testSkill4.getQualifier())).willReturn(testSkill4);
+        givenSkills(skill("Fizzing", lowest), skill("Buzzing", center), skill("Fooing", secondHighest), skill("Baring", lowest2));
 
         ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
-        Category displayCategory = viewProfile.getDisplayCategories().get(0);
-        assertThat(displayCategory.getDisplaySkills()).containsExactlyInAnyOrder(
-                Skill.builder().id(-1L).name(testSkill1.getQualifier()).versions(new ArrayList<>()).build(),
-                Skill.builder().id(-1L).name(testSkill2.getQualifier()).versions(new ArrayList<>()).build(),
-                Skill.builder().id(-1L).name(testSkill3.getQualifier()).versions(new ArrayList<>()).build(),
-                Skill.builder().id(-1L).name(testSkill4.getQualifier()).versions(new ArrayList<>()).build()
-        );
+
+        assertThat(displayCategoryNames(viewProfile)).containsExactly("SecondHighest");
+        assertThat(viewProfile.getDisplayCategories().get(0).getDisplaySkills()).extracting(Skill::getName)
+                .containsExactlyInAnyOrder("Fizzing", "Buzzing", "Fooing", "Baring");
+    }
+
+    /**
+     * A category with enough skills keeps them, the others move up (#169)
+     */
+    @Test
+    public void shouldKeepACategoryWithEnoughSkills() {
+        SkillServiceCategory development = new SkillServiceCategory("Development", null, true);
+        SkillServiceCategory languages = new SkillServiceCategory("Languages", development);
+        SkillServiceCategory buildTools = new SkillServiceCategory("Build Tools", development);
+        givenSkills(skill("Java", languages), skill("Kotlin", languages), skill("TypeScript", languages), skill("Maven", buildTools));
+
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
+
+        assertThat(viewProfile.findSkillByName("Java").get().getDisplayCategory().getName()).isEqualTo("Languages");
+        assertThat(viewProfile.findSkillByName("TypeScript").get().getDisplayCategory().getName()).isEqualTo("Languages");
+        assertThat(viewProfile.findSkillByName("Maven").get().getDisplayCategory().getName()).isEqualTo("Development");
+    }
+
+    /**
+     * Skills move only into categories marked as display category, step by step from the bottom up (#169)
+     */
+    @Test
+    public void shouldMoveOnlyIntoDisplayCategories() {
+        SkillServiceCategory top = new SkillServiceCategory("Top", null, true);
+        SkillServiceCategory notMarked = new SkillServiceCategory("NotMarked", top);
+        SkillServiceCategory marked = new SkillServiceCategory("Marked", notMarked, true);
+        SkillServiceCategory lowest = new SkillServiceCategory("Lowest", marked);
+        givenSkills(skill("A", lowest), skill("B", marked));
+
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
+
+        // Lowest (1) moves into Marked (2 then), which moves on past NotMarked into Top
+        assertThat(displayCategoryNames(viewProfile)).containsExactly("Top");
+        assertThat(viewProfile.getDisplayCategories().get(0).getDisplaySkills()).extracting(Skill::getName)
+                .containsExactlyInAnyOrder("A", "B");
+    }
+
+    /**
+     * The minimum comes from the configuration (view-profile.min-skills-per-category)
+     */
+    @Test
+    public void shouldUseTheConfiguredMinimum() {
+        SkillServiceCategory development = new SkillServiceCategory("Development", null, true);
+        SkillServiceCategory languages = new SkillServiceCategory("Languages", development);
+        givenSkills(skill("Java", languages), skill("Kotlin", languages));
+        viewProfileCreatorService.setMinSkillsPerCategory(2);
+
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
+
+        assertThat(displayCategoryNames(viewProfile)).containsExactly("Languages");
+    }
+
+    private SkillServiceSkill skill(String name, SkillServiceCategory category) {
+        SkillServiceSkill skill = new SkillServiceSkill(name, category);
+        skill.setId(-1);
+        return skill;
+    }
+
+    private void givenSkills(SkillServiceSkill... skills) {
+        for (SkillServiceSkill skill : skills) {
+            profile.getSkills().add(new ProfileSkill(skill.getQualifier()));
+            given(skillServiceClient.getSkillByName(skill.getQualifier())).willReturn(skill);
+        }
+        given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
+    }
+
+    private static List<String> displayCategoryNames(ViewProfile viewProfile) {
+        return viewProfile.getDisplayCategories().stream().map(Category::getName).collect(Collectors.toList());
     }
 
 
