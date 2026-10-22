@@ -3,7 +3,6 @@ import {FormEvent} from 'react';
 import {Collapse, Icon, IconButton, LinearProgress, TextField, Tooltip} from '@material-ui/core';
 import {PwrButton} from './pwr-button';
 import {PwrSpacer} from './pwr-spacer_module';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
 
 interface LimitedTextFieldProps {
     maxCharacters: number;
@@ -35,23 +34,9 @@ interface LimitedTextFieldProps {
 
     label?: string;
 
-    /**
-     * Shows the toggle edit button. Only works as controlled component. Edit button will forward the toggle request
-     * via {@link LimitedTextFieldProps#onToggleEdit}. Consumers of this button will have to set {@link LimitedTextFieldProps#disabled}
-     * manually.
-     */
-    useToggleEditButton?: boolean;
-
-    onToggleEdit?(disabled: boolean): void;
-
     id?: string;
 
     rows?: number;
-
-    /**
-     * Multi-line field that grows with its text, at least this many rows; instead of rows
-     */
-    minRows?: number;
 
     hideProgress?: boolean;
 
@@ -97,9 +82,6 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         fullWidth: false,
         errorText: '',
         label: null,
-        useToggleEditButton: false,
-        onToggleEdit: () => {
-        },
         disabled: false,
         rows: 1,
         hideProgress: false,
@@ -110,13 +92,6 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
         this.props.onChange(e, newString);
     };
 
-
-    private handleEditButtonPress = () => {
-        if (this.props.disabled)
-            this.props.onToggleEdit(false);
-        else
-            this.props.onToggleEdit(true);
-    };
 
     private toggleHelp = () => {
         this.setState({helpOpen: !this.state.helpOpen});
@@ -150,8 +125,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     }
 
     render() {
-        // A full-width field only leaves room on the right for the toggle edit button, right next to it (#149)
-        const fieldWidth = this.props.fullWidth ? (this.props.useToggleEditButton ? 'calc(100% - 56px)' : '100%') : 256;
+        const fieldWidth = this.props.fullWidth ? '100%' : 256;
         let progressBar = <React.Fragment/>
         if (!this.props.hideProgress) {
             // Below the field and as wide as it, the counter at its right end
@@ -174,8 +148,7 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                     <div style={{width: fieldWidth, float: 'left', position: 'relative'}}>
                         <TextField
                             className={this.props.className}
-                            rows={this.props.minRows ? undefined : this.props.rows}
-                            minRows={this.props.minRows}
+                            rows={this.props.rows}
                             id={this.props.id}
                             value={(this.state.errorText !== null) ? this.state.errorText : this.props.value}
                             disabled={this.props.disabled}
@@ -189,22 +162,6 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                         />
                         {this.hasHelp() && this.renderHelpButton()}
                     </div>
-
-                    {
-                        this.props.useToggleEditButton ?
-                            <div style={{width: this.props.fullWidth ? 56 : 72, paddingLeft: 8, float: 'left'}}>
-                                <Tooltip title={PowerLocalize.get(this.props.disabled ? 'Action.Edit' : 'Action.Save')}>
-                                    <IconButton aria-label={PowerLocalize.get(this.props.disabled ? 'Action.Edit' : 'Action.Save')}
-                                                onClick={this.handleEditButtonPress}>
-                                        <Icon className="material-icons">
-                                            {this.props.disabled ? 'edit' : 'save'}
-                                        </Icon>
-                                    </IconButton>
-                                </Tooltip>
-                            </div>
-                            :
-                            null
-                    }
                 </div>
                 {progressBar}
                 {this.hasHelp() && this.renderHelp()}
