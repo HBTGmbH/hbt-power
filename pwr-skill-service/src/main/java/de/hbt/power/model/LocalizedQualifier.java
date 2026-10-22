@@ -1,6 +1,8 @@
 package de.hbt.power.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.*;
 
@@ -42,11 +44,14 @@ public class LocalizedQualifier {
     })
     private String qualifier;
 
-    @ManyToMany
-    @JoinTable(name = "SKILL_QUALIFIERS",
-            joinColumns = @JoinColumn(name = "skill_id"),
-            inverseJoinColumns = @JoinColumn(name = "qualifiers_id"))
+    /**
+     * Inverse side of {@link Skill#getQualifiers()}, only for the search index. It was a second owning side that
+     * described SKILL_QUALIFIERS with swapped columns (#93).
+     */
+    @ManyToMany(mappedBy = "qualifiers")
     @ContainedIn
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<Skill> skills = new ArrayList<>();
 
     /**
