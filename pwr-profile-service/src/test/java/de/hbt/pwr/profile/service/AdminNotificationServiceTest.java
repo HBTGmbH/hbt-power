@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -230,46 +231,30 @@ public class AdminNotificationServiceTest extends AbstractIntegrationTest {
     }
 
 
+    /**
+     * A skill that was in the profile before raises no notification, but still lands in the skill tree (#175)
+     */
     @Test
     @Transactional
-    public void testSkillWithBlacklistedCategory() {
-        String qualifier = "BlacklistedSkill";
-        SkillCategory sc = new SkillCategory();
-        sc.setBlacklisted(true);
-
-
-        given(skillProfileClient.updateAndGetCategory(qualifier)).willReturn(sc);
-
-
+    public void testKnownSkill() {
+        String qualifier = "knownSkill";
         Profile p = new Profile();
         p = profileRepository.saveAndFlush(p);
-        Skill blacklistedSkill = new Skill(qualifier, 1);
-        p.getSkills().add(blacklistedSkill);
+        p.getSkills().add(newSkill(qualifier, 1));
 
         profileUpdateService.importProfile(p);
 
-        Collection<AdminNotification> ads = adminNotificationRepository.findAllByAdminNotificationStatus(AdminNotificationStatus.ALIVE);
-        assertThat(ads.size()).isEqualTo(1);
-        assertThat(ads.iterator().next().getReason().equals(AdminNotificationReason.DANGEROUS_SKILL_ADDED_BLACKLISTED));
-        SkillNotification sn = (SkillNotification) ads.iterator().next();
-        assertThat(qualifier.equals(sn.getSkill().getName()));
+        assertThat(adminNotificationRepository.findAllByAdminNotificationStatus(AdminNotificationStatus.ALIVE)).isEmpty();
+        verify(skillProfileClient).updateAndGetCategory(qualifier);
     }
 
     @Test
     @Transactional
     public void testUnknownSkill() {
         String qualifier = "unknownSkill";
-        SkillCategory sc = new SkillCategory();
-        sc.setBlacklisted(false);
-
-
-        given(skillProfileClient.updateAndGetCategory(qualifier)).willReturn(sc);
-
-
         Profile p = new Profile();
         p = profileRepository.saveAndFlush(p);
-        Skill blacklistedSkill = new Skill(qualifier, 1);
-        p.getSkills().add(blacklistedSkill);
+        p.getSkills().add(new Skill(qualifier, 1));
 
         profileUpdateService.importProfile(p);
 

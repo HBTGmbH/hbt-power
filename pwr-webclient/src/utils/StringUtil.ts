@@ -32,6 +32,19 @@ export class StringUtils {
         return '';
     }
 
+    /**
+     * Readable part of a URL from a name (#180): lower case, umlauts spelled out, everything else but a-z and 0-9
+     * becomes a hyphen. Only for reading, the URL is evaluated by the ID in front of it.
+     */
+    public static slug(value?: string): string {
+        return (value || '').toLowerCase()
+            .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+            .replace(/\+/g, ' plus ').replace(/#/g, ' sharp ')
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+
     public static dateToString(date: Date) {
         if (date == null) {
             return '';

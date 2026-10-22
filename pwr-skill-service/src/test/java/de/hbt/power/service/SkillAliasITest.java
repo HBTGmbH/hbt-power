@@ -138,7 +138,7 @@ public class SkillAliasITest {
     public void createSkill_withTheNameOfAnAlias_isRejected() throws Exception {
         addAlias(kubernetes, "K8S");
 
-        mockMvc.perform(post("/skill/category/{id}", containers.getId())
+        mockMvc.perform(post("/admin/skill/category/{id}", containers.getId())
                 .contentType("application/json")
                 .content("{\"qualifier\": \"K8S\"}"))
                 .andExpect(status().isConflict());

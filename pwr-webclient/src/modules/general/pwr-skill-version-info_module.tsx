@@ -9,6 +9,8 @@ import {SkillVersionActionCreator} from '../../reducers/profile-skill/SkillVersi
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {NON_PERSISTENT_ID} from '../../model/PwrConstants';
 import {ThunkDispatch} from 'redux-thunk';
+import {PwrSpacer} from './pwr-spacer_module';
+import {PwrRow} from './pwr-form-section';
 
 interface PwrSkillVersionInfoProps {
     serviceSkillId: number;
@@ -126,16 +128,17 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
     };
 
     render() {
+        const versions = this.props.allVersions ? this.mapVersions() : [];
         return (<Grid>
-              <TextField label={PowerLocalize.get('Version.New')} placeholder={PowerLocalize.get('Version.New')}
-                         style={{marginBottom: '5px'}}
+              <TextField label={PowerLocalize.get('Version.New')} fullWidth
                          value={this.state.newVersionText}
                          onChange={event => this.setState({newVersionText: event.target.value})}
                          onKeyPress={event => {this.handleEnterButton(event)}}
               />
-              <div style={{marginBottom: '5px'}}>
-                  {this.props.allVersions ? this.mapVersions() : ''}
-              </div>
+              {versions.length > 0 && <>
+                  <PwrSpacer size="tight"/>
+                  <PwrRow>{versions}</PwrRow>
+              </>}
         </Grid>);
     }
 }

@@ -132,10 +132,6 @@ body {
     margin-bottom: 8px
 }
 
-.blacklisted-icon {
-    color: crimson !important;
-}
-
 .material-icons-custom {
     font-family: 'Material Icons', serif;
     font-weight: normal;
@@ -904,4 +900,25 @@ label.pwr-view-profile-switch-label {
     z-index: 1200;
     background-color: #fff;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Skill tree (#180): name and type icons on one line, the trash icon at the end of the entry */
+.pwr-skill-tree-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pwr-skill-tree-delete {
+    margin-left: 8px;
+}
+
+/* Info box of the skill tree: the space of a form card; long content scrolls inside the fixed panel */
+.pwr-skill-tree-info {
+    padding: 16px;
+}
+
+#skill-tree-info-panel {
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
 }

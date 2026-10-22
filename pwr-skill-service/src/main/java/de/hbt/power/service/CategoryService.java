@@ -17,7 +17,6 @@ import java.util.Optional;
 
 import static de.hbt.power.exception.SkillServiceException.categoryAlreadyExists;
 import static de.hbt.power.model.SkillCategory.custom;
-import static de.hbt.power.util.SkillServiceUtil.peek;
 import static java.util.Optional.ofNullable;
 
 @Service
@@ -72,20 +71,6 @@ public class CategoryService {
     }
 
     @Transactional
-    public void setBlacklist(SkillCategory skillCategory, boolean blacklisted) {
-        skillCategory.setBlacklisted(blacklisted);
-        skillCategoryRepository.findAllByCategory(skillCategory).forEach(childCategory -> setBlacklist(childCategory, blacklisted));
-    }
-
-    public void blacklist(SkillCategory skillCategory) {
-        setBlacklist(skillCategory, true);
-    }
-
-    public void whitelist(SkillCategory skillCategory) {
-        setBlacklist(skillCategory, false);
-    }
-
-    @Transactional
     public void setIsDisplay(SkillCategory skillCategory, Boolean isDisplay) {
         skillCategory.setDisplay(isDisplay);
     }
@@ -108,7 +93,6 @@ public class CategoryService {
         SkillCategory newCategory = custom(category.getQualifier());
         ofNullable(parentId)
                 .map(this::getCategory)
-                .map(peek(c -> newCategory.setBlacklisted(c.isBlacklisted())))
                 .ifPresent(newCategory::setCategory);
         category.getQualifiers()
                 .forEach(locale -> addLocalizationToCategory(newCategory, locale.getLocale(), locale.getQualifier()));

@@ -237,29 +237,6 @@ export class SkillActionCreator {
         };
     }
 
-    /**
-     * Invokes witelisting of the {@link SkillCategory} identified by the given ID.
-     * If the category is already whitelisted, nothing will change.
-     * If the category is not existent, BAD REQUEST is returned.
-     * @param categoryId of the category to be whitelisted
-     */
-    public static AsyncWhitelistCategory(categoryId: number) {
-        return function (dispatch: ThunkDispatch<any, any, any>) {
-            skillClient.deleteBlacklistCategory(categoryId)
-                .then(() => dispatch(SkillActionCreator.AsyncUpdateCategory(categoryId)))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
-        };
-    }
-
-    public static AsyncBlacklistCategory(categoryId: number) {
-        return function (dispatch: ThunkDispatch<any, any, any>) {
-            skillClient.postBlacklistCategory(categoryId)
-                .then(() => dispatch(SkillActionCreator.AsyncUpdateCategory(categoryId)))
-
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
-        };
-    }
-
     public static AsyncSetIsDisplay(categoryId: number, isDisplay: boolean) {
         return function (dispatch: redux.Dispatch) {
             skillClient.patchSetIsDisplayCategory(categoryId, isDisplay)

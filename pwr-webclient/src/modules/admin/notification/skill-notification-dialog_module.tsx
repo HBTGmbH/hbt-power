@@ -135,21 +135,11 @@ class SkillNotificationModuleModule extends React.Component<SkillNotificationMod
 
     private SkillInfo = () => {
         return <div>
-            {
-
-                this.props.reason === AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN ?
-                    <p>
-                        {PowerLocalize.get('SkillNotificationDialog.UnknownSkill.Before')}<strong>{this.props.skillName}</strong>
-                        {PowerLocalize.get('SkillNotificationDialog.Profile.Before')}<strong>{this.props.initials}</strong>
-                        {PowerLocalize.get('SkillNotificationDialog.UnknownSkill.After')}
-                    </p>
-                    :
-                    <p>
-                        {PowerLocalize.get('SkillNotificationDialog.BlacklistedSkill.Before')}<strong>{this.props.skillName}</strong>
-                        {PowerLocalize.get('SkillNotificationDialog.Profile.Before')}<strong>{this.props.initials}</strong>
-                        {PowerLocalize.get('SkillNotificationDialog.BlacklistedSkill.After')}
-                    </p>
-            }
+            <p>
+                {PowerLocalize.get('SkillNotificationDialog.UnknownSkill.Before')}<strong>{this.props.skillName}</strong>
+                {PowerLocalize.get('SkillNotificationDialog.Profile.Before')}<strong>{this.props.initials}</strong>
+                {PowerLocalize.get('SkillNotificationDialog.UnknownSkill.After')}
+            </p>
             {
                 this.props.comment ? <p>{PowerLocalize.get('SkillNotificationDialog.Comment')} {this.props.comment}</p> : false
             }

@@ -14,8 +14,7 @@ export function reduceSkillVersions(store: SkillInfoStore = emptySkillInfoStore,
             return {...store, ...{currentVersions: []}};
         case ActionType.DeleteVersionFromSkill: {
             const act = action as SkillVersionDeleteAction;
-            let versions = store.currentVersions;
-            versions.filter(value => value !== act.versionToDelete);
+            const versions = store.currentVersions.filter(value => value !== act.versionToDelete);
             return {...store, ...{currentVersions: versions}};
         }
     }

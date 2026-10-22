@@ -8,7 +8,6 @@ export interface APISkillCategory {
     qualifier: string;
     qualifiers: [APILocalizedQualifier];
     category: APISkillCategory;
-    blacklisted: boolean;
     custom: boolean;
     display: boolean;
 }
@@ -19,20 +18,18 @@ export class SkillCategory {
     public readonly qualifier: string;
     public readonly qualifiers: Immutable.List<LocalizedQualifier>;
     public readonly skills: Immutable.List<SkillServiceSkill>;
-    public readonly blacklisted: boolean;
     public readonly isCustom: boolean;
     public readonly isDisplay: boolean;
 
 
     private constructor(id: number, qualifier: string,
                         qualifiers: Immutable.List<LocalizedQualifier>,
-                        skills: Immutable.List<SkillServiceSkill>, blacklisted: boolean,
+                        skills: Immutable.List<SkillServiceSkill>,
                         isCustom: boolean, isDisplay: boolean) {
         this.id = id;
         this.qualifier = qualifier;
         this.qualifiers = qualifiers;
         this.skills = skills;
-        this.blacklisted = blacklisted;
         this.isCustom = isCustom;
         this.isDisplay = isDisplay;
     }
@@ -43,7 +40,6 @@ export class SkillCategory {
             Immutable.List<LocalizedQualifier>(),
             Immutable.List<SkillServiceSkill>(),
             false,
-            false,
             false);
     }
 
@@ -53,7 +49,6 @@ export class SkillCategory {
             apiSkillCategory.qualifier,
             Immutable.List<LocalizedQualifier>(qualifiers),
             Immutable.List<SkillServiceSkill>(),
-            apiSkillCategory.blacklisted,
             apiSkillCategory.custom,
             apiSkillCategory.display);
     }
@@ -64,7 +59,6 @@ export class SkillCategory {
             node.qualifier,
             Immutable.List<LocalizedQualifier>(qualifiers),
             Immutable.List<SkillServiceSkill>(),
-            node.blacklisted,
             node.custom,
             node.display);
     }
