@@ -494,10 +494,22 @@ body {
         height: calc(100vh - 136px);
     }
 
-    .pwr-projects-form-pane {
+    /* Each card fills its pane; the form card scrolls in itself, so its shadow stays in place (#145) */
+    .pwr-projects-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pwr-projects-form-card {
         overflow-y: auto;
         overscroll-behavior: contain;
     }
+}
+
+/* Room between the edge of the form card and its fields */
+.pwr-projects-form-card {
+    padding: 0 16px;
 }
 
 /* No info icon on narrow screens (#127): the app bar has little room there */
