@@ -194,10 +194,11 @@ public class ViewProfileCreatorService {
     }
 
     /**
-     * Display categories as specific as possible (#169): each skill starts at the category it hangs at in the skill
-     * tree. A category with fewer than {@link #minSkillsPerCategory} skills of the profile passes them on to the next
-     * category above that the skill tree marks as display category, from the bottom up, so that skills brought
-     * together count there. Without such a category above, they stay.
+     * Display categories as specific as possible (#169), but only categories the skill tree marks as display category
+     * (#197): each skill starts at the lowest of them on its way up the tree, its own category if that is marked. A
+     * category with fewer than {@link #minSkillsPerCategory} skills of the profile passes them on to the next display
+     * category above, from the bottom up, so that skills brought together count there. A skill without any display
+     * category above it stays at its own category.
      */
     private List<Category> createDisplayCategories(Collection<ProfileSkill> profileSkills) {
         List<Placement> placements = profileSkills.stream().map(this::toPlacement).collect(Collectors.toList());
@@ -206,7 +207,7 @@ public class ViewProfileCreatorService {
     }
 
     /**
-     * A skill on its way up: its own category, then the display categories above it
+     * A skill on its way up: the display categories from its own upwards (#197), or just its own if there are none
      */
     private static final class Placement {
         private final Skill skill;
@@ -247,11 +248,13 @@ public class ViewProfileCreatorService {
 
         SkillServiceCategory own = serviceSkill.getCategory() != null ? serviceSkill.getCategory() : other();
         List<SkillServiceCategory> steps = new ArrayList<>();
-        steps.add(own);
-        for (SkillServiceCategory above = own.getCategory(); above != null; above = above.getCategory()) {
-            if (Boolean.TRUE.equals(above.getDisplay())) {
-                steps.add(above);
+        for (SkillServiceCategory category = own; category != null; category = category.getCategory()) {
+            if (Boolean.TRUE.equals(category.getDisplay())) {
+                steps.add(category);
             }
+        }
+        if (steps.isEmpty()) {
+            steps.add(own);
         }
         return new Placement(skill, steps);
     }

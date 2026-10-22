@@ -206,12 +206,12 @@ public class ViewProfileImporterSkillTest {
     }
 
     /**
-     * A category with enough skills keeps them, the others move up (#169)
+     * A display category with enough skills keeps them, the others move up (#169)
      */
     @Test
     public void shouldKeepACategoryWithEnoughSkills() {
         SkillServiceCategory development = new SkillServiceCategory("Development", null, true);
-        SkillServiceCategory languages = new SkillServiceCategory("Languages", development);
+        SkillServiceCategory languages = new SkillServiceCategory("Languages", development, true);
         SkillServiceCategory buildTools = new SkillServiceCategory("Build Tools", development);
         givenSkills(skill("Java", languages), skill("Kotlin", languages), skill("TypeScript", languages), skill("Maven", buildTools));
 
@@ -223,7 +223,8 @@ public class ViewProfileImporterSkillTest {
     }
 
     /**
-     * Skills move only into categories marked as display category, step by step from the bottom up (#169)
+     * Only categories marked as display category, step by step from the bottom up (#169, #197): A starts in Marked, not
+     * in its own category Lowest
      */
     @Test
     public void shouldMoveOnlyIntoDisplayCategories() {
@@ -235,7 +236,7 @@ public class ViewProfileImporterSkillTest {
 
         ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
 
-        // Lowest (1) moves into Marked (2 then), which moves on past NotMarked into Top
+        // A and B start in Marked (2), which moves on past NotMarked into Top
         assertThat(displayCategoryNames(viewProfile)).containsExactly("Top");
         assertThat(viewProfile.getDisplayCategories().get(0).getDisplaySkills()).extracting(Skill::getName)
                 .containsExactlyInAnyOrder("A", "B");
@@ -247,13 +248,30 @@ public class ViewProfileImporterSkillTest {
     @Test
     public void shouldUseTheConfiguredMinimum() {
         SkillServiceCategory development = new SkillServiceCategory("Development", null, true);
-        SkillServiceCategory languages = new SkillServiceCategory("Languages", development);
+        SkillServiceCategory languages = new SkillServiceCategory("Languages", development, true);
         givenSkills(skill("Java", languages), skill("Kotlin", languages));
         viewProfileCreatorService.setMinSkillsPerCategory(2);
 
         ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
 
         assertThat(displayCategoryNames(viewProfile)).containsExactly("Languages");
+    }
+
+    /**
+     * A category that is no display category is never one in the view profile, however many skills it has (#197): they
+     * start in the display category above
+     */
+    @Test
+    public void shouldStartInTheLowestDisplayCategory() {
+        SkillServiceCategory development = new SkillServiceCategory("Development", null, true);
+        SkillServiceCategory languages = new SkillServiceCategory("Languages", development);
+        givenSkills(skill("Java", languages), skill("Kotlin", languages), skill("TypeScript", languages));
+
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
+
+        assertThat(displayCategoryNames(viewProfile)).containsExactly("Development");
+        assertThat(viewProfile.getDisplayCategories().get(0).getDisplaySkills()).extracting(Skill::getName)
+                .containsExactlyInAnyOrder("Java", "Kotlin", "TypeScript");
     }
 
     private SkillServiceSkill skill(String name, SkillServiceCategory category) {

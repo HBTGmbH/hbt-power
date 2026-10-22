@@ -36,8 +36,8 @@ interface EditViewSkillDialogState {
 }
 
 /**
- * Choice of the display category of a skill (#161): its categories in the order of the skill tree, from the top one
- * down to the skill, each level indented and joined to the one above; taken over with Übernehmen
+ * Choice of the display category of a skill (#161): the display categories above it (#197) in the order of the skill
+ * tree, from the top one down to the skill, each level indented and joined to the one above; taken over with Übernehmen
  */
 export class EditViewSkillDialogModule extends React.Component<EditViewSkillDialogProps & EditViewSkillDialogLocalProps & EditViewSkillDialogDispatch, EditViewSkillDialogState> {
 
@@ -92,12 +92,21 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
         // The service lists the categories from the skill upwards; the tree reads from the top down
         const levels = [...this.props.parents].reverse();
         const title = PowerLocalize.getFormatted('ViewProfile.SkillCategory.Title', this.props.skill.name);
+        const current = this.currentDisplayCategory();
+        // An older view profile can have the skill in a category that is no display category (#197)
+        const currentOutside = !!current && levels.length > 0 && !levels.some(category => category.name === current);
         return <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth={true} maxWidth="sm">
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
                 <Typography variant="body2" color="textSecondary">
                     {PowerLocalize.get('ViewProfile.SkillCategory.Description')}
                 </Typography>
+                {currentOutside && <>
+                    <PwrSpacer size="tight"/>
+                    <Typography variant="body2">
+                        {PowerLocalize.getFormatted('ViewProfile.SkillCategory.CurrentNotDisplay', current)}
+                    </Typography>
+                </>}
                 <PwrSpacer/>
                 <RadioGroup className="pwr-category-tree" aria-label={title} value={this.state.selected || ''}
                             onChange={(e, value) => this.setState({selected: value})}>

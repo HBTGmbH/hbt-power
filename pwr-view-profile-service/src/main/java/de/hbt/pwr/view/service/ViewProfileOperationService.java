@@ -245,8 +245,9 @@ public class ViewProfileOperationService {
      * Sets the display category of the skill with the given name.
      * <p>
      * The new display category is identified by its {@link Category#getName()}, which is unique per view profile.
-     * The category identified by this name <bold>must</bold> be a direct or indirect parent of the skill at
-     * <code>skillIndex</code>. If this is not the case, {@link DisplayCategoryNotFoundException} is thrown.
+     * The category identified by this name <bold>must</bold> be the skill's own category or one above it, and the
+     * skill tree must mark it as display category (#197). If this is not the case,
+     * {@link DisplayCategoryNotFoundException} is thrown.
      * </p>
      * <p>
      * Also sets the {@link ViewProfile#getDisplayCategories()}
@@ -294,15 +295,19 @@ public class ViewProfileOperationService {
     }
 
     /**
-     * The categories of the skill tree the skills of a display category can move to (#171): every category on the
-     * way from a skill up the tree, with the number of skills that hang at or below it. In the order of the tree,
-     * parents before children, siblings by name. The view profile comes second: reading it must not save it
+     * The categories of the skill tree the skills of a display category can move to (#171): every display category
+     * (#197) on the way from a skill up the tree, with the number of skills that hang at or below it, and the current
+     * category, even if it is none (an older view profile). In the order of the tree, parents before children,
+     * siblings by name. The view profile comes second: reading it must not save it
      * ({@link de.hbt.pwr.view.aspects.ViewProfileAutoSave}).
      */
     public List<DisplayCategoryTarget> getMoveTargets(int displayCategoryIndex, ViewProfile viewProfile) {
         Category displayCategory = viewProfile.getDisplayCategories().get(displayCategoryIndex);
         List<List<SkillServiceCategory>> chains = displayCategory.getDisplaySkills().stream()
-                .map(skill -> chainOf(skill.getName()))
+                .map(skill -> chainOf(skill.getName()).stream()
+                        .filter(category -> isDisplay(category)
+                                || category.getId().longValue() == displayCategory.getId())
+                        .collect(Collectors.toList()))
                 .collect(Collectors.toList());
         Map<Integer, SkillServiceCategory> categories = new HashMap<>();
         Map<Integer, Integer> parents = new HashMap<>();
@@ -338,15 +343,25 @@ public class ViewProfileOperationService {
 
     /**
      * Moves the skills of a display category that hang at or below the target category in the skill tree into it
-     * (#171); the others stay
+     * (#171); the others stay. The target must be a display category above at least one of them (#197).
      */
     public void moveAllSkills(ViewProfile viewProfile, int displayCategoryIndex, int targetCategoryId) {
         Category displayCategory = viewProfile.getDisplayCategories().get(displayCategoryIndex);
-        // A copy: moving takes the skills out of the category
-        new ArrayList<>(displayCategory.getDisplaySkills()).forEach(skill -> chainOf(skill.getName()).stream()
-                .filter(category -> category.getId() == targetCategoryId)
+        List<Map.Entry<Skill, SkillServiceCategory>> targets = new ArrayList<>();
+        displayCategory.getDisplaySkills().forEach(skill -> chainOf(skill.getName()).stream()
+                .filter(category -> category.getId() == targetCategoryId && isDisplay(category))
                 .findFirst()
-                .ifPresent(target -> placeInDisplayCategory(viewProfile, skill, toCategory(target, viewProfile.getLocalization()))));
+                .ifPresent(target -> targets.add(new AbstractMap.SimpleEntry<>(skill, target))));
+        if (targets.isEmpty()) {
+            throw new DisplayCategoryNotFoundException(viewProfile.getId(), displayCategory.getName(),
+                    String.valueOf(targetCategoryId));
+        }
+        targets.forEach(target -> placeInDisplayCategory(viewProfile, target.getKey(),
+                toCategory(target.getValue(), viewProfile.getLocalization())));
+    }
+
+    private static boolean isDisplay(SkillServiceCategory category) {
+        return Boolean.TRUE.equals(category.getDisplay());
     }
 
     /** The categories of a skill in the skill tree, from its own up to the highest */
@@ -362,14 +377,15 @@ public class ViewProfileOperationService {
         return chain;
     }
 
+    /**
+     * The display category of the given name on the skill's way up the tree (#197); before, a name that was none of
+     * its categories ran into a NullPointerException
+     */
     private Category getNewDisplayCategory(String skillName, String newDisplayCategoryName, String language) {
         SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(skillName);
-        SkillServiceCategory category = null;
-        if (serviceSkill != null && serviceSkill.getCategory() != null) {
-            category = serviceSkill.getCategory();
-            while (!category.getQualifier().equals(newDisplayCategoryName)) {
-                category = category.getCategory();
-            }
+        SkillServiceCategory category = serviceSkill != null ? serviceSkill.getCategory() : null;
+        while (category != null && !(category.getQualifier().equals(newDisplayCategoryName) && isDisplay(category))) {
+            category = category.getCategory();
         }
         if (category == null) {
             throw new DisplayCategoryNotFoundException("", skillName, newDisplayCategoryName);
@@ -377,15 +393,18 @@ public class ViewProfileOperationService {
         return toCategory(category, language);
     }
 
+    /**
+     * The display categories (#197) a skill can be shown in, from its own category upwards: 0 is the lowest
+     */
     public Map<Integer, Category> getParentsForSkill(String skillName) {
         SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(skillName);
         if (serviceSkill != null) {
             Map<Integer, Category> result = new HashMap<>();
-            SkillServiceCategory c = serviceSkill.getCategory();
             int i = 0;
-            while (c != null) {
-                result.put(i++, toCategory(c));
-                c = c.getCategory();
+            for (SkillServiceCategory c = serviceSkill.getCategory(); c != null; c = c.getCategory()) {
+                if (isDisplay(c)) {
+                    result.put(i++, toCategory(c));
+                }
             }
             return result;
         } else {
