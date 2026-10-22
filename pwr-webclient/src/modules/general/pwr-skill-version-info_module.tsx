@@ -26,7 +26,7 @@ interface PwrSkillVersionInfoDispatch {
 
     loadVersions(skillName: string): void;
 
-    deleteVersion(skillId: number, versionToDelete: string): void;
+    deleteVersion(skillId: number, versionToDelete: string, skillName: string): void;
 }
 
 interface PwrSkillVersionInfoState {
@@ -57,7 +57,8 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
         return {
             addNewVersion: (skillId: number, newVersion: string) => dispatch(SkillVersionActionCreator.AsyncAddSkillVersion(skillId, newVersion)),
             loadVersions: (skillName: string) => dispatch(SkillVersionActionCreator.AsyncGetSkillVersions(skillName)),
-            deleteVersion: (skillId: number, versionToDelete: string) => dispatch(SkillVersionActionCreator.AsyncDeleteSkillVersion(skillId, versionToDelete))
+            deleteVersion: (skillId: number, versionToDelete: string, skillName: string) =>
+                dispatch(SkillVersionActionCreator.AsyncDeleteSkillVersion(skillId, versionToDelete, skillName))
         };
     }
 
@@ -95,7 +96,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
 
     private handleDelete = (versionName: string) => {
         if (this.props.serviceSkillId >= 0 && versionName) {
-            this.props.deleteVersion(this.props.serviceSkillId, versionName);
+            this.props.deleteVersion(this.props.serviceSkillId, versionName, this.props.skillName);
         }
     };
 

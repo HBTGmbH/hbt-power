@@ -16,7 +16,8 @@ export function reduceDeferredAction(store = emptyDeferredStore, action: Deferre
                     dialogActionNOK: action.actionNOK,
                     dialogActionOK: action.actionOK,
                     dialogContent: action.msg,
-                    dialogHeader: action.header
+                    dialogHeader: action.header,
+                    confirmName: action.confirmName
                 }
             };
         }

@@ -54,7 +54,7 @@ interface NotificationDialogLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface NotificationDialogDispatch {
-    executeDeleteAction(id: number): void;
+    executeDeleteAction(id: number, nameEntityName: string): void;
 
     executeOkAction(id: number): void;
 
@@ -88,7 +88,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): NotificationDialogDispatch {
         return {
-            executeDeleteAction: (id: number) => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id)),
+            executeDeleteAction: (id: number, nameEntityName: string) => dispatch(AdminActionCreator.AsyncNotificationInvokeDelete(id, nameEntityName)),
             executePatchAction: (notification) => dispatch(AdminActionCreator.AsyncNotificationInvokeEdit(notification)),
             executeOkAction: (id) => dispatch(AdminActionCreator.AsyncNotificationInvokeOK(id))
         };
@@ -141,7 +141,7 @@ class NotificationDialogModule extends React.Component<NotificationDialogProps
                 this.props.executePatchAction(notification);
                 break;
             case 'delete':
-                this.props.executeDeleteAction(this.props.notification.adminNotification.id());
+                this.props.executeDeleteAction(this.props.notification.adminNotification.id(), this.props.notification.nameEntity.name());
                 break;
         }
         this.closeDialog();

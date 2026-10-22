@@ -79,6 +79,8 @@ interface PwrConfirmActionsProps {
     destructive?: boolean;
     /** Which action has the focus, so Enter triggers it; none by default */
     autoFocus?: 'confirm' | 'reject';
+    /** Until the confirmation is complete, e.g. the name was entered twice (#181) */
+    confirmDisabled?: boolean;
 }
 
 const useConfirmStyles = makeStyles(theme => ({
@@ -106,7 +108,8 @@ export const PwrConfirmActions = (props: PwrConfirmActionsProps) => {
     const classes = useConfirmStyles();
     return <div className={classes.bar}>
         <PwrButton variant="contained" color="primary" className={props.destructive ? classes.destructive : undefined}
-                   text={props.confirmText} autoFocus={props.autoFocus === 'confirm'} onClick={props.onConfirm}/>
+                   text={props.confirmText} autoFocus={props.autoFocus === 'confirm'} disabled={props.confirmDisabled}
+                   onClick={props.onConfirm}/>
         <PwrButton color="primary" text={props.rejectText || PowerLocalize.get('Action.Cancel')}
                    autoFocus={props.autoFocus === 'reject'} onClick={props.onReject}/>
     </div>;

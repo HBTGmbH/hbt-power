@@ -20,7 +20,7 @@ interface ReportManagerInfoProps {
 interface ReportManagerInfoDispatch {
     saveChanges(template: Template): void;
 
-    deleteTemplate(id: string): void;
+    deleteTemplate(id: string, name: string): void;
 }
 
 interface ReportManagerInfoState {
@@ -44,7 +44,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportManagerInfoDispatch {
         return {
-            deleteTemplate: (id: string) => dispatch(TemplateActionCreator.AsyncDeleteTemplate(id)),
+            deleteTemplate: (id: string, name: string) => dispatch(TemplateActionCreator.AsyncDeleteTemplate(id, name)),
             saveChanges: (template: Template) => dispatch(TemplateActionCreator.AsyncChangeTemplate(template))
         };
     }
@@ -73,7 +73,7 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
     };
 
     private deleteTemplate = () => {
-        this.props.deleteTemplate(this.props.selectedTemplate.id);
+        this.props.deleteTemplate(this.props.selectedTemplate.id, this.props.selectedTemplate.name);
     };
 
     private beginEdit = () => {

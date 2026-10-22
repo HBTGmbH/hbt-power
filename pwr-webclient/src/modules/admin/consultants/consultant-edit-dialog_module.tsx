@@ -57,7 +57,7 @@ interface ConsultantEditDialogDispatch {
 
     updateConsultant(info: ConsultantInfo): void;
 
-    deleteConsultant(initials: string): void;
+    deleteConsultant(initials: string, fullName: string): void;
 }
 
 class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogProps
@@ -84,7 +84,7 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
         return {
             redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials)),
             updateConsultant: (info) => dispatch(AdminActionCreator.AsyncUpdateConsultant(info)),
-            deleteConsultant: (initials => dispatch(AdminActionCreator.AsyncDeleteConsultant(initials)))
+            deleteConsultant: (initials, fullName) => dispatch(AdminActionCreator.AsyncDeleteConsultant(initials, fullName))
         };
     }
 
@@ -141,7 +141,8 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
     };
 
     private deleteConsultant = () => {
-        this.props.deleteConsultant(this.state.consultantInfo.initials());
+        // The saved name, not one being edited in the dialog
+        this.props.deleteConsultant(this.props.consultantInfo.initials(), this.props.consultantInfo.getFullName());
         this.closeDialog();
     };
 

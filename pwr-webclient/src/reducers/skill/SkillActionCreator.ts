@@ -31,6 +31,7 @@ import {
     UpdateSkillServiceSkillAction
 } from './SkillActions';
 import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
+import {confirmDeleteByName} from '../deferred/DeferredActions';
 
 const skillClient = SkillServiceClient.instance();
 
@@ -259,8 +260,11 @@ export class SkillActionCreator {
         };
     }
 
-    @makeDeferrable(ActionType.AsyncDeleteCategoryLocale)
-    public static AsyncDeleteLocale(categoryId: number, language: string) {
+    /** The translation has to be entered twice (#181) */
+    @makeDeferrable(ActionType.AsyncDeleteCategoryLocale,
+        (categoryId: number, language: string, translation: string, categoryName: string) =>
+            confirmDeleteByName('Locale', translation, categoryName))
+    public static AsyncDeleteLocale(categoryId: number, language: string, translation: string, categoryName: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteLocaleFromCategory(categoryId, language)
                 .then((category) => SkillActionCreator.invokeCategoryUpdate(category, dispatch))
@@ -277,8 +281,11 @@ export class SkillActionCreator {
         };
     }
 
-
-    public static AsyncDeleteCategory(categoryId: number) {
+    /** The name has to be entered twice (#181); subcategories and skills go with the category */
+    @makeDeferrable(ActionType.AsyncDeleteTreeCategory,
+        (categoryId: number, name: string, categoryCount: number, skillCount: number) =>
+            confirmDeleteByName('Category', name, categoryCount, skillCount))
+    public static AsyncDeleteCategory(categoryId: number, name: string, categoryCount: number, skillCount: number) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteCategory(categoryId)
                 .then(() => dispatch(SkillActionCreator.RemoveSkillCategory(categoryId)))
@@ -303,8 +310,9 @@ export class SkillActionCreator {
         };
     }
 
-    @makeDeferrable(ActionType.AsyncDeleteTreeSkill)
-    public static AsyncDeleteSkill(skillId: number) {
+    /** The name has to be entered twice (#181) */
+    @makeDeferrable(ActionType.AsyncDeleteTreeSkill, (skillId: number, name: string) => confirmDeleteByName('Skill', name))
+    public static AsyncDeleteSkill(skillId: number, name: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteCustomSkill(skillId)
                 .then(() => dispatch(SkillActionCreator.RemoveSkill(skillId)))
@@ -345,8 +353,10 @@ export class SkillActionCreator {
         };
     }
 
-    @makeDeferrable(ActionType.AsyncDeleteSkillAlias)
-    public static AsyncDeleteSkillAlias(skillId: number, alias: string) {
+    /** The alias has to be entered twice (#181) */
+    @makeDeferrable(ActionType.AsyncDeleteSkillAlias,
+        (skillId: number, alias: string, skillName: string) => confirmDeleteByName('Alias', alias, skillName))
+    public static AsyncDeleteSkillAlias(skillId: number, alias: string, skillName: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteSkillAlias(skillId, alias)
                 .then(skill => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
@@ -360,9 +370,13 @@ export class SkillActionCreator {
      * from the skill.
      * @param skillId of the skill whose locale is to be deleted
      * @param language defines which locale from the skill is deleted
+     * @param translation has to be entered twice before deleting (#181)
+     * @param skillName is named in the confirmation
      */
-    @makeDeferrable(ActionType.AsyncDeleteSkillLocale)
-    public static AsyncDeleteSkillLocale(skillId: number, language: string) {
+    @makeDeferrable(ActionType.AsyncDeleteSkillLocale,
+        (skillId: number, language: string, translation: string, skillName: string) =>
+            confirmDeleteByName('Locale', translation, skillName))
+    public static AsyncDeleteSkillLocale(skillId: number, language: string, translation: string, skillName: string) {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteSkillLocale(skillId, language)
                 .then((skill) => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
