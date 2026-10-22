@@ -39,7 +39,8 @@ interface ViewProfileOverviewLocalProps {
 
 interface ViewProfileOverviewLocalState {
     currentDescription: string;
-    descriptionDisabled: boolean;
+    /** Changed since the last save, which happens when the field loses the focus (#157) */
+    descriptionDirty: boolean;
     generatorOpen: boolean;
     updateDialogOpen: boolean;
     /** Label of the sorting of the skill categories, if they are still in that order */
@@ -78,7 +79,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
         super(props);
         this.state = {
             currentDescription: !!(props.viewProfile) ? props.viewProfile.description : '',
-            descriptionDisabled: true,
+            descriptionDirty: false,
             generatorOpen: false,
             updateDialogOpen: false,
             categoriesSortedBy: null,
@@ -102,7 +103,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     }
 
     public componentDidUpdate(prevProps: ViewProfileOverviewProps & ViewProfileOverviewLocalProps & ViewProfileOverviewDispatch) {
-        if (prevProps.viewProfile !== this.props.viewProfile) {
+        // Every change of the view profile (switching, moving, saving) brings its text; not over unsaved typing
+        if (prevProps.viewProfile !== this.props.viewProfile && !this.state.descriptionDirty) {
             this.setState({
                 currentDescription: !!(this.props.viewProfile) ? this.props.viewProfile.description : ''
             });
@@ -113,12 +115,13 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
 
     }
 
-    private handleToggleEdit = (enabled: boolean) => {
-        this.setState({
-            descriptionDisabled: enabled
-        });
-        if (enabled) {
+    /**
+     * Saves the promotional text when the field loses the focus, like the profile does; only if it changed
+     */
+    private handleDescriptionBlur = () => {
+        if (this.state.descriptionDirty) {
             this.props.setDescription(this.state.currentDescription, this.props.viewProfile.id);
+            this.setState({descriptionDirty: false});
         }
     };
 
@@ -262,19 +265,17 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                 {this.renderHeader(this.props.viewProfile)}
 
                 <Paper className="pwr-view-profile-content">
-                    <div className={this.state.descriptionDisabled ? 'pwr-read-only' : undefined}>
+                    {/* Always editable, saved when it loses the focus, as in the profile (#157) */}
+                    <div onBlur={this.handleDescriptionBlur}>
                         <LimitedTextField
-                            disabled={this.state.descriptionDisabled}
-                            onToggleEdit={this.handleToggleEdit}
-                            useToggleEditButton={true}
                             maxCharacters={PROFILE_DESCRIPTION_LENGTH}
                             label={PowerLocalize.get('Profile.Description')}
                             value={this.state.currentDescription}
                             fullWidth={true}
-                            minRows={this.state.descriptionDisabled ? 1 : 5}
+                            rows={6}
                             multiLine={true}
                             onChange={(e, v) => {
-                                this.setState({currentDescription: v});
+                                this.setState({currentDescription: v, descriptionDirty: true});
                             }}
                         />
                     </div>
