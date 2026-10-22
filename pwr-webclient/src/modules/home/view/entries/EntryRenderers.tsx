@@ -15,6 +15,10 @@ import {ViewEntryColumn} from './view-profile-entries_module';
 export const DATE_WIDTH = '104px';
 /** Degree, language level */
 export const DETAIL_WIDTH = '160px';
+/** A rating 1 to 5 with its header „Bewertung“ and the sort arrow */
+export const RATING_WIDTH = '88px';
+/** Three small version chips in a line */
+export const VERSIONS_WIDTH = '128px';
 
 type Dated = IViewEntry & { startDate: Date, endDate: Date };
 

@@ -5,7 +5,7 @@ import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {ViewSkill} from '../../../model/view/ViewSkill';
 import {SortedColumn, ViewEntryColumn, ViewProfileEntries} from './entries/view-profile-entries_module';
-import {DATE_WIDTH} from './entries/EntryRenderers';
+import {RATING_WIDTH, VERSIONS_WIDTH} from './entries/EntryRenderers';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
@@ -153,7 +153,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                     viewProfileId={this.props.viewProfileId}
                     label={PowerLocalize.get('ViewEntryField.Rating')}
                     containerIndex={categoryIndex}/>,
-                width: DATE_WIDTH,
+                width: RATING_WIDTH,
                 render: skill => skill.rating,
             },
             {...this.versionsColumn, render: skill => this.renderVersions(skill, locked)},
@@ -173,8 +173,9 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
 
     private readonly versionsColumn: ViewEntryColumn<ViewSkill> = {
         header: PowerLocalize.get('ViewEntryField.Versions'),
-        // More room than the name, so a few versions fit in one line
-        width: 'minmax(0, 1.5fr)',
+        // Fixed like the other columns, so header and rows line up (each row is a grid of its own): three versions
+        // fit in a line, more wrap; the name gets the rest
+        width: VERSIONS_WIDTH,
         render: skill => this.renderVersions(skill, false),
     };
 
