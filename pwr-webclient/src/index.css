@@ -310,6 +310,15 @@ body {
     gap: 8px;
 }
 
+/* Dialog title with a link on the right, e.g. to the consultant's profile (#195) */
+.pwr-dialog-title-with-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+}
+
 /* Link with an icon after the text, e.g. a jump to another page (#40) */
 .pwr-link-with-icon {
     display: inline-flex;

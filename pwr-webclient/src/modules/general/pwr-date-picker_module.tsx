@@ -17,6 +17,8 @@ interface PwrDatePickerProps {
     type: DatePickerType;
     disabled?: boolean;
     disableOpenEnd?: boolean;
+    /** The field takes the whole width, next to the open end button if there is one */
+    fullWidth?: boolean;
     error?: boolean;
 }
 
@@ -48,6 +50,7 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps> {
                                    label={this.getLabel()}
                                    disabled={this.props.disabled}
                                    error={this.props.error}
+                                   fullWidth={this.props.fullWidth}
                                    onChange={this.changeDate}/>;
         }
         // A popover at the field that opens on the month of the date; one click on a day takes it and closes, the year
@@ -64,6 +67,7 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps> {
             value={fromLocalDate(this.props.value)}
             disabled={this.props.disabled}
             error={!!this.props.error}
+            fullWidth={this.props.fullWidth}
             onChange={(date: Moment | null) => this.changeDate(date?.toDate())}
             invalidDateMessage={PowerLocalize.get('DatePicker.Format')}
             minDateMessage={PowerLocalize.get('DatePicker.OutOfRange')}

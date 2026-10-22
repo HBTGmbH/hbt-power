@@ -62,6 +62,7 @@ interface PwrMonthPickerProps {
     label: string;
     disabled?: boolean;
     error?: boolean;
+    fullWidth?: boolean;
 
     /** The first day of the chosen month; null if the field was emptied */
     onChange(date: Date | null): void;
@@ -123,6 +124,7 @@ export const PwrMonthPicker = (props: PwrMonthPickerProps) => {
             label={props.label}
             value={text}
             disabled={props.disabled}
+            fullWidth={props.fullWidth}
             error={!!props.error || invalid}
             helperText={invalid ? PowerLocalize.get('MonthPicker.Format') : undefined}
             placeholder={PowerLocalize.get('MonthPicker.Placeholder')}

@@ -82,8 +82,10 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
 
 
     private showEditDialog = () => {
+        // Close the menu, or it stays open behind the dialog
         this.setState({
-            dialogOpen: true
+            dialogOpen: true,
+            menuAnchorEl: null
         });
     };
 
