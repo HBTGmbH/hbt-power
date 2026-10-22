@@ -75,7 +75,7 @@ export const ProfileSkillDialog = (props: ProfileSkillDialogProps) => {
             current = false;
             clearTimeout(timeout);
         };
-    }, [trimmedName]);
+    }, [trimmedName, adding]);
 
     const knownVersions = serviceSkill ? serviceSkill.versions : [];
     const versions = Array.from(new Set([...knownVersions, ...newVersions, ...selectedVersions]))
