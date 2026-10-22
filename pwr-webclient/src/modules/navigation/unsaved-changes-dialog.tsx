@@ -5,7 +5,7 @@ import Warning from '@material-ui/icons/Warning';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {PwrConfirmActions} from '../general/pwr-form-actions';
-import {Color} from '../../utils/ColorUtil';
+import {useTheme} from '@material-ui/core/styles';
 import {discardUnsavedChanges, keepUnsavedChanges} from '../../reducers/navigation/UnsavedChanges';
 
 /**
@@ -27,6 +27,7 @@ function projectName(state: ApplicationState): string | null {
  */
 export const UnsavedChangesDialog = () => {
     const dispatch = useDispatch();
+    const theme = useTheme();
     const open = useSelector((state: ApplicationState) => state.navigationSlice.confirmDialogOpen);
     const name = useSelector(projectName);
     const keep = () => dispatch(keepUnsavedChanges());
@@ -38,7 +39,7 @@ export const UnsavedChangesDialog = () => {
     return <Dialog open={open} onClose={keep} maxWidth={'sm'} aria-labelledby="unsaved-changes-title">
         <DialogTitle id="unsaved-changes-title">
             <span style={{display: 'flex', alignItems: 'center'}}>
-                <Warning style={{color: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(), marginRight: '12px'}}/>
+                <Warning style={{color: theme.palette.warning.main, marginRight: '12px'}}/>
                 {PowerLocalize.get('UnsavedChanges.Title')}
             </span>
         </DialogTitle>

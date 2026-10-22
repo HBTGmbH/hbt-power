@@ -1,4 +1,3 @@
-import {Color} from './utils/ColorUtil';
 import {createTheme, ThemeOptions} from '@material-ui/core/styles';
 
 const newPowerTheme: ThemeOptions = {
@@ -20,8 +19,14 @@ const newPowerTheme: ThemeOptions = {
             main: '#46E6E6',
             dark: '#31a1a1',
         },
+        // Errors and destructive actions in red (#201): 7.3:1 on white, 6.0:1 on the grey of the fields, white
+        // text on it 7.3:1. Not the HBT orange, which reaches only 2.3:1 (see PWR_ACCENT).
         error: {
-            main: Color.HBT_2017_HIGHLIGHT.toCSSRGBString(),
+            main: '#B00020',
+        },
+        // Warnings that are no errors (outdated, can't be undone), dark orange: 5.3:1 on white
+        warning: {
+            main: '#A85400',
         },
         text: {
 
@@ -90,3 +95,9 @@ const newPowerTheme: ThemeOptions = {
 };
 
 export const POWER_MUI_THEME = createTheme(newPowerTheme as any);
+
+/**
+ * The HBT orange (#201): an accent only, e.g. a bar or a border next to text in the normal text colour, or an area with
+ * dark blue text on it (6.7:1). Never the colour of text and never behind white text: 2.3:1 on white.
+ */
+export const PWR_ACCENT = '#ff8e01';

@@ -105,7 +105,7 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
             fullWidth
         />
         {trimmedTarget === props.skillToMerge
-            ? <p className="warning-note">{PowerLocalize.get('AdminClient.Infos.UsedSkills.Merge.SameSkill')}</p>
+            ? <p className="error-note">{PowerLocalize.get('AdminClient.Infos.UsedSkills.Merge.SameSkill')}</p>
             : null}
     </div>;
 
@@ -114,7 +114,7 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
             return <p>{PowerLocalize.get('AdminClient.Infos.UsedSkills.Merge.TargetLoading')}</p>;
         }
         if (targetInfo === null) {
-            return <p className="warning-note">
+            return <p className="error-note">
                 {PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.TargetUnknown', trimmedTarget)}
             </p>;
         }

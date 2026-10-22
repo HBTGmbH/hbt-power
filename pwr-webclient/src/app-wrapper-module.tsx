@@ -19,6 +19,7 @@ import {PWR_HISTORY} from './reducers/navigation/NavigationActionCreator';
 import {OIDCService} from './OIDCService';
 import {AuthenticatedRoute} from './modules/navigation/authenticated-route_module';
 import {ProfileSelect} from './modules/profile-select_module';
+import {PwrThemeColors} from './modules/general/pwr-theme-colors';
 
 export class AppWrapper extends React.Component<{}, {}> {
 
@@ -35,6 +36,7 @@ export class AppWrapper extends React.Component<{}, {}> {
         return (
             <MuiPickersUtilsProvider utils={MomentUtils} locale="de">
                 <MuiThemeProvider theme={POWER_MUI_THEME}>
+                    <PwrThemeColors/>
                     <Router history={PWR_HISTORY}>
                         <Provider store={store}>
                             <div>
