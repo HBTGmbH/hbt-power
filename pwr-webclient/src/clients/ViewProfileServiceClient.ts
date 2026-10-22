@@ -2,6 +2,7 @@ import {PowerHttpClient} from './PowerHttpClient';
 import {SortableEntryField, SortableEntryType} from '../model/view/NameComparableType';
 import {AxiosRequestConfig} from 'axios';
 import {ViewProfile} from '../model/view/ViewProfile';
+import {DisplayCategoryTarget} from '../model/view/DisplayCategoryTarget';
 import {ViewCategory} from '../model/view/ViewCategory';
 
 declare const POWER_VIEW_PROFILE_SERVICE_URL;
@@ -120,6 +121,19 @@ export class ViewProfileServiceClient extends PowerHttpClient {
     public patchToggleVersion(initials: string, id: string, skillName: string, versionName: string, isEnabled: boolean, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/visibility/version/' + isEnabled;
         return this.patchInBackground(url, null, config);
+    }
+
+    /** Where the skills of a display category can move to, with the number that fit (#171) */
+    public getMoveTargets(initials: string, id: string, displayCategoryIndex: number): Promise<Array<DisplayCategoryTarget>> {
+        const url = this.patchBase(initials, id) + 'DISPLAY_CATEGORY/' + displayCategoryIndex + '/targets';
+        this.beginRequest();
+        return this.get(url);
+    }
+
+    /** Moves the skills of a display category that fit into the target category (#171) */
+    public patchMoveAllSkills(initials: string, id: string, displayCategoryIndex: number, targetId: number): Promise<ViewProfile> {
+        const url = this.patchBase(initials, id) + 'DISPLAY_CATEGORY/' + displayCategoryIndex + '/move';
+        return this.patchInBackground(url, null, {params: {'target-id': targetId}});
     }
 
     /** Versions of all skills on or off (#151); the choice per version stays */

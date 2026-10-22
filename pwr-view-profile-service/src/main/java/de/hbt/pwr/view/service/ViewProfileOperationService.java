@@ -13,6 +13,7 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.ViewProfileInfo;
 import de.hbt.pwr.view.model.entries.ToggleableEntry;
 import de.hbt.pwr.view.model.skill.Category;
+import de.hbt.pwr.view.model.skill.DisplayCategoryTarget;
 import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.apache.logging.log4j.LogManager;
@@ -254,33 +255,106 @@ public class ViewProfileOperationService {
                                           String newDisplayCategoryName) {
         Optional<Skill> mayBeSkill = viewProfile.findSkillByName(name);
         if (mayBeSkill.isPresent()) {
-            Skill skill = mayBeSkill.get();
-
-            Category displayCategory = skill.getDisplayCategory();
-            displayCategory.getDisplaySkills().remove(skill);
-            if (displayCategory.getDisplaySkills().isEmpty()) {
-                displayCategory.setIsDisplay(false);
-                viewProfile.getDisplayCategories().remove(displayCategory);
-            }
-
             Category newDisplayCategory = getNewDisplayCategory(name, newDisplayCategoryName);
-            if (newDisplayCategory != null) {
-                // The category of the view profile if it has it, the new one otherwise
-                Category target = viewProfile.getDisplayCategories().stream()
-                        .filter(category -> category.getId().equals(newDisplayCategory.getId()))
-                        .findAny()
-                        .orElseGet(() -> {
-                            newDisplayCategory.setIsDisplay(true);
-                            newDisplayCategory.setEnabled(true);
-                            viewProfile.getDisplayCategories().add(newDisplayCategory);
-                            return newDisplayCategory;
-                        });
-                // Adds the skill to it, once (#160: it was added a second time before)
-                skill.setDisplayCategory(target);
-            }
+            placeInDisplayCategory(viewProfile, mayBeSkill.get(), newDisplayCategory);
         }
         LOG.debug(viewProfile.getDisplayCategories().toString());
         return viewProfile;
+    }
+
+    /**
+     * Takes the skill out of its display category (gone when empty) and puts it into the new one: the category of
+     * the view profile if it has it, the new one otherwise
+     */
+    private void placeInDisplayCategory(ViewProfile viewProfile, Skill skill, Category newDisplayCategory) {
+        Category displayCategory = skill.getDisplayCategory();
+        displayCategory.getDisplaySkills().remove(skill);
+        if (displayCategory.getDisplaySkills().isEmpty()) {
+            displayCategory.setIsDisplay(false);
+            viewProfile.getDisplayCategories().remove(displayCategory);
+        }
+        if (newDisplayCategory != null) {
+            Category target = viewProfile.getDisplayCategories().stream()
+                    .filter(category -> category.getId().equals(newDisplayCategory.getId()))
+                    .findAny()
+                    .orElseGet(() -> {
+                        newDisplayCategory.setIsDisplay(true);
+                        newDisplayCategory.setEnabled(true);
+                        viewProfile.getDisplayCategories().add(newDisplayCategory);
+                        return newDisplayCategory;
+                    });
+            // Adds the skill to it, once (#160: it was added a second time before)
+            skill.setDisplayCategory(target);
+        }
+    }
+
+    /**
+     * The categories of the skill tree the skills of a display category can move to (#171): every category on the
+     * way from a skill up the tree, with the number of skills that hang at or below it. In the order of the tree,
+     * parents before children, siblings by name. The view profile comes second: reading it must not save it
+     * ({@link de.hbt.pwr.view.aspects.ViewProfileAutoSave}).
+     */
+    public List<DisplayCategoryTarget> getMoveTargets(int displayCategoryIndex, ViewProfile viewProfile) {
+        Category displayCategory = viewProfile.getDisplayCategories().get(displayCategoryIndex);
+        List<List<SkillServiceCategory>> chains = displayCategory.getDisplaySkills().stream()
+                .map(skill -> chainOf(skill.getName()))
+                .collect(Collectors.toList());
+        Map<Integer, SkillServiceCategory> categories = new HashMap<>();
+        Map<Integer, Integer> parents = new HashMap<>();
+        Map<Integer, Integer> counts = new HashMap<>();
+        chains.forEach(chain -> {
+            for (int i = 0; i < chain.size(); i++) {
+                SkillServiceCategory category = chain.get(i);
+                categories.putIfAbsent(category.getId(), category);
+                parents.put(category.getId(), i + 1 < chain.size() ? chain.get(i + 1).getId() : null);
+                counts.merge(category.getId(), 1, Integer::sum);
+            }
+        });
+        List<DisplayCategoryTarget> targets = new ArrayList<>();
+        int of = displayCategory.getDisplaySkills().size();
+        addInTreeOrder(null, 0, categories, parents, counts, of, displayCategory.getId(), targets);
+        return targets;
+    }
+
+    private void addInTreeOrder(Integer parentId, int depth, Map<Integer, SkillServiceCategory> categories,
+                                Map<Integer, Integer> parents, Map<Integer, Integer> counts, int of, Long currentId,
+                                List<DisplayCategoryTarget> targets) {
+        categories.values().stream()
+                .filter(category -> Objects.equals(parents.get(category.getId()), parentId))
+                .map(this::toCategory)
+                .sorted(Comparator.comparing(Category::getName))
+                .forEach(category -> {
+                    Integer id = category.getId().intValue();
+                    targets.add(new DisplayCategoryTarget(category.getId(), category.getName(), depth, counts.get(id), of,
+                            category.getId().equals(currentId)));
+                    addInTreeOrder(id, depth + 1, categories, parents, counts, of, currentId, targets);
+                });
+    }
+
+    /**
+     * Moves the skills of a display category that hang at or below the target category in the skill tree into it
+     * (#171); the others stay
+     */
+    public void moveAllSkills(ViewProfile viewProfile, int displayCategoryIndex, int targetCategoryId) {
+        Category displayCategory = viewProfile.getDisplayCategories().get(displayCategoryIndex);
+        // A copy: moving takes the skills out of the category
+        new ArrayList<>(displayCategory.getDisplaySkills()).forEach(skill -> chainOf(skill.getName()).stream()
+                .filter(category -> category.getId() == targetCategoryId)
+                .findFirst()
+                .ifPresent(target -> placeInDisplayCategory(viewProfile, skill, toCategory(target))));
+    }
+
+    /** The categories of a skill in the skill tree, from its own up to the highest */
+    private List<SkillServiceCategory> chainOf(String skillName) {
+        List<SkillServiceCategory> chain = new ArrayList<>();
+        SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(skillName);
+        for (SkillServiceCategory category = serviceSkill != null ? serviceSkill.getCategory() : null; category != null;
+             category = category.getCategory()) {
+            if (category.getId() != null) {
+                chain.add(category);
+            }
+        }
+        return chain;
     }
 
     private Category getNewDisplayCategory(String skillName, String newDisplayCategoryName) {

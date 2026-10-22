@@ -342,6 +342,14 @@ label.pwr-category-level-label {
     color: #191E55;
 }
 
+/* How many skills fit into a category (#171), at the right end of its line. Doubled class: the margin of Material-UI's
+   Typography comes later */
+.pwr-category-level .pwr-category-level-count {
+    margin-left: auto;
+    padding-left: 16px;
+    white-space: nowrap;
+}
+
 /* The skill at the bottom: not selectable, a marker where the radio buttons are */
 .pwr-category-skill-marker {
     display: inline-flex;

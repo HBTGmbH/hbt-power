@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 
 import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -111,6 +112,21 @@ public class ViewProfileOperationsControllerTest {
         patchAndAssertStatus200(url);
         assertOwnerCheckAndRetrieval();
         then(viewProfileService).should(times(1)).setRoleInProjectEnabled(viewProfileReturned, projectIndex, index, isVisible);
+    }
+
+    @Test
+    public void returnsMoveTargetsOfADisplayCategory() throws Exception {
+        mockMvc.perform(get(urlBasePath() + "DISPLAY_CATEGORY/2/targets").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService).should(times(1)).getMoveTargets(2, viewProfileReturned);
+    }
+
+    @Test
+    public void movesAllSkillsOfADisplayCategoryAndReturns200() throws Exception {
+        mockMvc.perform(patch(urlBasePath() + "DISPLAY_CATEGORY/2/move").param("target-id", "33").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileService).should(times(1)).moveAllSkills(viewProfileReturned, 2, 33);
     }
 
     @Test

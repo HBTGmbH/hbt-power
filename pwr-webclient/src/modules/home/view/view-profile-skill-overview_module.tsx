@@ -10,6 +10,7 @@ import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
+import {MoveAllSkillsDialog} from './entries/move-all-skills-dialog_module';
 import {Chip, Typography} from '@material-ui/core';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PwrIconButton} from '../../general/pwr-icon-button';
@@ -34,6 +35,8 @@ interface ViewProfileSkillOverviewLocalProps {
 interface ViewProfileSkillOverviewLocalState {
     editSkillOpen: boolean;
     editSkill: ViewSkill;
+    /** Index of the category whose skills are being moved all at once (#171) */
+    moveAllIndex: number;
 }
 
 interface ViewProfileSkillOverviewDispatch {
@@ -60,6 +63,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
         super(props);
         this.state = {
             editSkillOpen: false,
+            moveAllIndex: null,
             editSkill: null
         };
     }
@@ -212,11 +216,25 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                 width: '72px',
                 render: category => skillCount(category.displaySkills.length),
             },
+            {
+                // All skills of the category into another one (#171)
+                header: null,
+                width: '40px',
+                render: (category, index) => <PwrIconButton iconName="drive_file_move"
+                                                            tooltip={PowerLocalize.get('ViewProfileOverview.MoveAll.Tooltip')}
+                                                            iconButtonProps={{size: 'small'}}
+                                                            onClick={() => this.setState({moveAllIndex: index})}/>,
+            },
         ];
     }
 
     render() {
         return <div>
+            {this.state.moveAllIndex != null && this.props.viewProfile.displayCategories[this.state.moveAllIndex] &&
+            <MoveAllSkillsDialog viewProfileId={this.props.viewProfileId}
+                                 category={this.props.viewProfile.displayCategories[this.state.moveAllIndex]}
+                                 categoryIndex={this.state.moveAllIndex}
+                                 onClose={() => this.setState({moveAllIndex: null})}/>}
             {
                 !!(this.state.editSkill) ?
                     <EditViewSkillDialog

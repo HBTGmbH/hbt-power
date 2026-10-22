@@ -3,6 +3,7 @@ package de.hbt.pwr.view.controller;
 import de.hbt.pwr.view.exception.ServiceError;
 import de.hbt.pwr.view.model.ProfileEntryType;
 import de.hbt.pwr.view.model.ViewProfile;
+import de.hbt.pwr.view.model.skill.DisplayCategoryTarget;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
@@ -267,6 +268,47 @@ public class ViewProfileOperationsController {
                                                    @RequestParam("display-category") String newDisplayCategoryName) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         return ResponseEntity.ok(viewProfileService.setDisplayCategory(viewProfile, skillName, newDisplayCategoryName));
+    }
+
+    @ApiOperation(value = "Categories the skills of a display category can move to",
+            notes = "Every category of the skill tree on the way from a skill of the display category up the tree, in " +
+                    "the order of the tree, with the number of skills that hang at or below it (#171). Reading only.",
+            tags = {"skill"},
+            httpMethod = "GET",
+            produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The categories in the order of the tree"),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
+    })
+    @GetMapping("/DISPLAY_CATEGORY/{displayCategoryIndex}/targets")
+    ResponseEntity<List<DisplayCategoryTarget>> getMoveTargets(@PathVariable("initials") String initials,
+                                                               @PathVariable("viewProfileId") String viewProfileId,
+                                                               @PathVariable("displayCategoryIndex") int displayCategoryIndex) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        return ResponseEntity.ok(viewProfileService.getMoveTargets(displayCategoryIndex, viewProfile));
+    }
+
+    @ApiOperation(value = "Moves the skills of a display category into another category",
+            notes = "Moves the skills of the display category that hang at or below the target category in the skill " +
+                    "tree into it; the others stay (#171). This operation is persistent.",
+            response = ViewProfile.class,
+            tags = {"skill"},
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
+    })
+    @PatchMapping("/DISPLAY_CATEGORY/{displayCategoryIndex}/move")
+    ResponseEntity<ViewProfile> moveAllSkills(@PathVariable("initials") String initials,
+                                              @PathVariable("viewProfileId") String viewProfileId,
+                                              @PathVariable("displayCategoryIndex") int displayCategoryIndex,
+                                              @RequestParam("target-id") int targetCategoryId) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.moveAllSkills(viewProfile, displayCategoryIndex, targetCategoryId);
+        return ResponseEntity.ok(viewProfile);
     }
 
 

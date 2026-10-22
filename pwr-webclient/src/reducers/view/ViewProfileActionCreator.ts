@@ -315,6 +315,16 @@ export class ViewProfileActionCreator {
         };
     }
 
+    public static AsyncMoveAllSkills(id: string, displayCategoryIndex: number, targetId: number) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+            let initials = getState().profileStore.consultant.initials;
+            viewProfileClient.patchMoveAllSkills(initials, id, displayCategoryIndex, targetId)
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
+        };
+    }
+
     public static AsyncSetShowSkillVersions(id: string, show: boolean) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
