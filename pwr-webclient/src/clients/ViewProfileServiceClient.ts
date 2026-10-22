@@ -122,6 +122,12 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.patchInBackground(url, null, config);
     }
 
+    /** Versions of all skills on or off (#151); the choice per version stays */
+    public patchShowSkillVersions(initials: string, id: string, show: boolean): Promise<ViewProfile> {
+        const url = this.patchBase(initials, id) + 'SKILL/versions/' + show;
+        return this.patchInBackground(url);
+    }
+
     public postReport(initials: string, viewProfileId: string, templateId: string) { // result ignored
         const url = this.base() + '/view/' + initials + '/view/' + viewProfileId + '/' + templateId + '/report';
         this.beginRequest();

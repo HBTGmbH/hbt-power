@@ -132,7 +132,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
     }
 
     private skillColumns(categoryIndex: number): Array<ViewEntryColumn<ViewSkill>> {
-        return [
+        const columns: Array<ViewEntryColumn<ViewSkill>> = [
             {
                 header: <ComparableNestedEntryButton
                     container="DISPLAY_CATEGORY"
@@ -154,12 +154,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                 width: DATE_WIDTH,
                 render: skill => skill.rating,
             },
-            {
-                header: PowerLocalize.get('ViewEntryField.Versions'),
-                // More room than the name, so a few versions fit in one line
-                width: 'minmax(0, 1.5fr)',
-                render: skill => this.renderVersions(skill),
-            },
+            this.versionsColumn,
             {
                 // The name switches the skill (#152), so the choice of the display category has its own button
                 header: null,
@@ -170,7 +165,16 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                                                 onClick={() => this.editSkill(skill)}/>,
             },
         ];
+        // Versions off for the whole view profile (#151): no column, the others get its width
+        return this.props.viewProfile.showSkillVersions ? columns : columns.filter(column => column !== this.versionsColumn);
     }
+
+    private readonly versionsColumn: ViewEntryColumn<ViewSkill> = {
+        header: PowerLocalize.get('ViewEntryField.Versions'),
+        // More room than the name, so a few versions fit in one line
+        width: 'minmax(0, 1.5fr)',
+        render: skill => this.renderVersions(skill),
+    };
 
     private renderDetails = (category: ViewCategory, categoryIndex: number) => <ViewProfileEntries
         movableEntryType="SKILL"

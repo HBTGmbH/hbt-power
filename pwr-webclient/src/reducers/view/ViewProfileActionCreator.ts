@@ -314,4 +314,14 @@ export class ViewProfileActionCreator {
                 .catch((error) => console.error(error));
         };
     }
+
+    public static AsyncSetShowSkillVersions(id: string, show: boolean) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+            let initials = getState().profileStore.consultant.initials;
+            viewProfileClient.patchShowSkillVersions(initials, id, show)
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
+        };
+    }
 }

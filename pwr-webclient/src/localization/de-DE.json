@@ -331,6 +331,8 @@
   "ViewProfileOverview.SkillCount.Other": "{0} Skills",
   "ViewProfileOverview.Empty": "Keine Einträge",
   "ViewProfileOverview.SortCategories": "Kategorien nach Name sortieren",
+  "ViewProfileOverview.SkillVersions": "Versionen",
+  "ViewProfileOverview.SkillVersions.Tooltip": "Versionen der Skills auf dieser Seite und im Exportdokument zeigen",
   "ViewProfileOverview.DisplayCategory": "Anzeige-Kategorie wählen",
   "ViewProfileOverview.Version": "Version {0} im Exportdokument zeigen",
   "ViewProfileOverview.NotFound": "Dieses View-Profil gibt es nicht.",
