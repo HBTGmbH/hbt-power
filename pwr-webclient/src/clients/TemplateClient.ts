@@ -29,8 +29,11 @@ export class TemplateClient extends PowerHttpClient {
         return this.get(url);
     }
 
+    /**
+     * Uploading, changing and deleting are admin-only (#203); the service takes the creator from the account
+     */
     public uploadAsTemplate(formData: any, config: AxiosRequestConfig): Promise<Template> {
-        const url = this.base() + '/template/';
+        const url = this.base() + '/admin/template/';
         this.beginRequest();
         return this.post(url, formData, config);
     }
@@ -39,7 +42,7 @@ export class TemplateClient extends PowerHttpClient {
      * Deletes the template and its BIRT file
      */
     public deleteTemplate(id: string) {
-        const url = this.base() + '/template/' + id;
+        const url = this.base() + '/admin/template/' + id;
         this.beginRequest();
         return this.delete(url);
     }
@@ -51,18 +54,12 @@ export class TemplateClient extends PowerHttpClient {
     }
 
     /**
-     * Saves name, description and creator. The file ids are left out on purpose: the service keeps the stored ones
-     * for every empty field (ReportTemplateController.updateTemplate)
+     * Saves name and description. The file ids are left out on purpose: the service keeps the stored ones for every
+     * empty field, creator and date never change (ReportTemplateAdminController.updateTemplate)
      */
     public changeTemplate(template: Template) {
-        const url = this.base() + '/template/' + template.id;
+        const url = this.base() + '/admin/template/' + template.id;
         this.beginRequest();
-        return this.post(url, {name: template.name, description: template.description, createUser: template.createUser});
-    }
-
-    public getAllFiles() {
-        const url = this.base() + '/file';
-        this.beginRequest();
-        return this.get(url);
+        return this.post(url, {name: template.name, description: template.description});
     }
 }

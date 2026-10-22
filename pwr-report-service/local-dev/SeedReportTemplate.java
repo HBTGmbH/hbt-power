@@ -56,8 +56,7 @@ public class SeedReportTemplate {
 
     private static void upload(HttpClient http, String baseUrl, Path designFile) throws Exception {
         String boundary = "----seed" + UUID.randomUUID();
-        // The view-profile service parses this by splitting at quotes: keep the field order and don't use quotes in values
-        String templateSlice = "{\"name\":\"" + NAME + "\",\"description\":\"" + DESCRIPTION + "\",\"createUser\":\"" + CREATE_USER + "\"}";
+        String templateSlice = "{\"name\":\"" + NAME + "\",\"description\":\"" + DESCRIPTION + "\"}";
 
         ByteArrayOutputStream body = new ByteArrayOutputStream();
         write(body, "--" + boundary + "\r\n"
@@ -69,8 +68,10 @@ public class SeedReportTemplate {
                 + templateSlice + "\r\n"
                 + "--" + boundary + "--\r\n");
 
-        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + "/template"))
+        // Without the edge nobody sets the account header, so the seed names the creator itself
+        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + "/admin/template"))
                 .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                .header("X-Pwr-User-Login", CREATE_USER)
                 .POST(HttpRequest.BodyPublishers.ofByteArray(body.toByteArray()))
                 .build();
         HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());

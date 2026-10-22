@@ -1,6 +1,9 @@
 package de.hbt.pwr.view.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,19 +49,21 @@ public class ReportTemplate {
         public String createUser;
     }
 
+    /**
+     * Name and description of an uploaded template. Other fields, like a creator older clients still send, are
+     * ignored: the creator comes from the edge (#203)
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ReportTemplateSlice {
         public String name;
         public String description;
-        public String createUser;
 
         public static ReportTemplateSlice fromJSON(String str) {
-            ReportTemplateSlice toReturn = new ReportTemplateSlice();
-            String[] content = str.split("\"");
-            toReturn.name = content[3];
-            toReturn.description = content[7];
-            toReturn.createUser = content[11];
-
-            return toReturn;
+            try {
+                return new ObjectMapper().readValue(str, ReportTemplateSlice.class);
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException("templateSlice is no valid JSON", e);
+            }
         }
     }
 }

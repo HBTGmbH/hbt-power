@@ -22,7 +22,8 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
  * Checks the path rules of {@link SecurityConfig}. Authorized requests are routed to a port nobody listens on, so
  * they fail behind the security filter, which is enough to tell them apart from 401/403.
  */
-@SpringBootTest(properties = {"pwr.url.profile=http://localhost:1", "pwr.url.skill=http://localhost:1"})
+@SpringBootTest(properties = {"pwr.url.profile=http://localhost:1", "pwr.url.skill=http://localhost:1",
+        "pwr.url.view-profile=http://localhost:1", "pwr.url.report=http://localhost:1"})
 @AutoConfigureWebTestClient
 class SecurityConfigTest {
 
@@ -134,6 +135,44 @@ class SecurityConfigTest {
     void newSkillAndVersionAsUserPassSecurity() {
         assertPassesSecurity("Power.User", HttpMethod.POST, "/pwr-skill-service/skill?qualifier=Helm");
         assertPassesSecurity("Power.User", HttpMethod.POST, "/pwr-skill-service/skill/1/version");
+    }
+
+    /**
+     * Uploading, changing and deleting report templates and their files (#203)
+     */
+    static Stream<Arguments> templateChanges() {
+        return Stream.of(
+                Arguments.of(HttpMethod.POST, "/pwr-view-profile-service/admin/template"),
+                Arguments.of(HttpMethod.POST, "/pwr-view-profile-service/admin/template/1"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-view-profile-service/admin/template/1"),
+                Arguments.of(HttpMethod.POST, "/pwr-report-service/admin/file"),
+                Arguments.of(HttpMethod.GET, "/pwr-report-service/admin/file"),
+                Arguments.of(HttpMethod.GET, "/pwr-report-service/admin/file/1"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-report-service/admin/file/1"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("templateChanges")
+    void templateChangeAsUserIsForbidden(HttpMethod method, String path) {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .method(method).uri(path).exchange().expectStatus().isForbidden();
+    }
+
+    @ParameterizedTest
+    @MethodSource("templateChanges")
+    void templateChangeAsAdminPassesSecurity(HttpMethod method, String path) {
+        assertPassesSecurity("Power.Admin", method, path);
+    }
+
+    /**
+     * Choosing a template, exporting and previewing stay open to every consultant (#203)
+     */
+    @Test
+    void readingTemplatesAndExportingAsUserPassSecurity() {
+        assertPassesSecurity("Power.User", "/pwr-view-profile-service/template");
+        assertPassesSecurity("Power.User", "/pwr-view-profile-service/template/1");
+        assertPassesSecurity("Power.User", HttpMethod.POST, "/pwr-view-profile-service/view/abc/view/1/t1/report");
+        assertPassesSecurity("Power.User", "/pwr-view-profile-service/view/abc/view/1/t1/preview");
     }
 
     private void assertPassesSecurity(String role, String path) {

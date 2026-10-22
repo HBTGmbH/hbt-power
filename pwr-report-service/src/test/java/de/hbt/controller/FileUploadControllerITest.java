@@ -21,7 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Stored files (BIRT designs): a missing file is not found, deleting one that is gone succeeds (#112)
+ * Stored files (BIRT designs): a missing file is not found, deleting one that is gone succeeds (#112), all of it only
+ * under {@code /admin} (#203)
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -48,14 +49,14 @@ class FileUploadControllerITest {
     void downloadReturnsTheStoredFile() throws Exception {
         DBFile file = storedFile();
 
-        mockMvc.perform(get("/file/" + file.getId()))
+        mockMvc.perform(get("/admin/file/" + file.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().string("<report/>"));
     }
 
     @Test
     void downloadOfAMissingFileIsNotFound() throws Exception {
-        mockMvc.perform(get("/file/" + UNKNOWN_ID))
+        mockMvc.perform(get("/admin/file/" + UNKNOWN_ID))
                 .andExpect(status().isNotFound());
     }
 
@@ -63,10 +64,25 @@ class FileUploadControllerITest {
     void deleteRemovesTheFile() throws Exception {
         DBFile file = storedFile();
 
-        mockMvc.perform(delete("/file/" + file.getId()))
+        mockMvc.perform(delete("/admin/file/" + file.getId()))
                 .andExpect(status().isOk());
 
         assertThat(dbFileRepository.findById(file.getId())).isEmpty();
+    }
+
+    /**
+     * Outside {@code /admin} the edge would let every user through
+     */
+    @Test
+    void filesAreNotServedOutsideAdmin() throws Exception {
+        DBFile file = storedFile();
+
+        mockMvc.perform(get("/file/" + file.getId()))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/file/" + file.getId()))
+                .andExpect(status().isNotFound());
+
+        assertThat(dbFileRepository.findById(file.getId())).isPresent();
     }
 
     /**
@@ -74,7 +90,7 @@ class FileUploadControllerITest {
      */
     @Test
     void deleteOfAMissingFileSucceeds() throws Exception {
-        mockMvc.perform(delete("/file/" + UNKNOWN_ID))
+        mockMvc.perform(delete("/admin/file/" + UNKNOWN_ID))
                 .andExpect(status().isOk());
     }
 }

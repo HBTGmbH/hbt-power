@@ -9,7 +9,6 @@ import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {ThunkDispatch} from 'redux-thunk';
-import {OIDCService} from '../../../OIDCService';
 
 
 interface ReportUploadTemplateLocalProps {
@@ -24,7 +23,7 @@ interface ReportUploadTemplateProps {
 
 interface ReportUploadTemplateDispatch {
 
-    saveTemplate(file: File, name: string, desc: string, createUser: string): void;
+    saveTemplate(file: File, name: string, desc: string): void;
 
 }
 
@@ -48,7 +47,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ReportUploadTemplateDispatch {
         return {
-            saveTemplate: (file: any, name: string, desc: string, createUser: string) => dispatch(TemplateActionCreator.AsyncUploadFileAsTemplate(file, name, desc, createUser)),
+            saveTemplate: (file: any, name: string, desc: string) => dispatch(TemplateActionCreator.AsyncUploadFileAsTemplate(file, name, desc)),
         };
     }
 
@@ -73,8 +72,7 @@ class ReportUploadTemplateDialog extends React.Component<ReportUploadTemplatePro
     private uploadTemplate = () => {
         if (this.state.file != null) {
             console.debug('trying to upload file... ', this.state.file);
-            const userName = OIDCService.instance().getCurrentUserName();
-            this.props.saveTemplate(this.state.file, this.state.tempName, this.state.tempDescription, userName);
+            this.props.saveTemplate(this.state.file, this.state.tempName, this.state.tempDescription);
         }
     };
 
