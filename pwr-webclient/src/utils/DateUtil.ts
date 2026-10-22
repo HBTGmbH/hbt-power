@@ -137,7 +137,7 @@ export function formatToNumericDateTime(date: Date): string {
  * @param date to be formatted
  * @return formatted date or "???" if the date is null
  */
-export function formatFullLocalizedDate(date: Date): string {
+export function formatFullLocalizedDate(date: Date | LocalDate): string {
     date = verifyDataType(date);
     if (!date) {
         return '???';
@@ -174,7 +174,8 @@ export function formatToYear(date: number | string | Date | undefined) {
 
 /**
  * A date without time and time zone, like Java's LocalDate, in ISO format: 'YYYY-MM-DD'.
- * This is how the services send and expect LocalDate fields, so no time zone conversion happens.
+ * This is how the services send and expect LocalDate fields, so no time zone conversion happens. It sorts and compares
+ * as a string; only the date picker converts it to a Date (#26).
  */
 export type LocalDate = string;
 

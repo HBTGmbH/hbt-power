@@ -1,12 +1,13 @@
+import {LocalDate} from '../../utils/DateUtil';
 
 export class ViewTraining {
     name: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: LocalDate;
+    endDate: LocalDate;
     enabled: boolean;
 
 
-    constructor(name: string, startDate: Date, endDate: Date, enabled: boolean) {
+    constructor(name: string, startDate: LocalDate, endDate: LocalDate, enabled: boolean) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -15,8 +16,8 @@ export class ViewTraining {
 
     public static of(viewTraining: ViewTraining) {
         return new ViewTraining(viewTraining.name,
-            !viewTraining.startDate ? null : new Date(viewTraining.startDate),
-            !viewTraining.endDate ? null : new Date(viewTraining.endDate),
+            viewTraining.startDate,
+            viewTraining.endDate,
             viewTraining.enabled);
     }
 }

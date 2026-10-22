@@ -5,6 +5,7 @@ import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditFields} from './consultant-edit-fields_module.';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
+import {LocalDate} from '../../../utils/DateUtil';
 import {LimitedTextField} from '../../general/limited-text-field-module';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
@@ -118,7 +119,7 @@ class ConsultantCreateDialogModule extends React.Component<ConsultantCreateDialo
         });
     };
 
-    private setBirthDate = (val: Date) => {
+    private setBirthDate = (val: LocalDate | null) => {
         this.setState({
             consultantInfo: this.state.consultantInfo.setBirthDate(val)
         });

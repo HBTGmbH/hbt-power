@@ -1,3 +1,4 @@
+import {LocalDate} from '../../../../utils/DateUtil';
 
 export interface Consultant {
     initials: string;
@@ -5,7 +6,7 @@ export interface Consultant {
     lastName: string;
     title: string;
     profileId: number;
-    birthDate: Date;
+    birthDate: LocalDate;
     profileLastUpdated: string;
     active: boolean;
     profilePictureId: string;

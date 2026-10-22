@@ -9,12 +9,13 @@ import {ConsultantEditProfilePicture} from './consultant-edit-profile-picture_mo
 import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PwrFormSection} from '../../general/pwr-form-section';
 import {PropsWithChildren} from "react";
+import {LocalDate} from '../../../utils/DateUtil';
 
 interface ConsultantEditFieldsProps extends PropsWithChildren {
     firstName: string;
     lastName: string;
     title: string;
-    birthDate: Date;
+    birthDate: LocalDate;
     active: boolean;
     profilePictureId: string;
 
@@ -24,7 +25,7 @@ interface ConsultantEditFieldsProps extends PropsWithChildren {
 
     onTitleChange(val: string): void;
 
-    onBirthDateChange(val: Date): void;
+    onBirthDateChange(val: LocalDate | null): void;
 
     onActiveChange(active: boolean): void;
 
@@ -65,7 +66,7 @@ export function ConsultantEditFields(props: ConsultantEditFieldsProps) {
             <PwrSpacer/>
             <PwrDatePicker
                 onChange={props.onBirthDateChange}
-                placeholderDate={!(props.birthDate) ? new Date() : props.birthDate}
+                value={props.birthDate}
                 label={PowerLocalize.get('ConsultantEdit.BirthDate')}
                 type={DatePickerType.FULL_DATE}
                 disableOpenEnd

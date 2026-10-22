@@ -1,3 +1,5 @@
+import {LocalDate} from '../utils/DateUtil';
+
 export interface APINameEntity {
     id: number;
     name: string;
@@ -19,7 +21,7 @@ export interface APIConsultant {
     firstName: string;
     lastName: string;
     title: string;
-    birthDate: string;
+    birthDate: LocalDate;
     active: boolean;
     profilePictureId?: string;
 }
