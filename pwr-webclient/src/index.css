@@ -673,6 +673,16 @@ label.pwr-category-level-label {
     flex: 0 0 auto;
 }
 
+/* Wide enough for „Keine (Namen aus dem Skill-Baum)“; doubled against the min-width of FormControl */
+.pwr-view-localization-select.pwr-view-localization-select {
+    min-width: 300px;
+}
+
+/* In the title row right before the buttons */
+.pwr-view-profile-title-row > .pwr-view-localization-select {
+    margin-left: auto;
+}
+
 /* The text of the first jump in line with the title: a text button has 8px padding */
 .pwr-view-profile-nav {
     display: flex;
@@ -811,6 +821,14 @@ label.pwr-view-profile-switch-label {
 
 .pwr-view-entry-title {
     font-weight: 500;
+}
+
+/* The name in the language of the view profile, below the name of the skill tree (#174) */
+.pwr-view-entry-localized {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.6);
 }
 
 /* Details of a project: below its name (8px padding + 32px handle + 40px switch + 2 × 8px gap) */

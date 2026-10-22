@@ -9,7 +9,7 @@ import {ViewProject} from '../../../model/view/ViewProject';
 import {ViewSkill} from '../../../model/view/ViewSkill';
 import {ViewProjectRole} from '../../../model/view/ViewProjectRole';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
-import {EntryRenderers, RATING_WIDTH} from './entries/EntryRenderers';
+import {EntryRenderers, LocalizedName, RATING_WIDTH} from './entries/EntryRenderers';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrFormSubCaption} from '../../general/pwr-typography';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
@@ -85,7 +85,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
                     viewProfileId={this.props.viewProfileId}
                     label={PowerLocalize.get('ViewEntryField.Name')}
                     containerIndex={projectIndex}/>,
-                render: skill => skill.name,
+                render: skill => <LocalizedName name={skill.name} localizedName={skill.localizedName}/>,
             },
             {
                 header: <ComparableNestedEntryButton

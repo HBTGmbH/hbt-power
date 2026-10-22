@@ -79,13 +79,15 @@ export class ViewProfileActionCreator {
         dispatch(ViewProfileActionCreator.SetViewProfile(new ViewProfile(viewProfileResponse)));
     }
 
-    public static AsyncCreateViewProfile(name: string, description: string) {
+    public static AsyncCreateViewProfile(name: string, description: string, localization: string | null = null) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             dispatch(CrossCuttingActionCreator.startRequest());
             let initials = getState().profileStore.consultant.initials;
             let body = {
                 name: name,
-                viewDescription: description
+                viewDescription: description,
+                // Language of the skill and category names (#174)
+                localization: localization
             };
             viewProfileClient.postViewProfile(initials, body)
                 .then((viewProfile) => ViewProfileActionCreator.succeedAndRead(viewProfile, dispatch))
@@ -329,6 +331,16 @@ export class ViewProfileActionCreator {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
             let initials = getState().profileStore.consultant.initials;
             viewProfileClient.patchShowSkillVersions(initials, id, show)
+                .then((response) => ViewProfileActionCreator.read(response, dispatch))
+                // The client shows the error
+                .catch((error) => console.error(error));
+        };
+    }
+
+    public static AsyncSetLocalization(id: string, language: string | null) {
+        return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
+            let initials = getState().profileStore.consultant.initials;
+            viewProfileClient.patchLocalization(initials, id, language)
                 .then((response) => ViewProfileActionCreator.read(response, dispatch))
                 // The client shows the error
                 .catch((error) => console.error(error));

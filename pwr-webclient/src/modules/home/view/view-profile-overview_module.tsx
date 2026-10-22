@@ -21,6 +21,7 @@ import {PwrFormCaption, PwrFormSubtitle} from '../../general/pwr-typography';
 import {ComparableEntryButton} from './entries/comprable-entry-button_module';
 import {SortedColumn, SortedColumnContext, ViewProfileEntries} from './entries/view-profile-entries_module';
 import {PwrIconButton} from '../../general/pwr-icon-button';
+import {LocalizationSelect} from './localization-select_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 
 
@@ -56,6 +57,8 @@ interface ViewProfileOverviewDispatch {
     setDescription(description: string, viewProfileId: string): void;
 
     setShowSkillVersions(viewProfileId: string, show: boolean): void;
+
+    setLocalization(viewProfileId: string, language: string | null): void;
 }
 
 class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
@@ -74,7 +77,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
         return {
             generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, '2')),
             setDescription: (description, viewProfileId) => dispatch(ViewProfileActionCreator.AsyncSetDescription(description, viewProfileId)),
-            setShowSkillVersions: (viewProfileId, show) => dispatch(ViewProfileActionCreator.AsyncSetShowSkillVersions(viewProfileId, show))
+            setShowSkillVersions: (viewProfileId, show) => dispatch(ViewProfileActionCreator.AsyncSetShowSkillVersions(viewProfileId, show)),
+            setLocalization: (viewProfileId, language) => dispatch(ViewProfileActionCreator.AsyncSetLocalization(viewProfileId, language))
         };
     }
 
@@ -216,6 +220,9 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     <PwrFormSubtitle>{PowerLocalize.get('ViewProfileOverview.Caption')}</PwrFormSubtitle>
                     <PwrFormCaption>{viewProfile.viewProfileInfo.name}</PwrFormCaption>
                 </div>
+                {/* Language of the skill and category names, for the whole view profile (#174) */}
+                <LocalizationSelect value={viewProfile.localization} className="pwr-view-localization-select"
+                                    onChange={language => this.props.setLocalization(viewProfile.id, language)}/>
                 <div className="pwr-view-profile-actions">
                     <PwrFormActions editing={false} noSpace
                                     editText={PowerLocalize.get('Action.Generate.Word')} editIcon={'open_in_new'}

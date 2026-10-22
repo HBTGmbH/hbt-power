@@ -5,7 +5,7 @@ import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {ViewSkill} from '../../../model/view/ViewSkill';
 import {SortedColumn, ViewEntryColumn, ViewProfileEntries} from './entries/view-profile-entries_module';
-import {RATING_WIDTH, VERSIONS_WIDTH} from './entries/EntryRenderers';
+import {LocalizedName, RATING_WIDTH, VERSIONS_WIDTH} from './entries/EntryRenderers';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
@@ -151,7 +151,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                     viewProfileId={this.props.viewProfileId}
                     label={PowerLocalize.get('ViewEntryField.Name')}
                     containerIndex={categoryIndex}/>,
-                render: skill => skill.name,
+                render: skill => <LocalizedName name={skill.name} localizedName={skill.localizedName}/>,
             },
             {
                 header: <ComparableNestedEntryButton
@@ -209,7 +209,8 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             {
                 // Sorted from the heading of the section
                 header: null,
-                render: category => <span className="pwr-view-entry-title">{category.name}</span>,
+                render: category => <LocalizedName name={category.name} localizedName={category.localizedName}
+                                                   className="pwr-view-entry-title"/>,
             },
             {
                 header: '',
