@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as Immutable from 'immutable';
-import {List, ListItem, Paper, TextField} from '@material-ui/core';
+import {TextField} from '@material-ui/core';
 import {Comparators} from '../../../../utils/Comparators';
 import {StatisticsActionCreator} from '../../../../reducers/statistics/StatisticsActionCreator';
 import {ConsultantInfo} from '../../../../model/ConsultantInfo';
@@ -11,8 +11,9 @@ import {ApplicationState} from '../../../../reducers/reducerIndex';
 import {MergeSkillDialog} from './merge-skill-dialog_module';
 import {StringUtils} from '../../../../utils/StringUtil';
 import {UsedSkillInfoBox} from './used-skill-info-box';
-import {toArray} from '../../../../utils/ImmutableUtils';
 import {SuggestionAsyncActionCreator} from '../../../../reducers/suggestions/SuggestionAsyncActionCreator';
+import {PwrListTable} from '../../../general/pwr-list-table';
+import {ProfileElementLayout} from '../profile-element-layout';
 import {ThunkDispatch} from 'redux-thunk';
 
 
@@ -82,7 +83,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         }
     }
 
-    private handleSkillSelect = (event: any, skillName: string) => {
+    private handleSkillSelect = (skillName: string) => {
         this.setState({
             selectedSkillName: skillName,
         });
@@ -102,36 +103,6 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         });
     };
 
-    private isSelected = (name: string) => {
-        return name === this.state.selectedSkillName;
-    };
-
-    private selectedClass = (name: string) => {
-        if (this.isSelected(name)) {
-            return 'pwr-selected-list-item';
-        } else {
-            return '';
-        }
-    };
-
-    private renderSkillItem = (name: string) => {
-        return <ListItem button
-                         className={this.selectedClass(name)}
-                         key={name}
-                         onChange={(e: any) => console.debug(e)}
-                         onClick={() => this.handleSkillSelect(null, name)}
-        >
-            {name}
-        </ListItem>;
-    };
-
-    private renderSkills = (skills: Array<string> | null) => {
-        if (skills) {
-            return skills.map(this.renderSkillItem);
-        }
-        return <></>;
-    };
-
     private skillHierarchy = () => {
         return this.props.skillHierarchies.get(this.state.selectedSkillName);
     };
@@ -143,40 +114,33 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
-        let skillUsageInfo: Array<ConsultantInfo> = toArray(this.props.skillUsageInfo.get(this.state.selectedSkillName));
+        const usedBy = this.props.skillUsageInfo.get(this.state.selectedSkillName);
         return (
             <div>
-                <MergeSkillDialog skillInfo={this.props.skillUsageInfo.get(this.state.selectedSkillName)}
+                <MergeSkillDialog skillInfo={usedBy}
                                   skillToMerge={this.state.selectedSkillName}
                                   open={this.state.editOpen}
                                   onClose={this.closeEditDialog}
                 />
-
-                <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
-                    <TextField
+                <ProfileElementLayout
+                    filter={<TextField
                         value={this.state.filterString}
                         onChange={(e) => this.setState({filterString: e.target.value})}
                         label={PowerLocalize.get('Action.Search')}
-                        style={{padding: '8px'}}
-                    />
-                </Paper>
-
-                <div className={'row'}>
-                    <div className={'col-md-8'}>
-                        <Paper>
-                            <List>
-                                {this.renderSkills(res)}</List>
-                        </Paper>
-                    </div>
-                    <div className="col-md-4">
-                        <div style={{marginTop: '8px'}}>
-                            <UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
-                                              usedBy={skillUsageInfo}
-                                              skillName={this.state.selectedSkillName}
-                                              onOpenEdit={this.openEditDialog}/>
-                        </div>
-                    </div>
-                </div>
+                        fullWidth
+                    />}
+                    list={<PwrListTable label={PowerLocalize.get('AdminClient.Overview.Skills')}
+                                        items={res}
+                                        itemKey={name => name}
+                                        selectedKey={this.state.selectedSkillName}
+                                        onSelect={this.handleSkillSelect}
+                                        emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
+                                        columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: name => name}]}/>}
+                    info={<UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
+                                            usedBy={usedBy ? usedBy.toArray() : undefined}
+                                            skillName={this.state.selectedSkillName}
+                                            onOpenEdit={this.openEditDialog}/>}
+                />
             </div>
         );
     }

@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ProfileElementType} from '../../../../Store';
-import {FormControl, InputLabel, List, ListItem, MenuItem, Paper, Select, withTheme} from '@material-ui/core';
+import {FormControl, InputLabel, MenuItem, Select, withTheme} from '@material-ui/core';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {NAME_ENTITY_BY_NAME} from '../../../../utils/Comparators';
@@ -11,7 +11,8 @@ import {ConsultantInfo} from '../../../../model/ConsultantInfo';
 import {ThemeProps} from '../../../../utils/ReactUtils';
 import {ApplicationState} from '../../../../reducers/reducerIndex';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
-import {NameEntityInfoBox} from './name-entity-info-box';
+import {PwrListTable} from '../../../general/pwr-list-table';
+import {ProfileElementInfo, ProfileElementLayout} from '../profile-element-layout';
 import {SuggestionAsyncActionCreator} from '../../../../reducers/suggestions/SuggestionAsyncActionCreator';
 import {NameEntity} from '../../../../reducers/profile-new/profile/model/NameEntity';
 import {ThunkDispatch} from 'redux-thunk';
@@ -124,86 +125,48 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         return this.getNameEntitiesByField(this.state.selectedField);
     };
 
-    private handleIndexSelect = (event: any, index: number) => {
+    private handleSelectEntity = (nameEntity: NameEntity) => {
         this.setState({
-            selectedIndex: index
+            selectedIndex: this.getNameEntitiesByState().indexOf(nameEntity)
         });
-        let nameEntity = this.getNameEntitiesByState()[index];
         this.props.requestNameEntityUsageInfo(nameEntity, this.state.selectedField);
     };
 
-    private renderInfoBox = (nameEntities: Array<NameEntity>) => {
-        if (this.state.selectedIndex != -1) {
-            const ne = nameEntities[this.state.selectedIndex];
-            const usageInfo = this.props.nameEntityUsageInfo.get(ne);
-            const usedBy = usageInfo ? usageInfo.toArray() : [];
-            return <NameEntityInfoBox name={ne.name} usedBy={usedBy.map(value => value.initials())}/>;
-        } else {
-            return <></>;
-        }
+    private renderInfoBox = (selected: NameEntity | undefined) => {
+        const usageInfo = selected && this.props.nameEntityUsageInfo.get(selected);
+        return <ProfileElementInfo name={selected && selected.name} usedBy={usageInfo && usageInfo.toArray()}/>;
     };
 
     private renderSelect() {
-        return (
-            <Paper style={{paddingLeft: '16px', marginBottom: '16px'}}>
-                <form style={{display: 'flex', flexWrap: 'wrap', padding: '8px'}} className="fullWidth">
-                    <FormControl variant="filled">
-                        <InputLabel
-                            htmlFor="ame-entity-overview-element-type">{PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}</InputLabel>
-                        <Select value={this.state.selectedField}
-                                inputProps={{name: 'element-type', id: 'name-entity-overview-element-type'}}
-                                onChange={this.handleSelect}>
-                            {
-                                NameEntityUtil
-                                    .getProfileElementTypes()
-                                    .map((value) => <MenuItem key={value} value={value}
-                                                                            button><ListItemText
-                                        primary={PowerLocalize.get(`NameEntityType.${value}`)}/></MenuItem>)
-                            }
-                        </Select>
-                    </FormControl>
-                </form>
-            </Paper>
-        );
+        return <FormControl variant="filled" fullWidth>
+            <InputLabel id="name-entity-overview-element-type-label" htmlFor="name-entity-overview-element-type">
+                {PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}
+            </InputLabel>
+            <Select value={this.state.selectedField} labelId="name-entity-overview-element-type-label"
+                    inputProps={{name: 'element-type', id: 'name-entity-overview-element-type'}}
+                    onChange={this.handleSelect}>
+                {NameEntityUtil.getProfileElementTypes().map(value =>
+                    <MenuItem key={value} value={value}>
+                        <ListItemText primary={PowerLocalize.get(`NameEntityType.${value}`)}/>
+                    </MenuItem>)}
+            </Select>
+        </FormControl>;
     }
 
-    private isSelected = (index: number) => {
-        return this.state.selectedIndex === index;
-    };
-
-    private renderListItem = (nameEntity: NameEntity, index: number) => {
-        return <ListItem button
-                         onClick={(e: any) => this.handleIndexSelect(e, index)}
-                         key={index}
-                         className={this.isSelected(index) ? 'pwr-selected-list-item' : ''}
-        >
-            {nameEntity.name}
-        </ListItem>;
-    };
-
-
     render() {
-        let nameEntites = this.getNameEntitiesByField(this.state.selectedField);
-        return (
-            <div>
-                {this.renderSelect()}
-                <div className="row">
-                    <div className="col-md-8">
-                        <Paper>
-                            <List>
-                                {
-                                    nameEntites.map(this.renderListItem)
-                                }
-                            </List>
-                        </Paper>
-                    </div>
-                    <div className="col-md-4">
-                        <Paper style={{width: '100%', minHeight: '400px'}}>
-                            {this.renderInfoBox(nameEntites)}
-                        </Paper>
-                    </div>
-                </div>
-            </div>);
+        const nameEntities = this.getNameEntitiesByField(this.state.selectedField);
+        const selected = this.state.selectedIndex >= 0 ? nameEntities[this.state.selectedIndex] : undefined;
+        return <ProfileElementLayout
+            filter={this.renderSelect()}
+            list={<PwrListTable label={PowerLocalize.get(`NameEntityType.${this.state.selectedField}`)}
+                                items={nameEntities}
+                                itemKey={nameEntity => String(nameEntity.id)}
+                                selectedKey={selected && String(selected.id)}
+                                onSelect={this.handleSelectEntity}
+                                emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
+                                columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: nameEntity => nameEntity.name}]}/>}
+            info={this.renderInfoBox(selected)}
+        />;
     }
 }
 

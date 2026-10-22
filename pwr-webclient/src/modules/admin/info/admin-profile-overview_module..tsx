@@ -3,6 +3,7 @@ import {Tab, Tabs, Theme, withTheme} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {NameEntityOverview} from './name-entity/name-entity-overview_module';
 import {UsedSkillOverview} from './skill/used-skill-overview_module';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 
 interface AdminProfileOverviewProps {
     theme: Theme;
@@ -30,18 +31,18 @@ class AdminProfileOverviewModule extends React.Component<AdminProfileOverviewPro
     render() {
         return (
             <div>
-                <div style={{paddingTop: '8px'}}>
-                    <Tabs variant='fullWidth'
-                          centered
-                          value={this.state.index}
-                          onChange={this.setIndex}
-                    >
-                        <Tab label={PowerLocalize.get('AdminClient.Overview.NameEntity')} value={0}/>
-                        <Tab label={PowerLocalize.get('AdminClient.Overview.Skills')} value={1}/>
-                    </Tabs>
-                    {this.state.index === 0 ? <NameEntityOverview/> : null}
-                    {this.state.index === 1 ? <UsedSkillOverview/> : null}
-                </div>
+                <PwrSpacer size="tight"/>
+                <Tabs variant='fullWidth'
+                      centered
+                      value={this.state.index}
+                      onChange={this.setIndex}
+                >
+                    <Tab label={PowerLocalize.get('AdminClient.Overview.NameEntity')} value={0}/>
+                    <Tab label={PowerLocalize.get('AdminClient.Overview.Skills')} value={1}/>
+                </Tabs>
+                <PwrSpacer size="field"/>
+                {this.state.index === 0 ? <NameEntityOverview/> : null}
+                {this.state.index === 1 ? <UsedSkillOverview/> : null}
             </div>);
     }
 }
