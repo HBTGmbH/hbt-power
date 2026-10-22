@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.error.main,
     },
     outdated: {
-        color: theme.palette.secondary.main,
+        color: theme.palette.warning.main,
     },
     neutral: {
         color: theme.palette.text.secondary,

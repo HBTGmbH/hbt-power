@@ -108,12 +108,18 @@ body {
     align-self: flex-end;
 }
 
+/* Colours from the theme (#201, PwrThemeColors): errors red, warnings dark orange, the HBT orange never as text */
 .error-text {
-    color: red;
+    color: var(--pwr-error);
+}
+
+.error-note {
+    color: var(--pwr-error);
+    font-size: 13px;
 }
 
 .warning-note {
-    color: orange;
+    color: var(--pwr-warning);
     font-size: 13px;
 }
 
@@ -123,7 +129,7 @@ body {
 }
 
 .highlighted-category {
-    color: #ffc01b;
+    font-weight: 500;
     margin-top: 8px;
     margin-bottom: 8px
 }
@@ -382,10 +388,6 @@ label.pwr-category-level-label {
 }
 
 
-.pwr-flat-warn-button {
-    color: #ff8e01 !important;
-}
-
 .Report-Uploader {
     padding: 30px;
     display: inline-block;
@@ -462,14 +464,14 @@ label.pwr-category-level-label {
 .pwr-generator-outdated {
     padding: 8px 16px;
     margin-bottom: 16px;
-    border-left: 4px solid #ff8e01;
+    border-left: 4px solid var(--pwr-accent);
     background-color: rgba(255, 142, 1, 0.08);
 }
 
 .pwr-generator-outdated-icon {
     vertical-align: middle;
     margin-right: 8px;
-    color: #ff8e01;
+    color: var(--pwr-warning);
 }
 
 /* Jump from the profile check (#139): stop below the fixed app bar */

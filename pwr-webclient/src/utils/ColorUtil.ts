@@ -25,8 +25,6 @@ export class Color {
     public static readonly HBT_2017_MEDIUM_BLUE = new Color(60, 60, 110);
     public static readonly HBT_2017_LIGHT_BLUE = new Color(80, 90, 200);
 
-    public static readonly HBT_2017_HIGHLIGHT = new Color(255, 142, 1);
-
     public static readonly HBT_2017_WHITE = new Color(255, 255, 255);
 
     constructor(r: number, g: number, b: number, a?: number) {
