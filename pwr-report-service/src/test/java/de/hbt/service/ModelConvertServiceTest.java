@@ -16,7 +16,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Versions of the skills in the export (#151)
+ * Skills in the export: their versions (#151), categories switched off (#159)
  */
 class ModelConvertServiceTest {
 
@@ -65,6 +65,13 @@ class ModelConvertServiceTest {
         assertThat(skills).hasSize(1);
         assertThat(skills.get(0).getGruppe()).isEqualTo("Programming Languages");
         assertThat(skills.get(0).getVersions()).isNull();
+    }
+
+    @Test
+    void shouldExportNoSkillOfACategorySwitchedOff() {
+        ReportInfo reportInfo = reportInfo(true);
+        reportInfo.viewProfile.getDisplayCategories().get(0).setEnabled(false);
+        assertThat(modelConvertService.convert(reportInfo, null).getSkills()).isEmpty();
     }
 
     @Test
