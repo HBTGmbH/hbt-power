@@ -6,6 +6,7 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.*;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
+import de.hbt.pwr.view.model.skill.SkillVersion;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.assertj.core.api.Condition;
 import org.junit.Before;
@@ -14,10 +15,13 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.tuple;
 
 /**
  * Tests that validate that toggling visibility of profile elements works as intended.
@@ -369,6 +373,23 @@ public class ViewProfileVisibilityTests {
 
         viewProfileService.setIsEnabledForAllRolesInProject(profileToTest, 0, false);
         profileToTest.getProjects().forEach(project1 -> assertThat(project1.getProjectRoles()).areNot(enabled));
+    }
+
+    @Test
+    public void hidingSkillVersions_keepsTheChoicePerVersion() {
+        Skill skill = Skill.builder().name("Java").enabled(true).build();
+        skill.setVersions(Arrays.asList("8", "17"));
+        skill.setEnabledForVersion("8", false);
+        profileToTest.getDisplayCategories().add(Category.builder().name("Languages").displaySkills(new ArrayList<>(Arrays.asList(skill))).build());
+
+        viewProfileService.setShowSkillVersions(profileToTest, false);
+        assertThat(profileToTest.getShowSkillVersions()).isFalse();
+        assertThat(skill.getVersions()).extracting(SkillVersion::getName, SkillVersion::getEnabled)
+                .containsExactly(tuple("8", false), tuple("17", true));
+
+        viewProfileService.setShowSkillVersions(profileToTest, true);
+        assertThat(profileToTest.getShowSkillVersions()).isTrue();
+        assertThat(skill.getVersions()).extracting(SkillVersion::getEnabled).containsExactly(false, true);
     }
 
 

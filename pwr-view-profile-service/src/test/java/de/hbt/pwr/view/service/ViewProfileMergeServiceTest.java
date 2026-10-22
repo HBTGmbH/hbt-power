@@ -74,6 +74,13 @@ public class ViewProfileMergeServiceTest {
     }
 
     @Test
+    public void shouldKeepHiddenSkillVersions() {
+        oldView.setShowSkillVersions(false);
+        ViewProfile newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, new ViewProfile(), options);
+        assertThat(newViewProfile.getShowSkillVersions()).isFalse();
+    }
+
+    @Test
     public void shouldCopyLanguageOptions() {
 
         makeViewProfile();

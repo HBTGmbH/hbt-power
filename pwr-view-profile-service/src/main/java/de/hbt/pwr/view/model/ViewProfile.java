@@ -50,6 +50,12 @@ public class ViewProfile {
 
     private List<Category> displayCategories = new ArrayList<>();
 
+    /**
+     * Versions of the skills in the export (#151). Off hides all of them; the choice per version stays as it is.
+     * View profiles stored before lack it, {@link de.hbt.pwr.view.aspects.ViewProfileRestoreAspect} sets it to true.
+     */
+    private Boolean showSkillVersions = true;
+
     public Optional<Skill> findSkillByName(String name) {
         return this.displayCategories.stream()
                 .map(category -> category.getDisplaySkills().stream()

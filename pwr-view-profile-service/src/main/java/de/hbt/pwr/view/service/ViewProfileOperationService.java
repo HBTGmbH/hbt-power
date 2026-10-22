@@ -171,6 +171,13 @@ public class ViewProfileOperationService {
     }
 
     /**
+     * Shows or hides the versions of all skills in the export (#151); the choice per version stays as it is.
+     */
+    public void setShowSkillVersions(ViewProfile viewProfile, boolean show) {
+        viewProfile.setShowSkillVersions(show);
+    }
+
+    /**
      * Sets {@link Skill#getEnabled()} to <code>isEnabled</code> for all skills.
      *
      * @param viewProfile that is affected

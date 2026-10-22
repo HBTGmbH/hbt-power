@@ -46,6 +46,8 @@ public class ViewProfileMergeService {
 
         newView.getViewProfileInfo().setName(options.name);
         newView.getViewProfileInfo().setViewDescription(options.viewDescription);
+        // Settings of the view profile (#151)
+        newView.setShowSkillVersions(oldView.getShowSkillVersions());
 
         //2. merge old and new VP
 

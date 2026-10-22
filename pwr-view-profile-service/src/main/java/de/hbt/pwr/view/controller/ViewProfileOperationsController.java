@@ -113,6 +113,27 @@ public class ViewProfileOperationsController {
         return ResponseEntity.ok(viewProfile);
     }
 
+    @ApiOperation(value = "Shows or hides the versions of all skills",
+            notes = "Shows or hides the versions of all skills in the export (#151). The visibility of each version " +
+                    "stays as it is. This operation is persistent.",
+            response = ViewProfile.class,
+            tags = {"toggling", "skill"},
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
+    })
+    @PatchMapping("/SKILL/versions/{isEnabled}")
+    ResponseEntity<ViewProfile> setShowSkillVersions(@PathVariable("initials") String initials,
+                                                     @PathVariable("viewProfileId") String viewProfileId,
+                                                     @PathVariable("isEnabled") Boolean isEnabled) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        viewProfileService.setShowSkillVersions(viewProfile, isEnabled);
+        return ResponseEntity.ok(viewProfile);
+    }
+
     @ApiOperation(value = "Sets the visibility for all entries",
             notes = "Sets the visibility for all entries of the given type in the defined view profile. " +
                     "This operation is persistent.",
