@@ -33,6 +33,7 @@ import {Alerts} from '../../../../../utils/Alerts';
 import {ThunkDispatch} from 'redux-thunk';
 import {findSkillByName, PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
 import {LimitedTextField} from '../../../../general/limited-text-field-module';
+import {ProjectDescriptionHelp} from './project-description-help';
 import {PROJECT_DESCRIPTION_LENGTH, PROJECT_NAME_LENGTH} from '../../../../../model/PwrConstants';
 
 interface ProjectProps {
@@ -283,6 +284,9 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
                         id="project-description"
                         label={PowerLocalize.get('Profile.Project.Description')}
                         maxCharacters={PROJECT_DESCRIPTION_LENGTH}
+                        help={<ProjectDescriptionHelp/>}
+                        helpOpenLabel={PowerLocalize.get('ProjectDescriptionHelp.Open')}
+                        helpCloseLabel={PowerLocalize.get('ProjectDescriptionHelp.Close')}
                         onChange={(_, description) => this.setDescription(description)}
                         value={this.project().description || ''}
                         fullWidth
