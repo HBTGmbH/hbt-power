@@ -3,11 +3,13 @@ package de.hbt.power.controller;
 import de.hbt.power.exception.SkillServiceException;
 import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
+import de.hbt.power.model.dto.LocalizationLanguage;
 import de.hbt.power.model.dto.SkillSuggestion;
 import de.hbt.power.model.dto.TCategoryNode;
 import de.hbt.power.repo.SkillCategoryRepository;
 import de.hbt.power.repo.SkillRepository;
 import de.hbt.power.service.CategoryService;
+import de.hbt.power.service.LocalizationService;
 import de.hbt.power.service.SkillSearcherService;
 import de.hbt.power.service.SkillService;
 import de.hbt.power.service.SkillTreeMappingService;
@@ -49,17 +51,21 @@ public class SkillController {
 
     private final SkillTreeMappingService skillTreeMappingService;
 
+    private final LocalizationService localizationService;
+
     @Autowired
     public SkillController(
             SkillRepository skillRepository,
             SkillCategoryRepository skillCategoryRepository,
-            SkillSearcherService skillSearcherService, SkillService skillService, CategoryService categoryService, SkillTreeMappingService skillTreeMappingService) {
+            SkillSearcherService skillSearcherService, SkillService skillService, CategoryService categoryService, SkillTreeMappingService skillTreeMappingService,
+            LocalizationService localizationService) {
         this.skillRepository = skillRepository;
         this.skillCategoryRepository = skillCategoryRepository;
         this.skillSearcherService = skillSearcherService;
         this.skillService = skillService;
         this.categoryService = categoryService;
         this.skillTreeMappingService = skillTreeMappingService;
+        this.localizationService = localizationService;
     }
 
     private Skill requireSkill(Integer id) {
@@ -214,6 +220,12 @@ public class SkillController {
         Skill skill = requireSkill(skillId);
         skillService.deleteVersion(skill, version);
         return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "Returns the languages with localizations of skills or categories (ISO 639-2 code and German name)")
+    @GetMapping("/locales")
+    public ResponseEntity<List<LocalizationLanguage>> getLocalizationLanguages() {
+        return ResponseEntity.ok(localizationService.getLanguages());
     }
 
     @ApiOperation(value = "Returns a model of the skill tree. Returned value is the root node.", response = TCategoryNode.class)

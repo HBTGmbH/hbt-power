@@ -24,4 +24,11 @@ public interface SkillRepository extends JpaRepository<Skill, Integer>, CrudRepo
 
     @Query("select s from Skill s WHERE not s.category is null")
     List<Skill> findForTree();
+
+    /**
+     * Languages with at least one localization of a skill; removed localizations stay behind in LOCALIZED_QUALIFIER
+     * without a skill, so they don't count
+     */
+    @Query("select distinct q.locale from Skill s join s.qualifiers q")
+    List<String> findLocalizationLanguages();
 }

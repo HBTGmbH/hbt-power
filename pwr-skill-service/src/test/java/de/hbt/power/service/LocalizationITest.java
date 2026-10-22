@@ -176,4 +176,35 @@ public class LocalizationITest {
                 .andExpect(jsonPath("$.display").value(true))
                 .andExpect(jsonPath("$.qualifiers[0].qualifier").value("Anforderungen"));
     }
+
+    /**
+     * A view profile offers the languages that have localizations (#174); removed ones stay behind without a skill or
+     * category and must not count
+     */
+    @Test
+    public void languages_areThoseWithLocalizationsOfSkillsOrCategories() throws Exception {
+        mockMvc.perform(get("/skill/locales"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.code == 'eng')]").isEmpty())
+                .andExpect(jsonPath("$[?(@.code == 'fra')]").isEmpty());
+
+        mockMvc.perform(post("/skill/{id}/locale/{language}", skill.getId(), "eng").param("qualifier", "Requirements Engineering"))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/category/{id}/locale", category.getId()).param("lang", "fra").param("qualifier", "Exigences"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/skill/locales"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.code == 'eng')].name").value("Englisch"))
+                .andExpect(jsonPath("$[?(@.code == 'fra')].name").value("Französisch"));
+
+        mockMvc.perform(delete("/skill/{id}/locale/{language}", skill.getId(), "eng"))
+                .andExpect(status().isOk());
+        mockMvc.perform(delete("/category/{id}/locale/{language}", category.getId(), "fra"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/skill/locales"))
+                .andExpect(jsonPath("$[?(@.code == 'eng')]").isEmpty())
+                .andExpect(jsonPath("$[?(@.code == 'fra')]").isEmpty());
+    }
 }
