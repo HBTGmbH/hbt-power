@@ -18,7 +18,8 @@ export function hintLink(hint: ProfileCheckHint, initials: string): string {
         return Paths.build(Paths.USER_PROFILE_NEW_PROJECT, {initials});
     }
     if (hint.projectId !== null && hint.projectId !== undefined) {
-        return Paths.build(Paths.USER_PROFILE_PROJECT, {initials, projectId: String(hint.projectId)});
+        return Paths.build(Paths.USER_PROFILE_PROJECT,
+            {initials, projectId: String(hint.projectId), slug: Paths.projectSlug(hint.projectName)});
     }
     switch (hint.section) {
         case ProfileSection.SKILLS:

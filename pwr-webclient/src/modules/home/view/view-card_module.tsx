@@ -86,7 +86,8 @@ class ViewCardModule extends React.Component<ViewCardProps
                                     onDelete={() => this.props.deleteViewProfile(this.props.viewProfileId)}>
                         <PwrButton color={'primary'} text={PowerLocalize.get('Action.Edit')}
                                    icon={<Icon className="material-icons">edit</Icon>}
-                                   onClick={() => this.props.navigateTo(Paths.build(Paths.USER_VIEW_PROFILE, {id: this.props.viewProfileId, initials}))}/>
+                                   onClick={() => this.props.navigateTo(Paths.viewProfile(initials, this.props.viewProfileId,
+                                       this.props.viewProfile.viewProfileInfo.name))}/>
                     </PwrFormActions>
                 </CardActions>
             </Card>);

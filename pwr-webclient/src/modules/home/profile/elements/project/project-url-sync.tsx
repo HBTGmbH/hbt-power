@@ -23,7 +23,9 @@ export function projectsUrl(initials: string, store: ProfileStore): string {
         return Paths.build(Paths.USER_PROFILE_NEW_PROJECT, {initials});
     }
     const path = store.isProjectEditing ? Paths.USER_PROFILE_PROJECT_EDIT : Paths.USER_PROFILE_PROJECT;
-    return Paths.build(path, {initials, projectId: String(project.id)});
+    // Slug from the saved name: it does not follow the typing in the edit mode
+    const saved = (store.profile.projects || []).find(other => other.id === project.id);
+    return Paths.build(path, {initials, projectId: String(project.id), slug: Paths.projectSlug(saved && saved.name)});
 }
 
 interface UrlTarget {
@@ -41,6 +43,15 @@ function parseTarget(pathname: string): UrlTarget {
     const match = edit || view;
     const projectId = match ? Number(match.params.projectId) : NaN;
     return {isNew: false, projectId: isNaN(projectId) ? null : projectId, edit: !!edit};
+}
+
+/**
+ * Both URLs show the same project: the slug is not evaluated, a stale or missing one leads to the same project
+ */
+function sameProject(pathname: string, other: string): boolean {
+    const a = parseTarget(pathname);
+    const b = parseTarget(other);
+    return a.projectId !== null && a.projectId === b.projectId && a.edit === b.edit;
 }
 
 /**
@@ -76,9 +87,13 @@ export const ProjectUrlSync = () => {
         previousPath.current = path;
         previousStoreUrl.current = storeUrl;
 
-        if (path === storeUrl) {
+        if (path === storeUrl || sameProject(path, storeUrl)) {
             target.current = null;
             attemptedAt.current = null;
+            if (path !== storeUrl) {
+                // Only the slug differs (old link, renamed project): write the right one
+                history.replace(storeUrl);
+            }
             return;
         }
         if (storeChanged && !pathChanged && target.current === null) {
