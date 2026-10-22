@@ -16,10 +16,15 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"isDisplay", "displaySkills"})
+@EqualsAndHashCode(exclude = {"isDisplay", "displaySkills", "localizedName"})
 public class Category implements ToggleableEntry, NameComparable {
     private Long id;
     private String name;
+
+    /**
+     * The name in the language of the view profile (#174), see {@link Skill#getLocalizedName()}
+     */
+    private String localizedName;
 
     /**
      * Hard override to any display logic; If this flag is set, the category

@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"rating", "enabled", "displayCategory"})
+@EqualsAndHashCode(exclude = {"rating", "enabled", "displayCategory", "localizedName"})
 @ToString(exclude = {"displayCategory"})
 public class Skill implements ToggleableEntry, NameComparable {
     private Long id;
@@ -23,6 +23,12 @@ public class Skill implements ToggleableEntry, NameComparable {
     private Boolean enabled;
 
     private List<SkillVersion> versions;
+
+    /**
+     * The name in the language of the view profile (#174), if the skill has a localization for it; the name stays the
+     * key. Filled by {@link de.hbt.pwr.view.service.ViewProfileLocalizationService}.
+     */
+    private String localizedName;
 
     @Transient
     @JsonBackReference(value = "refDisplaySkills")
@@ -47,6 +53,15 @@ public class Skill implements ToggleableEntry, NameComparable {
         this.enabled = enabled;
         this.setDisplayCategory(displayCategory);
         this.versions = versions;
+    }
+
+    /**
+     * All fields, in their order, for the builder: like the others, it puts the skill into its display category
+     */
+    public Skill(Long id, String name, Integer rating, Boolean enabled, List<SkillVersion> versions, String localizedName,
+                 Category displayCategory) {
+        this(id, name, rating, enabled, versions, displayCategory);
+        this.localizedName = localizedName;
     }
 
     public void setVersions(List<String> names) {

@@ -104,7 +104,7 @@ public class ViewProfileController {
             locale = ViewProfileCreatorService.DEFAULT_LOCALE;
         }
         ViewProfile viewProfile = viewProfileCreatorService
-                .createViewProfile(initials, data.name, data.viewDescription, locale);
+                .createViewProfile(initials, data.name, data.viewDescription, locale, data.localization);
         return ResponseEntity.ok(viewProfile);
     }
 

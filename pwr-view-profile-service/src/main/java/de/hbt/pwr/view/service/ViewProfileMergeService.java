@@ -24,13 +24,16 @@ public class ViewProfileMergeService {
 
     private final ViewProfileRepository viewProfileRepository;
     private final ViewProfileCreatorService viewProfileCreatorService;
+    private final ViewProfileLocalizationService viewProfileLocalizationService;
 
 
     @Autowired
-    public ViewProfileMergeService(ViewProfileRepository viewProfileRepository, ViewProfileCreatorService viewProfileCreatorService) {
+    public ViewProfileMergeService(ViewProfileRepository viewProfileRepository, ViewProfileCreatorService viewProfileCreatorService,
+                                   ViewProfileLocalizationService viewProfileLocalizationService) {
 
         this.viewProfileRepository = viewProfileRepository;
         this.viewProfileCreatorService = viewProfileCreatorService;
+        this.viewProfileLocalizationService = viewProfileLocalizationService;
     }
 
     public ViewProfile updateViewProfile(String oldId, String initials, ViewProfile.ViewProfileMergeOptions options) {
@@ -38,7 +41,8 @@ public class ViewProfileMergeService {
         ViewProfile oldView = viewProfileRepository.findById(oldId).orElseThrow(() -> new ViewProfileNotFoundException(oldId));
 
         // 3. create new ViewProfile
-        ViewProfile newView = viewProfileCreatorService.createViewProfile(initials, options.name, options.viewDescription, "");
+        ViewProfile newView = viewProfileCreatorService.createViewProfile(initials, options.name, options.viewDescription, "",
+                oldView.getLocalization());
         return mergeViewProfiles(oldView, newView, options);
     }
 
@@ -46,8 +50,9 @@ public class ViewProfileMergeService {
 
         newView.getViewProfileInfo().setName(options.name);
         newView.getViewProfileInfo().setViewDescription(options.viewDescription);
-        // Settings of the view profile (#151)
+        // Settings of the view profile (#151, #174)
         newView.setShowSkillVersions(oldView.getShowSkillVersions());
+        newView.setLocalization(oldView.getLocalization());
 
         //2. merge old and new VP
 
@@ -67,6 +72,8 @@ public class ViewProfileMergeService {
 
         // Display Categories
         newView.setDisplayCategories(mergeDisplayCategories(oldView.getDisplayCategories(), newView.getDisplayCategories()));
+        // The old display categories and projects stay; their names come from the current localizations (#174)
+        viewProfileLocalizationService.localize(newView);
 
         if (!options.keepOld) {
             // delete the old one

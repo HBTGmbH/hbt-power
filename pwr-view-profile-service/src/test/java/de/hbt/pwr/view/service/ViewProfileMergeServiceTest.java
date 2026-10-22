@@ -20,6 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -61,6 +62,8 @@ public class ViewProfileMergeServiceTest {
         return view;
     }
 
+    private final ViewProfileLocalizationService viewProfileLocalizationService = mock(ViewProfileLocalizationService.class);
+
     @Before
     public void setUp() throws Exception {
         oldView = makeViewProfile();
@@ -70,7 +73,16 @@ public class ViewProfileMergeServiceTest {
         options.keepOld = true;
         ViewProfileRepository viewProfileRepository = mock(ViewProfileRepository.class);
         when(viewProfileRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null);
+        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null, viewProfileLocalizationService);
+    }
+
+    @Test
+    public void shouldKeepTheLanguageAndFillTheCurrentLocalizations() {
+        oldView.setLocalization("deu");
+        ViewProfile newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, new ViewProfile(), options);
+        assertThat(newViewProfile.getLocalization()).isEqualTo("deu");
+        // The old display categories and projects stay, with their names from the current localizations (#174)
+        verify(viewProfileLocalizationService).localize(newViewProfile);
     }
 
     @Test
