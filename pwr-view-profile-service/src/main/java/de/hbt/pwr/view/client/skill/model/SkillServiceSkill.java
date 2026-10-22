@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Data
@@ -30,13 +29,4 @@ public class SkillServiceSkill {
         this.category = category;
     }
 
-    public String getLocalizedQualifier(String locale) {
-        if (locale == null || this.qualifiers == null) {
-            return qualifier;
-        }
-        Optional<String> name = qualifiers.stream()
-                .filter(localizedQualifier -> locale.equals(localizedQualifier.getLocale()))
-                .map(LocalizedQualifier::getQualifier).findAny();
-        return name.orElse(qualifier);
-    }
 }

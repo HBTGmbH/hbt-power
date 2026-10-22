@@ -314,24 +314,27 @@ public class ViewProfileImporterSkillTest {
         assertThat(viewProfile.getViewProfileInfo().getCreationDate()).isNotNull();
     }
 
+    /**
+     * The view profile recognises skills and categories by their names, so a localization must not replace them (#93)
+     */
     @Test
-    public void shouldImportWithLocaleIfAvailable() {
+    public void shouldImportNamesFromSkillTree_evenIfLocalized() {
         SkillServiceCategory highest = new SkillServiceCategory("Highest", null);
         SkillServiceCategory center = new SkillServiceCategory("Center", highest);
         SkillServiceCategory lowest = new SkillServiceCategory("Lowest", center, true);
         SkillServiceSkill testSkill1 = new SkillServiceSkill("German", lowest);
-        LocalizedQualifier localizedQualifier = new LocalizedQualifier("deu", "Deutsch");
-        LocalizedQualifier localizedQualifierCategory = new LocalizedQualifier("deu", "Niedrigste");
-        testSkill1.getQualifiers().add(localizedQualifier);
-        lowest.getQualifiers().add(localizedQualifierCategory);
+        testSkill1.getQualifiers().add(new LocalizedQualifier("deu", "Deutsch"));
+        lowest.getQualifiers().add(new LocalizedQualifier("deu", "Niedrigste"));
 
         profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
         given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
         ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "deu");
 
-        Optional<Skill> skillOptional = viewProfile.findSkillByName(localizedQualifier.getQualifier());
-        assertThat(skillOptional.isPresent()).isTrue();
-        assertThat(skillOptional.get().getName()).isEqualTo(localizedQualifier.getQualifier());
+        assertThat(viewProfile.findSkillByName("German")).isPresent();
+        assertThat(viewProfile.findSkillByName("Deutsch")).isEmpty();
+        assertThat(viewProfile.getDisplayCategories())
+                .extracting(Category::getName)
+                .containsExactly("Lowest");
     }
 
     @Test

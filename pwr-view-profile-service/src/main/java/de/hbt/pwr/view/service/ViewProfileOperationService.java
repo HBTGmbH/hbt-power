@@ -215,7 +215,7 @@ public class ViewProfileOperationService {
 
     private Category toCategory(SkillServiceCategory serviceCategory) {
         if (serviceCategory != null) {
-            Category category = new Category(serviceCategory.getLocalizedQualifier("deu"));
+            Category category = new Category(serviceCategory.getQualifier());
             category.setId(serviceCategory.getId().longValue());
             return category;
         }
