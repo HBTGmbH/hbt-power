@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
-import {Divider, Paper} from '@material-ui/core';
+import {Button, Divider, Icon, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ProfileDataAsyncActionCreator} from '../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
@@ -24,16 +24,19 @@ import {formatToShortDisplay} from '../../../utils/DateUtil';
 import {ThunkDispatch} from 'redux-thunk';
 import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
-import {matchPath} from 'react-router-dom';
+import {Link, matchPath} from 'react-router-dom';
 import {Paths} from '../../../Paths';
 import {profileSectionAnchor} from '../../general/profile-check/profile-check-hints';
 import {ProfileSection} from '../../../model/check/ProfileCheck';
+import {projectsUrl} from './elements/project/project-url-sync';
+import {ProfileStore} from '../../../reducers/profile-new/ProfileStore';
 
 
 interface ProfileProps {
     suggestions: SuggestionStore;
     activeConsultant: Consultant;
     profile: Profile;
+    profileStore: ProfileStore;
 }
 
 /**
@@ -77,7 +80,8 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
         return {
             suggestions: state.suggestionStore,
             activeConsultant: state.profileStore.consultant,
-            profile: state.profileStore.profile
+            profile: state.profileStore.profile,
+            profileStore: state.profileStore
         };
     }
 
@@ -129,6 +133,24 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
     private consultantName(): string {
         const consultant = this.props.activeConsultant;
         return consultant != null ? consultant.firstName + ' ' + consultant.lastName : 'No Name';
+    }
+
+    /**
+     * Jumps to the projects and skills of the profile (#189), like the jumps in the head of a view profile: buttons that
+     * are links, so the router navigates (and asks about unsaved changes) and a middle click opens a new tab
+     */
+    private renderJumps() {
+        const initials = this.props.match.params.initials;
+        const jump = (to: string, icon: string, localizationKey: string) =>
+            // Material-UI marks anything but a plain <a> as a button; this is a link
+            <Button color="primary" component={Link} to={to} role="link"
+                    endIcon={<Icon className="material-icons">{icon}</Icon>}>
+                {PowerLocalize.get(localizationKey)}
+            </Button>;
+        return <nav className="pwr-profile-nav" aria-label={PowerLocalize.get('Profile.Jumps')}>
+            {jump(projectsUrl(initials, this.props.profileStore), 'work', 'Menu.BaseData.Projects')}
+            {jump(Paths.build(Paths.USER_PROFILE_SKILLS, {initials}), 'star', 'Menu.BaseData.Skills')}
+        </nav>;
     }
 
     private renderInfo(value: string) {
@@ -202,10 +224,16 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                                                alt={this.consultantName()}/>
                         </Grid>}
                         <Grid item xs={12} md>
-                            <Typography variant={'h5'}>{this.consultantName()}</Typography>
-                            <Typography variant={'subtitle1'} color={'textSecondary'} gutterBottom>
-                                {this.props.activeConsultant.title}
-                            </Typography>
+                            {/* Name and title on the left, the jumps on the right; on a narrow screen they wrap below */}
+                            <div className="pwr-profile-title-row">
+                                <div>
+                                    <Typography variant={'h5'}>{this.consultantName()}</Typography>
+                                    <Typography variant={'subtitle1'} color={'textSecondary'} gutterBottom>
+                                        {this.props.activeConsultant.title}
+                                    </Typography>
+                                </div>
+                                {this.renderJumps()}
+                            </div>
                             <div id={profileSectionAnchor(ProfileSection.DESCRIPTION)} className="pwr-profile-section-anchor">
                                 <ProfileDescription/>
                             </div>

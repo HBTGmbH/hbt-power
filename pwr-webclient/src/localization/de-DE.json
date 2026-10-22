@@ -59,6 +59,7 @@
   "Overview.ViewProfiles.Subtitle": "Übersicht",
   "Overview.Base.LastEdited": "Deine letzte Profilaktualisierung war",
   "Profile.Description.AllowedCharacterText": "{0}/{1} Zeichen",
+  "Profile.Jumps": "Weiter zu Projekten und Skills",
   "Profile.Entries.NotAvailable": "Nicht Vorhanden",
   "Profile.Entry.Edit.DeleteConfirm.Header": "Löschen Bestätigen",
   "Profile.Entry.Edit.DeleteConfirm.Message": "Willst du {0} wirklich löschen?",
