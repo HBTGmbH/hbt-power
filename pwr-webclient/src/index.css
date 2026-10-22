@@ -687,6 +687,23 @@ label.pwr-category-level-label {
 }
 
 /* The text of the first jump in line with the title: a text button has 8px padding */
+/* Head of the profile page (#189): name and title, the jumps to projects and skills on the right */
+.pwr-profile-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    column-gap: 16px;
+}
+
+/* Text buttons: their labels line up with the edges of the text, right beside the name, left when wrapped below it */
+.pwr-profile-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 -8px;
+}
+
 .pwr-view-profile-nav {
     display: flex;
     flex-wrap: wrap;
