@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Dialog, DialogActions, DialogContent, DialogTitle, Icon, Radio, RadioGroup, Typography} from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel';
@@ -30,13 +30,17 @@ export const MoveAllSkillsDialog = (props: MoveAllSkillsDialogProps) => {
     const initials = useSelector((state: ApplicationState) => state.profileStore.consultant.initials);
     const [targets, setTargets] = useState<Array<DisplayCategoryTarget>>(null);
     const [selected, setSelected] = useState<number>(null);
+    const {viewProfileId, categoryIndex} = props;
+    // The parent passes a new function with every render; loading the targets must not depend on it
+    const onClose = useRef(props.onClose);
+    onClose.current = props.onClose;
 
     useEffect(() => {
-        ViewProfileServiceClient.instance().getMoveTargets(initials, props.viewProfileId, props.categoryIndex)
+        ViewProfileServiceClient.instance().getMoveTargets(initials, viewProfileId, categoryIndex)
             .then(setTargets)
             // The client shows the error
-            .catch(() => props.onClose());
-    }, [initials, props.viewProfileId, props.categoryIndex]);
+            .catch(() => onClose.current());
+    }, [initials, viewProfileId, categoryIndex]);
 
     const move = () => {
         dispatch(ViewProfileActionCreator.AsyncMoveAllSkills(props.viewProfileId, props.categoryIndex, selected));
