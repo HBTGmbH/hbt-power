@@ -17,16 +17,15 @@ import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.ModelConvertUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.hbt.pwr.view.client.skill.model.SkillServiceCategory.other;
@@ -45,6 +44,13 @@ public class ViewProfileCreatorService {
     private final SkillServiceClient skillServiceClient;
     private final ViewProfileRepository viewProfileRepository;
     private final ViewProfileSortService viewProfileSortService;
+
+    /**
+     * A display category needs at least this many skills of the profile, otherwise they move up (#169)
+     */
+    @Setter
+    @Value("${view-profile.min-skills-per-category:3}")
+    private int minSkillsPerCategory = 3;
 
     public ViewProfile createViewProfile(String initials, String name, String viewDescription, String localeStr) {
         Locale locale = (localeStr == null || localeStr.equals("")) ? Locale.GERMAN : Locale.forLanguageTag(localeStr);
@@ -175,13 +181,45 @@ public class ViewProfileCreatorService {
         }
     }
 
+    /**
+     * Display categories as specific as possible (#169): each skill starts at the category it hangs at in the skill
+     * tree. A category with fewer than {@link #minSkillsPerCategory} skills of the profile passes them on to the next
+     * category above that the skill tree marks as display category, from the bottom up, so that skills brought
+     * together count there. Without such a category above, they stay.
+     */
     private List<Category> createDisplayCategories(Collection<ProfileSkill> profileSkills) {
-        List<Category> displayCategories = new ArrayList<>();
-        profileSkills.forEach(profileSkill -> getDisplayCategoryForProfileSkill(profileSkill, displayCategories));
-        return displayCategories;
+        List<Placement> placements = profileSkills.stream().map(this::toPlacement).collect(Collectors.toList());
+        moveUpSmallCategories(placements);
+        return toDisplayCategories(placements);
     }
 
-    private void getDisplayCategoryForProfileSkill(ProfileSkill profileSkill, List<Category> displayCategories) {
+    /**
+     * A skill on its way up: its own category, then the display categories above it
+     */
+    private static final class Placement {
+        private final Skill skill;
+        private final List<SkillServiceCategory> steps;
+        private int step = 0;
+
+        private Placement(Skill skill, List<SkillServiceCategory> steps) {
+            this.skill = skill;
+            this.steps = steps;
+        }
+
+        private SkillServiceCategory category() {
+            return steps.get(step);
+        }
+
+        private boolean canMoveUp() {
+            return step + 1 < steps.size();
+        }
+
+        private void moveUp() {
+            step++;
+        }
+    }
+
+    private Placement toPlacement(ProfileSkill profileSkill) {
         SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(profileSkill.getName());
         if (serviceSkill == null) {
             serviceSkill = skillServiceClient.getDefaultSkillByName(profileSkill.getName());
@@ -195,29 +233,64 @@ public class ViewProfileCreatorService {
         );
         skill.setVersions(profileSkill.getVersions());
 
-        if (serviceSkill.getCategory() == null) {
-            serviceSkill.setCategory(other());
+        SkillServiceCategory own = serviceSkill.getCategory() != null ? serviceSkill.getCategory() : other();
+        List<SkillServiceCategory> steps = new ArrayList<>();
+        steps.add(own);
+        for (SkillServiceCategory above = own.getCategory(); above != null; above = above.getCategory()) {
+            if (Boolean.TRUE.equals(above.getDisplay())) {
+                steps.add(above);
+            }
         }
-        skill.setDisplayCategory(getDisplayCategory(serviceSkill.getCategory(), displayCategories));
+        return new Placement(skill, steps);
     }
 
-
-    private Category getDisplayCategory(SkillServiceCategory serviceCategory, List<Category> displayCategories) {
-
-        if (serviceCategory.getDisplay() || serviceCategory.getCategory() == null || serviceCategory.getCategory().getCategory() == null) {
-            Category category = mapCategory(serviceCategory);
-            category.setIsDisplay(true);
-            category.setEnabled(true);
-
-            if (displayCategories.stream().noneMatch(c -> c.getId().equals(category.getId()))) {
-                displayCategories.add(category);
-                return displayCategories.get(displayCategories.indexOf(category));
-            } else {
-                return displayCategories.stream().filter(cat -> cat.getId().equals(category.getId())).findFirst().orElseThrow(RuntimeException::new);
+    /**
+     * Deepest categories first: what moves up counts in the category above, which comes later
+     */
+    private void moveUpSmallCategories(List<Placement> placements) {
+        Set<String> done = new HashSet<>();
+        while (true) {
+            Map<String, List<Placement>> byCategory = placements.stream()
+                    .collect(Collectors.groupingBy(placement -> key(placement.category()), LinkedHashMap::new, Collectors.toList()));
+            Optional<Map.Entry<String, List<Placement>>> deepest = byCategory.entrySet().stream()
+                    .filter(entry -> !done.contains(entry.getKey()))
+                    .max(Comparator.comparingInt(entry -> depth(entry.getValue().get(0).category())));
+            if (!deepest.isPresent()) {
+                return;
             }
-        } else {
-            return getDisplayCategory(serviceCategory.getCategory(), displayCategories);
+            done.add(deepest.get().getKey());
+            List<Placement> group = deepest.get().getValue();
+            if (group.size() < minSkillsPerCategory) {
+                group.stream().filter(Placement::canMoveUp).forEach(Placement::moveUp);
+            }
         }
+    }
+
+    private List<Category> toDisplayCategories(List<Placement> placements) {
+        Map<String, Category> categories = new LinkedHashMap<>();
+        placements.forEach(placement -> {
+            Category category = categories.computeIfAbsent(key(placement.category()), key -> {
+                Category displayCategory = mapCategory(placement.category());
+                displayCategory.setIsDisplay(true);
+                displayCategory.setEnabled(true);
+                return displayCategory;
+            });
+            placement.skill.setDisplayCategory(category);
+        });
+        return new ArrayList<>(categories.values());
+    }
+
+    /** Categories of different skills are different objects; the same category has the same id (or name) */
+    private static String key(SkillServiceCategory category) {
+        return category.getId() != null ? "id:" + category.getId() : "name:" + category.getQualifier();
+    }
+
+    private static int depth(SkillServiceCategory category) {
+        int depth = 0;
+        for (SkillServiceCategory above = category.getCategory(); above != null; above = above.getCategory()) {
+            depth++;
+        }
+        return depth;
     }
 
     private Category mapCategory(SkillServiceCategory category) {

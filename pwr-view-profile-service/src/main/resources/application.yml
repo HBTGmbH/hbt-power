@@ -25,6 +25,10 @@ management:
 pwr-skill-service-url: http://pwr-skill-service:9003
 pwr-profile-service-url: http://pwr-profile-service:9004
 pwr-report-service-url: http://pwr-report-service:9005
+view-profile:
+  # A display category of a new view profile needs this many skills of the profile; with fewer they move up to the next
+  # display category above in the skill tree (#169)
+  min-skills-per-category: 3
 ---
 spring:
   profiles: localDev
