@@ -1,6 +1,7 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
+import de.hbt.pwr.view.client.skill.model.LocalizedQualifier;
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.ViewProfile;
@@ -121,5 +122,16 @@ public class MoveAllSkillsTest {
         assertThat(skillNames(displayCategory("Software Development").get()))
                 .containsExactlyInAnyOrder("JUnit", "Maven", "React", "Spring Boot");
         assertThat(displayCategory("Frameworks")).isEmpty();
+    }
+
+    @Test
+    public void aNewCategoryGetsItsNameInTheLanguageOfTheViewProfile() {
+        SkillServiceSkill react = skillServiceClient.getSkillByName("React");
+        react.getCategory().getQualifiers().add(new LocalizedQualifier("deu", "Frameworks (deutsch)"));
+        viewProfile.setLocalization("deu");
+
+        service.moveAllSkills(viewProfile, 0, 33);
+
+        assertThat(displayCategory("Frameworks").get().getLocalizedName()).isEqualTo("Frameworks (deutsch)");
     }
 }

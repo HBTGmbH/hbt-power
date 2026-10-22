@@ -5,6 +5,7 @@ import de.hbt.model.export.Profil;
 import de.hbt.model.export.Skill;
 import de.hbt.model.view.ViewCategory;
 import de.hbt.model.view.ViewProfile;
+import de.hbt.model.view.ViewProject;
 import de.hbt.model.view.ViewSkill;
 import de.hbt.model.view.ViewSkillVersion;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 /**
- * Skills in the export: their versions (#151), categories switched off (#159)
+ * Skills in the export: their versions (#151), categories switched off (#159), names in a language (#174)
  */
 class ModelConvertServiceTest {
 
@@ -77,5 +79,42 @@ class ModelConvertServiceTest {
     @Test
     void shouldExportVersions_whenTheSettingIsMissing() {
         assertThat(skills(null)).extracting(Skill::getVersions).containsExactly("17, 21");
+    }
+
+    /**
+     * With a language the view profile carries the localizations next to the names (#174)
+     */
+    @Test
+    void shouldExportLocalizedNames_whenTheViewProfileHasThem() {
+        ReportInfo reportInfo = reportInfo(true);
+        ViewCategory category = reportInfo.viewProfile.getDisplayCategories().get(0);
+        category.setLocalizedName("Programmiersprachen");
+        category.getDisplaySkills().get(0).setLocalizedName("Java (Programmiersprache)");
+        ViewSkill projectSkill = new ViewSkill();
+        projectSkill.setName("Java");
+        projectSkill.setLocalizedName("Java (Programmiersprache)");
+        projectSkill.setEnabled(true);
+        ViewSkill unknownSkill = new ViewSkill();
+        unknownSkill.setName("Excel");
+        unknownSkill.setEnabled(true);
+        ViewProject project = new ViewProject();
+        project.setName("Projekt");
+        project.setEnabled(true);
+        project.setSkills(new ArrayList<>(Arrays.asList(projectSkill, unknownSkill)));
+        reportInfo.viewProfile.getProjects().add(project);
+
+        Profil profil = modelConvertService.convert(reportInfo, null);
+
+        assertThat(profil.getSkills()).extracting(skill -> skill.getBezeichnung().getHauptbegriff().getBezeichnung(), Skill::getGruppe)
+                .containsExactly(tuple("Java (Programmiersprache)", "Programmiersprachen"));
+        assertThat(profil.getProjekte().get(0).getSkills())
+                .extracting(skill -> skill.getBezeichnung().getHauptbegriff().getBezeichnung())
+                .containsExactly("Java (Programmiersprache)", "Excel");
+    }
+
+    @Test
+    void shouldExportTheNamesOfTheSkillTree_withoutLocalizations() {
+        assertThat(skills(true)).extracting(skill -> skill.getBezeichnung().getHauptbegriff().getBezeichnung(), Skill::getGruppe)
+                .containsExactly(tuple("Java", "Programming Languages"));
     }
 }

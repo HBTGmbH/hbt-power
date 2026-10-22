@@ -5,6 +5,7 @@ import {AxiosRequestConfig} from 'axios';
 import {APISkillCategory, SkillCategory} from '../model/skill/SkillCategory';
 import {TCategoryNode} from '../model/skill/tree/TCategoryNode';
 import {SkillSuggestion} from '../model/skill/SkillSuggestion';
+import {LocalizationLanguage} from '../model/view/LocalizationLanguage';
 
 declare const POWER_SKILL_SERVICE_URL: string;
 
@@ -25,6 +26,14 @@ export class SkillServiceClient extends PowerHttpClient {
 
     private base = (): string => {
         return POWER_SKILL_SERVICE_URL;
+    };
+
+    /**
+     * The languages with localizations of skills or categories (#174). Quietly: without them a view profile just
+     * offers the names of the skill tree
+     */
+    public getLocalizationLanguages = (): Promise<Array<LocalizationLanguage>> => {
+        return this.getQuietly<Array<LocalizationLanguage>>(this.base() + '/skill/locales');
     };
 
     public getSkillByName = (name: string): Promise<APISkillServiceSkill> => {

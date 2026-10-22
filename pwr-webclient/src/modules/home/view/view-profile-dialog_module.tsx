@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dialog, TextField} from '@material-ui/core';
+import {Dialog} from '@material-ui/core';
 import {PwrFormActions} from '../../general/pwr-form-actions';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {LimitedTextField} from '../../general/limited-text-field-module';
@@ -13,6 +13,7 @@ import {PwrSpacer} from '../../general/pwr-spacer_module';
 import {PwrFormSection, PwrRow} from '../../general/pwr-form-section';
 import Fab from '@material-ui/core/Fab/Fab';
 import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
+import {LocalizationSelect} from './localization-select_module';
 
 
 interface ViewProfileDialogProps {
@@ -22,14 +23,15 @@ interface ViewProfileDialogProps {
 
     onClose(): void;
 
-    onSave?(name: string, description: string, charsPerLine: number): void;
+    /** The language only when creating (#174); a view profile changes it on its page */
+    onSave?(name: string, description: string, charsPerLine: number, localization: string | null): void;
 }
 
 interface ViewProfileDialogState {
     name: string;
     description: string;
     charsPerLine: number;
-    locale: string;
+    localization: string | null;
 }
 
 export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, ViewProfileDialogState> {
@@ -48,7 +50,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
             name: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.name) ? '' : props.viewProfile.viewProfileInfo.name,
             description: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.viewDescription) ? '' : props.viewProfile.viewProfileInfo.viewDescription,
             charsPerLine: !(props.viewProfile) || !(props.viewProfile.viewProfileInfo.charsPerLine) ? 45 : props.viewProfile.viewProfileInfo.charsPerLine,
-            locale: !(props.viewProfile) || !(props.viewProfile.locale) ? 'deu' : props.viewProfile.locale
+            localization: !(props.viewProfile) ? null : props.viewProfile.localization
         };
     };
 
@@ -70,8 +72,8 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
         this.setField('charsPerLine', charsPerLine);
     };
 
-    private changeLocale = (e: any, locale: string) => {
-        this.setField('locale', locale);
+    private changeLocalization = (localization: string | null) => {
+        this.setField('localization', localization);
     };
 
     private closeAndReset = () => {
@@ -81,7 +83,7 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
 
     private closeAndSave = () => {
         if (!!(this.props.onSave)) {
-            this.props.onSave(this.state.name, this.state.description, this.state.charsPerLine);
+            this.props.onSave(this.state.name, this.state.description, this.state.charsPerLine, this.state.localization);
         }
         if (this.props.type !== 'edit') {
             // The next view profile starts empty again
@@ -121,12 +123,11 @@ export class ViewProfileDialog extends React.Component<ViewProfileDialogProps, V
                                   rows={4}
                                   label={PowerLocalize.get('ViewProfileDialog.Description')}
                 />
-                <PwrSpacer/>
-                <TextField onChange={() => this.changeLocale}
-                           value={this.state.locale}
-                           label={PowerLocalize.get('ViewProfileDialog.Locale')}
-                           disabled={this.props.type === 'edit'}
-                />
+                {this.props.type !== 'edit' && <>
+                    <PwrSpacer/>
+                    <LocalizationSelect value={this.state.localization} onChange={this.changeLocalization}
+                                        className="pwr-view-localization-select"/>
+                </>}
                 <PwrFormSection title={PowerLocalize.get('ViewProfileDialog.CharsPerLine')}>
                     <PwrRow>
                         <Fab

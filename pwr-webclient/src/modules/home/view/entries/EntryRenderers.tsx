@@ -23,6 +23,16 @@ export const VERSIONS_WIDTH = '128px';
 type Dated = IViewEntry & { startDate: Date, endDate: Date };
 
 /**
+ * A name of the skill tree with its localization in the language of the view profile (#174) as a second line; none
+ * when the localization says the same
+ */
+export const LocalizedName = (props: { name: string, localizedName?: string, className?: string }) => <>
+    <span className={props.className}>{props.name}</span>
+    {props.localizedName && props.localizedName !== props.name &&
+    <span className="pwr-view-entry-localized">{props.localizedName}</span>}
+</>;
+
+/**
  * Columns of the tables of the view profile (#149). Fixed columns stand at the right end in the same order everywhere
  * (detail, then start and end date), so they line up between the tables.
  */

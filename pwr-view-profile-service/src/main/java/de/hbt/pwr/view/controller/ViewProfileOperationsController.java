@@ -7,6 +7,7 @@ import de.hbt.pwr.view.model.skill.DisplayCategoryTarget;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
+import de.hbt.pwr.view.service.ViewProfileLocalizationService;
 import de.hbt.pwr.view.service.ViewProfileOperationService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import io.swagger.annotations.Api;
@@ -46,10 +47,14 @@ public class ViewProfileOperationsController {
 
     private final ViewProfileOperationService viewProfileService;
 
+    private final ViewProfileLocalizationService viewProfileLocalizationService;
+
     @Autowired
-    public ViewProfileOperationsController(ViewProfileSortService viewProfileSortService, ViewProfileOperationService viewProfileService) {
+    public ViewProfileOperationsController(ViewProfileSortService viewProfileSortService, ViewProfileOperationService viewProfileService,
+                                           ViewProfileLocalizationService viewProfileLocalizationService) {
         this.viewProfileSortService = viewProfileSortService;
         this.viewProfileService = viewProfileService;
+        this.viewProfileLocalizationService = viewProfileLocalizationService;
     }
 
 
@@ -133,6 +138,26 @@ public class ViewProfileOperationsController {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         viewProfileService.setShowSkillVersions(viewProfile, isEnabled);
         return ResponseEntity.ok(viewProfile);
+    }
+
+    @ApiOperation(value = "Sets the language of the skill and category names",
+            notes = "ISO 639-2 code of the language (#174); without it the view profile shows the names of the skill " +
+                    "tree. Fills the names from the current localizations. This operation is persistent.",
+            response = ViewProfile.class,
+            tags = {"skill"},
+            httpMethod = "PATCH",
+            produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The updated view profile is returned in the response", response = ViewProfile.class),
+            @ApiResponse(code = 403, message = "Access to the view profile is not allowed.", response = ServiceError.class),
+            @ApiResponse(code = 404, message = "No view profile for the provided ID found.", response = ServiceError.class)
+    })
+    @PatchMapping("/localization")
+    ResponseEntity<ViewProfile> setLocalization(@PathVariable("initials") String initials,
+                                                @PathVariable("viewProfileId") String viewProfileId,
+                                                @RequestParam(value = "language", required = false) String language) {
+        ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
+        return ResponseEntity.ok(viewProfileLocalizationService.setLocalization(viewProfile, language));
     }
 
     @ApiOperation(value = "Sets the visibility for all entries",

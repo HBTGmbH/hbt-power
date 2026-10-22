@@ -32,6 +32,8 @@ export class ViewProfile {
     displayCategories: Array<ViewCategory>;
     /** Versions of the skills on the page and in the export (#151) */
     showSkillVersions: boolean;
+    /** ISO 639-2 code of the language of the skill and category names (#174), null for the names of the skill tree */
+    localization: string | null;
 
     private skillDisplayCategories: Map<string, ViewCategory>;
 
@@ -52,6 +54,7 @@ export class ViewProfile {
         this.displayCategories = viewProfile.displayCategories;
         // Missing in view profiles from before #151: shown, as they were
         this.showSkillVersions = viewProfile.showSkillVersions !== false;
+        this.localization = viewProfile.localization || null;
 
         this.skillDisplayCategories = new Map();
         this.gatherParents();

@@ -149,9 +149,16 @@ public class ModelConvertService {
     private static List<Skill> extractSkills(ViewProject project) {
         return project.getSkills().stream().filter(ViewEntry::getEnabled).map(skill -> {
             Skill res = new Skill();
-            res.setBezeichnung(toSynonymSet(skill.getName()));
+            res.setBezeichnung(toSynonymSet(nameInLanguage(skill.getLocalizedName(), skill.getName())));
             return res;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * The name in the language of the view profile (#174), otherwise the one of the skill tree
+     */
+    private static String nameInLanguage(String localizedName, String name) {
+        return localizedName == null || localizedName.isBlank() ? name : localizedName;
     }
 
     private static ProjektRolle mapRolle(ViewProjectRole viewProjectRole) {
@@ -230,7 +237,8 @@ public class ModelConvertService {
                 continue;
             }
             for (ViewSkill viewSkill : viewCategory.getDisplaySkills()) {
-                displayCategoryNamesBySkill.put(viewSkill.getName(), viewCategory.getName());
+                displayCategoryNamesBySkill.put(viewSkill.getName(),
+                        nameInLanguage(viewCategory.getLocalizedName(), viewCategory.getName()));
                 groupIndexBySkillName.put(viewSkill.getName(), i);
                 skills.add(viewSkill);
             }
@@ -239,7 +247,7 @@ public class ModelConvertService {
         boolean showVersions = !Boolean.FALSE.equals(viewProfile.getShowSkillVersions());
         return skills.stream().filter(ViewEntry::getEnabled).map(viewSkill -> {
             Skill sExport = new Skill();
-            sExport.setBezeichnung(toSynonymSet(viewSkill.getName()));
+            sExport.setBezeichnung(toSynonymSet(nameInLanguage(viewSkill.getLocalizedName(), viewSkill.getName())));
             sExport.setGruppe(displayCategoryNamesBySkill.get(viewSkill.getName()));
             sExport.setLevel(toSkillLevel(viewSkill.getRating()));
             sExport.setGroupIndex(groupIndexBySkillName.get(viewSkill.getName()));

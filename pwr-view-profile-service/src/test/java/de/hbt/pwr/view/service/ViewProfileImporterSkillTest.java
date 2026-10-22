@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
@@ -75,7 +76,7 @@ public class ViewProfileImporterSkillTest {
     public void setUp() {
         profile = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
-        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, viewProfileRepository, viewProfileSortService);
+        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, viewProfileRepository, viewProfileSortService, new ViewProfileLocalizationService(skillServiceClient));
     }
 
     @After
@@ -335,6 +336,30 @@ public class ViewProfileImporterSkillTest {
         assertThat(viewProfile.getDisplayCategories())
                 .extracting(Category::getName)
                 .containsExactly("Lowest");
+    }
+
+    /**
+     * With a language (#174) the names stay those of the skill tree, the localizations go next to them
+     */
+    @Test
+    public void shouldFillLocalizedNames_whenALanguageIsChosen() {
+        SkillServiceCategory lowest = new SkillServiceCategory("Lowest", new SkillServiceCategory("Center", null), true);
+        lowest.setId(7);
+        lowest.getQualifiers().add(new LocalizedQualifier("deu", "Niedrigste"));
+        SkillServiceSkill testSkill1 = new SkillServiceSkill("German", lowest);
+        testSkill1.getQualifiers().add(new LocalizedQualifier("deu", "Deutsch"));
+        profile.getSkills().add(new ProfileSkill(testSkill1.getQualifier()));
+        given(skillServiceClient.getSkillByName(testSkill1.getQualifier())).willReturn(testSkill1);
+        given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
+        given(viewProfileRepository.save(any())).will(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        ViewProfile viewProfile = viewProfileCreatorService.createViewProfile(initials, "name", "descr", "", "deu");
+
+        assertThat(viewProfile.getLocalization()).isEqualTo("deu");
+        assertThat(viewProfile.findSkillByName("German").get().getLocalizedName()).isEqualTo("Deutsch");
+        assertThat(viewProfile.getDisplayCategories())
+                .extracting(Category::getName, Category::getLocalizedName)
+                .containsExactly(tuple("Lowest", "Niedrigste"));
     }
 
     @Test

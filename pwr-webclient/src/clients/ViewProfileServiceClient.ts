@@ -136,6 +136,12 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.patchInBackground(url, null, {params: {'target-id': targetId}});
     }
 
+    /** Language of the skill and category names (#174), null for the names of the skill tree */
+    public patchLocalization(initials: string, id: string, language: string | null): Promise<ViewProfile> {
+        const url = this.patchBase(initials, id) + 'localization';
+        return this.patchInBackground(url, null, {params: language ? {language: language} : {}});
+    }
+
     /** Versions of all skills on or off (#151); the choice per version stays */
     public patchShowSkillVersions(initials: string, id: string, show: boolean): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/versions/' + show;

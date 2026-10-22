@@ -44,6 +44,7 @@ public class ViewProfileCreatorService {
     private final SkillServiceClient skillServiceClient;
     private final ViewProfileRepository viewProfileRepository;
     private final ViewProfileSortService viewProfileSortService;
+    private final ViewProfileLocalizationService viewProfileLocalizationService;
 
     /**
      * A display category needs at least this many skills of the profile, otherwise they move up (#169)
@@ -53,6 +54,15 @@ public class ViewProfileCreatorService {
     private int minSkillsPerCategory = 3;
 
     public ViewProfile createViewProfile(String initials, String name, String viewDescription, String localeStr) {
+        return createViewProfile(initials, name, viewDescription, localeStr, null);
+    }
+
+    /**
+     * @param localization ISO 639-2 code of the language of the skill and category names (#174), null for the names
+     *                     of the skill tree
+     */
+    public ViewProfile createViewProfile(String initials, String name, String viewDescription, String localeStr,
+                                         String localization) {
         Locale locale = (localeStr == null || localeStr.equals("")) ? Locale.GERMAN : Locale.forLanguageTag(localeStr);
 
         Profile profile;
@@ -64,11 +74,12 @@ public class ViewProfileCreatorService {
             // so we'll catch a general exception
             throw new NoProfileAvailableException(initials);
         }
-        return createViewProfile(profile, initials, name, viewDescription, locale);
+        return createViewProfile(profile, initials, name, viewDescription, locale, localization);
     }
 
 
-    private ViewProfile createViewProfile(Profile profile, String initials, String name, String viewDescription, Locale locale) {
+    private ViewProfile createViewProfile(Profile profile, String initials, String name, String viewDescription, Locale locale,
+                                          String localization) {
 
         ViewProfile result = new ViewProfile();
         result.setLocale(locale);
@@ -88,6 +99,8 @@ public class ViewProfileCreatorService {
 
 
         result.setDisplayCategories(createDisplayCategories(profile.getSkills()));
+        result.setLocalization(localization == null || localization.isBlank() ? null : localization.trim());
+        viewProfileLocalizationService.localize(result);
         applyInitialSorting(result);
         result = viewProfileRepository.save(result);
         return result;

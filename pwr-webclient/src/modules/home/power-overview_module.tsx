@@ -65,7 +65,7 @@ interface PowerOverviewDispatch {
 
     navigateTo(target: string): void;
 
-    createViewProfile(description: string, name: string): void;
+    createViewProfile(name: string, description: string, localization: string | null): void;
 
 }
 
@@ -92,7 +92,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            createViewProfile: (description, name) => dispatch(ViewProfileActionCreator.AsyncCreateViewProfile(description, name)),
+            createViewProfile: (name, description, localization) => dispatch(ViewProfileActionCreator.AsyncCreateViewProfile(name, description, localization)),
         };
     }
 
@@ -121,8 +121,8 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     };
 
 
-    private handleCreateViewProfile = (name: string, description: string) => {
-        this.props.createViewProfile(name, description);
+    private handleCreateViewProfile = (name: string, description: string, charsPerLine: number, localization: string | null) => {
+        this.props.createViewProfile(name, description, localization);
         this.setViewDialogOpen(false);
     };
 

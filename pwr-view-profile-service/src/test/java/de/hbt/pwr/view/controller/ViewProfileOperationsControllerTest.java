@@ -5,6 +5,7 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.service.ViewProfileOperationService;
+import de.hbt.pwr.view.service.ViewProfileLocalizationService;
 import de.hbt.pwr.view.service.ViewProfileSortService;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,9 @@ public class ViewProfileOperationsControllerTest {
 
     @MockBean
     private ViewProfileSortService viewProfileSortService;
+
+    @MockBean
+    private ViewProfileLocalizationService viewProfileLocalizationService;
 
     @SuppressWarnings("unused")
     @MockBean
@@ -344,5 +348,19 @@ public class ViewProfileOperationsControllerTest {
         then(viewProfileSortService)
                 .should(times(1))
                 .moveSkillInProject(viewProfileReturned, projectIndex, sourceIndex, targetIndex);
+    }
+
+    @Test
+    public void setLocalization_setsTheLanguageOfTheNames() throws Exception {
+        mockMvc.perform(patch(urlBasePath() + "localization").param("language", "deu").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertOwnerCheckAndRetrieval();
+        then(viewProfileLocalizationService).should(times(1)).setLocalization(viewProfileReturned, "deu");
+    }
+
+    @Test
+    public void setLocalization_withoutLanguage_showsTheNamesOfTheSkillTree() throws Exception {
+        patchAndAssertStatus200(urlBasePath() + "localization");
+        then(viewProfileLocalizationService).should(times(1)).setLocalization(viewProfileReturned, null);
     }
 }

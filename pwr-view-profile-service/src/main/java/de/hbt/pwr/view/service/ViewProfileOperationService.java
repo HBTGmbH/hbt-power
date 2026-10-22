@@ -214,9 +214,17 @@ public class ViewProfileOperationService {
     }
 
     private Category toCategory(SkillServiceCategory serviceCategory) {
+        return toCategory(serviceCategory, null);
+    }
+
+    /**
+     * A display category for the category of the skill tree, with its name in the language of the view profile (#174)
+     */
+    private Category toCategory(SkillServiceCategory serviceCategory, String language) {
         if (serviceCategory != null) {
             Category category = new Category(serviceCategory.getQualifier());
             category.setId(serviceCategory.getId().longValue());
+            category.setLocalizedName(ViewProfileLocalizationService.localizedName(serviceCategory.getQualifiers(), language));
             return category;
         }
         return null;
@@ -255,7 +263,7 @@ public class ViewProfileOperationService {
                                           String newDisplayCategoryName) {
         Optional<Skill> mayBeSkill = viewProfile.findSkillByName(name);
         if (mayBeSkill.isPresent()) {
-            Category newDisplayCategory = getNewDisplayCategory(name, newDisplayCategoryName);
+            Category newDisplayCategory = getNewDisplayCategory(name, newDisplayCategoryName, viewProfile.getLocalization());
             placeInDisplayCategory(viewProfile, mayBeSkill.get(), newDisplayCategory);
         }
         LOG.debug(viewProfile.getDisplayCategories().toString());
@@ -341,7 +349,7 @@ public class ViewProfileOperationService {
         new ArrayList<>(displayCategory.getDisplaySkills()).forEach(skill -> chainOf(skill.getName()).stream()
                 .filter(category -> category.getId() == targetCategoryId)
                 .findFirst()
-                .ifPresent(target -> placeInDisplayCategory(viewProfile, skill, toCategory(target))));
+                .ifPresent(target -> placeInDisplayCategory(viewProfile, skill, toCategory(target, viewProfile.getLocalization()))));
     }
 
     /** The categories of a skill in the skill tree, from its own up to the highest */
@@ -357,7 +365,7 @@ public class ViewProfileOperationService {
         return chain;
     }
 
-    private Category getNewDisplayCategory(String skillName, String newDisplayCategoryName) {
+    private Category getNewDisplayCategory(String skillName, String newDisplayCategoryName, String language) {
         SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(skillName);
         SkillServiceCategory category = null;
         if (serviceSkill != null && serviceSkill.getCategory() != null) {
@@ -369,7 +377,7 @@ public class ViewProfileOperationService {
         if (category == null) {
             throw new DisplayCategoryNotFoundException("", skillName, newDisplayCategoryName);
         }
-        return toCategory(category);
+        return toCategory(category, language);
     }
 
     public Map<Integer, Category> getParentsForSkill(String skillName) {

@@ -12,6 +12,9 @@ public class ViewCategory implements ViewEntry {
 
     private String name;
 
+    /** The name in the language of the view profile (#174), null for the name of the skill tree */
+    private String localizedName;
+
     /**
      * Hard override to any display logic; If this flag is set, the category
      * servies as display category to all child skills, provided it is the only one.
@@ -60,6 +63,14 @@ public class ViewCategory implements ViewEntry {
     public boolean containsCategoryWithName(@NotNull String nameToFind) {
         return nameToFind.equals(name)
                 || children.stream().anyMatch(category -> category.containsCategoryWithName(nameToFind));
+    }
+
+    public String getLocalizedName() {
+        return localizedName;
+    }
+
+    public void setLocalizedName(String localizedName) {
+        this.localizedName = localizedName;
     }
 
     public String getName() {

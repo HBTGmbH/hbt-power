@@ -56,6 +56,12 @@ public class ViewProfile {
      */
     private Boolean showSkillVersions = true;
 
+    /**
+     * ISO 639-2 code of the language the skill and category names are shown in (#174), null for the names of the
+     * skill tree. Not {@link #locale}: that one says German for every view profile stored before, without a choice.
+     */
+    private String localization;
+
     public Optional<Skill> findSkillByName(String name) {
         return this.displayCategories.stream()
                 .map(category -> category.getDisplaySkills().stream()
@@ -69,6 +75,8 @@ public class ViewProfile {
         public String viewDescription;
         public String name;
         public String locale;
+        /** Language of the skill and category names (#174), see {@link ViewProfile#getLocalization()} */
+        public String localization;
     }
 
     public static class ViewProfileMergeOptions {
