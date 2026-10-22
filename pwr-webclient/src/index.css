@@ -487,11 +487,12 @@ body {
 }
 
 /* Side by side (Bootstrap md and up): list and form scroll on their own up to the bottom of the window, the page
-   does not scroll, so toolbar (64px) and tabs stay visible. 136px = space above the panes plus the bottom margin. */
+   does not scroll, so the toolbar stays visible. 78px = 70px above the cards (toolbar and its space) plus 8px
+   below them, as on their sides (#145). */
 @media (min-width: 992px) {
     .pwr-projects-list-pane,
     .pwr-projects-form-pane {
-        height: calc(100vh - 136px);
+        height: calc(100vh - 78px);
     }
 
     /* Each card fills its pane; the form card scrolls in itself, so its shadow stays in place (#145) */
