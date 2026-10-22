@@ -121,7 +121,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
     };
 
 
-    private handleCreateViewProfile = (name: string, description: string, charsPerLine: number, localization: string | null) => {
+    private handleCreateViewProfile = (name: string, description: string, localization: string | null) => {
         this.props.createViewProfile(name, description, localization);
         this.setViewDialogOpen(false);
     };
@@ -168,7 +168,6 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     onClose={() => this.setViewDialogOpen(false)}
                                     open={this.state.createViewDialogOpen}
                                     onSave={this.handleCreateViewProfile}
-                                    type="new"
                                 />
                                 {/* Text buttons: the highlighted action is "Generieren" on each card (#41) */}
                                 <div className="mui-margin">

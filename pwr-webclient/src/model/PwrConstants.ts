@@ -14,7 +14,6 @@ export function getRandomGreeting() {
 }
 
 declare const GLOBAL_OPTIONS: {
-    defaultCharsPerLine: number;
     greetings: Array<string>;
 };
 

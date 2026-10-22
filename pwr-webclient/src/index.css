@@ -517,8 +517,9 @@ label.pwr-category-level-label {
     resize: none;
 }
 
-/* Read-only fields outside of .pwr-read-only (e.g. report templates) are not editable either: no grey area */
-.MuiFilledInput-root:has(> .MuiFilledInput-input[readonly]) {
+/* Read-only fields outside of .pwr-read-only (e.g. report templates) are not editable either: no grey area. Not
+   the hidden copy that a growing text area (maxRows) measures itself with, which is read-only too */
+.MuiFilledInput-root:has(> .MuiFilledInput-input[readonly]:not([aria-hidden])) {
     background-color: transparent;
 }
 
@@ -663,6 +664,8 @@ label.pwr-category-level-label {
 
 .pwr-view-profile-title {
     min-width: 0;
+    /* The name field takes the room the language and the buttons leave */
+    flex: 1 1 320px;
 }
 
 .pwr-view-profile-actions {

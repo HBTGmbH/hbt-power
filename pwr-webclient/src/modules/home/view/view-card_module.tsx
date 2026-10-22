@@ -7,7 +7,6 @@ import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PwrButton} from '../../general/pwr-button';
 import {formatFullLocalizedDate} from '../../../utils/DateUtil';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {ViewProfileDialog} from './view-profile-dialog_module';
 import {ProfileGenerator} from './view-profile-generator_module';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
@@ -25,7 +24,6 @@ interface ViewCardLocalProps {
 }
 
 interface ViewCardLocalState {
-    dialogOpen: boolean;
     generatorOpen: boolean;
 }
 
@@ -33,9 +31,6 @@ interface ViewCardDispatch {
     deleteViewProfile(id: string): void;
 
     navigateTo(target: string): void;
-
-    //generate(viewProfileId: string, templateId: string): void;
-    updateViewProfile(viewProfileId: string, name: string, description: string, charsPerLine: number): void;
 }
 
 class ViewCardModule extends React.Component<ViewCardProps
@@ -45,9 +40,7 @@ class ViewCardModule extends React.Component<ViewCardProps
     constructor(props: ViewCardLocalProps & ViewCardProps & ViewCardDispatch) {
         super(props);
         this.state = {
-            dialogOpen: false,
             generatorOpen: false,
-
         };
     }
 
@@ -61,17 +54,7 @@ class ViewCardModule extends React.Component<ViewCardProps
         return {
             deleteViewProfile: (id) => dispatch(ViewProfileActionCreator.AsyncDeleteViewProfile(id)),
             navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            //generate: (viewProfileId, templateId) => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, templateId)),
-            updateViewProfile: (viewProfileId, name, description, charsPerLine) => {
-                dispatch(ViewProfileActionCreator.AsyncUpdateViewProfile(viewProfileId, description, name, charsPerLine));
-            }
         };
-    }
-
-    private setDialogOpen(open: boolean) {
-        this.setState({
-            dialogOpen: open
-        });
     }
 
     private setGeneratorOpen(open: boolean) {
@@ -80,24 +63,10 @@ class ViewCardModule extends React.Component<ViewCardProps
         });
     }
 
-    private handleUpdate = (name: string, description: string, charsPerLine: number) => {
-        this.props.updateViewProfile(this.props.viewProfileId, name, description, charsPerLine);
-        this.setDialogOpen(false);
-        this.setGeneratorOpen(false);
-    };
-
-
     render() {
         const initials = this.props.match.params.initials;
         return (
             <Card className="fullWidth">
-                <ViewProfileDialog
-                    viewProfile={this.props.viewProfile}
-                    onClose={() => this.setDialogOpen(false)}
-                    onSave={this.handleUpdate}
-                    open={this.state.dialogOpen}
-                />
-
                 <ProfileGenerator
                     open={this.state.generatorOpen}
                     onClose={() => this.setGeneratorOpen(false)}
@@ -109,7 +78,7 @@ class ViewCardModule extends React.Component<ViewCardProps
                 />
                 <h6 className="padding-left-16px">{this.props.viewProfile.viewProfileInfo.viewDescription}</h6>
                 {/* The button bar of the forms (#41): Generate highlighted (the export document is the goal of a view
-                    profile), Edit and Edit info as text buttons, Delete set apart on the right with its question */}
+                    profile), Edit as text button, which opens the page where everything is changed (#179), Delete set apart on the right with its question */}
                 <CardActions>
                     <PwrFormActions editing={false} noSpace
                                     editText={PowerLocalize.get('Action.Generate.Word')} editIcon={'open_in_new'}
@@ -118,9 +87,6 @@ class ViewCardModule extends React.Component<ViewCardProps
                         <PwrButton color={'primary'} text={PowerLocalize.get('Action.Edit')}
                                    icon={<Icon className="material-icons">edit</Icon>}
                                    onClick={() => this.props.navigateTo(Paths.build(Paths.USER_VIEW_PROFILE, {id: this.props.viewProfileId, initials}))}/>
-                        <PwrButton color={'primary'} text={PowerLocalize.get('ViewProfileCard.Action.EditInfo')}
-                                   icon={<Icon className="material-icons">info</Icon>}
-                                   onClick={() => this.setDialogOpen(true)}/>
                     </PwrFormActions>
                 </CardActions>
             </Card>);

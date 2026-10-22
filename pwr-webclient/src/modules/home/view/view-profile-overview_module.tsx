@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
-import {Button, Dialog, FormControlLabel, Icon, LinearProgress, Paper, Switch, Tooltip, Typography} from '@material-ui/core';
+import {Button, Dialog, FormControlLabel, Icon, LinearProgress, Paper, Switch, TextField, Tooltip, Typography} from '@material-ui/core';
 import {ViewProfileEntriesOverview} from './view-profile-entries-overview_module';
 import {ViewProfileProjectsOverview} from './view-profile-projects-overview_module';
 import {ProfileGenerator} from './view-profile-generator_module';
@@ -17,7 +17,7 @@ import {IViewEntry} from '../../../model/view/IViewEntry';
 import {PwrFormActions} from '../../general/pwr-form-actions';
 import {PwrButton} from '../../general/pwr-button';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
-import {PwrFormCaption, PwrFormSubtitle} from '../../general/pwr-typography';
+import {PwrFormSubtitle} from '../../general/pwr-typography';
 import {ComparableEntryButton} from './entries/comprable-entry-button_module';
 import {SortedColumn, SortedColumnContext, ViewProfileEntries} from './entries/view-profile-entries_module';
 import {PwrIconButton} from '../../general/pwr-icon-button';
@@ -43,6 +43,11 @@ interface ViewProfileOverviewLocalState {
     currentDescription: string;
     /** Changed since the last save, which happens when the field loses the focus (#157) */
     descriptionDirty: boolean;
+    /** Name and note of the view profile, saved the same way (#179) */
+    currentName: string;
+    nameDirty: boolean;
+    currentNote: string;
+    noteDirty: boolean;
     generatorOpen: boolean;
     updateDialogOpen: boolean;
     /** Label of the sorting of the skill categories, if they are still in that order */
@@ -59,6 +64,8 @@ interface ViewProfileOverviewDispatch {
     setShowSkillVersions(viewProfileId: string, show: boolean): void;
 
     setLocalization(viewProfileId: string, language: string | null): void;
+
+    setInfo(viewProfileId: string, name: string, viewDescription: string): void;
 }
 
 class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
@@ -78,7 +85,8 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             generate: viewProfileId => dispatch(ViewProfileActionCreator.AsyncGenerateDocX(viewProfileId, '2')),
             setDescription: (description, viewProfileId) => dispatch(ViewProfileActionCreator.AsyncSetDescription(description, viewProfileId)),
             setShowSkillVersions: (viewProfileId, show) => dispatch(ViewProfileActionCreator.AsyncSetShowSkillVersions(viewProfileId, show)),
-            setLocalization: (viewProfileId, language) => dispatch(ViewProfileActionCreator.AsyncSetLocalization(viewProfileId, language))
+            setLocalization: (viewProfileId, language) => dispatch(ViewProfileActionCreator.AsyncSetLocalization(viewProfileId, language)),
+            setInfo: (viewProfileId, name, viewDescription) => dispatch(ViewProfileActionCreator.AsyncSetInfo(viewProfileId, name, viewDescription)),
         };
     }
 
@@ -87,11 +95,23 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
         this.state = {
             currentDescription: !!(props.viewProfile) ? props.viewProfile.description : '',
             descriptionDirty: false,
+            currentName: ViewProfileOverviewModule.nameOf(props.viewProfile),
+            nameDirty: false,
+            currentNote: ViewProfileOverviewModule.noteOf(props.viewProfile),
+            noteDirty: false,
             generatorOpen: false,
             updateDialogOpen: false,
             categoriesSortedBy: null,
             expandedCategories: [],
         };
+    }
+
+    private static nameOf(viewProfile: ViewProfile): string {
+        return viewProfile ? viewProfile.viewProfileInfo.name || '' : '';
+    }
+
+    private static noteOf(viewProfile: ViewProfile): string {
+        return viewProfile ? viewProfile.viewProfileInfo.viewDescription || '' : '';
     }
 
     private categoryKeys(): Array<string> {
@@ -136,6 +156,12 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                 currentDescription: !!(this.props.viewProfile) ? this.props.viewProfile.description : ''
             });
         }
+        if (prevProps.viewProfile !== this.props.viewProfile && !this.state.nameDirty) {
+            this.setState({currentName: ViewProfileOverviewModule.nameOf(this.props.viewProfile)});
+        }
+        if (prevProps.viewProfile !== this.props.viewProfile && !this.state.noteDirty) {
+            this.setState({currentNote: ViewProfileOverviewModule.noteOf(this.props.viewProfile)});
+        }
         if (!prevProps.viewProfile && this.props.viewProfile && this.hash()) {
             window.setTimeout(() => this.scrollToSection(this.hash(), 'auto'), 0);
         }
@@ -151,6 +177,30 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             this.setState({descriptionDirty: false});
         }
     };
+
+    /** A view profile needs a name: an empty one is not saved, the field shows the old name again */
+    private handleNameBlur = () => {
+        if (!this.state.nameDirty) {
+            return;
+        }
+        const name = this.state.currentName.trim();
+        if (name && name !== ViewProfileOverviewModule.nameOf(this.props.viewProfile)) {
+            this.props.setInfo(this.props.viewProfile.id, name, this.state.currentNote);
+        }
+        this.setState({currentName: name || ViewProfileOverviewModule.nameOf(this.props.viewProfile), nameDirty: false});
+    };
+
+    private handleNoteBlur = () => {
+        if (this.state.noteDirty) {
+            this.props.setInfo(this.props.viewProfile.id, this.validName(), this.state.currentNote);
+            this.setState({noteDirty: false});
+        }
+    };
+
+    /** The name in the field, the stored one while the field is empty */
+    private validName(): string {
+        return this.state.currentName.trim() || ViewProfileOverviewModule.nameOf(this.props.viewProfile);
+    }
 
     private setGeneratorOpen(open: boolean) {
         this.setState({
@@ -218,7 +268,12 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
             <div className="pwr-view-profile-title-row">
                 <div className="pwr-view-profile-title">
                     <PwrFormSubtitle>{PowerLocalize.get('ViewProfileOverview.Caption')}</PwrFormSubtitle>
-                    <PwrFormCaption>{viewProfile.viewProfileInfo.name}</PwrFormCaption>
+                    <PwrSpacer size="tight"/>
+                    {/* Name and note are changed here, saved when the field loses the focus (#179) */}
+                    <TextField id="pwr-view-profile-name" fullWidth label={PowerLocalize.get('ViewProfileDialog.Name')}
+                               value={this.state.currentName} inputProps={{maxLength: 250}}
+                               onChange={e => this.setState({currentName: e.target.value, nameDirty: true})}
+                               onBlur={this.handleNameBlur}/>
                 </div>
                 {/* Language of the skill and category names, for the whole view profile (#174) */}
                 <LocalizationSelect value={viewProfile.localization} className="pwr-view-localization-select"
@@ -233,6 +288,12 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                     </PwrFormActions>
                 </div>
             </div>
+            <PwrSpacer/>
+            {/* Grows up to three lines, so the header that stays on top doesn't take the page */}
+            <TextField id="pwr-view-profile-note" fullWidth multiline maxRows={3} label={PowerLocalize.get('ViewProfileDialog.Description')}
+                       value={this.state.currentNote} inputProps={{maxLength: PROFILE_DESCRIPTION_LENGTH}}
+                       onChange={e => this.setState({currentNote: e.target.value, noteDirty: true})}
+                       onBlur={this.handleNoteBlur}/>
             <PwrSpacer size="tight"/>
             <nav className="pwr-view-profile-nav" aria-label={PowerLocalize.get('ViewProfileOverview.Sections')}>
                 {this.sections().map(section =>
