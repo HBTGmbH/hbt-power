@@ -103,7 +103,8 @@ export class PwrDatePicker extends React.Component<PwrDatePickerProps, PwrDatePi
         // surrounding grid (#40); a grid item would give the button its share of the width instead
         return <div className="pwr-date-picker">
             {this.renderPicker()}
-            {this.props.disableOpenEnd ? <></> :
+            {/* Not in read mode either: a disabled field shows only its value (#145) */}
+            {this.props.disableOpenEnd || this.props.disabled ? <></> :
                 <PwrIconButton
                     iconName={'send'}
                     tooltip={PowerLocalize.get('DatePicker.OpenEnd')}

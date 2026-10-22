@@ -446,6 +446,22 @@ body {
     opacity: 1;
 }
 
+/* Disabled fields show only their value, no buttons (#145). The calendar button keeps its space, so the fields next to
+   it don't move between read and edit mode; a chip without its delete icon moves nothing. */
+.MuiInputBase-root.Mui-disabled .MuiInputAdornment-root {
+    visibility: hidden;
+}
+
+.MuiInputBase-root.Mui-disabled .MuiChip-deleteIcon,
+.MuiChip-root.Mui-disabled .MuiChip-deleteIcon {
+    display: none;
+}
+
+/* Nor the resize handle of text areas (#107) */
+.MuiInputBase-root.Mui-disabled textarea {
+    resize: none;
+}
+
 /* Read-only fields outside of .pwr-read-only (e.g. report templates) are not editable either: no grey area */
 .MuiFilledInput-root:has(> .MuiFilledInput-input[readonly]) {
     background-color: transparent;
