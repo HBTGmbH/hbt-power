@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+// German month and day names in the date pickers (#143)
+import 'moment/locale/de';
 import {MuiThemeProvider} from '@material-ui/core';
 import {POWER_MUI_THEME} from './PowerTheme';
 import {Provider} from 'react-redux';
@@ -31,7 +33,7 @@ export class AppWrapper extends React.Component<{}, {}> {
 
     render() {
         return (
-            <MuiPickersUtilsProvider utils={MomentUtils}>
+            <MuiPickersUtilsProvider utils={MomentUtils} locale="de">
                 <MuiThemeProvider theme={POWER_MUI_THEME}>
                     <Router history={PWR_HISTORY}>
                         <Provider store={store}>
