@@ -43,6 +43,15 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.get(url, config);
     };
 
+    /**
+     * The skill of this name or alias, null if the skill tree doesn't know it; without spinner, for lookups while typing
+     */
+    public findSkillByNameQuietly = (name: string): Promise<APISkillServiceSkill | null> => {
+        const config: AxiosRequestConfig = {params: {qualifier: name}};
+        return this.getQuietly<APISkillServiceSkill | ''>(this.base() + '/skill/byName', config)
+            .then(skill => skill ? skill : null);
+    };
+
     public categorizeSkill = (name: string): Promise<APISkillCategory> => {
         const url = this.base() + '/skill';
         const config: AxiosRequestConfig = {params: {qualifier: name}};

@@ -19,10 +19,6 @@ interface PwrSkillVersionInfoProps {
 
 interface PwrSkillVersionInfoLocalProps {
     skillName: string;
-
-    profileVersions?: string[];
-
-    handleVersionToggle?(version: string): void;
 }
 
 interface PwrSkillVersionInfoDispatch {
@@ -71,7 +67,7 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
 
     componentDidUpdate(prevProps: Readonly<PwrSkillVersionInfoProps & PwrSkillVersionInfoLocalProps & PwrSkillVersionInfoDispatch>,
                        prevState: Readonly<PwrSkillVersionInfoState>, snapshot?: any): void {
-        if (this.props.skillName != prevProps.skillName || this.props.profileVersions != prevProps.profileVersions) {
+        if (this.props.skillName != prevProps.skillName) {
             this.loadSkillData();
         }
     }
@@ -111,20 +107,8 @@ class PwrSkillVersionInfoModule extends React.Component<PwrSkillVersionInfoProps
     };
 
     private mapVersions = () => {
-        let result: JSX.Element[];
-        if (this.props.handleVersionToggle && this.props.profileVersions) {
-            result = this.props.allVersions.sort((a, b) => a.localeCompare(b))
-                .map((value, index) =>
-                    <Chip key={index}
-                          color={this.props.profileVersions.indexOf(value) >= 0 ?
-                              'primary' : 'default'} label={value}
-                          onClick={() => this.props.handleVersionToggle(value)}
-                    />);
-        } else {
-            result = this.props.allVersions.sort((a, b) => a.localeCompare(b))
-                .map((value, index) => <Chip key={index} label={value} onDelete={() => this.handleDelete(value)}/>);
-        }
-        return result;
+        return [...this.props.allVersions].sort((a, b) => a.localeCompare(b, undefined, {numeric: true}))
+            .map(value => <Chip key={value} label={value} onDelete={() => this.handleDelete(value)}/>);
     };
 
     render() {

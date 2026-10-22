@@ -1,10 +1,9 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ApplicationState} from '../../../../../reducers/reducerIndex';
-import {newProfileSkill, ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
-import {findSkillByName, PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
-import {AddSkill} from './add-skill_module';
-import {Grid, Theme, withTheme} from '@material-ui/core';
+import {ProfileSkill} from '../../../../../reducers/profile-new/profile/model/ProfileSkill';
+import {PROFILE_SKILLS_BY_NAME} from '../../../../../utils/Comparators';
+import {Grid, Icon, Theme, withTheme} from '@material-ui/core';
 import {PwrFormSubCaption} from '../../../../general/pwr-typography';
 import {ProfileDataAsyncActionCreator} from '../../../../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {PowerLocalize} from '../../../../../localization/PowerLocalizer';
@@ -13,10 +12,10 @@ import {StarRating} from '../../../../star-rating_module.';
 import Divider from '@material-ui/core/Divider';
 import {PwrIconButton} from '../../../../general/pwr-icon-button';
 import Button from '@material-ui/core/Button';
-import {SkillInfo} from './skill-info_module';
 import Badge from '@material-ui/core/Badge';
-import {Alerts} from '../../../../../utils/Alerts';
 import {ThunkDispatch} from 'redux-thunk';
+import {PwrButton} from '../../../../general/pwr-button';
+import {ProfileSkillDialog} from './profile-skill-dialog_module';
 
 interface ProfileSkillsProps {
     skills: Array<ProfileSkill>;
@@ -32,7 +31,9 @@ interface ProfileSkillsLocalProps {
 }
 
 interface ProfileSkillsLocalState {
+    /** The skill being edited in the dialog */
     selectedSkill: ProfileSkill;
+    addOpen: boolean;
 }
 
 interface ProfileSkillsDispatch {
@@ -42,12 +43,11 @@ interface ProfileSkillsDispatch {
 
 class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProps & ProfileSkillsLocalProps & ProfileSkillsDispatch, ProfileSkillsLocalState> {
 
-
-
     constructor(props: ProfileSkillsProps & ProfileSkillsLocalProps & ThemeProps & ProfileSkillsDispatch) {
         super(props);
         this.state = {
-            selectedSkill: null
+            selectedSkill: null,
+            addOpen: false,
         };
     }
 
@@ -76,17 +76,15 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
         this.props.saveSkill(this.props.initials, skillToSave);
     };
 
-    private handleAddSkill = (name: string, rating: number) => {
-        const trimmedName = name.trim();
-        const existing = findSkillByName(this.props.skills, trimmedName);
-        if (trimmedName === "") {
-            Alerts.showError(PowerLocalize.get('Profile.Skills.AddSkillErrorCaption'))
-        } else if (existing) {
-            // Saving it would overwrite rating and versions of the existing skill
-            Alerts.showInfo(PowerLocalize.getFormatted('Profile.Skills.AlreadyExists', existing.name));
-        } else {
-            this.props.saveSkill(this.props.initials, newProfileSkill(trimmedName, rating, []));
-        }
+    private handleSaveSkill = (skill: ProfileSkill) => {
+        this.props.saveSkill(this.props.initials, skill);
+    };
+
+    private closeDialog = () => {
+        this.setState({
+            selectedSkill: null,
+            addOpen: false,
+        });
     };
 
     private ratingIsValid = (rating) => {
@@ -96,22 +94,6 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
     private handleDeleteSkill = (skill: ProfileSkill) => {
         this.props.deleteSkill(this.props.initials, skill);
     };
-
-    private getCurrentSkill = () => {
-        return this.state.selectedSkill;
-    };
-
-    componentDidUpdate(prevProps: Readonly<ProfileSkillsProps & ThemeProps & ProfileSkillsLocalProps & ProfileSkillsDispatch>,
-                       prevState: Readonly<ProfileSkillsLocalState>): void {
-        if (prevProps.skills != this.props.skills) {
-            if (prevState.selectedSkill != null) {
-                const newSkill: ProfileSkill = this.props.skills.filter(skill => prevState.selectedSkill.name === skill.name)[0];
-                this.setState({
-                    selectedSkill: newSkill
-                });
-            }
-        }
-    }
 
     private toSkill = (skill: ProfileSkill) => {
         return <Grid key={skill.id} xs={12} sm={6} md={3} lg={3} xl={3} container item spacing={0}
@@ -179,22 +161,13 @@ class ProfileSkillsModule extends React.Component<ProfileSkillsProps & ThemeProp
 
     render() {
         return (<Grid container spacing={1}>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <PwrFormSubCaption>{PowerLocalize.get('Profile.Skills.AddSkillCaption')}</PwrFormSubCaption>
-            </Grid>
-            <Grid item md={12} sm={12} xs={12} lg={12} xl={12}>
-                <Divider variant={'fullWidth'}
-                         style={{height: '2px', backgroundColor: this.props.theme.palette.primary.dark}}/>
-            </Grid>
-            <Grid item md={6} sm={12} xs={12} lg={6} xl={6}>
-                <div className="Pwr-Content-Container">
-                    <AddSkill onAddSkill={this.handleAddSkill}/>
-                </div>
-            </Grid>
-            <Grid item md={6} sm={12} xs={12} lg={6} xl={6}>
-                <div className="Pwr-Content-Container">
-                    <SkillInfo selectedSkill={this.getCurrentSkill()} handleChangeRating={this.handleChangeRating}/>
-                </div>
+            {(this.state.addOpen || this.state.selectedSkill) &&
+            <ProfileSkillDialog skill={this.state.selectedSkill} profileSkills={this.props.skills}
+                                onSave={this.handleSaveSkill} onClose={this.closeDialog}/>}
+            <Grid item container xs={12} justify="flex-end">
+                <PwrButton color="primary" variant="contained" text={PowerLocalize.get('Profile.Skills.Dialog.AddTitle')}
+                           icon={<Icon className="material-icons">add</Icon>}
+                           onClick={() => this.setState({addOpen: true})}/>
             </Grid>
             {this.toSkillOverview()}
         </Grid>);
