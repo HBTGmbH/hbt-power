@@ -21,6 +21,9 @@ public class SecurityConfig {
                 .pathMatchers("/pwr-profile-service/admin/**").hasAnyAuthority("Power.Admin")
                 .pathMatchers("/pwr-profile-service/consultants/info").hasAnyAuthority("Power.Admin")
                 .pathMatchers("/pwr-skill-service/admin/**").hasAnyAuthority("Power.Admin")
+                // Report templates and their files (#203)
+                .pathMatchers("/pwr-view-profile-service/admin/**").hasAnyAuthority("Power.Admin")
+                .pathMatchers("/pwr-report-service/admin/**").hasAnyAuthority("Power.Admin")
                 // Users and admins can access everything.
                 .pathMatchers("/**").hasAnyAuthority("Power.User", "Power.Admin")
                 .and()

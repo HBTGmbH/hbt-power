@@ -24,7 +24,7 @@ interface ReportManagerDispatch {
 }
 
 interface ReportManagerState {
-    selectedTemplate: Template;
+    selectedTemplateId: string;
     createDialogOpen: boolean;
     previewSource: PreviewSource;
 }
@@ -35,7 +35,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         super(props);
 
         this.state = {
-            selectedTemplate: null,
+            selectedTemplateId: null,
             createDialogOpen: false,
             previewSource: {initials: '', viewProfileId: ''},
         };
@@ -77,8 +77,15 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
     private selectTemplate = (template: Template) => {
         this.setState({
-            selectedTemplate: template,
+            selectedTemplateId: template.id,
         });
+    };
+
+    /**
+     * Looked up by id in the loaded templates, so a change or a deletion shows right away
+     */
+    private selectedTemplate = (): Template => {
+        return this.props.allTemplates.find(template => template.id === this.state.selectedTemplateId);
     };
 
     private renderListItems = () => {
@@ -129,7 +136,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                         <ReportPreviewSource value={this.state.previewSource} onChange={this.setPreviewSource}/>
                         <div style={{flex: 1, minHeight: 0}}>
                             <ReportPreview
-                                templateId={this.state.selectedTemplate != null ? this.state.selectedTemplate.id : ''}
+                                templateId={this.selectedTemplate() ? this.state.selectedTemplateId : ''}
                                 initials={this.state.previewSource.initials}
                                 viewProfileId={this.state.previewSource.viewProfileId}/>
                         </div>
@@ -140,9 +147,9 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
             <div className={'col-md-3'} style={{marginLeft: '10px'}}>
                 <Paper>
                     {
-                        !this.state.selectedTemplate ? <></> :
+                        !this.selectedTemplate() ? <></> :
                             <div>
-                                <ReportManagerInfoBox selectedTemplate={this.state.selectedTemplate}/>
+                                <ReportManagerInfoBox selectedTemplate={this.selectedTemplate()}/>
                             </div>
                     }
                 </Paper>

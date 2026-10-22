@@ -15,8 +15,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Map;
 
-// TODO Swagger annotations + swagger ui
-@RequestMapping("file")
+/**
+ * Template files (BIRT designs). Only the view-profile service calls this, while an admin uploads or deletes a
+ * template; the edge lets only admins through to {@code /admin} (#203). Rendering reads the files directly.
+ */
+@RequestMapping("admin/file")
 @RestController
 public class FileUploadController {
 
@@ -33,7 +36,7 @@ public class FileUploadController {
         DBFile dbFile = dbFileStorageService.storeFile(file);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("file/" + dbFile.getId())
+                .path("admin/file/" + dbFile.getId())
                 .toUriString();
 
         return new UploadFileResponse(dbFile.getId(), dbFile.getFilename(), fileDownloadUri, file.getContentType(), file.getSize());

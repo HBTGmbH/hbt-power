@@ -97,25 +97,13 @@ export class TemplateActionCreator {
     }
 
 
-    public static AsyncLoadAllFiles() {
-        return function (dispatch: redux.Dispatch) {
-            dispatch(CrossCuttingActionCreator.startRequest());
-            templateClient.getAllFiles()
-                .then((response) => dispatch(CrossCuttingActionCreator.endRequest()))
-
-                .catch((error) => console.error(error))
-                .catch(() => dispatch(CrossCuttingActionCreator.endRequest()));
-        };
-    }
-
-    public static AsyncUploadFileAsTemplate(file: any, name: string, description: string, createUser: string) {
+    public static AsyncUploadFileAsTemplate(file: any, name: string, description: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('templateSlice', JSON.stringify({
                 name: name,
-                description: description,
-                createUser: createUser
+                description: description
             }));
             const config: AxiosRequestConfig = {
                 headers: {'content-type': 'multipart/form-data'},

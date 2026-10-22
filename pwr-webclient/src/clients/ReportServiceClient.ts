@@ -50,10 +50,4 @@ export class ReportServiceClient extends PowerHttpClient {
         return this.delete(url);
     }
 
-    public getFileById(id: string) {
-        const url = this.base() + '/file/' + id;
-        this.beginRequest();
-        return this.get(url);
-    }
-
 }

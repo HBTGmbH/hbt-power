@@ -104,10 +104,6 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                 newTemplate.description = value;
                 this.setState({template: newTemplate});
                 break;
-            case 'createUser':
-                newTemplate.createUser = value;
-                this.setState({template: newTemplate});
-                break;
             default:
                 break;
         }
@@ -152,16 +148,16 @@ export class ReportManagerInfoBox_Module extends React.Component<ReportManagerIn
                     onChange={(e: any) => this.handleChange('description', e.target.value)}
                 />
                 <PwrSpacer/>
+                {/* Set by the service from the account that uploaded the template (#203) */}
                 <TextField
                     id="createUser"
                     fullWidth
                     InputProps={{
-                        readOnly: !this.state.edit,
-                        disableUnderline: !this.state.edit
+                        readOnly: true,
+                        disableUnderline: true
                     }}
                     label="Ersteller"
                     value={this.state.template.createUser}
-                    onChange={(e: any) => this.handleChange('createUser', e.target.value)}
                 />
                 <PwrSpacer/>
                 <TextField
