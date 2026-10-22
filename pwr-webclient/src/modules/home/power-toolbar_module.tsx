@@ -168,7 +168,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return <MenuItem
             key={viewProfile.id}
             className="pwr-menu-subitem"
-            onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_VIEW_PROFILE, {id: viewProfile.id, initials}))}
+            onClick={() => this.handleMenuNavigate(Paths.viewProfile(initials, viewProfile.id, viewProfile.viewProfileInfo.name))}
         >
             <ListItemText inset>
                 {text}

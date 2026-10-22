@@ -23,6 +23,7 @@ import {SortedColumn, SortedColumnContext, ViewProfileEntries} from './entries/v
 import {PwrIconButton} from '../../general/pwr-icon-button';
 import {LocalizationSelect} from './localization-select_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
+import {Paths} from '../../../Paths';
 
 
 interface ViewProfileOverviewProps {
@@ -141,9 +142,25 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
     private readonly headerRef = React.createRef<HTMLDivElement>();
 
     /**
+     * The slug in the URL is only for reading (#182): a missing or stale one (old link, renamed view profile) is
+     * replaced by the one of the name, the section in the URL stays
+     */
+    private writeSlug() {
+        const viewProfile = this.props.viewProfile;
+        if (!viewProfile) {
+            return;
+        }
+        const pathname = Paths.viewProfile(this.props.match.params.initials, viewProfile.id, viewProfile.viewProfileInfo.name);
+        if (pathname !== this.props.location.pathname) {
+            this.props.history.replace({...this.props.location, pathname});
+        }
+    }
+
+    /**
      * Opened with a section in the URL (#view-section-…): there once the view profile is loaded
      */
     public componentDidMount() {
+        this.writeSlug();
         if (this.props.viewProfile && this.hash()) {
             window.setTimeout(() => this.scrollToSection(this.hash(), 'auto'), 0);
         }
@@ -164,6 +181,9 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
         }
         if (!prevProps.viewProfile && this.props.viewProfile && this.hash()) {
             window.setTimeout(() => this.scrollToSection(this.hash(), 'auto'), 0);
+        }
+        if (prevProps.viewProfile !== this.props.viewProfile) {
+            this.writeSlug();
         }
 
     }

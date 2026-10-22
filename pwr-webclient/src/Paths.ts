@@ -1,4 +1,5 @@
 import {CONFIG} from './Config';
+import {StringUtils} from './utils/StringUtil';
 
 /**
  * Paths used for routing. Central point of configuration for routing information.
@@ -22,24 +23,39 @@ export class Paths {
     public static readonly USER_BASE = CONFIG.APP_PATH + '/app/:initials';
     public static readonly PROFILE_SELECT = CONFIG.APP_PATH + '/profilauswahl';
     public static readonly USER_HOME = CONFIG.APP_PATH + '/app/:initials/home';
-    public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/:initials/view/:id';
+    /** The slug is only for reading, the ID selects (#182) */
+    public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/:initials/view/:id/:slug?';
     public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/:initials/profile';
     public static readonly USER_PROFILE_PROJECTS = CONFIG.APP_PATH + '/app/:initials/profile/projects';
     public static readonly USER_PROFILE_NEW_PROJECT = CONFIG.APP_PATH + '/app/:initials/profile/projects/new';
-    public static readonly USER_PROFILE_PROJECT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId';
-    public static readonly USER_PROFILE_PROJECT_EDIT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId/edit';
+    public static readonly USER_PROFILE_PROJECT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId/:slug?';
+    public static readonly USER_PROFILE_PROJECT_EDIT = CONFIG.APP_PATH + '/app/:initials/profile/projects/:projectId/:slug?/edit';
     public static readonly USER_PROFILE_SKILLS = CONFIG.APP_PATH + '/app/:initials/profile/skills';
     public static readonly USER_REPORTS = CONFIG.APP_PATH + '/app/:initials/reports';
     public static readonly USER_SEARCH = CONFIG.APP_PATH + '/app/:initials/search';
     public static readonly USER_STATISTICS_CLUSTERINFO = CONFIG.APP_PATH + '/app/:initials/statistics/clusterinfo';
     public static readonly USER_STATISTICS_SKILLS = CONFIG.APP_PATH + '/app/:initials/statistics/skills';
 
+    /**
+     * Readable part of a project URL (#182). A project named "Edit" has none, its URL would read as the edit mode.
+     */
+    public static projectSlug(name?: string): string {
+        const slug = StringUtils.slug(name);
+        return slug === 'edit' ? '' : slug;
+    }
+
+    public static viewProfile(initials: string, id: string, name?: string): string {
+        return Paths.build(Paths.USER_VIEW_PROFILE, {initials, id, slug: StringUtils.slug(name)});
+    }
+
     public static build(path: string, params: Record<string, string>): string {
-        let result = path;
-        for (let key in params) {
-            result = result.replace(`:${key}?`, params[key]).replace(`:${key}`, params[key]);
-        }
         // An optional parameter without a value leaves no empty segment
-        return result.replace(/\/:[a-zA-Z]+\?/g, '').replace(/\/$/, '');
+        return path.replace(/\/:([a-zA-Z]+)(\?)?/g, (segment, key, optional) => {
+            const value = params[key];
+            if (optional && !value) {
+                return '';
+            }
+            return value === undefined ? segment : '/' + value;
+        }).replace(/\/$/, '');
     }
 }
