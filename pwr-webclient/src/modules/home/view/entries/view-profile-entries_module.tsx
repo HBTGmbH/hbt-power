@@ -48,7 +48,7 @@ interface ViewProfileEntriesProps<T extends IViewEntry> {
     /** The column last sorted by, kept outside when the sorting sits outside (heading); the table's own otherwise */
     sortedColumn?: SortedColumn;
 
-    /** Content below an entry, opened by the button at its end or by clicking the entry; closed at first */
+    /** Content below an entry, opened by the button at its end; closed at first */
     renderDetails?(entry: T, entryIndex: number): ReactNode;
 
     onToggle(toggleableEntryType: string, index: number, isEnabled: boolean): void;
@@ -77,6 +77,9 @@ interface ViewProfileEntriesState {
     /** Label of the column last sorted by */
     sortedColumn: string;
 }
+
+/** Numbers the tables of a page, for the ids that tie a name to its switch */
+let nextInstance = 0;
 
 interface SortableItemProps<T> {
     entry: T;
@@ -109,6 +112,8 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
 
     /** The entry being dragged, which stays in the list as the dashed drop target */
     private dropTarget: HTMLElement = null;
+
+    private readonly instance = ++nextInstance;
 
     private handleToggle = (entryIndex: number, checked: boolean) => {
         this.props.onToggle(this.props.toggleableEntryType, entryIndex, checked);
@@ -194,20 +199,24 @@ export class ViewProfileEntries<T extends IViewEntry> extends React.Component<Vi
 
     private renderRow(entry: T, entryIndex: number, expanded: boolean) {
         const expandable = this.expandable();
-        const onCellClick = expandable ? () => this.toggleExpanded(entry) : undefined;
-        const cellClass = 'pwr-view-entries-cell' + (expandable ? ' cursor-pointer' : '');
+        // The name (first column) is the label of the switch (#152): clicking it shows or hides the entry
+        const switchId = 'pwr-view-entry-' + this.instance + '-' + entryIndex;
         return <div className={this.rowClass() + (entry.enabled ? '' : ' pwr-view-entry-disabled')}
                     style={{gridTemplateColumns: this.template()}}>
             <div>{this.props.moveDisabled ? null : <this.DragHandle/>}</div>
             <div>
                 <Switch size="small" color="primary"
+                        id={switchId}
                         checked={entry.enabled}
                         onChange={(e: any) => this.handleToggle(entryIndex, e.target.checked)}
-                        inputProps={{'aria-label': PowerLocalize.get('ViewProfileOverview.Toggle')}}
                 />
             </div>
             {this.props.columns.map((column, index) =>
-                <div key={index} className={cellClass + secondary(index)} onClick={onCellClick}>{column.render(entry, entryIndex)}</div>)}
+                <div key={index} className={'pwr-view-entries-cell' + secondary(index)}>
+                    {index === 0
+                        ? <label htmlFor={switchId} className="pwr-view-entries-label">{column.render(entry, entryIndex)}</label>
+                        : column.render(entry, entryIndex)}
+                </div>)}
             {expandable &&
             <div className="pwr-view-entries-expand">
                 <PwrIconButton iconName={expanded ? 'expand_less' : 'expand_more'}

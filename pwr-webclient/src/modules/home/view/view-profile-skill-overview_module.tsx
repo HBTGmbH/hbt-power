@@ -10,7 +10,8 @@ import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
-import {Chip, Link} from '@material-ui/core';
+import {Chip} from '@material-ui/core';
+import {PwrIconButton} from '../../general/pwr-icon-button';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrRow} from '../../general/pwr-form-section';
 import {ThunkDispatch} from 'redux-thunk';
@@ -140,8 +141,7 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                     viewProfileId={this.props.viewProfileId}
                     label={PowerLocalize.get('ViewEntryField.Name')}
                     containerIndex={categoryIndex}/>,
-                // Opens the choice of the display category
-                render: skill => <Link component="button" variant="body2" onClick={() => this.editSkill(skill)}>{skill.name}</Link>,
+                render: skill => skill.name,
             },
             {
                 header: <ComparableNestedEntryButton
@@ -159,6 +159,15 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                 // More room than the name, so a few versions fit in one line
                 width: 'minmax(0, 1.5fr)',
                 render: skill => this.renderVersions(skill),
+            },
+            {
+                // The name switches the skill (#152), so the choice of the display category has its own button
+                header: null,
+                width: '40px',
+                render: skill => <PwrIconButton iconName="account_tree"
+                                                tooltip={PowerLocalize.get('ViewProfileOverview.DisplayCategory')}
+                                                iconButtonProps={{size: 'small'}}
+                                                onClick={() => this.editSkill(skill)}/>,
             },
         ];
     }

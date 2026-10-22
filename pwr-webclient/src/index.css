@@ -716,6 +716,14 @@ body {
     color: rgba(0, 0, 0, 0.87);
 }
 
+/* The name is the label of the switch (#152) */
+.pwr-view-entries-label {
+    display: block;
+    margin: 0;
+    font-weight: inherit;
+    cursor: pointer;
+}
+
 .pwr-view-entry-title {
     font-weight: 500;
 }
