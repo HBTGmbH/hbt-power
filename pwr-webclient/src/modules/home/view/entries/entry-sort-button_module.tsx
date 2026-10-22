@@ -1,47 +1,42 @@
 import * as React from 'react';
-import {Button, Icon} from '@material-ui/core';
+import {TableSortLabel} from '@material-ui/core';
+import {SortedColumn, SortedColumnContext} from './view-profile-entries_module';
 
 interface EntrySortButtonProps {
     label: string;
+    /** Order of the last sort by this column */
     order: 'asc' | 'desc';
 
     onChangeOrder(order: 'asc' | 'desc'): void;
 }
 
-interface EntrySortButtonState {
-}
+/**
+ * Column header that sorts the entries (#149): text without the padding of a button, so it starts on the line of the
+ * cells below it. Only the column last sorted by shows its arrow, the others on hover; the first click sorts
+ * ascending, each further one turns the order.
+ */
+export class EntrySortButton extends React.Component<EntrySortButtonProps> {
 
-export class EntrySortButton extends React.Component<EntrySortButtonProps, EntrySortButtonState> {
+    /** Which column of the list was sorted last; moving an entry by hand clears it */
+    static contextType = SortedColumnContext;
+    context: SortedColumn | null;
 
-    constructor(props: EntrySortButtonProps) {
-        super(props);
+    private active(): boolean {
+        return !!this.context && this.context.label === this.props.label;
     }
 
-    private getType = () => {
-        if (this.props.order === 'asc') {
-            return 'arrow_upward';
-        } else {
-            return 'arrow_downward';
-        }
-    };
-
     private changeOrder = () => {
-        let order: 'desc' | 'asc';
-        if (this.props.order === 'asc') {
-            order = 'desc';
-        } else {
-            order = 'asc';
-        }
+        const order = this.active() && this.props.order === 'asc' ? 'desc' : 'asc';
         this.props.onChangeOrder(order);
+        if (this.context) {
+            this.context.setLabel(this.props.label);
+        }
     };
 
     render() {
-        return (
-            <span>
-                <Button color="primary" onClick={this.changeOrder}>
-                    {this.props.label}
-                    <Icon>{this.getType()}</Icon>
-                </Button>
-            </span>);
+        const active = this.active();
+        return <TableSortLabel active={active} direction={active ? this.props.order : 'asc'} onClick={this.changeOrder}>
+            {this.props.label}
+        </TableSortLabel>;
     }
 }

@@ -3,12 +3,14 @@ import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
-import {Button} from '@material-ui/core';
-import {ViewProfileEntries} from './entries/view-profile-entries_module';
+import {ViewEntryColumn, ViewProfileEntries} from './entries/view-profile-entries_module';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {EntryRenderers} from './entries/EntryRenderers';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ThunkDispatch} from 'redux-thunk';
+import {IViewEntry} from '../../../model/view/IViewEntry';
+import {PwrFormSubCaption} from '../../general/pwr-typography';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
 
 
 interface ViewProfileEntriesOverviewProps {
@@ -19,28 +21,22 @@ interface ViewProfileEntriesOverviewLocalProps {
     viewProfileId: string;
 }
 
-interface ViewProfileEntriesOverviewLocalState {
-    expansionValue: number;
-}
-
 interface ViewProfileEntriesOverviewDispatch {
     moveEntry(id: string, type: string, sourceIndex: number, targetIndex: number): void;
 
     toggleEntry(id: string, type: string, index: number, isEnabled: boolean): void;
 }
 
+interface Group<T extends IViewEntry> {
+    title: string;
+    entryType: string;
+    entries: Array<T>;
+    columns: Array<ViewEntryColumn<T>>;
+}
+
 class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntriesOverviewProps
     & ViewProfileEntriesOverviewLocalProps
-    & ViewProfileEntriesOverviewDispatch, ViewProfileEntriesOverviewLocalState> {
-
-    constructor(props: ViewProfileEntriesOverviewProps
-        & ViewProfileEntriesOverviewLocalProps
-        & ViewProfileEntriesOverviewDispatch) {
-        super(props);
-        this.state = {
-            expansionValue: -1,
-        };
-    }
+    & ViewProfileEntriesOverviewDispatch> {
 
     static mapStateToProps(state: ApplicationState, localProps: ViewProfileEntriesOverviewLocalProps): ViewProfileEntriesOverviewProps {
         return {
@@ -65,136 +61,40 @@ class ViewProfileEntriesOverviewModule extends React.Component<ViewProfileEntrie
         this.props.toggleEntry(this.props.viewProfileId, type, index, isEnabled);
     };
 
-    private handleExpansionChange = (value: number) => {
-
-        if (this.state.expansionValue === value) {
-            this.setState({
-                expansionValue: -1,
-            });
-        } else {
-            this.setState({
-                expansionValue: value,
-            });
-        }
-    };
+    /**
+     * In the order of the standard template (designfile_hbt_standard.rptdesign), two per row from md up
+     */
+    private groups(): Array<Group<any>> {
+        const viewProfile = this.props.viewProfile;
+        const id = this.props.viewProfileId;
+        return [
+            {title: PowerLocalize.get('Education.Plural'), entryType: 'EDUCATION', entries: viewProfile.educations, columns: EntryRenderers.education(id)},
+            {title: PowerLocalize.get('Career.Plural'), entryType: 'CAREER', entries: viewProfile.careers, columns: EntryRenderers.career(id)},
+            {title: PowerLocalize.get('SpecialField.Plural'), entryType: 'KEY_SKILL', entries: viewProfile.keySkills, columns: EntryRenderers.nameOnly(SortableEntryType.KEY_SKILL, id)},
+            {title: PowerLocalize.get('Qualification.Plural'), entryType: 'QUALIFICATION', entries: viewProfile.qualifications, columns: EntryRenderers.qualification(id)},
+            {title: PowerLocalize.get('Training.Plural'), entryType: 'TRAINING', entries: viewProfile.trainings, columns: EntryRenderers.training(id)},
+            {title: PowerLocalize.get('Sector.Plural'), entryType: 'SECTOR', entries: viewProfile.sectors, columns: EntryRenderers.nameOnly(SortableEntryType.SECTOR, id)},
+            {title: PowerLocalize.get('ProjectRole.Plural'), entryType: 'PROJECT_ROLE', entries: viewProfile.projectRoles, columns: EntryRenderers.nameOnly(SortableEntryType.PROJECT_ROLE, id)},
+            {title: PowerLocalize.get('Language.Plural'), entryType: 'LANGUAGE', entries: viewProfile.languages, columns: EntryRenderers.language(id)},
+        ];
+    }
 
     render() {
-        return <div>
-            <div className="row">
-                <div className="col-md-6 fullWidth">
+        return <div className="pwr-view-groups">
+            {this.groups().map(group =>
+                <section key={group.entryType}>
+                    <PwrFormSubCaption>{group.title}</PwrFormSubCaption>
+                    <PwrSpacer size="tight"/>
                     <ViewProfileEntries
-                        title={PowerLocalize.get('Sector.Plural')}//
-                        movableEntryType="SECTOR"
-                        toggleableEntryType="SECTOR"
-                        renderEntry={EntryRenderers.renderSector}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.SECTOR, this.props.viewProfileId)]}
-                        entries={this.props.viewProfile.sectors}
+                        movableEntryType={group.entryType}
+                        toggleableEntryType={group.entryType}
+                        columns={group.columns}
+                        entries={group.entries}
+                        emptyText={PowerLocalize.get('ViewProfileOverview.Empty')}
                         onMove={this.handleMove}
                         onToggle={this.handleToggle}
                     />
-                </div>
-                <div className="col-md-6 fullWidth">
-
-                    <ViewProfileEntries
-                        title={PowerLocalize.get('Career.Plural')}
-                        movableEntryType="CAREER"
-                        toggleableEntryType="CAREER"
-                        renderEntry={EntryRenderers.renderCareer}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.CAREER, this.props.viewProfileId),
-                            EntryRenderers.renderStartDate(SortableEntryType.CAREER, this.props.viewProfileId),
-                            EntryRenderers.renderEndDate(SortableEntryType.CAREER, this.props.viewProfileId)]}
-                        entries={this.props.viewProfile.careers}
-                        onMove={this.handleMove}
-                        onToggle={this.handleToggle}
-                    />
-                </div>
-                <div className="col-md-6 fullWidth">
-
-                    <ViewProfileEntries
-                        title={PowerLocalize.get('Education.Plural')}
-                        movableEntryType="EDUCATION"
-                        toggleableEntryType="EDUCATION"
-                        renderEntry={EntryRenderers.renderEducation}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.EDUCATION, this.props.viewProfileId),
-                            EntryRenderers.renderStartDate(SortableEntryType.EDUCATION, this.props.viewProfileId),
-                            EntryRenderers.renderEndDate(SortableEntryType.EDUCATION, this.props.viewProfileId),
-                            <Button variant={'text'}
-                                    disabled={true}>{PowerLocalize.get('ViewEntryField.Degree')}</Button>]}
-                        entries={this.props.viewProfile.educations}
-                        onMove={this.handleMove}
-                        onToggle={this.handleToggle}
-                    />
-                </div>
-                <div className="col-md-6 fullWidth">
-
-                    <ViewProfileEntries
-                        title={PowerLocalize.get('SpecialField.Plural')}
-                        movableEntryType="KEY_SKILL"
-                        toggleableEntryType="KEY_SKILL"
-                        renderEntry={EntryRenderers.renderKeySkill}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.KEY_SKILL, this.props.viewProfileId)]}
-                        entries={this.props.viewProfile.keySkills}
-                        onMove={this.handleMove}
-                        onToggle={this.handleToggle}
-                    />
-                </div>
-                <div className="col-md-6 fullWidth">
-
-                    <ViewProfileEntries
-                        title={PowerLocalize.get('Language.Plural')}
-                        movableEntryType="LANGUAGE"
-                        toggleableEntryType="LANGUAGE"
-                        renderEntry={EntryRenderers.renderLanguage}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.LANGUAGE, this.props.viewProfileId),
-                            <Button variant={'text'}
-                                    disabled={true}>{PowerLocalize.get('ViewEntryField.Level')}</Button>]}
-                        entries={this.props.viewProfile.languages}
-                        onMove={this.handleMove}
-                        onToggle={this.handleToggle}
-                    />
-                </div>
-                <div className="col-md-6 fullWidth">
-
-                    <ViewProfileEntries
-                        title={PowerLocalize.get('Qualification.Plural')}
-                        movableEntryType="QUALIFICATION"
-                        toggleableEntryType="QUALIFICATION"
-                        renderEntry={EntryRenderers.renderQualification}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.QUALIFICATION, this.props.viewProfileId),
-                            <Button variant={'text'} disabled={true}>Date</Button>]}
-                        entries={this.props.viewProfile.qualifications}
-                        onMove={this.handleMove}
-                        onToggle={this.handleToggle}
-                    />
-                </div>
-                <div className="col-md-6 fullWidth">
-
-                    <ViewProfileEntries
-                        title={PowerLocalize.get('Training.Plural')}
-                        movableEntryType="TRAINING"
-                        toggleableEntryType="TRAINING"
-                        renderEntry={EntryRenderers.renderTraining}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.TRAINING, this.props.viewProfileId),
-                            EntryRenderers.renderStartDate(SortableEntryType.TRAINING, this.props.viewProfileId),
-                            EntryRenderers.renderEndDate(SortableEntryType.TRAINING, this.props.viewProfileId)]}
-                        entries={this.props.viewProfile.trainings}
-                        onMove={this.handleMove}
-                        onToggle={this.handleToggle}
-                    />
-                </div>
-                <div className="col-md-6 fullWidth">
-                    <ViewProfileEntries
-                        title={PowerLocalize.get('ProjectRole.Plural')}
-                        movableEntryType="PROJECT_ROLE"
-                        toggleableEntryType="PROJECT_ROLE"
-                        renderEntry={EntryRenderers.renderProjectRole}
-                        headers={[EntryRenderers.renderNameButton(SortableEntryType.PROJECT_ROLE, this.props.viewProfileId)]}
-                        entries={this.props.viewProfile.projectRoles}
-                        onMove={this.handleMove}
-                        onToggle={this.handleToggle}
-                    />
-                </div>
-            </div>
+                </section>)}
         </div>;
     }
 }

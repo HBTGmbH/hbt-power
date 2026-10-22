@@ -116,6 +116,21 @@ export class PowerHttpClient {
     }
 
     /**
+     * Like patch, but without the loading overlay, which would get in the way of every click: for small changes the
+     * page shows right away (#149). Counted as a background request instead, errors are shown as usual.
+     */
+    patchInBackground<R>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
+        store.dispatch(CrossCuttingActionCreator.startBackgroundRequest());
+        return this.getAxios()
+            .then(client => client.patch<R>(url, data, config))
+            .then(response => response.data)
+            .catch(error => {
+                throw this.handleError(error);
+            })
+            .finally(() => store.dispatch(CrossCuttingActionCreator.endBackgroundRequest()));
+    }
+
+    /**
      * Overwrite this method if a client does not conform to the {@link PowerApiError] interface
      */
     extractApiError = (error: AxiosError): PowerApiError => {

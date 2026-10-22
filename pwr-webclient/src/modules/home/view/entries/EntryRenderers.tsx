@@ -1,99 +1,120 @@
 import * as React from 'react';
 import {ViewCareer} from '../../../../model/view/ViewCareer';
-import {ViewSector} from '../../../../model/view/ViewSector';
 import {ViewEducation} from '../../../../model/view/ViewEducation';
-import {ViewKeySkill} from '../../../../model/view/ViewKeySkill';
 import {ViewLanguage} from '../../../../model/view/ViewLanguage';
 import {ViewQualification} from '../../../../model/view/ViewQualification';
 import {ViewTraining} from '../../../../model/view/ViewTraining';
-import {ViewProjectRole} from '../../../../model/view/ViewProjectRole';
+import {IViewEntry} from '../../../../model/view/IViewEntry';
 import {ComparableEntryButton} from './comprable-entry-button_module';
 import {SortableEntryType} from '../../../../model/view/NameComparableType';
 import {formatToShortDisplay} from '../../../../utils/DateUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
+import {ViewEntryColumn} from './view-profile-entries_module';
 
+/** A month like „Sept. 2019“ or „Heute“, with its sort arrow in the header */
+export const DATE_WIDTH = '104px';
+/** Degree, language level */
+export const DETAIL_WIDTH = '160px';
+
+type Dated = IViewEntry & { startDate: Date, endDate: Date };
+
+/**
+ * Columns of the tables of the view profile (#149). Fixed columns stand at the right end in the same order everywhere
+ * (detail, then start and end date), so they line up between the tables.
+ */
 export class EntryRenderers {
-    public static renderCareer(entry: ViewCareer) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'ViewCareer_' + entry.name}>{entry.name}</td>);
-        res.push(<td key={'ViewCareer_' + entry.startDate + '_s_date'}>{formatToShortDisplay(entry.startDate)}</td>);
-        res.push(<td key={'ViewCareer_' + entry.endDate + '_s_date'}>{formatToShortDisplay(entry.endDate)}</td>);
-        return res;
+
+    public static nameColumn<T extends IViewEntry>(entryType: SortableEntryType, viewProfileId: string): ViewEntryColumn<T> {
+        return {
+            header: <ComparableEntryButton
+                sortableEntryType={entryType}
+                sortableEntryField="name"
+                label={PowerLocalize.get('ViewEntryField.Name')}
+                viewProfileId={viewProfileId}
+            />,
+            render: entry => entry.name,
+        };
     }
 
-    public static renderSector(entry: ViewSector) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'ViewSector_' + entry.name}>{entry.name}</td>);
-        return res;
+    public static startDate<T extends Dated>(entryType: SortableEntryType, viewProfileId: string): ViewEntryColumn<T> {
+        return {
+            header: <ComparableEntryButton
+                sortableEntryType={entryType}
+                sortableEntryField="start-date"
+                label={PowerLocalize.get('ViewEntryField.StartDate')}
+                viewProfileId={viewProfileId}
+            />,
+            width: DATE_WIDTH,
+            render: entry => formatToShortDisplay(entry.startDate),
+        };
     }
 
-    public static renderEducation(entry: ViewEducation) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'ViewEducation_' + entry.name}>{entry.name}</td>);
-        res.push(<td key={'ViewEducation_' + entry.startDate + '_s_date'}>{formatToShortDisplay(entry.startDate)}</td>);
-        res.push(<td key={'ViewEducation_' + entry.endDate + '_e_date'}>{formatToShortDisplay(entry.endDate)}</td>);
-        res.push(<td key={'ViewEducation_' + entry.degree + '_degree'}>{entry.degree}</td>);
-        return res;
+    public static endDate<T extends Dated>(entryType: SortableEntryType, viewProfileId: string): ViewEntryColumn<T> {
+        return {
+            header: <ComparableEntryButton
+                sortableEntryType={entryType}
+                sortableEntryField="end-date"
+                label={PowerLocalize.get('ViewEntryField.EndDate')}
+                viewProfileId={viewProfileId}
+            />,
+            width: DATE_WIDTH,
+            render: entry => formatToShortDisplay(entry.endDate),
+        };
     }
 
-    public static renderKeySkill(entry: ViewKeySkill) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'ViewKeySkill_' + entry.name}>{entry.name}</td>);
-        return res;
+    public static career(viewProfileId: string): Array<ViewEntryColumn<ViewCareer>> {
+        return [
+            EntryRenderers.nameColumn(SortableEntryType.CAREER, viewProfileId),
+            EntryRenderers.startDate(SortableEntryType.CAREER, viewProfileId),
+            EntryRenderers.endDate(SortableEntryType.CAREER, viewProfileId),
+        ];
     }
 
-    public static renderLanguage(entry: ViewLanguage) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'ViewLanguage_' + entry.name}>{entry.name}</td>);
-        res.push(<td key={'ViewLanguage_' + entry.name + '_lvl'}>{entry.level}</td>);
-        return res;
+    public static education(viewProfileId: string): Array<ViewEntryColumn<ViewEducation>> {
+        return [
+            EntryRenderers.nameColumn(SortableEntryType.EDUCATION, viewProfileId),
+            {
+                header: PowerLocalize.get('ViewEntryField.Degree'),
+                width: DETAIL_WIDTH,
+                render: entry => entry.degree,
+            },
+            EntryRenderers.startDate(SortableEntryType.EDUCATION, viewProfileId),
+            EntryRenderers.endDate(SortableEntryType.EDUCATION, viewProfileId),
+        ];
     }
 
-    public static renderQualification(entry: ViewQualification) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'Qualification_' + entry.name}>{entry.name}</td>);
-        res.push(<td key={'Qualification_' + entry.name + '_date'}>{formatToShortDisplay(entry.date)}</td>);
-        return res;
+    public static training(viewProfileId: string): Array<ViewEntryColumn<ViewTraining>> {
+        return [
+            EntryRenderers.nameColumn(SortableEntryType.TRAINING, viewProfileId),
+            EntryRenderers.startDate(SortableEntryType.TRAINING, viewProfileId),
+            EntryRenderers.endDate(SortableEntryType.TRAINING, viewProfileId),
+        ];
     }
 
-    public static renderTraining(entry: ViewTraining) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'Training_' + entry.name}>{entry.name}</td>);
-        res.push(<td key={'Training_' + entry.name + '_s_date'}>{formatToShortDisplay(entry.startDate)}</td>);
-        res.push(<td key={'Training_' + entry.name + '_e_date'}>{formatToShortDisplay(entry.endDate)}</td>);
-        return res;
+    public static qualification(viewProfileId: string): Array<ViewEntryColumn<ViewQualification>> {
+        return [
+            EntryRenderers.nameColumn(SortableEntryType.QUALIFICATION, viewProfileId),
+            {
+                header: PowerLocalize.get('ViewEntryField.Date'),
+                width: DATE_WIDTH,
+                render: entry => formatToShortDisplay(entry.date),
+            },
+        ];
     }
 
-    public static renderProjectRole(entry: ViewProjectRole) {
-        let res: Array<JSX.Element> = [];
-        res.push(<td key={'ViewProjectRole_' + entry.name}>{entry.name}</td>);
-        return res;
+    public static language(viewProfileId: string): Array<ViewEntryColumn<ViewLanguage>> {
+        return [
+            EntryRenderers.nameColumn(SortableEntryType.LANGUAGE, viewProfileId),
+            {
+                header: PowerLocalize.get('ViewEntryField.Level'),
+                width: DETAIL_WIDTH,
+                render: entry => PowerLocalize.langLevelToLocalizedString(entry.level),
+            },
+        ];
     }
 
-    public static renderNameButton(entryType: SortableEntryType, viewProfileId: string) {
-        return <ComparableEntryButton
-            sortableEntryType={entryType}
-            sortableEntryField="name"
-            label={PowerLocalize.get('ViewEntryField.Name')}
-            viewProfileId={viewProfileId}
-        />;
-    }
-
-    public static renderStartDate(entryType: SortableEntryType, viewProfileId: string) {
-        return <ComparableEntryButton
-            sortableEntryType={entryType}
-            sortableEntryField="start-date"
-            label={PowerLocalize.get('ViewEntryField.StartDate')}
-            viewProfileId={viewProfileId}
-        />;
-    }
-
-    public static renderEndDate(entryType: SortableEntryType, viewProfileId: string) {
-        return <ComparableEntryButton
-            sortableEntryType={entryType}
-            sortableEntryField="end-date"
-            label={PowerLocalize.get('ViewEntryField.EndDate')}
-            viewProfileId={viewProfileId}
-        />;
+    /** Sectors, special fields, project roles */
+    public static nameOnly<T extends IViewEntry>(entryType: SortableEntryType, viewProfileId: string): Array<ViewEntryColumn<T>> {
+        return [EntryRenderers.nameColumn(entryType, viewProfileId)];
     }
 }

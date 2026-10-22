@@ -7,6 +7,12 @@ export interface SetRequestPendingAction extends AbstractAction {
     requestPending: boolean;
 }
 
+export interface ChangeBackgroundRequestsAction extends AbstractAction {
+    type: ActionType.ChangeBackgroundRequests;
+    /** +1 when one starts, -1 when it ends */
+    delta: number;
+}
+
 export interface SetLoginStatusAction {
     type: ActionType.SetLoginStatus;
     loginStatus: LoginStatus;
@@ -27,6 +33,8 @@ function SetRequestPending(requestPending: boolean): SetRequestPendingAction {
 export const CrossCuttingActionCreator = {
     startRequest: () => SetRequestPending(true),
     endRequest: () => SetRequestPending(false),
+    startBackgroundRequest: (): ChangeBackgroundRequestsAction => ({type: ActionType.ChangeBackgroundRequests, delta: 1}),
+    endBackgroundRequest: (): ChangeBackgroundRequestsAction => ({type: ActionType.ChangeBackgroundRequests, delta: -1}),
     SetLoginStatus: (loginStatus: LoginStatus) => ({
         type: ActionType.SetLoginStatus,
         loginStatus

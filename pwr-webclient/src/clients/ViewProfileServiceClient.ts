@@ -75,59 +75,51 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.base() + '/' + initials + '/view/' + id + '/';
     }
 
+    // Editing a view profile (move, show/hide, sort, display category, description): without the loading overlay
     public patchMoveEntry(initials: string, id: string, movableEntry: string, sourceIndex: number, targetIndex: number): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + movableEntry + '/position/' + sourceIndex + '/' + targetIndex;
-        this.beginRequest();
-        return this.patch(url);
+        return this.patchInBackground(url);
     }
 
     public patchMoveNestedEntry(initials: string, id: string, container: string, containerIndex: number, movableEntry: string, sourceIndex: number, targetIndex: number): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + container + '/' + containerIndex + '/' + movableEntry + '/position/' + sourceIndex + '/' + targetIndex;
-        this.beginRequest();
-        return this.patch(url);
+        return this.patchInBackground(url);
     }
 
     public patchToggleEntry(initials: string, id: string, toggleableEntry: string, index: number, isEnabled: boolean): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + toggleableEntry + '/' + index + '/visibility/' + isEnabled;
-        this.beginRequest();
-        return this.patch(url);
+        return this.patchInBackground(url);
     }
 
     public patchToggleNestedEntry(initials: string, id: string, container: string, containerIndex: number, toggleableEntry: string, index: number, isEnabled: boolean): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + container + '/' + containerIndex + '/' + toggleableEntry + '/' + index + '/visibility/' + isEnabled;
-        this.beginRequest();
-        return this.patch(url);
+        return this.patchInBackground(url);
     }
 
     public patchSortEntry(initials: string, id: string, entryType: SortableEntryType, field: SortableEntryField, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + SortableEntryType[entryType] + '/' + field + '/order';
-        this.beginRequest();
-        return this.patch(url, null, config);
+        return this.patchInBackground(url, null, config);
     }
 
     public patchToggleSkill(initials: string, id: string, isEnabled: boolean, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/visibility/' + isEnabled;
-        this.beginRequest();
-        return this.patch(url, null, config);
+        return this.patchInBackground(url, null, config);
     }
 
     public patchSetDisplayCategory(initials: string, id: string, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/display-category';
-        this.beginRequest();
-        return this.patch(url, null, config);
+        return this.patchInBackground(url, null, config);
     }
 
     public patchSortNestedEntry(initials: string, id: string, container: string, containerIndex: number,
                                 entryType: SortableEntryType, field: SortableEntryField, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + container + '/' + containerIndex + '/' + SortableEntryType[entryType] + '/' + field + '/order';
-        this.beginRequest();
-        return this.patch(url, null, config);
+        return this.patchInBackground(url, null, config);
     }
 
     public patchToggleVersion(initials: string, id: string, skillName: string, versionName: string, isEnabled: boolean, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, id) + 'SKILL/visibility/version/' + isEnabled;
-        this.beginRequest();
-        return this.patch(url, null, config);
+        return this.patchInBackground(url, null, config);
     }
 
     public postReport(initials: string, viewProfileId: string, templateId: string) { // result ignored
@@ -156,8 +148,7 @@ export class ViewProfileServiceClient extends PowerHttpClient {
 
     public patchDescription(initials: string, viewProfileId: string, description: string, config: AxiosRequestConfig): Promise<ViewProfile> {
         const url = this.patchBase(initials, viewProfileId) + 'DESCRIPTION';
-        this.beginRequest();
-        return this.patch(url, description, config);
+        return this.patchInBackground(url, description, config);
     }
 
 

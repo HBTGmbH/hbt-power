@@ -3,6 +3,7 @@ import {FormEvent} from 'react';
 import {Collapse, Icon, IconButton, LinearProgress, TextField, Tooltip} from '@material-ui/core';
 import {PwrButton} from './pwr-button';
 import {PwrSpacer} from './pwr-spacer_module';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
 
 interface LimitedTextFieldProps {
     maxCharacters: number;
@@ -46,6 +47,11 @@ interface LimitedTextFieldProps {
     id?: string;
 
     rows?: number;
+
+    /**
+     * Multi-line field that grows with its text, at least this many rows; instead of rows
+     */
+    minRows?: number;
 
     hideProgress?: boolean;
 
@@ -144,8 +150,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
     }
 
     render() {
-        // A full-width field only leaves room on the right for the toggle edit button
-        const fieldWidth = this.props.fullWidth ? (this.props.useToggleEditButton ? '85%' : '100%') : 256;
+        // A full-width field only leaves room on the right for the toggle edit button, right next to it (#149)
+        const fieldWidth = this.props.fullWidth ? (this.props.useToggleEditButton ? 'calc(100% - 56px)' : '100%') : 256;
         let progressBar = <React.Fragment/>
         if (!this.props.hideProgress) {
             // Below the field and as wide as it, the counter at its right end
@@ -168,7 +174,8 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
                     <div style={{width: fieldWidth, float: 'left', position: 'relative'}}>
                         <TextField
                             className={this.props.className}
-                            rows={this.props.rows}
+                            rows={this.props.minRows ? undefined : this.props.rows}
+                            minRows={this.props.minRows}
                             id={this.props.id}
                             value={(this.state.errorText !== null) ? this.state.errorText : this.props.value}
                             disabled={this.props.disabled}
@@ -185,13 +192,15 @@ export class LimitedTextField extends React.Component<LimitedTextFieldProps, Lim
 
                     {
                         this.props.useToggleEditButton ?
-                            <div style={{width: this.props.fullWidth ? '15%' : 72, paddingTop: '30px', float: 'left'}}>
-                                <IconButton
-                                    onClick={this.handleEditButtonPress}>
-                                    <Icon className="material-icons icon-size-70">
-                                        {this.props.disabled ? 'edit' : 'save'}
-                                    </Icon>
-                                </IconButton>
+                            <div style={{width: this.props.fullWidth ? 56 : 72, paddingLeft: 8, float: 'left'}}>
+                                <Tooltip title={PowerLocalize.get(this.props.disabled ? 'Action.Edit' : 'Action.Save')}>
+                                    <IconButton aria-label={PowerLocalize.get(this.props.disabled ? 'Action.Edit' : 'Action.Save')}
+                                                onClick={this.handleEditButtonPress}>
+                                        <Icon className="material-icons">
+                                            {this.props.disabled ? 'edit' : 'save'}
+                                        </Icon>
+                                    </IconButton>
+                                </Tooltip>
                             </div>
                             :
                             null

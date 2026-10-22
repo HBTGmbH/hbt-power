@@ -118,6 +118,7 @@ export enum ActionType {
 
     // == Cross Cutting
     SetRequestPending = '[Cross Cutting] SetRequestPending',
+    ChangeBackgroundRequests = '[Cross Cutting] ChangeBackgroundRequests',
     SetLoginStatus = '[Cross Cutting] Set Login Status',
     SetLoginError = '[Cross Cutting] Set Login Error',
 

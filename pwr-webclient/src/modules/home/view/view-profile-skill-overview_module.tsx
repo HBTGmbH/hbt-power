@@ -4,19 +4,15 @@ import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ViewProfile} from '../../../model/view/ViewProfile';
 import {ViewProfileActionCreator} from '../../../reducers/view/ViewProfileActionCreator';
 import {ViewSkill} from '../../../model/view/ViewSkill';
-import {ViewProfileEntries} from './entries/view-profile-entries_module';
-import {EntryRenderers} from './entries/EntryRenderers';
+import {SortedColumn, ViewEntryColumn, ViewProfileEntries} from './entries/view-profile-entries_module';
+import {DATE_WIDTH} from './entries/EntryRenderers';
 import {SortableEntryType} from '../../../model/view/NameComparableType';
 import {ViewCategory} from '../../../model/view/ViewCategory';
 import {ComparableNestedEntryButton} from './entries/comparable-nested-entry-button_module';
 import {EditViewSkillDialog} from './entries/edit-view-skill-dialog_module';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails';
-import Icon from '@material-ui/core/Icon/Icon';
-import Typography from '@material-ui/core/Typography/Typography';
-import {Chip} from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
+import {Chip, Link} from '@material-ui/core';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
+import {PwrRow} from '../../general/pwr-form-section';
 import {ThunkDispatch} from 'redux-thunk';
 
 interface ViewProfileSkillOverviewProps {
@@ -25,6 +21,8 @@ interface ViewProfileSkillOverviewProps {
 
 interface ViewProfileSkillOverviewLocalProps {
     viewProfileId: string;
+    /** The sorting of the categories sits in the heading of the section */
+    sortedColumn: SortedColumn;
 }
 
 interface ViewProfileSkillOverviewLocalState {
@@ -117,80 +115,80 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
         this.props.toggleVersion(this.props.viewProfileId, skillName, versionName, isEnabled);
     };
 
-    private renderSkill = (entry: ViewSkill) => {
-        let res: Array<JSX.Element> = [];
-        res.push(
-            <td key={'ViewSkill_' + entry.name}
-                className="cursor-pointer"
-                onClick={() => this.editSkill(entry)}
-            >
-                {entry.name}
-            </td>);
-        res.push(<td key={'ViewSkill_' + entry.name + '_rating'}>{entry.rating}</td>);
-        entry.versions ?
-            res.push(
-                <td>{entry.versions.map(version =>
-                    <div><Chip key={version.name} label={version.name}/><Checkbox
-                        checked={version.enabled}
-                        onChange={() => this.handleVersionToggle(entry.name, version.name, !version.enabled)}/>
-                    </div>)}
-                </td>)
-            : res.push(<td key={'no version'}>-</td>);
-        return res;
-    };
+    private renderVersions(skill: ViewSkill) {
+        if (!skill.versions || skill.versions.length === 0) {
+            return '–';
+        }
+        // Click a version to show or hide it in the export; a hidden one is grey and struck through
+        return <PwrRow>
+            {skill.versions.map(version =>
+                <Chip key={version.name} size="small" clickable variant="outlined" label={version.name}
+                      className={version.enabled ? undefined : 'pwr-view-version-hidden'}
+                      aria-label={PowerLocalize.getFormatted('ViewProfileOverview.Version', version.name)}
+                      aria-pressed={version.enabled}
+                      onClick={() => this.handleVersionToggle(skill.name, version.name, !version.enabled)}/>)}
+        </PwrRow>;
+    }
 
-    private renderDisplayCategory = (entry: ViewCategory, entryIndex: number) => {
-        let res: Array<JSX.Element> = [];
-        res.push(
-            <td key={'ViewCategory_' + entry.name}>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary expandIcon={<Icon className={'material-ui'}>arrow_down</Icon>}>
-                        <Typography style={{flexBasis: '33.33%'}} variant={'h5'}>{entry.name}</Typography>
-                        <Typography variant={'caption'}>{entry.displaySkills.length + ' Skills'}</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
+    private skillColumns(categoryIndex: number): Array<ViewEntryColumn<ViewSkill>> {
+        return [
+            {
+                header: <ComparableNestedEntryButton
+                    container="DISPLAY_CATEGORY"
+                    sortableEntryType={SortableEntryType.SKILL}
+                    sortableEntryField="name"
+                    viewProfileId={this.props.viewProfileId}
+                    label={PowerLocalize.get('ViewEntryField.Name')}
+                    containerIndex={categoryIndex}/>,
+                // Opens the choice of the display category
+                render: skill => <Link component="button" variant="body2" onClick={() => this.editSkill(skill)}>{skill.name}</Link>,
+            },
+            {
+                header: <ComparableNestedEntryButton
+                    container="DISPLAY_CATEGORY"
+                    sortableEntryType={SortableEntryType.SKILL}
+                    sortableEntryField="rating"
+                    viewProfileId={this.props.viewProfileId}
+                    label={PowerLocalize.get('ViewEntryField.Rating')}
+                    containerIndex={categoryIndex}/>,
+                width: DATE_WIDTH,
+                render: skill => skill.rating,
+            },
+            {
+                header: PowerLocalize.get('ViewEntryField.Versions'),
+                // More room than the name, so a few versions fit in one line
+                width: 'minmax(0, 1.5fr)',
+                render: skill => this.renderVersions(skill),
+            },
+        ];
+    }
 
-                        <ViewProfileEntries
-                            movableEntryType="SKILL"
-                            toggleableEntryType="SKILL"
-                            renderEntry={this.renderSkill}
-                            headers={[<ComparableNestedEntryButton
-                                container="DISPLAY_CATEGORY"
-                                sortableEntryType={SortableEntryType.SKILL}
-                                sortableEntryField="name"
-                                viewProfileId={this.props.viewProfileId}
-                                label="Name"
-                                containerIndex={entryIndex}/>,
-                                <ComparableNestedEntryButton
-                                    container="DISPLAY_CATEGORY"
-                                    sortableEntryType={SortableEntryType.SKILL}
-                                    sortableEntryField="rating"
-                                    viewProfileId={this.props.viewProfileId}
-                                    label="Rating"
-                                    containerIndex={entryIndex}
-                                />,
-                                <ComparableNestedEntryButton
-                                    container="DISPLAY_CATEGORY"
-                                    sortableEntryType={SortableEntryType.SKILL}
-                                    sortableEntryField="name"
-                                    viewProfileId={this.props.viewProfileId}
-                                    label="Versionen"
-                                    containerIndex={entryIndex}
-                                />
-                            ]}
-                            entries={entry.displaySkills}
-                            onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('DISPLAY_CATEGORY', entryIndex, type, sourceIndex, targetIndex)}
-                            onToggle={(type, index, isEnabled) => this.handleSkillToggle(entry.displaySkills, index, isEnabled)}
-                        />
+    private renderDetails = (category: ViewCategory, categoryIndex: number) => <ViewProfileEntries
+        movableEntryType="SKILL"
+        toggleableEntryType="SKILL"
+        columns={this.skillColumns(categoryIndex)}
+        entries={category.displaySkills}
+        onMove={(type, sourceIndex, targetIndex) => this.handleNestedMove('DISPLAY_CATEGORY', categoryIndex, type, sourceIndex, targetIndex)}
+        onToggle={(type, index, isEnabled) => this.handleSkillToggle(category.displaySkills, index, isEnabled)}
+    />;
 
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
-            </td>);
-        return res;
-    };
+    private categoryColumns(): Array<ViewEntryColumn<ViewCategory>> {
+        return [
+            {
+                // Sorted from the heading of the section
+                header: null,
+                render: category => <span className="pwr-view-entry-title">{category.name}</span>,
+            },
+            {
+                header: '',
+                width: '72px',
+                render: category => skillCount(category.displaySkills.length),
+            },
+        ];
+    }
 
     render() {
-        return (<div className="row">
+        return <div>
             {
                 !!(this.state.editSkill) ?
                     <EditViewSkillDialog
@@ -202,21 +200,27 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                     :
                     null
             }
-            <div className="col-md-12 fullWidth">
-                <ViewProfileEntries
-                    movableEntryType="DISPLAY_CATEGORY"
-                    toggleableEntryType="DISPLAY_CATEGORY"
-                    renderEntry={this.renderDisplayCategory}
-                    headers={[<span>
-                        {EntryRenderers.renderNameButton(SortableEntryType.DISPLAY_CATEGORY, this.props.viewProfileId)}
-                            </span>]}
-                    entries={this.props.viewProfile.displayCategories}
-                    onMove={this.handleMove}
-                    onToggle={this.handleToggle}
-                />
-            </div>
-        </div>);
+            <ViewProfileEntries
+                cards
+                hideHeader
+                sortedColumn={this.props.sortedColumn}
+                movableEntryType="DISPLAY_CATEGORY"
+                toggleableEntryType="DISPLAY_CATEGORY"
+                columns={this.categoryColumns()}
+                renderDetails={this.renderDetails}
+                entries={this.props.viewProfile.displayCategories}
+                emptyText={PowerLocalize.get('ViewProfileOverview.Empty')}
+                onMove={this.handleMove}
+                onToggle={this.handleToggle}
+            />
+        </div>;
     }
+}
+
+/** „1 Skill“, „3 Skills“ */
+export function skillCount(count: number): string {
+    return count === 1 ? PowerLocalize.get('ViewProfileOverview.SkillCount.One')
+        : PowerLocalize.getFormatted('ViewProfileOverview.SkillCount.Other', count);
 }
 
 /**
