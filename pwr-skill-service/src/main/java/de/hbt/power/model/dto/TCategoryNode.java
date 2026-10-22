@@ -16,7 +16,6 @@ import java.util.Set;
 public class TCategoryNode {
     private Integer id;
     private String qualifier = "";
-    private boolean blacklisted = false;
     private boolean custom = false;
     private boolean display = false;
     private Set<LocalizedQualifier> qualifiers = new HashSet<>();

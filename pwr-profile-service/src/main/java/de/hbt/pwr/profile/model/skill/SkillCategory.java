@@ -8,7 +8,6 @@ public class SkillCategory {
     private String qualifier = "";
     private Set<LocalizedQualifier> qualifiers = new HashSet<>();
     private SkillCategory category;
-    private boolean blacklisted = false;
 
     public String getQualifier() {
         return qualifier;
@@ -32,14 +31,6 @@ public class SkillCategory {
 
     public void setCategory(SkillCategory category) {
         this.category = category;
-    }
-
-    public boolean isBlacklisted() {
-        return blacklisted;
-    }
-
-    public void setBlacklisted(boolean blacklisted) {
-        this.blacklisted = blacklisted;
     }
 
 }

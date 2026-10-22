@@ -69,14 +69,6 @@ public class CategoryServiceTest {
     }
 
     @Test
-    public void whenCreatingCategory_withParent_shouldAcceptBlacklistingFromParent() {
-        SkillCategory parent = new SkillCategory().toBuilder().id(99).blacklisted(true).qualifier("Parenting").build();
-        when(skillCategoryRepository.findById(99)).thenReturn(of(parent));
-        SkillCategory category = categoryService.createSkillCategory(skillCategory, 99);
-        assertThat(category.isBlacklisted()).isTrue();
-    }
-
-    @Test
     public void whenCreatingCategory_whereCategoryWithNameAlreadyExists_shouldThrow() {
         SkillCategory concurrent = new SkillCategory().toBuilder().id(55).qualifier(skillCategory.getQualifier()).build();
         when(skillCategoryRepository.findOneByQualifier(skillCategory.getQualifier())).thenReturn(of(concurrent));

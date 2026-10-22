@@ -83,13 +83,6 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         airplay
     </Icon>;
 
-    private static BlacklistedIcon = (props: { margin: string }) => <Icon
-        className="material-icons blacklisted-icon"
-        style={{marginLeft: props.margin, position: 'absolute', top: '12px'}}
-    >
-        warning
-    </Icon>;
-
     private getSkill = (skillId: number): SkillServiceSkill => {
         return this.props.skillsById.get(skillId);
     };
@@ -173,14 +166,9 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
         let skillCategory = this.props.categoriesById.get(categoryId);
 
         let currentMargin = 24;
-        let blacklistIcon = null;
         let customIcon = null;
         let displayIcon = null;
 
-        if (skillCategory.blacklisted) {
-            blacklistIcon = <SkillTree.BlacklistedIcon margin={currentMargin + 'px'}/>;
-            currentMargin += 24;
-        }
         if (skillCategory.isCustom) {
             customIcon = <SkillTree.CustomIcon margin={currentMargin + 'px'}/>;
             currentMargin += 24;
@@ -196,7 +184,6 @@ export class SkillTree extends React.Component<SkillTreeProps, SkillTreeState> {
             </ListItemIcon>
             <ListItemText>
                 {skillCategory.qualifier}
-                {blacklistIcon}
                 {customIcon}
                 {displayIcon}
             </ListItemText>

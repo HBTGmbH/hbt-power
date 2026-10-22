@@ -10,13 +10,7 @@ export enum AdminNotificationReason {
      * A new dangerous Skill has been added.
      * Claimed as dangerous, because it was not known before that
      */
-    DANGEROUS_SKILL_ADDED_UNKNOWN,
-
-    /**
-     * A new dangerous Skill has been added.
-     * Claimed as dangerous, because its blacklisted
-     */
-    DANGEROUS_SKILL_ADDED_BLACKLISTED
+    DANGEROUS_SKILL_ADDED_UNKNOWN
 }
 
 export class AdminNotificationReasonUtil {

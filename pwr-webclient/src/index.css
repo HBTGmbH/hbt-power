@@ -132,10 +132,6 @@ body {
     margin-bottom: 8px
 }
 
-.blacklisted-icon {
-    color: crimson !important;
-}
-
 .material-icons-custom {
     font-family: 'Material Icons', serif;
     font-weight: normal;

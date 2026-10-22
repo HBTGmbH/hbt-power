@@ -72,7 +72,6 @@ public class SkillTreeMappingService {
             node.setId(category.getId());
             node.setQualifier(category.getQualifier());
             node.setQualifiers(category.getQualifiers());
-            node.setBlacklisted(category.isBlacklisted());
             node.setDisplay(category.isDisplay());
             categoryNodesById.put(node.getId(), node);
         }

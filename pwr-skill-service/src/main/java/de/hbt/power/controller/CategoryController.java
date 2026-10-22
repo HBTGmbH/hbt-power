@@ -222,58 +222,6 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.moveCategory(toMove, newParent));
     }
 
-    /**
-     * Adds the category identified by the given <code>id</code> to the list of blacklisted categories.
-     * All child-categories will also be blacklisted.
-     *
-     * @param categoryId id
-     * @return the category that was blacklisted.
-     */
-    @ApiOperation(value = "Blacklists a category",
-            notes = "Moves an arbitrary category into the blacklist. Blacklisted categories indicates categories that" +
-                    " are not supposed to be used, but are kept due to consistency regulations.",
-            response = SkillCategory.class,
-            httpMethod = "POST",
-            produces = "application/json")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Category successfully blacklisted and returned in response."),
-            @ApiResponse(code = 404, message = "No category for provided <code>id</code> found"),
-    })
-    @PostMapping(value = "/blacklist/{id}")
-    @Transactional
-    public ResponseEntity<SkillCategory> addToBlacklist(@PathVariable("id") Integer categoryId) {
-        SkillCategory skillCategory = getCategory(categoryId);
-        log.info("Blacklisting the category " + skillCategory.toString() + " and all child categories.");
-        categoryService.blacklist(skillCategory);
-        return ResponseEntity.ok(skillCategory);
-    }
-
-
-    /**
-     * Removes the category and all its child categories from the blacklist.
-     *
-     * @param categoryId id
-     * @return the category that was removed from the blacklist
-     */
-    @ApiOperation(value = "Removes a category from the blacklist",
-            notes = "Removes an arbitrary category into the blacklist. Blacklisted categories indicates categories that" +
-                    " are not supposed to be used, but are kept due to consistency regulations.",
-            response = SkillCategory.class,
-            httpMethod = "DELETE",
-            produces = "application/json")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Category successfully blacklisted and returned in response."),
-            @ApiResponse(code = 404, message = "No category for provided <code>id</code> found"),
-    })
-    @DeleteMapping(value = "/blacklist/{id}")
-    @Transactional
-    public ResponseEntity<SkillCategory> deleteFromBlackList(@PathVariable("id") Integer categoryId) {
-        SkillCategory skillCategory = getCategory(categoryId);
-        log.info("Whitelisting the category " + skillCategory.toString() + " and all child categories.");
-        categoryService.whitelist(skillCategory);
-        return ResponseEntity.ok(skillCategory);
-    }
-
     private SkillCategory getCategory(Integer categoryId) {
         return skillCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> SkillServiceException.categoryNotFound(categoryId));

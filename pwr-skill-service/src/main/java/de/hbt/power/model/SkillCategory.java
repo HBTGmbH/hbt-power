@@ -40,9 +40,6 @@ public class SkillCategory {
     @JoinColumn(name = "category_id")
     private SkillCategory category;
 
-    @Column(name = "is_blacklisted", nullable = false)
-    private boolean blacklisted = false;
-
     @Column(name = "is_custom", nullable = false)
     private boolean custom = false;
 
@@ -56,11 +53,11 @@ public class SkillCategory {
     }
 
     public static SkillCategory custom(String qualifier) {
-        return new SkillCategory(null, qualifier, new HashSet<>(), null, false, true, false);
+        return new SkillCategory(null, qualifier, new HashSet<>(), null, true, false);
     }
 
     public static SkillCategory of(String qualifier) {
-        return new SkillCategory(null, qualifier, new HashSet<>(), null, false, false, false);
+        return new SkillCategory(null, qualifier, new HashSet<>(), null, false, false);
     }
 
     public static SkillCategory of(String qualifier, SkillCategory parent) {
@@ -105,7 +102,6 @@ public class SkillCategory {
 
         SkillCategory that = (SkillCategory) o;
 
-        if (blacklisted != that.blacklisted) return false;
         if (custom != that.custom) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         return qualifier != null ? qualifier.equals(that.qualifier) : that.qualifier == null;
@@ -115,7 +111,6 @@ public class SkillCategory {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (qualifier != null ? qualifier.hashCode() : 0);
-        result = 31 * result + (blacklisted ? 1 : 0);
         result = 31 * result + (custom ? 1 : 0);
         return result;
     }

@@ -127,23 +127,6 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.get(url);
     };
 
-    /**
-     * String representing a delete operation on the blacklist.
-     * @param id of the category to be whitelisted
-     * @returns {string} the representing the full API URI
-     */
-    public deleteBlacklistCategory = (id: number): Promise<APISkillCategory> => {
-        const url = this.base() + '/category/blacklist/' + id;
-        this.beginRequest();
-        return this.delete(url);
-    };
-
-    public postBlacklistCategory = (id: number): Promise<APISkillCategory> => {
-        const url = this.base() + '/category/blacklist/' + id;
-        this.beginRequest();
-        return this.post(url);
-    };
-
     public patchSetIsDisplayCategory = (categoryId: number, isDisplay: boolean): Promise<APISkillCategory> => {
         const url = this.base() + '/category/' + categoryId + '/display/' + isDisplay;
         this.beginRequest();

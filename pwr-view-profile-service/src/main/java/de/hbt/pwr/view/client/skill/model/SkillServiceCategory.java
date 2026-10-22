@@ -12,7 +12,6 @@ public class SkillServiceCategory {
     private List<LocalizedQualifier> qualifiers = new ArrayList<>();
     private SkillServiceCategory category;
     private Boolean custom;
-    private Boolean blacklisted;
     private Boolean display = false;
 
     public SkillServiceCategory() {
@@ -21,7 +20,6 @@ public class SkillServiceCategory {
 
     public static SkillServiceCategory other() {
         SkillServiceCategory skillServiceCategory = new SkillServiceCategory();
-        skillServiceCategory.setBlacklisted(true);
         skillServiceCategory.setCustom(true);
         skillServiceCategory.setQualifier("Other");
         skillServiceCategory.setId(-1);

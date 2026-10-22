@@ -8,42 +8,42 @@
 -- Categories marked as display group their skills in view profiles. Without a flag, the second tree level is used.
 
 -- Categories: (id, qualifier, parent, is_display)
-INSERT IGNORE INTO skill_category (id, qualifier, category_id, is_display, is_blacklisted, is_custom) VALUES
+INSERT IGNORE INTO skill_category (id, qualifier, category_id, is_display, is_custom) VALUES
     -- Information Technology
-    (900001, 'Information Technology', NULL, 0, 0, 0),
-    (900002, 'Software Development', 900001, 0, 0, 0),
-    (900003, 'Programming Languages', 900002, 1, 0, 0),
-    (900004, 'Frameworks', 900002, 0, 0, 0),
-    (900005, 'Backend Frameworks', 900004, 1, 0, 0),
-    (900006, 'Frontend Frameworks', 900004, 1, 0, 0),
-    (900007, 'Testing', 900002, 1, 0, 0),
-    (900008, 'Build Tools', 900002, 1, 0, 0),
-    (900009, 'Cloud & Infrastructure', 900001, 0, 0, 0),
-    (900010, 'Cloud Platforms', 900009, 1, 0, 0),
-    (900011, 'Containers & Orchestration', 900009, 1, 0, 0),
-    (900012, 'Infrastructure as Code', 900009, 1, 0, 0),
-    (900013, 'CI/CD', 900009, 1, 0, 0),
-    (900014, 'Data', 900001, 0, 0, 0),
-    (900015, 'Databases', 900014, 1, 0, 0),
-    (900016, 'Messaging', 900014, 1, 0, 0),
-    (900017, 'Data Engineering', 900014, 1, 0, 0),
-    (900018, 'Methods', 900001, 0, 0, 0),
-    (900019, 'Agile Methods', 900018, 1, 0, 0),
-    (900020, 'Architecture', 900018, 1, 0, 0),
-    (900021, 'Security', 900001, 0, 0, 0),
+    (900001, 'Information Technology', NULL, 0, 0),
+    (900002, 'Software Development', 900001, 0, 0),
+    (900003, 'Programming Languages', 900002, 1, 0),
+    (900004, 'Frameworks', 900002, 0, 0),
+    (900005, 'Backend Frameworks', 900004, 1, 0),
+    (900006, 'Frontend Frameworks', 900004, 1, 0),
+    (900007, 'Testing', 900002, 1, 0),
+    (900008, 'Build Tools', 900002, 1, 0),
+    (900009, 'Cloud & Infrastructure', 900001, 0, 0),
+    (900010, 'Cloud Platforms', 900009, 1, 0),
+    (900011, 'Containers & Orchestration', 900009, 1, 0),
+    (900012, 'Infrastructure as Code', 900009, 1, 0),
+    (900013, 'CI/CD', 900009, 1, 0),
+    (900014, 'Data', 900001, 0, 0),
+    (900015, 'Databases', 900014, 1, 0),
+    (900016, 'Messaging', 900014, 1, 0),
+    (900017, 'Data Engineering', 900014, 1, 0),
+    (900018, 'Methods', 900001, 0, 0),
+    (900019, 'Agile Methods', 900018, 1, 0),
+    (900020, 'Architecture', 900018, 1, 0),
+    (900021, 'Security', 900001, 0, 0),
     -- Agriculture
-    (900022, 'Agriculture', NULL, 0, 0, 0),
-    (900023, 'Crop Farming', 900022, 0, 0, 0),
-    (900024, 'Livestock', 900022, 0, 0, 0),
-    (900025, 'Agricultural Machinery', 900022, 0, 0, 0),
-    (900026, 'Forestry', 900022, 0, 0, 0),
+    (900022, 'Agriculture', NULL, 0, 0),
+    (900023, 'Crop Farming', 900022, 0, 0),
+    (900024, 'Livestock', 900022, 0, 0),
+    (900025, 'Agricultural Machinery', 900022, 0, 0),
+    (900026, 'Forestry', 900022, 0, 0),
     -- Gaming
-    (900027, 'Gaming', NULL, 0, 0, 0),
-    (900028, 'Game Development', 900027, 0, 0, 0),
-    (900029, 'Esports', 900027, 0, 0, 0),
-    (900030, 'Tabletop Games', 900027, 0, 0, 0),
+    (900027, 'Gaming', NULL, 0, 0),
+    (900028, 'Game Development', 900027, 0, 0),
+    (900029, 'Esports', 900027, 0, 0),
+    (900030, 'Tabletop Games', 900027, 0, 0),
     -- Unknown skills land here (CategoryService.getOther), the service fails without it
-    (900031, 'Other', NULL, 0, 0, 0);
+    (900031, 'Other', NULL, 0, 0);
 
 -- German category names; the localized_qualifier id equals the category id
 INSERT IGNORE INTO localized_qualifier (id, locale, qualifier) VALUES

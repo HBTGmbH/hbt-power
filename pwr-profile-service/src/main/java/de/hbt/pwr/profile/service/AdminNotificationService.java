@@ -8,7 +8,6 @@ import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
 import de.hbt.pwr.profile.model.profile.entries.ProfileEntry;
-import de.hbt.pwr.profile.model.skill.SkillCategory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,11 +174,9 @@ public class AdminNotificationService {
      * @param skill   for reference
      */
     public Optional<AdminNotification> createSkillNotification(Profile profile, Skill skill, boolean newSkillCreated) {
-        // Priority: Blacklist first, if not blacklist, check unknown
-        SkillCategory category = skillProfileClient.updateAndGetCategory(skill.getName());
-        if (category != null && category.isBlacklisted()) {
-            return Optional.of(createBlacklistedSkillNotification(profile, skill));
-        } else if (newSkillCreated) {
+        // Puts a skill the skill tree doesn't know yet into "Other"
+        skillProfileClient.updateAndGetCategory(skill.getName());
+        if (newSkillCreated) {
             return Optional.of(createUnknownSkillNotification(profile, skill));
         }
         return Optional.empty();
@@ -187,10 +184,6 @@ public class AdminNotificationService {
 
     public AdminNotification createUnknownSkillNotification(Profile profile, Skill skill) {
         return new SkillNotification(profile, AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN, skill);
-    }
-
-    public AdminNotification createBlacklistedSkillNotification(Profile profile, Skill skill) {
-        return new SkillNotification(profile, AdminNotificationReason.DANGEROUS_SKILL_ADDED_BLACKLISTED, skill);
     }
 
     /**

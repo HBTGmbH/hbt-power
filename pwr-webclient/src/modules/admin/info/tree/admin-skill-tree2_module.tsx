@@ -46,10 +46,6 @@ interface AdminSkillTree2LocalState {
 interface AdminSkillTree2Dispatch {
     loadTree(): void;
 
-    whitelistCategory(categoryId: number): void;
-
-    blacklistCategory(categoryId: number): void;
-
     setIsDisplayCategory(categoryId: number, isDisplay: boolean): void;
 
     addLocalization(categoryId: number, language: string, qualifier: string): void;
@@ -115,8 +111,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AdminSkillTree2Dispatch {
         return {
             loadTree: () => dispatch(SkillActionCreator.AsyncLoadTree()),
-            whitelistCategory: categoryId => dispatch(SkillActionCreator.AsyncWhitelistCategory(categoryId)),
-            blacklistCategory: categoryId => dispatch(SkillActionCreator.AsyncBlacklistCategory(categoryId)),
             addLocalization: (categoryId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddLocale(categoryId, language, qualifier)),
             deleteLocalization: (categoryId, language) => dispatch(SkillActionCreator.AsyncDeleteLocale(categoryId, language)),
             createCategory: (parentId, qualifier) => dispatch(SkillActionCreator.AsyncCreateCategory(qualifier, parentId)),
@@ -152,14 +146,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
             selectedCategoryId: this.NO_ID,
             selectedSkillId: skillId
         });
-    };
-
-    private handleCategoryBlacklistCheck = (event: any, isChecked: boolean) => {
-        if (isChecked) {
-            this.props.blacklistCategory(this.state.selectedCategoryId);
-        } else {
-            this.props.whitelistCategory(this.state.selectedCategoryId);
-        }
     };
 
     private handleCategoryIsDisplayCheck = (event: any, isChecked: boolean) => {
@@ -354,17 +340,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
                 control={
                     <Checkbox
                         style={{marginLeft: '16px'}}
-                        checked={selectedCategory.blacklisted}
-                        onChange={this.handleCategoryBlacklistCheck}
-                        color={'primary'}
-                    />}
-                label={PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsBlacklisted')}
-            />
-
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        style={{marginLeft: '16px'}}
                         checked={selectedCategory.isDisplay}
                         onChange={this.handleCategoryIsDisplayCheck}
                         color={'primary'}
@@ -488,15 +463,6 @@ class AdminSkillTree2Module extends React.Component<AdminSkillTree2Props & Admin
                                 title={PowerLocalize.get('AdminClient.Info.SkillTree.Legend')}
                                 style={{paddingBottom: '16px'}}
                             >
-                                <div style={{marginLeft: '8px'}}>
-                                    <Icon
-                                        className="material-icons blacklisted-icon"
-                                        style={{top: '6px', marginRight: '24px'}}
-                                    >
-                                        warning
-                                    </Icon>
-                                    {PowerLocalize.get('AdminClient.Info.SkillTree.Category.IsBlacklisted')}
-                                </div>
                                 <div style={{marginLeft: '8px'}}>
                                     <Icon
                                         className="material-icons"
