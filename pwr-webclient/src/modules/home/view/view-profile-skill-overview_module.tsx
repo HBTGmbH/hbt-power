@@ -25,6 +25,10 @@ interface ViewProfileSkillOverviewLocalProps {
     viewProfileId: string;
     /** The sorting of the categories sits in the heading of the section */
     sortedColumn: SortedColumn;
+    /** Opened categories, which the heading can open and close all at once (#165) */
+    expanded: Array<string>;
+
+    onExpandedChange(update: (expanded: Array<string>) => Array<string>): void;
 }
 
 interface ViewProfileSkillOverviewLocalState {
@@ -228,6 +232,8 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
                 cards
                 hideHeader
                 sortedColumn={this.props.sortedColumn}
+                expanded={this.props.expanded}
+                onExpandedChange={this.props.onExpandedChange}
                 movableEntryType="DISPLAY_CATEGORY"
                 toggleableEntryType="DISPLAY_CATEGORY"
                 columns={this.categoryColumns()}
