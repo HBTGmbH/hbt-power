@@ -14,9 +14,14 @@ import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import {ThunkDispatch} from 'redux-thunk';
+import {LimitedTextField} from '../../general/limited-text-field-module';
+import {PROFILE_DESCRIPTION_LENGTH} from '../../../model/PwrConstants';
 
 interface UpdateProps {
     initials: string;
+    /** Name and description of the view profile now, to start the fields with (#167) */
+    currentName: string;
+    currentDescription: string;
 }
 
 interface UpdateLocalProps {
@@ -42,11 +47,22 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
 
     constructor(props) {
         super(props);
-        this.state = {
-            name: '',
-            description: '',
+        this.state = this.initialState(props);
+    }
+
+    private initialState(props: UpdateProps): UpdateState {
+        return {
+            name: props.currentName,
+            description: props.currentDescription,
             keepOld: true
         };
+    }
+
+    /** Opened again: the values of the view profile, not what was typed and cancelled before */
+    componentDidUpdate(prevProps: UpdateLocalProps & UpdateProps & UpdateDispatch) {
+        if (this.props.open && !prevProps.open) {
+            this.setState(this.initialState(this.props));
+        }
     }
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): UpdateDispatch {
@@ -56,10 +72,14 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
         };
     }
 
-    static mapStateToProps(state: ApplicationState): UpdateProps {
+    static mapStateToProps(state: ApplicationState, localProps: UpdateLocalProps): UpdateProps {
         const initials = state.profileStore.consultant.initials;
+        const viewProfile = state.viewProfileSlice.viewProfiles.get(localProps.viewProfileId);
+        const info = viewProfile && viewProfile.viewProfileInfo;
         return {
             initials: initials,
+            currentName: (info && info.name) || '',
+            currentDescription: (info && info.viewDescription) || '',
         };
     }
 
@@ -68,10 +88,8 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
             name: event.target.value
         });
     };
-    private changeDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({
-            description: event.target.value
-        });
+    private changeDescription = (event: any, description: string) => {
+        this.setState({description});
     };
 
     private toggleKeepOld = () => {
@@ -93,7 +111,7 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
 
     render() {
         return (
-            <Dialog open={this.props.open} onClose={this.props.onClose}>
+            <Dialog open={this.props.open} onClose={this.props.onClose} fullWidth>
                 <DialogTitle>
                     {PowerLocalize.get('ViewProfileUpdate.Title')}
                 </DialogTitle>
@@ -106,8 +124,12 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
                         onChange={this.changeName}
                     />
                     <PwrSpacer/>
-                    <TextField
-                        fullWidth
+                    {/* Optional, multi-line like when creating a view profile (#167) */}
+                    <LimitedTextField
+                        fullWidth={true}
+                        multiLine={true}
+                        rows={4}
+                        maxCharacters={PROFILE_DESCRIPTION_LENGTH}
                         label={PowerLocalize.get('ViewProfileUpdate.NewDescription')}
                         value={this.state.description}
                         onChange={this.changeDescription}
@@ -130,7 +152,7 @@ class ViewProfileUpdateDialog_module extends react.Component<UpdateLocalProps & 
                     {/* The same button bar as the forms (#41) */}
                     <PwrFormActions editing noSpace
                                     saveText={PowerLocalize.get('ViewProfileUpdate.Update')} saveIcon={'refresh'}
-                                    saveDisabled={this.state.name.length === 0 || this.state.description.length === 0}
+                                    saveDisabled={this.state.name.trim().length === 0}
                                     onSave={() => this.updateViewProfile()}
                                     onCancel={this.props.onClose}/>
                 </DialogActions>
