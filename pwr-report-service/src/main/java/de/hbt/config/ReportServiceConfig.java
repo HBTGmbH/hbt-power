@@ -15,9 +15,10 @@ public class ReportServiceConfig {
     private boolean deleteDataSource = true;
 
     /**
-     * Rendering a PDF preview is cancelled after this time, see BirtRendering
+     * Rendering a PDF preview is cancelled after this time, see BirtRendering. A preview takes about a second; only a
+     * broken design (an element higher than the page) runs into it, and its error should come quickly (#155)
      */
-    private long previewTimeLimitSeconds = 60;
+    private long previewTimeLimitSeconds = 10;
 
     /**
      * Directory with the HBT font Simplon Norm for PDFs (licensed: mounted as a volume, never part of a repository or
