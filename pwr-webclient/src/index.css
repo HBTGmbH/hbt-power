@@ -720,6 +720,11 @@ body {
     padding: 0 8px 8px 8px;
 }
 
+/* The edge of the card closes the list of its skills, no line below the last one */
+.pwr-view-entries-card-details .pwr-view-entries-item:last-child {
+    border-bottom: none;
+}
+
 /* Narrow screens: no room for the fixed columns next to the name. They go below it, one per line; handle, switch
    and the expand button stay on the first line. Overrides the template set on the row. */
 @media (max-width: 599px) {
