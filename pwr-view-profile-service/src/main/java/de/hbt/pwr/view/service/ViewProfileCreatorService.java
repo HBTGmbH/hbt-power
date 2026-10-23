@@ -14,6 +14,7 @@ import de.hbt.pwr.view.model.entries.sort.NameComparableEntryType;
 import de.hbt.pwr.view.model.entries.sort.StartEndDateComparableEntryType;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
+import de.hbt.pwr.view.model.skill.SkillVersion;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import de.hbt.pwr.view.util.ModelConvertUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.hbt.pwr.view.client.skill.model.SkillServiceCategory.other;
 
@@ -93,12 +95,14 @@ public class ViewProfileCreatorService {
         result.setSectors(profile.getSectors().stream().map(ModelConvertUtil::mapSector).collect(Collectors.toList()));
         result.setCareers(profile.getCareerEntries().stream().map(ModelConvertUtil::mapCareer).collect(Collectors.toList()));
         result.setKeySkills(profile.getSpecialFieldEntries().stream().map(ModelConvertUtil::mapKeySkill).collect(Collectors.toList()));
-        result.setProjects(mapProjects(profile.getProjects()));
+        // Skills under the names of the skill tree, also in the projects (#208)
+        SkillTreeLookup lookup = new SkillTreeLookup(skillServiceClient);
+        result.setProjects(mapProjects(profile.getProjects(), lookup));
 
         result.setProjectRoles(collectProjectRoles(profile.getProjects()));
 
 
-        result.setDisplayCategories(createDisplayCategories(profile.getSkills()));
+        result.setDisplayCategories(createDisplayCategories(profile.getSkills(), lookup));
         result.setLocalization(localization == null || localization.isBlank() ? null : localization.trim());
         viewProfileLocalizationService.localize(result);
         applyInitialSorting(result);
@@ -137,7 +141,7 @@ public class ViewProfileCreatorService {
                 .collect(Collectors.toList());
     }
 
-    private Project mapProject(ProfileProject profileProject) {
+    private Project mapProject(ProfileProject profileProject, SkillTreeLookup lookup) {
         Project result = new Project();
         result.setId(profileProject.getId());
         result.setEndDate(profileProject.getEndDate());
@@ -150,7 +154,7 @@ public class ViewProfileCreatorService {
         result.setDescription(profileProject.getDescription());
         result.setEnabled(true);
         result.setProjectRoles(mapProjectRole(profileProject.getProjectRoles()));
-        result.setSkills(mapFlatSkills(profileProject.getSkills()));
+        result.setSkills(mapProjectSkills(profileProject.getSkills(), lookup));
         return result;
     }
 
@@ -158,12 +162,26 @@ public class ViewProfileCreatorService {
         return projectRoles.stream().map(ModelConvertUtil::mapProjectRole).collect(Collectors.toList());
     }
 
-    private List<Skill> mapFlatSkills(Collection<ProfileSkill> skills) {
-        return skills.stream().map(ModelConvertUtil::mapFlatSkill).collect(Collectors.toList());
+    /**
+     * Under the names of the skill tree (#208); an alias and the name of the same skill become one, with the higher
+     * rating
+     */
+    private List<Skill> mapProjectSkills(Collection<ProfileSkill> skills, SkillTreeLookup lookup) {
+        Map<String, Skill> byName = new LinkedHashMap<>();
+        skills.forEach(profileSkill -> {
+            Skill skill = ModelConvertUtil.mapFlatSkill(profileSkill);
+            skill.setName(lookup.treeName(profileSkill.getName()));
+            byName.merge(skill.getName(), skill, (one, other) -> rating(other) > rating(one) ? other : one);
+        });
+        return new ArrayList<>(byName.values());
     }
 
-    private List<Project> mapProjects(Collection<ProfileProject> projects) {
-        return projects.stream().map(this::mapProject).collect(Collectors.toList());
+    private static int rating(Skill skill) {
+        return skill.getRating() == null ? 0 : skill.getRating();
+    }
+
+    private List<Project> mapProjects(Collection<ProfileProject> projects, SkillTreeLookup lookup) {
+        return projects.stream().map(project -> mapProject(project, lookup)).collect(Collectors.toList());
     }
 
     private ViewProfileInfo createInfo(String initials, String name, String viewDescription) {
@@ -200,8 +218,14 @@ public class ViewProfileCreatorService {
      * category above, from the bottom up, so that skills brought together count there. A skill without any display
      * category above it stays at its own category.
      */
-    private List<Category> createDisplayCategories(Collection<ProfileSkill> profileSkills) {
-        List<Placement> placements = profileSkills.stream().map(this::toPlacement).collect(Collectors.toList());
+    private List<Category> createDisplayCategories(Collection<ProfileSkill> profileSkills, SkillTreeLookup lookup) {
+        // An alias and the name of the same skill become one skill (#208)
+        Map<String, Placement> byName = new LinkedHashMap<>();
+        profileSkills.forEach(profileSkill -> {
+            Placement placement = toPlacement(profileSkill, lookup);
+            byName.merge(placement.skill.getName(), placement, ViewProfileCreatorService::mergePlacements);
+        });
+        List<Placement> placements = new ArrayList<>(byName.values());
         moveUpSmallCategories(placements);
         return toDisplayCategories(placements);
     }
@@ -232,11 +256,26 @@ public class ViewProfileCreatorService {
         }
     }
 
-    private Placement toPlacement(ProfileSkill profileSkill) {
-        SkillServiceSkill serviceSkill = skillServiceClient.getSkillByName(profileSkill.getName());
-        if (serviceSkill == null) {
-            serviceSkill = skillServiceClient.getDefaultSkillByName(profileSkill.getName());
+    /**
+     * The higher rating and the versions of both
+     */
+    private static Placement mergePlacements(Placement one, Placement other) {
+        if (rating(other.skill) > rating(one.skill)) {
+            one.skill.setRating(other.skill.getRating());
         }
+        List<String> versions = Stream.of(one.skill, other.skill)
+                .filter(skill -> skill.getVersions() != null)
+                .flatMap(skill -> skill.getVersions().stream())
+                .map(SkillVersion::getName)
+                .distinct()
+                .collect(Collectors.toList());
+        one.skill.setVersions(versions);
+        return one;
+    }
+
+    private Placement toPlacement(ProfileSkill profileSkill, SkillTreeLookup lookup) {
+        SkillServiceSkill serviceSkill = lookup.skill(profileSkill.getName())
+                .orElseGet(() -> skillServiceClient.getDefaultSkillByName(profileSkill.getName()));
         Skill skill = new Skill(
                 serviceSkill.getId() != null ? serviceSkill.getId().longValue() : -1,
                 serviceSkill.getQualifier(),

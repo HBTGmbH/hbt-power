@@ -25,6 +25,8 @@ public class StatisticsService {
 
     private final ClusteredNetworkRepo clusteredNetworkRepo;
 
+    private final SkillNameNormalizer skillNameNormalizer;
+
 
     /**
      * Defines a threshold(percentage) that a skill needs to achieve to qualify as 'common'
@@ -32,9 +34,11 @@ public class StatisticsService {
     private static final float COMMON_SKILL_THRESHOLD = 0.8f;
 
     @Autowired
-    public StatisticsService(ConsultantRepository consultantRepository, ClusteredNetworkRepo clusteredNetworkRepo) {
+    public StatisticsService(ConsultantRepository consultantRepository, ClusteredNetworkRepo clusteredNetworkRepo,
+                             SkillNameNormalizer skillNameNormalizer) {
         this.consultantRepository = consultantRepository;
         this.clusteredNetworkRepo = clusteredNetworkRepo;
+        this.skillNameNormalizer = skillNameNormalizer;
     }
 
 
@@ -132,7 +136,7 @@ public class StatisticsService {
 
     public List<ConsultantSkillInfo> findConsultantsBySkills(List<String> skillNames) {
         List<Consultant> consultants = StreamUtils.asStream(consultantRepository.findAll()).collect(Collectors.toList());
-        Set<String> skillNameSet = new HashSet<>(skillNames);
+        Set<String> skillNameSet = new HashSet<>(skillNameNormalizer.treeNames(skillNames));
         consultants.removeIf(consultant -> !consultant.hasAllSkills(skillNameSet));
         return consultants.stream().map(consultant -> new ConsultantSkillInfo(consultant, skillNameSet)).collect(Collectors.toList());
     }
@@ -210,10 +214,14 @@ public class StatisticsService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * The stored skills carry the names of the skill tree (#208), so an alias or another spelling finds them too
+     */
     public List<Consultant> getAllConsultantsReferencingSkill(String skillName) {
+        String treeName = skillNameNormalizer.treeName(skillName);
         return StreamUtils
                 .asStream(consultantRepository.findAll())
-                .filter(consultant -> hasSkill(consultant, skillName))
+                .filter(consultant -> hasSkill(consultant, treeName))
                 .collect(Collectors.toList());
 
     }

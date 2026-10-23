@@ -2,6 +2,7 @@ package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.profile.model.Profile;
+import de.hbt.pwr.view.client.profile.model.ProfileProject;
 import de.hbt.pwr.view.client.profile.model.ProfileSkill;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.client.skill.model.LocalizedQualifier;
@@ -10,6 +11,7 @@ import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
+import de.hbt.pwr.view.model.skill.SkillVersion;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +32,8 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Validates that skills are correctly imported
@@ -272,6 +276,45 @@ public class ViewProfileImporterSkillTest {
         assertThat(displayCategoryNames(viewProfile)).containsExactly("Development");
         assertThat(viewProfile.getDisplayCategories().get(0).getDisplaySkills()).extracting(Skill::getName)
                 .containsExactlyInAnyOrder("Java", "Kotlin", "TypeScript");
+    }
+
+    /**
+     * Display categories and projects under the names of the skill tree, an alias and the name of the same skill as
+     * one skill (#208)
+     */
+    @Test
+    public void aliasesAndOtherSpellings_becomeTheSkillOfTheTree_inDisplayCategoriesAndProjects() {
+        SkillServiceCategory frameworks = new SkillServiceCategory("Frameworks", null, true);
+        frameworks.setId(1);
+        SkillServiceSkill dotNet = skill(".NET", frameworks);
+        given(skillServiceClient.getSkillByName(".NET")).willReturn(dotNet);
+        given(skillServiceClient.getSkillByName(".NET Core")).willReturn(dotNet);
+        given(skillServiceClient.getSkillByName(".net")).willReturn(dotNet);
+        ProfileSkill alias = new ProfileSkill(".NET Core", 2);
+        alias.setVersions(Arrays.asList("6"));
+        ProfileSkill name = new ProfileSkill(".NET", 4);
+        name.setVersions(Arrays.asList("8"));
+        profile.getSkills().add(alias);
+        profile.getSkills().add(name);
+        ProfileProject project = new ProfileProject();
+        project.setId(1L);
+        project.setName("Project");
+        project.getSkills().add(new ProfileSkill(".net", 3));
+        project.getSkills().add(new ProfileSkill(".NET Core", 2));
+        profile.getProjects().add(project);
+
+        ViewProfile viewProfile = makeViewProfile(initials, "name", "descr", "");
+
+        List<Skill> displaySkills = viewProfile.getDisplayCategories().stream()
+                .flatMap(category -> category.getDisplaySkills().stream())
+                .collect(Collectors.toList());
+        assertThat(displaySkills).extracting(Skill::getName).containsExactly(".NET");
+        assertThat(displaySkills.get(0).getRating()).isEqualTo(4);
+        assertThat(displaySkills.get(0).getVersions()).extracting(SkillVersion::getName).containsExactlyInAnyOrder("6", "8");
+        assertThat(viewProfile.getProjects().get(0).getSkills()).extracting(Skill::getName, Skill::getRating)
+                .containsExactly(tuple(".NET", 3));
+        // Each name once, however many projects use it
+        verify(skillServiceClient, times(1)).getSkillByName(".NET Core");
     }
 
     private SkillServiceSkill skill(String name, SkillServiceCategory category) {

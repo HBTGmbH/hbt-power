@@ -15,7 +15,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,11 +57,15 @@ public class SkillProfileClient {
             }
             Set<String> known = new HashSet<>();
             Set<String> inOther = new HashSet<>();
+            Map<String, String> treeNames = new HashMap<>();
+            Map<String, String> aliases = new HashMap<>();
             // Other is a top category, directly below the root (##ROOT##)
             for (JsonNode top : root.path("childCategories")) {
-                collect(top, known, inOther, OTHER_CATEGORY.equals(top.path("qualifier").asText()));
+                collect(top, known, inOther, OTHER_CATEGORY.equals(top.path("qualifier").asText()), treeNames, aliases);
             }
-            return Optional.of(new SkillTreeIndex(known, inOther));
+            // A name of a skill wins over an alias of another one
+            aliases.forEach(treeNames::putIfAbsent);
+            return Optional.of(new SkillTreeIndex(known, inOther, treeNames));
         } catch (RuntimeException e) {
             log.warn("Skill tree not available, the profile check skips unsorted skills: " + e.getMessage());
             return Optional.empty();
@@ -69,18 +75,40 @@ public class SkillProfileClient {
     /**
      * Only the skills directly in Other count as unsorted; subcategories of Other are sorted on purpose
      */
-    private static void collect(JsonNode category, Set<String> known, Set<String> inOther, boolean isOther) {
+    private static void collect(JsonNode category, Set<String> known, Set<String> inOther, boolean isOther,
+                                Map<String, String> treeNames, Map<String, String> aliases) {
         for (JsonNode skill : category.path("childSkills")) {
+            String treeName = skill.path("qualifier").asText();
             Set<String> names = new HashSet<>();
-            names.add(SkillTreeIndex.normalize(skill.path("qualifier").asText()));
-            skill.path("aliases").forEach(alias -> names.add(SkillTreeIndex.normalize(alias.asText())));
+            names.add(SkillTreeIndex.normalize(treeName));
+            treeNames.put(SkillTreeIndex.normalize(treeName), treeName);
+            skill.path("aliases").forEach(alias -> {
+                names.add(SkillTreeIndex.normalize(alias.asText()));
+                aliases.put(SkillTreeIndex.normalize(alias.asText()), treeName);
+            });
             known.addAll(names);
             if (isOther) {
                 inOther.addAll(names);
             }
         }
         for (JsonNode child : category.path("childCategories")) {
-            collect(child, known, inOther, false);
+            collect(child, known, inOther, false, treeNames, aliases);
+        }
+    }
+
+    /**
+     * The name of the skill in the tree if <code>name</code> is that name in another case (#208), else
+     * <code>name</code>: an alias stays as typed. Also <code>name</code> if the skill service doesn't answer.
+     */
+    public String treeNameIgnoringCase(String name) {
+        try {
+            JsonNode skill = restTemplate.getForObject(pwrSkillServiceUrl + "/skill/byName?qualifier={qualifier}",
+                    JsonNode.class, name);
+            String treeName = skill == null ? null : skill.path("qualifier").asText(null);
+            return treeName != null && treeName.equalsIgnoreCase(name) ? treeName : name;
+        } catch (RuntimeException e) {
+            log.warn("Skill service not available, '" + name + "' stays as typed: " + e.getMessage());
+            return name;
         }
     }
 
