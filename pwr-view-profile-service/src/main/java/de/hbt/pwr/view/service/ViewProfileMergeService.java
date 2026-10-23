@@ -98,7 +98,8 @@ public class ViewProfileMergeService {
                             .orElse(newProject);
                 })
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(newProject -> findIndexIn(oldList, newProject)))
+                // New projects have no index, they go behind the old ones
+                .sorted(Comparator.comparing(newProject -> findIndexIn(oldList, newProject), Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
     }
 
@@ -138,7 +139,7 @@ public class ViewProfileMergeService {
                             .enabled(skillActive)
                             .build();
                 })
-                .sorted(Comparator.comparing(newProject -> findIndexIn(oldSkills, newProject)))
+                .sorted(Comparator.comparing(newSkill -> findIndexIn(oldSkills, newSkill), Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
     }
 
