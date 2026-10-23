@@ -87,8 +87,11 @@ public class SkillProfileClient {
     /**
      * Merges skill <code>source</code> into skill <code>target</code> in the skill tree. Errors of the skill service
      * (unknown target, conflicting alias) keep their status.
+     *
+     * @return the name of the target in the skill tree, which differs from <code>target</code> if that is an alias or
+     * written in another case (#207)
      */
-    public void mergeSkills(String source, String target) {
+    public String mergeSkills(String source, String target) {
         try {
             URI uri = UriComponentsBuilder.fromHttpUrl(pwrSkillServiceUrl + "/admin/skill/merge")
                     .queryParam("source", "{source}")
@@ -97,7 +100,8 @@ public class SkillProfileClient {
                     .encode()
                     .buildAndExpand(source, target)
                     .toUri();
-            restTemplate.postForEntity(uri, null, Void.class);
+            JsonNode targetSkill = restTemplate.postForEntity(uri, null, JsonNode.class).getBody();
+            return targetSkill == null ? target : targetSkill.path("qualifier").asText(target);
         } catch (HttpStatusCodeException e) {
             throw new WebApplicationException(e.getStatusCode(), messageOf(e));
         }

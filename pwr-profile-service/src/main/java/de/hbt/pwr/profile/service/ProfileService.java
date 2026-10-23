@@ -42,6 +42,9 @@ public class ProfileService {
      * alias of the target) and in all profiles and projects. Where a profile has both, the target keeps the higher
      * rating and the versions of both. The optional <code>version</code> is added wherever the source was. Calling it
      * again with the same arguments changes nothing.
+     * <p>
+     * The profiles get the name of the target in the skill tree, so <code>.Net</code> can be merged into
+     * <code>.NET</code> and the other way round (#207).
      */
     @Transactional
     public List<Profile> mergeSkills(String source, String target, String version) {
@@ -50,8 +53,8 @@ public class ProfileService {
         String addedVersion = version == null || version.trim().isEmpty() ? null : version.trim();
         LOG.info("Merging skill " + sourceName + " into " + targetName + (addedVersion == null ? "" : " with version " + addedVersion));
         // The skill service checks the merge (target exists, no conflicting alias) before any profile changes
-        skillProfileClient.mergeSkills(sourceName, targetName);
-        return mergeSkillsInProfiles(sourceName, targetName, addedVersion);
+        String treeName = skillProfileClient.mergeSkills(sourceName, targetName);
+        return mergeSkillsInProfiles(sourceName, treeName == null ? targetName : treeName, addedVersion);
     }
 
     /**

@@ -54,6 +54,13 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
 
     const trimmedTarget = target.trim();
     const targetValid = trimmedTarget.length > 0 && trimmedTarget !== props.skillToMerge;
+    // The profiles get the name of the skill tree (#207)
+    const targetName = targetInfo ? targetInfo.qualifier : trimmedTarget;
+    const lowerCaseSource = props.skillToMerge.toLowerCase();
+    // Only spellings in another case: the database compares names ignoring case, so the skill tree knows them already
+    const sameSpelling = lowerCaseSource === targetName.toLowerCase();
+    const alreadyInTree = sameSpelling
+        || (!!targetInfo && (targetInfo.aliases || []).some(alias => alias.toLowerCase() === lowerCaseSource));
 
     const loadTargetInfo = () => {
         setTargetInfo(undefined);
@@ -67,7 +74,7 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
             loadTargetInfo();
         }
         if (step === STEP_CONFIRM) {
-            dispatch(AdminActionCreator.AsyncMergeSkill(props.skillToMerge, trimmedTarget, version) as any);
+            dispatch(AdminActionCreator.AsyncMergeSkill(props.skillToMerge, trimmedTarget, version, targetName) as any);
             props.onClose();
             return;
         }
@@ -118,9 +125,12 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
                 {PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.TargetUnknown', trimmedTarget)}
             </p>;
         }
+        const otherSpelling = trimmedTarget.toLowerCase() === targetInfo.qualifier.toLowerCase();
         return <>
             {targetInfo.qualifier !== trimmedTarget
-                ? <p>{PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.TargetIsAlias', trimmedTarget, targetInfo.qualifier)}</p>
+                ? <p>{PowerLocalize.getFormatted(otherSpelling
+                    ? 'AdminClient.Infos.UsedSkills.Merge.TargetIsOtherSpelling'
+                    : 'AdminClient.Infos.UsedSkills.Merge.TargetIsAlias', trimmedTarget, targetInfo.qualifier)}</p>
                 : null}
             <p>
                 {PowerLocalize.get('AdminClient.Infos.UsedSkills.Merge.TargetHierarchy')}<br/>
@@ -130,14 +140,17 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
     };
 
     const renderConfirm = () => {
-        const targetName = targetInfo ? targetInfo.qualifier : trimmedTarget;
         return <div>
             {renderTargetInfo()}
-            <p>{PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Summary', props.skillToMerge, targetName)}</p>
+            <p>{sameSpelling
+                ? PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.SummarySpelling', targetName)
+                : PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Summary', props.skillToMerge, targetName)}</p>
             {version.trim().length > 0
                 ? <p>{PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.SummaryVersion', version.trim(), targetName)}</p>
                 : null}
-            <p>{PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.SummaryTree', props.skillToMerge, targetName)}</p>
+            <p>{PowerLocalize.getFormatted(alreadyInTree
+                ? 'AdminClient.Infos.UsedSkills.Merge.SummaryTreeUnchanged'
+                : 'AdminClient.Infos.UsedSkills.Merge.SummaryTree', props.skillToMerge, targetName)}</p>
             <p className="warning-note">{PowerLocalize.get('AdminClient.Infos.UsedSkills.Merge.Irreversible')}</p>
         </div>;
     };

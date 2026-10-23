@@ -106,18 +106,23 @@ public class SkillService {
      * Merges the skill <code>source</code> into the skill <code>target</code>: the name and the aliases of the source
      * become aliases of the target, the versions are united and the source is deleted. A source that is no skill
      * becomes an alias of the target. Calling it again with the same arguments changes nothing.
+     * <p>
+     * The database compares names ignoring case (#207): a source that differs from the target only in case, or that is
+     * already an alias of it, is the target itself, so the skill tree stays as it is. The profile service then only
+     * renames the spellings in the profiles to the name of the returned skill.
      *
      * @return the target skill
      */
     @Transactional
     public Skill mergeSkills(String source, String target) {
         String sourceName = requireText("source", source);
-        Skill targetSkill = findByNameOrAlias(requireText("target", target))
-                .orElseThrow(() -> skillNotFound(target));
-        if (sourceName.equals(targetSkill.getQualifier())) {
+        String targetName = requireText("target", target);
+        if (sourceName.equals(targetName)) {
             throw validationFailed("source", "'" + sourceName + "' is the target skill itself");
         }
-        Optional<Skill> sourceSkill = skillRepository.findOneByQualifier(sourceName);
+        Skill targetSkill = findByNameOrAlias(targetName).orElseThrow(() -> skillNotFound(target));
+        Optional<Skill> sourceSkill = skillRepository.findOneByQualifier(sourceName)
+                .filter(skill -> !skill.getId().equals(targetSkill.getId()));
         if (sourceSkill.isPresent()) {
             mergeSkillInto(sourceSkill.get(), targetSkill);
         } else if (!hasNameOrAlias(targetSkill, sourceName)) {
@@ -143,7 +148,7 @@ public class SkillService {
     }
 
     private boolean hasNameOrAlias(Skill skill, String name) {
-        return name.equals(skill.getQualifier()) || skill.getAliases().stream().anyMatch(name::equalsIgnoreCase);
+        return name.equalsIgnoreCase(skill.getQualifier()) || skill.getAliases().stream().anyMatch(name::equalsIgnoreCase);
     }
 
     /**

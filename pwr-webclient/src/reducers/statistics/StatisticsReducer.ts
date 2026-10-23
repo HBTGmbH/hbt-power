@@ -72,10 +72,12 @@ export class StatisticsReducer {
         }
     }
 
+    /** Ignoring case: merging .Net into .NET renames the profiles to the name of the skill tree (#207) */
     public static ForgetSkillUsageInfo(store: StatisticsStore, action: ForgetSkillUsageInfoAction): StatisticsStore {
+        const forgotten = action.skillNames.map(skillName => skillName.toLowerCase());
         return {
             ...store,
-            skillUsageInfo: action.skillNames.reduce((info, skillName) => info.delete(skillName), store.skillUsageInfo),
+            skillUsageInfo: store.skillUsageInfo.filterNot((info, skillName) => forgotten.includes(skillName.toLowerCase())).toMap(),
         }
     }
 

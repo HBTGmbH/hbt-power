@@ -205,6 +205,43 @@ public class SkillAliasITest {
     }
 
     @Test
+    public void merge_withSourceThatDiffersOnlyInCase_keepsTheTargetAsItIs() throws Exception {
+        Skill dotNet = skill(".NET", containers, "8");
+        addAlias(dotNet, ".NET Core");
+
+        mockMvc.perform(post("/admin/skill/merge").param("source", ".Net").param("target", ".NET"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.qualifier").value(".NET"));
+
+        Skill kept = skillRepository.findById(dotNet.getId()).orElseThrow(AssertionError::new);
+        assertThat(kept.getCategory().getQualifier()).isEqualTo("Containers");
+        assertThat(kept.getAliases()).containsExactly(".NET Core");
+        assertThat(kept.getVersions()).containsExactly("8");
+    }
+
+    @Test
+    public void merge_withTargetThatDiffersOnlyInCase_returnsTheSkillOfTheTree() throws Exception {
+        Skill dotNet = skill(".NET", containers);
+
+        mockMvc.perform(post("/admin/skill/merge").param("source", ".NET").param("target", ".Net"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.qualifier").value(".NET"));
+
+        assertThat(skillRepository.findById(dotNet.getId()).orElseThrow(AssertionError::new).getAliases()).isEmpty();
+    }
+
+    @Test
+    public void merge_withSourceThatIsAnAliasOfTheTarget_changesNothing() throws Exception {
+        addAlias(kubernetes, "K8S");
+
+        mockMvc.perform(post("/admin/skill/merge").param("source", "k8s").param("target", "Kubernetes"))
+                .andExpect(status().isOk());
+
+        assertThat(skillRepository.findAll()).extracting(Skill::getQualifier).containsExactly("Kubernetes");
+        assertThat(skillRepository.findById(kubernetes.getId()).get().getAliases()).containsExactly("K8S");
+    }
+
+    @Test
     public void merge_removesSourceFromSearch() throws Exception {
         skill("Kubernetes Lens", null);
         skillSearcherService.buildSearchIndexSync();

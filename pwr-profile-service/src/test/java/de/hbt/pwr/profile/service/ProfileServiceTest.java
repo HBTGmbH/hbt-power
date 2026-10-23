@@ -161,6 +161,47 @@ public class ProfileServiceTest {
     }
 
     @Test
+    public void givenSpellingsThatDifferOnlyInCase_shouldNameTheSkillLikeTheSkillTree() {
+        Skill dotNet = skill(".Net", 3);
+        Profile profile = profileWithSkills(dotNet);
+        profile.setProjects(hashSet(Project.builder().skills(hashSet(dotNet)).build()));
+        Profile other = profileWithSkills(skill(".NET", 2));
+        when(profileRepository.findAll()).thenReturn(asList(profile, other));
+        when(skillProfileClient.mergeSkills(".Net", ".NET")).thenReturn(".NET");
+
+        profileService.mergeSkills(".Net", ".NET", null);
+
+        assertThat(profile.getSkills()).extracting(Skill::getName).containsExactly(".NET");
+        assertThat(profile.getProjects()).flatExtracting(Project::getSkills).extracting(Skill::getName).containsExactly(".NET");
+        assertThat(other.getSkills()).extracting(Skill::getName).containsExactly(".NET");
+    }
+
+    @Test
+    public void givenTargetInAnotherCaseThanTheSkillTree_shouldNameTheSkillLikeTheSkillTree() {
+        Profile profile = profileWithSkills(skill(".Net", 3), skill(".NET", 2, "8"));
+        when(profileRepository.findAll()).thenReturn(singletonList(profile));
+        when(skillProfileClient.mergeSkills(".NET", ".Net")).thenReturn(".NET");
+
+        profileService.mergeSkills(".NET", ".Net", null);
+
+        Skill kept = only(profile.getSkills(), ".NET");
+        assertThat(profile.getSkills()).containsExactly(kept);
+        assertThat(kept.getRating()).isEqualTo(3);
+        assertThat(kept.getVersions()).containsExactly("8");
+    }
+
+    @Test
+    public void givenTargetThatIsAnAlias_shouldNameTheSkillLikeTheSkillTree() {
+        Profile profile = profileWithSkills(skill("Kubernetes Lens", 3));
+        when(profileRepository.findAll()).thenReturn(singletonList(profile));
+        when(skillProfileClient.mergeSkills("Kubernetes Lens", "K8S")).thenReturn("Kubernetes");
+
+        profileService.mergeSkills("Kubernetes Lens", "K8S", null);
+
+        assertThat(profile.getSkills()).extracting(Skill::getName).containsExactly("Kubernetes");
+    }
+
+    @Test
     public void whenMergingTwice_shouldNotChangeAnythingTheSecondTime() {
         Profile profile = profileWithSkills(skill("Java 8", 2), skill("Kotlin", 3));
         when(profileRepository.findAll()).thenReturn(singletonList(profile));
