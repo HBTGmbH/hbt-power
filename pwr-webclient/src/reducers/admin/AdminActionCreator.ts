@@ -425,15 +425,16 @@ export class AdminActionCreator {
      * an alias of target. Expected rejections of the merge (400, 404, 409) are explained to the admin. The profile
      * service has refreshed the statistics when the merge returns, so who uses source and target is loaded again (#205).
      */
-    public static AsyncMergeSkill(source: string, target: string, version?: string) {
+    /** The profiles get <code>targetName</code>, the name of the target in the skill tree (#207) */
+    public static AsyncMergeSkill(source: string, target: string, version?: string, targetName: string = target) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.mergeSkill(source, target, version)
                 .then(() => {
                     dispatch(SuggestionAsyncActionCreator.requestAllSkills());
-                    dispatch(StatisticsActionCreator.ForgetSkillUsageInfo(source, target));
-                    dispatch(StatisticsActionCreator.AsyncRequestSkillUsageInfo(target));
+                    dispatch(StatisticsActionCreator.ForgetSkillUsageInfo(source, target, targetName));
+                    dispatch(StatisticsActionCreator.AsyncRequestSkillUsageInfo(targetName));
                 })
-                .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Success', source, target)))
+                .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Success', source, targetName)))
                 .catch((error: PowerApiError) => {
                     const key = {
                         400: 'AdminClient.Infos.UsedSkills.Merge.Error.Invalid',

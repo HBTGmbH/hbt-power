@@ -43,6 +43,14 @@ public class SkillProfileClientTest {
     }
 
     @Test
+    public void mergeSkills_returnsTheNameOfTheTargetInTheSkillTree() {
+        server.expect(requestTo("http://skill/admin/skill/merge?source=.NET&target=.Net"))
+                .andRespond(withSuccess("{\"id\": 7, \"qualifier\": \".NET\", \"aliases\": []}", MediaType.APPLICATION_JSON));
+
+        assertThat(client.mergeSkills(".NET", ".Net")).isEqualTo(".NET");
+    }
+
+    @Test
     public void updateAndGetCategory_encodesTheName() {
         server.expect(requestTo("http://skill/skill?qualifier=C%23"))
                 .andExpect(method(POST))
