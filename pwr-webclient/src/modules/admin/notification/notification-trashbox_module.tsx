@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as Immutable from 'immutable';
-import {Icon, Table, TableBody, TableCell, TableRow, Typography} from '@material-ui/core';
+import {Icon, Paper, Table, TableBody, TableCell, TableRow, Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
@@ -123,26 +123,27 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
 
     render() {
         return (
-            <div>
-                <PwrSpacer size="tight"/>
-                <TrashboxActions onRefresh={() => this.props.getTrashedNotifications()}
-                                 onEmpty={() => this.props.finalDeleteTrashed()}/>
-                <PwrSpacer/>
-                <div>
-                    {/* A heading, not a tab: there is nothing to switch to (#211) */}
-                    <Typography variant="h6" component="h2">
-                        {PowerLocalize.get('NotificationInbox.TrashedMessages')}
-                    </Typography>
-                    <Table>
-                        <TableBody>
-                            {
-                                this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
-                            }
-                        </TableBody>
-                    </Table>
+            // On a white area like the other pages: the heading and the error colour need it for their contrast
+            <Paper>
+                <div className="mui-margin">
+                    <TrashboxActions onRefresh={() => this.props.getTrashedNotifications()}
+                                     onEmpty={() => this.props.finalDeleteTrashed()}/>
+                    <PwrSpacer/>
+                    <div>
+                        {/* A heading, not a tab: there is nothing to switch to (#211) */}
+                        <Typography variant="h6" component="h2">
+                            {PowerLocalize.get('NotificationInbox.TrashedMessages')}
+                        </Typography>
+                        <Table>
+                            <TableBody>
+                                {
+                                    this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
+                                }
+                            </TableBody>
+                        </Table>
+                    </div>
                 </div>
-            </div>
-
+            </Paper>
         );
     }
 }
