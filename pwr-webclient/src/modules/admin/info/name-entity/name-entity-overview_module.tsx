@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ProfileElementType} from '../../../../Store';
-import {FormControl, InputLabel, MenuItem, Select, withTheme} from '@material-ui/core';
+import {FormControl, InputLabel, MenuItem, Select, Typography, withTheme} from '@material-ui/core';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {NAME_ENTITY_BY_NAME} from '../../../../utils/Comparators';
@@ -47,6 +47,18 @@ interface NameEntityOverviewDispatch {
 
     requestNameEntityUsageInfo(nameEntity: NameEntity, type: ProfileElementType): void;
 }
+
+const isNameless = (nameEntity: NameEntity) => !nameEntity.name || nameEntity.name.trim() === '';
+
+/**
+ * An entry without a name stays visible and selectable (#211), so it can be checked and cleaned up
+ */
+const displayName = (nameEntity: NameEntity) =>
+    isNameless(nameEntity) ? PowerLocalize.get('AdminClient.Overview.Nameless') : nameEntity.name;
+
+const renderName = (nameEntity: NameEntity) => isNameless(nameEntity)
+    ? <Typography component="span" variant="inherit" color="textSecondary"><em>{displayName(nameEntity)}</em></Typography>
+    : nameEntity.name;
 
 class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     & NameEntityOverviewLocalProps
@@ -134,7 +146,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
 
     private renderInfoBox = (selected: NameEntity | undefined) => {
         const usageInfo = selected && this.props.nameEntityUsageInfo.get(selected);
-        return <ProfileElementInfo name={selected && selected.name} usedBy={usageInfo && usageInfo.toArray()}/>;
+        return <ProfileElementInfo name={selected && displayName(selected)} usedBy={usageInfo && usageInfo.toArray()}/>;
     };
 
     private renderSelect() {
@@ -164,7 +176,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                                 selectedKey={selected && String(selected.id)}
                                 onSelect={this.handleSelectEntity}
                                 emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
-                                columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: nameEntity => nameEntity.name}]}/>}
+                                columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: renderName}]}/>}
             info={this.renderInfoBox(selected)}
         />;
     }

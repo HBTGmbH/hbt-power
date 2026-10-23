@@ -199,6 +199,7 @@
   "AdminClient.Overview.Name": "Name",
   "AdminClient.Overview.NoEntries": "Keine Einträge",
   "AdminClient.Overview.Info.NothingSelected": "Wählen Sie einen Eintrag aus der Liste.",
+  "AdminClient.Overview.Nameless": "(ohne Namen)",
   "AdminClient.Overview.Info.UsedBy": "Benutzt von",
   "AdminClient.Overview.Info.UsedByCount": "Benutzt von ({0})",
   "AdminClient.Overview.Info.UsedByNobody": "Von keinem Profil benutzt",

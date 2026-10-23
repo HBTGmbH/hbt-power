@@ -29,7 +29,7 @@ export const UsedSkillInfoBox = (props: UsedSkillInfoBoxProps) => {
     const merge = props.skillName && <PwrButton color="primary" text={PowerLocalize.get('Action.Merge')}
                                                 icon={<CallMerge/>}
                                                 onClick={() => props.onOpenEdit(props.skillName)}/>;
-    return <ProfileElementInfo name={props.skillName} action={merge} usedBy={props.usedBy}>
+    return <ProfileElementInfo name={props.skillName || undefined} action={merge} usedBy={props.usedBy}>
         <PwrSpacer size="tight"/>
         <Typography variant="body2" color="textSecondary">
             {props.skillHierarchy
