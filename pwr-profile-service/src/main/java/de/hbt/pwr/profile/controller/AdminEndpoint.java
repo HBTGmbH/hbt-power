@@ -139,4 +139,35 @@ public class AdminEndpoint {
         profileService.mergeSkills(source, target, version);
         return noContent().build();
     }
+
+    @ApiOperation(
+            value = "Renames a skill of the skill tree, in the tree and in all profiles and projects (#228)",
+            notes = "The old name becomes an alias. A profile that has the new name too keeps one skill, like a merge."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Renamed."),
+            @ApiResponse(code = 400, message = "No name"),
+            @ApiResponse(code = 404, message = "The skill tree has no skill of this name"),
+            @ApiResponse(code = 409, message = "The new name is the name or an alias of another skill")
+    })
+    @PostMapping("/skills/rename")
+    public ResponseEntity renameSkill(@NotNull @RequestParam("name") String name,
+                                      @NotNull @RequestParam("newName") String newName) {
+        profileService.renameSkill(name, newName);
+        return noContent().build();
+    }
+
+    @ApiOperation(
+            value = "Deletes a skill from all profiles and projects and from the skill tree (#229)",
+            notes = "Under its name and its aliases, in any case."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Deleted."),
+            @ApiResponse(code = 404, message = "The skill tree has no skill of this name")
+    })
+    @DeleteMapping("/skills")
+    public ResponseEntity deleteSkill(@NotNull @RequestParam("name") String name) {
+        profileService.deleteSkill(name);
+        return noContent().build();
+    }
 }

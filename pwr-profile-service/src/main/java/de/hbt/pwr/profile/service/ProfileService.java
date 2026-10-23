@@ -2,17 +2,20 @@ package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.client.StatisticsClient;
+import com.fasterxml.jackson.databind.JsonNode;
+import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
+import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
@@ -26,13 +29,16 @@ public class ProfileService {
 
     private final StatisticsClient statisticsClient;
 
+    private final AdminNotificationRepository adminNotificationRepository;
+
     private static Logger LOG = getLogger(ProfileService.class);
 
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository, SkillProfileClient skillProfileClient,
-                          StatisticsClient statisticsClient) {
+                          StatisticsClient statisticsClient, AdminNotificationRepository adminNotificationRepository) {
         this.profileRepository = profileRepository;
+        this.adminNotificationRepository = adminNotificationRepository;
         this.skillProfileClient = skillProfileClient;
         this.statisticsClient = statisticsClient;
     }
@@ -66,25 +72,54 @@ public class ProfileService {
                 .stream()
                 .peek(profile -> new SkillMerger(source, target, version).mergeIn(profile))
                 .collect(Collectors.toList());
-        refreshStatisticsAfterCommit();
+        // The statistics keep a copy of the profiles, which shows the admin who uses a skill (#205)
+        statisticsClient.refreshConsultantsAfterCommit();
         return profiles;
     }
 
     /**
-     * The statistics keep a copy of the profiles, which shows the admin who uses a skill (#205). They read the profiles
-     * from this service, so only once the merge is committed.
+     * Renames the skill <code>name</code> of the skill tree to <code>newName</code> (#228), in the tree, where the old
+     * name becomes an alias, and in all profiles and projects, in every case of the old name. Aliases typed in a
+     * profile stay as they are (#208). A profile that has the new name as well keeps one skill, like a merge.
      */
-    private void refreshStatisticsAfterCommit() {
-        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            statisticsClient.refreshConsultants();
-            return;
+    @Transactional
+    public List<Profile> renameSkill(String name, String newName) {
+        if (name == null || name.isBlank() || newName == null || newName.isBlank()) {
+            throw new WebApplicationException(HttpStatus.BAD_REQUEST, "A skill needs a name");
         }
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            @Override
-            public void afterCommit() {
-                statisticsClient.refreshConsultants();
-            }
+        String oldName = name.trim();
+        LOG.info("Renaming skill " + oldName + " to " + newName.trim());
+        // The skill service checks the rename (skill exists, new name free) before any profile changes
+        String treeName = skillProfileClient.renameSkill(oldName, newName.trim());
+        return mergeSkillsInProfiles(oldName, treeName, null);
+    }
+
+    /**
+     * Deletes the skill <code>name</code> from all profiles and projects, under its name and its aliases in any case,
+     * and then from the skill tree (#229). The admin notifications about it go with it. If the skill tree refuses,
+     * the profiles stay as they were.
+     */
+    @Transactional
+    public List<Profile> deleteSkill(String name) {
+        if (name == null || name.isBlank()) {
+            throw new WebApplicationException(HttpStatus.BAD_REQUEST, "A skill needs a name");
+        }
+        JsonNode treeSkill = skillProfileClient.requireTreeSkill(name.trim());
+        Set<String> names = new HashSet<>();
+        names.add(treeSkill.path("qualifier").asText().toLowerCase());
+        treeSkill.path("aliases").forEach(alias -> names.add(alias.asText().toLowerCase()));
+        LOG.info("Deleting skill " + names + " from all profiles and the skill tree");
+        Predicate<Skill> isDeleted = skill -> skill.getName() != null && names.contains(skill.getName().toLowerCase());
+        List<Profile> profiles = profileRepository.findAll();
+        profiles.forEach(profile -> {
+            profile.getProjects().forEach(project -> project.getSkills().removeIf(isDeleted));
+            profile.getSkills().removeIf(isDeleted);
         });
+        names.forEach(skillName -> adminNotificationRepository.deleteAll(
+                adminNotificationRepository.findSkillNotificationsBySkillName(skillName)));
+        skillProfileClient.deleteSkill(treeSkill.path("id").asLong());
+        statisticsClient.refreshConsultantsAfterCommit();
+        return profiles;
     }
 
     /**

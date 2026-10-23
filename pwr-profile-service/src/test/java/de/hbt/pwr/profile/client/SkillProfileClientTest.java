@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -149,5 +150,59 @@ public class SkillProfileClientTest {
                 .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
 
         assertThat(client.getSkillTreeIndex()).isEmpty();
+    }
+
+    @Test
+    public void renameSkill_encodesTheNames_andReturnsTheNewNameInTheTree() {
+        server.expect(requestTo("http://skill/admin/skill/rename?name=C%2B%2B&newName=C%2B%2B%2020"))
+                .andExpect(method(POST))
+                .andRespond(withSuccess("{\"id\": 7, \"qualifier\": \"C++ 20\", \"aliases\": [\"C++\"]}", MediaType.APPLICATION_JSON));
+
+        assertThat(client.renameSkill("C++", "C++ 20")).isEqualTo("C++ 20");
+        server.verify();
+    }
+
+    @Test
+    public void renameSkill_keepsStatusAndMessageOfTheSkillService() {
+        server.expect(requestTo("http://skill/admin/skill/rename?name=Docker&newName=Kubernetes"))
+                .andRespond(withStatus(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON)
+                        .body("{\"id\":7,\"errorType\":\"ERR_SKILL_ALREADY_EXISTS\",\"message\":\"Skill Kubernetes already exists!\"}"));
+
+        assertThatThrownBy(() -> client.renameSkill("Docker", "Kubernetes"))
+                .isInstanceOf(WebApplicationException.class)
+                .hasFieldOrPropertyWithValue("status", HttpStatus.CONFLICT)
+                .hasMessage("Skill Kubernetes already exists!");
+    }
+
+    @Test
+    public void requireTreeSkill_returnsTheSkillOfTheName_inAnyCase() {
+        server.expect(requestTo("http://skill/skill/byName?qualifier=kubernetes"))
+                .andRespond(withSuccess("{\"id\": 7, \"qualifier\": \"Kubernetes\", \"aliases\": [\"K8S\"]}", MediaType.APPLICATION_JSON));
+
+        assertThat(client.requireTreeSkill("kubernetes").path("id").asLong()).isEqualTo(7);
+    }
+
+    @Test
+    public void requireTreeSkill_withAnAliasOrAnUnknownName_isNotFound() {
+        server.expect(requestTo("http://skill/skill/byName?qualifier=K8S"))
+                .andRespond(withSuccess("{\"id\": 7, \"qualifier\": \"Kubernetes\", \"aliases\": [\"K8S\"]}", MediaType.APPLICATION_JSON));
+        server.expect(requestTo("http://skill/skill/byName?qualifier=Nomad"))
+                .andRespond(withStatus(HttpStatus.NO_CONTENT));
+
+        assertThatThrownBy(() -> client.requireTreeSkill("K8S"))
+                .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+        assertThatThrownBy(() -> client.requireTreeSkill("Nomad"))
+                .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void deleteSkill_deletesItInTheTree() {
+        server.expect(requestTo("http://skill/admin/skill/7"))
+                .andExpect(method(DELETE))
+                .andRespond(withStatus(HttpStatus.NO_CONTENT));
+
+        client.deleteSkill(7);
+
+        server.verify();
     }
 }

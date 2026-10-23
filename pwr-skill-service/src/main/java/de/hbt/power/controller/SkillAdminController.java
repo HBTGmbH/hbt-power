@@ -77,6 +77,14 @@ public class SkillAdminController {
         return ResponseEntity.ok(skillService.mergeSkills(source, target));
     }
 
+    @ApiOperation(value = "Renames skill 'name' to 'newName': the old name becomes an alias (#228)",
+            notes = "Changing only the case adds no alias. 409 if 'newName' is the name or an alias of another skill.",
+            response = Skill.class)
+    @PostMapping("/rename")
+    public ResponseEntity<Skill> renameSkill(@RequestParam("name") String name, @RequestParam("newName") String newName) {
+        return ResponseEntity.ok(skillService.renameSkill(name, newName));
+    }
+
     @ApiOperation(value = "Moves a skill to a different category", response = Skill.class)
     @PatchMapping("/{id}/category/{category_id}")
     public ResponseEntity<Skill> moveSkill(@PathVariable("id") Integer skillId, @PathVariable("category_id") Integer newParentId) {
