@@ -107,12 +107,6 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                         <div className="col-md-12">
                             <ProfileCheckDashboardElement initials={initials}/>
                         </div>
-                        <div className="col-md-12">
-                            <CommonSkillsDashboardElement initials={initials}/>
-                        </div>
-                        <div className="col-md-12">
-                            <MissingCommonDashboardElement initials={initials}/>
-                        </div>
                         <div className="col-md-12 fullWidth">
                             <ProfileStatistics initials={initials}/>
                         </div>
@@ -127,6 +121,13 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                                     <ViewProfileSection initials={initials} limit={3}/>
                                 </div>
                             </Paper>
+                        </div>
+                        {/* The links to the skill statistics below the view profiles, the chart stays left (#232) */}
+                        <div className="col-md-12">
+                            <CommonSkillsDashboardElement initials={initials}/>
+                        </div>
+                        <div className="col-md-12">
+                            <MissingCommonDashboardElement initials={initials}/>
                         </div>
                     </div>
                 </div>
