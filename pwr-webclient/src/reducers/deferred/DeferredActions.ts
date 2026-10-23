@@ -74,3 +74,18 @@ export function confirmDeleteByName(key: string, name: string, ...args: any[]): 
 export function matchesConfirmName(input: string, name: string): boolean {
     return !!name && input.trim() === name.trim();
 }
+
+/**
+ * Emptying the trash (#211): its own words, it deletes every entry for good; a simple question without the name
+ */
+export function deferEmptyTrash(action: AbstractAction): DeferActionAction {
+    return {
+        action: action,
+        header: PowerLocalize.get('ConfirmEmptyTrash.Title'),
+        msg: PowerLocalize.get('ConfirmEmptyTrash.Content'),
+        actionNOK: PowerLocalize.get('ConfirmDeleteEntry.Action.CancelDelete'),
+        actionOK: PowerLocalize.get('ConfirmEmptyTrash.Action'),
+        confirmName: '',
+        type: ActionType.DeferAction
+    };
+}
