@@ -6,7 +6,10 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Career;
 import de.hbt.pwr.view.model.entries.Language;
 import de.hbt.pwr.view.model.entries.Project;
+import de.hbt.pwr.view.client.skill.SkillServiceClient;
+import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.skill.Category;
+import de.hbt.pwr.view.model.skill.Skill;
 import de.hbt.pwr.view.repo.ViewProfileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -15,9 +18,11 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -64,6 +69,8 @@ public class ViewProfileMergeServiceTest {
 
     private final ViewProfileLocalizationService viewProfileLocalizationService = mock(ViewProfileLocalizationService.class);
 
+    private final SkillServiceClient skillServiceClient = mock(SkillServiceClient.class);
+
     @Before
     public void setUp() throws Exception {
         oldView = makeViewProfile();
@@ -73,7 +80,8 @@ public class ViewProfileMergeServiceTest {
         options.keepOld = true;
         ViewProfileRepository viewProfileRepository = mock(ViewProfileRepository.class);
         when(viewProfileRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null, viewProfileLocalizationService);
+        viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null, viewProfileLocalizationService,
+                skillServiceClient);
     }
 
     @Test
@@ -133,6 +141,36 @@ public class ViewProfileMergeServiceTest {
 
         assertThat(newViewProfile.getProjects()).contains(p1);
         assertThat(newViewProfile.getProjects()).contains(p2);
+    }
+
+    /**
+     * Old view profiles kept the names of the profile in the projects, new ones take those of the skill tree (#208)
+     */
+    @Test
+    public void whenMergingProject_aHiddenSkillStaysHidden_evenIfItIsNowNamedLikeTheSkillTree() {
+        SkillServiceSkill dotNet = new SkillServiceSkill();
+        dotNet.setQualifier(".NET");
+        when(skillServiceClient.getSkillByName(".NET Core")).thenReturn(dotNet);
+        Project oldProject = ViewProfileFixtures.validProject().toBuilder().id(77L)
+                .skills(new ArrayList<>(Arrays.asList(
+                        Skill.builder().name(".NET Core").rating(3).enabled(false).build(),
+                        Skill.builder().name("Java").rating(3).enabled(false).build())))
+                .build();
+        Project newProject = oldProject.toBuilder()
+                .skills(new ArrayList<>(Arrays.asList(
+                        Skill.builder().name(".NET").rating(3).enabled(true).build(),
+                        Skill.builder().name("Java").rating(3).enabled(true).build(),
+                        Skill.builder().name("Kotlin").rating(3).enabled(true).build())))
+                .build();
+        oldView.setProjects(new ArrayList<>(Collections.singletonList(oldProject)));
+        ViewProfile newViewProfile = new ViewProfile();
+        newViewProfile.getProjects().add(newProject);
+
+        newViewProfile = viewProfileMergeService.mergeViewProfiles(oldView, newViewProfile, options);
+
+        assertThat(newViewProfile.getProjects().get(0).getSkills())
+                .extracting(Skill::getName, Skill::getEnabled)
+                .containsExactlyInAnyOrder(tuple(".NET", false), tuple("Java", false), tuple("Kotlin", true));
     }
 
     @Test

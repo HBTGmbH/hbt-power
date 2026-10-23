@@ -1,5 +1,6 @@
 package de.hbt.pwr.view.service;
 
+import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.exception.ViewProfileNotFoundException;
 import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Project;
@@ -25,15 +26,18 @@ public class ViewProfileMergeService {
     private final ViewProfileRepository viewProfileRepository;
     private final ViewProfileCreatorService viewProfileCreatorService;
     private final ViewProfileLocalizationService viewProfileLocalizationService;
+    private final SkillServiceClient skillServiceClient;
 
 
     @Autowired
     public ViewProfileMergeService(ViewProfileRepository viewProfileRepository, ViewProfileCreatorService viewProfileCreatorService,
-                                   ViewProfileLocalizationService viewProfileLocalizationService) {
+                                   ViewProfileLocalizationService viewProfileLocalizationService,
+                                   SkillServiceClient skillServiceClient) {
 
         this.viewProfileRepository = viewProfileRepository;
         this.viewProfileCreatorService = viewProfileCreatorService;
         this.viewProfileLocalizationService = viewProfileLocalizationService;
+        this.skillServiceClient = skillServiceClient;
     }
 
     public ViewProfile updateViewProfile(String oldId, String initials, ViewProfile.ViewProfileMergeOptions options) {
@@ -66,7 +70,7 @@ public class ViewProfileMergeService {
         newView.setKeySkills(mergeEntities(oldView.getKeySkills(), newView.getKeySkills()));
 
         // Projects
-        newView.setProjects(mergeProjects(oldView.getProjects(), newView.getProjects()));
+        newView.setProjects(mergeProjects(oldView.getProjects(), newView.getProjects(), new SkillTreeLookup(skillServiceClient)));
         // ProjectRoles
         newView.setProjectRoles(mergeEntities(oldView.getProjectRoles(), newView.getProjectRoles()));
 
@@ -83,14 +87,14 @@ public class ViewProfileMergeService {
         return newView;
     }
 
-    private List<Project> mergeProjects(List<Project> oldList, List<Project> newList) {
+    private List<Project> mergeProjects(List<Project> oldList, List<Project> newList, SkillTreeLookup lookup) {
         return newList.stream()
                 .map(newProject -> {
                     Optional<Project> maybeOldProject = oldList.stream()
                             .filter(oldProject -> Objects.equals(oldProject.getId(), newProject.getId()))
                             .findAny();
                     return maybeOldProject
-                            .map(project -> mergeProject(newProject, project))
+                            .map(project -> mergeProject(newProject, project, lookup))
                             .orElse(newProject);
                 })
                 .filter(Objects::nonNull)
@@ -98,10 +102,10 @@ public class ViewProfileMergeService {
                 .collect(Collectors.toList());
     }
 
-    private Project mergeProject(Project newProject, Project oldProject) {
+    private Project mergeProject(Project newProject, Project oldProject, SkillTreeLookup lookup) {
         return newProject.toBuilder()
                 .projectRoles(mergeProjectRoles(newProject.getProjectRoles(), oldProject.getProjectRoles()))
-                .skills(mergeProjectSkills(newProject.getSkills(), oldProject.getSkills()))
+                .skills(mergeProjectSkills(newProject.getSkills(), oldProject.getSkills(), lookup))
                 .enabled(oldProject.getEnabled())
                 .build();
     }
@@ -122,20 +126,31 @@ public class ViewProfileMergeService {
                 .collect(Collectors.toList());
     }
 
-    private List<Skill> mergeProjectSkills(List<Skill> newSkills, List<Skill> oldSkills) {
+    private List<Skill> mergeProjectSkills(List<Skill> newSkills, List<Skill> oldSkills, SkillTreeLookup lookup) {
         return newSkills.stream()
                 .map(newSkill -> {
                     Boolean skillActive = oldSkills.stream()
                             .filter(oldSkill -> Objects.equals(oldSkill.getName(), newSkill.getName()))
                             .findAny()
                             .map(Skill::getEnabled)
-                            .orElse(true);
+                            .orElseGet(() -> enabledUnderTreeName(newSkill, oldSkills, lookup));
                     return newSkill.toBuilder()
                             .enabled(skillActive)
                             .build();
                 })
                 .sorted(Comparator.comparing(newProject -> findIndexIn(oldSkills, newProject)))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Old view profiles kept the names of the profile in the projects, new ones take those of the skill tree (#208):
+     * an old <code>.NET Core</code> is the new <code>.NET</code>. Shown if one of them was shown, or if none was there.
+     */
+    private static Boolean enabledUnderTreeName(Skill newSkill, List<Skill> oldSkills, SkillTreeLookup lookup) {
+        List<Skill> renamed = oldSkills.stream()
+                .filter(oldSkill -> oldSkill.getName() != null && newSkill.getName().equals(lookup.treeName(oldSkill.getName())))
+                .collect(Collectors.toList());
+        return renamed.isEmpty() || renamed.stream().anyMatch(oldSkill -> !Boolean.FALSE.equals(oldSkill.getEnabled()));
     }
 
     private Integer findIndexIn(List<Skill> oldList, Skill newSkill) {
