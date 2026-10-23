@@ -24,8 +24,12 @@ public class PowerProfileClient {
         this.restTemplate = new RestTemplate();
     }
 
+    /**
+     * All consultants with their profiles, from the admin path of the profile service (#218): service to service, not
+     * through the edge
+     */
     public List<Consultant> getAllConsultants() {
-        return restTemplate.exchange(pwrProfileServiceUrl + "/consultants",
+        return restTemplate.exchange(pwrProfileServiceUrl + "/admin/consultants",
                 HttpMethod.GET,
                 new HttpEntity<>(null),
                 LIST_OF_CONSULTANT
