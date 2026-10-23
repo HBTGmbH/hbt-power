@@ -3,6 +3,9 @@ import {Popper, PopperProps, TextField} from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {useSelector} from 'react-redux';
+import {ApplicationState} from '../../reducers/reducerIndex';
+import {PwrConsultantName} from '../general/pwr-consultant-name';
 
 interface ConsultantSelectProps {
     consultants: Array<ConsultantInfoDTO>;
@@ -14,11 +17,11 @@ interface ConsultantSelectProps {
 }
 
 /**
- * Name or initials, without regard to case, anywhere in the text
+ * Full name, short name (#216) or initials, without regard to case, anywhere in the text
  */
-function matches(consultant: ConsultantInfoDTO, input: string): boolean {
+function matches(consultant: ConsultantInfoDTO, shortName: string, input: string): boolean {
     const query = input.trim().toLowerCase();
-    return consultant.name.toLowerCase().includes(query) || consultant.initials.toLowerCase().includes(query);
+    return [consultant.name, shortName, consultant.initials].some(text => text.toLowerCase().includes(query));
 }
 
 /**
@@ -32,18 +35,25 @@ const WidePopper = (props: PopperProps) => <Popper {...props} className="pwr-con
  */
 export const ConsultantSelect = (props: ConsultantSelectProps) => {
     const selected = props.consultants.find(consultant => consultant.initials === props.initials) || null;
+    const names = useSelector((state: ApplicationState) => state.consultantNames.names);
+    // The short name (#216), the full name as long as the names are not loaded
+    const shortName = (consultant: ConsultantInfoDTO) =>
+        names[consultant.initials] ? names[consultant.initials].shortName : consultant.name;
     // Explicit types: one consultant, never empty (disableClearable), no free text
+    // The field takes its text from the label only when the value changes: new once the names are there
+    const namesLoaded = Object.keys(names).length > 0;
     return <Autocomplete<ConsultantInfoDTO, false, true, false>
+        key={namesLoaded ? 'short-names' : 'full-names'}
         className={props.label ? 'pwr-consultant-select-field' : 'pwr-consultant-select'}
         options={props.consultants}
         value={selected}
         disableClearable
         openOnFocus
-        getOptionLabel={consultant => consultant.name}
+        getOptionLabel={shortName}
         getOptionSelected={(option, value) => option.initials === value.initials}
-        filterOptions={(options, state) => options.filter(option => matches(option, state.inputValue))}
+        filterOptions={(options, state) => options.filter(option => matches(option, shortName(option), state.inputValue))}
         renderOption={consultant => <>
-            {consultant.name}
+            <PwrConsultantName initials={consultant.initials} fullName={consultant.name}/>
             <span className="pwr-consultant-select-initials">{consultant.initials}</span>
         </>}
         noOptionsText={PowerLocalize.get('Toolbar.NoConsultantFound')}

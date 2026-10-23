@@ -6,10 +6,12 @@ import {PwrAutoComplete} from '../pwr-auto-complete';
 import {StatisticsServiceClient} from '../../../clients/StatisticsServiceClient';
 import {SkillServiceClient} from '../../../clients/SkillServiceClient';
 import {compareNames} from '../../../utils/Comparators';
+import {PwrConsultantName} from '../pwr-consultant-name';
 
 
 interface ConsultantSkillInfo {
     fullName: string;
+    initials: string;
     skills: Array<APISkill>;
 }
 
@@ -91,14 +93,18 @@ export class ConsultantSkillSearch extends React.Component<ConsultantSkillSearch
     };
 
     private renderConsultantInfo = (consultant: ConsultantSkillInfo) => {
-        let res: string = consultant.fullName;
+        let res: string = '';
         [...consultant.skills].sort((skill1, skill2) => compareNames(skill1.name, skill2.name)).forEach(skill => {
             res += ' / ';
             res += skill.name;
             res += ': ';
             res += skill.rating;
         });
-        return res;
+        // The short name (#216), the full name with the initials in the tooltip
+        return <>
+            <PwrConsultantName initials={consultant.initials} fullName={consultant.fullName}/>
+            {res}
+        </>;
     };
 
 

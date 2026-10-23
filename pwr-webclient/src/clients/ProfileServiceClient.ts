@@ -5,6 +5,7 @@ import {APIAdminNotification} from '../model/admin/AdminNotification';
 import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
 import {SkillNotification} from '../model/admin/SkillNotification';
 import {ConsultantInfoDTO} from '../model/ConsultantInfoDTO';
+import {ConsultantName} from '../model/ConsultantName';
 import {ProfileCheck, ProfileCheckSummary, ProfileConfirmation} from '../model/check/ProfileCheck';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
@@ -43,6 +44,13 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + '/consultants/';
         this.beginRequest();
         return this.get(url);
+    };
+
+    /**
+     * Short and full names of all consultants (#216); quietly, without them the app shows the full names
+     */
+    public getConsultantNames = (): Promise<Array<ConsultantName>> => {
+        return this.getQuietly(this.base() + '/consultants/names');
     };
 
     public createConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {

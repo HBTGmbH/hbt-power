@@ -6,6 +6,7 @@ import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrListTable} from '../../general/pwr-list-table';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
+import {PwrConsultantName} from '../../general/pwr-consultant-name';
 
 const useStyles = makeStyles(theme => ({
     layout: {
@@ -107,7 +108,8 @@ export const ProfileElementInfo = (props: PropsWithChildren<ProfileElementInfoPr
                               columns={[
                                   {
                                       header: PowerLocalize.getFormatted('AdminClient.Overview.Info.UsedByCount', props.usedBy.length),
-                                      render: consultant => consultant.firstName() + ' ' + consultant.lastName()
+                                      render: consultant => <PwrConsultantName initials={consultant.initials()}
+                                                                          fullName={consultant.firstName() + ' ' + consultant.lastName()}/>
                                   },
                                   {
                                       header: PowerLocalize.get('AdminClient.Overview.Info.Initials'),

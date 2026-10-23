@@ -29,6 +29,7 @@ import {Paths} from '../../../Paths';
 import {profileSectionAnchor} from '../../general/profile-check/profile-check-hints';
 import {ProfileSection} from '../../../model/check/ProfileCheck';
 import {projectsUrl} from './elements/project/project-url-sync';
+import {PwrConsultantName} from '../../general/pwr-consultant-name';
 import {ProfileStore} from '../../../reducers/profile-new/ProfileStore';
 
 
@@ -227,7 +228,10 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
                             {/* Name and title on the left, the jumps on the right; on a narrow screen they wrap below */}
                             <div className="pwr-profile-title-row">
                                 <div>
-                                    <Typography variant={'h5'}>{this.consultantName()}</Typography>
+                                    <Typography variant={'h5'}>
+                                        <PwrConsultantName initials={this.props.activeConsultant.initials}
+                                                           fullName={this.consultantName()}/>
+                                    </Typography>
                                     <Typography variant={'subtitle1'} color={'textSecondary'} gutterBottom>
                                         {this.props.activeConsultant.title}
                                     </Typography>

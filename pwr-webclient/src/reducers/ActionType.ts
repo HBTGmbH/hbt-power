@@ -190,4 +190,8 @@ export enum ActionType {
     AsyncDeleteVersion = '[Async] DeleteVersionFromSkill',
 
     LoadConsultantInfoSuccess = '[Admin] Load Consultant Info Success',
+
+    // == Names of the consultants (#216)
+    RequestConsultantNames = '[ConsultantNames] Request',
+    ReceiveConsultantNames = '[ConsultantNames] Receive',
 }

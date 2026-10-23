@@ -18,6 +18,7 @@ import {PowerLocalize} from './localization/PowerLocalizer';
 import {PWR_HISTORY} from './reducers/navigation/NavigationActionCreator';
 import {OIDCService} from './OIDCService';
 import {AuthenticatedRoute} from './modules/navigation/authenticated-route_module';
+import {ConsultantNamesLoader} from './modules/general/pwr-consultant-name';
 import {ProfileSelect} from './modules/profile-select_module';
 import {PwrThemeColors} from './modules/general/pwr-theme-colors';
 
@@ -44,6 +45,7 @@ export class AppWrapper extends React.Component<{}, {}> {
                                 <AuthenticatedRoute path={Paths.PROFILE_SELECT} component={ProfileSelect}/>
                                 <AuthenticatedRoute path={Paths.USER_BASE} component={PowerClient}/>
                                 <AuthenticatedRoute requiresAdmin path={Paths.ADMIN_BASE} component={AdminClient}/>
+                                <ConsultantNamesLoader/>
                                 <UnsavedChangesDialog/>
                                 <PwrConfirmDeferredActionDialog/>
                             </div>

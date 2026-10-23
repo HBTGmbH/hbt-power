@@ -14,6 +14,7 @@ import {ThunkDispatch} from 'redux-thunk';
 import {PwrProfilePicture} from '../../general/pwr-profile-picture';
 import {ProfileCheckSummary} from '../../../model/check/ProfileCheck';
 import {formatToNumericDateTime, formatToRelativeTime} from '../../../utils/DateUtil';
+import {selectConsultantName} from '../../../reducers/consultant-names/ConsultantNameActionCreator';
 
 /**
  * Properties that are managed by react-redux.
@@ -23,6 +24,8 @@ import {formatToNumericDateTime, formatToRelativeTime} from '../../../utils/Date
  */
 interface ConsultantTileProps {
     consultantInfo: ConsultantInfo;
+    /** "Klaus" or "Kai B." (#216), the full name as long as the names are not loaded */
+    shortName: string;
 }
 
 /**
@@ -56,6 +59,12 @@ interface ConsultantTileDispatch {
     redirectToUser(initials: string): void;
 }
 
+function shortNameOf(state: ApplicationState, initials: string): string {
+    const name = selectConsultantName(state, initials);
+    const info = state.adminReducer.consultantsByInitials.get(initials);
+    return name ? name.shortName : info ? info.firstName() + ' ' + info.lastName() : initials;
+}
+
 class ConsultantTileModule extends React.Component<ConsultantTileProps
     & ConsultantTileLocalProps
     & ConsultantTileDispatch, ConsultantTileLocalState> {
@@ -71,6 +80,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
     static mapStateToProps(state: ApplicationState, localProps: ConsultantTileLocalProps): ConsultantTileProps {
         return {
             consultantInfo: state.adminReducer.consultantsByInitials.get(localProps.initials),
+            shortName: shortNameOf(state, localProps.initials),
         };
     }
 
@@ -186,11 +196,12 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
         if (!info.active()) {
             return picture;
         }
-        const openProfile = PowerLocalize.getFormatted('ConsultantTile.OpenProfile',
-            info.firstName() + ' ' + info.lastName());
+        const openProfile = PowerLocalize.getFormatted('ConsultantTile.OpenProfile', this.props.shortName);
+        // Screen readers get the full name (#216)
+        const openProfileLabel = PowerLocalize.getFormatted('ConsultantTile.OpenProfile', info.firstName() + ' ' + info.lastName());
         return <Tooltip title={openProfile}>
             <ButtonBase className="consultant-tile-picture" focusVisibleClassName="consultant-tile-picture-focus"
-                        aria-label={openProfile}
+                        aria-label={openProfileLabel}
                         onClick={() => this.props.redirectToUser(this.props.initials)}>
                 {picture}
             </ButtonBase>
@@ -218,9 +229,9 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
                 >
                     {this.renderPicture()}
                     <GridListTileBar
-                        // The full name on hover, since the bar cuts a long one; the picture has its own tooltip
-                        title={<span title={this.props.consultantInfo.getFullName()}>
-                            {this.props.consultantInfo.getFullName()}
+                        // The short name (#216), the full name on hover; the picture has its own tooltip
+                        title={<span title={this.props.consultantInfo.firstName() + ' ' + this.props.consultantInfo.lastName()}>
+                            {this.props.shortName}
                         </span>}
                         subtitle={this.renderProfileCheck()}
                         //actionIcon={this.renderMenu()

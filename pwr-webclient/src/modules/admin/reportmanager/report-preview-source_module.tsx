@@ -5,6 +5,7 @@ import {FormControl, InputLabel, MenuItem, Select, Typography} from '@material-u
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ViewProfileServiceClient} from '../../../clients/ViewProfileServiceClient';
+import {PwrConsultantName} from '../../general/pwr-consultant-name';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 export interface PreviewSource {
@@ -70,7 +71,9 @@ export const ReportPreviewSource = (props: ReportPreviewSourceProps) => {
             <Select value={initials}
                     onChange={event => onChange({initials: event.target.value as string, viewProfileId: ''})}>
                 {sortedConsultants.map(consultant =>
-                    <MenuItem key={consultant.initials} value={consultant.initials}>{consultant.name}</MenuItem>)}
+                    <MenuItem key={consultant.initials} value={consultant.initials}>
+                        <PwrConsultantName initials={consultant.initials} fullName={consultant.name}/>
+                    </MenuItem>)}
             </Select>
         </FormControl>
         {viewProfiles && viewProfiles.length > 0 &&

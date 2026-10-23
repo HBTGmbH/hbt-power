@@ -12,6 +12,7 @@ import {SkillServiceClient} from '../../../../clients/SkillServiceClient';
 import {APISkillServiceSkill} from '../../../../model/skill/SkillServiceSkill';
 import {PwrButton} from '../../../general/pwr-button';
 import ArrowBack from '@material-ui/icons/ArrowBack';
+import {PwrConsultantName} from '../../../general/pwr-consultant-name';
 import {PwrFormActions} from '../../../general/pwr-form-actions';
 
 interface MergeSkillDialogProps {
@@ -84,10 +85,14 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
     const stepBack = () => setStep(Math.max(STEP_OVERVIEW, step - 1));
 
     const renderOverview = () => {
-        const consultants = props.skillInfo.map(value => value.getFullName()).join(', ');
+        // Short names with the full name in the tooltip (#216)
+        const consultants = props.skillInfo.toArray().map((value, index) => <React.Fragment key={value.initials()}>
+            {index > 0 && ', '}
+            <PwrConsultantName initials={value.initials()} fullName={value.getFullName()}/>
+        </React.Fragment>);
         return <div>
             <p>{PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Overview', props.skillToMerge)}</p>
-            <p>{consultants || PowerLocalize.get('AdminClient.Infos.UsedSkills.Merge.NoConsultants')}</p>
+            <p>{consultants.length > 0 ? consultants : PowerLocalize.get('AdminClient.Infos.UsedSkills.Merge.NoConsultants')}</p>
         </div>;
     };
 

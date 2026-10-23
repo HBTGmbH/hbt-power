@@ -29,6 +29,8 @@ import {SkillInfoStore} from './profile-skill/SkillInfoStore';
 import {reduceSkillVersions} from './profile-skill/SkillVersionReducer';
 import {TemplateStore} from './template/TemplateStore';
 import {AbstractAction} from './BaseActions';
+import {ConsultantNameStore} from './consultant-names/ConsultantNameStore';
+import {reduceConsultantNames} from './consultant-names/ConsultantNameReducer';
 
 export interface ApplicationState {
     profileStore: ProfileStore;
@@ -43,6 +45,7 @@ export interface ApplicationState {
     deferred: DeferredStore;
     reportStore: ReportStore;
     skillVersionStore: SkillInfoStore;
+    consultantNames: ConsultantNameStore;
 }
 
 
@@ -58,7 +61,8 @@ const ApplicationStore: Reducer<ApplicationState, AbstractAction> = combineReduc
     templateSlice: TemplateReducer.reduce,
     deferred: reduceDeferredAction,
     skillVersionStore: reduceSkillVersions,
-    reportStore: reduceReports
+    reportStore: reduceReports,
+    consultantNames: reduceConsultantNames
 });
 
 const composeEnhancers = composeWithDevTools({
