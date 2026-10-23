@@ -1,14 +1,9 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {Paper} from '@material-ui/core';
-import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {ProfileStatistics} from './profile-statistics_module';
-import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {ViewProfile} from '../../model/view/ViewProfile';
-import {ViewCard} from './view/view-card_module';
-import {ViewProfileActionCreator} from '../../reducers/view/ViewProfileActionCreator';
-import {ViewProfileDialog} from './view/view-profile-dialog_module';
+import {ViewProfileSection} from './view/view-profile-section';
 import {BaseDataDashboardElement} from './dashboard/base-data-dahboard-element_module';
 import {CommonSkillsDashboardElement} from './dashboard/common-skills-dashboard-element_module';
 import {MissingCommonDashboardElement} from './dashboard/missing-common-dashboard-element';
@@ -16,11 +11,6 @@ import {ProfileCheckDashboardElement} from './dashboard/profile-check-dashboard-
 import {ProfileDataAsyncActionCreator} from '../../reducers/profile-new/profile/ProfileDataAsyncActionCreator';
 import {Consultant} from '../../reducers/profile-new/consultant/model/Consultant';
 import {getRandomGreeting} from '../../model/PwrConstants';
-import {Paths} from '../../Paths';
-import {PwrButton} from '../general/pwr-button';
-import {PwrRow} from '../general/pwr-form-section';
-import Add from '@material-ui/icons/Add';
-import History from '@material-ui/icons/History';
 import {ThunkDispatch} from 'redux-thunk';
 import {withRouter} from 'react-router-dom';
 
@@ -32,7 +22,6 @@ import {withRouter} from 'react-router-dom';
  */
 interface PowerOverviewProps {
     loggedInUser: Consultant;
-    viewProfiles: Array<ViewProfile>;
 }
 
 /**
@@ -53,7 +42,6 @@ interface PowerOverviewLocalProps {
  * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
  */
 interface PowerOverviewLocalState {
-    createViewDialogOpen: boolean;
     greeting: string;
 }
 
@@ -62,11 +50,6 @@ interface PowerOverviewLocalState {
  */
 interface PowerOverviewDispatch {
     requestSingleProfile(initials: string): void;
-
-    navigateTo(target: string): void;
-
-    createViewProfile(name: string, description: string, localization: string | null): void;
-
 }
 
 class PowerOverviewModule extends React.Component<PowerOverviewProps
@@ -81,8 +64,7 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
 
     static mapStateToProps(state: ApplicationState): PowerOverviewProps {
         return {
-            loggedInUser: state.profileStore.consultant,
-            viewProfiles: state.viewProfileSlice.viewProfiles.toArray()
+            loggedInUser: state.profileStore.consultant
         };
     }
 
@@ -91,8 +73,6 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
             requestSingleProfile: function (initials: string) {
                 dispatch(ProfileDataAsyncActionCreator.loadFullProfile(initials));
             },
-            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
-            createViewProfile: (name, description, localization) => dispatch(ViewProfileActionCreator.AsyncCreateViewProfile(name, description, localization)),
         };
     }
 
@@ -107,23 +87,10 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
         }
     }
 
-    private setViewDialogOpen(isOpen: boolean) {
-        this.setState({
-            createViewDialogOpen: isOpen
-        });
-    }
-
     private resetLocalState = () => {
         this.state = {
-            createViewDialogOpen: false,
             greeting: getRandomGreeting()
         };
-    };
-
-
-    private handleCreateViewProfile = (name: string, description: string, localization: string | null) => {
-        this.props.createViewProfile(name, description, localization);
-        this.setViewDialogOpen(false);
     };
 
 
@@ -156,36 +123,8 @@ class PowerOverviewModule extends React.Component<PowerOverviewProps
                         <div className="col-md-12">
                             <Paper className="dashboard-element">
                                 <div className="mui-margin">
-                                    <span style={{
-                                        fontSize: '16px',
-                                        fontWeight: 'bold'
-                                    }}>{PowerLocalize.get('Overview.ViewProfiles.Title')}</span><br/>
-                                </div>
-                                <div className="mui-margin">
-                                    <span>{PowerLocalize.get('Overview.ViewProfiles.Description')}</span>
-                                </div>
-                                <ViewProfileDialog
-                                    onClose={() => this.setViewDialogOpen(false)}
-                                    open={this.state.createViewDialogOpen}
-                                    onSave={this.handleCreateViewProfile}
-                                />
-                                {/* Text buttons: the highlighted action is "Generieren" on each card (#41) */}
-                                <div className="mui-margin">
-                                    <PwrRow>
-                                        <PwrButton color={'primary'} onClick={() => this.setViewDialogOpen(true)}
-                                                   icon={<Add/>} text={PowerLocalize.get('ViewProfile.Create')}/>
-                                        <PwrButton color={'primary'}
-                                                   onClick={() => this.props.navigateTo(Paths.build(Paths.USER_REPORTS, {initials}))}
-                                                   icon={<History/>} text={PowerLocalize.get('Report.History')}/>
-                                    </PwrRow>
-                                </div>
-                                <div className="row">
-                                    {this.props.viewProfiles.map(viewProfile => {
-                                        return <div className="col-md-12 fullWidth" style={{marginTop: '8px'}}
-                                                    key={viewProfile.id}>
-                                            <ViewCard viewProfileId={viewProfile.id}/>
-                                        </div>;
-                                    })}
+                                    {/* The newest three, all on a page of their own (#213) */}
+                                    <ViewProfileSection initials={initials} limit={3}/>
                                 </div>
                             </Paper>
                         </div>

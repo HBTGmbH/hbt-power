@@ -9,6 +9,7 @@ import {ClusterResult} from './statistics/cluster-result_module';
 import {ConsultantProfile} from './profile/profile_module';
 import {PowerOverview} from './power-overview_module';
 import {Paths} from '../../Paths';
+import {ViewProfilesPage} from './view/view-profiles-page';
 import {ReportHistory} from './reportHistory/report_history-module';
 import {CrossCuttingAsyncActionCreator} from "../../reducers/crosscutting/CrossCuttingAsyncActionCreator";
 import {useEffect} from "react";
@@ -30,6 +31,7 @@ export const PowerClient = () => {
             <Route path={Paths.USER_STATISTICS_CLUSTERINFO} component={ClusterResult}/>
             <Route path={Paths.USER_STATISTICS_SKILLS} component={SkillStatistics}/>
             <Route path={Paths.USER_SEARCH} component={ConsultantSkillSearch}/>
+            <Route path={Paths.USER_VIEW_PROFILES} component={ViewProfilesPage}/>
             <Route path={Paths.USER_VIEW_PROFILE} component={ViewProfileOverview}/>
             <Route path={Paths.USER_REPORTS} component={ReportHistory}/>
         </div>

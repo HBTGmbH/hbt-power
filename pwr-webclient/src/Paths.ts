@@ -32,6 +32,7 @@ export class Paths {
     public static readonly PROFILE_SELECT = CONFIG.APP_PATH + '/profilauswahl';
     public static readonly USER_HOME = CONFIG.APP_PATH + '/app/:initials/home';
     /** The slug is only for reading, the ID selects (#182) */
+    public static readonly USER_VIEW_PROFILES = CONFIG.APP_PATH + '/app/:initials/views';
     public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/:initials/view/:id/:slug?';
     public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/:initials/profile';
     public static readonly USER_PROFILE_PROJECTS = CONFIG.APP_PATH + '/app/:initials/profile/projects';
