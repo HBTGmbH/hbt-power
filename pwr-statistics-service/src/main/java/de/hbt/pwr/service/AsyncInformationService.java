@@ -32,6 +32,7 @@ public class AsyncInformationService {
     private final ConsultantRepository consultantRepository;
     private final PowerProfileClient powerProfileClient;
     private final ClusteredNetworkRepo clusteredNetworkRepo;
+    private final SkillNameNormalizer skillNameNormalizer;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncInformationService.class);
@@ -39,10 +40,12 @@ public class AsyncInformationService {
 
     @Autowired
     public AsyncInformationService(ConsultantRepository consultantRepository,
-                                   PowerProfileClient powerProfileClient, ClusteredNetworkRepo clusteredNetworkRepo) {
+                                   PowerProfileClient powerProfileClient, ClusteredNetworkRepo clusteredNetworkRepo,
+                                   SkillNameNormalizer skillNameNormalizer) {
         this.consultantRepository = consultantRepository;
         this.powerProfileClient = powerProfileClient;
         this.clusteredNetworkRepo = clusteredNetworkRepo;
+        this.skillNameNormalizer = skillNameNormalizer;
     }
 
 
@@ -53,7 +56,8 @@ public class AsyncInformationService {
     /**
      * Replaces the stored consultants by the current ones of the profile service. Returns when done, so a caller of
      * {@link de.hbt.pwr.controller.StatisticsAdminController} reads current data afterwards (#205). Synchronized: the
-     * hourly refresh and a requested one must not delete each other's consultants.
+     * hourly refresh and a requested one must not delete each other's consultants. The skills are stored under the
+     * names of the skill tree (#208), so every statistic counts them that way.
      */
     public synchronized void refreshConsultantData() {
         StopWatch stopWatch = new StopWatch();
@@ -63,6 +67,8 @@ public class AsyncInformationService {
         LOG.info("Requesting all consultants from profile service...");
         List<Consultant> consultantList = powerProfileClient.getAllConsultants();
         LOG.info("...done. Received " + consultantList.size() + " consultants.");
+        skillNameNormalizer.refresh();
+        consultantList.forEach(skillNameNormalizer::normalize);
         LOG.info("Deleting all old consultants...");
         // Delete all old consultants
         consultantRepository.deleteAll(consultantRepository.findAll());

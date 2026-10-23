@@ -9,6 +9,7 @@ spring:
     password: ${DB_PASSWORD:redis}
     database: ${DB_DATABASE:1}
 pwr-profile-service-url: http://pwr-profile-service:9004
+pwr-skill-service-url: http://pwr-skill-service:9003
 management:
   endpoints:
     web:
@@ -26,3 +27,4 @@ spring:
     database: 6
     password: changeit
 pwr-profile-service-url: http://localhost:9004
+pwr-skill-service-url: http://localhost:9003
