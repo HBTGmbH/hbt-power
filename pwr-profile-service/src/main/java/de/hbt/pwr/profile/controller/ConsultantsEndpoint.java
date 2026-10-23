@@ -5,7 +5,9 @@ import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.model.ConsultantDTO;
 import de.hbt.pwr.profile.model.ConsultantInfoDTO;
+import de.hbt.pwr.profile.model.ConsultantNameDTO;
 import de.hbt.pwr.profile.service.ConsultantService;
+import de.hbt.pwr.profile.service.ConsultantShortNames;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -123,6 +125,15 @@ public class ConsultantsEndpoint {
         return ResponseEntity.ok().build();
     }
 
+
+    /**
+     * Short and full names of all consultants (#216), for every user: the webclient names colleagues by their short
+     * name. Nothing else about the consultants.
+     */
+    @GetMapping("names")
+    public List<ConsultantNameDTO> getAllConsultantNames() {
+        return ConsultantShortNames.of(consultantRepository.findAll());
+    }
 
     @GetMapping("info")
     public ResponseEntity<List<ConsultantInfoDTO>> getAllConsultantInfos() {

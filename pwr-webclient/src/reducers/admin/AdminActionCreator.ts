@@ -37,6 +37,7 @@ import {makeDeferrable} from '../deferred/AsyncActionUnWrapper';
 import {confirmDeleteByName} from '../deferred/DeferredActions';
 import {ThunkDispatch} from 'redux-thunk';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
+import {loadConsultantNames} from '../consultant-names/ConsultantNameActionCreator';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 
 const profileServiceClient = ProfileServiceClient.instance();
@@ -323,16 +324,19 @@ export class AdminActionCreator {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.createConsultant(apiConsultant)
                 .then(_ => dispatch(AdminActionCreator.AsyncLoadConsultant(consultantInfo.initials())))
+                // A new first name can change the short names of others (#216)
+                .then(() => dispatch(loadConsultantNames()))
                 .then(() => Alerts.showSuccess('Created consultant ' + consultantInfo.initials()))
                 .catch(console.error);
         };
     }
 
     public static AsyncUpdateConsultant(consultantInfo: ConsultantInfo) {
-        return function (dispatch: redux.Dispatch) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
             let apiConsultant = consultantInfo.toAPI();
             profileServiceClient.updateConsultant(apiConsultant)
                 .then(consultant => dispatch(AdminActionCreator.ReceiveConsultant(ConsultantInfo.fromAPI(consultant))))
+                .then(() => dispatch(loadConsultantNames()))
                 .then(_ => Alerts.showSuccess('Consultant ' + apiConsultant.initials + ' updated!'))
                 .catch(console.error);
         };
@@ -457,6 +461,7 @@ export class AdminActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.deleteConsultant(initials)
                 .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))
+                .then(() => dispatch(loadConsultantNames()))
                 .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))
                 .catch((error) => Alerts.showError(error));
         };
