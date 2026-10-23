@@ -11,10 +11,13 @@ import java.util.stream.Collectors;
 @Data
 public class ConsultantSkillInfo {
     private String fullName;
+    /** The webclient names the consultant by it (#216) */
+    private String initials;
     private List<Skill> skills;
 
     public ConsultantSkillInfo(Consultant consultant, Set<String> retainedSkills) {
         fullName = consultant.getFullNameWithInitials();
+        initials = consultant.getInitials();
         skills = consultant
                 .getProfile()
                 .getSkills()

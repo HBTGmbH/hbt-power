@@ -50,6 +50,13 @@ public class StatisticsServiceSkillNamesTest {
         assertThat(found.get(0).getSkills()).extracting(Skill::getName).containsExactly(".NET");
     }
 
+    @Test
+    public void findConsultantsBySkills_namesTheInitials() {
+        // The webclient looks up the short name by them (#216)
+        assertThat(statisticsService.findConsultantsBySkills(List.of("Java")))
+                .extracting(ConsultantSkillInfo::getInitials).containsExactly("xyz");
+    }
+
     private static Consultant consultant(String initials, String skillName) {
         Profile profile = new Profile();
         profile.setSkills(new HashSet<>(List.of(new Skill(skillName, 3))));
