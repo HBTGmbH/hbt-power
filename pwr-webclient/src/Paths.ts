@@ -11,6 +11,8 @@ export class Paths {
     public static readonly ADMIN_TRASHBOX = CONFIG.APP_PATH + '/admin/home/trashbox';
     public static readonly ADMIN_CONSULTANTS = CONFIG.APP_PATH + '/admin/home/consultants';
     public static readonly ADMIN_TEMPLATES = CONFIG.APP_PATH + '/admin/home/templates';
+    /** The slug is only for reading, the ID selects (#211) */
+    public static readonly ADMIN_TEMPLATE = CONFIG.APP_PATH + '/admin/home/templates/:templateId/:slug?';
     public static readonly ADMIN_STATISTICS_SKILL = CONFIG.APP_PATH + '/admin/home/statistics/skills';
     public static readonly ADMIN_INFO_SKILLTREE = CONFIG.APP_PATH + '/admin/home/info/skilltree';
     /** The slug is only for reading, the ID selects (#180) */
