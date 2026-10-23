@@ -57,7 +57,7 @@ public class ConsultantsTests {
         maxMustermann.setFirstName("Max");
         maxMustermann.setLastName("Mustermann");
         maxMustermann.setBirthDate(LocalDate.parse("1977-03-20"));
-        ResponseEntity<String> entity = restTemplate.postForEntity(apiPath + localServerPort + "/consultants?action=new", maxMustermann, String.class);
+        ResponseEntity<String> entity = restTemplate.postForEntity(apiPath + localServerPort + "/admin/consultants", maxMustermann, String.class);
         assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -71,7 +71,7 @@ public class ConsultantsTests {
         batman.setBirthDate(LocalDate.parse("1940-06-10"));
 
         // POST
-        ResponseEntity<String> stringResponse = restTemplate.postForEntity(apiPath + localServerPort + "/consultants?action=new", batman, String.class);
+        ResponseEntity<String> stringResponse = restTemplate.postForEntity(apiPath + localServerPort + "/admin/consultants", batman, String.class);
         assertThat(stringResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // GET
@@ -83,7 +83,7 @@ public class ConsultantsTests {
         assertThat(consultantResponse.getBody().getBirthDate()).isEqualTo(batman.getBirthDate());
 
         // GET all
-        ResponseEntity<String> listResponse = this.restTemplate.getForEntity(apiPath + localServerPort + "/consultants", String.class);
+        ResponseEntity<String> listResponse = this.restTemplate.getForEntity(apiPath + localServerPort + "/admin/consultants", String.class);
         assertThat(listResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(listResponse.getBody()).isNotEmpty();
         assertThat(listResponse.getBody()).contains("\"initials\":\"" + batman.getInitials() + "\"");
@@ -99,18 +99,18 @@ public class ConsultantsTests {
         joeMiller.setBirthDate(LocalDate.parse("2253-01-13"));
 
         // POST
-        ResponseEntity<String> stringResponse = restTemplate.postForEntity(apiPath + localServerPort + "/consultants?action=new", joeMiller, String.class);
+        ResponseEntity<String> stringResponse = restTemplate.postForEntity(apiPath + localServerPort + "/admin/consultants", joeMiller, String.class);
         assertThat(stringResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // POST
-        stringResponse = restTemplate.postForEntity(apiPath + localServerPort + "/consultants?action=new", joeMiller, String.class);
+        stringResponse = restTemplate.postForEntity(apiPath + localServerPort + "/admin/consultants", joeMiller, String.class);
         assertThat(stringResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     public void listAll() {
         // GET all
-        ResponseEntity<List> entity = this.restTemplate.getForEntity(apiPath + localServerPort + "/consultants", List.class);
+        ResponseEntity<List> entity = this.restTemplate.getForEntity(apiPath + localServerPort + "/admin/consultants", List.class);
         assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

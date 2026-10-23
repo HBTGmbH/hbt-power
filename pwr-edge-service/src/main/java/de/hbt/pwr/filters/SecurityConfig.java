@@ -18,8 +18,8 @@ public class SecurityConfig {
         return http.authorizeExchange()
                 // Only admins can do admin things
                 .pathMatchers("/pwr-profile-service/api/admin/**").hasAnyAuthority("Power.Admin")
+                // Also listing and managing the consultants (#218)
                 .pathMatchers("/pwr-profile-service/admin/**").hasAnyAuthority("Power.Admin")
-                .pathMatchers("/pwr-profile-service/consultants/info").hasAnyAuthority("Power.Admin")
                 .pathMatchers("/pwr-skill-service/admin/**").hasAnyAuthority("Power.Admin")
                 // Report templates and their files (#203)
                 .pathMatchers("/pwr-view-profile-service/admin/**").hasAnyAuthority("Power.Admin")

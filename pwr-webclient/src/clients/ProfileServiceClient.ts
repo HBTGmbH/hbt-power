@@ -40,8 +40,9 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.get(url);
     };
 
+    // Listing and managing the consultants is under /admin (#218)
     public getConsultants = (): Promise<Array<APIConsultant>> => {
-        const url = this.base() + '/consultants/';
+        const url = this.base() + '/admin/consultants';
         this.beginRequest();
         return this.get(url);
     };
@@ -54,18 +55,13 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     public createConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {
-        let config: AxiosRequestConfig = {
-            params: {
-                action: 'new'
-            }
-        };
-        const url = this.base() + '/consultants/';
+        const url = this.base() + '/admin/consultants';
         this.beginRequest();
-        return this.post(url, consultant, config);
+        return this.post(url, consultant);
     };
 
     public updateConsultant = (consultant: APIConsultant): Promise<APIConsultant> => {
-        const url = this.base() + '/consultants/' + consultant.initials;
+        const url = this.base() + '/admin/consultants/' + consultant.initials;
         this.beginRequest();
         return this.patch(url, consultant);
     };
@@ -146,13 +142,13 @@ export class ProfileServiceClient extends PowerHttpClient {
 
 
     public deleteConsultant = (initials: string): Promise<void> => {
-        const url = this.base() + `/consultants/${initials}/delete`;
+        const url = this.base() + `/admin/consultants/${initials}`;
         this.beginRequest();
         return this.delete(url);
     };
 
     public getAllConsultantInfos = (): Promise<ConsultantInfoDTO[]> => {
-        const url = this.base() + `/consultants/info`;
+        const url = this.base() + `/admin/consultants/info`;
         this.beginRequest();
         return this.get(url);
     };
@@ -175,12 +171,6 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + `/profile-pictures/${id}`;
         this.beginRequest();
         return this.delete(url);
-    }
-
-    public getConsultantInfo = (): Promise<void> => {
-        const url = this.base() + `/consultants/info`;
-        this.beginRequest();
-        return this.get(url);
     }
 
     /**

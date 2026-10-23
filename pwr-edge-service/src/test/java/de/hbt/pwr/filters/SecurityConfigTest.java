@@ -189,6 +189,40 @@ class SecurityConfigTest {
         assertPassesSecurity("Power.User", "/pwr-view-profile-service/view/abc/view/1/t1/preview");
     }
 
+    /**
+     * Listing and managing the consultants (#218)
+     */
+    static Stream<Arguments> consultantManagement() {
+        return Stream.of(
+                Arguments.of(HttpMethod.GET, "/pwr-profile-service/admin/consultants"),
+                Arguments.of(HttpMethod.GET, "/pwr-profile-service/admin/consultants/info"),
+                Arguments.of(HttpMethod.POST, "/pwr-profile-service/admin/consultants"),
+                Arguments.of(HttpMethod.PATCH, "/pwr-profile-service/admin/consultants/abc"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-profile-service/admin/consultants/abc"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("consultantManagement")
+    void consultantManagementAsUserIsForbidden(HttpMethod method, String path) {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .method(method).uri(path).exchange().expectStatus().isForbidden();
+    }
+
+    @ParameterizedTest
+    @MethodSource("consultantManagement")
+    void consultantManagementAsAdminPassesSecurity(HttpMethod method, String path) {
+        assertPassesSecurity("Power.Admin", method, path);
+    }
+
+    /**
+     * One consultant (the own profile) and the names of all (#216) stay open to every consultant
+     */
+    @Test
+    void consultantAndNamesAsUserPassSecurity() {
+        assertPassesSecurity("Power.User", "/pwr-profile-service/consultants/abc");
+        assertPassesSecurity("Power.User", "/pwr-profile-service/consultants/names");
+    }
+
     private void assertPassesSecurity(String role, String path) {
         assertPassesSecurity(role, HttpMethod.GET, path);
     }
