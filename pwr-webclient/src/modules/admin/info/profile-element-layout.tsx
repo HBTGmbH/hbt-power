@@ -61,13 +61,17 @@ interface ProfileElementLayoutProps {
  */
 export const ProfileElementLayout = (props: ProfileElementLayoutProps) => {
     const classes = useStyles();
-    return <div className={classes.layout}>
-        <Paper>
-            <div className={classes.filter}>{props.filter}</div>
-            {props.list}
-        </Paper>
-        <Paper className={classes.info}>{props.info}</Paper>
-    </div>;
+    // Space below the app bar, where the tabs used to be (#212)
+    return <>
+        <PwrSpacer/>
+        <div className={classes.layout}>
+            <Paper>
+                <div className={classes.filter}>{props.filter}</div>
+                {props.list}
+            </Paper>
+            <Paper className={classes.info}>{props.info}</Paper>
+        </div>
+    </>;
 };
 
 interface ProfileElementInfoProps {

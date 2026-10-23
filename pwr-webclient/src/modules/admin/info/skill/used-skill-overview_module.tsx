@@ -15,6 +15,8 @@ import {SuggestionAsyncActionCreator} from '../../../../reducers/suggestions/Sug
 import {PwrListTable} from '../../../general/pwr-list-table';
 import {ProfileElementLayout} from '../profile-element-layout';
 import {ThunkDispatch} from 'redux-thunk';
+import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {Paths} from '../../../../Paths';
 
 
 interface UsedSkillOverviewProps {
@@ -23,12 +25,9 @@ interface UsedSkillOverviewProps {
     skillHierarchies: Immutable.Map<string, string>;
 }
 
-interface UsedSkillOverviewLocalProps {
-
-}
+type UsedSkillOverviewLocalProps = RouteComponentProps;
 
 interface UsedSkillOverviewLocalState {
-    selectedSkillName: string;
     filterString: string;
     editOpen: boolean;
 }
@@ -48,7 +47,6 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     constructor(props: UsedSkillOverviewProps & UsedSkillOverviewLocalProps & UsedSkillOverviewDispatch) {
         super(props);
         this.state = {
-            selectedSkillName: '',
             filterString: '',
             editOpen: false
         };
@@ -72,23 +70,39 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
 
     public componentDidMount() {
         this.props.loadAllUsedSkills();
+        this.loadSelected();
     }
 
-    public componentDidUpdate(prevProps: UsedSkillOverviewProps) {
-        // A merged skill disappears from the list; its info box must go with it
-        const selected = this.state.selectedSkillName;
-        if (prevProps.usedSkillNames !== this.props.usedSkillNames && selected !== ''
-            && !this.props.usedSkillNames.includes(selected)) {
-            this.setState({selectedSkillName: ''});
+    public componentDidUpdate(prevProps: UsedSkillOverviewProps & UsedSkillOverviewLocalProps) {
+        if (prevProps.location.search !== this.props.location.search) {
+            this.loadSelected();
+        }
+        // A merged or unknown skill is not in the list: the list without a selection
+        const selected = this.selectedSkillName();
+        if (selected !== '' && this.props.usedSkillNames.length > 0 && !this.props.usedSkillNames.includes(selected)) {
+            this.props.history.replace(Paths.ADMIN_INFO_USED_SKILLS);
         }
     }
 
+    /**
+     * The selected skill is in the URL (#212): its name as query parameter, since names may hold "/", "#" or "?";
+     * the slug in the path is only for reading
+     */
+    private selectedSkillName = (): string => {
+        return new URLSearchParams(this.props.location.search).get('name') || '';
+    };
+
+    private loadSelected = () => {
+        const skillName = this.selectedSkillName();
+        if (skillName !== '') {
+            this.props.getSkillUsageInfo(skillName);
+            this.props.getSkillHierarchy(skillName);
+        }
+    };
+
     private handleSkillSelect = (skillName: string) => {
-        this.setState({
-            selectedSkillName: skillName,
-        });
-        this.props.getSkillUsageInfo(skillName);
-        this.props.getSkillHierarchy(skillName);
+        const path = Paths.build(Paths.ADMIN_INFO_USED_SKILL, {slug: StringUtils.slug(skillName)});
+        this.props.history.push(path + '?name=' + encodeURIComponent(skillName));
     };
 
     private closeEditDialog = () => {
@@ -104,7 +118,7 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
     };
 
     private skillHierarchy = () => {
-        return this.props.skillHierarchies.get(this.state.selectedSkillName);
+        return this.props.skillHierarchies.get(this.selectedSkillName());
     };
 
     render() {
@@ -114,11 +128,12 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
         } else {
             res = this.props.usedSkillNames.sort(Comparators.getStringComparator(true));
         }
-        const usedBy = this.props.skillUsageInfo.get(this.state.selectedSkillName);
+        const selectedSkillName = this.selectedSkillName();
+        const usedBy = this.props.skillUsageInfo.get(selectedSkillName);
         return (
             <div>
                 <MergeSkillDialog skillInfo={usedBy}
-                                  skillToMerge={this.state.selectedSkillName}
+                                  skillToMerge={selectedSkillName}
                                   open={this.state.editOpen}
                                   onClose={this.closeEditDialog}
                 />
@@ -132,13 +147,13 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
                     list={<PwrListTable label={PowerLocalize.get('AdminClient.Overview.Skills')}
                                         items={res}
                                         itemKey={name => name}
-                                        selectedKey={this.state.selectedSkillName}
+                                        selectedKey={selectedSkillName}
                                         onSelect={this.handleSkillSelect}
                                         emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
                                         columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: name => name}]}/>}
                     info={<UsedSkillInfoBox skillHierarchy={this.skillHierarchy()}
                                             usedBy={usedBy ? usedBy.toArray() : undefined}
-                                            skillName={this.state.selectedSkillName}
+                                            skillName={selectedSkillName}
                                             onOpenEdit={this.openEditDialog}/>}
                 />
             </div>
@@ -151,4 +166,4 @@ class UsedSkillOverviewModule extends React.Component<UsedSkillOverviewProps
  * @author nt
  * @since 18.07.2017
  */
-export const UsedSkillOverview = connect(UsedSkillOverviewModule.mapStateToProps, UsedSkillOverviewModule.mapDispatchToProps)(UsedSkillOverviewModule);
+export const UsedSkillOverview = withRouter(connect(UsedSkillOverviewModule.mapStateToProps, UsedSkillOverviewModule.mapDispatchToProps)(UsedSkillOverviewModule));
