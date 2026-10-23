@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -392,6 +393,43 @@ public class ProfileEntryServiceTest {
         profileEntryService.updateProject(project, profile);
         Mockito.verify(skillProfileClient, times(1)).updateAndGetCategory("Skill B");
         Mockito.verify(skillProfileClient, never()).updateAndGetCategory("Skill A");
+    }
+
+    @Test
+    public void newSkill_inAnotherCase_takesTheSpellingOfTheSkillTree() {
+        when(skillProfileClient.treeNameIgnoringCase(".net")).thenReturn(".NET");
+        Profile profile = new Profile();
+
+        Skill saved = profileEntryService.updateProfileSkills(Skill.builder().name(".net").rating(2).build(), profile);
+
+        assertThat(saved.getName()).isEqualTo(".NET");
+        assertThat(profile.getSkills()).extracting(Skill::getName).containsExactly(".NET");
+        Mockito.verify(skillProfileClient).updateAndGetCategory(".NET");
+    }
+
+    @Test
+    public void newProjectSkill_inAnotherCase_takesTheSpellingOfTheSkillTree() {
+        when(skillProfileClient.treeNameIgnoringCase(".net")).thenReturn(".NET");
+        Profile profile = new Profile();
+        Project project = Project.builder()
+                .name("Project")
+                .skills(new HashSet<>(Collections.singletonList(Skill.builder().name(" .net").rating(2).build())))
+                .build();
+
+        profileEntryService.updateProject(project, profile);
+
+        assertThat(project.getSkills()).extracting(Skill::getName).containsExactly(".NET");
+        assertThat(profile.getSkills()).extracting(Skill::getName).containsExactly(".NET");
+    }
+
+    @Test
+    public void newSkill_thatIsAnAlias_staysAsTyped() {
+        when(skillProfileClient.treeNameIgnoringCase(".NET Core")).thenReturn(".NET Core");
+        Profile profile = new Profile();
+
+        profileEntryService.updateProfileSkills(Skill.builder().name(".NET Core").rating(2).build(), profile);
+
+        assertThat(profile.getSkills()).extracting(Skill::getName).containsExactly(".NET Core");
     }
 
     // TODO Skill löschen wenn er im Project enthalten ist ?!!?

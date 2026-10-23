@@ -82,9 +82,18 @@ public class ProfileEntryService {
         return concurrent
                 .map(s -> updateSkill(s, skill))
                 .orElseGet(() -> {
+                    skill.setName(treeNameIgnoringCase(skill.getName()));
                     skillProfileClient.updateAndGetCategory(skill.getName());
                     return createNewInProfile(skill, profile);
                 });
+    }
+
+    /**
+     * A new skill takes the spelling of the skill tree if it only differs in case (#208); an alias stays as typed
+     */
+    private String treeNameIgnoringCase(String name) {
+        String treeName = skillProfileClient.treeNameIgnoringCase(name.trim());
+        return treeName == null ? name.trim() : treeName;
     }
 
     private Skill updateSkill(Skill current, Skill newSkill) {
@@ -110,6 +119,7 @@ public class ProfileEntryService {
         Skill inPro = profileSkills.stream().filter(s -> s.getName().toLowerCase().equals(finalSkill.getName().toLowerCase())).findAny().orElse(null);
         if (inPro == null) {
             // nicht im profil
+            skill.setName(treeNameIgnoringCase(skill.getName()));
             if (skill.getId() == null) {
                 skill = skillRepository.save(skill);
             }

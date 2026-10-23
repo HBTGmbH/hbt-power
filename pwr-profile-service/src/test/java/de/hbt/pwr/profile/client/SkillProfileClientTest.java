@@ -97,6 +97,53 @@ public class SkillProfileClientTest {
     }
 
     @Test
+    public void skillTreeIndex_knowsTheTreeNameOfOtherSpellingsAndAliases() {
+        server.expect(requestTo("http://skill/skill/tree"))
+                .andRespond(withSuccess("{\"qualifier\": \"##ROOT##\", \"childSkills\": [], \"childCategories\": ["
+                        + "{\"qualifier\": \"Frameworks\", \"childCategories\": [], \"childSkills\": ["
+                        + "{\"qualifier\": \".NET\", \"aliases\": [\".NET Core\"]},"
+                        + "{\"qualifier\": \"Spring Framework\", \"aliases\": [\"Spring\"]}]},"
+                        + "{\"qualifier\": \"Other\", \"childCategories\": [],"
+                        + " \"childSkills\": [{\"qualifier\": \"Spring\", \"aliases\": []}]}"
+                        + "]}", MediaType.APPLICATION_JSON));
+
+        SkillTreeIndex index = client.getSkillTreeIndex().orElseThrow(AssertionError::new);
+
+        assertThat(index.treeName(".Net")).isEqualTo(".NET");
+        assertThat(index.treeName(" .net core")).isEqualTo(".NET");
+        // A name of a skill wins over an alias of another one
+        assertThat(index.treeName("spring")).isEqualTo("Spring");
+        assertThat(index.treeName("Unknown ")).isEqualTo("Unknown");
+    }
+
+    @Test
+    public void treeNameIgnoringCase_takesTheSpellingOfTheTree() {
+        server.expect(requestTo("http://skill/skill/byName?qualifier=.net"))
+                .andRespond(withSuccess("{\"id\": 7, \"qualifier\": \".NET\", \"aliases\": [\".NET Core\"]}", MediaType.APPLICATION_JSON));
+
+        assertThat(client.treeNameIgnoringCase(".net")).isEqualTo(".NET");
+    }
+
+    @Test
+    public void treeNameIgnoringCase_keepsAnAlias() {
+        server.expect(requestTo("http://skill/skill/byName?qualifier=.NET%20Core"))
+                .andRespond(withSuccess("{\"id\": 7, \"qualifier\": \".NET\", \"aliases\": [\".NET Core\"]}", MediaType.APPLICATION_JSON));
+
+        assertThat(client.treeNameIgnoringCase(".NET Core")).isEqualTo(".NET Core");
+    }
+
+    @Test
+    public void treeNameIgnoringCase_keepsTheNameIfTheTreeDoesNotKnowItOrTheSkillServiceFails() {
+        server.expect(requestTo("http://skill/skill/byName?qualifier=Unknown"))
+                .andRespond(withStatus(HttpStatus.NO_CONTENT));
+        server.expect(requestTo("http://skill/skill/byName?qualifier=Other"))
+                .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+        assertThat(client.treeNameIgnoringCase("Unknown")).isEqualTo("Unknown");
+        assertThat(client.treeNameIgnoringCase("Other")).isEqualTo("Other");
+    }
+
+    @Test
     public void skillTreeIndex_isEmptyWhenTheSkillServiceFails() {
         server.expect(requestTo("http://skill/skill/tree"))
                 .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));

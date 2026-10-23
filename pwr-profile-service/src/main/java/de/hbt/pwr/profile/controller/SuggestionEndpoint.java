@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.controller;
 
+import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.data.NameEntityRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.model.HBTPowerConstants;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -39,12 +41,15 @@ public class SuggestionEndpoint {
     private final NameEntityRepository nameEntityRepository;
     private final ProfileRepository profileRepository;
     private final SkillRecommendationService skillRecommendationService;
+    private final SkillProfileClient skillProfileClient;
 
     @Autowired
-    public SuggestionEndpoint(NameEntityRepository nameEntityRepository, ProfileRepository profileRepository, SkillRecommendationService skillRecommendationService) {
+    public SuggestionEndpoint(NameEntityRepository nameEntityRepository, ProfileRepository profileRepository,
+                              SkillRecommendationService skillRecommendationService, SkillProfileClient skillProfileClient) {
         this.nameEntityRepository = nameEntityRepository;
         this.profileRepository = profileRepository;
         this.skillRecommendationService = skillRecommendationService;
+        this.skillProfileClient = skillProfileClient;
     }
 
 
@@ -145,17 +150,20 @@ public class SuggestionEndpoint {
 
 
     /**
-     * Returns a list of skill names that are unique per name and only exist in current base profiles,
-     * not view profiles.
-     *
-     * @return
+     * The skill names used in the profiles, each once, under the names of the skill tree (#208): other spellings and
+     * aliases appear as the skill they stand for. As used if the skill service doesn't answer.
      */
     @GetMapping("/skills")
     public ResponseEntity<List<String>> getAllUniqueSkillNames() {
+        Function<String, String> treeName = skillProfileClient.getSkillTreeIndex()
+                .<Function<String, String>>map(index -> index::treeName)
+                .orElse(String::trim);
         List<String> results = profileRepository.findAll()
                 .stream()
                 .flatMap(profile -> profile.getSkills().stream())
                 .map(Skill::getName)
+                .map(treeName)
+                .distinct()
                 .collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
