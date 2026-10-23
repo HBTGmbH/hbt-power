@@ -116,9 +116,8 @@ class AdminClientModule extends React.Component<AdminClientProps
             navigateTo: (target: string) => {
                 dispatch(NavigationActionCreator.AsyncNavigateTo(target));
             },
-            logOutAdmin: () => {
-                dispatch(AdminActionCreator.AsyncLogOutAdmin());
-            }
+            // Through the logout of the profile area (#211), which also asks about unsaved changes
+            logOutAdmin: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT))
         };
     }
 
@@ -233,6 +232,14 @@ class AdminClientModule extends React.Component<AdminClientProps
                                         <Icon className="material-icons">palette</Icon>
                                     </ListItemIcon>
                                     <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}/>
+                                </ListItem>
+                                <Divider/>
+                                {/* Last entry like in the menu of the profile area (#211) */}
+                                <ListItem button key="Tooolbar.LogOut" onClick={this.props.logOutAdmin}>
+                                    <ListItemIcon>
+                                        <Icon className="material-icons">input</Icon>
+                                    </ListItemIcon>
+                                    <ListItemText primary={PowerLocalize.get('Tooolbar.LogOut')}/>
                                 </ListItem>
                             </List>
                         </Paper>

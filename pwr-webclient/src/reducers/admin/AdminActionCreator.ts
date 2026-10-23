@@ -273,13 +273,6 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncLogOutAdmin() {
-        return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
-            dispatch(AdminActionCreator.LogOutAdmin());
-        };
-    }
-
     public static AsyncValidateAuthentication() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.authenticateAdmin().then(ignored => {

@@ -33,6 +33,8 @@ export class CrossCuttingAsyncActionCreator {
             dispatch(CrossCuttingActionCreator.SetLoginStatus(LoginStatus.INITIALS));
             dispatch(resetProfileStore());
             dispatch(ViewProfileActionCreator.ResetViewState());
+            // The same logout for the admin area (#211)
+            dispatch(AdminActionCreator.LogOutAdmin());
             OIDCService.instance().logout();
         };
     }
