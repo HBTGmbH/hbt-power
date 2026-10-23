@@ -89,7 +89,9 @@ class AdminClientModule extends React.Component<AdminClientProps
                     </Paper>
                 </div>
 
-                <div className="row" style={{width: '100%'}}>
+                {/* No "row": its negative margin would put the pages right at the edge of the window, now that there
+                    is no menu column on the left any more (#212) */}
+                <div>
                     <div className="col-md-12 fittingContainer admin-app-bar-spacer">
                         <Route path={Paths.ADMIN_INBOX} component={NotificationInbox}/>
                         <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid}/>

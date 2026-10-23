@@ -113,7 +113,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                     show={this.state.createDialogOpen}
                     onClose={this.hideDialog}
                 />
-                <div className="row">
+                <div>
                     <Button
                         variant={'contained'}
                         style={{marginTop: '10px', marginBottom: '10px', marginRight: '15px'}}
@@ -149,7 +149,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                         </Select>
                     </FormControl>
                 </div>
-                <div className="row">
+                <div>
                     <GridList
                         cols={4}
                         cellHeight={310}
