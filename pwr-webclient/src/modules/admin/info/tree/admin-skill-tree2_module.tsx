@@ -518,6 +518,7 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                             label={PowerLocalize.get('Action.Search')}
                             margin={'dense'}
                             style={{verticalAlign: 'middle'}}
+                            value={this.props.skillStore.filterTerm}
                             onChange={(e: any) => {
                                 this.props.filter(e.target.value);
                             }}

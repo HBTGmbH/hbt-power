@@ -281,6 +281,11 @@ export class SkillReducer {
             case ActionType.LoadTree: {
                 let act = action as InitializeTreeAction;
                 let result = SkillTreeBuilder.for(act.root).build();
+                // Loaded again after a change: keep what was open and the filter
+                result.tree.takeOpenFrom(skillStore.skillTreeRoot);
+                if (skillStore.filterNonCustomSkills || skillStore.filterTerm) {
+                    result.tree.filter(skillStore.filterNonCustomSkills, skillStore.filterTerm, result.skillsById, result.categoriesById);
+                }
                 return {
                     ...skillStore,
                     skillsById: result.skillsById,
