@@ -134,7 +134,12 @@ export class PowerHttpClient {
      * Overwrite this method if a client does not conform to the {@link PowerApiError] interface
      */
     extractApiError = (error: AxiosError): PowerApiError => {
-        return error.response.data;
+        const data: any = error.response.data;
+        // The view-profile service answers {error: {code, message, …}} (#221)
+        if (data.error !== null && typeof data.error === 'object') {
+            return {status: error.response.status, error: data.error.code, message: data.error.message};
+        }
+        return data;
     };
 
     /**

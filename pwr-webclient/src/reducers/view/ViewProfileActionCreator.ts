@@ -18,6 +18,11 @@ import {PowerLocalize} from '../../localization/PowerLocalizer';
 import {RemoveViewProfileAction, SetParentCategoryAction, SetSortInProgressAction, SetViewProfileAction} from './ViewProfileActions';
 
 const viewProfileClient = ViewProfileServiceClient.instance();
+
+/** Whether the consultant is still the selected one when an answer for them arrives */
+const isCurrentConsultant = (getState: () => ApplicationState, initials: string) =>
+    getState().profileStore.consultant.initials === initials;
+
 export class ViewProfileActionCreator {
 
     /**
@@ -228,11 +233,17 @@ export class ViewProfileActionCreator {
         };
     }
 
-    private static AsyncLoadViewProfile(id: string) {
+    /**
+     * With the initials its id was loaded for (#221): after a switch to another consultant the store holds the new ones
+     */
+    private static AsyncLoadViewProfile(initials: string, id: string) {
         return function (dispatch: redux.Dispatch, getState: () => ApplicationState) {
-            let initials = getState().profileStore.consultant.initials;
             viewProfileClient.getViewProfile(initials, id)
-                .then((response) => ViewProfileActionCreator.succeedAndRead(response, dispatch))
+                .then((response) => {
+                    if (isCurrentConsultant(getState, initials)) {
+                        ViewProfileActionCreator.succeedAndRead(response, dispatch);
+                    }
+                })
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
                 .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.Load')));
@@ -272,7 +283,9 @@ export class ViewProfileActionCreator {
             dispatch(ViewProfileActionCreator.ClearViewProfiles());
             dispatch(CrossCuttingActionCreator.startRequest());
             viewProfileClient.getViewProfileIds(initials)
-                .then((response) => response.forEach(id => dispatch(ViewProfileActionCreator.AsyncLoadViewProfile(id))))
+                // A late answer for a consultant no longer selected is dropped (#221)
+                .then((response) => isCurrentConsultant(getState, initials)
+                    && response.forEach(id => dispatch(ViewProfileActionCreator.AsyncLoadViewProfile(initials, id))))
                 .catch((error) => console.error(error))
                 .catch(() => dispatch(CrossCuttingActionCreator.endRequest()))
                 .catch(() => Alerts.showError(PowerLocalize.get('ViewProfile.Error.LoadAll')));
