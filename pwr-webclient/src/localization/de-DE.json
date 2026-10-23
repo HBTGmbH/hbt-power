@@ -649,6 +649,8 @@
   "ProjectDescriptionHelp.Example": "Beispiel: Ein Versicherungskonzern wollte sein Kundenportal modernisieren und die Bearbeitung von Schadenmeldungen beschleunigen. Auftrag war die Neuentwicklung des Portals als Cloud-native Anwendung, die das bisherige Altsystem schrittweise ablöst. Als Lead Developer Verantwortung für Architektur und technische Konzeption; Umsetzung von Frontend und Backend gemeinsam mit einem Scrum-Team aus sechs Entwicklerinnen und Entwicklern (React, Spring Boot, AWS). Dazu Abstimmung der Schnittstellen mit den Fachbereichen und dem Betrieb des Kunden. Nach 15 Monaten ging das Portal live; Schadenmeldungen werden seitdem online erfasst und in der Regel noch am selben Tag bearbeitet.",
   "Report.History": "Bisher generierte Profile",
   "Report.ViewProfile": "View-Profil",
+  "Report.Description": "Beschreibung",
+  "Report.ExportedBy": "Exportiert von",
   "Report.Template": "Template",
   "Report.UnknownTemplate": "Unbekanntes Template",
   "Report.Status": "Status",

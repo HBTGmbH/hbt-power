@@ -10,3 +10,5 @@ spring:
 eureka:
   client:
     enabled: false
+# Never called: the clients are mocked
+pwr-profile-service-url: http://localhost:9004

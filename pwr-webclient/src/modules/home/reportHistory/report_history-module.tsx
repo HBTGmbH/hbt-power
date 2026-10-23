@@ -16,6 +16,7 @@ import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ThunkDispatch} from 'redux-thunk';
+import {PwrConsultantName} from '../../general/pwr-consultant-name';
 import {formatFullLocalizedDate, formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 
 interface ReportHistoryLocalProps {
@@ -43,6 +44,9 @@ interface ReportHistoryProps {
 interface ReportHistoryState {
     initials: string;
 }
+
+/** Documents from before #214 know neither the description nor who exported */
+const NOT_KNOWN = '–';
 
 /** While a report is being created ('RUNNING'), the list is reloaded at this interval */
 const POLL_INTERVAL_MS = 3000;
@@ -205,8 +209,10 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                         <TableHead>
                             <TableRow key={-1}>
                                 <TableCell>{PowerLocalize.get('Report.ViewProfile')}</TableCell>
+                                <TableCell align="left">{PowerLocalize.get('Report.Description')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.Template')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.CreateDate')}</TableCell>
+                                <TableCell align="left">{PowerLocalize.get('Report.ExportedBy')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.Status')}</TableCell>
                                 <TableCell/>
                             </TableRow>
@@ -216,8 +222,21 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                                 [...this.props.reports].sort(newestFirst).map(value =>
                                     <TableRow key={value.id}>
                                         <TableCell>{value.viewProfileName}</TableCell>
+                                        <TableCell align="left" className="pwr-report-description">
+                                            {value.viewProfileDescription
+                                                ? <Tooltip title={value.viewProfileDescription}>
+                                                    <span>{value.viewProfileDescription}</span>
+                                                </Tooltip>
+                                                : NOT_KNOWN}
+                                        </TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
                                         <TableCell align="left">{value.createdAt ? formatToFullLocalizedDateTime(value.createdAt) : formatFullLocalizedDate(value.createDate)}</TableCell>
+                                        <TableCell align="left">
+                                            {value.exportedByInitials && value.exportedByName
+                                                ? <PwrConsultantName initials={value.exportedByInitials}
+                                                                     fullName={value.exportedByName}/>
+                                                : NOT_KNOWN}
+                                        </TableCell>
                                         <TableCell
                                             align="left">{this.StatusDisplay(value)}</TableCell>
                                         {/* An icon in a column of its own: in a list of many documents a button per row would dominate (#41) */}
