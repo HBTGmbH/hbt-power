@@ -167,7 +167,7 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
                     <Link component="button" variant="body2" className="pwr-link-with-icon"
                           onClick={() => this.props.redirectToUserHome(this.props.initials)}>
                         {PowerLocalize.get('ConsultantEdit.OpenOverview')}
-                        <Icon className="material-icons" fontSize="small">open_in_new</Icon>
+                        <Icon className="material-icons" fontSize="small">arrow_forward</Icon>
                     </Link>
                 </DialogTitle>
                 <DialogContent dividers={true}>

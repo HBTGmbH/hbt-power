@@ -296,7 +296,7 @@ class ViewProfileOverviewModule extends React.Component<ViewProfileOverviewProps
                 </div>
                 <div className="pwr-view-profile-actions">
                     <PwrFormActions editing={false} noSpace
-                                    editText={PowerLocalize.get('Action.Generate.Word')} editIcon={'open_in_new'}
+                                    editText={PowerLocalize.get('Action.Generate.Word')} editIcon={'note_add'}
                                     onEdit={() => this.setGeneratorOpen(true)}>
                         <PwrButton color={'primary'} text={PowerLocalize.get('Action.Update')}
                                    icon={<Icon className="material-icons">replay</Icon>}
