@@ -196,4 +196,45 @@ public class ViewProfileSortServiceTest {
         viewProfile.getTrainings().addAll(Arrays.asList(ed2, ed1, ed3));
         performStartEndDateSortAssert(StartEndDateComparableEntryType.TRAINING, ed1, ed2, ed3);
     }
+
+    private static Career career(String name, LocalDate start, LocalDate end) {
+        return Career.builder().name(name).startDate(start).endDate(end).build();
+    }
+
+    /**
+     * An open end ("bis heute") is the latest end (#225), in mixed order and with more than one of them
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void openEndIsTheLatestEnd() {
+        Career past = career("past", LocalDate.of(2015, 1, 1), LocalDate.of(2018, 12, 31));
+        Career recent = career("recent", LocalDate.of(2019, 1, 1), LocalDate.of(2022, 6, 30));
+        Career currentSince2023 = career("current 2023", LocalDate.of(2023, 1, 1), null);
+        Career currentSince2024 = career("current 2024", LocalDate.of(2024, 1, 1), null);
+        viewProfile.getCareers().addAll(Arrays.asList(currentSince2023, past, currentSince2024, recent));
+
+        viewProfileSortService.sortEntryByEndDate(viewProfile, StartEndDateComparableEntryType.CAREER, false);
+        assertThat((List) StartEndDateComparableEntryType.CAREER.getComparable(viewProfile))
+                .containsExactly(currentSince2024, currentSince2023, recent, past);
+
+        viewProfileSortService.sortEntryByEndDate(viewProfile, StartEndDateComparableEntryType.CAREER, true);
+        assertThat((List) StartEndDateComparableEntryType.CAREER.getComparable(viewProfile))
+                .containsExactly(past, recent, currentSince2023, currentSince2024);
+    }
+
+    /**
+     * The same end decided by the start
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void sameEndIsDecidedByTheStart() {
+        LocalDate end = LocalDate.of(2020, 12, 31);
+        Career longer = career("longer", LocalDate.of(2015, 1, 1), end);
+        Career shorter = career("shorter", LocalDate.of(2019, 1, 1), end);
+        viewProfile.getCareers().addAll(Arrays.asList(longer, shorter));
+
+        viewProfileSortService.sortEntryByEndDate(viewProfile, StartEndDateComparableEntryType.CAREER, false);
+        assertThat((List) StartEndDateComparableEntryType.CAREER.getComparable(viewProfile))
+                .containsExactly(shorter, longer);
+    }
 }

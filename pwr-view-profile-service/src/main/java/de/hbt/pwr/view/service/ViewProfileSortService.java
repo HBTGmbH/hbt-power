@@ -34,12 +34,13 @@ public class ViewProfileSortService {
     private static final Comparator<StartEndDateComparable> StartDateAsc = Comparator.comparing(StartEndDateComparable::getStartDate);
     private static final Comparator<StartEndDateComparable> StartDateDesc = Comparator.comparing(StartEndDateComparable::getStartDate).reversed();
 
-    private static final Comparator<StartEndDateComparable> EndDateAsc = (o1, o2) -> {
-        if (o1.getEndDate() == null || o2.getEndDate() == null) {
-            return StartDateAsc.compare(o1, o2);
-        }
-        return Comparator.comparing(StartEndDateComparable::getEndDate).compare(o1, o2);
-    };
+    /**
+     * An open end ("bis heute", no end date) is the latest end of all (#225); the same end, or two open ones, decided by
+     * the start
+     */
+    private static final Comparator<StartEndDateComparable> EndDateAsc =
+            Comparator.comparing(StartEndDateComparable::getEndDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                    .thenComparing(StartEndDateComparable::getStartDate, Comparator.nullsFirst(Comparator.naturalOrder()));
     private static final Comparator<StartEndDateComparable> EndDateDesc = EndDateAsc.reversed();
 
 
