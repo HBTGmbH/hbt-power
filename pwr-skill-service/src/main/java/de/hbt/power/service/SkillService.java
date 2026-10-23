@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static de.hbt.power.exception.SkillServiceException.aliasConflict;
+import static de.hbt.power.exception.SkillServiceException.skillAlreadyExists;
 import static de.hbt.power.exception.SkillServiceException.skillNotFound;
 import static de.hbt.power.exception.SkillServiceException.validationFailed;
 
@@ -131,6 +132,42 @@ public class SkillService {
             targetSkill.getAliases().add(sourceName);
         }
         return targetSkill;
+    }
+
+    /**
+     * Renames the skill <code>name</code> (#228): the old name becomes an alias, so search and the names in the
+     * profiles still find it (#208); an alias of the skill that becomes its name is no alias anymore. Changing only the
+     * case adds no alias. 409 if the new name is the name or an alias of another skill (ignoring case, #207): that is
+     * a merge, which the admin decides. Versions, localizations and category stay.
+     *
+     * @return the renamed skill
+     */
+    @Transactional
+    public Skill renameSkill(String name, String newName) {
+        String oldName = requireText("name", name);
+        String targetName = requireText("newName", newName);
+        Skill skill = skillRepository.findOneByQualifier(oldName).orElseThrow(() -> skillNotFound(oldName));
+        String qualifier = skill.getQualifier();
+        if (qualifier.equals(targetName)) {
+            return skill;
+        }
+        if (!qualifier.equalsIgnoreCase(targetName)) {
+            skillRepository.findAllByQualifierIgnoreCase(targetName).stream()
+                    .filter(other -> !other.equals(skill))
+                    .findAny()
+                    .ifPresent(other -> {
+                        throw skillAlreadyExists(other);
+                    });
+            requireFreeAlias(targetName, skill);
+        }
+        log.info("Renaming " + skill + " to '" + targetName + "'");
+        skill.getAliases().removeIf(targetName::equalsIgnoreCase);
+        skillRepository.flush();
+        skill.setQualifier(targetName);
+        if (!qualifier.equalsIgnoreCase(targetName)) {
+            skill.getAliases().add(qualifier);
+        }
+        return skill;
     }
 
     private void mergeSkillInto(Skill source, Skill target) {

@@ -1,0 +1,89 @@
+package de.hbt.pwr.profile.controller;
+
+import de.hbt.pwr.profile.model.FormerNameDTO;
+import de.hbt.pwr.profile.model.profile.NameEntityType;
+import de.hbt.pwr.profile.model.profile.entries.NameEntity;
+import de.hbt.pwr.profile.service.NameEntityAdminService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static org.springframework.http.ResponseEntity.noContent;
+
+/**
+ * Renaming, merging and deleting profile elements in all profiles (#227). Under /admin, which the edge restricts to
+ * Power.Admin.
+ */
+@RestController
+@RequestMapping(value = "/admin/name-entities", produces = "application/json")
+@Api(value = "Admin resource for profile elements", produces = "application/json")
+public class NameEntityAdminEndpoint {
+
+    private final NameEntityAdminService nameEntityAdminService;
+
+    public NameEntityAdminEndpoint(NameEntityAdminService nameEntityAdminService) {
+        this.nameEntityAdminService = nameEntityAdminService;
+    }
+
+    @ApiOperation(value = "The initials of the consultants whose profile uses the profile element, counted in the database")
+    @GetMapping("/{id}/users")
+    public List<String> findUsers(@PathVariable("id") Long id) {
+        return nameEntityAdminService.findUsers(id);
+    }
+
+    @ApiOperation(value = "The profile elements of the type that no profile uses")
+    @GetMapping("/unused")
+    public List<NameEntity> findUnused(@RequestParam("type") NameEntityType type) {
+        return nameEntityAdminService.findUnused(type);
+    }
+
+    @ApiOperation(value = "Former names of renamed and merged profile elements with their current names (#230)")
+    @GetMapping("/former-names")
+    public List<FormerNameDTO> findFormerNames() {
+        return nameEntityAdminService.findFormerNames();
+    }
+
+    @ApiOperation(value = "Renames a profile element in all profiles",
+            notes = "The old name becomes a former name. 409 if another element of the type has the name, ignoring case.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Renamed", response = NameEntity.class),
+            @ApiResponse(code = 400, message = "No name"),
+            @ApiResponse(code = 404, message = "No such profile element"),
+            @ApiResponse(code = 409, message = "Another profile element of the type has the name")
+    })
+    @PatchMapping("/{id}")
+    public NameEntity rename(@PathVariable("id") Long id, @RequestParam("name") String name) {
+        return nameEntityAdminService.rename(id, name);
+    }
+
+    @ApiOperation(value = "Merges a profile element into another one of the same type in all profiles",
+            notes = "Everything that pointed to the source points to the target, the source is deleted.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Merged, the target in the response", response = NameEntity.class),
+            @ApiResponse(code = 400, message = "Source and target are the same or of different types"),
+            @ApiResponse(code = 404, message = "No such profile element")
+    })
+    @PostMapping("/{id}/merge")
+    public NameEntity merge(@PathVariable("id") Long id, @RequestParam("target") Long targetId) {
+        return nameEntityAdminService.merge(id, targetId);
+    }
+
+    @ApiOperation(value = "Deletes a profile element from all profiles",
+            notes = "Profile entries with it are deleted, broker, client and role of projects become empty.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        nameEntityAdminService.delete(id);
+        return noContent().build();
+    }
+
+    @ApiOperation(value = "Deletes the profile elements of the type that no profile uses, checked again at once")
+    @DeleteMapping("/unused")
+    public List<NameEntity> deleteUnused(@RequestParam("type") NameEntityType type) {
+        return nameEntityAdminService.deleteUnused(type);
+    }
+}

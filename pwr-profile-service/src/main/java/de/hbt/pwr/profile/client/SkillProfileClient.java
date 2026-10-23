@@ -7,6 +7,7 @@ import de.hbt.pwr.profile.model.skill.SkillCategory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -130,6 +131,55 @@ public class SkillProfileClient {
                     .toUri();
             JsonNode targetSkill = restTemplate.postForEntity(uri, null, JsonNode.class).getBody();
             return targetSkill == null ? target : targetSkill.path("qualifier").asText(target);
+        } catch (HttpStatusCodeException e) {
+            throw new WebApplicationException(e.getStatusCode(), messageOf(e));
+        }
+    }
+
+    /**
+     * Renames skill <code>name</code> to <code>newName</code> in the skill tree (#228); the old name becomes an alias.
+     * Errors of the skill service (unknown skill, name of another skill) keep their status.
+     *
+     * @return the new name in the skill tree
+     */
+    public String renameSkill(String name, String newName) {
+        try {
+            URI uri = UriComponentsBuilder.fromHttpUrl(pwrSkillServiceUrl + "/admin/skill/rename")
+                    .queryParam("name", "{name}")
+                    .queryParam("newName", "{newName}")
+                    .encode()
+                    .buildAndExpand(name, newName)
+                    .toUri();
+            JsonNode skill = restTemplate.postForEntity(uri, null, JsonNode.class).getBody();
+            return skill == null ? newName.trim() : skill.path("qualifier").asText(newName.trim());
+        } catch (HttpStatusCodeException e) {
+            throw new WebApplicationException(e.getStatusCode(), messageOf(e));
+        }
+    }
+
+    /**
+     * The skill of the tree with the name <code>name</code> in any case (#229), not one it is an alias of: its ID,
+     * name and aliases. 404 if the tree has no such skill.
+     */
+    public JsonNode requireTreeSkill(String name) {
+        JsonNode skill;
+        try {
+            skill = restTemplate.getForObject(pwrSkillServiceUrl + "/skill/byName?qualifier={qualifier}", JsonNode.class, name);
+        } catch (HttpStatusCodeException e) {
+            throw new WebApplicationException(e.getStatusCode(), messageOf(e));
+        }
+        if (skill == null || !name.equalsIgnoreCase(skill.path("qualifier").asText(""))) {
+            throw new WebApplicationException(HttpStatus.NOT_FOUND, "No skill '" + name + "' in the skill tree");
+        }
+        return skill;
+    }
+
+    /**
+     * Deletes the skill with the ID from the skill tree (#229)
+     */
+    public void deleteSkill(long id) {
+        try {
+            restTemplate.delete(pwrSkillServiceUrl + "/admin/skill/{id}", id);
         } catch (HttpStatusCodeException e) {
             throw new WebApplicationException(e.getStatusCode(), messageOf(e));
         }

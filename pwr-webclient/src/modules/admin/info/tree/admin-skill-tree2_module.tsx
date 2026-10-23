@@ -17,6 +17,7 @@ import {SkillStore} from '../../../../model/skill/SkillStore';
 import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
 import {PwrSkillVersionInfo} from '../../../general/pwr-skill-version-info_module';
 import {AliasList} from '../../../general/skill/alias-list_module';
+import {SkillDeleteDialog, SkillRenameDialog} from './skill-tree-dialogs';
 import {ThunkDispatch} from 'redux-thunk';
 import {PwrFormSection, PwrRow} from '../../../general/pwr-form-section';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
@@ -41,6 +42,10 @@ interface AdminSkillTree2LocalState {
     skillNameOpen: boolean;
     categorySearcherOpen: boolean;
     moveCategorySearcher: boolean;
+    /** Renaming the selected skill (#228) */
+    skillRenameOpen: boolean;
+    /** The skill whose deletion asks what happens to the profiles (#229) */
+    skillToDelete: string | null;
 
     newVersionText: string;
 
@@ -72,8 +77,6 @@ interface AdminSkillTree2Dispatch {
     moveSkill(newCategory: number, oldCategory: number, skillId: number): void;
 
     createSkill(qualifier: string, categoryId: number): void;
-
-    deleteSkill(skillId: number, name: string): void;
 
     toggleOpen(categoryId: number): void;
 
@@ -124,6 +127,8 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
             categorySearcherOpen: false,
             skillNameOpen: false,
             moveCategorySearcher: false,
+            skillRenameOpen: false,
+            skillToDelete: null,
             newVersionText: '',
         };
     }
@@ -150,7 +155,6 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
             moveCategory: (newCategoryId, selectedCategoryId) => dispatch(SkillActionCreator.AsyncMoveCategory(newCategoryId, selectedCategoryId)),
             moveSkill: (newCategory, oldCategory, skillId) => dispatch(SkillActionCreator.AsyncMoveSkill(skillId, newCategory, oldCategory)),
             createSkill: (qualifier, categoryId) => dispatch(SkillActionCreator.AsyncCreateSkill(qualifier, categoryId)),
-            deleteSkill: (skillId, name) => dispatch(SkillActionCreator.AsyncDeleteSkill(skillId, name)),
             addSkillLocalization: (skillId, language, qualifier) => dispatch(SkillActionCreator.AsyncAddSkillLocale(skillId, language, qualifier)),
             deleteSkillLocalization: (skillId, language, translation, skillName) =>
                 dispatch(SkillActionCreator.AsyncDeleteSkillLocale(skillId, language, translation, skillName)),
@@ -330,8 +334,8 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
     };
 
     private handleDeleteSkill = (skillId: number) => {
-        // Asks first (makeDeferrable); if it was selected, applyUrl leaves the selection once it is gone
-        this.props.deleteSkill(skillId, this.props.skillsById.get(skillId).qualifier());
+        // Asks what happens to the profiles (#229); if it was selected, applyUrl leaves the selection once it is gone
+        this.setState({skillToDelete: this.props.skillsById.get(skillId).qualifier()});
     };
 
     private openMoveCategorySearcher = () => {
@@ -414,10 +418,16 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
             </PwrFormSection>
             <PwrSpacer size="section"/>
             <PwrRow>
+                <PwrButton color="primary" text={PowerLocalize.get('AdminClient.Info.SkillTree.Rename.Action')}
+                           icon={<Icon className="material-icons">edit</Icon>}
+                           onClick={() => this.setState({skillRenameOpen: true})}/>
                 <PwrButton color="primary" text={PowerLocalize.get('Action.ChangeCategory')}
                            icon={<Icon className="material-icons">drive_file_move</Icon>}
                            onClick={this.openCategorySearcher}/>
             </PwrRow>
+            <SkillRenameDialog open={this.state.skillRenameOpen} skillId={selectedSkill.id()}
+                               skillName={selectedSkill.qualifier()}
+                               onClose={() => this.setState({skillRenameOpen: false})}/>
         </>;
     };
 
@@ -493,6 +503,9 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                     onClose={this.closeNameDialog}
                     onOk={this.handleCreateCategory}
                 />
+                {this.state.skillToDelete !== null &&
+                <SkillDeleteDialog open skillName={this.state.skillToDelete}
+                                   onClose={() => this.setState({skillToDelete: null})}/>}
                 <SetValueDialog
                     open={this.state.skillNameOpen}
                     label={PowerLocalize.get('AdminClient.Info.SkillTree.NewSkill.Name')}
@@ -505,6 +518,7 @@ class AdminSkillTree2Module extends React.Component<AllProps, AdminSkillTree2Loc
                             label={PowerLocalize.get('Action.Search')}
                             margin={'dense'}
                             style={{verticalAlign: 'middle'}}
+                            value={this.props.skillStore.filterTerm}
                             onChange={(e: any) => {
                                 this.props.filter(e.target.value);
                             }}

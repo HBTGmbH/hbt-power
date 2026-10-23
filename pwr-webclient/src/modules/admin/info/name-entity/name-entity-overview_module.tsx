@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ProfileElementType} from '../../../../Store';
-import {FormControl, InputLabel, MenuItem, Select, Typography, withTheme} from '@material-ui/core';
+import {FormControl, Icon, InputLabel, MenuItem, Select, Typography, withTheme} from '@material-ui/core';
 import {NameEntityUtil} from '../../../../utils/NameEntityUtil';
 import {PowerLocalize} from '../../../../localization/PowerLocalizer';
 import {NAME_ENTITY_BY_NAME} from '../../../../utils/Comparators';
@@ -19,6 +19,13 @@ import {ThunkDispatch} from 'redux-thunk';
 import {matchPath, RouteComponentProps, withRouter} from 'react-router-dom';
 import {Paths} from '../../../../Paths';
 import {StringUtils} from '../../../../utils/StringUtil';
+import {ConsultantName} from '../../../../model/ConsultantName';
+import {AdminActionCreator} from '../../../../reducers/admin/AdminActionCreator';
+import {ProfileServiceClient} from '../../../../clients/ProfileServiceClient';
+import {PwrIconButton} from '../../../general/pwr-icon-button';
+import {PwrButton} from '../../../general/pwr-button';
+import {PwrSpacer} from '../../../general/pwr-spacer_module';
+import {NameEntityChangeDialog, UnusedNameEntitiesDialog} from './name-entity-dialogs';
 
 interface NameEntityOverviewProps {
     sectors: Array<NameEntity>;
@@ -32,11 +39,14 @@ interface NameEntityOverviewProps {
     companies: Array<NameEntity>;
     currentlyUsedSkillNames: Array<string>;
     nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>;
+    consultantNames: Record<string, ConsultantName>;
 }
 
 type NameEntityOverviewLocalProps = RouteComponentProps;
 
 interface NameEntityOverviewLocalState {
+    /** Renaming, merging or deleting the unused ones of the type (#227) */
+    dialog: 'rename' | 'merge' | 'unused' | null;
 }
 
 interface NameEntityOverviewDispatch {
@@ -45,6 +55,8 @@ interface NameEntityOverviewDispatch {
     requestCurrentlyUsedSkills(): void;
 
     requestNameEntityUsageInfo(nameEntity: NameEntity, type: ProfileElementType): void;
+
+    deleteNameEntity(nameEntity: NameEntity, users: Array<string>): void;
 }
 
 /**
@@ -99,6 +111,8 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     & NameEntityOverviewLocalProps
     & NameEntityOverviewDispatch
     & ThemeProps, NameEntityOverviewLocalState> {
+
+    state: NameEntityOverviewLocalState = {dialog: null};
 
     public componentDidMount() {
         this.props.requestAllNameEntities();
@@ -170,6 +184,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
             companies: state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
             currentlyUsedSkillNames: state.suggestionStore.allSkills,
             nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo,
+            consultantNames: state.consultantNames.names,
         };
     }
 
@@ -177,7 +192,8 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         return {
             requestAllNameEntities: () => dispatch(SuggestionAsyncActionCreator.requestAllNameEntities()),
             requestNameEntityUsageInfo: (nameEntity, type) => dispatch(StatisticsActionCreator.AsyncRequestNameEntityUsageInfo(nameEntity, type)),
-            requestCurrentlyUsedSkills: () => dispatch(SuggestionAsyncActionCreator.requestAllSkills())
+            requestCurrentlyUsedSkills: () => dispatch(SuggestionAsyncActionCreator.requestAllSkills()),
+            deleteNameEntity: (nameEntity, users) => dispatch(AdminActionCreator.AsyncDeleteNameEntity(nameEntity, users))
         };
     }
 
@@ -194,12 +210,57 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         }));
     };
 
-    private renderInfoBox = (selected: NameEntity | undefined) => {
-        const usageInfo = selected && this.props.nameEntityUsageInfo.get(selected);
-        return <ProfileElementInfo name={selected && displayName(selected)} usedBy={usageInfo && usageInfo.toArray()}/>;
+    /**
+     * Asks first (makeDeferrable): the profiles using it come from the database, with their short names (#216)
+     */
+    private handleDelete = (selected: NameEntity) => {
+        ProfileServiceClient.instance().getNameEntityUsers(selected.id)
+            .then(users => this.props.deleteNameEntity(selected, users.map(initials =>
+                this.props.consultantNames[initials] ? this.props.consultantNames[initials].shortName : initials)))
+            .catch(console.error);
     };
 
+    private renderActions = (selected: NameEntity) => <div>
+        <PwrIconButton iconName="edit" tooltip={PowerLocalize.get('AdminClient.NameEntity.Rename.Action')}
+                       onClick={() => this.setState({dialog: 'rename'})}/>
+        <PwrIconButton iconName="call_merge" tooltip={PowerLocalize.get('Action.Merge')}
+                       onClick={() => this.setState({dialog: 'merge'})}/>
+        <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')}
+                       onClick={() => this.handleDelete(selected)}/>
+    </div>;
+
+    private renderInfoBox = (selected: NameEntity | undefined) => {
+        const usageInfo = selected && this.props.nameEntityUsageInfo.get(selected);
+        return <ProfileElementInfo name={selected && displayName(selected)} usedBy={usageInfo && usageInfo.toArray()}
+                                   action={selected && this.renderActions(selected)}/>;
+    };
+
+    private renderDialogs(selected: NameEntity | undefined) {
+        const type = this.selectedField();
+        const typeLabel = PowerLocalize.get(`NameEntityType.${type}`);
+        const closeDialog = () => this.setState({dialog: null});
+        return <>
+            {selected && <NameEntityChangeDialog open={this.state.dialog === 'rename' || this.state.dialog === 'merge'}
+                                                 mode={this.state.dialog === 'merge' ? 'merge' : 'rename'}
+                                                 nameEntity={selected} entities={this.getNameEntitiesByField(type)}
+                                                 typeLabel={typeLabel} onClose={closeDialog}
+                                                 onDone={this.handleSelectEntity}/>}
+            <UnusedNameEntitiesDialog open={this.state.dialog === 'unused'} type={type} typeLabel={typeLabel}
+                                      onClose={closeDialog}/>
+        </>;
+    }
+
     private renderSelect() {
+        return <>
+            {this.renderTypeSelect()}
+            <PwrSpacer size="tight"/>
+            <PwrButton color="primary" text={PowerLocalize.get('AdminClient.NameEntity.Unused.Action')}
+                       icon={<Icon className="material-icons">delete_sweep</Icon>}
+                       onClick={() => this.setState({dialog: 'unused'})}/>
+        </>;
+    }
+
+    private renderTypeSelect() {
         return <FormControl variant="filled" fullWidth>
             <InputLabel id="name-entity-overview-element-type-label" htmlFor="name-entity-overview-element-type">
                 {PowerLocalize.get('AdminClient.Menu.Info.ProfileElements.ElementTypes')}
@@ -218,7 +279,9 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     render() {
         const nameEntities = this.getNameEntitiesByField(this.selectedField());
         const selected = this.selectedEntity();
-        return <ProfileElementLayout
+        return <>
+            {this.renderDialogs(selected)}
+            <ProfileElementLayout
             filter={this.renderSelect()}
             list={<PwrListTable label={PowerLocalize.get(`NameEntityType.${this.selectedField()}`)}
                                 items={nameEntities}
@@ -228,7 +291,8 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                                 emptyText={PowerLocalize.get('AdminClient.Overview.NoEntries')}
                                 columns={[{header: PowerLocalize.get('AdminClient.Overview.Name'), render: renderName}]}/>}
             info={this.renderInfoBox(selected)}
-        />;
+        />
+        </>;
     }
 }
 

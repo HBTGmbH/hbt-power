@@ -186,12 +186,6 @@ export class SkillServiceClient extends PowerHttpClient {
         return this.post(url, {qualifier: qualifier});
     };
 
-    public deleteCustomSkill = (skillId: number) => {
-        const url = this.base() + '/admin/skill/' + skillId;
-        this.beginRequest();
-        return this.delete(url);
-    };
-
     public deleteCategory = (categoryId: number) => {
         const url = this.base() + '/admin/category/' + categoryId;
         this.beginRequest();

@@ -3,6 +3,7 @@ package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.client.StatisticsClient;
+import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
@@ -38,7 +39,9 @@ public class ProfileServiceTest {
         profileRepository = mock(ProfileRepository.class);
         skillProfileClient = mock(SkillProfileClient.class);
         statisticsClient = mock(StatisticsClient.class);
-        profileService = new ProfileService(profileRepository, skillProfileClient, statisticsClient);
+        // Registers the refresh after the commit like the real client, the refresh itself is mocked
+        doCallRealMethod().when(statisticsClient).refreshConsultantsAfterCommit();
+        profileService = new ProfileService(profileRepository, skillProfileClient, statisticsClient, mock(AdminNotificationRepository.class));
     }
 
     private static Skill skill(String name, int rating, String... versions) {
@@ -269,5 +272,72 @@ public class ProfileServiceTest {
         profileService.mergeSkillsInProfiles("Java 8", "Java", null);
 
         verify(statisticsClient).refreshConsultants();
+    }
+
+    @Test
+    public void whenRenamingASkill_shouldRenameItInProfilesAndProjects_andKeepAliases() {
+        Profile profile = profileWithSkills(skill("kubernetes", 3), skill("K8S", 2), skill("Docker", 4));
+        profile.setProjects(hashSet(Project.builder().skills(hashSet(only(profile.getSkills(), "kubernetes"))).build()));
+        when(profileRepository.findAll()).thenReturn(singletonList(profile));
+        when(skillProfileClient.renameSkill("Kubernetes", "Kubernetes Engine")).thenReturn("Kubernetes Engine");
+
+        profileService.renameSkill(" Kubernetes ", " Kubernetes Engine");
+
+        assertThat(profile.getSkills()).extracting(Skill::getName).containsExactlyInAnyOrder("Kubernetes Engine", "K8S", "Docker");
+        assertThat(profile.getProjects()).flatExtracting(Project::getSkills).extracting(Skill::getName)
+                .containsExactly("Kubernetes Engine");
+        verify(statisticsClient).refreshConsultants();
+    }
+
+    @Test
+    public void whenRenamingASkillToANameAProfileHasToo_shouldKeepOneSkill() {
+        Profile profile = profileWithSkills(skill("JS", 2), skill("JavaScript", 4));
+        when(profileRepository.findAll()).thenReturn(singletonList(profile));
+        when(skillProfileClient.renameSkill("JS", "JavaScript")).thenReturn("JavaScript");
+
+        profileService.renameSkill("JS", "JavaScript");
+
+        assertThat(only(profile.getSkills(), "JavaScript").getRating()).isEqualTo(4);
+        assertThat(profile.getSkills()).hasSize(1);
+    }
+
+    @Test
+    public void whenTheSkillServiceRejectsTheRename_shouldNotChangeProfiles() {
+        doThrow(new WebApplicationException(HttpStatus.CONFLICT, "name of another skill"))
+                .when(skillProfileClient).renameSkill("Docker", "Kubernetes");
+
+        assertThatThrownBy(() -> profileService.renameSkill("Docker", "Kubernetes"))
+                .isInstanceOf(WebApplicationException.class);
+
+        verify(profileRepository, never()).findAll();
+        verify(statisticsClient, never()).refreshConsultants();
+    }
+
+    @Test
+    public void whenDeletingASkill_shouldRemoveItUnderNameAndAliasesFromProfilesAndProjects_andThenFromTheTree() throws Exception {
+        Profile profile = profileWithSkills(skill("kubernetes", 3), skill("k8s", 2), skill("Docker", 4));
+        profile.setProjects(hashSet(Project.builder()
+                .skills(hashSet(only(profile.getSkills(), "kubernetes"), only(profile.getSkills(), "Docker"))).build()));
+        when(profileRepository.findAll()).thenReturn(singletonList(profile));
+        when(skillProfileClient.requireTreeSkill("Kubernetes")).thenReturn(new com.fasterxml.jackson.databind.ObjectMapper()
+                .readTree("{\"id\": 7, \"qualifier\": \"Kubernetes\", \"aliases\": [\"K8S\"]}"));
+
+        profileService.deleteSkill("Kubernetes");
+
+        assertThat(profile.getSkills()).extracting(Skill::getName).containsExactly("Docker");
+        assertThat(profile.getProjects()).flatExtracting(Project::getSkills).extracting(Skill::getName).containsExactly("Docker");
+        verify(skillProfileClient).deleteSkill(7);
+        verify(statisticsClient).refreshConsultants();
+    }
+
+    @Test
+    public void whenTheTreeHasNoSuchSkill_deletingShouldNotChangeProfiles() {
+        doThrow(new WebApplicationException(HttpStatus.NOT_FOUND, "no skill"))
+                .when(skillProfileClient).requireTreeSkill("Kubernetes");
+
+        assertThatThrownBy(() -> profileService.deleteSkill("Kubernetes")).isInstanceOf(WebApplicationException.class);
+
+        verify(profileRepository, never()).findAll();
+        verify(skillProfileClient, never()).deleteSkill(anyLong());
     }
 }

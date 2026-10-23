@@ -39,6 +39,14 @@ public class ProjectNotification extends AdminNotification {
         this.project = project;
     }
 
+    public NameEntity getNameEntity() {
+        return nameEntity;
+    }
+
+    public void setNameEntity(NameEntity nameEntity) {
+        this.nameEntity = nameEntity;
+    }
+
     @Override
     public String getNotificationType() {
         return this.getClass().getSimpleName();

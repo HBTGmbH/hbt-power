@@ -38,10 +38,28 @@ import {confirmDeleteByName} from '../deferred/DeferredActions';
 import {ThunkDispatch} from 'redux-thunk';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
 import {loadConsultantNames} from '../consultant-names/ConsultantNameActionCreator';
+import {NameEntity} from '../profile-new/profile/model/NameEntity';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 
 const profileServiceClient = ProfileServiceClient.instance();
 const skillServiceClient = SkillServiceClient.instance();
+
+/**
+ * After a profile element changed in all profiles (#227): the lists of all elements and who uses them are loaded again
+ */
+function afterNameEntityChange(dispatch: ThunkDispatch<any, any, any>) {
+    dispatch(SuggestionAsyncActionCreator.requestAllNameEntities());
+    dispatch(StatisticsActionCreator.ForgetNameEntityUsageInfo());
+}
+
+/**
+ * After a skill changed in the tree and in all profiles (#228, #229): the tree, the used skills and who uses them
+ */
+function afterSkillChange(dispatch: ThunkDispatch<any, any, any>, ...skillNames: Array<string>) {
+    dispatch(SkillActionCreator.AsyncLoadTree());
+    dispatch(SuggestionAsyncActionCreator.requestAllSkills());
+    dispatch(StatisticsActionCreator.ForgetSkillUsageInfo(...skillNames));
+}
 
 export class AdminActionCreator {
 
@@ -439,6 +457,8 @@ export class AdminActionCreator {
                     dispatch(SuggestionAsyncActionCreator.requestAllSkills());
                     dispatch(StatisticsActionCreator.ForgetSkillUsageInfo(source, target, targetName));
                     dispatch(StatisticsActionCreator.AsyncRequestSkillUsageInfo(targetName));
+                    // The source is gone from the skill tree, or an alias of the target now (#228, #229)
+                    dispatch(SkillActionCreator.AsyncLoadTree());
                 })
                 .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Infos.UsedSkills.Merge.Success', source, targetName)))
                 .catch((error: PowerApiError) => {
@@ -453,6 +473,90 @@ export class AdminActionCreator {
                         console.error(error);
                     }
                 });
+        };
+    }
+
+    /**
+     * Renames a skill of the skill tree, in the tree and in all profiles (#228); the old name becomes an alias. Who
+     * uses the skill is loaded again under its new name.
+     */
+    public static AsyncRenameSkill(name: string, newName: string) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.renameSkill(name, newName.trim())
+                .then(() => afterSkillChange(dispatch, name, newName.trim()))
+                .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Rename.Success', name, newName.trim())))
+                .catch(console.error);
+        };
+    }
+
+    /**
+     * Deletes a skill from all profiles and projects and from the skill tree (#229). Used by profiles, the name has to
+     * be entered twice (#181); unused, a simple question.
+     */
+    @makeDeferrable(ActionType.AsyncDeleteSkillEverywhere, (name: string, profileCount: number) =>
+        profileCount > 0 ? confirmDeleteByName('SkillEverywhere', name, profileCount) : confirmDeleteByName('Skill', name))
+    public static AsyncDeleteSkillEverywhere(name: string, profileCount: number) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.deleteSkillEverywhere(name)
+                .then(() => afterSkillChange(dispatch, name))
+                .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Delete.Success', name)))
+                .catch(console.error);
+        };
+    }
+
+    /** onDone gets the renamed element (the middleware doesn't pass on the promise of a thunk) */
+    public static AsyncRenameNameEntity(nameEntity: NameEntity, name: string, onDone: (renamed: NameEntity) => void) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.renameNameEntity(nameEntity.id, name.trim())
+                .then(renamed => {
+                    afterNameEntityChange(dispatch);
+                    Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.NameEntity.Rename.Success', nameEntity.name, renamed.name));
+                    onDone(renamed);
+                })
+                .catch(console.error);
+        };
+    }
+
+    /** onDone gets the target, which is left */
+    public static AsyncMergeNameEntity(source: NameEntity, target: NameEntity, onDone: (merged: NameEntity) => void) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.mergeNameEntity(source.id, target.id)
+                .then(merged => {
+                    afterNameEntityChange(dispatch);
+                    Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.NameEntity.Merge.Success', source.name, target.name));
+                    onDone(merged);
+                })
+                .catch(console.error);
+        };
+    }
+
+    /**
+     * Deletes a profile element from all profiles (#227). Used by profiles, the dialog names them and the name has to
+     * be entered twice (#181); unused, a simple question.
+     */
+    @makeDeferrable(ActionType.AsyncDeleteNameEntity, (nameEntity: NameEntity, users: Array<string>) =>
+        users.length > 0 ? confirmDeleteByName('NameEntity', nameEntity.name, users.length, users.join(', '))
+            : {...confirmDeleteByName('NameEntityUnused', nameEntity.name), name: ''})
+    public static AsyncDeleteNameEntity(nameEntity: NameEntity, users: Array<string>) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.deleteNameEntity(nameEntity.id)
+                .then(() => {
+                    afterNameEntityChange(dispatch);
+                    Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.NameEntity.Delete.Success', nameEntity.name));
+                })
+                .catch(console.error);
+        };
+    }
+
+    /** The dialog with the list of unused elements is the question */
+    public static AsyncDeleteUnusedNameEntities(type: string) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            profileServiceClient.deleteUnusedNameEntities(type)
+                .then(deleted => {
+                    afterNameEntityChange(dispatch);
+                    Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.NameEntity.Unused.Success', deleted.length));
+                })
+                .catch(console.error);
         };
     }
 

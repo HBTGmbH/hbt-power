@@ -62,10 +62,6 @@ export interface MoveSkillAction extends AbstractAction {
     skillId: number;
 }
 
-export interface RemoveSkillAction extends AbstractAction {
-    skillId: number;
-}
-
 export interface UpdateSkillServiceSkillAction extends AbstractAction {
     skill: SkillServiceSkill;
 }

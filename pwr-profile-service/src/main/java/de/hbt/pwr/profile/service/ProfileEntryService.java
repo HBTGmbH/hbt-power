@@ -8,6 +8,7 @@ import de.hbt.pwr.profile.model.profile.BaseProfile;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
+import de.hbt.pwr.profile.model.profile.entries.NameEntityFormerName;
 import de.hbt.pwr.profile.model.profile.entries.ProfileEntry;
 import de.hbt.pwr.profile.model.profile.entries.Project;
 import lombok.extern.slf4j.Slf4j;
@@ -30,19 +31,22 @@ public class ProfileEntryService {
     private SkillRepository skillRepository;
     private ProjectRepository projectRepository;
     private SkillProfileClient skillProfileClient;
+    private NameEntityFormerNameRepository formerNameRepository;
 
     @Autowired
     public ProfileEntryService(NameEntityRepository nameEntityRepository,
                                ProfileEntryDAO profileEntryDAO,
                                ProfileRepository profileRepository,
                                SkillRepository skillRepository,
-                               ProjectRepository projectRepository, SkillProfileClient skillProfileClient) {
+                               ProjectRepository projectRepository, SkillProfileClient skillProfileClient,
+                               NameEntityFormerNameRepository formerNameRepository) {
         this.nameEntityRepository = nameEntityRepository;
         this.profileEntryDAO = profileEntryDAO;
         this.profileRepository = profileRepository;
         this.skillRepository = skillRepository;
         this.projectRepository = projectRepository;
         this.skillProfileClient = skillProfileClient;
+        this.formerNameRepository = formerNameRepository;
     }
 
     public BaseProfile updateBaseProfile(Profile p, BaseProfile baseProfile) {
@@ -179,7 +183,7 @@ public class ProfileEntryService {
 
     /**
      * The profile element of this name, created if it does not exist yet; null without a name, so there never is an
-     * element without a name (#215)
+     * element without a name (#215). A former name of a renamed or merged element stands for that element (#227).
      */
     private NameEntity validateNameEntity(NameEntity nameEntity, NameEntityType type) {
         String name = trimmedName(nameEntity);
@@ -189,6 +193,13 @@ public class ProfileEntryService {
         NameEntity concurrent = nameEntityRepository.findByNameAndType(name, type);
         if (concurrent != null) {
             return concurrent;
+        }
+        Optional<NameEntity> renamed = formerNameRepository.findAllByType(type).stream()
+                .filter(formerName -> formerName.getName().equalsIgnoreCase(name))
+                .map(NameEntityFormerName::getNameEntity)
+                .findAny();
+        if (renamed.isPresent()) {
+            return renamed.get();
         } else {
             return nameEntityRepository.save(NameEntity.builder().name(name).type(type).build());
         }

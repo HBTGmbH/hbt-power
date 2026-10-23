@@ -103,6 +103,19 @@ export class SkillTreeNode {
         }
     }
 
+    /**
+     * Opens the categories that were open in the tree before it was loaded again, so a change in the admin skill
+     * tree doesn't collapse it
+     */
+    public takeOpenFrom(previous: SkillTreeNode) {
+        if (!previous) {
+            return;
+        }
+        this.open = previous.open;
+        this.childNodes.forEach(childNode => childNode.takeOpenFrom(
+            previous.childNodes.find(previousChild => previousChild.skillCategoryId === childNode.skillCategoryId)));
+    }
+
     public setVisibility(nodeId: number, status: boolean) {
         if (this.skillCategoryId === nodeId) {
             this.open = status;

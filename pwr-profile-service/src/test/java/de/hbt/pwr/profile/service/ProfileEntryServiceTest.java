@@ -34,6 +34,7 @@ public class ProfileEntryServiceTest {
     private ProfileUpdateService profileUpdateService;
     private SkillRepository skillRepository;
     private ProjectRepository projectRepository;
+    private NameEntityFormerNameRepository formerNameRepository;
     private SkillProfileClient skillProfileClient;
 
     @Before
@@ -41,6 +42,7 @@ public class ProfileEntryServiceTest {
 
         profileEntryDAO = mock(ProfileEntryDAO.class);
         nameEntityRepository = mock(NameEntityRepository.class);
+        formerNameRepository = mock(NameEntityFormerNameRepository.class);
         profileRepository = mock(ProfileRepository.class);
         skillRepository = mock(SkillRepository.class);
         projectRepository = mock(ProjectRepository.class);
@@ -52,7 +54,7 @@ public class ProfileEntryServiceTest {
         when(projectRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         profileUpdateService = new ProfileUpdateService(nameEntityRepository, skillRepository, profileEntryDAO, projectRepository, profileRepository, null, null);
-        profileEntryService = new ProfileEntryService(nameEntityRepository, profileEntryDAO, profileRepository, skillRepository, projectRepository, skillProfileClient);
+        profileEntryService = new ProfileEntryService(nameEntityRepository, profileEntryDAO, profileRepository, skillRepository, projectRepository, skillProfileClient, formerNameRepository);
     }
 
 

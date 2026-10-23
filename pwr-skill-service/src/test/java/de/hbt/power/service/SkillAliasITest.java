@@ -1,5 +1,6 @@
 package de.hbt.power.service;
 
+import de.hbt.power.model.LocalizedQualifier;
 import de.hbt.power.model.Skill;
 import de.hbt.power.model.SkillCategory;
 import de.hbt.power.repo.SkillCategoryRepository;
@@ -295,5 +296,75 @@ public class SkillAliasITest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.childCategories[?(@.qualifier == 'Containers')].childSkills[0].aliases[*]",
                         containsInAnyOrder("K8S")));
+    }
+
+    @Test
+    public void rename_makesTheOldNameAnAlias_andKeepsVersionsLocalizationsAndCategory() throws Exception {
+        Skill k8s = skill("K8s Engine", containers, "1.29");
+        k8s.addLocale(java.util.Locale.GERMAN, "K8s-Maschine");
+        skillRepository.save(k8s);
+
+        mockMvc.perform(post("/admin/skill/rename").param("name", "k8s engine").param("newName", " Kubernetes Engine "))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.qualifier").value("Kubernetes Engine"));
+
+        Skill renamed = skillRepository.findById(k8s.getId()).get();
+        assertThat(renamed.getQualifier()).isEqualTo("Kubernetes Engine");
+        assertThat(renamed.getAliases()).containsExactly("K8s Engine");
+        assertThat(renamed.getVersions()).containsExactly("1.29");
+        assertThat(renamed.getQualifiers()).extracting(LocalizedQualifier::getQualifier).containsExactly("K8s-Maschine");
+        assertThat(renamed.getCategory().getId()).isEqualTo(containers.getId());
+        mockMvc.perform(get("/skill/byName").param("qualifier", "K8S ENGINE"))
+                .andExpect(jsonPath("$.qualifier").value("Kubernetes Engine"));
+        assertThat(skillSearcherService.searchSkill("Engine", 10)).containsExactly("Kubernetes Engine");
+    }
+
+    @Test
+    public void rename_inAnotherCase_addsNoAlias() throws Exception {
+        mockMvc.perform(post("/admin/skill/rename").param("name", "Kubernetes").param("newName", "KUBERNETES"))
+                .andExpect(status().isOk());
+
+        Skill renamed = skillRepository.findById(kubernetes.getId()).get();
+        assertThat(renamed.getQualifier()).isEqualTo("KUBERNETES");
+        assertThat(renamed.getAliases()).isEmpty();
+    }
+
+    @Test
+    public void rename_toAnOwnAlias_swapsNameAndAlias() throws Exception {
+        addAlias(kubernetes, "K8S");
+
+        mockMvc.perform(post("/admin/skill/rename").param("name", "Kubernetes").param("newName", "k8s"))
+                .andExpect(status().isOk());
+
+        Skill renamed = skillRepository.findById(kubernetes.getId()).get();
+        assertThat(renamed.getQualifier()).isEqualTo("k8s");
+        assertThat(renamed.getAliases()).containsExactly("Kubernetes");
+    }
+
+    @Test
+    public void rename_toTheNameOfAnotherSkill_isAConflict() throws Exception {
+        skill("Docker", containers);
+
+        mockMvc.perform(post("/admin/skill/rename").param("name", "Docker").param("newName", "kubernetes"))
+                .andExpect(status().isConflict());
+
+        assertThat(skillRepository.findAll()).extracting(Skill::getQualifier).containsExactlyInAnyOrder("Docker", "Kubernetes");
+    }
+
+    @Test
+    public void rename_toAnAliasOfAnotherSkill_isAConflict() throws Exception {
+        skill("Docker", containers);
+        addAlias(kubernetes, "K8S");
+
+        mockMvc.perform(post("/admin/skill/rename").param("name", "Docker").param("newName", "k8s"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void rename_withoutName_isRejected_andUnknownSkill_isNotFound() throws Exception {
+        mockMvc.perform(post("/admin/skill/rename").param("name", "Kubernetes").param("newName", "  "))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/admin/skill/rename").param("name", "Nomad").param("newName", "HashiCorp Nomad"))
+                .andExpect(status().isNotFound());
     }
 }

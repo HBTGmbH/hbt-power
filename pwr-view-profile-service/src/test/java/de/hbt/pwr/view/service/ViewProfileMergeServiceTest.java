@@ -6,7 +6,12 @@ import de.hbt.pwr.view.model.ViewProfile;
 import de.hbt.pwr.view.model.entries.Career;
 import de.hbt.pwr.view.model.entries.Language;
 import de.hbt.pwr.view.model.entries.Project;
+import de.hbt.pwr.view.client.profile.ProfileServiceClient;
+import de.hbt.pwr.view.client.profile.model.FormerName;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
+import de.hbt.pwr.view.model.entries.ProjectRole;
+import de.hbt.pwr.view.model.entries.Sector;
+import de.hbt.pwr.view.model.skill.SkillVersion;
 import de.hbt.pwr.view.client.skill.model.SkillServiceSkill;
 import de.hbt.pwr.view.model.skill.Category;
 import de.hbt.pwr.view.model.skill.Skill;
@@ -21,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static de.hbt.pwr.view.client.profile.model.NameEntityType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,6 +77,8 @@ public class ViewProfileMergeServiceTest {
 
     private final SkillServiceClient skillServiceClient = mock(SkillServiceClient.class);
 
+    private final ProfileServiceClient profileServiceClient = mock(ProfileServiceClient.class);
+
     @Before
     public void setUp() throws Exception {
         oldView = makeViewProfile();
@@ -81,7 +89,7 @@ public class ViewProfileMergeServiceTest {
         ViewProfileRepository viewProfileRepository = mock(ViewProfileRepository.class);
         when(viewProfileRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
         viewProfileMergeService = new ViewProfileMergeService(viewProfileRepository, null, viewProfileLocalizationService,
-                skillServiceClient);
+                skillServiceClient, profileServiceClient);
     }
 
     @Test
@@ -225,5 +233,133 @@ public class ViewProfileMergeServiceTest {
         assertThat(updatedProject.getStartDate()).isEqualTo(newProject.getStartDate());
         assertThat(updatedProject.getName()).isEqualTo(newProject.getName());
         assertThat(updatedProject.getEnabled()).isFalse(); // The old project was disabled, so this is, too
+    }
+
+    private ViewProfile merged(ViewProfile newView) {
+        return viewProfileMergeService.mergeViewProfiles(oldView, newView, options);
+    }
+
+    private static Sector sector(String name, boolean enabled) {
+        return new Sector(name, enabled);
+    }
+
+    private static SkillServiceSkill treeSkill(String qualifier) {
+        SkillServiceSkill skill = new SkillServiceSkill();
+        skill.setQualifier(qualifier);
+        return skill;
+    }
+
+    /**
+     * A profile element renamed since (#230): the entry is the old one under its new name
+     */
+    @Test
+    public void aRenamedEntry_keepsWhetherItIsShown() {
+        when(profileServiceClient.getFormerNames()).thenReturn(List.of(new FormerName(SECTOR, "Bank", "Bankwesen")));
+        oldView.setSectors(new ArrayList<>(List.of(sector("Bank", false), sector("Versicherungen", false))));
+        ViewProfile newView = new ViewProfile();
+        newView.setSectors(new ArrayList<>(List.of(sector("Bankwesen", true), sector("versicherungen", true),
+                sector("Logistik", true))));
+
+        assertThat(merged(newView).getSectors()).extracting(Sector::getName, Sector::getEnabled)
+                .containsExactly(tuple("Bankwesen", false), tuple("versicherungen", false), tuple("Logistik", true));
+    }
+
+    @Test
+    public void twoMergedEntries_areShownIfOneOfThemWas() {
+        when(profileServiceClient.getFormerNames()).thenReturn(List.of(new FormerName(SECTOR, "bank", "Banken")));
+        oldView.setSectors(new ArrayList<>(List.of(sector("Bank", true), sector("Banken", false))));
+        ViewProfile newView = new ViewProfile();
+        newView.setSectors(new ArrayList<>(List.of(sector("Banken", false))));
+
+        assertThat(merged(newView).getSectors()).extracting(Sector::getEnabled).containsExactly(true);
+    }
+
+    @Test
+    public void entriesOfTheSameName_areTheOnesWithTheSameDates() {
+        when(profileServiceClient.getFormerNames()).thenReturn(List.of(new FormerName(CAREER, "HBT", "HBT GmbH")));
+        LocalDate start1 = LocalDate.of(2015, 1, 1);
+        LocalDate end1 = LocalDate.of(2018, 12, 31);
+        LocalDate start2 = LocalDate.of(2021, 1, 1);
+        oldView.setCareers(new ArrayList<>(List.of(new Career("HBT", start1, end1, false), new Career("HBT GmbH", start2, null, true))));
+        ViewProfile newView = new ViewProfile();
+        newView.setCareers(new ArrayList<>(List.of(new Career("HBT GmbH", start1, end1, true), new Career("HBT GmbH", start2, null, false))));
+
+        assertThat(merged(newView).getCareers()).extracting(Career::getStartDate, Career::getEnabled)
+                .containsExactly(tuple(start1, false), tuple(start2, true));
+    }
+
+    @Test
+    public void withoutFormerNames_entriesAreFoundUnderTheirNames() {
+        when(profileServiceClient.getFormerNames()).thenReturn(List.of());
+        oldView.setSectors(new ArrayList<>(List.of(sector("Bank", false))));
+        ViewProfile newView = new ViewProfile();
+        newView.setSectors(new ArrayList<>(List.of(sector("Bank", true), sector("Bankwesen", true))));
+
+        assertThat(merged(newView).getSectors()).extracting(Sector::getEnabled).containsExactly(false, true);
+    }
+
+    @Test
+    public void aRenamedRoleOfAProject_keepsWhetherItIsShownAndItsPlace() {
+        when(profileServiceClient.getFormerNames()).thenReturn(List.of(new FormerName(PROJECT_ROLE, "Dev", "Entwickler")));
+        Project oldProject = ViewProfileFixtures.validProject().toBuilder().id(77L)
+                .projectRoles(new ArrayList<>(List.of(new ProjectRole("Architekt", true), new ProjectRole("Dev", false))))
+                .build();
+        Project newProject = oldProject.toBuilder()
+                .projectRoles(new ArrayList<>(List.of(new ProjectRole("Tester", true), new ProjectRole("Entwickler", true),
+                        new ProjectRole("Architekt", true))))
+                .build();
+        oldView.setProjects(new ArrayList<>(List.of(oldProject)));
+        ViewProfile newView = new ViewProfile();
+        newView.getProjects().add(newProject);
+
+        assertThat(merged(newView).getProjects().get(0).getProjectRoles())
+                .extracting(ProjectRole::getName, ProjectRole::getEnabled)
+                .containsExactly(tuple("Architekt", true), tuple("Entwickler", false), tuple("Tester", true));
+    }
+
+    /**
+     * A skill renamed in the skill tree (#228) keeps its place in the display category, whether it is shown and which
+     * of its versions are; a deleted one goes (#229), a new one goes into its category
+     */
+    @Test
+    public void aRenamedSkill_keepsItsPlaceInTheDisplayCategory() {
+        when(skillServiceClient.getSkillByName("K8s")).thenReturn(treeSkill("Kubernetes"));
+        Category oldContainers = new Category(5L, "Container", true, true);
+        Skill.builder().name("Docker").enabled(true).displayCategory(oldContainers).build();
+        Skill oldK8s = Skill.builder().name("K8s").enabled(false).displayCategory(oldContainers).build();
+        oldK8s.setVersions(List.of("1.28", "1.29"));
+        oldK8s.setEnabledForVersion("1.28", false);
+        Skill.builder().name("Nomad").enabled(true).displayCategory(oldContainers).build();
+        oldView.setDisplayCategories(new ArrayList<>(List.of(oldContainers)));
+
+        Category newContainers = new Category(5L, "Container", true, true);
+        Skill.builder().name("Podman").enabled(true).displayCategory(newContainers).build();
+        Skill newK8s = Skill.builder().name("Kubernetes").enabled(true).displayCategory(newContainers).build();
+        newK8s.setVersions(List.of("1.28", "1.29", "1.30"));
+        Skill.builder().name("Docker").enabled(true).displayCategory(newContainers).build();
+        ViewProfile newView = new ViewProfile();
+        newView.setDisplayCategories(new ArrayList<>(List.of(newContainers)));
+
+        List<Category> categories = merged(newView).getDisplayCategories();
+
+        assertThat(categories).hasSize(1);
+        assertThat(categories.get(0).getDisplaySkills()).extracting(Skill::getName, Skill::getEnabled)
+                .containsExactly(tuple("Docker", true), tuple("Kubernetes", false), tuple("Podman", true));
+        assertThat(categories.get(0).getDisplaySkills().get(1).getVersions())
+                .extracting(SkillVersion::getName, SkillVersion::getEnabled)
+                .containsExactly(tuple("1.28", false), tuple("1.29", true), tuple("1.30", true));
+    }
+
+    @Test
+    public void aNewProject_goesBehindTheOldOnes() {
+        Project old1 = ViewProfileFixtures.validProject().toBuilder().id(1L).name("Eins").build();
+        Project old2 = ViewProfileFixtures.validProject().toBuilder().id(2L).name("Zwei").build();
+        oldView.setProjects(new ArrayList<>(List.of(old2, old1)));
+        ViewProfile newView = new ViewProfile();
+        newView.getProjects().add(old1.toBuilder().build());
+        newView.getProjects().add(ViewProfileFixtures.validProject().toBuilder().id(3L).name("Drei").build());
+        newView.getProjects().add(old2.toBuilder().build());
+
+        assertThat(merged(newView).getProjects()).extracting(Project::getName).containsExactly("Zwei", "Eins", "Drei");
     }
 }
