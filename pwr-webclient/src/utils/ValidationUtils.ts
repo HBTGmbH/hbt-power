@@ -7,7 +7,8 @@ export interface ValidationError {
 export type ValidatorFn = (value: string) => ValidationError | null;
 
 export function validateNonEmptyProfileEntry(value: string): ValidationError | null {
-    if (!value) {
+    // Only spaces is no name either (#215)
+    if (!value || value.trim() === '') {
         return {
             msg: PowerLocalize.get(`Validation.NameRequired`)
         };

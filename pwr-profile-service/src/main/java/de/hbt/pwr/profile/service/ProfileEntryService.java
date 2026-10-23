@@ -54,8 +54,14 @@ public class ProfileEntryService {
 
 
     // TODO 2: Result Messages
-    // TODO 3: Leere Name Entity/Validierung von fachlichen Daten
+    /**
+     * @throws WebApplicationException 400 if the entry has no name (#215): it would create a profile element without
+     *                                 a name
+     */
     public <Entry extends ProfileEntry> Entry updateProfileEntry(Entry profileEntry, Profile profile, NameEntityType nameEntityType) {
+        if (trimmedName(profileEntry.getNameEntity()) == null) {
+            throw new WebApplicationException(HttpStatus.BAD_REQUEST, "A profile entry needs a name");
+        }
         // Every change counts as a profile update, not only the description and projects (#139)
         profile.setLastEdited(LocalDateTime.now());
         NameEntity nameEntity = validateNameEntity(profileEntry.getNameEntity(), nameEntityType);
@@ -161,15 +167,30 @@ public class ProfileEntryService {
         profile.setLastEdited(now);
     }
 
-    private NameEntity validateNameEntity(NameEntity nameEntity, NameEntityType type) {
-        if (nameEntity == null) {
+    /**
+     * The name without spaces at the ends; null for no name or a blank one (#215)
+     */
+    private static String trimmedName(NameEntity nameEntity) {
+        if (nameEntity == null || nameEntity.getName() == null || nameEntity.getName().isBlank()) {
             return null;
         }
-        NameEntity concurrent = nameEntityRepository.findByNameAndType(nameEntity.getName(), type);
+        return nameEntity.getName().trim();
+    }
+
+    /**
+     * The profile element of this name, created if it does not exist yet; null without a name, so there never is an
+     * element without a name (#215)
+     */
+    private NameEntity validateNameEntity(NameEntity nameEntity, NameEntityType type) {
+        String name = trimmedName(nameEntity);
+        if (name == null) {
+            return null;
+        }
+        NameEntity concurrent = nameEntityRepository.findByNameAndType(name, type);
         if (concurrent != null) {
             return concurrent;
         } else {
-            return nameEntityRepository.save(NameEntity.builder().name(nameEntity.getName()).type(type).build());
+            return nameEntityRepository.save(NameEntity.builder().name(name).type(type).build());
         }
     }
 
@@ -180,7 +201,18 @@ public class ProfileEntryService {
         }
         Optional<Project> repoProject = project.getId() != null ? projectRepository.findById(project.getId()) : Optional.empty();
 
-        // clean up data / relations
+        // clean up data / relations; an emptied broker, client or role is none (#215)
+        if (trimmedName(project.getBroker()) == null) {
+            project.setBroker(null);
+        }
+        if (trimmedName(project.getClient()) == null) {
+            project.setClient(null);
+        }
+        if (project.getProjectRoles() != null) {
+            project.setProjectRoles(project.getProjectRoles().stream()
+                    .filter(role -> trimmedName(role) != null)
+                    .collect(Collectors.toSet()));
+        }
         if (project.getBroker() != null && (!repoProject.isPresent() || !project.getBroker().equals(repoProject.get().getBroker()))) {
             project.setBroker(validateNameEntity(project.getBroker(), NameEntityType.COMPANY));
         }
