@@ -82,7 +82,7 @@ export const ViewProfileSection = (props: ViewProfileSectionProps) => {
     };
 
     const renderActions = (viewProfile: ViewProfile) => <div className={classes.actions}>
-        <PwrIconButton iconName="open_in_new" tooltip={PowerLocalize.get('Action.Generate.Word')}
+        <PwrIconButton iconName="note_add" tooltip={PowerLocalize.get('Action.Generate.Word')}
                        onClick={() => setGeneratorFor(viewProfile.id)}/>
         <PwrIconButton iconName="edit" tooltip={PowerLocalize.get('Action.Edit')} onClick={() => edit(viewProfile)}/>
         <PwrIconButton iconName="delete" tooltip={PowerLocalize.get('Action.Delete')} onClick={() => remove(viewProfile)}/>

@@ -224,7 +224,7 @@ class ViewProfileGenerator extends React.Component<ViewProfileGeneratorProps
                 </DialogContent>
                 {/* The button bar of the forms (#134) instead of an app bar of its own */}
                 <DialogActions>
-                    <PwrFormActions editing noSpace saveText={PowerLocalize.get('Action.Generate.Word')} saveIcon="open_in_new"
+                    <PwrFormActions editing noSpace saveText={PowerLocalize.get('Action.Generate.Word')} saveIcon="note_add"
                                     saveDisabled={this.state.activeTemplateId === ''}
                                     onSave={() => this.startGenerate(this.props.viewProfileId, this.state.activeTemplateId)}
                                     onCancel={this.closeAndReset}/>
