@@ -3,11 +3,8 @@ import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {Avatar, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
-import {Paths} from '../../../Paths';
 import statisticsIcon from '../../../img/statistics_icon.svg';
-import {PwrRaisedButton} from '../../general/pwr-raised-button';
-import OpenInNew from '@material-ui/icons/OpenInNew';
+import {SkillStatisticsLink} from './skill-statistics-link';
 import {ThunkDispatch} from 'redux-thunk';
 import {APIProfileSkillMetric} from '../../../model/statistics/ApiMetrics';
 
@@ -24,7 +21,6 @@ interface CommonSkillsDashboardElementLocalState {
 }
 
 interface CommonSkillsDashboardElementDispatch {
-    navigateTo(target: string): void;
 }
 
 class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDashboardElementProps & CommonSkillsDashboardElementLocalProps & CommonSkillsDashboardElementDispatch, CommonSkillsDashboardElementLocalState> {
@@ -37,13 +33,9 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): CommonSkillsDashboardElementDispatch {
         return {
-            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
         };
     }
 
-    private showSkillStatistics = () => {
-        this.props.navigateTo(Paths.build(Paths.USER_STATISTICS_SKILLS, {initials: this.props.initials}));
-    };
 
     private renderCommonSkills = () => {
         if (this.props.profileSkillMetrics.common.length === 0) {
@@ -69,12 +61,10 @@ class CommonSkillsDashboardElementModule extends React.Component<CommonSkillsDas
                         <Avatar sizes={'80'} src={statisticsIcon}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
-                    Standard-Skills, die auch in diesem Profil vorhanden sind:{this.renderCommonSkills()}
+                    {PowerLocalize.get('Dashboard.CommonSkills')} {this.renderCommonSkills()}
                 </span>
                     <div className="col-md-3 col-sm-12">
-                        <PwrRaisedButton color={'primary'} icon={<OpenInNew/>}
-                                         text={PowerLocalize.get('Action.ShowMore')}
-                                         onClick={this.showSkillStatistics}/>
+                        <SkillStatisticsLink initials={this.props.initials}/>
                     </div>
                 </div>
             </Paper>);

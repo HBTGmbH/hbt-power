@@ -3,11 +3,8 @@ import * as React from 'react';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {Avatar, Paper} from '@material-ui/core';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
-import {NavigationActionCreator} from '../../../reducers/navigation/NavigationActionCreator';
-import {Paths} from '../../../Paths';
 import chartIcon from '../../../img/icon_chart.svg';
-import {PwrRaisedButton} from '../../general/pwr-raised-button';
-import OpenInNew from '@material-ui/icons/OpenInNew';
+import {SkillStatisticsLink} from './skill-statistics-link';
 import {ThunkDispatch} from 'redux-thunk';
 import {APIProfileSkillMetric} from '../../../model/statistics/ApiMetrics';
 
@@ -24,7 +21,6 @@ interface MissingCommonDashboardElementLocalState {
 }
 
 interface MissingCommonDashboardElementDispatch {
-    navigateTo(target: string): void;
 }
 
 class MissingCommonDashboardElementModule extends React.Component<MissingCommonDashboardElementProps & MissingCommonDashboardElementLocalProps & MissingCommonDashboardElementDispatch, MissingCommonDashboardElementLocalState> {
@@ -37,13 +33,9 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): MissingCommonDashboardElementDispatch {
         return {
-            navigateTo: target => dispatch(NavigationActionCreator.AsyncNavigateTo(target)),
         };
     }
 
-    private showSkillStatistics = () => {
-        this.props.navigateTo(Paths.build(Paths.USER_STATISTICS_SKILLS, {initials: this.props.initials}));
-    };
 
 
     private renderMissingSkills = () => {
@@ -70,12 +62,10 @@ class MissingCommonDashboardElementModule extends React.Component<MissingCommonD
                         <Avatar sizes={'80'} src={chartIcon}/>
                     </div>
                     <span className="col-md-6 col-xs-12 col-sm-12">
-                        Standard-Skills, die diesem Profil fehlen: {this.renderMissingSkills()}
+                        {PowerLocalize.get('Dashboard.MissingSkills')} {this.renderMissingSkills()}
                     </span>
                     <div className="col-md-3 col-sm-12">
-                        <PwrRaisedButton color={'primary'} icon={<OpenInNew/>}
-                                         text={PowerLocalize.get('Action.ShowMore')}
-                                         onClick={this.showSkillStatistics}/>
+                        <SkillStatisticsLink initials={this.props.initials}/>
                     </div>
                 </div>
             </Paper>);
