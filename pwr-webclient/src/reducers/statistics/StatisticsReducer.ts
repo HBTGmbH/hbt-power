@@ -11,6 +11,7 @@ import {
 import * as Immutable from 'immutable';
 import {ActionType} from '../ActionType';
 import {ConsultantInfo} from '../../model/ConsultantInfo';
+import {NameEntity} from '../profile-new/profile/model/NameEntity';
 import {AbstractAction} from '../BaseActions';
 import {APISkillUsageMetric} from '../../model/statistics/ApiMetrics';
 
@@ -107,6 +108,8 @@ export class StatisticsReducer {
                 return StatisticsReducer.AddNameEntityUsageInfo(store, action as AddNameEntityUsageInfoAction);
             case ActionType.AddSkillUsageInfo:
                 return StatisticsReducer.AddSkillUsageInfo(store, action as AddSkillUsageInfoAction);
+            case ActionType.ForgetNameEntityUsageInfo:
+                return {...store, nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>()};
             case ActionType.ForgetSkillUsageInfo:
                 return StatisticsReducer.ForgetSkillUsageInfo(store, action as ForgetSkillUsageInfoAction);
             default:

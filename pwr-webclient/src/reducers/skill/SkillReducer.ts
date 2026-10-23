@@ -12,7 +12,7 @@ import {
     AddSkillToTreeAction, FilterTreeAction, InitializeTreeAction,
     MoveCategoryAction,
     MoveSkillAction,
-    PartiallyUpdateSkillCategoryAction, ReadSkillHierarchyAction, RemoveSkillAction,
+    PartiallyUpdateSkillCategoryAction, ReadSkillHierarchyAction,
     RemoveSkillCategoryAction, SetAddSkillStepAction, SetCurrentChoiceAction, SetTreeChildrenOpenAction, UpdateSkillServiceSkillAction
 } from './SkillActions';
 
@@ -151,17 +151,6 @@ export class SkillReducer {
                 return {
                     ...SkillReducer.addOrUpdateSkill(skillStore, skill),
                     skillTreeRoot: root,
-                }
-            }
-            case ActionType.RemoveSkillServiceSkill: {
-                let act = action as RemoveSkillAction;
-                let skill = skillStore.skillsById.get(act.skillId);
-                let root = skillStore.skillTreeRoot;
-                root.removeSkillFromTree(skill.categoryId(), skill.id());
-                root = SkillTreeNode.shallowCopy(root);
-                return {
-                    ...SkillReducer.addOrUpdateSkill(skillStore, skill),
-                    skillTreeRoot: root
                 }
             }
             case ActionType.ReadSkillHierarchy: {

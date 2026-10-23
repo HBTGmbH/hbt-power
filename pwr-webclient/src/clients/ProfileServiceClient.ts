@@ -7,6 +7,7 @@ import {SkillNotification} from '../model/admin/SkillNotification';
 import {ConsultantInfoDTO} from '../model/ConsultantInfoDTO';
 import {ConsultantName} from '../model/ConsultantName';
 import {ProfileCheck, ProfileCheckSummary, ProfileConfirmation} from '../model/check/ProfileCheck';
+import {NameEntity} from '../reducers/profile-new/profile/model/NameEntity';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -108,6 +109,59 @@ export class ProfileServiceClient extends PowerHttpClient {
         }
         this.beginRequest();
         return this.postExpecting(url, [400, 404, 409], null, {params});
+    };
+
+    /** Renames a skill of the skill tree, in the tree and in all profiles (#228); the old name becomes an alias */
+    public renameSkill = (name: string, newName: string): Promise<void> => {
+        const url = this.base() + '/admin/skills/rename';
+        this.beginRequest();
+        return this.post(url, null, {params: {name, newName}});
+    };
+
+    /** Deletes a skill from all profiles and projects and from the skill tree (#229) */
+    public deleteSkillEverywhere = (name: string): Promise<void> => {
+        const url = this.base() + '/admin/skills';
+        this.beginRequest();
+        return this.delete(url, {params: {name}});
+    };
+
+    // Profile elements in all profiles (#227)
+
+    /** The initials of the consultants whose profile uses the element, counted in the database */
+    public getNameEntityUsers = (id: number): Promise<Array<string>> => {
+        const url = this.base() + '/admin/name-entities/' + id + '/users';
+        this.beginRequest();
+        return this.get(url);
+    };
+
+    public renameNameEntity = (id: number, name: string): Promise<NameEntity> => {
+        const url = this.base() + '/admin/name-entities/' + id;
+        this.beginRequest();
+        return this.patch(url, null, {params: {name}});
+    };
+
+    public mergeNameEntity = (id: number, targetId: number): Promise<NameEntity> => {
+        const url = this.base() + '/admin/name-entities/' + id + '/merge';
+        this.beginRequest();
+        return this.post(url, null, {params: {target: targetId}});
+    };
+
+    public deleteNameEntity = (id: number): Promise<void> => {
+        const url = this.base() + '/admin/name-entities/' + id;
+        this.beginRequest();
+        return this.delete(url);
+    };
+
+    public getUnusedNameEntities = (type: string): Promise<Array<NameEntity>> => {
+        const url = this.base() + '/admin/name-entities/unused';
+        this.beginRequest();
+        return this.get(url, {params: {type}});
+    };
+
+    public deleteUnusedNameEntities = (type: string): Promise<Array<NameEntity>> => {
+        const url = this.base() + '/admin/name-entities/unused';
+        this.beginRequest();
+        return this.delete(url, {params: {type}});
     };
 
     public authenticateAdmin = (): Promise<void> => {

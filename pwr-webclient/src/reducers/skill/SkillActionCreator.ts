@@ -23,7 +23,6 @@ import {
     InitializeTreeAction,
     MoveSkillAction, PartiallyUpdateSkillCategoryAction,
     ReadSkillHierarchyAction,
-    RemoveSkillAction,
     RemoveSkillCategoryAction,
     SetAddSkillStepAction,
     SetCurrentChoiceAction,
@@ -168,13 +167,6 @@ export class SkillActionCreator {
         };
     }
 
-    private static RemoveSkill(skillId: number): RemoveSkillAction {
-        return {
-            type: ActionType.RemoveSkillServiceSkill,
-            skillId: skillId
-        };
-    }
-
     private static UpdateSkillServiceSkill(skill: SkillServiceSkill): UpdateSkillServiceSkillAction {
         return {
             type: ActionType.UpdateSkillServiceSkill,
@@ -306,16 +298,6 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.postNewSkill(categoryId, qualifier)
                 .then((skill) => dispatch(SkillActionCreator.AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(skill))))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
-        };
-    }
-
-    /** The name has to be entered twice (#181) */
-    @makeDeferrable(ActionType.AsyncDeleteTreeSkill, (skillId: number, name: string) => confirmDeleteByName('Skill', name))
-    public static AsyncDeleteSkill(skillId: number, name: string) {
-        return function (dispatch: redux.Dispatch) {
-            skillClient.deleteCustomSkill(skillId)
-                .then(() => dispatch(SkillActionCreator.RemoveSkill(skillId)))
                 .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }

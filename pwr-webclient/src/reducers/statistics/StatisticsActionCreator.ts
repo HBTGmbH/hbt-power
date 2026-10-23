@@ -90,6 +90,11 @@ export class StatisticsActionCreator {
         };
     }
 
+    /** After renaming, merging or deleting profile elements (#227) who uses them has to be loaded again */
+    public static ForgetNameEntityUsageInfo(): AbstractAction {
+        return {type: ActionType.ForgetNameEntityUsageInfo};
+    }
+
     public static AsyncCheckAvailability() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.headStatisticsServiceAvailable()

@@ -75,6 +75,7 @@ export enum ActionType {
     AddNameEntityUsageInfo = '[Statistics] AddNameEntityUsageInfo',
     AddSkillUsageInfo = '[Statistics] AddSkillUsageInfo',
     ForgetSkillUsageInfo = '[Statistics] ForgetSkillUsageInfo',
+    ForgetNameEntityUsageInfo = '[Statistics] ForgetNameEntityUsageInfo',
 
     // == Skill reducer
     AddCategoryToTree = '[Skill] AddCategoryToTree',
@@ -86,7 +87,6 @@ export enum ActionType {
     UpdateSkillCategory = '[Skill] UpdateSkillCategory',
     RemoveSkillCategory = '[Skill] RemoveSkillCategory',
     MoveSkill = '[Skill] MoveSkill',
-    RemoveSkillServiceSkill = '[Skill] RemoveSkillServiceSkill',
     UpdateSkillServiceSkill = '[Skill] UpdateSkillServiceSkill',
     LoadTree = '[Skill] LoadTree',
     SetCurrentSkillName = '[Skill] SetCurrentSkillName',
@@ -134,7 +134,8 @@ export enum ActionType {
     AsyncDeleteTemplate = '[Async] DeleteTemplate',
     AsyncDeleteViewProfile = '[Async] DeleteViewProfile',
     AsyncDeleteReport = '[Async] DeleteReport',
-    AsyncDeleteTreeSkill = '[Async] DeleteTreeSkill',
+    AsyncDeleteSkillEverywhere = '[Async] DeleteSkillEverywhere',
+    AsyncDeleteNameEntity = '[Async] DeleteNameEntity',
     AsyncDeleteTreeCategory = '[Async] DeleteTreeCategory',
     AsyncDeleteConsultant = '[Async] DeleteConsultant',
     AsyncDeleteSkillAlias = '[Async] DeleteSkillAlias',
