@@ -11,12 +11,20 @@ export class Paths {
     public static readonly ADMIN_TRASHBOX = CONFIG.APP_PATH + '/admin/home/trashbox';
     public static readonly ADMIN_CONSULTANTS = CONFIG.APP_PATH + '/admin/home/consultants';
     public static readonly ADMIN_TEMPLATES = CONFIG.APP_PATH + '/admin/home/templates';
+    /** The slug is only for reading, the ID selects (#211) */
+    public static readonly ADMIN_TEMPLATE = CONFIG.APP_PATH + '/admin/home/templates/:templateId/:slug?';
     public static readonly ADMIN_STATISTICS_SKILL = CONFIG.APP_PATH + '/admin/home/statistics/skills';
     public static readonly ADMIN_INFO_SKILLTREE = CONFIG.APP_PATH + '/admin/home/info/skilltree';
     /** The slug is only for reading, the ID selects (#180) */
     public static readonly ADMIN_INFO_SKILLTREE_SKILL = CONFIG.APP_PATH + '/admin/home/info/skilltree/skill/:skillId/:slug?';
     public static readonly ADMIN_INFO_SKILLTREE_CATEGORY = CONFIG.APP_PATH + '/admin/home/info/skilltree/category/:categoryId/:slug?';
     public static readonly ADMIN_INFO_NAME_ENTITY = CONFIG.APP_PATH + '/admin/home/info/names';
+    /** Type and entry of the profile elements in the URL (#212); the slug is only for reading, the ID selects */
+    public static readonly ADMIN_INFO_NAME_ENTITY_TYPE = CONFIG.APP_PATH + '/admin/home/info/names/:type';
+    public static readonly ADMIN_INFO_NAME_ENTITY_ENTRY = CONFIG.APP_PATH + '/admin/home/info/names/:type/:id/:slug?';
+    /** The used skills; the selected one by name in the query parameter "name", the slug is only for reading (#212) */
+    public static readonly ADMIN_INFO_USED_SKILLS = CONFIG.APP_PATH + '/admin/home/info/skills';
+    public static readonly ADMIN_INFO_USED_SKILL = CONFIG.APP_PATH + '/admin/home/info/skills/:slug?';
 
     public static readonly USER_SPECIAL_LOGOUT = '##LOGOUT_USER##';
 
@@ -24,6 +32,7 @@ export class Paths {
     public static readonly PROFILE_SELECT = CONFIG.APP_PATH + '/profilauswahl';
     public static readonly USER_HOME = CONFIG.APP_PATH + '/app/:initials/home';
     /** The slug is only for reading, the ID selects (#182) */
+    public static readonly USER_VIEW_PROFILES = CONFIG.APP_PATH + '/app/:initials/views';
     public static readonly USER_VIEW_PROFILE = CONFIG.APP_PATH + '/app/:initials/view/:id/:slug?';
     public static readonly USER_PROFILE = CONFIG.APP_PATH + '/app/:initials/profile';
     public static readonly USER_PROFILE_PROJECTS = CONFIG.APP_PATH + '/app/:initials/profile/projects';

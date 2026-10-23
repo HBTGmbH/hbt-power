@@ -158,7 +158,13 @@ class Project_module extends React.Component<ProjectProps & ProjectLocalProps & 
         this.props.updateEditingProject(project);
     };
 
-    private setNameEntityName(nameEntity: NameEntity, name: string): NameEntity {
+    /**
+     * An emptied client or broker is none (#215), not a company without a name
+     */
+    private setNameEntityName(nameEntity: NameEntity, name: string): NameEntity | null {
+        if (!name || name.trim() === '') {
+            return null;
+        }
         if (!nameEntity) {
             nameEntity = {name: name, id: null, type: NameEntityType.COMPANY};
         }

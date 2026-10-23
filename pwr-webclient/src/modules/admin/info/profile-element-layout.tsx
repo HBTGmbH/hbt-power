@@ -61,13 +61,17 @@ interface ProfileElementLayoutProps {
  */
 export const ProfileElementLayout = (props: ProfileElementLayoutProps) => {
     const classes = useStyles();
-    return <div className={classes.layout}>
-        <Paper>
-            <div className={classes.filter}>{props.filter}</div>
-            {props.list}
-        </Paper>
-        <Paper className={classes.info}>{props.info}</Paper>
-    </div>;
+    // Space below the app bar, where the tabs used to be (#212)
+    return <>
+        <PwrSpacer/>
+        <div className={classes.layout}>
+            <Paper>
+                <div className={classes.filter}>{props.filter}</div>
+                {props.list}
+            </Paper>
+            <Paper className={classes.info}>{props.info}</Paper>
+        </div>
+    </>;
 };
 
 interface ProfileElementInfoProps {
@@ -87,7 +91,8 @@ const byName = (a: ConsultantInfo, b: ConsultantInfo) =>
  */
 export const ProfileElementInfo = (props: PropsWithChildren<ProfileElementInfoProps>) => {
     const classes = useStyles();
-    if (!props.name) {
+    // Nothing selected; an entry without a name comes with a label for it (#211)
+    if (props.name === undefined) {
         return <Typography variant="body2" color="textSecondary">
             {PowerLocalize.get('AdminClient.Overview.Info.NothingSelected')}
         </Typography>;

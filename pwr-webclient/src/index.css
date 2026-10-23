@@ -983,3 +983,15 @@ label.pwr-view-profile-switch-label {
     max-height: calc(100vh - 96px);
     overflow-y: auto;
 }
+
+/* Description of the view profile in the report history (#214): at most two lines, all of it in the tooltip */
+.pwr-report-description {
+    max-width: 320px;
+}
+
+.pwr-report-description > span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}

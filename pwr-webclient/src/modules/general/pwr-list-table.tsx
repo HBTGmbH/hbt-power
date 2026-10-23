@@ -38,6 +38,10 @@ const useStyles = makeStyles(theme => ({
         minHeight: 40,
         padding: theme.spacing(0, 1),
         borderBottom: '1px solid ' + theme.palette.divider,
+        // Lines only between the rows: below the last one there is nothing left to separate (#211)
+        '&:last-child': {
+            borderBottom: 'none',
+        },
         fontSize: 14,
         lineHeight: 1.43,
         textAlign: 'left',

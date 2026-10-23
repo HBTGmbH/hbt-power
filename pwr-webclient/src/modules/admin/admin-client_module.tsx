@@ -3,13 +3,8 @@ import * as React from 'react';
 import IconButton from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Paper from '@material-ui/core/Paper';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem/ListItem';
 import Icon from '@material-ui/core/Icon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import {PowerLocalize} from '../../localization/PowerLocalizer';
-import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
 import {Paths} from '../../Paths';
 import {Route} from 'react-router-dom';
 import {ApplicationState} from '../../reducers/reducerIndex';
@@ -19,17 +14,16 @@ import {NotificationTrashbox} from './notification/notification-trashbox_module'
 import {ConsultantGrid} from './consultants/consultant-grid_module';
 import {SkillStatistics} from '../home/statistics/skill-statistics_module';
 import {AdminSkillTree2} from './info/tree/admin-skill-tree2_module';
-import {AdminProfileOverview} from './info/admin-profile-overview_module.';
+import {NameEntityOverview} from './info/name-entity/name-entity-overview_module';
+import {UsedSkillOverview} from './info/skill/used-skill-overview_module';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
-import ListSubheader from '@material-ui/core/ListSubheader/ListSubheader';
-import Divider from '@material-ui/core/Divider/Divider';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import {ReportManager} from './reportmanager/report-manager_module';
-import {TemplateActionCreator} from '../../reducers/template/TemplateActionCreator';
 import {ProfileLoadingSpinner} from '../home/profile/profile-loading-spinner_module';
 import {AppInfoButton, LoggedInUserAvatar} from '../metadata/app-info_module';
 import {ThunkDispatch} from 'redux-thunk';
+import {AdminMenu} from './admin-menu';
 
 
 /**
@@ -43,50 +37,24 @@ interface AdminClientProps {
 
 /**
  * Local properties of this module.
- *
- * These properties are used to initialize the local state and to control everything that is solely used for the display layer.
- *
- * Data that is intended not only for display needs to be placed in the {@link AdminClientProps} and will then be
- * managed by redux.
  */
 interface AdminClientLocalProps {
-    listOpen1: boolean;
-    listOpen2: boolean;
-}
-
-/**
- * Local state of the module.
- *
- * All display-only state fields, such as bool flags that define if an element is visibile or not, belong here.
- */
-interface AdminClientLocalState {
-
 }
 
 /**
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface AdminClientDispatch {
-    getNotifications(): void;
-
-    navigateToTrashbox(): void;
-
-    navigateToInbox(): void;
-
-    navigateToConsultants(): void;
-
-    navigateToReportManager(): void;
-
-    navigateToSkillStatistics(): void;
-
-    navigateTo(target: string): void;
-
     logOutAdmin(): void;
 }
 
+/**
+ * The admin area: the menu behind the burger in the app bar like in the profile area (#212), the page in the full
+ * width below
+ */
 class AdminClientModule extends React.Component<AdminClientProps
     & AdminClientLocalProps
-    & AdminClientDispatch, AdminClientLocalState> {
+    & AdminClientDispatch> {
 
     static mapStateToProps(_: ApplicationState, __: AdminClientLocalProps): AdminClientProps {
         return {};
@@ -94,41 +62,10 @@ class AdminClientModule extends React.Component<AdminClientProps
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): AdminClientDispatch {
         return {
-            getNotifications: () => {
-                dispatch(AdminActionCreator.AsyncRequestNotifications());
-            },
-            navigateToInbox: () => {
-                dispatch(AdminActionCreator.AsyncNavigateToInbox());
-            },
-            navigateToTrashbox: () => {
-                dispatch(AdminActionCreator.AsyncNavigateToTrashbox());
-            },
-            navigateToConsultants: () => {
-                dispatch(TemplateActionCreator.AsyncLoadAllTemplates());
-                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_CONSULTANTS));
-            },
-            navigateToReportManager: () => {
-                dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.ADMIN_TEMPLATES));
-            },
-            navigateToSkillStatistics: () => {
-                dispatch(AdminActionCreator.AsyncNavigateToStatistics());
-            },
-            navigateTo: (target: string) => {
-                dispatch(NavigationActionCreator.AsyncNavigateTo(target));
-            },
-            logOutAdmin: () => {
-                dispatch(AdminActionCreator.AsyncLogOutAdmin());
-            }
+            // Through the logout of the profile area (#211), which also asks about unsaved changes
+            logOutAdmin: () => dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_SPECIAL_LOGOUT))
         };
     }
-
-    private handleInboxButtonClick = () => {
-        this.props.navigateToInbox();
-    };
-
-    private handleTrashboxButtonClick = () => {
-        this.props.navigateToTrashbox();
-    };
 
     render() {
         return (
@@ -137,6 +74,7 @@ class AdminClientModule extends React.Component<AdminClientProps
                     <Paper elevation={3}>
                         <AppBar>
                             <Toolbar>
+                                <AdminMenu onLogOut={this.props.logOutAdmin}/>
                                 <PwrBrand/>
                                 <AppInfoButton/>
                                 <LoggedInUserAvatar/>
@@ -151,100 +89,18 @@ class AdminClientModule extends React.Component<AdminClientProps
                     </Paper>
                 </div>
 
-                <div className="row" style={{width: '100%'}}>
-                    <div className="col-md-2">
-                        <Paper style={{marginTop: '70px'}}>
-                            <List>
-                                <ListSubheader>Postkorb</ListSubheader>
-                                <ListItem
-                                    button
-                                    key="AdminClient.Overview.Mail.Inbox"
-                                    onClick={this.handleInboxButtonClick}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">inbox</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Inbox')}/>
-                                </ListItem>
-                                <ListItem
-                                    button
-                                    key="AdminClient.Overview.Mail.Trashbin"
-                                    onClick={this.handleTrashboxButtonClick}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">delete</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Trashbin')}/>
-                                </ListItem>
-
-                                <Divider/>
-                                <ListSubheader>Mitarbeiter</ListSubheader>
-                                <ListItem
-                                    button
-                                    key="Berater"
-                                    onClick={this.props.navigateToConsultants}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">people</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={'Berater'}/>
-                                </ListItem>
-                                <ListItem
-                                    button
-                                    key="Templates"
-                                    onClick={this.props.navigateToReportManager}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">description</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={'Report Manager'}/>
-                                </ListItem>
-                                <Divider/>
-                                <ListSubheader>Informationen</ListSubheader>
-                                {/* Navigate like the other entries: a router Link is an <a> and shows the link color */}
-                                <ListItem
-                                    button
-                                    key="AdminClient.Menu.Info.ProfileElements"
-                                    onClick={() => this.props.navigateTo(Paths.ADMIN_INFO_NAME_ENTITY)}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">dehaze</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.ProfileElements')}/>
-                                </ListItem>
-                                <ListItem
-                                    button
-                                    key="AdminClient.Menu.Info.SkillTree"
-                                    onClick={() => this.props.navigateTo(Paths.ADMIN_INFO_SKILLTREE)}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">device_hub</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Info.SkillTree')}/>
-                                </ListItem>
-                                <Divider/>
-                                <ListSubheader>Statistiken</ListSubheader>
-                                <ListItem
-                                    button
-                                    key="AdminClient.Menu.Statistics.Skills"
-                                    onClick={this.props.navigateToSkillStatistics}
-                                >
-                                    <ListItemIcon>
-                                        <Icon className="material-icons">palette</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={PowerLocalize.get('AdminClient.Menu.Statistics.Skills')}/>
-                                </ListItem>
-                            </List>
-                        </Paper>
-                    </div>
-                    <div className="col-md-9 fittingContainer admin-app-bar-spacer">
+                {/* No "row": its negative margin would put the pages right at the edge of the window, now that there
+                    is no menu column on the left any more (#212) */}
+                <div>
+                    <div className="col-md-12 fittingContainer admin-app-bar-spacer">
                         <Route path={Paths.ADMIN_INBOX} component={NotificationInbox}/>
                         <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid}/>
                         <Route path={Paths.ADMIN_TEMPLATES} component={ReportManager}/>
                         <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox}/>
                         <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics}/>
                         <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2}/>
-                        <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={AdminProfileOverview}/>
+                        <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={NameEntityOverview}/>
+                        <Route path={Paths.ADMIN_INFO_USED_SKILLS} component={UsedSkillOverview}/>
                     </div>
                     <ProfileLoadingSpinner/>
                 </div>

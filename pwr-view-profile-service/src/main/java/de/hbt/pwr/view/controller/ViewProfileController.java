@@ -61,6 +61,12 @@ public class ViewProfileController {
 
     private static final Logger LOG = LogManager.getLogger(ViewProfile.class);
 
+    /**
+     * Who is logged in, set by the edge from the verified token
+     */
+    static final String USER_LOGIN_HEADER = "X-Pwr-User-Login";
+    static final String USER_INITIALS_HEADER = "X-Pwr-User-Initials";
+
 
     // private final ViewProfileImporter viewProfileImporter;
 
@@ -171,11 +177,15 @@ public class ViewProfileController {
     @PostMapping(path = "/{initials}/view/{viewProfileId}/{templateId}/report")
     public ResponseEntity<String> generateReport(@PathVariable("initials") String initials,
                                                  @PathVariable("viewProfileId") String viewProfileId,
-                                                 @PathVariable("templateId") String templateId) {
+                                                 @PathVariable("templateId") String templateId,
+                                                 @RequestHeader(value = USER_LOGIN_HEADER, required = false) String login,
+                                                 @RequestHeader(value = USER_INITIALS_HEADER, required = false) String userInitials) {
         ViewProfile viewProfile = viewProfileService.getByIdAndCheckOwner(viewProfileId, initials);
         ReportTemplate template =
                 (templateId.equals("-1") ? null : reportTemplateService.getTemplate(templateId));
-        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo(initials, viewProfile, template), "DOC");
+        // Who exports only from the headers of the edge, never from the request (#214)
+        ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo(initials, viewProfile, template), "DOC",
+                login, userInitials);
         URI location =
                 ofNullable(response).map(HttpEntity::getHeaders).map(HttpHeaders::getLocation)
                         .orElse(URI.create(""));

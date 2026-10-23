@@ -8,7 +8,6 @@ import {StatisticsActionCreator} from '../../reducers/statistics/StatisticsActio
 import {Paths} from '../../Paths';
 import {NavigationActionCreator} from '../../reducers/navigation/NavigationActionCreator';
 import {ApplicationState} from '../../reducers/reducerIndex';
-import {ViewProfile} from '../../model/view/ViewProfile';
 import {PwrBrand} from '../general/pwr-brand';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
@@ -26,7 +25,6 @@ import {projectsUrl} from './profile/elements/project/project-url-sync';
 interface ToolbarProps {
     loggedInAsAdmin: boolean;
     statisticsAvailable: boolean;
-    viewProfiles: Array<ViewProfile>;
     consultantInfo: ConsultantInfoDTO[];
     profileStore: ProfileStore;
 }
@@ -52,7 +50,6 @@ interface ToolbarLocalState {
     appInfoOpen: boolean;
     baseDataOpen: boolean;
     statisticsOpen: boolean;
-    profilesOpen: boolean;
     menuAnchorEl: any;
 }
 
@@ -73,7 +70,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             appInfoOpen: false,
             baseDataOpen: false,
             statisticsOpen: false,
-            profilesOpen: false,
             menuAnchorEl: null,
         };
     }
@@ -82,7 +78,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
         return {
             loggedInAsAdmin: state.adminReducer.loginStatus === LoginStatus.SUCCESS,
             statisticsAvailable: state.statisticsReducer.available,
-            viewProfiles: state.viewProfileSlice.viewProfiles.toArray(),
             consultantInfo: [...state.adminReducer.consultantInfo].sort((a, b) => a.name.localeCompare(b.name)),
             profileStore: state.profileStore
         };
@@ -107,8 +102,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             menuOpen: false,
             menuAnchorEl: null,
             baseDataOpen: false,
-            statisticsOpen: false,
-            profilesOpen: false
+            statisticsOpen: false
         });
     };
 
@@ -124,7 +118,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
      */
     private changeConsultant = (initials: string) => {
         const pagesForAnyConsultant = [Paths.USER_HOME, Paths.USER_PROFILE, Paths.USER_PROFILE_PROJECTS, Paths.USER_PROFILE_SKILLS,
-            Paths.USER_REPORTS, Paths.USER_SEARCH, Paths.USER_STATISTICS_SKILLS];
+            Paths.USER_REPORTS, Paths.USER_VIEW_PROFILES, Paths.USER_SEARCH, Paths.USER_STATISTICS_SKILLS];
         const pathname = this.props.location.pathname;
         let currentPage = pagesForAnyConsultant.find(path => matchPath(pathname, {path, exact: true}));
         if (!currentPage && matchPath(pathname, {path: Paths.USER_PROFILE_PROJECTS})) {
@@ -158,22 +152,6 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
     private navigateToAdmin = () => {
         this.handleMenuClose();
         this.props.navigateToAdmin();
-    };
-
-    private renderViewProfile = (viewProfile: ViewProfile, initials: string) => {
-        let text = viewProfile.viewProfileInfo.name;
-        if (!text) {
-            text = viewProfile.id;
-        }
-        return <MenuItem
-            key={viewProfile.id}
-            className="pwr-menu-subitem"
-            onClick={() => this.handleMenuNavigate(Paths.viewProfile(initials, viewProfile.id, viewProfile.viewProfileInfo.name))}
-        >
-            <ListItemText inset>
-                {text}
-            </ListItemText>
-        </MenuItem>;
     };
 
     private renderExpandIcon = (open: boolean) => {
@@ -245,22 +223,15 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             'star', 'Menu.BaseData.Skills')}
                     </Collapse>
 
-                    {this.props.viewProfiles.length > 0 ?
-                        <div>
-                            <MenuItem key={'3'} button
-                                      onClick={() => this.setState({profilesOpen: !this.state.profilesOpen})}>
-                                <ListItemIcon>
-                                    <Icon className="material-icons">remove_red_eye</Icon>
-                                </ListItemIcon>
-                                <ListItemText>{PowerLocalize.get('Menu.ViewProfile')}</ListItemText>
-                                {this.renderExpandIcon(this.state.profilesOpen)}
-                            </MenuItem>
-                            <Collapse in={this.state.profilesOpen}>
-                                {this.props.viewProfiles.map(vp => this.renderViewProfile(vp, initials))}
-                            </Collapse>
-                        </div>
-                        : null
-                    }
+                    {/* One entry for the page with all view profiles (#213), there even without any */}
+                    <MenuItem key={'3'}
+                              selected={!!matchPath(this.props.location.pathname, {path: Paths.USER_VIEW_PROFILES})}
+                              onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_VIEW_PROFILES, {initials}))}>
+                        <ListItemIcon>
+                            <Icon className="material-icons">remove_red_eye</Icon>
+                        </ListItemIcon>
+                        <ListItemText>{PowerLocalize.get('Menu.ViewProfile')}</ListItemText>
+                    </MenuItem>
 
                     {
                         this.props.statisticsAvailable ? (

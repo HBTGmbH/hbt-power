@@ -273,13 +273,6 @@ export class AdminActionCreator {
         };
     }
 
-    public static AsyncLogOutAdmin() {
-        return function (dispatch: ThunkDispatch<any, any, any>) {
-            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.APP_ROOT));
-            dispatch(AdminActionCreator.LogOutAdmin());
-        };
-    }
-
     public static AsyncValidateAuthentication() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.authenticateAdmin().then(ignored => {
@@ -308,6 +301,15 @@ export class AdminActionCreator {
     public static AsyncRedirectToUser(initials: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.USER_PROFILE.replace(":initials", initials)));
+        };
+    }
+
+    /**
+     * The overview of a consultant (#211): profile check and view profiles
+     */
+    public static AsyncRedirectToUserHome(initials: string) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.build(Paths.USER_HOME, {initials})));
         };
     }
 

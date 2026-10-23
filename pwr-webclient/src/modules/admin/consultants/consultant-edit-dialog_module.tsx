@@ -53,7 +53,7 @@ interface ConsultantEditDialogLocalState {
  * Defines mappings from local handlers to redux dispatches that invoke actions on the store.
  */
 interface ConsultantEditDialogDispatch {
-    redirectToUser(initials: string): void;
+    redirectToUserHome(initials: string): void;
 
     updateConsultant(info: ConsultantInfo): void;
 
@@ -82,7 +82,7 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ConsultantEditDialogDispatch {
         return {
-            redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials)),
+            redirectToUserHome: initials => dispatch(AdminActionCreator.AsyncRedirectToUserHome(initials)),
             updateConsultant: (info) => dispatch(AdminActionCreator.AsyncUpdateConsultant(info)),
             deleteConsultant: (initials, fullName) => dispatch(AdminActionCreator.AsyncDeleteConsultant(initials, fullName))
         };
@@ -158,15 +158,15 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
                 open={this.props.show}
                 onClose={this.closeDialog}
             >
-                {/* Jump to the consultant's profile on the right of the title (#195): a link, not one of the form's
-                    actions */}
+                {/* Jump to the consultant's overview on the right of the title (#195, #211): a link, not one of the
+                    form's actions */}
                 <DialogTitle disableTypography className="pwr-dialog-title-with-link">
                     <Typography variant="h6" id="ConsultantTile.EditConsultant.Dialog.Title">
                         {PowerLocalize.get('ConsultantTile.EditConsultant')}
                     </Typography>
                     <Link component="button" variant="body2" className="pwr-link-with-icon"
-                          onClick={() => this.props.redirectToUser(this.props.initials)}>
-                        {PowerLocalize.get('ConsultantEdit.OpenProfile')}
+                          onClick={() => this.props.redirectToUserHome(this.props.initials)}>
+                        {PowerLocalize.get('ConsultantEdit.OpenOverview')}
                         <Icon className="material-icons" fontSize="small">open_in_new</Icon>
                     </Link>
                 </DialogTitle>

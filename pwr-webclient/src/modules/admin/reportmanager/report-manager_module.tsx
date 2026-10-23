@@ -9,14 +9,16 @@ import {PreviewSource, ReportPreviewSource} from './report-preview-source_module
 import {UploadTemplateDialog} from './report-upload-template-dialog';
 import {ReportManagerInfoBox} from './report-manager-infobox_module';
 import {ThunkDispatch} from 'redux-thunk';
+import {matchPath, RouteComponentProps, withRouter} from 'react-router-dom';
+import {Paths} from '../../../Paths';
+import {StringUtils} from '../../../utils/StringUtil';
+import {PowerLocalize} from '../../../localization/PowerLocalizer';
 
 interface ReportManagerProps {
     allTemplates: Array<Template>;
 }
 
-interface ReportManagerLocalProps {
-
-}
+type ReportManagerLocalProps = RouteComponentProps;
 
 interface ReportManagerDispatch {
 
@@ -24,7 +26,6 @@ interface ReportManagerDispatch {
 }
 
 interface ReportManagerState {
-    selectedTemplateId: string;
     createDialogOpen: boolean;
     previewSource: PreviewSource;
 }
@@ -35,7 +36,6 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         super(props);
 
         this.state = {
-            selectedTemplateId: null,
             createDialogOpen: false,
             previewSource: {initials: '', viewProfileId: ''},
         };
@@ -59,6 +59,23 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
         }
     }
 
+    public componentDidUpdate() {
+        // A deleted or unknown template: the list without a selection
+        const id = this.selectedTemplateId();
+        if (id && this.props.allTemplates.length > 0 && !this.selectedTemplate()) {
+            this.props.history.replace(Paths.ADMIN_TEMPLATES);
+        }
+    }
+
+    /**
+     * The selected template is in the URL (#211), the slug is only for reading
+     */
+    private selectedTemplateId = (): string | null => {
+        const match = matchPath<{ templateId: string }>(this.props.location.pathname,
+            {path: Paths.ADMIN_TEMPLATE, exact: true});
+        return match ? match.params.templateId : null;
+    };
+
     private onCreateDialogOpen = () => {
         this.setState({
             createDialogOpen: true,
@@ -76,23 +93,24 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
     };
 
     private selectTemplate = (template: Template) => {
-        this.setState({
-            selectedTemplateId: template.id,
-        });
+        this.props.history.push(Paths.build(Paths.ADMIN_TEMPLATE,
+            {templateId: template.id, slug: StringUtils.slug(template.name)}));
     };
 
     /**
      * Looked up by id in the loaded templates, so a change or a deletion shows right away
      */
     private selectedTemplate = (): Template => {
-        return this.props.allTemplates.find(template => template.id === this.state.selectedTemplateId);
+        const id = this.selectedTemplateId();
+        return this.props.allTemplates.find(template => template.id === id);
     };
 
     private renderListItems = () => {
         let items: any = [];
 
         this.props.allTemplates.map((value, key) => {
-            items.push(<ListItem key={key} button onClick={() => this.selectTemplate(value)}>
+            items.push(<ListItem key={key} button selected={value.id === this.selectedTemplateId()}
+                                 onClick={() => this.selectTemplate(value)}>
                 <ListItemText
                     style={{fontSize: '1rem'}}
                     primary={value.name}
@@ -117,7 +135,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                             this.onCreateDialogOpen();
                         }}>
                             <Icon className={'material-icons'}>add</Icon>
-                            <ListItemText primary={'Neues Template'}/>
+                            <ListItemText primary={PowerLocalize.get('Action.Generate.NewTemplate')}/>
                         </ListItem>
                     </List>
                     <Divider/>
@@ -136,7 +154,7 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
                         <ReportPreviewSource value={this.state.previewSource} onChange={this.setPreviewSource}/>
                         <div style={{flex: 1, minHeight: 0}}>
                             <ReportPreview
-                                templateId={this.selectedTemplate() ? this.state.selectedTemplateId : ''}
+                                templateId={this.selectedTemplate() ? this.selectedTemplateId() : ''}
                                 initials={this.state.previewSource.initials}
                                 viewProfileId={this.state.previewSource.viewProfileId}/>
                         </div>
@@ -159,4 +177,4 @@ class ReportManagerModule extends React.Component<ReportManagerProps & ReportMan
 
 }
 
-export const ReportManager = connect(ReportManagerModule.mapStateToProps, ReportManagerModule.mapDispatchToProps)(ReportManagerModule);
+export const ReportManager = withRouter(connect(ReportManagerModule.mapStateToProps, ReportManagerModule.mapDispatchToProps)(ReportManagerModule));

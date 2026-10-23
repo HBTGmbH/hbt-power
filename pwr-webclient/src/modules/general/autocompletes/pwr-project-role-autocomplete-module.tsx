@@ -73,8 +73,10 @@ class PwrProjectRoleAutocompleteModule extends React.Component<PwrProjectRoleAut
 
 
     handleAdd = (item: string) => {
-        if (this.props.onAddRole) {
-            this.props.onAddRole(this.findOrNew(item));
+        // No role without a name (#215); the name without spaces at the ends, as the profile service saves it
+        const name = (item || '').trim();
+        if (this.props.onAddRole && name !== '') {
+            this.props.onAddRole(this.findOrNew(name));
         }
     };
 

@@ -1,8 +1,10 @@
 package de.hbt.controller;
 
+import de.hbt.client.ConsultantNameClient;
 import de.hbt.exceptions.ReportRenderException;
 import de.hbt.model.ReportData;
 import de.hbt.model.ReportInfo;
+import de.hbt.model.view.ViewProfileInfo;
 import de.hbt.service.ProfileReportService;
 import de.hbt.service.ReportDataService;
 import org.apache.logging.log4j.LogManager;
@@ -29,12 +31,27 @@ public class ReportController {
 
     private final ReportDataService reportDataService;
 
+    private final ConsultantNameClient consultantNameClient;
+
+    /**
+     * Who is logged in, set by the edge from the verified token; the view-profile service passes them on
+     */
+    static final String USER_LOGIN_HEADER = "X-Pwr-User-Login";
+    static final String USER_INITIALS_HEADER = "X-Pwr-User-Initials";
+
+    /**
+     * Length of the column {@code view_profile_description}
+     */
+    static final int MAX_DESCRIPTION_LENGTH = 4000;
+
     private static final Logger LOG = LogManager.getLogger(ReportController.class);
 
     @Autowired
-    public ReportController(ProfileReportService profileReportService, ReportDataService reportDataService) {
+    public ReportController(ProfileReportService profileReportService, ReportDataService reportDataService,
+                            ConsultantNameClient consultantNameClient) {
         this.profileReportService = profileReportService;
         this.reportDataService = reportDataService;
+        this.consultantNameClient = consultantNameClient;
     }
 
     @GetMapping("{initials}")
@@ -63,13 +80,24 @@ public class ReportController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> generate(@RequestBody ReportInfo reportInfo,
-                                           @RequestParam("type") String type) {
+                                           @RequestParam("type") String type,
+                                           @RequestHeader(value = USER_LOGIN_HEADER, required = false) String login,
+                                           @RequestHeader(value = USER_INITIALS_HEADER, required = false) String exportedBy) {
         LOG.info("Generating new report!");
+        ViewProfileInfo viewProfileInfo = reportInfo.viewProfile.getViewProfileInfo();
+        // Who exports only from the headers of the edge (#214), the name as it is now; without them (locally) nobody
+        String exportedByName = null;
+        if (exportedBy != null && !exportedBy.isBlank()) {
+            exportedByName = consultantNameClient.findFullName(exportedBy).orElse(login);
+        }
         ReportData reportData = new ReportData(
                 reportInfo.initials,
-                reportInfo.viewProfile.getViewProfileInfo().getName(),
-                reportInfo.initials + "_" + reportInfo.viewProfile.getViewProfileInfo().getName() + "_" + reportInfo.reportTemplate.getName(),
-                reportInfo.reportTemplate.getId()
+                viewProfileInfo.getName(),
+                truncate(viewProfileInfo.getViewDescription()),
+                reportInfo.initials + "_" + viewProfileInfo.getName() + "_" + reportInfo.reportTemplate.getName(),
+                reportInfo.reportTemplate.getId(),
+                exportedBy,
+                exportedByName
         );
         reportData = reportDataService.saveReportData(reportData);
         if ("DOC".equals(type)) {
@@ -78,6 +106,13 @@ public class ReportController {
             throw new RuntimeException("Unsupported type " + type);
         }
         return ResponseEntity.ok("Started Report Generation");
+    }
+
+    private static String truncate(String description) {
+        if (description == null || description.isBlank()) {
+            return null;
+        }
+        return description.length() > MAX_DESCRIPTION_LENGTH ? description.substring(0, MAX_DESCRIPTION_LENGTH) : description;
     }
 
     /**

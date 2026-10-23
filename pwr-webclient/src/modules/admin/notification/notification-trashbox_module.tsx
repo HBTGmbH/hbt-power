@@ -1,13 +1,37 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import * as Immutable from 'immutable';
-import {Button, Icon, Tab, Table, TableBody, TableCell, TableRow, Tabs} from '@material-ui/core';
+import {Icon, Paper, Table, TableBody, TableCell, TableRow, Typography} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {AdminNotification} from '../../../model/admin/AdminNotification';
 import {formatToMailDisplay} from '../../../utils/DateUtil';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {ApplicationState} from '../../../reducers/reducerIndex';
 import {ThunkDispatch} from 'redux-thunk';
+import {PwrButton} from '../../general/pwr-button';
+import {PwrRow} from '../../general/pwr-form-section';
+import {PwrSpacer} from '../../general/pwr-spacer_module';
+
+const useStyles = makeStyles(theme => ({
+    // Destroys every entry (#201)
+    empty: {
+        color: theme.palette.error.main,
+    },
+}));
+
+/**
+ * Refresh and empty (#211): emptying in the error colour, it deletes every entry for good
+ */
+const TrashboxActions = (props: { onRefresh(): void, onEmpty(): void }) => {
+    const classes = useStyles();
+    return <PwrRow>
+        <PwrButton color="primary" text={PowerLocalize.get('Action.Update')}
+                   icon={<Icon className="material-icons">refresh</Icon>} onClick={props.onRefresh}/>
+        <PwrButton color="default" className={classes.empty} text={PowerLocalize.get('Action.EmptyTrash')}
+                   icon={<Icon className="material-icons">delete_forever</Icon>} onClick={props.onEmpty}/>
+    </PwrRow>;
+};
 
 /**
  * Properties that are managed by react-redux.
@@ -99,47 +123,27 @@ class NotificationTrashboxModule extends React.Component<NotificationTrashboxPro
 
     render() {
         return (
-            <div>
-                <div className="row">
-                    <div className="col-md-9">
-                        <Button
-                            variant={'contained'}
-                            style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
-                            onClick={() => this.props.getTrashedNotifications()}
-                        >
-                            {PowerLocalize.get('Action.Update')}
-                            <Icon className="material-icons">refresh</Icon>
-                        </Button>
-                        <Button
-                            variant={'contained'}
-                            style={{marginTop: '5px', marginBottom: '10px', marginRight: '15px'}}
-                            onClick={() => this.props.finalDeleteTrashed()}
-                        >
-                            {PowerLocalize.get('Action.FinalDelete')}
-                            <Icon className="material-icons">delete</Icon>
-                        </Button>
+            // On a white area like the other pages: the heading and the error colour need it for their contrast
+            <Paper>
+                <div className="mui-margin">
+                    <TrashboxActions onRefresh={() => this.props.getTrashedNotifications()}
+                                     onEmpty={() => this.props.finalDeleteTrashed()}/>
+                    <PwrSpacer/>
+                    <div>
+                        {/* A heading, not a tab: there is nothing to switch to (#211) */}
+                        <Typography variant="h6" component="h2">
+                            {PowerLocalize.get('NotificationInbox.TrashedMessages')}
+                        </Typography>
+                        <Table>
+                            <TableBody>
+                                {
+                                    this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
+                                }
+                            </TableBody>
+                        </Table>
                     </div>
                 </div>
-                <div>
-                    <Tabs value={0} centered variant={'fullWidth'}>
-                        <Tab
-                            icon={<Icon className="material-icons">delete</Icon>}
-                            label={PowerLocalize.get('NotificationInbox.TrashedMessages')}
-                        >
-                        </Tab>
-                    </Tabs>
-
-
-                    <Table>
-                        <TableBody>
-                            {
-                                this.props.notifications.map(this.renderNotificationAsTableRow).toArray()
-                            }
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
-
+            </Paper>
         );
     }
 }

@@ -16,6 +16,7 @@ import {Template} from '../../../model/view/Template';
 import {TemplateActionCreator} from '../../../reducers/template/TemplateActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ThunkDispatch} from 'redux-thunk';
+import {PwrConsultantName} from '../../general/pwr-consultant-name';
 import {formatFullLocalizedDate, formatToFullLocalizedDateTime} from '../../../utils/DateUtil';
 
 interface ReportHistoryLocalProps {
@@ -44,10 +45,22 @@ interface ReportHistoryState {
     initials: string;
 }
 
+/** Documents from before #214 know neither the description nor who exported */
+const NOT_KNOWN = '–';
+
 /** While a report is being created ('RUNNING'), the list is reloaded at this interval */
 const POLL_INTERVAL_MS = 3000;
 /** Polling stops after this time, so a report stuck in 'RUNNING' (e.g. the service restarted) is not polled forever */
 const POLL_DURATION_MS = 5 * 60 * 1000;
+
+/**
+ * Newest document first (#211): by the time of creation; old documents without it (createdAt null) by their date, then
+ * by id. Both are ISO strings, which sort like the time they stand for.
+ */
+function newestFirst(a: ReportData, b: ReportData): number {
+    const created = (report: ReportData) => String(report.createdAt || report.createDate || '');
+    return created(b).localeCompare(created(a)) || b.id - a.id;
+}
 
 class ReportHistoryModule extends React.Component<ReportHistoryProps
     & ReportHistoryLocalProps
@@ -196,19 +209,34 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                         <TableHead>
                             <TableRow key={-1}>
                                 <TableCell>{PowerLocalize.get('Report.ViewProfile')}</TableCell>
+                                <TableCell align="left">{PowerLocalize.get('Report.Description')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.Template')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.CreateDate')}</TableCell>
+                                <TableCell align="left">{PowerLocalize.get('Report.ExportedBy')}</TableCell>
                                 <TableCell align="left">{PowerLocalize.get('Report.Status')}</TableCell>
                                 <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {
-                                this.props.reports.map((value, index) =>
-                                    <TableRow key={index}>
+                                [...this.props.reports].sort(newestFirst).map(value =>
+                                    <TableRow key={value.id}>
                                         <TableCell>{value.viewProfileName}</TableCell>
+                                        <TableCell align="left" className="pwr-report-description">
+                                            {value.viewProfileDescription
+                                                ? <Tooltip title={value.viewProfileDescription}>
+                                                    <span>{value.viewProfileDescription}</span>
+                                                </Tooltip>
+                                                : NOT_KNOWN}
+                                        </TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
                                         <TableCell align="left">{value.createdAt ? formatToFullLocalizedDateTime(value.createdAt) : formatFullLocalizedDate(value.createDate)}</TableCell>
+                                        <TableCell align="left">
+                                            {value.exportedByInitials && value.exportedByName
+                                                ? <PwrConsultantName initials={value.exportedByInitials}
+                                                                     fullName={value.exportedByName}/>
+                                                : NOT_KNOWN}
+                                        </TableCell>
                                         <TableCell
                                             align="left">{this.StatusDisplay(value)}</TableCell>
                                         {/* An icon in a column of its own: in a list of many documents a button per row would dominate (#41) */}
