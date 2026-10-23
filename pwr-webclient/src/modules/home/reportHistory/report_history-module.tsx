@@ -49,6 +49,15 @@ const POLL_INTERVAL_MS = 3000;
 /** Polling stops after this time, so a report stuck in 'RUNNING' (e.g. the service restarted) is not polled forever */
 const POLL_DURATION_MS = 5 * 60 * 1000;
 
+/**
+ * Newest document first (#211): by the time of creation; old documents without it (createdAt null) by their date, then
+ * by id. Both are ISO strings, which sort like the time they stand for.
+ */
+function newestFirst(a: ReportData, b: ReportData): number {
+    const created = (report: ReportData) => String(report.createdAt || report.createDate || '');
+    return created(b).localeCompare(created(a)) || b.id - a.id;
+}
+
 class ReportHistoryModule extends React.Component<ReportHistoryProps
     & ReportHistoryLocalProps
     & ReportHistoryDispatch, ReportHistoryState> {
@@ -204,8 +213,8 @@ class ReportHistoryModule extends React.Component<ReportHistoryProps
                         </TableHead>
                         <TableBody>
                             {
-                                this.props.reports.map((value, index) =>
-                                    <TableRow key={index}>
+                                [...this.props.reports].sort(newestFirst).map(value =>
+                                    <TableRow key={value.id}>
                                         <TableCell>{value.viewProfileName}</TableCell>
                                         <TableCell align="left">{this.getTemplateName(value.templateId)}</TableCell>
                                         <TableCell align="left">{value.createdAt ? formatToFullLocalizedDateTime(value.createdAt) : formatFullLocalizedDate(value.createDate)}</TableCell>
