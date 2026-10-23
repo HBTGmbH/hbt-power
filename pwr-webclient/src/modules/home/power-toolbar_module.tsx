@@ -13,7 +13,6 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
-import Collapse from '@material-ui/core/Collapse/Collapse';
 import {ThunkDispatch} from 'redux-thunk';
 import {AppInfoButton, AppInfoDialog, LoggedInUserAvatar} from '../metadata/app-info_module';
 import {AdminActionCreator} from '../../reducers/admin/AdminActionCreator';
@@ -204,7 +203,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             {PowerLocalize.get('Menu.Home')}
                         </ListItemText>
                     </MenuItem>
-                    <MenuItem key={'2'} button
+                    <MenuItem key={'2'} button aria-expanded={this.state.baseDataOpen}
                               onClick={() => this.setState({baseDataOpen: !this.state.baseDataOpen})}>
                         <ListItemIcon>
                             <Icon className="material-icons">person</Icon>
@@ -214,14 +213,15 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         </ListItemText>
                         {this.renderExpandIcon(this.state.baseDataOpen)}
                     </MenuItem>
-                    <Collapse in={this.state.baseDataOpen}>
-                        {this.renderBaseDataSection(Paths.USER_PROFILE, Paths.build(Paths.USER_PROFILE, {initials}),
-                            'account_box', 'Menu.BaseData.Consultant')}
-                        {this.renderBaseDataSection(Paths.USER_PROFILE_PROJECTS, projectsUrl(initials, this.props.profileStore),
-                            'work', 'Menu.BaseData.Projects')}
-                        {this.renderBaseDataSection(Paths.USER_PROFILE_SKILLS, Paths.build(Paths.USER_PROFILE_SKILLS, {initials}),
-                            'star', 'Menu.BaseData.Skills')}
-                    </Collapse>
+                    {/* Siblings, not inside a Collapse: the arrow keys of the menu only reach its direct items (#231) */}
+                    {this.state.baseDataOpen && [
+                        this.renderBaseDataSection(Paths.USER_PROFILE, Paths.build(Paths.USER_PROFILE, {initials}),
+                            'account_box', 'Menu.BaseData.Consultant'),
+                        this.renderBaseDataSection(Paths.USER_PROFILE_PROJECTS, projectsUrl(initials, this.props.profileStore),
+                            'work', 'Menu.BaseData.Projects'),
+                        this.renderBaseDataSection(Paths.USER_PROFILE_SKILLS, Paths.build(Paths.USER_PROFILE_SKILLS, {initials}),
+                            'star', 'Menu.BaseData.Skills')
+                    ]}
 
                     {/* One entry for the page with all view profiles (#213), there even without any */}
                     <MenuItem key={'3'}
@@ -233,47 +233,42 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                         <ListItemText>{PowerLocalize.get('Menu.ViewProfile')}</ListItemText>
                     </MenuItem>
 
-                    {
-                        this.props.statisticsAvailable ? (
-                                <div>
-                                    <MenuItem key={'5'} button
-                                              onClick={() => this.setState({statisticsOpen: !this.state.statisticsOpen})}>
-                                        <ListItemIcon>
-                                            <Icon className="material-icons">insert_chart</Icon>
-                                        </ListItemIcon>
-                                        <ListItemText>{PowerLocalize.get('Menu.Statistics')}</ListItemText>
-                                        {this.renderExpandIcon(this.state.statisticsOpen)}
-                                    </MenuItem>
-                                    <Collapse in={this.state.statisticsOpen}>
-                                        <MenuItem
-                                            key="Menu.Statistics.Network.Clusterinfo"
-                                            className="pwr-menu-subitem"
-                                            onClick={() => this.loadConsultantClusterInfo(initials)}
-                                        >
-                                            <ListItemIcon>
-                                                <Icon className="material-icons">info</Icon>
-                                            </ListItemIcon>
-                                            <ListItemText>
-                                                {PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
-                                            </ListItemText>
-                                        </MenuItem>
-                                        <MenuItem
-                                            key="Menu.Statistics.Skills"
-                                            className="pwr-menu-subitem"
-                                            onClick={() => this.loadSkillStatistics(initials)}
-                                        >
-                                            <ListItemIcon>
-                                                <Icon className="material-icons">palette</Icon>
-                                            </ListItemIcon>
-                                            <ListItemText>
-                                                {PowerLocalize.get('Menu.Statistics.Skills')}
-                                            </ListItemText>
-                                        </MenuItem>
-                                    </Collapse>
-                                </div>)
-                            :
-                            null
-                    }
+                    {this.props.statisticsAvailable && [
+                        <MenuItem key={'5'} button aria-expanded={this.state.statisticsOpen}
+                                  onClick={() => this.setState({statisticsOpen: !this.state.statisticsOpen})}>
+                            <ListItemIcon>
+                                <Icon className="material-icons">insert_chart</Icon>
+                            </ListItemIcon>
+                            <ListItemText>{PowerLocalize.get('Menu.Statistics')}</ListItemText>
+                            {this.renderExpandIcon(this.state.statisticsOpen)}
+                        </MenuItem>,
+                        ...(this.state.statisticsOpen ? [
+                            <MenuItem
+                                key="Menu.Statistics.Network.Clusterinfo"
+                                className="pwr-menu-subitem"
+                                onClick={() => this.loadConsultantClusterInfo(initials)}
+                            >
+                                <ListItemIcon>
+                                    <Icon className="material-icons">info</Icon>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {PowerLocalize.get('Menu.Statistics.Network.Clusterinfo')}
+                                </ListItemText>
+                            </MenuItem>,
+                            <MenuItem
+                                key="Menu.Statistics.Skills"
+                                className="pwr-menu-subitem"
+                                onClick={() => this.loadSkillStatistics(initials)}
+                            >
+                                <ListItemIcon>
+                                    <Icon className="material-icons">palette</Icon>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {PowerLocalize.get('Menu.Statistics.Skills')}
+                                </ListItemText>
+                            </MenuItem>
+                        ] : [])
+                    ]}
                     <MenuItem
                         key={'6'}
                         onClick={() => this.handleMenuNavigate(Paths.build(Paths.USER_REPORTS, {initials}))}
@@ -339,14 +334,17 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
             <div>
                 <AppBar color={'primary'}>
                     <Toolbar>
-                        <IconButton
-                            onClick={(e: any) => {
-                                this.handleMenuOpen(e);
-                            }}
-                            style={{color: 'white', marginLeft: -12, marginRight: 20}}
-                        >
-                            <Icon className="material-icons">menu</Icon>
-                        </IconButton>
+                        <Tooltip title={PowerLocalize.get('Menu.Open')}>
+                            <IconButton
+                                aria-label={PowerLocalize.get('Menu.Open')} aria-haspopup="true" aria-controls="menu"
+                                onClick={(e: any) => {
+                                    this.handleMenuOpen(e);
+                                }}
+                                style={{color: 'white', marginLeft: -12, marginRight: 20}}
+                            >
+                                <Icon className="material-icons">menu</Icon>
+                            </IconButton>
+                        </Tooltip>
                         {this.renderMenu(initials)}
                         <AppInfoDialog open={this.state.appInfoOpen} onClose={() => this.setState({appInfoOpen: false})}/>
 
@@ -364,6 +362,7 @@ class PowerToolbarModule extends React.Component<ToolbarProps & ToolbarLocalProp
                             <IconButton
                                 style={{'color': 'white'}}
                                 className="material-icons"
+                                aria-label={PowerLocalize.get('Tooolbar.LogOut')}
                                 onClick={this.logOutUser}
                             >
                                 input
