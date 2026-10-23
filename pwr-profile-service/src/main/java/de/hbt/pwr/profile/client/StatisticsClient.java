@@ -3,6 +3,8 @@ package de.hbt.pwr.profile.client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -28,5 +30,22 @@ public class StatisticsClient {
         } catch (RuntimeException e) {
             log.warn("Statistics not refreshed, they catch up within the hour: " + e.getMessage());
         }
+    }
+
+    /**
+     * The statistics read the profiles from this service, so a change of many profiles at once (#205, #227) lets them
+     * reload only once it is committed; outside a transaction right away.
+     */
+    public void refreshConsultantsAfterCommit() {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            refreshConsultants();
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                refreshConsultants();
+            }
+        });
     }
 }
