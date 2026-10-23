@@ -1,12 +1,11 @@
 import {connect} from 'react-redux';
 import * as React from 'react';
 import {ConsultantInfo} from '../../../model/ConsultantInfo';
-import {ButtonBase, GridListTile, Icon, Menu, MenuItem, Tooltip} from '@material-ui/core';
+import {ButtonBase, GridListTile, Icon, IconButton, Menu, MenuItem, Tooltip, useTheme} from '@material-ui/core';
 import {AdminActionCreator} from '../../../reducers/admin/AdminActionCreator';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {ConsultantEditDialog} from './consultant-edit-dialog_module';
 import {ApplicationState} from '../../../reducers/reducerIndex';
-import Button from '@material-ui/core/Button/Button';
 import GridListTileBar from '@material-ui/core/GridListTileBar/GridListTileBar';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
@@ -57,6 +56,8 @@ interface ConsultantTileLocalState {
  */
 interface ConsultantTileDispatch {
     redirectToUser(initials: string): void;
+
+    redirectToUserHome(initials: string): void;
 }
 
 function shortNameOf(state: ApplicationState, initials: string): string {
@@ -64,6 +65,20 @@ function shortNameOf(state: ApplicationState, initials: string): string {
     const info = state.adminReducer.consultantsByInitials.get(initials);
     return name ? name.shortName : info ? info.firstName() + ' ' + info.lastName() : initials;
 }
+
+/**
+ * Opens the menu of a tile (#211): three dots, since it is a menu of actions, light on the dark bar
+ */
+const TileMenuButton = (props: { onClick(event: React.MouseEvent<HTMLElement>): void }) => {
+    const theme = useTheme();
+    const label = PowerLocalize.get('ConsultantTile.Menu');
+    return <Tooltip title={label}>
+        <IconButton aria-label={label} aria-haspopup="true" style={{color: theme.palette.common.white}}
+                    onClick={props.onClick}>
+            <Icon>more_vert</Icon>
+        </IconButton>
+    </Tooltip>;
+};
 
 class ConsultantTileModule extends React.Component<ConsultantTileProps
     & ConsultantTileLocalProps
@@ -86,7 +101,8 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
 
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): ConsultantTileDispatch {
         return {
-            redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials))
+            redirectToUser: initials => dispatch(AdminActionCreator.AsyncRedirectToUser(initials)),
+            redirectToUserHome: initials => dispatch(AdminActionCreator.AsyncRedirectToUserHome(initials))
         };
     }
 
@@ -184,7 +200,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
     };
 
     /**
-     * The picture opens the profile like "Profil bearbeiten" in the menu (#193); not for inactive consultants, whose
+     * The picture opens the overview of the consultant (#211, before the profile, #193); not for inactive consultants, whose
      * menu entry is disabled as well
      */
     private renderPicture = () => {
@@ -196,13 +212,13 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
         if (!info.active()) {
             return picture;
         }
-        const openProfile = PowerLocalize.getFormatted('ConsultantTile.OpenProfile', this.props.shortName);
+        const openProfile = PowerLocalize.getFormatted('ConsultantTile.OpenOverview', this.props.shortName);
         // Screen readers get the full name (#216)
-        const openProfileLabel = PowerLocalize.getFormatted('ConsultantTile.OpenProfile', info.firstName() + ' ' + info.lastName());
+        const openProfileLabel = PowerLocalize.getFormatted('ConsultantTile.OpenOverview', info.firstName() + ' ' + info.lastName());
         return <Tooltip title={openProfile}>
             <ButtonBase className="consultant-tile-picture" focusVisibleClassName="consultant-tile-picture-focus"
                         aria-label={openProfileLabel}
-                        onClick={() => this.props.redirectToUser(this.props.initials)}>
+                        onClick={() => this.props.redirectToUserHome(this.props.initials)}>
                 {picture}
             </ButtonBase>
         </Tooltip>;
@@ -234,12 +250,7 @@ class ConsultantTileModule extends React.Component<ConsultantTileProps
                             {this.props.shortName}
                         </span>}
                         subtitle={this.renderProfileCheck()}
-                        //actionIcon={this.renderMenu()
-                        actionIcon={
-                            <Button onClick={this.handleMenuClick}>
-                                <Icon className="material-icons" style={{color: 'white'}}>menu</Icon>
-                            </Button>
-                        }
+                        actionIcon={<TileMenuButton onClick={this.handleMenuClick}/>}
                     />
                 </GridListTile>
             </div>);

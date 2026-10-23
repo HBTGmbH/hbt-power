@@ -311,6 +311,15 @@ export class AdminActionCreator {
         };
     }
 
+    /**
+     * The overview of a consultant (#211): profile check and view profiles
+     */
+    public static AsyncRedirectToUserHome(initials: string) {
+        return function (dispatch: ThunkDispatch<any, any, any>) {
+            dispatch(NavigationActionCreator.AsyncNavigateTo(Paths.build(Paths.USER_HOME, {initials})));
+        };
+    }
+
     public static AsyncLoadConsultant(initials: string) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.getConsultant(initials)
