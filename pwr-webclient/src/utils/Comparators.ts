@@ -33,6 +33,26 @@ export const findSkillByName = <T extends { name: string }>(skills: ReadonlyArra
     return skills.find(skill => (skill.name || '').trim().toLowerCase() === normalized);
 };
 
+/** Newest first; LocalDate strings sort like the dates they stand for. Without a date last */
+const newestDateFirst = (date1: LocalDate | null | undefined, date2: LocalDate | null | undefined): number => {
+    if (date1 && date2) {
+        return date2.localeCompare(date1);
+    }
+    return date1 ? -1 : date2 ? 1 : 0;
+};
+
+/**
+ * By end date, newest first; an open end ("bis heute", no end date) is the newest of all (#225). The same end, or two
+ * open ones, decided by the later start
+ */
+const newestEndFirst = (entry1: { startDate: LocalDate, endDate: LocalDate },
+                        entry2: { startDate: LocalDate, endDate: LocalDate }): number => {
+    if (!entry1.endDate !== !entry2.endDate) {
+        return entry1.endDate ? 1 : -1;
+    }
+    return newestDateFirst(entry1.endDate, entry2.endDate) || newestDateFirst(entry1.startDate, entry2.startDate);
+};
+
 export const PROJECTS_BY_START_DATE = ComparatorBuilder
     .comparing<Project>(nullSafe(t => t.startDate))
     .definingNullAs(NullMode.HIGHEST)
@@ -93,19 +113,19 @@ export class Comparators {
     }
 
     public static compareEducationByEndDate(edu1: Education, edu2: Education): number {
-        return Comparators.compareDate(edu1.endDate, edu2.endDate);
+        return newestEndFirst(edu1, edu2);
     }
 
     public static compareCareerByEndDate(career1: Career, career2: Career): number {
-        return Comparators.compareDate(career1.endDate, career2.endDate);
+        return newestEndFirst(career1, career2);
     }
 
     public static compareQualificationByDate(qualification1: Qualification, qualification2: Qualification): number {
-        return Comparators.compareDate(qualification1.date, qualification2.date);
+        return newestDateFirst(qualification1.date, qualification2.date);
     }
 
     public static compareFurtherTrainingByEndDate(training1: FurtherTraining, training2: FurtherTraining): number {
-        return Comparators.compareDate(training1.endDate, training2.endDate);
+        return newestEndFirst(training1, training2);
     }
 
     public static compareLanguageByLevel(lang1: Language, lang2: Language): number {
