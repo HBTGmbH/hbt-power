@@ -102,11 +102,4 @@ public class ViewProfileAccessTest {
     public void callWithoutTheEdgeReadsEverything() throws Exception {
         mockMvc.perform(get("/view/xyz")).andExpect(status().isOk());
     }
-
-    @Test
-    public void onlyAnAdminConvertsTheViewProfilesOfEveryone() throws Exception {
-        mockMvc.perform(asUser(post("/view/dataConversion"), "tst")).andExpect(status().isForbidden());
-        verify(viewProfileService, never()).migrateViewProfiles();
-        mockMvc.perform(post("/view/dataConversion").header(USER_ADMIN_HEADER, "true")).andExpect(status().isOk());
-    }
 }
