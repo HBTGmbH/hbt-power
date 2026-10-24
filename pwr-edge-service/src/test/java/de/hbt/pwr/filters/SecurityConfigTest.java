@@ -67,7 +67,7 @@ class SecurityConfigTest {
     @Test
     void adminPathAsUserIsForbidden() {
         webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
-                .get().uri("/pwr-profile-service/admin/notifications").exchange().expectStatus().isForbidden();
+                .get().uri("/pwr-profile-service/admin/consultants").exchange().expectStatus().isForbidden();
     }
 
     @Test

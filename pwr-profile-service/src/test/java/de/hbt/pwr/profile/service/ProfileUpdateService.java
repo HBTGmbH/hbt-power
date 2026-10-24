@@ -3,7 +3,6 @@ package de.hbt.pwr.profile.service;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.errors.PwrValidationException;
 import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.notification.AdminNotification;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.*;
@@ -29,21 +28,6 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 @Service
 public class ProfileUpdateService {
 
-    private static class Pair<K, V> {
-        private final K key;
-        private final V value;
-        private Pair(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-        private K getKey() {
-            return key;
-        }
-        private V getValue() {
-            return value;
-        }
-    }
-
     private static final Logger LOG = getLogger(ProfileUpdateService.class);
 
     private final NameEntityRepository nameEntityRepository;
@@ -51,20 +35,18 @@ public class ProfileUpdateService {
     private final ProfileEntryDAO profileEntryDAO;
     private final ProjectRepository projectRepository;
     private final ProfileRepository profileRepository;
-    private final AdminNotificationService adminNotificationService;
     private final ProfileValidationService profileValidationService;
 
     @Autowired
     public ProfileUpdateService(NameEntityRepository nameEntityRepository, SkillRepository skillRepository,
                                 ProfileEntryDAO profileEntryDAO, ProjectRepository projectRepository,
-                                ProfileRepository profileRepository, AdminNotificationService adminNotificationService,
+                                ProfileRepository profileRepository,
                                 ProfileValidationService profileValidationService) {
         this.nameEntityRepository = nameEntityRepository;
         this.skillRepository = skillRepository;
         this.profileEntryDAO = profileEntryDAO;
         this.projectRepository = projectRepository;
         this.profileRepository = profileRepository;
-        this.adminNotificationService = adminNotificationService;
         this.profileValidationService = profileValidationService;
     }
 
@@ -88,9 +70,8 @@ public class ProfileUpdateService {
      * @param newEntityType is the type of the {@link NameEntity}, which is not necessarily set for new {@link NameEntity}s
      * @return either the concurrent or the given {@link NameEntity}
      */
-    private Pair<Boolean, NameEntity> mergeNameEntity(@NotNull NameEntity nameEntity, NameEntityType newEntityType) {
+    private NameEntity mergeNameEntity(@NotNull NameEntity nameEntity, NameEntityType newEntityType) {
         NameEntity res = nameEntity;
-        boolean created = false;
         LOG.debug("NameEntity: " + nameEntity.toString());
         // Precache all
         nameEntityRepository.findAll();
@@ -101,19 +82,13 @@ public class ProfileUpdateService {
         } else {
             res.setType(newEntityType);
             res = nameEntityRepository.save(nameEntity);
-            created = true;
         }
-        return new Pair<>(created, res);
+        return res;
     }
 
-    public <T extends ProfileEntry> T persistEntry(T entry, Profile profile, NameEntityType nameEntityType,Set<AdminNotification> adminNotifications) {
-        Pair<Boolean, NameEntity> res = mergeNameEntity(entry.getNameEntity(), nameEntityType);
-        entry.setNameEntity(res.getValue());
-        entry = profileEntryDAO.update(entry);
-        if (res.getKey()) {
-            adminNotifications.add(adminNotificationService.createProfileEntryNotification(profile, entry.getId(), res.getValue()));
-        }
-        return entry;
+    public <T extends ProfileEntry> T persistEntry(T entry, NameEntityType nameEntityType) {
+        entry.setNameEntity(mergeNameEntity(entry.getNameEntity(), nameEntityType));
+        return profileEntryDAO.update(entry);
     }
 
 
@@ -130,23 +105,19 @@ public class ProfileUpdateService {
      * @param entries to be persisted
      * @return persisted entries
      */
-    protected <T extends ProfileEntry> Set<T> persistEntries(Set<T> entries, Profile profile, NameEntityType nameEntityType,Set<AdminNotification> adminNotifications) {
-        return entries.stream().map(e -> persistEntry(e, profile, nameEntityType, adminNotifications)).collect(Collectors.toSet());
+    protected <T extends ProfileEntry> Set<T> persistEntries(Set<T> entries, NameEntityType nameEntityType) {
+        return entries.stream().map(e -> persistEntry(e, nameEntityType)).collect(Collectors.toSet());
     }
 
 
-    private Skill importSkill(Profile profile, Skill skill, Map<String, Skill> skillsByLcName, Set<AdminNotification> adminNotifications) {
+    private Skill importSkill(Skill skill, Map<String, Skill> skillsByLcName) {
         // Fix skill name
-        boolean newSkillCreated = false;
         skill.setName(skill.getName().trim());
         Skill res;
         Skill concurrent = skillsByLcName.get(skill.getName().toLowerCase());
         LOG.debug("Skill: " + skill);
         LOG.debug("Concurrent skill: " + (concurrent == null ? null : concurrent.toString()));
         if (concurrent == null) {
-            if (skill.getId() == null) {
-                newSkillCreated = true;
-            }
             // persist in any case, Skill might be detached and then a merge occurs (update)
             res = skillRepository.saveAndFlush(skill);
         } else {
@@ -156,9 +127,6 @@ public class ProfileUpdateService {
                 skillRepository.flush();
             }
         }
-        // Do notifications
-        Optional<AdminNotification> notification = adminNotificationService.createSkillNotification(profile, res, newSkillCreated);
-        notification.ifPresent(adminNotifications::add);
         return res;
     }
 
@@ -169,14 +137,14 @@ public class ProfileUpdateService {
      * @return the imported {@link Project} with possible changed skills in the project. The {@link Project#getSkills()} will
      * have been replaced by a new Set.
      */
-    protected Project importProjectSkills(Profile profile, Project project, Set<AdminNotification> adminNotifications) {
+    protected Project importProjectSkills(Profile profile, Project project) {
         Set<Skill> profileSkills = profile.getSkills();
         Set<Skill> projectSkills = project.getSkills();
         Map<String, Skill> profileSkillsByLcName = new HashMap<>();
         profileSkills.forEach(skill -> profileSkillsByLcName.put(skill.getName().toLowerCase(), skill));
         Set<Skill> newProjectSkills = new HashSet<>();
         projectSkills.forEach(skill -> {
-            skill = importSkill(profile, skill, profileSkillsByLcName, adminNotifications);
+            skill = importSkill(skill, profileSkillsByLcName);
             newProjectSkills.add(skill);
 
             // Only works on well defined hash code AND correctly persisted skill (With correct ID set)
@@ -190,18 +158,15 @@ public class ProfileUpdateService {
     }
 
     private Project importProject(Project project) {
-        Pair<Boolean, NameEntity> res;
         if (project.getBroker() != null) {
-            res = mergeNameEntity(project.getBroker(), NameEntityType.COMPANY);
-            project.setBroker(res.getValue());
+            project.setBroker(mergeNameEntity(project.getBroker(), NameEntityType.COMPANY));
         }
         if (project.getClient() != null) {
-            res = mergeNameEntity(project.getClient(), NameEntityType.COMPANY);
-            project.setClient(res.getValue());
+            project.setClient(mergeNameEntity(project.getClient(), NameEntityType.COMPANY));
         }
         project.setProjectRoles(project.getProjectRoles()
                 .stream()
-                .map(ne -> mergeNameEntity(ne, NameEntityType.PROJECT_ROLE).getValue())
+                .map(ne -> mergeNameEntity(ne, NameEntityType.PROJECT_ROLE))
                 .collect(Collectors.toSet()));
 
         if(isNewProject(project)) {
@@ -220,33 +185,33 @@ public class ProfileUpdateService {
         return project.getId() == null;
     }
 
-    private void persistNameEntities(Profile profile,Set<AdminNotification> adminNotifications) {
+    private void persistNameEntities(Profile profile) {
         if (profile.getEducation().size() > 0) {
-            profile.setEducation(persistEntries(profile.getEducation(), profile, NameEntityType.EDUCATION,adminNotifications));
+            profile.setEducation(persistEntries(profile.getEducation(), NameEntityType.EDUCATION));
         }
 
         if (profile.getQualification().size() > 0) {
-            profile.setQualification(persistEntries(profile.getQualification(), profile, NameEntityType.QUALIFICATION, adminNotifications));
+            profile.setQualification(persistEntries(profile.getQualification(), NameEntityType.QUALIFICATION));
         }
 
         if (profile.getLanguages().size() > 0) {
-            profile.setLanguages(persistEntries(profile.getLanguages(), profile, NameEntityType.LANGUAGE, adminNotifications));
+            profile.setLanguages(persistEntries(profile.getLanguages(), NameEntityType.LANGUAGE));
         }
 
         if (profile.getSectors().size() > 0) {
-            profile.setSectors(persistEntries(profile.getSectors(), profile, NameEntityType.SECTOR, adminNotifications));
+            profile.setSectors(persistEntries(profile.getSectors(), NameEntityType.SECTOR));
         }
 
         if (profile.getTrainingEntries().size() > 0) {
-            profile.setTrainingEntries(persistEntries(profile.getTrainingEntries(), profile, NameEntityType.TRAINING, adminNotifications));
+            profile.setTrainingEntries(persistEntries(profile.getTrainingEntries(), NameEntityType.TRAINING));
         }
 
         if (profile.getCareerEntries().size() > 0) {
-            profile.setCareerEntries(persistEntries(profile.getCareerEntries(), profile, NameEntityType.CAREER, adminNotifications));
+            profile.setCareerEntries(persistEntries(profile.getCareerEntries(), NameEntityType.CAREER));
         }
 
         if (profile.getSpecialFieldEntries().size() > 0) {
-            profile.setSpecialFieldEntries(persistEntries(profile.getSpecialFieldEntries(), profile, NameEntityType.SPECIAL_FIELD, adminNotifications));
+            profile.setSpecialFieldEntries(persistEntries(profile.getSpecialFieldEntries(), NameEntityType.SPECIAL_FIELD));
         }
     }
 
@@ -323,19 +288,19 @@ public class ProfileUpdateService {
     }
 
 
-    protected void importProfileSkills(Profile profile, Set<AdminNotification> adminNotifications) {
+    protected void importProfileSkills(Profile profile) {
         Map<String, Skill> skillsByLcName = new HashMap<>();
         profile.getSkills().forEach(skill -> {
-            Skill res = importSkill(profile, skill, skillsByLcName, adminNotifications);
+            Skill res = importSkill(skill, skillsByLcName);
             skillsByLcName.put(res.getName().toLowerCase(), res);
         });
         profile.getSkills().clear(); // do not replace but modify persistent collection
         profile.getSkills().addAll(skillsByLcName.values());
     }
 
-    protected void importProjectSkills(Profile profile, Set<AdminNotification> adminNotifications) {
+    protected void importProjectSkills(Profile profile) {
         Set<Project> projects = profile.getProjects().stream()
-                .map(project -> importProjectSkills(profile, project, adminNotifications))
+                .map(project -> importProjectSkills(profile, project))
                 .collect(Collectors.toSet());
         profile.getProjects().clear();
         profile.getProjects().addAll(projects);
@@ -343,7 +308,6 @@ public class ProfileUpdateService {
 
 
     public Profile importProfile(Profile profile) {
-        Set<AdminNotification> adminNotifications = new HashSet<>();
         Collection<String> errors = profileValidationService.validateProfile(profile);
         if (!errors.isEmpty()) {
             throw new PwrValidationException(errors);
@@ -352,28 +316,24 @@ public class ProfileUpdateService {
         LOG.info(profile + ": Importing profile.");
         removeInvalidEntries(profile);
         LOG.info(profile + ": Persisting name entities.");
-        persistNameEntities(profile, adminNotifications);
+        persistNameEntities(profile);
         // Note: order is important here. Cascading is deactivated, so
         // it is important to first persist all new profile skills,
         // then all project skills and THEN the projects.
         LOG.info(profile + ": Importing profile skills.");
-        importProfileSkills(profile, adminNotifications);
+        importProfileSkills(profile);
         LOG.info(profile + ": Importing project skills.");
-        importProjectSkills(profile, adminNotifications);
+        importProjectSkills(profile);
         LOG.info(profile + ": Importing projects.");
         importProjects(profile);
         LOG.info(profile + ": Importing done.");
         profile.setLastEdited(LocalDateTime.now());
         profile = profileRepository.save(profile);
         LOG.info("Profile saved...");
-        adminNotificationService.emit(adminNotifications);
         return profile;
     }
 
     public Profile updateProfile(Profile profile) {
-
-        profile = importProfile(profile);
-        adminNotificationService.emit(adminNotificationService.createProfileUpdatedNotification(profile));
-        return profile;
+        return importProfile(profile);
     }
 }

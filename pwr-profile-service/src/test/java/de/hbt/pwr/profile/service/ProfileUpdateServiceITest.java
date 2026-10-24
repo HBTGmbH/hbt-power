@@ -3,7 +3,6 @@ package de.hbt.pwr.profile.service;
 import de.hbt.pwr.profile.AbstractIntegrationTest;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.notification.*;
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
@@ -51,9 +50,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
 
     @Autowired
     private ProfileRepository profileRepository;
-
-    @Autowired
-    private AdminNotificationRepository adminNotificationRepository;
 
 
     private static Logger LOG = getLogger(ProfileUpdateService.class);
@@ -159,7 +155,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
     @Transactional
     public void testPersistNewEntries() {
         initTestData();
-        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile p = new Profile();
         LanguageSkill lang2 = new LanguageSkill(null, n2, LanguageSkillLevel.BASIC);
         LanguageSkill lang3 = new LanguageSkill(null, n3, LanguageSkillLevel.BUSINESS_FLUENT);
@@ -168,7 +163,7 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         Set<LanguageSkill> languageSkillSet = new HashSet<>();
         languageSkillSet.add(lang2);
         languageSkillSet.add(lang3);
-        languageSkillSet = ReflectionTestUtils.invokeMethod(profileUpdateService, "persistEntries", languageSkillSet, p, NameEntityType.LANGUAGE, adminNotifications);
+        languageSkillSet = ReflectionTestUtils.invokeMethod(profileUpdateService, "persistEntries", languageSkillSet, NameEntityType.LANGUAGE);
         assertThat(languageSkillSet.size()).isEqualTo(2);
     }
 
@@ -182,7 +177,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
     @Transactional
     public void testImportProjectSkills() {
         initTestData();
-        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile profile = new Profile();
         profileRepository.saveAndFlush(profile);
         Set<Skill> profileSkills = new HashSet<>();
@@ -207,7 +201,7 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         p.setName("Test");
         p.setDescription("This is a test project");
 
-        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p, adminNotifications);
+        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p);
         assertThat(profileSkills.size()).isEqualTo(5);
         Optional<Skill> skillOptional = profileSkills.stream().filter(skill -> skill.getName().equals("S5")).findFirst();
         assertThat(skillOptional).isPresent();
@@ -245,7 +239,7 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         p.setName("Test");
         p.setDescription("This is a test project");
 
-        p = profileUpdateService.importProjectSkills(profile, p, new HashSet<>());
+        p = profileUpdateService.importProjectSkills(profile, p);
         profile = profileUpdateService.updateProfile(profile);
 
         profile.getSkills().forEach(skill -> skill.setRating(5));
@@ -299,7 +293,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
     @Transactional
     public void testImportProjectSkillsWithDuplicate() {
         initTestData();
-        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile profile = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
         profile.setSkills(profileSkills);
@@ -323,7 +316,7 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         p.setName("Test");
         p.setDescription("This is a test project");
 
-        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p, adminNotifications);
+        p = ReflectionTestUtils.invokeMethod(profileUpdateService, "importProjectSkills", profile, p);
         assertThat(profileSkills.size()).isEqualTo(4);
         assertThat(profileSkills).containsExactlyInAnyOrder(s1, s2, s3, s4);
         assertThat(p.getSkills()).containsExactlyInAnyOrder(s3, s4);
@@ -337,7 +330,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
     @Test
     @Transactional
     public void testImportProfileSkillsWithDuplicates() {
-        Set<AdminNotification> adminNotifications = new HashSet<>();
         initTestData();
         Profile p = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
@@ -348,7 +340,7 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         profileSkills.add(s3);
         profileSkills.add(duplicate);
 
-        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p, adminNotifications);
+        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p);
         Set<Skill> resultSkills = p.getSkills();
         assertThat(resultSkills).contains(s2);
         assertThat(resultSkills).contains(s3);
@@ -369,7 +361,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
     @Transactional
     public void testImportProfileSkillsWithCaseUnsensitiveDuplicates() {
         initTestData();
-        Set<AdminNotification> notifications = new HashSet<>();
         Profile p = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
         p.setSkills(profileSkills);
@@ -379,7 +370,7 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         profileSkills.add(s3);
         profileSkills.add(duplicate);
 
-        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p, notifications);
+        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p);
         Set<Skill> resultSkills = p.getSkills();
         assertThat(resultSkills).contains(s2);
         assertThat(resultSkills).contains(s3);
@@ -398,7 +389,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
     @Transactional
     public void testImportProfileSkillsWithDuplicateRatingConflict() {
         initTestData();
-        Set<AdminNotification> adminNotifications = new HashSet<>();
         Profile p = new Profile();
         Set<Skill> profileSkills = new HashSet<>();
         p.setSkills(profileSkills);
@@ -409,7 +399,7 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         profileSkills.add(s3);
         profileSkills.add(duplicate);
 
-        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p, adminNotifications);
+        ReflectionTestUtils.invokeMethod(profileUpdateService, "importProfileSkills", p);
         Set<Skill> resultSkills = p.getSkills();
         assertThat(resultSkills.size()).isEqualTo(3);
         assertThat(resultSkills).contains(s2);
@@ -479,33 +469,12 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         }
     }
 
-    private void assertContains(List<SkillNotification> notifications, Skill skill) {
-        Optional<SkillNotification> notificationOptional = notifications
-                .stream()
-                .filter(skillNotification -> skillNotification.getSkill().equals(skill))
-                .findAny();
-        if (!notificationOptional.isPresent()) {
-            fail("Expected " + notifications + " to contain a " + SkillNotification.class.getSimpleName() + " that has " + skill);
-        }
-    }
-
-    private void assertContains(List<ProfileEntryNotification> notifications, NameEntity nameEntity) {
-        Optional<ProfileEntryNotification> notificationOptional = notifications
-                .stream()
-                .filter(notification -> notification.getNameEntity().equals(nameEntity))
-                .findAny();
-        if (!notificationOptional.isPresent()) {
-            fail("Expected " + notifications + " to contain a " + ProfileEntryNotification.class.getSimpleName() + " that has " + nameEntity);
-        }
-    }
-
     /**
      * Tests import a valid profile that only has new entries.
      * Validates that:
      * A) The entries all get persisted correctly (have an ID, are in the database)
      * B) The name entites get peristed correctly
      * C) Potential conflicts get resolved correctly
-     * D) Notifications are created when necessary
      * => Full integrative testing of the profile import
      */
     @Test
@@ -606,49 +575,6 @@ public class ProfileUpdateServiceITest extends AbstractIntegrationTest {
         assertThat(retrievedProject.getDescription()).isEqualTo("Description");
 
         assertThat(profile.getSkills()).containsExactlyInAnyOrder(skill1, skill2, skill3);
-
-        List<SkillNotification> skillNotifications = adminNotificationRepository.findAllByAdminNotificationStatus(AdminNotificationStatus.ALIVE)
-                .stream()
-                .filter(notification -> notification.getNotificationType().equals("SkillNotification"))
-                .map(notification -> (SkillNotification) notification)
-                .collect(Collectors.toList());
-        assertContains(skillNotifications, skill1);
-        assertContains(skillNotifications, skill2);
-        assertContains(skillNotifications, skill3);
-
-        List<ProfileEntryNotification> profileEntryNotifications = adminNotificationRepository.findAllByAdminNotificationStatus(AdminNotificationStatus.ALIVE)
-                .stream()
-                .filter(notification -> notification.getNotificationType().equals("ProfileEntryNotification"))
-                .map(notification -> (ProfileEntryNotification) notification)
-                .collect(Collectors.toList());
-        assertContains(profileEntryNotifications, educationEntry1.getNameEntity());
-        assertContains(profileEntryNotifications, educationEntry2.getNameEntity());
-
-        assertContains(profileEntryNotifications, sectorEntry1.getNameEntity());
-        assertContains(profileEntryNotifications, sectorEntry2.getNameEntity());
-
-        assertContains(profileEntryNotifications, specialFieldEntry1.getNameEntity());
-        assertContains(profileEntryNotifications, specialFieldEntry2.getNameEntity());
-        assertContains(profileEntryNotifications, specialFieldEntry3.getNameEntity());
-
-        assertContains(profileEntryNotifications, careerEntry1.getNameEntity());
-        assertContains(profileEntryNotifications, careerEntry2.getNameEntity());
-
-        assertContains(profileEntryNotifications, trainingEntry1.getNameEntity());
-        assertContains(profileEntryNotifications, trainingEntry2.getNameEntity());
-
-        assertContains(profileEntryNotifications, qualificationEntry1.getNameEntity());
-        assertContains(profileEntryNotifications, qualificationEntry2.getNameEntity());
-
-        assertContains(profileEntryNotifications, languageSkill1.getNameEntity());
-        assertContains(profileEntryNotifications, languageSkill2.getNameEntity());
-
-        List<ProfileUpdatedNotification> profileUpdatedNotifications = adminNotificationRepository.findAllByAdminNotificationStatus(AdminNotificationStatus.ALIVE)
-                .stream()
-                .filter(notification -> notification.getNotificationType().equals("ProfileUpdatedNotification"))
-                .map(notification -> (ProfileUpdatedNotification) notification)
-                .collect(Collectors.toList());
-        assertThat(profileUpdatedNotifications).isNotEmpty();
 
         Profile retrieved = profileRepository.findById(profile.getId()).get();
         assertThat(retrieved).isNotNull();

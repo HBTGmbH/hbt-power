@@ -2,11 +2,9 @@ package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.model.NameEntityLocalizationDTO;
 import de.hbt.pwr.profile.AbstractIntegrationTest;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.NameEntityRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.FormerNameDTO;
-import de.hbt.pwr.profile.model.notification.ProfileEntryNotification;
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
@@ -57,8 +55,6 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
     private ConsultantService consultantService;
     @Autowired
     private NameEntityRepository nameEntityRepository;
-    @Autowired
-    private AdminNotificationRepository adminNotificationRepository;
     @Autowired
     private EntityManager entityManager;
     @Autowired
@@ -186,14 +182,13 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void merge_pointsEntriesBrokerClientRolesAndNotificationsToTheTarget_andDeletesTheSource() {
-        SectorEntry annasBank = sector(anna, "Bank");
+    public void merge_pointsEntriesBrokerClientAndRolesToTheTarget_andDeletesTheSource() {
+        sector(anna, "Bank");
         sector(bert, "Banken");
         project(anna, "Hbt", "Dev", "Developer");
         project(bert, "HBT GmbH", "Developer");
         NameEntity bank = element("Bank", SECTOR);
         NameEntity banks = element("Banken", SECTOR);
-        adminNotificationRepository.save(new ProfileEntryNotification(anna, annasBank.getId(), bank));
 
         nameEntityAdminService.merge(bank.getId(), banks.getId());
         nameEntityAdminService.merge(element("Hbt", COMPANY).getId(), element("HBT GmbH", COMPANY).getId());
@@ -205,9 +200,6 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
         assertThat(annaNow.getProjects()).flatExtracting(Project::getProjectRoles).extracting(NameEntity::getName)
                 .containsExactly("Developer");
         assertThat(nameEntityRepository.findById(bank.getId())).isEmpty();
-        assertThat(adminNotificationRepository.findAll())
-                .extracting(notification -> ((ProfileEntryNotification) notification).getNameEntity().getName())
-                .containsExactly("Banken");
         assertThat(nameEntityAdminService.findFormerNames())
                 .extracting(FormerNameDTO::getName, FormerNameDTO::getCurrentName)
                 .containsExactlyInAnyOrder(tuple("Bank", "Banken"), tuple("Hbt", "HBT GmbH"), tuple("Dev", "Developer"));
@@ -252,13 +244,12 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void delete_removesTheElementFromAllProfiles_andItsNotifications() {
-        SectorEntry annasBank = sector(anna, "Banken");
+    public void delete_removesTheElementFromAllProfiles() {
+        sector(anna, "Banken");
         sector(anna, "Versicherungen");
         project(bert, "Kunde AG", "Entwickler", "Architekt");
         project(bert, "Kunde AG");
         NameEntity banks = element("Banken", SECTOR);
-        adminNotificationRepository.save(new ProfileEntryNotification(anna, annasBank.getId(), banks));
 
         nameEntityAdminService.delete(banks.getId());
         nameEntityAdminService.delete(element("Kunde AG", COMPANY).getId());
@@ -270,7 +261,6 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
         assertThat(bertNow.getProjects()).flatExtracting(Project::getProjectRoles).extracting(NameEntity::getName)
                 .containsExactly("Entwickler");
         assertThat(element("Banken", SECTOR)).isNull();
-        assertThat(adminNotificationRepository.findAll()).isEmpty();
     }
 
     @Test
@@ -318,7 +308,6 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
         Long logisticsRow = profileEntryRowWithoutType(logistics);
         Long banksRow = profileEntryRowWithoutType(banks);
         Long tradeRow = profileEntryRowWithoutType(trade);
-        adminNotificationRepository.save(new ProfileEntryNotification(anna, banksRow, banks));
 
         assertThat(nameEntityAdminService.deleteUnused(COMPANY)).extracting(NameEntity::getName).containsExactly("Logistik");
         nameEntityAdminService.delete(banks.getId());
@@ -332,7 +321,6 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
         assertThat(nameEntityOfRow(logisticsRow)).isNull();
         assertThat(nameEntityOfRow(banksRow)).isNull();
         assertThat(nameEntityOfRow(tradeRow)).isEqualTo(insurances.getId());
-        assertThat(adminNotificationRepository.findAll()).isEmpty();
         assertThat(reloaded(anna).getSectors()).extracting(entry -> entry.getNameEntity().getName()).containsExactly("Versicherungen");
     }
 

@@ -31,19 +31,6 @@ const navigateTo = (path: string) => (dispatch: ReturnType<typeof useDispatch>) 
 
 const GROUPS: Array<{ localizationKey: string, entries: Array<AdminMenuEntry | AdminSubmenu> }> = [
     {
-        localizationKey: 'AdminClient.Menu.Mail',
-        entries: [
-            {
-                localizationKey: 'AdminClient.Menu.Inbox', icon: 'inbox', path: Paths.ADMIN_INBOX,
-                open: dispatch => dispatch(AdminActionCreator.AsyncNavigateToInbox() as any)
-            },
-            {
-                localizationKey: 'AdminClient.Menu.Trashbin', icon: 'delete', path: Paths.ADMIN_TRASHBOX,
-                open: dispatch => dispatch(AdminActionCreator.AsyncNavigateToTrashbox() as any)
-            },
-        ]
-    },
-    {
         localizationKey: 'AdminClient.Menu.Employees',
         entries: [
             {

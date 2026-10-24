@@ -40,7 +40,7 @@ Welcher Service welchen aufruft, zeigt [5.3](#53-abhängigkeiten-zwischen-den-se
 |---|---|---|
 | **pwr-webclient** | Bedienoberfläche für Berater und Admins | nur im Browser (Redux) |
 | **pwr-edge-service** | Einziger Eingang: Token prüfen, Rollen je Pfad, Identitäts-Header setzen, Routing | keine |
-| **pwr-profile-service** | Berater, Profile mit Einträgen, Projekten und Skills, Profil-Elemente, Profilbilder, Benachrichtigungen, Profilprüfung; Admin-Operationen über alle Profile | MariaDB `profile` |
+| **pwr-profile-service** | Berater, Profile mit Einträgen, Projekten und Skills, Profil-Elemente, Profilbilder, Profilprüfung; Admin-Operationen über alle Profile | MariaDB `profile` |
 | **pwr-skill-service** | Skill-Baum (Kategorien, Skills, Aliase, Versionen, Übersetzungen) und Suche | MariaDB `skill`, Lucene-Index |
 | **pwr-view-profile-service** | View-Profile (Momentaufnahmen für einen Export), Vorlagen-Metadaten; stößt Export und Vorschau an | Redis |
 | **pwr-report-service** | Rendert Dokumente mit BIRT, speichert die Dokumente (Historie) und die Vorlagen-Dateien | MariaDB `report` |
@@ -90,11 +90,10 @@ flowchart TB
     end
     subgraph Services
         CS[ConsultantService<br/>ConsultantShortNames]
-        PES[ProfileEntryService<br/>ProfileUpdateService]
+        PES[ProfileEntryService]
         PS[ProfileService<br/>Skills über alle Profile]
         NE[NameEntityAdminService]
         CK[ProfileCheckService]
-        AN[AdminNotificationService]
         HK[HousekeepingService]
     end
     subgraph Clients
@@ -108,7 +107,7 @@ flowchart TB
     CE --> CS
     PE --> PES
     PC --> CK
-    AD --> CS & PS & NE & AN & HK
+    AD --> CS & PS & NE & HK
     PES --> SPC
     PS --> SPC
     CK --> SPC
@@ -125,7 +124,7 @@ Wichtige Schnittstellen (nach außen über `/pwr-profile-service`):
 | Eigenes Profil | `GET /consultants/{initials}`, `GET/PUT/DELETE /profile/{initials}/<typ>/{id}` für `language`, `qualification`, `sector`, `specialfield`, `career`, `training`, `education`, `skill`, `project`; `GET/PUT /profile/{initials}/baseProfile` |
 | Für alle Benutzer | `GET /consultants/names` (Kürzel, Kurz- und voller Name, #216), `GET /suggestions/*`, `GET /profile-pictures/{id}` |
 | Profilprüfung | `GET /profile/{initials}/check`, `POST …/check/confirmation` (wer bestätigt, aus den Headern) |
-| Admin | `/admin/consultants` (auch die Quelle der Statistik), `/admin/notifications`, `/admin/skills/merge|rename`, `DELETE /admin/skills?name=`, `/admin/name-entities/**`, `/admin/profile-checks`, `/admin/housekeeping` |
+| Admin | `/admin/consultants` (auch die Quelle der Statistik), `/admin/skills/merge|rename`, `DELETE /admin/skills?name=`, `/admin/name-entities/**`, `/admin/profile-checks`, `/admin/housekeeping` |
 
 Datenmodell (vereinfacht):
 
@@ -141,7 +140,6 @@ erDiagram
     Project }o--o{ NameEntity : projectRoles
     ProfileEntry }o--|| NameEntity : nameEntity
     NameEntity ||--o{ NameEntityFormerName : "frühere Namen"
-    Profile ||--o{ AdminNotification : notifications
     Profile ||--o{ ProfileConfirmation : "bestätigt (profileId)"
 
     Consultant {
@@ -165,15 +163,10 @@ erDiagram
         int rating
         set versions
     }
-    AdminNotification {
-        enum reason
-        enum status "ALIVE, TRASHED"
-        string typ "JOINED: ProfileEntryNotification, ProjectNotification, SkillNotification, ProfileUpdatedNotification"
-    }
 ```
 
 Besonderheiten (Details in [`AGENTS.md`](../../AGENTS.md)):
-- `ProfileEntry` und `AdminNotification` sind mit `JOINED` vererbt. Altdaten enthalten Zeilen in `profile_entry` ohne Zeile eines Eintragstyps (#236), deshalb werden Einträge je Typ geladen.
+- `ProfileEntry` ist mit `JOINED` vererbt. Altdaten enthalten Zeilen in `profile_entry` ohne Zeile eines Eintragstyps (#236), deshalb werden Einträge je Typ geladen.
 - Die Skills eines Projekts sind dieselben Zeilen wie die Skills des Profils (`ProfileEntryService.handleProjectSkill`).
 - Ein aus einer Collection entferntes Element bleibt als Zeile mit `profile_id` NULL stehen. Projekte löscht `deleteProject` seit #243 wirklich.
 - Profil-Elemente (`NameEntity`) sind gemeinsame Einträge aller Profile. Umbenannte und zusammengeführte Elemente behalten ihre früheren Namen (#227, #230); Admins legen weitere als Aliase an (#270). Alle Benutzer lesen sie über `GET /suggestions/aliases` für die Vorschläge.
@@ -358,7 +351,7 @@ flowchart LR
 flowchart TB
     subgraph UI[modules]
         HOME["home: Profil, Projekte, Skills,<br/>View-Profile, Dokumente, Statistik"]
-        ADM["admin: Berater, Postkorb, Report Manager,<br/>Skill-Baum, Profil-Elemente, Housekeeping"]
+        ADM["admin: Berater, Report Manager,<br/>Skill-Baum, Profil-Elemente, Housekeeping"]
         GEN["general: Pwr*-Komponenten"]
     end
     subgraph State[reducers · Redux]
@@ -381,7 +374,7 @@ flowchart TB
 |---|---|
 | Einstieg | `/` (Anmeldung, nur nach dem Abmelden), `/start` (Admins → Beraterverwaltung, sonst eigenes Profil; `/profilauswahl` leitet dorthin) |
 | Profil eines Beraters | `/app/:initials/home`, `…/profile`, `…/profile/projects/:projectId`, `…/profile/skills`, `…/views`, `…/view/:id`, `…/reports`, `…/search`, `…/statistics/*` |
-| Admin | `/admin/home/inbox`, `…/trashbox`, `…/consultants`, `…/templates`, `…/statistics/skills`, `…/info/skilltree`, `…/info/names`, `…/info/skills`, `…/housekeeping` |
+| Admin | `/admin/home/consultants`, `…/templates`, `…/statistics/skills`, `…/info/skilltree`, `…/info/names`, `…/info/skills`, `…/housekeeping` |
 
 - **Laufzeitkonfiguration:** `config.js` mit Platzhaltern, die `configure_api.sh` beim Start des nginx-Containers ersetzt.
 - **Lokal:** `start:local` leitet über `src/setupProxy.js` direkt auf die Ports der Services und überspringt die Anmeldung.

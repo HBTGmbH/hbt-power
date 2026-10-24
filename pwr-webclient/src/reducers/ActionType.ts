@@ -38,8 +38,6 @@ export enum ActionType {
     // == Single ConsultantProfile Actions == //
     ChangeAbstract = '[Profile] ChangeAbstract',
     // == Admin Actions
-    ReceiveNotifications = '[Profile] ReceiveNotifications',
-    ReceiveTrashedNotifications = '[Profile] ReceiveTrashedNotifications',
     AdminRequestStatus = '[Profile] AdminRequestStatus',
     SetCustomSkillFiltering = '[Skill] SetCustomSkillFiltering',
     ChangeAdminLoginStatus = '[Profile] ChangeAdminLoginStatus',
@@ -51,14 +49,6 @@ export enum ActionType {
      */
     ReceiveAllConsultants = '[Profile] ReceiveAllConsultants',
     ReceiveSingleConsultant = '[Profile] ReceiveSingleConsultant',
-
-    // == Notification Dialog
-    OpenSkillNotificationDialog = '[Profile] OpenSkillNotificationDialog',
-    SetSkillNotificationEditStatus = '[Profile] SetSkillNotificationEditStatus',
-    CloseAndResetSkillNotificationDlg = '[Profile] CloseAndResetSkillNotificationDlg',
-    SetSkillNotificationError = '[Profile] SetSkillNotificationError',
-    SetSkillNotificationAction = '[Profile] SetSkillNotificationAction',
-    SetNewSkillName = '[Profile] SetNewSkillName',
 
     // == Report Upload
     SetReportUploadPending = '[Report] SetReportUploadPending',
@@ -144,8 +134,6 @@ export enum ActionType {
     AsyncDeleteSkillAlias = '[Async] DeleteSkillAlias',
     AsyncDeleteSkillLocale = '[Async] DeleteSkillLocale',
     AsyncDeleteCategoryLocale = '[Async] DeleteCategoryLocale',
-    AsyncDeleteNotificationEntry = '[Async] DeleteNotificationEntry',
-    AsyncDeleteTrashedNotifications = '[Async] DeleteTrashedNotifications',
 
     // == Profile Actions
     SetDescription = '[Profile] Set Description',

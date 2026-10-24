@@ -38,10 +38,9 @@ quadrantChart
 |---|---|---|---|---|
 | D1 | **Keine Schema-Migrationen** ([ADR-08](09-architekturentscheidungen.md#adr-08-schema-mit-hibernate-ddl-auto-update-ohne-migrationswerkzeug)) | mittel | SQL-Skripte laufen von Hand. Alte Spalten bleiben, Umgebungen können auseinanderlaufen. #72 geht noch von `ddl-auto: none` aus. | Migrationswerkzeug mit dem Upgrade (#51) |
 | D2 | **Nicht transaktionales Löschen über Services, Verweise ohne Fremdschlüssel** (Berater, Vorlagen und ihre Dateien) | mittel | Datenleichen und Teilzustände | Housekeeping (#242), wiederholbares Löschen (#240); die Zusammenlegung (#50) macht vieles zu echten Fremdschlüsseln |
-| D3 | **Altdaten:** Zeilen in `profile_entry` ohne Eintragstyp, Einträge, Projekte und Skills ohne Profil, alte Benachrichtigungen | mittel | Funktionen scheitern an unerwarteten Daten (#236, #243). | Housekeeping bereinigen; Code lädt Einträge je Typ |
+| D3 | **Altdaten:** Zeilen in `profile_entry` ohne Eintragstyp, Einträge, Projekte und Skills ohne Profil | mittel | Funktionen scheitern an unerwarteten Daten (#236, #243). | Housekeeping bereinigen; Code lädt Einträge je Typ |
 | D4 | **Statistikkopie** bis zu einer Stunde alt | niedrig | Einzelne Änderungen erscheinen verzögert in Statistik und „wer benutzt was“. | Neuladen nach Massenänderungen; bei Bedarf auch nach einzelnen |
 | D5 | **Redis-Modelle** müssen alte Daten lesbar halten | mittel | Ein umbenanntes Feld verliert seine Daten ohne Migration. | Regel in der Definition of Done; Ablösung von Redis (#52) |
-| D6 | **Benachrichtigungen** im Postkorb entstehen seit 2019 kaum noch | niedrig | Toter Code und unklare Funktion | #138 |
 
 ## 11.3 Betrieb
 

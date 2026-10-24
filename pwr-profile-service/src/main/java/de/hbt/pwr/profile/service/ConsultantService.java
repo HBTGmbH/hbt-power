@@ -3,7 +3,6 @@ package de.hbt.pwr.profile.service;
 import de.hbt.pwr.profile.client.ReportClient;
 import de.hbt.pwr.profile.client.StatisticsClient;
 import de.hbt.pwr.profile.client.ViewProfileClient;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.data.ProjectRepository;
 import de.hbt.pwr.profile.data.SkillRepository;
@@ -41,7 +40,6 @@ public class ConsultantService {
     private final SkillRepository skillRepository;
     private final ProjectRepository projectRepository;
     private final ViewProfileClient viewProfileClient;
-    private final AdminNotificationRepository adminNotificationRepository;
     private final ReportClient reportClient;
     private final PictureService pictureService;
     private final StatisticsClient statisticsClient;
@@ -50,13 +48,12 @@ public class ConsultantService {
     public ConsultantService(ConsultantRepository consultantRepository,
                              SkillRepository skillRepository,
                              ProjectRepository projectRepository, ViewProfileClient viewProfileClient,
-                             AdminNotificationRepository adminNotificationRepository, ReportClient reportClient,
+                             ReportClient reportClient,
                              PictureService pictureService, StatisticsClient statisticsClient) {
         this.consultantRepository = consultantRepository;
         this.skillRepository = skillRepository;
         this.projectRepository = projectRepository;
         this.viewProfileClient = viewProfileClient;
-        this.adminNotificationRepository = adminNotificationRepository;
         this.reportClient = reportClient;
         this.pictureService = pictureService;
         this.statisticsClient = statisticsClient;
@@ -132,7 +129,7 @@ public class ConsultantService {
 
     /**
      * Deletes an inactive consultant with everything about the consultant (#240): first the view profiles and the
-     * exported documents in the other services, then the notifications, the profile, the picture and the consultant.
+     * exported documents in the other services, then the profile, the picture and the consultant.
      * If another service fails, the consultant stays; deleting again deletes the rest. The statistics load their copy
      * again after the commit. Profile elements and skills of the skill tree the consultant used stay.
      */
@@ -146,8 +143,6 @@ public class ConsultantService {
         } else {
 
             deleteInOtherServices(toDelete.getInitials());
-
-            adminNotificationRepository.deleteAdminNotificationsByProfileId(toDelete.getProfile().getId());
 
             deleteProjectsAndSkills(toDelete.getProfile());
             String pictureId = toDelete.getProfilePictureId();
@@ -186,11 +181,6 @@ public class ConsultantService {
     }
 
     private void deleteProjects(List<Project> projects) {
-        if (projects.isEmpty()) {
-            // MariaDB rejects "in ()"
-            return;
-        }
-        adminNotificationRepository.deleteAll(adminNotificationRepository.findProjectNotificationsAbout(projects));
         projects.forEach(project -> {
             project.getSkills().clear();
             projectRepository.delete(project);

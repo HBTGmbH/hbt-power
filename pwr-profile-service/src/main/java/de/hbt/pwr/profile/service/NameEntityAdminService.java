@@ -8,9 +8,6 @@ import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.model.FormerNameDTO;
-import de.hbt.pwr.profile.model.notification.AdminNotification;
-import de.hbt.pwr.profile.model.notification.ProfileEntryNotification;
-import de.hbt.pwr.profile.model.notification.ProjectNotification;
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
@@ -27,8 +24,8 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 /**
- * Renaming, merging and deleting profile elements in all profiles (#227). Profile entries, broker, client and roles
- * of projects and the admin notifications point to a profile element by its ID; renaming changes the element,
+ * Renaming, merging and deleting profile elements in all profiles (#227). Profile entries and broker, client and roles
+ * of projects point to a profile element by its ID; renaming changes the element,
  * merging points everything to the target, deleting removes it from the profiles.
  * <p>
  * Former names are kept (#230): a renamed or merged element keeps its old name as a former name, like the alias of a
@@ -222,13 +219,6 @@ public class NameEntityAdminService {
                 project.getProjectRoles().add(target);
             }
         });
-        notificationsWith(source).forEach(notification -> {
-            if (notification instanceof ProfileEntryNotification) {
-                ((ProfileEntryNotification) notification).setNameEntity(target);
-            } else {
-                ((ProjectNotification) notification).setNameEntity(target);
-            }
-        });
         entityManager.flush();
         repointRowsWithoutType(source, target);
         if (ENTRY_TYPES.contains(source.getType())) {
@@ -248,29 +238,18 @@ public class NameEntityAdminService {
 
     /**
      * Deletes the element from all profiles: profile entries with it are deleted, broker, client or role of a project
-     * become empty. The admin notifications about it go with it.
+     * become empty.
      */
     public void delete(Long id) {
         NameEntity nameEntity = require(id);
         log.info("Deleting " + nameEntity + " from all profiles");
-        Set<Long> deletedEntries = new HashSet<>();
         profileRepository.findAll().forEach(profile -> ENTRY_TYPES.forEach(type -> type.getEntryCollection(profile)
-                .removeIf(entry -> {
-                    boolean with = nameEntity.equals(entry.getNameEntity());
-                    if (with) {
-                        deletedEntries.add(entry.getId());
-                    }
-                    return with;
-                })));
+                .removeIf(entry -> nameEntity.equals(entry.getNameEntity()))));
         entityManager.flush();
         // Entries without a profile, which no collection above holds (removed entries keep their row)
-        entriesWith(nameEntity).forEach(entry -> {
-            deletedEntries.add(entry.getId());
-            entityManager.remove(entry);
-        });
-        deletedEntries.addAll(deleteRowsWithoutType(nameEntity));
+        entriesWith(nameEntity).forEach(entityManager::remove);
+        deleteRowsWithoutType(nameEntity);
         removeFromProjects(nameEntity);
-        deleteNotifications(nameEntity, deletedEntries);
         deleteElement(nameEntity);
         statisticsClient.refreshConsultantsAfterCommit();
     }
@@ -284,14 +263,9 @@ public class NameEntityAdminService {
         log.info("Deleting " + unused.size() + " unused profile elements of type " + type);
         unused.forEach(nameEntity -> {
             // Entries and projects without a profile may still point to it
-            Set<Long> deletedEntries = new HashSet<>();
-            entriesWith(nameEntity).forEach(entry -> {
-                deletedEntries.add(entry.getId());
-                entityManager.remove(entry);
-            });
-            deletedEntries.addAll(deleteRowsWithoutType(nameEntity));
+            entriesWith(nameEntity).forEach(entityManager::remove);
+            deleteRowsWithoutType(nameEntity);
             removeFromProjects(nameEntity);
-            deleteNotifications(nameEntity, deletedEntries);
             deleteElement(nameEntity);
         });
         statisticsClient.refreshConsultantsAfterCommit();
@@ -343,24 +317,6 @@ public class NameEntityAdminService {
         nameEntityRepository.delete(nameEntity);
     }
 
-    /**
-     * The notifications about the element and about the deleted entries. Loaded instead of a bulk delete: a
-     * notification spans two tables (JOINED), only deleting the entities removes both rows (#187).
-     */
-    private void deleteNotifications(NameEntity nameEntity, Set<Long> deletedEntries) {
-        notificationsWith(nameEntity).forEach(entityManager::remove);
-        deleteNotificationsAboutEntries(deletedEntries);
-    }
-
-    private void deleteNotificationsAboutEntries(Set<Long> deletedEntries) {
-        if (!deletedEntries.isEmpty()) {
-            entityManager.createQuery("select n from ProfileEntryNotification n where n.profileEntryId in :ids",
-                    AdminNotification.class).setParameter("ids", deletedEntries).getResultList()
-                    .forEach(entityManager::remove);
-        }
-        entityManager.flush();
-    }
-
     private void removeFromProjects(NameEntity nameEntity) {
         projectsWith(nameEntity).forEach(project -> {
             if (nameEntity.equals(project.getClient())) {
@@ -388,23 +344,16 @@ public class NameEntityAdminService {
 
     /**
      * Deletes the rows of profile_entry without a type that still point to the element, after the entries were
-     * removed: every row left then has no type. Returns their ids, for the notifications about them.
+     * removed: every row left then has no type
      */
-    private List<Long> deleteRowsWithoutType(NameEntity nameEntity) {
+    private void deleteRowsWithoutType(NameEntity nameEntity) {
         entityManager.flush();
-        List<Long> ids = ((List<?>) entityManager
-                .createNativeQuery("select id from profile_entry where name_entity_id = :n")
+        int deleted = entityManager.createNativeQuery("delete from profile_entry where name_entity_id = :n")
                 .setParameter("n", nameEntity.getId())
-                .getResultList()).stream()
-                .map(id -> ((Number) id).longValue())
-                .collect(Collectors.toList());
-        if (!ids.isEmpty()) {
-            log.warn("Deleting " + ids.size() + " rows of profile_entry without an entry type pointing to " + nameEntity);
-            entityManager.createNativeQuery("delete from profile_entry where name_entity_id = :n")
-                    .setParameter("n", nameEntity.getId())
-                    .executeUpdate();
+                .executeUpdate();
+        if (deleted > 0) {
+            log.warn("Deleted " + deleted + " rows of profile_entry without an entry type pointing to " + nameEntity);
         }
-        return ids;
     }
 
     /** Points the rows of profile_entry without a type to the target of a merge, after the entries were */
@@ -424,18 +373,6 @@ public class NameEntityAdminService {
                 + " where p.client = :n or p.broker = :n or r = :n", Project.class)
                 .setParameter("n", nameEntity)
                 .getResultList();
-    }
-
-    private List<AdminNotification> notificationsWith(NameEntity nameEntity) {
-        List<AdminNotification> notifications = new ArrayList<>(entityManager.createQuery(
-                "select n from ProfileEntryNotification n where n.nameEntity = :n", AdminNotification.class)
-                .setParameter("n", nameEntity)
-                .getResultList());
-        notifications.addAll(entityManager.createQuery(
-                "select n from ProjectNotification n where n.nameEntity = :n", AdminNotification.class)
-                .setParameter("n", nameEntity)
-                .getResultList());
-        return notifications;
     }
 
     /**
@@ -518,7 +455,6 @@ public class NameEntityAdminService {
         log.info("Profile " + profile.getId() + ": keeping " + type + " entry " + kept.getId() + ", removing " + removed);
         entries.removeIf(entry -> removed.contains(entry.getId()));
         entityManager.flush();
-        deleteNotificationsAboutEntries(removed);
     }
 
     private static int level(ProfileEntry entry) {

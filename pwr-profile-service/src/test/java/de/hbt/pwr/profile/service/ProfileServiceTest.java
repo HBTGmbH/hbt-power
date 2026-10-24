@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Arrays;
 import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.client.StatisticsClient;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
@@ -48,7 +47,7 @@ public class ProfileServiceTest {
         statisticsClient = mock(StatisticsClient.class);
         // Registers the refresh after the commit like the real client, the refresh itself is mocked
         doCallRealMethod().when(statisticsClient).refreshConsultantsAfterCommit();
-        profileService = new ProfileService(profileRepository, skillProfileClient, statisticsClient, mock(AdminNotificationRepository.class),
+        profileService = new ProfileService(profileRepository, skillProfileClient, statisticsClient,
                 mock(SkillRows.class));
     }
 

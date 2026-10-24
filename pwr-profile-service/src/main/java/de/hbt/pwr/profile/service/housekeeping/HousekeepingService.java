@@ -4,7 +4,6 @@ import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.HousekeepingFindings;
 import de.hbt.pwr.profile.model.ProfilePicture;
 import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.notification.AdminNotification;
 import de.hbt.pwr.profile.model.profile.entries.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +28,6 @@ public class HousekeepingService {
     public static final String ENTRIES_WITHOUT_PROFILE = "entries-without-profile";
     public static final String PROJECTS_WITHOUT_PROFILE = "projects-without-profile";
     public static final String SKILLS_WITHOUT_PROFILE = "skills-without-profile";
-    public static final String NOTIFICATIONS_WITHOUT_ENTRY = "notifications-without-entry";
     public static final String PICTURES_WITHOUT_CONSULTANT = "pictures-without-consultant";
 
     /** The entry types with the collection of the profile that holds them */
@@ -64,8 +62,6 @@ public class HousekeepingService {
                         .map(project -> project.getName() + " (#" + project.getId() + ")").collect(Collectors.toList())),
                 HousekeepingFindings.of(SKILLS_WITHOUT_PROFILE, skillsWithoutProfile().stream()
                         .map(skill -> skill.getName() + " (#" + skill.getId() + ")").collect(Collectors.toList())),
-                HousekeepingFindings.of(NOTIFICATIONS_WITHOUT_ENTRY, notificationsWithoutEntry().stream()
-                        .map(notification -> "#" + notification.getId() + " " + notification.getReason()).collect(Collectors.toList())),
                 HousekeepingFindings.of(PICTURES_WITHOUT_CONSULTANT, picturesWithoutConsultant().stream()
                         .map(ProfilePicture::getId).collect(Collectors.toList()))
         );
@@ -88,12 +84,6 @@ public class HousekeepingService {
                 break;
             case SKILLS_WITHOUT_PROFILE:
                 cleaned = deleteSkillsWithoutProfile();
-                break;
-            case NOTIFICATIONS_WITHOUT_ENTRY:
-                List<AdminNotification> notifications = notificationsWithoutEntry();
-                notifications.forEach(entityManager::remove);
-                log.info("Housekeeping: deleted notifications without entry " + ids(notifications, AdminNotification::getId));
-                cleaned = notifications.size();
                 break;
             case PICTURES_WITHOUT_CONSULTANT:
                 List<ProfilePicture> pictures = picturesWithoutConsultant();
@@ -130,7 +120,6 @@ public class HousekeepingService {
         if (ids.isEmpty()) {
             return 0;
         }
-        deleteNotificationsAboutEntries(ids);
         entityManager.createNativeQuery("delete from profile_entry where id in :ids").setParameter("ids", ids).executeUpdate();
         log.info("Housekeeping: deleted rows of profile_entry without an entry type " + ids);
         return ids.size();
@@ -153,18 +142,9 @@ public class HousekeepingService {
 
     private int deleteEntriesWithoutProfile() {
         List<ProfileEntry> entries = entriesWithoutProfile();
-        Set<Long> ids = entries.stream().map(ProfileEntry::getId).collect(Collectors.toSet());
-        deleteNotificationsAboutEntries(ids);
         entries.forEach(entityManager::remove);
-        log.info("Housekeeping: deleted entries without profile " + ids);
+        log.info("Housekeeping: deleted entries without profile " + ids(entries, ProfileEntry::getId));
         return entries.size();
-    }
-
-    private void deleteNotificationsAboutEntries(Set<Long> ids) {
-        if (!ids.isEmpty()) {
-            entityManager.createQuery("select n from ProfileEntryNotification n where n.profileEntryId in :ids",
-                    AdminNotification.class).setParameter("ids", ids).getResultList().forEach(entityManager::remove);
-        }
     }
 
     // Projects and skills that no profile holds
@@ -178,8 +158,6 @@ public class HousekeepingService {
     private int deleteProjectsWithoutProfile() {
         List<Project> projects = projectsWithoutProfile();
         projects.forEach(project -> {
-            entityManager.createQuery("select n from ProjectNotification n where n.project = :p", AdminNotification.class)
-                    .setParameter("p", project).getResultList().forEach(entityManager::remove);
             // The skills of a project are those of the profile; one no profile holds is found as such
             project.getSkills().clear();
             entityManager.remove(project);
@@ -197,24 +175,12 @@ public class HousekeepingService {
 
     private int deleteSkillsWithoutProfile() {
         List<Skill> skills = skillsWithoutProfile();
-        skills.forEach(this::deleteSkill);
+        skills.forEach(entityManager::remove);
         log.info("Housekeeping: deleted skills without profile " + ids(skills, Skill::getId));
         return skills.size();
     }
 
-    private void deleteSkill(Skill skill) {
-        entityManager.createQuery("select n from SkillNotification n where n.skill = :s", AdminNotification.class)
-                .setParameter("s", skill).getResultList().forEach(entityManager::remove);
-        entityManager.remove(skill);
-    }
-
-    // Notifications and pictures
-
-    private List<AdminNotification> notificationsWithoutEntry() {
-        return entityManager.createQuery("select n from ProfileEntryNotification n where n.profileEntryId is not null"
-                + " and not exists (select e from ProfileEntry e where e.id = n.profileEntryId) order by n.id", AdminNotification.class)
-                .getResultList();
-    }
+    // Pictures
 
     /**
      * Pictures no consultant shows. A picture is uploaded before the consultant that shows it is saved, so in that

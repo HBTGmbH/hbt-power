@@ -7,8 +7,6 @@ import {StringUtils} from './utils/StringUtil';
 export class Paths {
     public static readonly APP_ROOT = CONFIG.APP_PATH + '/';
     public static readonly ADMIN_BASE = CONFIG.APP_PATH + '/admin/';
-    public static readonly ADMIN_INBOX = CONFIG.APP_PATH + '/admin/home/inbox';
-    public static readonly ADMIN_TRASHBOX = CONFIG.APP_PATH + '/admin/home/trashbox';
     public static readonly ADMIN_CONSULTANTS = CONFIG.APP_PATH + '/admin/home/consultants';
     public static readonly ADMIN_TEMPLATES = CONFIG.APP_PATH + '/admin/home/templates';
     /** The slug is only for reading, the ID selects (#211) */

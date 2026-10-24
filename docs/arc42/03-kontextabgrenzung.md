@@ -24,7 +24,7 @@ flowchart LR
 | Partner | Eingabe an HBT Power | Ausgabe von HBT Power |
 |---|---|---|
 | **Berater** | Das eigene Profil, View-Profile und Exportwünsche | Profil, Profilprüfung, Statistik, Word-Dokument, PDF-Vorschau |
-| **Admin** | Berater, Skill-Baum, Profil-Elemente, Vorlagen (BIRT-Designs), Entscheidungen zu Benachrichtigungen und Datenleichen | Profile und Exporte aller Berater, wer was benutzt, Statistik, Housekeeping-Befunde |
+| **Admin** | Berater, Skill-Baum, Profil-Elemente, Vorlagen (BIRT-Designs), Entscheidungen zu Datenleichen | Profile und Exporte aller Berater, wer was benutzt, Statistik, Housekeeping-Befunde |
 | **Empfänger** | – | Das Dokument; Power selbst sieht er nicht. |
 | **Microsoft Entra ID** | Konten, App-Rollen `Power.User` und `Power.Admin`, Claims (`mailnickname` = Kürzel) | Anmeldeanfragen |
 

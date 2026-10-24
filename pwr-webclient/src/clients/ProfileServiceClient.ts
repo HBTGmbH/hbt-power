@@ -1,10 +1,6 @@
 import {APIConsultant} from '../model/APIProfile';
 import {HousekeepingFindings} from '../model/admin/HousekeepingFindings';
-import {AxiosRequestConfig} from 'axios';
 import {PowerHttpClient} from './PowerHttpClient';
-import {APIAdminNotification} from '../model/admin/AdminNotification';
-import {ProfileEntryNotification} from '../model/admin/ProfileEntryNotification';
-import {SkillNotification} from '../model/admin/SkillNotification';
 import {ConsultantInfoDTO} from '../model/ConsultantInfoDTO';
 import {ConsultantName} from '../model/ConsultantName';
 import {ProfileCheck, ProfileCheckSummary, ProfileConfirmation} from '../model/check/ProfileCheck';
@@ -73,30 +69,6 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + '/suggestions/skills';
         this.beginRequest();
         return this.get(url);
-    };
-
-    public getAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
-        const url = this.base() + '/admin/notifications';
-        this.beginRequest();
-        return this.get(url);
-    };
-
-    public getTrashedAdminNotifications = (): Promise<Array<APIAdminNotification>> => {
-        const url = this.base() + '/admin/notifications/trash';
-        this.beginRequest();
-        return this.get(url);
-    };
-
-    public trashNotifications = (ids: Array<number>): Promise<void> => {
-        const url = this.base() + '/admin/notifications/trash';
-        this.beginRequest();
-        return this.put(url, ids);
-    };
-
-    public deleteTrashedNotifications = (): Promise<void> => {
-        const url = this.base() + '/admin/notifications/trash';
-        this.beginRequest();
-        return this.delete(url);
     };
 
     /**
@@ -219,31 +191,6 @@ export class ProfileServiceClient extends PowerHttpClient {
         this.beginRequest();
         return this.head(url);
     };
-
-    /**
-     * The endpoints for OK and delete only accept JSON (`consumes`), although they read no body: without the header
-     * they answer 415. Axios drops the header when there is no data at all, so the body is an explicit null.
-     */
-    private static readonly JSON_WITHOUT_BODY: AxiosRequestConfig = {headers: {'Content-Type': 'application/json'}, data: null};
-
-    public invokeNotificationDelete = (notificationId: number): Promise<void> => {
-        const url = this.base() + '/admin/notifications/' + notificationId;
-        this.beginRequest();
-        return this.delete(url, ProfileServiceClient.JSON_WITHOUT_BODY);
-    };
-
-    public invokeNotificationOK = (notificationId: number): Promise<void> => {
-        const url = this.base() + '/admin/notifications/' + notificationId;
-        this.beginRequest();
-        return this.put(url, null, ProfileServiceClient.JSON_WITHOUT_BODY);
-    };
-
-    public invokeNotificationEdit = (notification: ProfileEntryNotification | SkillNotification): Promise<void> => {
-        const url = this.base() + '/admin/notifications';
-        this.beginRequest();
-        return this.patch(url, notification.toAPI());
-    };
-
 
     public deleteConsultant = (initials: string): Promise<void> => {
         const url = this.base() + `/admin/consultants/${initials}`;

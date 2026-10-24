@@ -1,7 +1,7 @@
 import {Dispatch, MiddlewareAPI} from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {ActionType} from '../ActionType';
-import {deferDeleteEntry, deferEmptyTrash} from './DeferredActions';
+import {deferDeleteEntry} from './DeferredActions';
 import {selectedProjectHasChanged, selectIndexHasChanged} from '../../utils/PwrStoreUtils';
 import {AbstractAction} from '../BaseActions';
 import {confirmLeavingUnsavedChanges} from '../navigation/UnsavedChanges';
@@ -117,16 +117,6 @@ const deferredActions: DeferrableAction<ApplicationState>[] = [
         type: ActionType.AsyncDeleteCategoryLocale,
         condition: unconditional,
         makeAction: action => deferDeleteEntry(action)
-    },
-    {
-        type: ActionType.AsyncDeleteNotificationEntry,
-        condition: unconditional,
-        makeAction: action => deferDeleteEntry(action)
-    },
-    {
-        type: ActionType.AsyncDeleteTrashedNotifications,
-        condition: unconditional,
-        makeAction: action => deferEmptyTrash(action)
     }
 ];
 
