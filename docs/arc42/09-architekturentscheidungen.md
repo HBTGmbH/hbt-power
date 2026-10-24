@@ -312,7 +312,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - **Icons:** Der Icon-Font wird selbst ausgeliefert (#109).
 - **Konsequenzen:**
   - Nach einem Deployment holt jedes Neuladen den neuen Stand.
-  - Ein offener Tab bleibt aber auf dem alten Stand, bis jemand neu lädt (#247).
+  - Ein offener Tab bleibt auf dem alten Stand, bis jemand neu lädt; seit #247 meldet er einen neuen Stand und bietet **Neu laden** an.
 
 ## ADR-24: Spring Security in den Backend-Services erst mit eigener Tokenprüfung
 

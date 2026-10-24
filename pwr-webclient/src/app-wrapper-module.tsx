@@ -21,6 +21,7 @@ import {AuthenticatedRoute} from './modules/navigation/authenticated-route_modul
 import {ConsultantNamesLoader} from './modules/general/pwr-consultant-name';
 import {ProfileSelect} from './modules/profile-select_module';
 import {PwrThemeColors} from './modules/general/pwr-theme-colors';
+import {PwrNewVersionNotice} from './modules/general/pwr-new-version-notice';
 
 export class AppWrapper extends React.Component<{}, {}> {
 
@@ -48,6 +49,7 @@ export class AppWrapper extends React.Component<{}, {}> {
                                 <ConsultantNamesLoader/>
                                 <UnsavedChangesDialog/>
                                 <PwrConfirmDeferredActionDialog/>
+                                <PwrNewVersionNotice/>
                             </div>
                         </Provider>
                     </Router>

@@ -43,6 +43,16 @@ export class AppInfoClient extends PowerHttpClient {
             .catch(() => unavailable(name));
     }
 
+    /**
+     * The commit of the webclient the server delivers now (#247); null if it cannot be loaded, e.g. while the
+     * container is replaced (502): quietly, no spinner, no alert
+     */
+    public getDeliveredCommit(): Promise<string | null> {
+        return this.getQuietly<ClientInfo>(CLIENT_BUILD_INFO_LOCATION)
+            .then(info => (info && info.commit) || null)
+            .catch(() => null);
+    }
+
     public getComponentInfos(): Promise<Array<ComponentInfo>> {
         return Promise.all([
             this.clientInfo('Webclient'),

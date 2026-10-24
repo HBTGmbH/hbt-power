@@ -63,4 +63,4 @@ mindmap
 | Q16 | Wartbarkeit | Eine Änderung nur am Skill Service | Der PR baut und testet nur den Skill Service; nach dem Merge wird nur sein Image neu gebaut und ausgetauscht. | #6, [ADR-18](09-architekturentscheidungen.md#adr-18-ci-je-ordner-mit-pfadfiltern-und-getrenntem-publish) |
 | Q17 | Wartbarkeit | Jemand will wissen, welcher Stand in der Produktion läuft. | Das Info-Symbol zeigt den Commit jedes Teils. | #71, #77 |
 | Q18 | Betrieb | Ein Merge nach `main` | Spätestens etwa 10 Minuten nach dem Build läuft der neue Stand, ohne Handgriff. Der Austausch eines Containers dauert unter einer Minute. | [ADR-07](09-architekturentscheidungen.md#adr-07-betrieb-mit-docker-compose-auf-einem-host-und-watchtower) |
-| Q19 | Betrieb | Nach einem Deployment hat ein Berater Power noch offen. | Heute: Er arbeitet mit dem alten Stand bis zum Neuladen. Gewünscht: ein Hinweis mit **Neu laden** (#247). | #9, #247 |
+| Q19 | Betrieb | Nach einem Deployment hat ein Berater Power noch offen. | Spätestens 5 Minuten nach dem Deployment, oder sobald er den Tab wieder öffnet, erscheint der Hinweis „Eine neue Version von Power ist verfügbar.“ mit **Neu laden**. | #9, #247 |

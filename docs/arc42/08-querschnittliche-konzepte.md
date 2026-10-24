@@ -159,7 +159,7 @@ flowchart LR
 - **Mobil:** Unter 992 px gilt Master-Detail (#49).
 - **Caching:**
   - Statische Dateien tragen einen Hash im Namen und sind `immutable`, alles andere ist `no-cache` (#9, #10).
-  - Wer einen alten Stand im offenen Tab hat, merkt es heute erst beim Neuladen (#247).
+  - Ein offener Tab mit einem alten Stand meldet sich (#247): Das Bundle kennt seinen Commit (`REACT_APP_COMMIT`, eingebettet von `withCommit.js`) und vergleicht ihn alle 5 Minuten und beim Zurückkehren in den Tab mit `build_info.json`. Bei einem anderen Commit bleibt ein Hinweis mit **Neu laden** stehen; ungespeicherte Änderungen fragen vorher, automatisch neu geladen wird nie.
 
 ## 8.9 Build, Stand und Tests
 

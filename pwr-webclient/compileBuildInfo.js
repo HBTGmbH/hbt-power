@@ -24,7 +24,7 @@ function buildInfo() {
     };
 }
 
-module.exports = {buildInfo};
+module.exports = {buildInfo, commit};
 
 if (require.main === module) {
     fs.writeFileSync(path.join(__dirname, 'build', 'build_info.json'), JSON.stringify(buildInfo()));
