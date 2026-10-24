@@ -142,7 +142,9 @@ class ConsultantEditDialogModule extends React.Component<ConsultantEditDialogPro
 
     private deleteConsultant = () => {
         // The saved name, not one being edited in the dialog
-        this.props.deleteConsultant(this.props.consultantInfo.initials(), this.props.consultantInfo.getFullName());
+        // The full name without the title, which is the job title (#216)
+        const consultant = this.props.consultantInfo;
+        this.props.deleteConsultant(consultant.initials(), consultant.firstName() + ' ' + consultant.lastName());
         this.closeDialog();
     };
 

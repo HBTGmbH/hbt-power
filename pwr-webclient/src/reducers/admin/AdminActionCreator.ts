@@ -560,7 +560,10 @@ export class AdminActionCreator {
         };
     }
 
-    /** The initials have to be entered twice (#181); the profile and the view profiles go with the consultant */
+    /**
+     * The initials have to be entered twice (#181); everything about the consultant goes with it (#240), so who uses
+     * a skill or profile element is loaded again
+     */
     @makeDeferrable(ActionType.AsyncDeleteConsultant,
         (initials: string, fullName: string) => confirmDeleteByName('Consultant', initials, fullName))
     public static AsyncDeleteConsultant(initials: string, fullName: string) {
@@ -568,8 +571,9 @@ export class AdminActionCreator {
             profileServiceClient.deleteConsultant(initials)
                 .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))
                 .then(() => dispatch(loadConsultantNames()))
-                .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))
-                .catch((error) => Alerts.showError(error));
+                .then(() => dispatch(StatisticsActionCreator.ForgetAllUsageInfo()))
+                .then(() => Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.Consultant.Delete.Success', fullName, initials)))
+                .catch(console.error);
         };
     }
 
@@ -584,7 +588,7 @@ export class AdminActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.getAllConsultantInfos()
               .then((consultantInfo) => dispatch(AdminActionCreator.LoadConsultantInfoSuccess(consultantInfo)))
-              .catch((error) => Alerts.showError(error));
+              .catch(console.error);
         };
     }
 }

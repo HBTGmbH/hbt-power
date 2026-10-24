@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ReportDataRepository extends JpaRepository<ReportData, Long> {
     List<ReportData> findAllByInitials(String initials);
+
+    long deleteAllByInitials(String initials);
 }
