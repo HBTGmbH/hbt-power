@@ -124,6 +124,7 @@ public class ProfileCheckService {
 
         List<ProfileCheckHint> hints = new ArrayList<>();
         addMissing(profile, hints);
+        addEducationWithoutDegree(profile, hints);
         addIncompleteProjects(profile, hints);
         addOutdated(profile, now, fallback, skillsLastEdited, projectsLastEdited, hints);
         tree.ifPresent(index -> addUnsorted(profile, index, hints));
@@ -153,6 +154,19 @@ public class ProfileCheckService {
                 .filter(section -> properties.getRequiredSections().contains(section))
                 .filter(section -> isEmpty(profile, section))
                 .forEach(section -> hints.add(hint(Type.MISSING, Code.SECTION_EMPTY, section).build()));
+    }
+
+    /**
+     * The degree stands next to the education in the export (#281); one hint per education without one, by name
+     */
+    private void addEducationWithoutDegree(Profile profile, List<ProfileCheckHint> hints) {
+        profile.getEducation().stream()
+                .filter(entry -> entry.getDegree() == null || entry.getDegree().isBlank())
+                .map(entry -> entry.getNameEntity() == null ? "" : entry.getNameEntity().getName())
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .forEach(name -> hints.add(hint(Type.INCOMPLETE, Code.EDUCATION_WITHOUT_DEGREE, ProfileSection.EDUCATION)
+                        .values(values("education", name))
+                        .build()));
     }
 
     private void addIncompleteProjects(Profile profile, List<ProfileCheckHint> hints) {

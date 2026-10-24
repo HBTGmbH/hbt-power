@@ -660,6 +660,7 @@
   "ProfileCheck.DescriptionMissing": "Noch kein Werbetext.",
   "ProfileCheck.DescriptionShort": "Dein Werbetext ist noch recht kurz.",
   "ProfileCheck.ProjectIncomplete": "„{0}“ ist vielleicht noch nicht fertig: {1}.",
+  "ProfileCheck.EducationWithoutDegree": "Zu „{0}“ fehlt der Abschluss.",
   "ProfileCheck.Reason.FewSkills": "{0} Skills (mindestens {1})",
   "ProfileCheck.Reason.ShortDescription": "kurze Beschreibung",
   "ProfileCheck.Reason.NoRole": "keine Rolle",

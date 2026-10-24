@@ -75,6 +75,8 @@ export function hintText(hint: ProfileCheckHint): string {
         case ProfileCheckHintCode.PROJECT_INCOMPLETE:
             return PowerLocalize.getFormatted('ProfileCheck.ProjectIncomplete', hint.projectName || '',
                 (values.reasons || []).map((reason: string) => reasonText(reason, values)).join(', '));
+        case ProfileCheckHintCode.EDUCATION_WITHOUT_DEGREE:
+            return PowerLocalize.getFormatted('ProfileCheck.EducationWithoutDegree', values.education || '');
         case ProfileCheckHintCode.PROJECTS_OUTDATED:
             return PowerLocalize.getFormatted('ProfileCheck.ProjectsOutdated', fuzzy(hint.since));
         case ProfileCheckHintCode.NO_FOLLOW_UP_PROJECT:
