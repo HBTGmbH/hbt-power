@@ -5,13 +5,14 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Registers the check of the consultant in the path (#255)
+ * Registers the checks of the admin paths (#260) and of the consultant in the path (#255)
  */
 @Configuration
 public class ConsultantAccessConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new AdminAccessInterceptor());
         registry.addInterceptor(new ConsultantAccessInterceptor());
     }
 }

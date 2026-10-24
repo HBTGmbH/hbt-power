@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -198,5 +199,18 @@ public class ConsultantAccessITest extends AbstractIntegrationTest {
         WebApplicationException e = catchThrowableOfType(call::run, WebApplicationException.class);
         assertThat(e).isNotNull();
         assertThat(e.getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * The service lets only admins reach /admin itself, however the path is written (#260)
+     */
+    @Test
+    public void onlyAnAdminReachesTheAdminEndpoints() throws Exception {
+        mockMvc.perform(asUser(get("/admin/consultants"), "own")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(get("/admin;x/consultants"), "own")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(get(URI.create("/%61dmin/consultants")), "own")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(get("/admin/consultants/"), "own")).andExpect(status().isForbidden());
+        mockMvc.perform(asAdmin(get("/admin/consultants"))).andExpect(status().isOk());
+        mockMvc.perform(get("/admin/consultants")).andExpect(status().isOk());
     }
 }

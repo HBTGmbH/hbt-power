@@ -14,18 +14,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import static de.hbt.security.ConsultantAccess.USER_ADMIN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static de.hbt.security.ConsultantAccess.USER_ADMIN_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -189,5 +192,20 @@ class ReportControllerITest {
         mockMvc.perform(generate().header(USER_ADMIN_HEADER, "true")).andExpect(status().isOk());
         mockMvc.perform(delete("/report/delete/" + other.getId()).header(USER_ADMIN_HEADER, "true"))
                 .andExpect(status().isOk());
+    }
+
+    /**
+     * The service lets only admins reach /admin itself, however the path is written (#260)
+     */
+    @Test
+    void onlyAnAdminReachesTheAdminEndpoints() throws Exception {
+        mockMvc.perform(get("/admin/file").header(USER_ADMIN_HEADER, "false")).andExpect(status().isForbidden());
+        // The firewall of Spring Security in this service rejects a ';' before anything else
+        assertThatThrownBy(() -> mockMvc.perform(get("/admin;x/file").header(USER_ADMIN_HEADER, "false")))
+                .isInstanceOf(RequestRejectedException.class);
+        mockMvc.perform(get(URI.create("/%61dmin/file")).header(USER_ADMIN_HEADER, "false"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/admin/file").header(USER_ADMIN_HEADER, "true")).andExpect(status().isOk());
+        mockMvc.perform(get("/admin/file")).andExpect(status().isOk());
     }
 }

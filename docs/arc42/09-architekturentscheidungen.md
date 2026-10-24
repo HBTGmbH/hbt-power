@@ -84,6 +84,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - Die Services lesen den angemeldeten Benutzer nur aus diesen Headern, nie aus Body, Pfad oder Query.
   - Ein Service, der im Auftrag des Benutzers einen anderen ruft, gibt die Header weiter.
   - Binärdaten lädt der Webclient mit Token als Blob.
+  - Die Pfadregeln der Edge sehen den Pfad, wie er ankommt; die Services normalisieren ihn selbst. Deshalb lässt die Edge nur normalisierte Pfade durch, und jeder Service weist `/admin` für Nicht-Admins zusätzlich selbst ab (#260).
   - Seit #255 setzt die Edge auch `X-Pwr-User-Admin`, auf jede Anfrage. Die Services mit Daten zu Beratern prüfen damit selbst, dass ein Benutzer nur seine eigenen Daten liest und ändert (`ConsultantAccess`): Die Edge kennt nur Pfade, nicht wem ein Dokument oder View-Profil gehört.
 - **Konsequenzen:**
   - Ein Ort für die Rollenregeln, getestet in `SecurityConfigTest` und `AccountHeadersFilterTest`; die Prüfung je Berater liegt in jedem Service und ist dort getestet.
