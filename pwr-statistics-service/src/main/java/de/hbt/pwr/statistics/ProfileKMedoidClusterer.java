@@ -18,13 +18,21 @@ public class ProfileKMedoidClusterer {
 
     private final int maxIterations;
 
-    private final Random random = new Random();
+    private final Random random;
 
     private final KMedoidMetric metric;
 
     public ProfileKMedoidClusterer(int maxIterations, KMedoidMetric metric) {
+        this(maxIterations, metric, new Random());
+    }
+
+    /**
+     * With a given random, so a test can cluster twice the same way (#292)
+     */
+    ProfileKMedoidClusterer(int maxIterations, KMedoidMetric metric, Random random) {
         this.maxIterations = maxIterations < 0 ? 10 : maxIterations;
         this.metric = metric;
+        this.random = random;
     }
 
     /**
@@ -39,7 +47,8 @@ public class ProfileKMedoidClusterer {
             return Collections.emptyList();
         }
         if(clusters < 0) throw new IllegalArgumentException("Parameter 'clusters' may not be negative.");
-        if(clusters > values.size()) {
+        // At least one profile besides the medoids, the swapping below picks one at random
+        if(clusters >= values.size()) {
             return Collections.emptyList();
         }
         List<ProfileMedoid> resultMedoids;

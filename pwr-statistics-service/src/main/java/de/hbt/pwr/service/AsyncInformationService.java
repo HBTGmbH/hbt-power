@@ -16,7 +16,6 @@ import de.hbt.pwr.statistics.ProfileKMedoidClusterer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -81,7 +80,12 @@ public class AsyncInformationService {
         LOG.info("Async refresh task done. Took " + stopWatch.getTotalTimeSeconds() + " seconds.");
     }
 
-    @Async
+    /**
+     * Clusters the stored consultants. Synchronous in the scheduler thread, right after their refresh (#292): the
+     * {@code @Async} it had never took effect, since the call comes from this class and doesn't pass the Spring proxy.
+     * Running it asynchronously would gain nothing, the scheduler has no other task, and one run at a time keeps the
+     * heap small.
+     */
     void refreshStatistics() {
         final StatisticsConfig config = getConfig();
         List<Consultant> consultants = StreamUtils.asStream(consultantRepository.findAll().iterator()).collect(Collectors.toList());
