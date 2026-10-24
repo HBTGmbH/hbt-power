@@ -61,9 +61,12 @@ export const PROJECTS_BY_START_DATE = ComparatorBuilder
 export const PROFILE_SKILLS_BY_NAME = (skill1: ProfileSkill, skill2: ProfileSkill): number =>
     compareNames(skill1.name, skill2.name);
 
-export const NAME_ENTITY_BY_NAME = ComparatorBuilder
-    .comparing<NameEntity>(n => n.name)
-    .build();
+/**
+ * Profile elements in the order of the skills: without regard to case, umlauts with their base letter, numbers by
+ * value (#274); one without a name first
+ */
+export const NAME_ENTITY_BY_NAME = (entity1: NameEntity, entity2: NameEntity): number =>
+    compareNames(entity1.name, entity2.name);
 
 export class Comparators {
 
