@@ -13,9 +13,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabe
 import {ThunkDispatch} from 'redux-thunk';
 import {ProfileServiceClient} from '../../../clients/ProfileServiceClient';
 import {ProfileCheckSummary} from '../../../model/check/ProfileCheck';
+import {ConsultantName} from '../../../model/ConsultantName';
+import {compareNames} from '../../../utils/Comparators';
 
 interface ConsultantGridProps {
     consultantsByInitials: Immutable.Map<string, ConsultantInfo>;
+    /** The names the tiles show (#216), per initials */
+    consultantNames: Record<string, ConsultantName>;
 }
 
 interface ConsultantGridLocalProps {
@@ -53,7 +57,8 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
 
     static mapStateToProps(state: ApplicationState): ConsultantGridProps {
         return {
-            consultantsByInitials: state.adminReducer.consultantsByInitials
+            consultantsByInitials: state.adminReducer.consultantsByInitials,
+            consultantNames: state.consultantNames.names,
         };
     }
 
@@ -77,15 +82,32 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
     };
 
     /**
-     * Most hints first, on a tie the one with more outdated hints. Consultants without a check (inactive) last.
+     * By the name the tile shows (#277), like the other lists of names: the short name, the full name on a tie or while
+     * the names are not loaded yet. By profile check: most hints first, on a tie the one with more outdated hints,
+     * consultants without a check (inactive) last, then by name.
      */
-    private sortKey = (consultant: ConsultantInfo): string | number => {
-        if (this.state.sort === 'name') {
-            return consultant.lastName();
+    private compare = (consultant1: ConsultantInfo, consultant2: ConsultantInfo): number => {
+        if (this.state.sort === 'profileCheck') {
+            const byCheck = this.checkKey(consultant1) - this.checkKey(consultant2);
+            if (byCheck !== 0) {
+                return byCheck;
+            }
         }
+        return compareNames(this.shownName(consultant1), this.shownName(consultant2))
+            || compareNames(this.fullName(consultant1), this.fullName(consultant2));
+    };
+
+    private checkKey = (consultant: ConsultantInfo): number => {
         const summary = this.state.summaries.get(consultant.initials());
         return summary ? -(summary.hintCount * 1000 + summary.outdatedCount) : 1;
     };
+
+    private shownName = (consultant: ConsultantInfo): string => {
+        const name = this.props.consultantNames[consultant.initials()];
+        return name ? name.shortName : this.fullName(consultant);
+    };
+
+    private fullName = (consultant: ConsultantInfo): string => consultant.firstName() + ' ' + consultant.lastName();
 
     private showDialog = () => {
         this.setState({
@@ -158,7 +180,7 @@ class ConsultantGridModule extends React.Component<ConsultantGridProps
                         {
                             this.props.consultantsByInitials
                                 .filter(this.filterInactive)
-                                .sortBy(this.sortKey)
+                                .sort(this.compare)
                                 .map(consultantInfo => {
                                     return <ConsultantTile key={'ConsultantTile.' + consultantInfo.initials()}
                                                            initials={consultantInfo.initials()}
