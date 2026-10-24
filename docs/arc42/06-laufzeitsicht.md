@@ -42,7 +42,7 @@ sequenceDiagram
     W->>P: PUT /profile/{kürzel}/skill { name: ".net", rating: 4 }
     P->>S: GET /skill/byName?qualifier=.net
     S-->>P: Skill ".NET" (Name oder Alias, ohne Groß-/Kleinschreibung)
-    P->>P: Schreibweise des Baums übernehmen (".NET"); Aliase bleiben, wie getippt
+    P->>P: Schreibweise des Baums übernehmen (".NET") – Aliase bleiben, wie getippt
     P->>S: POST /skill?qualifier=.NET
     S-->>P: Kategorie (ein unbekannter Skill kommt nach „Other“)
     P->>P: Skill speichern
@@ -72,7 +72,7 @@ sequenceDiagram
     V->>V: Momentaufnahme bauen: Einträge, Projekte,<br/>Anzeigekategorien, Sichtbarkeit
     V->>R: speichern (@RedisHash viewProfile)
     V-->>W: View-Profil
-    Note over W,V: Jede weitere Änderung (zeigen, sortieren, verschieben)<br/>ist ein PATCH; @ViewProfileAutoSave speichert danach.
+    Note over W,V: Jede weitere Änderung (zeigen, sortieren, verschieben)<br/>ist ein PATCH – @ViewProfileAutoSave speichert danach.
 ```
 
 *Aktualisieren* (`POST /view/update/{kürzel}/{alteId}`) baut eine neue Momentaufnahme aus dem aktuellen Profil. Die Einstellungen der alten übernimmt es; umbenannte Elemente findet es über `GET /admin/name-entities/former-names` und den Skill-Baum (#230).
@@ -129,7 +129,7 @@ sequenceDiagram
     ST->>RS: alte Kopie löschen, neue speichern
     ST->>ST: Clustering (K-Medoid, SimRank) → ClusteredNetwork
 
-    Note over P: nach einer Massenänderung<br/>(Skills zusammenführen, umbenennen, löschen;<br/>Profil-Elemente; Berater löschen)
+    Note over P: nach einer Massenänderung<br/>(Skills zusammenführen, umbenennen, löschen,<br/>Profil-Elemente, Berater löschen)
     P->>P: Transaktion committet
     P->>ST: POST /admin/consultants/refresh (afterCommit)
     ST->>P: GET /admin/consultants
@@ -215,7 +215,7 @@ sequenceDiagram
     W->>W: Bereinigen? (Rückfrage mit Anzahl)
     W->>R: DELETE /admin/housekeeping/reports-without-consultant
     R->>P: GET /consultants/names (erneut)
-    R->>R: löscht, was jetzt noch zutrifft; loggt Anzahl und IDs
+    R->>R: löscht, was jetzt noch zutrifft – loggt Anzahl und IDs
     R-->>W: Anzahl
 ```
 

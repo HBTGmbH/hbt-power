@@ -11,15 +11,15 @@ quadrantChart
     quadrant-2 Beobachten und vorsorgen
     quadrant-3 Hinnehmen
     quadrant-4 Bei Gelegenheit
-    Veralteter Stack T1: [0.75, 0.85]
-    Ein Host O1: [0.2, 0.9]
-    Kein Redis-Backup O3: [0.15, 0.7]
-    Keine Migrationen D1: [0.45, 0.6]
-    Datenleichen D2: [0.65, 0.45]
-    BIRT T3: [0.55, 0.65]
-    Keine Webclient-Tests T6: [0.7, 0.5]
-    Kurzer Ausfall beim Deploy O2: [0.85, 0.3]
-    Keine Timeouts K1: [0.3, 0.55]
+    T1 Stack: [0.8, 0.88]
+    O1 Ein Host: [0.15, 0.9]
+    O3 Redis-Backup: [0.15, 0.68]
+    T3 BIRT: [0.62, 0.72]
+    D1 Migrationen: [0.4, 0.62]
+    K1 Timeouts: [0.25, 0.55]
+    T6 Webclient-Tests: [0.75, 0.38]
+    D2 Datenleichen: [0.62, 0.3]
+    O2 Deploy: [0.88, 0.18]
 ```
 
 ## 11.1 Technik und Stack

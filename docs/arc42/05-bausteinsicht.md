@@ -3,11 +3,12 @@
 ## 5.1 Ebene 1: Gesamtsystem
 
 ```mermaid
-flowchart TB
+flowchart LR
     W["pwr-webclient<br/>React-SPA in nginx"]
     E["pwr-edge-service<br/>Spring Cloud Gateway · 9000"]
 
     subgraph fach[Fachliche Services]
+        direction TB
         P["pwr-profile-service<br/>Berater, Profile · 9004"]
         S["pwr-skill-service<br/>Skill-Baum, Suche · 9003"]
         V["pwr-view-profile-service<br/>View-Profile, Vorlagen · 9008"]
@@ -15,33 +16,25 @@ flowchart TB
         ST["pwr-statistics-service<br/>Statistik · 9007"]
     end
 
-    DBP[("MariaDB<br/>profile")]
-    DBS[("MariaDB<br/>skill + Lucene-Index")]
-    DBR[("MariaDB<br/>report")]
-    RV[("Redis<br/>View-Profile, Vorlagen")]
-    RS[("Redis<br/>Statistikkopie")]
+    subgraph daten[Daten]
+        direction TB
+        DBP[("MariaDB profile")]
+        DBS[("MariaDB skill<br/>+ Lucene-Index")]
+        RV[("Redis<br/>View-Profile, Vorlagen")]
+        DBR[("MariaDB report")]
+        RS[("Redis<br/>Statistikkopie")]
+    end
 
     W -->|"/api/pwr-&lt;service&gt;/**"| E
-    E --> P & S & V & R & ST
-
-    P --> S
-    P --> V
-    P --> R
-    P --> ST
-    V --> P
-    V --> S
-    V --> R
-    R --> P
-    R --> V
-    ST --> P
-    ST --> S
-
+    E -->|"/pwr-&lt;service&gt;/** → Service"| fach
     P --- DBP
     S --- DBS
-    R --- DBR
     V --- RV
+    R --- DBR
     ST --- RS
 ```
+
+Welcher Service welchen aufruft, zeigt [5.3](#53-abhängigkeiten-zwischen-den-services).
 
 | Baustein | Verantwortung | Daten |
 |---|---|---|
@@ -122,7 +115,7 @@ flowchart TB
     CS --> VPC & RC & STC
     PS --> STC
     NE --> STC
-    CS & PES & PS & NE & CK & AN & HK --> DB
+    Services --> DB
 ```
 
 Wichtige Schnittstellen (nach außen über `/pwr-profile-service`):
@@ -388,6 +381,27 @@ flowchart TB
 - **Lokal:** `start:local` leitet über `src/setupProxy.js` direkt auf die Ports der Services und überspringt die Anmeldung.
 
 ## 5.3 Abhängigkeiten zwischen den Services
+
+```mermaid
+flowchart LR
+    P[profile]
+    S[skill]
+    V[view-profile]
+    R[report]
+    ST[statistics]
+
+    P -->|"neue Skills, Baum,<br/>umbenennen, löschen"| S
+    P -->|"Berater löschen"| V
+    P -->|"Berater löschen"| R
+    P -->|"neu laden"| ST
+    V -->|"Profil, Namen,<br/>frühere Namen"| P
+    V -->|"Baum, Übersetzungen"| S
+    V -->|"Export, Vorschau,<br/>Vorlagen-Dateien"| R
+    R -->|"Name, Bild,<br/>Kürzel"| P
+    R -->|"Vorlagen-Dateien"| V
+    ST -->|"alle Berater"| P
+    ST -->|"Baum"| S
+```
 
 | Aufrufer | Ziel | Endpunkte | Wozu |
 |---|---|---|---|
