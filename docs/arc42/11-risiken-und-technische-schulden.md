@@ -60,7 +60,7 @@ quadrantChart
 
 | Nr. | Risiko / Schuld | Bewertung | Auswirkung | Maßnahme |
 |---|---|---|---|---|
-| K2 | **Die Sicherheit hängt an der Edge und am Netz:** Die Backend-Services prüfen kein Token, sondern glauben den Headern der Edge; eine Anfrage ohne `X-Pwr-User-Admin` gilt als Aufruf eines anderen Service und darf alles (#255). | mittel | Ist ein Service am Ingress vorbei erreichbar, ist er offen. | Nur der Ingress ist von außen erreichbar; neue Endpunkte gegen die Regeln der Edge und die Prüfung je Berater prüfen (Definition of Done); Spring Security oder eigene Tokenprüfung in den Services: #256 |
+| K2 | **Die Sicherheit hängt an der Edge und am Netz:** Die Backend-Services prüfen kein Token, sondern glauben den Headern der Edge; eine Anfrage ohne `X-Pwr-User-Admin` gilt als Aufruf eines anderen Service und darf alles (#255). | mittel | Ist ein Service am Ingress vorbei erreichbar, ist er offen. | Nur der Ingress ist von außen erreichbar; neue Endpunkte gegen die Regeln der Edge und die Prüfung je Berater prüfen (Definition of Done); eigene Tokenprüfung in den Services mit dem ersten On-Behalf-Of-Zugriff oder #50/#51 ([ADR-24](09-architekturentscheidungen.md#adr-24-spring-security-in-den-backend-services-erst-mit-eigener-tokenprüfung)) |
 | K3 | **CORS der Edge** lässt jede Herkunft mit Anmeldedaten zu. | niedrig | Die Anmeldung läuft über das Bearer-Token, nicht über Cookies; die Wirkung ist daher begrenzt. | Auf die eigene Herkunft beschränken |
 | K4 | **Öffentliche Repositories:** Die Regel „keine Betriebsdetails“ hängt an Disziplin. | mittel | Einmal veröffentlicht, bleibt es in der Historie. | Regel in `AGENTS.md`, Prüfung im PR |
 
