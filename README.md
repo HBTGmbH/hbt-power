@@ -12,6 +12,8 @@
 
 Infrastructure for local development (MariaDB, Redis) is defined in [`docker-compose.yaml`](docker-compose.yaml).
 
+The architecture (context, building blocks, runtime flows, deployment, decisions, risks) is documented after arc42 in [`docs/arc42/`](docs/arc42/README.md); the rules for development are in [`AGENTS.md`](AGENTS.md).
+
 ## Prerequisites
 
 Works on macOS (Apple Silicon and Intel), Linux and Windows.
