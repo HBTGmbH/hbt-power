@@ -41,7 +41,8 @@ profile-check:
   required-sections: LANGUAGES, EDUCATION, CAREER, TRAININGS, SECTORS, SKILLS, PROJECTS
   min-description-length: 300
   min-project-skills: 5
-  min-project-description-length: 500
+  # Below this the description of a project mostly lacks what a client needs; above, length adds little (#305)
+  min-project-description-length: 300
   projects-max-age-months: 12
   running-project-max-age-months: 12
   follow-up-project-months: 3

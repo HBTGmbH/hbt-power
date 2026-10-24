@@ -36,7 +36,7 @@ public class ProfileCheckProperties {
     /**
      * A project reference is incomplete below this many characters of description
      */
-    private int minProjectDescriptionLength = 500;
+    private int minProjectDescriptionLength = 300;
 
     /**
      * The project references are outdated if none was saved for this many months (wish: once a year)
