@@ -34,6 +34,14 @@ public class SimRankClusteringTest {
         }
     }
 
+    @Test
+    public void asManyClustersAsProfiles_giveNoClusters() {
+        List<Profile> profiles = SimRankTest.randomProfiles(2, 2, 10, 1, 5);
+        List<ProfileClusterable> values = profiles.stream().map(ProfileClusterable::new).collect(Collectors.toList());
+
+        assertThat(new ProfileKMedoidClusterer(50, new KMedoidSimRankMetric(profiles)).cluster(values, 2)).isEmpty();
+    }
+
     /**
      * The medoid and the other profiles of each cluster, by id
      */

@@ -47,7 +47,8 @@ public class ProfileKMedoidClusterer {
             return Collections.emptyList();
         }
         if(clusters < 0) throw new IllegalArgumentException("Parameter 'clusters' may not be negative.");
-        if(clusters > values.size()) {
+        // At least one profile besides the medoids, the swapping below picks one at random
+        if(clusters >= values.size()) {
             return Collections.emptyList();
         }
         List<ProfileMedoid> resultMedoids;
