@@ -22,6 +22,8 @@ spring:
       force: true
 server:
   port: 9003
+# Who uses which skill, for the housekeeping (#288)
+pwr-profile-service-url: http://pwr-profile-service:9004
 ---
 spring:
   profiles: localDev
@@ -40,6 +42,7 @@ spring:
             directory_provider: filesystem
             # Outside target, so neither `mvn clean` nor a test run touches it (gitignored)
             indexBase: ./lucene-data
+pwr-profile-service-url: http://localhost:9004
 ---
 spring:
   profiles: test

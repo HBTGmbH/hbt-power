@@ -187,7 +187,10 @@ flowchart LR
         CC["CategoryController /category"]
         SA["SkillAdminController /admin/skill<br/>Alias, Merge, Rename, Move, Version, Locale, Index"]
         CA["CategoryAdminController /admin/category"]
+        HA["HousekeepingAdminController<br/>/admin/housekeeping/unused"]
     end
+    HK["HousekeepingService<br/>eigene Skills ohne Nutzer"]
+    UC["SkillUsageClient<br/>GET /admin/skills/usage (Profile)"]
     SS[SkillService]
     CS["CategoryService<br/>getOther()"]
     SRCH["SkillSearcherService<br/>Hibernate Search"]
@@ -203,6 +206,8 @@ flowchart LR
     SS & CS --> DB
     SRCH --> IDX
     INIT --> SRCH
+    HA --> HK --> UC
+    HK --> DB
 ```
 
 ```mermaid
@@ -417,5 +422,6 @@ flowchart LR
 | report | view-profile | `GET /admin/template/files` | Housekeeping |
 | statistics | profile | `GET /admin/consultants` | Kopie aller Berater |
 | statistics | skill | `GET /skill/tree` | Namen normalisieren |
+| skill | profile | `GET /admin/skills/usage` | Housekeeping: eigene Skills ohne Nutzer (#288) |
 
 Diese Aufrufe gehen direkt im Container-Netz, nicht über die Edge. Deshalb erreichen sie auch die `/admin`-Pfade ohne Token.

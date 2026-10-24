@@ -171,11 +171,14 @@ interface UnusedNameEntitiesDialogProps {
     typeLabel: string;
 
     onClose(): void;
+
+    /** After deleting, e.g. to check again */
+    onDeleted?(): void;
 }
 
 /**
- * Deletes the elements of a type that no profile uses (#227). The list comes from the database; deleting checks
- * again, so an element a consultant took in the meantime stays.
+ * Deletes the elements of a type that no profile uses (#227), from the housekeeping (#288). The list comes from the
+ * database; deleting checks again, so an element a consultant took in the meantime stays.
  */
 export const UnusedNameEntitiesDialog = (props: UnusedNameEntitiesDialogProps) => {
     const dispatch = useDispatch();
@@ -195,7 +198,7 @@ export const UnusedNameEntitiesDialog = (props: UnusedNameEntitiesDialogProps) =
 
     const deleteUnused = () => {
         props.onClose();
-        dispatch(AdminActionCreator.AsyncDeleteUnusedNameEntities(props.type) as any);
+        dispatch(AdminActionCreator.AsyncDeleteUnusedNameEntities(props.type, props.onDeleted) as any);
     };
 
     // Forgotten only once the dialog has faded out, so it shows the list until then

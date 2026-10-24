@@ -302,6 +302,14 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.getQuietly(this.base() + '/admin/housekeeping');
     };
 
+    /**
+     * Rubric unused (#288): the profile elements no profile uses, per type (check `unused-name-entities-<TYPE>`);
+     * deleting goes through `deleteUnusedNameEntities`
+     */
+    public getUnusedHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
+        return this.getQuietly(this.base() + '/admin/housekeeping/unused');
+    };
+
     /** Deletes what the check finds now; the answer says how many */
     public cleanHousekeeping = (check: string): Promise<HousekeepingFindings> => {
         const url = this.base() + '/admin/housekeeping/' + encodeURIComponent(check);

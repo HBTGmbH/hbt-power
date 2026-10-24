@@ -577,13 +577,16 @@ export class AdminActionCreator {
         };
     }
 
-    /** The dialog with the list of unused elements is the question */
-    public static AsyncDeleteUnusedNameEntities(type: string) {
+    /** The dialog with the list of unused elements is the question; onDone after deleting, e.g. to check again */
+    public static AsyncDeleteUnusedNameEntities(type: string, onDone?: () => void) {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.deleteUnusedNameEntities(type)
                 .then(deleted => {
                     afterNameEntityChange(dispatch);
                     Alerts.showSuccess(PowerLocalize.getFormatted('AdminClient.NameEntity.Unused.Success', deleted.length));
+                    if (onDone) {
+                        onDone();
+                    }
                 })
                 .catch(console.error);
         };

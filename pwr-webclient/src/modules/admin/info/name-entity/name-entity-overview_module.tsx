@@ -25,7 +25,7 @@ import {ProfileServiceClient} from '../../../../clients/ProfileServiceClient';
 import {PwrIconButton} from '../../../general/pwr-icon-button';
 import {PwrButton} from '../../../general/pwr-button';
 import {PwrSpacer} from '../../../general/pwr-spacer_module';
-import {NameEntityChangeDialog, UnusedNameEntitiesDialog} from './name-entity-dialogs';
+import {NameEntityChangeDialog} from './name-entity-dialogs';
 import {PwrUsageCount, USAGE_COLUMN_WIDTH} from '../../../general/pwr-usage-count';
 import {NameEntityAlias} from '../../../../model/NameEntityAlias';
 import {PwrFormSection} from '../../../general/pwr-form-section';
@@ -50,8 +50,8 @@ interface NameEntityOverviewProps {
 type NameEntityOverviewLocalProps = RouteComponentProps;
 
 interface NameEntityOverviewLocalState {
-    /** Renaming, merging or deleting the unused ones of the type (#227) */
-    dialog: 'rename' | 'merge' | 'unused' | null;
+    /** Renaming or merging (#227); deleting the unused ones lives in the housekeeping (#288) */
+    dialog: 'rename' | 'merge' | null;
     /** How many consultants use each element of the shown type, by id (#271); null while loading */
     usage: { type: ProfileElementType, counts: Record<string, number> } | null;
 }
@@ -318,8 +318,6 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                                                  nameEntity={selected} entities={this.getNameEntitiesByField(type)}
                                                  typeLabel={typeLabel} onClose={closeDialog}
                                                  onDone={this.handleSelectEntity}/>}
-            <UnusedNameEntitiesDialog open={this.state.dialog === 'unused'} type={type} typeLabel={typeLabel}
-                                      onClose={closeDialog}/>
         </>;
     }
 
@@ -327,9 +325,10 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         return <>
             {this.renderTypeSelect()}
             <PwrSpacer size="tight"/>
-            <PwrButton color="primary" text={PowerLocalize.get('AdminClient.NameEntity.Unused.Action')}
+            {/* Unused ones show 0 users; deleting them is a matter of the housekeeping (#288) */}
+            <PwrButton color="primary" text={PowerLocalize.get('AdminClient.NameEntity.Unused.Housekeeping')}
                        icon={<Icon className="material-icons">delete_sweep</Icon>}
-                       onClick={() => this.setState({dialog: 'unused'})}/>
+                       onClick={() => this.props.history.push(Paths.ADMIN_HOUSEKEEPING)}/>
         </>;
     }
 

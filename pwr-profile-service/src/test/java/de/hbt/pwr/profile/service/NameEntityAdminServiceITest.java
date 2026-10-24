@@ -420,6 +420,38 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$['" + element("Banken", SECTOR).getId() + "']").value(1));
     }
 
+    // ------------------------------------------------------------------------------ housekeeping, unused (#288)
+
+    @Test
+    public void theHousekeeping_listsTheUnusedElementsOfEveryType_likeTheUsageCountsThem() throws Exception {
+        sector(anna, "Banken");
+        nameEntityRepository.save(named("Logistik", SECTOR));
+        nameEntityRepository.save(named("Leerlauf GmbH", COMPANY));
+        project(bert, "Kunde AG", "Entwickler");
+        entityManager.flush();
+
+        mockMvc.perform(get("/admin/housekeeping/unused"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(NameEntityType.values().length))
+                .andExpect(jsonPath("$[?(@.check == 'unused-name-entities-SECTOR')].count").value(1))
+                .andExpect(jsonPath("$[?(@.check == 'unused-name-entities-SECTOR')].examples[0]").value("Logistik"))
+                .andExpect(jsonPath("$[?(@.check == 'unused-name-entities-COMPANY')].examples[0]").value("Leerlauf GmbH"))
+                .andExpect(jsonPath("$[?(@.check == 'unused-name-entities-PROJECT_ROLE')].count").value(0));
+
+        // After deleting, the list (#271) has no element without users and the housekeeping finds none
+        nameEntityAdminService.deleteUnused(SECTOR);
+        entityManager.flush();
+        assertThat(nameEntityAdminService.countUsers(SECTOR)).doesNotContainValue(0);
+        mockMvc.perform(get("/admin/housekeeping/unused"))
+                .andExpect(jsonPath("$[?(@.check == 'unused-name-entities-SECTOR')].count").value(0));
+    }
+
+    @Test
+    public void theUnusedRubric_isForAdminsOnly() throws Exception {
+        mockMvc.perform(get("/admin/housekeeping/unused").header("X-Pwr-User-Admin", "false").header("X-Pwr-User-Initials", "ann"))
+                .andExpect(status().isForbidden());
+    }
+
     // -------------------------------------------------------------------------------------------- aliases (#270)
 
     private NameEntity company(String name) {
