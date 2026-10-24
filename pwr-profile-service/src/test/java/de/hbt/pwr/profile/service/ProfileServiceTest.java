@@ -41,7 +41,8 @@ public class ProfileServiceTest {
         statisticsClient = mock(StatisticsClient.class);
         // Registers the refresh after the commit like the real client, the refresh itself is mocked
         doCallRealMethod().when(statisticsClient).refreshConsultantsAfterCommit();
-        profileService = new ProfileService(profileRepository, skillProfileClient, statisticsClient, mock(AdminNotificationRepository.class));
+        profileService = new ProfileService(profileRepository, skillProfileClient, statisticsClient, mock(AdminNotificationRepository.class),
+                mock(SkillRows.class));
     }
 
     private static Skill skill(String name, int rating, String... versions) {

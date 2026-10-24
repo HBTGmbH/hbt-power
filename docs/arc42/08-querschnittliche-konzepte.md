@@ -84,6 +84,7 @@ flowchart LR
 - **Löschen über Services** geht von außen nach innen, und jeder Schritt lässt sich wiederholen. Ein Beispiel ist das Löschen eines Beraters ([6.7](06-laufzeitsicht.md#67-berater-löschen-admin)). Ein Abbruch lässt den eigentlichen Datensatz stehen; erneutes Löschen löscht den Rest.
 - **Housekeeping** ([6.8](06-laufzeitsicht.md#68-housekeeping-admin), #242):
   - Jeder Service meldet die Datenleichen seiner eigenen Daten (`GET /admin/housekeeping`) und bereinigt sie selbst (`DELETE /admin/housekeeping/{check}`).
+  - Innerhalb des Profile Service entstehen keine mehr (#254): Einträge löscht `orphanRemoval`, Projekte `deleteProject`, Skills `SkillRows` mit ihren Benachrichtigungen, sobald weder Profil noch Projekt sie hält. `NoLeftoversITest` prüft jeden Weg gegen die Housekeeping-Prüfungen. Was das Housekeeping dort noch findet, sind Altdaten.
   - Andere Services fragt er nur nach Daten. Fällt einer aus, gibt es einen Fehler statt Treffern.
   - **Regel:** Wer neue Verweise über Service-Grenzen oder neue nicht transaktionale Löschvorgänge einführt, ergänzt eine Prüfung.
 - **Abgeleitete Daten:** Die Statistik hält eine Kopie und lädt sie stündlich und nach Massenänderungen neu ([6.5](06-laufzeitsicht.md#65-statistik-aktuell-halten)). Der Webclient verwirft danach seine zwischengespeicherten Nutzungsangaben.
