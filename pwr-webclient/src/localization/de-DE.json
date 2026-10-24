@@ -321,7 +321,7 @@
   "AdminClient.Housekeeping.Service.skillUnused": "Eigene Skills (Skill Service)",
   "AdminClient.Housekeeping.Check.unused-name-entities.Description": "Je Typ die Einträge, die kein Profil und kein Projekt benutzt. Löschen zeigt alle Namen des Typs und löscht, was dann noch unbenutzt ist, samt Aliassen.",
   "AdminClient.Housekeeping.Check.unused-custom-skills": "Eigene Skills ohne Nutzer",
-  "AdminClient.Housekeeping.Check.unused-custom-skills.Description": "Skills, die Berater selbst angelegt haben (meist unter „Other“) und die kein Profil und kein Projekt mehr benutzt, weder unter ihrem Namen noch unter einem Alias. Skills des Skill-Baums zählen nie dazu. Löschen entfernt sie aus dem Skill-Baum.",
+  "AdminClient.Housekeeping.Check.unused-custom-skills.Description": "Skills in „Other“, die Berater durch Tippen eines unbekannten Namens angelegt haben und die kein Profil und kein Projekt mehr benutzt, weder unter ihrem Namen noch unter einem Alias. Skills anderer Kategorien zählen nie dazu. Löschen entfernt sie aus dem Skill-Baum.",
   "AdminClient.Housekeeping.Service.profile": "Profile Service",
   "AdminClient.Housekeeping.Service.report": "Report Service",
   "AdminClient.Housekeeping.Service.viewProfile": "View-Profile Service",
