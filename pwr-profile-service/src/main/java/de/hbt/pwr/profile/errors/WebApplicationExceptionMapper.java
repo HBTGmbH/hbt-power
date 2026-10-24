@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.stream.Collectors;
-
 import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
@@ -43,13 +41,5 @@ public class WebApplicationExceptionMapper extends ResponseEntityExceptionHandle
         return ResponseEntity
                 .status(e.getStatus())
                 .body(new ErrorInfo(e.getStatus().value(), e.getStatus().getReasonPhrase(), msg, ""));
-    }
-
-    @ExceptionHandler(value = {PwrValidationException.class})
-    public ResponseEntity<ErrorInfo> toResponse(PwrValidationException e) {
-        String messages = e.getMessages().stream().collect(Collectors.joining("\n"));
-        ErrorInfo errorInfo = new ErrorInfo(400, "Validation failed", messages, "");
-        return ResponseEntity.status(errorInfo.getStatus())
-                .body(errorInfo);
     }
 }

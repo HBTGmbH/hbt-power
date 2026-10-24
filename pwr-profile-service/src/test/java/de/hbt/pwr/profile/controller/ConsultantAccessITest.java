@@ -213,4 +213,15 @@ public class ConsultantAccessITest extends AbstractIntegrationTest {
         mockMvc.perform(asAdmin(get("/admin/consultants"))).andExpect(status().isOk());
         mockMvc.perform(get("/admin/consultants")).andExpect(status().isOk());
     }
+
+    /**
+     * Replacing a whole profile from the body is gone (#261), reading it stays for the view-profile service
+     */
+    @Test
+    public void aWholeProfileIsReadButNotReplaced() throws Exception {
+        mockMvc.perform(put("/profiles/own").contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(get("/profiles/own")).andExpect(status().isOk());
+        mockMvc.perform(asUser(get("/profiles/own"), "own")).andExpect(status().isOk());
+    }
 }
