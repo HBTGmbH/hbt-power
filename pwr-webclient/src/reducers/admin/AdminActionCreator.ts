@@ -569,7 +569,7 @@ export class AdminActionCreator {
                 .then(() => dispatch(AdminActionCreator.AsyncGetAllConsultants()))
                 .then(() => dispatch(loadConsultantNames()))
                 .then(() => Alerts.showSuccess(`Deleted Consultant ${initials}! Good Bye!`))
-                .catch((error) => Alerts.showError(error));
+                .catch(console.error);
         };
     }
 
@@ -584,7 +584,7 @@ export class AdminActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.getAllConsultantInfos()
               .then((consultantInfo) => dispatch(AdminActionCreator.LoadConsultantInfoSuccess(consultantInfo)))
-              .catch((error) => Alerts.showError(error));
+              .catch(console.error);
         };
     }
 }
