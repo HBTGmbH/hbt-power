@@ -90,6 +90,15 @@ const GROUPS: Array<{ localizationKey: string, entries: Array<AdminMenuEntry | A
             },
         ]
     },
+    {
+        localizationKey: 'AdminClient.Menu.Maintenance',
+        entries: [
+            {
+                localizationKey: 'AdminClient.Menu.Maintenance.Housekeeping', icon: 'cleaning_services',
+                path: Paths.ADMIN_HOUSEKEEPING, open: navigateTo(Paths.ADMIN_HOUSEKEEPING)
+            },
+        ]
+    },
 ];
 
 const isActive = (pathname: string, path: string) => pathname === path || pathname.startsWith(path + '/');

@@ -1,4 +1,5 @@
 import {PowerHttpClient} from './PowerHttpClient';
+import {HousekeepingFindings} from '../model/admin/HousekeepingFindings';
 import {SortableEntryField, SortableEntryType} from '../model/view/NameComparableType';
 import {AxiosRequestConfig} from 'axios';
 import {ViewProfile} from '../model/view/ViewProfile';
@@ -179,5 +180,18 @@ export class ViewProfileServiceClient extends PowerHttpClient {
         return this.patchInBackground(url, description, config);
     }
 
+    /**
+     * The housekeeping checks of the service (#242), without loading spinner and error alert: the housekeeping page
+     * shows a service that does not answer next to the others
+     */
+    public getHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
+        return this.getQuietly(this.base() + '/admin/housekeeping');
+    };
 
+    /** Deletes what the check finds now; the answer says how many */
+    public cleanHousekeeping = (check: string): Promise<HousekeepingFindings> => {
+        const url = this.base() + '/admin/housekeeping/' + encodeURIComponent(check);
+        this.beginRequest();
+        return this.delete(url);
+    };
 }

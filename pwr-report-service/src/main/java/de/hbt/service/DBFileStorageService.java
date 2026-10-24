@@ -47,7 +47,8 @@ public class DBFileStorageService {
 
     public Map<String, String> allFiles() {
         Map<String, String> nameIdMap = new HashMap<>();
-        dbFileRepository.findAllByOrderByFiletype().forEach(dbFile -> nameIdMap.put(dbFile.getId(), dbFile.getFilename()));
+        // Without the content: the housekeeping of the view-profile service asks for all ids (#242)
+        dbFileRepository.findAllSummaries().forEach(file -> nameIdMap.put(file.getId(), file.getFilename()));
         return nameIdMap;
     }
 
