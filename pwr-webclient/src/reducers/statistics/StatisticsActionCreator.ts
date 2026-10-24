@@ -95,6 +95,11 @@ export class StatisticsActionCreator {
         return {type: ActionType.ForgetNameEntityUsageInfo};
     }
 
+    /** Who uses which skill or profile element, after a consultant was deleted (#240) */
+    public static ForgetAllUsageInfo(): AbstractAction {
+        return {type: ActionType.ForgetAllUsageInfo};
+    }
+
     public static AsyncCheckAvailability() {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             statisticsClient.headStatisticsServiceAvailable()

@@ -76,6 +76,7 @@ export enum ActionType {
     AddSkillUsageInfo = '[Statistics] AddSkillUsageInfo',
     ForgetSkillUsageInfo = '[Statistics] ForgetSkillUsageInfo',
     ForgetNameEntityUsageInfo = '[Statistics] ForgetNameEntityUsageInfo',
+    ForgetAllUsageInfo = '[Statistics] ForgetAllUsageInfo',
 
     // == Skill reducer
     AddCategoryToTree = '[Skill] AddCategoryToTree',

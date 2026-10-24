@@ -110,6 +110,12 @@ export class StatisticsReducer {
                 return StatisticsReducer.AddSkillUsageInfo(store, action as AddSkillUsageInfoAction);
             case ActionType.ForgetNameEntityUsageInfo:
                 return {...store, nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>()};
+            case ActionType.ForgetAllUsageInfo:
+                return {
+                    ...store,
+                    skillUsageInfo: Immutable.Map<string, Immutable.List<ConsultantInfo>>(),
+                    nameEntityUsageInfo: Immutable.Map<NameEntity, Immutable.List<ConsultantInfo>>()
+                };
             case ActionType.ForgetSkillUsageInfo:
                 return StatisticsReducer.ForgetSkillUsageInfo(store, action as ForgetSkillUsageInfoAction);
             default:
