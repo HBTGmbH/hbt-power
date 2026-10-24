@@ -5,6 +5,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -12,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static de.hbt.pwr.filters.AccountHeadersFilter.USER_ADMIN_HEADER;
 import static de.hbt.pwr.filters.AccountHeadersFilter.USER_INITIALS_HEADER;
 import static de.hbt.pwr.filters.AccountHeadersFilter.USER_LOGIN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,6 +54,24 @@ class AccountHeadersFilterTest {
     }
 
     @Test
+    void tellsWhetherTheAccountIsAnAdmin() {
+        assertThat(forward(request(), token("clara.check@example.org", "chk")).get(USER_ADMIN_HEADER))
+                .containsExactly("false");
+        assertThat(forward(request(), token("ada.admin@example.org", "ada", "Power.User", "Power.Admin"))
+                .get(USER_ADMIN_HEADER)).containsExactly("true");
+    }
+
+    @Test
+    void replacesAnAdminHeaderAClientSent() {
+        MockServerHttpRequest forged = MockServerHttpRequest.get("/pwr-profile-service/profile/xyz/fullProfile")
+                .header("x-pwr-user-admin", "true")
+                .build();
+        assertThat(forward(forged, token("clara.check@example.org", "chk", "Power.User")).get(USER_ADMIN_HEADER))
+                .containsExactly("false");
+        assertThat(forward(forged, null).get(USER_ADMIN_HEADER)).containsExactly("false");
+    }
+
+    @Test
     void dropsCharactersThatDontBelongIntoAHeader() {
         HttpHeaders forwarded = forward(request(), token("clara\r\nX-Evil: 1@example.org", null));
         assertThat(forwarded.getFirst(USER_LOGIN_HEADER)).isEqualTo("claraX-Evil: 1@example.org");
@@ -76,11 +96,11 @@ class AccountHeadersFilterTest {
         return MockServerHttpRequest.post("/pwr-profile-service/profile/chk/check/confirmation").build();
     }
 
-    private static JwtAuthenticationToken token(String login, String initials) {
+    private static JwtAuthenticationToken token(String login, String initials, String... roles) {
         Jwt.Builder jwt = Jwt.withTokenValue("token").header("alg", "none").claim("preferred_username", login);
         if (initials != null) {
             jwt.claim("mailnickname", initials);
         }
-        return new JwtAuthenticationToken(jwt.build());
+        return new JwtAuthenticationToken(jwt.build(), AuthorityUtils.createAuthorityList(roles));
     }
 }

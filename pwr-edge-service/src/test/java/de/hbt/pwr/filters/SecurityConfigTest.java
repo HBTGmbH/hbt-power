@@ -190,6 +190,31 @@ class SecurityConfigTest {
     }
 
     /**
+     * Personal data of other consultants and changing profile pictures, only for the admin area (#255)
+     */
+    static Stream<Arguments> adminOnlyPersonalData() {
+        return Stream.of(
+                Arguments.of(HttpMethod.POST, "/pwr-profile-service/admin/profile-pictures"),
+                Arguments.of(HttpMethod.DELETE, "/pwr-profile-service/admin/profile-pictures/some-id"),
+                Arguments.of(HttpMethod.GET, "/pwr-statistics-service/admin/statistics/skill/referencing?skill=Java"),
+                Arguments.of(HttpMethod.GET, "/pwr-statistics-service/admin/statistics/entries/referencing?name-entity=x&type=SECTOR"),
+                Arguments.of(HttpMethod.GET, "/pwr-statistics-service/admin/statistics/network/kmed"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("adminOnlyPersonalData")
+    void adminOnlyPersonalDataAsUserIsForbidden(HttpMethod method, String path) {
+        webTestClient.mutateWith(mockJwt().authorities(new SimpleGrantedAuthority("Power.User")))
+                .method(method).uri(path).exchange().expectStatus().isForbidden();
+    }
+
+    @ParameterizedTest
+    @MethodSource("adminOnlyPersonalData")
+    void adminOnlyPersonalDataAsAdminPassesSecurity(HttpMethod method, String path) {
+        assertPassesSecurity("Power.Admin", method, path);
+    }
+
+    /**
      * Listing and managing the consultants (#218)
      */
     static Stream<Arguments> consultantManagement() {
