@@ -21,7 +21,7 @@
 | **Früherer Name** (`NameEntityFormerName`) | Alter Name eines umbenannten oder zusammengeführten Profil-Elements. Wer ihn tippt, bekommt das Element. |
 | **Hausschrift** | Simplon Norm, lizenziert; in der Produktion als Volume eingebunden |
 | **Housekeeping** | Admin-Seite und Endpunkte `/admin/housekeeping` je Service, die Datenleichen melden und bereinigen (#242) |
-| **Identitäts-Header** | `X-Pwr-User-Login` und `X-Pwr-User-Initials`; die Edge setzt sie aus dem geprüften Token |
+| **Identitäts-Header** | `X-Pwr-User-Login`, `X-Pwr-User-Initials` und `X-Pwr-User-Admin`; die Edge setzt sie aus dem geprüften Token |
 | **Ingress** | Der nginx vor allen Containern in der Produktion: TLS, `/` zum Webclient, `/api/` zur Edge |
 | **Kurzname** | Name eines Kollegen in der App, z. B. `Kai B.` (`ConsultantShortNames`, #216) |
 | **Kürzel** (`initials`) | Eindeutige Kennung eines Beraters, gleich dem Claim `mailnickname` seines Kontos, klein geschrieben |
