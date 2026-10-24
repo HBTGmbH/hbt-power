@@ -292,7 +292,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - Kann er sie nicht fragen, meldet er einen Fehler statt Treffern.
   - Bereinigen wirkt nur auf das, was beim Ausführen noch zutrifft, und loggt es.
   - Regel: Neue Verweise über Service-Grenzen oder neue nicht transaktionale Löschvorgänge bringen eine Prüfung mit.
-  - Das Housekeeping pflegt das ganze System (#288). Neben den Datenleichen hat es die Rubrik *Unbenutzt* für gültige Einträge, die niemand mehr nutzt: Profil-Elemente je Typ (Profile Service) und eigene Skills des Skill-Baums (Skill Service, der die Nutzung beim Profile Service liest). Löschen ist dort eine Pflegeentscheidung, keine Reparatur. Weitere Rubriken können folgen (#289).
+  - Das Housekeeping pflegt das ganze System (#288). Neben den Datenleichen hat es die Rubrik *Unbenutzt* für gültige Einträge, die niemand mehr nutzt: Profil-Elemente je Typ (Profile Service) und eigene Skills in der Kategorie *Other* (Skill Service, der die Nutzung beim Profile Service liest). Löschen ist dort eine Pflegeentscheidung, keine Reparatur. Weitere Rubriken können folgen (#289).
 - **Konsequenzen:**
   - Die Verantwortung bleibt beim Besitzer der Daten.
   - Das Bereinigen ist ein bewusster Schritt eines Admins und geschieht nicht automatisch.

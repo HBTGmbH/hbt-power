@@ -4,6 +4,7 @@ import de.hbt.power.client.SkillUsageClient;
 import de.hbt.power.model.HousekeepingFindings;
 import de.hbt.power.model.Skill;
 import de.hbt.power.repo.SkillRepository;
+import de.hbt.power.service.CategoryService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Housekeeping of the skill tree, rubric <em>unused</em> (#288): own skills ({@link Skill#isCustom()}, put into the
- * tree by a consultant typing an unknown skill) that no profile and no project uses any more. They are no left-overs
- * but valid entries, so deleting them is a decision of the admin; typing the name again puts the skill back. Skills
- * of the tree that are not custom never count, they are maintained.
+ * Housekeeping of the skill tree, rubric <em>unused</em> (#288): own skills, put into the category
+ * {@value CategoryService#OTHER_CATEGORY_NAME} by a consultant typing an unknown skill, that no profile and no project
+ * uses any more. They are no left-overs but valid entries, so deleting them is a decision of the admin; typing the
+ * name again puts the skill back. Skills of every other category never count, they are maintained, also once an
+ * admin moved an own skill there. {@link Skill#isCustom()} tells nothing (#297): creating a skill in a category of
+ * the admin tree sets it too.
  * <p>
  * Who uses which skill only the profile service knows; if it doesn't answer, or knows no skill in use at all, the
  * check reports that instead of findings, so a failure never turns every own skill into an unused one.
@@ -66,12 +69,17 @@ public class HousekeepingService {
         }
     }
 
+    private static boolean isInOther(Skill skill) {
+        return skill.getCategory() != null
+                && CategoryService.OTHER_CATEGORY_NAME.equalsIgnoreCase(skill.getCategory().getQualifier());
+    }
+
     private static String unavailable(RestClientException e) {
         return "Another service did not answer: " + e.getMessage();
     }
 
     /**
-     * Own skills whose name and aliases no profile uses, ignoring case: the profile service counts by the name of the
+     * Own skills in Other whose name and aliases no profile uses, ignoring case: the profile service counts by the name of the
      * tree, but by the name as typed if it can't reach the tree, so an alias counts too
      */
     private List<Skill> unusedCustomSkills() {
@@ -85,7 +93,7 @@ public class HousekeepingService {
             throw new RestClientException("the profile service knows no skill in use");
         }
         return skillRepository.findAll().stream()
-                .filter(Skill::isCustom)
+                .filter(HousekeepingService::isInOther)
                 .filter(skill -> Stream.concat(Stream.of(skill.getQualifier()), skill.getAliases().stream())
                         .filter(Objects::nonNull)
                         .noneMatch(name -> used.contains(name.trim().toLowerCase(Locale.ROOT))))

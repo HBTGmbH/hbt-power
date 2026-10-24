@@ -32,7 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
- * Housekeeping, rubric unused (#288): own skills no profile uses, never skills of the tree
+ * Housekeeping, rubric unused (#288): own skills in Other no profile uses, never skills of another category, whatever
+ * their custom flag says (#297)
  */
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,8 +65,12 @@ public class UnusedCustomSkillsITest {
         custom("Eigener ungenutzt");
         custom("Eigener genutzt");
         custom("Eigener per Alias genutzt", "EpA");
-        skill("Baum ungenutzt", false);
-        skill("Java", false);
+        SkillCategory tools = skillCategoryRepository.findOneByQualifier("Tools")
+                .orElseGet(() -> skillCategoryRepository.save(SkillCategory.of("Tools")));
+        skill("Baum ungenutzt", false, tools);
+        skill("Java", false, tools);
+        // Created by an admin in a category of the tree: custom too, but maintained (#297)
+        skill("Gepflegt ungenutzt", true, tools);
         when(skillUsageClient.findSkillUsage()).thenReturn(Map.of("Java", 3, "eigener GENUTZT", 1, "epa", 1, "Zuletzt", 0));
     }
 
@@ -82,10 +87,10 @@ public class UnusedCustomSkillsITest {
         return skillRepository.save(skill);
     }
 
-    private void skill(String name, boolean custom) {
+    private void skill(String name, boolean custom, SkillCategory category) {
         Skill skill = Skill.of(name);
         skill.setCustom(custom);
-        skill.setCategory(other);
+        skill.setCategory(category);
         skillRepository.save(skill);
     }
 
@@ -109,7 +114,8 @@ public class UnusedCustomSkillsITest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.count").value(1));
 
-        assertThat(names()).containsExactly("Baum ungenutzt", "Eigener genutzt", "Eigener per Alias genutzt", "Java");
+        assertThat(names()).containsExactly("Baum ungenutzt", "Eigener genutzt", "Eigener per Alias genutzt",
+                "Gepflegt ungenutzt", "Java");
     }
 
     @Test
@@ -122,7 +128,7 @@ public class UnusedCustomSkillsITest {
                 .andExpect(jsonPath("$[0].error", containsString("Connection refused")));
         mockMvc.perform(delete("/admin/housekeeping/unused/" + UNUSED_CUSTOM_SKILLS))
                 .andExpect(status().isServiceUnavailable());
-        assertThat(names()).hasSize(5);
+        assertThat(names()).hasSize(6);
     }
 
     @Test
@@ -133,7 +139,7 @@ public class UnusedCustomSkillsITest {
                 .andExpect(jsonPath("$[0].error", containsString("no skill in use")));
         mockMvc.perform(delete("/admin/housekeeping/unused/" + UNUSED_CUSTOM_SKILLS))
                 .andExpect(status().isServiceUnavailable());
-        assertThat(names()).hasSize(5);
+        assertThat(names()).hasSize(6);
     }
 
     @Test
@@ -148,6 +154,6 @@ public class UnusedCustomSkillsITest {
                 .andExpect(status().isForbidden());
         mockMvc.perform(delete("/admin/housekeeping/unused/" + UNUSED_CUSTOM_SKILLS).header("X-Pwr-User-Admin", "false"))
                 .andExpect(status().isForbidden());
-        assertThat(names()).hasSize(5);
+        assertThat(names()).hasSize(6);
     }
 }

@@ -26,7 +26,7 @@ public class CategoryService {
     private final SkillCategoryRepository skillCategoryRepository;
     private final SkillRepository skillRepository;
 
-    private static final String OTHER_CATEGORY_NAME = "Other";
+    public static final String OTHER_CATEGORY_NAME = "Other";
 
     @Autowired
     public CategoryService(SkillCategoryRepository skillCategoryRepository, SkillRepository skillRepository) {
