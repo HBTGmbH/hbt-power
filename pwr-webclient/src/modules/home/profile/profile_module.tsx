@@ -172,7 +172,9 @@ class ProfileModule extends React.Component<ProfileProps & ProfileLocalProps & P
 
     private renderEducationInfo = (entry: ProfileEntry) => {
         const education: Education = entry as Education;
-        return this.renderInfo(`${formatToShortDisplay(education.endDate)} | ${education.degree}`);
+        // Without a degree no separator at the end (#281)
+        const degree = education.degree && education.degree.trim();
+        return this.renderInfo(degree ? `${formatToShortDisplay(education.endDate)} | ${degree}` : formatToShortDisplay(education.endDate));
     };
 
     private renderQualificationInfo = (entry: ProfileEntry) => {

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -57,6 +58,28 @@ public class ProfileCheckServiceTest {
     }
 
     // --------------------------------------------------------------------------------------------------------- missing
+
+    @Test
+    public void educationWithoutDegreeIsIncomplete() {
+        Profile profile = completeProfile();
+        EducationEntry empty = new EducationEntry(name("Universität Hamburg - Informatik"), null);
+        empty.setId(nextId++);
+        EducationEntry blank = new EducationEntry(name("Ausbildung zum Fachinformatiker"), "  ");
+        blank.setId(nextId++);
+        profile.getEducation().add(empty);
+        profile.getEducation().add(blank);
+
+        assertThat(hints(check(profile), Code.EDUCATION_WITHOUT_DEGREE))
+                .extracting(hint -> hint.getValues().get("education"), ProfileCheckHint::getSection, ProfileCheckHint::getType)
+                .containsExactly(
+                        tuple("Ausbildung zum Fachinformatiker", ProfileSection.EDUCATION, Type.INCOMPLETE),
+                        tuple("Universität Hamburg - Informatik", ProfileSection.EDUCATION, Type.INCOMPLETE));
+    }
+
+    @Test
+    public void educationWithDegreeIsComplete() {
+        assertThat(hints(check(completeProfile()), Code.EDUCATION_WITHOUT_DEGREE)).isEmpty();
+    }
 
     @Test
     public void emptyRequiredSectionsAreMissing() {
