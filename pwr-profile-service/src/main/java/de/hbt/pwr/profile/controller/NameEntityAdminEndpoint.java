@@ -31,7 +31,6 @@ public class NameEntityAdminEndpoint {
         this.nameEntityAdminService = nameEntityAdminService;
     }
 
-    @ApiOperation(value = "The initials of the consultants whose profile uses the profile element, counted in the database")
     /**
      * How many consultants use each element of the type, by id (#271)
      */
@@ -68,6 +67,7 @@ public class NameEntityAdminEndpoint {
         return nameEntityAdminService.deleteAlias(id, alias);
     }
 
+    @ApiOperation(value = "The initials of the consultants whose profile uses the profile element, counted in the database")
     @GetMapping("/{id}/users")
     public List<String> findUsers(@PathVariable("id") Long id) {
         return nameEntityAdminService.findUsers(id);
