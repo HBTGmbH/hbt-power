@@ -203,7 +203,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                     <PwrDatePicker
                                         onChange={this.onStartDateChange}
                                         value={this.state.startDate}
-                                        label={'Start'}
+                                        label={PowerLocalize.get('ProfileEntry.StartDate')}
                                         type={DatePickerType.MONTH_YEAR}
                                         disableOpenEnd
                                     />
@@ -216,7 +216,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                     <PwrDatePicker
                                         onChange={this.onEndDateChange}
                                         value={this.state.endDate}
-                                        label={'Ende'}
+                                        label={PowerLocalize.get('ProfileEntry.EndDate')}
                                         type={DatePickerType.MONTH_YEAR}/>
                                 </Grid>
                         }
@@ -226,7 +226,7 @@ class ProfileEntryDialogModule extends React.Component<ProfileEntryDialogProps &
                                 <Grid item md={12} xs={12}>
                                     <PwrAutoComplete
                                         fullWidth
-                                        label={PowerLocalize.get(`ProfileEntryType.${this.props.type}.AutoCompleteLabel`)}
+                                        label={PowerLocalize.get('ProfileEntry.Degree')}
                                         id={'id'}
                                         data={this.props.degrees}
                                         searchTerm={this.state.degree}
