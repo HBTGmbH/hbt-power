@@ -1,7 +1,6 @@
 import {SkillCategory} from '../model/skill/SkillCategory';
 import {Skill} from '../model/Skill';
 import * as Immutable from 'immutable';
-import {AdminNotification} from '../model/admin/AdminNotification';
 import {SkillNode, SkillTreeNode} from '../model/skill/SkillTreeNode';
 import {SkillServiceSkill} from '../model/skill/SkillServiceSkill';
 import {ComparatorBuilder, NullMode, nullSafe} from 'ts-comparator';
@@ -109,10 +108,6 @@ export class Comparators {
 
     public static compareSkills(s1: Skill, s2: Skill): number {
         return Comparators.compareString(s2.name(), s1.name());
-    }
-
-    public static compareAdminNotification(a1: AdminNotification, a2: AdminNotification): number {
-        return Comparators.compareDate(a1.occurrence(), a2.occurrence());
     }
 
     public static compareEducationByEndDate(edu1: Education, edu2: Education): number {

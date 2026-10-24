@@ -9,8 +9,6 @@ import {Paths} from '../../Paths';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {ApplicationState} from '../../reducers/reducerIndex';
 import {PwrBrand} from '../general/pwr-brand';
-import {NotificationInbox} from './notification/notification-inbox_module';
-import {NotificationTrashbox} from './notification/notification-trashbox_module';
 import {ConsultantGrid} from './consultants/consultant-grid_module';
 import {SkillStatistics} from '../home/statistics/skill-statistics_module';
 import {AdminSkillTree2} from './info/tree/admin-skill-tree2_module';
@@ -94,16 +92,16 @@ class AdminClientModule extends React.Component<AdminClientProps
                     is no menu column on the left any more (#212) */}
                 <div>
                     <div className="col-md-12 fittingContainer admin-app-bar-spacer">
-                        {/* The admin area without a page starts in the consultant management (#263) */}
+                        {/* The admin area without a page starts in the consultant management (#263), so do old links
+                            to the inbox and the trash, which are gone (#307) */}
                         <Switch>
-                            <Route exact path={[Paths.ADMIN_BASE, Paths.ADMIN_BASE + 'home']}>
+                            <Route exact path={[Paths.ADMIN_BASE, Paths.ADMIN_BASE + 'home', Paths.ADMIN_BASE + 'home/inbox',
+                                Paths.ADMIN_BASE + 'home/trashbox']}>
                                 <Redirect to={Paths.ADMIN_CONSULTANTS}/>
                             </Route>
                         </Switch>
-                        <Route path={Paths.ADMIN_INBOX} component={NotificationInbox}/>
                         <Route path={Paths.ADMIN_CONSULTANTS} component={ConsultantGrid}/>
                         <Route path={Paths.ADMIN_TEMPLATES} component={ReportManager}/>
-                        <Route path={Paths.ADMIN_TRASHBOX} component={NotificationTrashbox}/>
                         <Route path={Paths.ADMIN_STATISTICS_SKILL} component={SkillStatistics}/>
                         <Route path={Paths.ADMIN_INFO_SKILLTREE} component={AdminSkillTree2}/>
                         <Route path={Paths.ADMIN_INFO_NAME_ENTITY} component={NameEntityOverview}/>
