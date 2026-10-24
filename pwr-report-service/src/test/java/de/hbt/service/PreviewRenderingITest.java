@@ -88,6 +88,8 @@ class PreviewRenderingITest {
                 .viewDescription("Beispiel")
                 .ownerInitials("tst")
                 .build();
+        // Where the view-profile service sends the owner (#262)
+        reportInfo.viewProfile.getViewProfileInfo().setOwnerInitials("tst");
         return reportInfo;
     }
 

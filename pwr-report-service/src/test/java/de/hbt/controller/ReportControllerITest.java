@@ -25,6 +25,7 @@ import java.util.Optional;
 import static de.hbt.security.ConsultantAccess.USER_ADMIN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -46,7 +47,8 @@ class ReportControllerITest {
 
     private static final String REPORT_INFO = "{"
             + "\"initials\": \"tst\","
-            + "\"viewProfile\": {\"viewProfileInfo\": {\"name\": \"Anfrage A\", \"viewDescription\": \"Für Kunde X\"}},"
+            + "\"viewProfile\": {\"viewProfileInfo\": {\"name\": \"Anfrage A\", \"viewDescription\": \"Für Kunde X\","
+            + " \"owner\": \"tst\"}},"
             + "\"reportTemplate\": {\"id\": \"template-1\", \"name\": \"Standard\"},"
             // Not taken over: who exports is no part of the body
             + "\"exportedByInitials\": \"fake\", \"exportedByName\": \"Jemand Anderes\""
@@ -170,16 +172,36 @@ class ReportControllerITest {
         assertThat(reportDataRepository.findById(own.getId())).isEmpty();
     }
 
+    /**
+     * Only the view-profile service makes documents, from a view profile it loaded by its id (#262): through the edge
+     * nobody does, not even an admin
+     */
     @Test
-    void userExportsAndPreviewsOnlyTheOwnProfile() throws Exception {
-        mockMvc.perform(asUser(generate(), "xyz")).andExpect(status().isForbidden());
-        mockMvc.perform(asUser(post("/report/preview"), "xyz")
+    void throughTheEdgeNoDocumentIsMade() throws Exception {
+        mockMvc.perform(asUser(generate(), "tst")).andExpect(status().isForbidden());
+        mockMvc.perform(asUser(post("/report/preview"), "tst")
+                        .contentType(MediaType.APPLICATION_JSON).content(REPORT_INFO))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(generate().header(USER_ADMIN_HEADER, "true")).andExpect(status().isForbidden());
+        mockMvc.perform(post("/report/preview").header(USER_ADMIN_HEADER, "true")
                         .contentType(MediaType.APPLICATION_JSON).content(REPORT_INFO))
                 .andExpect(status().isForbidden());
         assertThat(reportDataRepository.findAll()).isEmpty();
+        verify(profileReportService, never()).renderPdfPreview(any());
+    }
 
-        mockMvc.perform(asUser(post("/report/preview"), "tst")
-                        .contentType(MediaType.APPLICATION_JSON).content(REPORT_INFO))
+    @Test
+    void noDocumentFromAViewProfileOfAnotherConsultant() throws Exception {
+        String ofAnother = REPORT_INFO.replace("\"owner\": \"tst\"", "\"owner\": \"xyz\"");
+        mockMvc.perform(post("/report").param("type", "DOC").contentType(MediaType.APPLICATION_JSON).content(ofAnother))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/report/preview").contentType(MediaType.APPLICATION_JSON).content(ofAnother))
+                .andExpect(status().isForbidden());
+        assertThat(reportDataRepository.findAll()).isEmpty();
+
+        // The owner compares ignoring case, like the initials everywhere
+        mockMvc.perform(post("/report").param("type", "DOC").contentType(MediaType.APPLICATION_JSON)
+                        .content(REPORT_INFO.replace("\"owner\": \"tst\"", "\"owner\": \"TST\"")))
                 .andExpect(status().isOk());
     }
 
@@ -189,7 +211,6 @@ class ReportControllerITest {
 
         mockMvc.perform(get("/report/file/" + other.getId()).header(USER_ADMIN_HEADER, "true"))
                 .andExpect(status().isOk());
-        mockMvc.perform(generate().header(USER_ADMIN_HEADER, "true")).andExpect(status().isOk());
         mockMvc.perform(delete("/report/delete/" + other.getId()).header(USER_ADMIN_HEADER, "true"))
                 .andExpect(status().isOk());
     }

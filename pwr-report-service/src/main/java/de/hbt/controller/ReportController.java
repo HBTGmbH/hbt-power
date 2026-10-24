@@ -4,6 +4,7 @@ import de.hbt.client.ConsultantNameClient;
 import de.hbt.exceptions.ReportRenderException;
 import de.hbt.model.ReportData;
 import de.hbt.model.ReportInfo;
+import de.hbt.model.view.ViewProfile;
 import de.hbt.model.view.ViewProfileInfo;
 import de.hbt.security.ConsultantAccess;
 import de.hbt.service.ProfileReportService;
@@ -18,9 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -87,7 +90,7 @@ public class ReportController {
                                            @RequestHeader(value = USER_LOGIN_HEADER, required = false) String login,
                                            @RequestHeader(value = USER_INITIALS_HEADER, required = false) String exportedBy) {
         LOG.info("Generating new report!");
-        ConsultantAccess.check(reportInfo.initials);
+        requireViewProfileOfTheConsultant(reportInfo);
         ViewProfileInfo viewProfileInfo = reportInfo.viewProfile.getViewProfileInfo();
         // Who exports only from the headers of the edge (#214), the name as it is now; without them (locally) nobody
         String exportedByName = null;
@@ -112,6 +115,23 @@ public class ReportController {
         return ResponseEntity.ok("Started Report Generation");
     }
 
+    /**
+     * A document only comes from a stored view profile of the consultant (#262). Only the view-profile service sends
+     * one: it loaded the view profile by its id and checked the owner against the initials. A request through the
+     * edge, even of an admin, could send any content, so it gets <code>403</code>; so does a view profile of another
+     * consultant than the initials.
+     */
+    private static void requireViewProfileOfTheConsultant(ReportInfo reportInfo) {
+        ConsultantAccess.checkNotThroughEdge();
+        String owner = Optional.ofNullable(reportInfo.viewProfile)
+                .map(ViewProfile::getViewProfileInfo)
+                .map(ViewProfileInfo::getOwnerInitials)
+                .orElse(null);
+        if (owner == null || reportInfo.initials == null || !owner.trim().equalsIgnoreCase(reportInfo.initials.trim())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "The view profile belongs to another consultant");
+        }
+    }
+
     private static String truncate(String description) {
         if (description == null || description.isBlank()) {
             return null;
@@ -125,7 +145,7 @@ public class ReportController {
     @PostMapping(value = "/preview", consumes = "application/json")
     public ResponseEntity<byte[]> preview(@RequestBody ReportInfo reportInfo) {
         LOG.info("Rendering preview for " + reportInfo.initials);
-        ConsultantAccess.check(reportInfo.initials);
+        requireViewProfileOfTheConsultant(reportInfo);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .cacheControl(CacheControl.noStore())

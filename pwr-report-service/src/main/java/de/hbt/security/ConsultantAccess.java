@@ -57,6 +57,17 @@ public final class ConsultantAccess {
     }
 
     /**
+     * Answers <code>403</code> for a request through the edge, also of an admin: only for calls of another service
+     * (#262)
+     */
+    public static void checkNotThroughEdge() {
+        HttpServletRequest request = currentRequest();
+        if (request != null && request.getHeader(USER_ADMIN_HEADER) != null) {
+            throw new ResponseStatusException(FORBIDDEN, "Only for other services");
+        }
+    }
+
+    /**
      * The request being handled; null outside of one (a scheduled job), which is no request through the edge
      */
     private static HttpServletRequest currentRequest() {
