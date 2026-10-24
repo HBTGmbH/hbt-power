@@ -168,6 +168,7 @@ public class NameEntityAdminService {
             }
         });
         entityManager.flush();
+        repointRowsWithoutType(source, target);
         if (ENTRY_TYPES.contains(source.getType())) {
             profileRepository.findAll().forEach(profile -> removeDuplicates(profile, source.getType(), target));
         }
@@ -204,6 +205,7 @@ public class NameEntityAdminService {
             deletedEntries.add(entry.getId());
             entityManager.remove(entry);
         });
+        deletedEntries.addAll(deleteRowsWithoutType(nameEntity));
         removeFromProjects(nameEntity);
         deleteNotifications(nameEntity, deletedEntries);
         deleteElement(nameEntity);
@@ -224,6 +226,7 @@ public class NameEntityAdminService {
                 deletedEntries.add(entry.getId());
                 entityManager.remove(entry);
             });
+            deletedEntries.addAll(deleteRowsWithoutType(nameEntity));
             removeFromProjects(nameEntity);
             deleteNotifications(nameEntity, deletedEntries);
             deleteElement(nameEntity);
@@ -299,10 +302,50 @@ public class NameEntityAdminService {
         });
     }
 
+    /**
+     * The entries with the element, queried per entry type: a row of profile_entry without a row in the table of an
+     * entry type (there are such in old data) can't be loaded as the abstract ProfileEntry
+     */
     private List<ProfileEntry> entriesWith(NameEntity nameEntity) {
-        return entityManager.createQuery("select e from ProfileEntry e where e.nameEntity = :n", ProfileEntry.class)
-                .setParameter("n", nameEntity)
-                .getResultList();
+        return ENTRY_TYPES.stream()
+                .flatMap(type -> entityManager.createQuery("select e from " + type.getProfileEntryClass().getSimpleName()
+                        + " e where e.nameEntity = :n", type.getProfileEntryClass())
+                        .setParameter("n", nameEntity)
+                        .getResultList().stream())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes the rows of profile_entry without a type that still point to the element, after the entries were
+     * removed: every row left then has no type. Returns their ids, for the notifications about them.
+     */
+    private List<Long> deleteRowsWithoutType(NameEntity nameEntity) {
+        entityManager.flush();
+        List<Long> ids = ((List<?>) entityManager
+                .createNativeQuery("select id from profile_entry where name_entity_id = :n")
+                .setParameter("n", nameEntity.getId())
+                .getResultList()).stream()
+                .map(id -> ((Number) id).longValue())
+                .collect(Collectors.toList());
+        if (!ids.isEmpty()) {
+            log.warn("Deleting " + ids.size() + " rows of profile_entry without an entry type pointing to " + nameEntity);
+            entityManager.createNativeQuery("delete from profile_entry where name_entity_id = :n")
+                    .setParameter("n", nameEntity.getId())
+                    .executeUpdate();
+        }
+        return ids;
+    }
+
+    /** Points the rows of profile_entry without a type to the target of a merge, after the entries were */
+    private void repointRowsWithoutType(NameEntity source, NameEntity target) {
+        int repointed = entityManager
+                .createNativeQuery("update profile_entry set name_entity_id = :target where name_entity_id = :source")
+                .setParameter("target", target.getId())
+                .setParameter("source", source.getId())
+                .executeUpdate();
+        if (repointed > 0) {
+            log.warn("Pointed " + repointed + " rows of profile_entry without an entry type from " + source + " to " + target);
+        }
     }
 
     private List<Project> projectsWith(NameEntity nameEntity) {

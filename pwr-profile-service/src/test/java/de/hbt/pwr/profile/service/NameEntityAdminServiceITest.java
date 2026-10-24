@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import static de.hbt.pwr.profile.model.profile.NameEntityType.*;
@@ -298,6 +299,52 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
         assertThat(nameEntityRepository.findAllByType(SECTOR)).extracting(NameEntity::getName).containsExactly("Banken");
         assertThat(nameEntityAdminService.findUnused(COMPANY)).extracting(NameEntity::getName).containsExactly("Logistik");
         assertThat(nameEntityAdminService.findUnused(PROJECT_ROLE)).isEmpty();
+    }
+
+    /**
+     * Old data has rows in profile_entry without a row in the table of an entry type, which Hibernate can't load as
+     * the abstract ProfileEntry. They point to the element still and go with it, or to the target of a merge.
+     */
+    @Test
+    public void rowsOfProfileEntryWithoutAType_areDeletedWithTheElement_orPointToTheTargetOfAMerge() {
+        NameEntity logistics = nameEntityRepository.save(named("Logistik", COMPANY));
+        NameEntity banks = nameEntityRepository.save(named("Banken", SECTOR));
+        sector(anna, "Versicherungen");
+        NameEntity insurances = element("Versicherungen", SECTOR);
+        NameEntity trade = nameEntityRepository.save(named("Handel", SECTOR));
+        Long logisticsRow = profileEntryRowWithoutType(logistics);
+        Long banksRow = profileEntryRowWithoutType(banks);
+        Long tradeRow = profileEntryRowWithoutType(trade);
+        adminNotificationRepository.save(new ProfileEntryNotification(anna, banksRow, banks));
+
+        assertThat(nameEntityAdminService.deleteUnused(COMPANY)).extracting(NameEntity::getName).containsExactly("Logistik");
+        nameEntityAdminService.delete(banks.getId());
+        nameEntityAdminService.merge(trade.getId(), insurances.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThat(element("Logistik", COMPANY)).isNull();
+        assertThat(element("Banken", SECTOR)).isNull();
+        assertThat(element("Handel", SECTOR)).isNull();
+        assertThat(nameEntityOfRow(logisticsRow)).isNull();
+        assertThat(nameEntityOfRow(banksRow)).isNull();
+        assertThat(nameEntityOfRow(tradeRow)).isEqualTo(insurances.getId());
+        assertThat(adminNotificationRepository.findAll()).isEmpty();
+        assertThat(reloaded(anna).getSectors()).extracting(entry -> entry.getNameEntity().getName()).containsExactly("Versicherungen");
+    }
+
+    private Long profileEntryRowWithoutType(NameEntity nameEntity) {
+        entityManager.flush();
+        entityManager.createNativeQuery("insert into profile_entry (name_entity_id) values (:n)")
+                .setParameter("n", nameEntity.getId()).executeUpdate();
+        return ((Number) entityManager.createNativeQuery("select max(id) from profile_entry").getSingleResult()).longValue();
+    }
+
+    /** The element the row points to, null if the row is gone */
+    private Long nameEntityOfRow(Long id) {
+        List<?> rows = entityManager.createNativeQuery("select name_entity_id from profile_entry where id = :id")
+                .setParameter("id", id).getResultList();
+        return rows.isEmpty() ? null : ((Number) rows.get(0)).longValue();
     }
 
     @Test

@@ -176,7 +176,6 @@ export const UnusedNameEntitiesDialog = (props: UnusedNameEntitiesDialogProps) =
     const [unused, setUnused] = useState<Array<NameEntity> | undefined>(undefined);
 
     useEffect(() => {
-        setUnused(undefined);
         if (props.open) {
             ProfileServiceClient.instance().getUnusedNameEntities(props.type)
                 .then(setUnused)
@@ -193,7 +192,9 @@ export const UnusedNameEntitiesDialog = (props: UnusedNameEntitiesDialogProps) =
         dispatch(AdminActionCreator.AsyncDeleteUnusedNameEntities(props.type) as any);
     };
 
-    return <Dialog open={props.open && unused !== undefined} onClose={props.onClose} fullWidth maxWidth="sm">
+    // Forgotten only once the dialog has faded out, so it shows the list until then
+    return <Dialog open={props.open && unused !== undefined} onClose={props.onClose} fullWidth maxWidth="sm"
+                   TransitionProps={{onExited: () => setUnused(undefined)}}>
         <DialogTitle>{PowerLocalize.getFormatted('AdminClient.NameEntity.Unused.Title', props.typeLabel)}</DialogTitle>
         <DialogContent>
             <Typography variant="body1">
