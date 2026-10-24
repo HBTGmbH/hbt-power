@@ -139,6 +139,10 @@ export class PowerHttpClient {
         if (data.error !== null && typeof data.error === 'object') {
             return {status: error.response.status, error: data.error.code, message: data.error.message};
         }
+        // The skill service answers {id, errorType, message} (#252)
+        if (typeof data.errorType === 'string') {
+            return {status: error.response.status, error: data.errorType, message: data.message};
+        }
         return data;
     };
 

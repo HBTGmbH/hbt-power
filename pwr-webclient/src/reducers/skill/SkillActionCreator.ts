@@ -3,12 +3,10 @@ import {ActionType} from '../ActionType';
 import * as redux from 'redux';
 import {ApplicationState} from '../reducerIndex';
 import {RequestStatus} from '../../Store';
-import {AxiosError} from 'axios';
 import {APISkillServiceSkill, SkillServiceSkill} from '../../model/skill/SkillServiceSkill';
 import {AddSkillStep} from '../../model/skill/AddSkillStep';
 import {UnCategorizedSkillChoice} from '../../model/skill/UncategorizedSkillChoice';
 import {AdminActionCreator} from '../admin/AdminActionCreator';
-import {SkillServiceError} from '../../model/skill/SkillServiceError';
 import {TCategoryNode} from '../../model/skill/tree/TCategoryNode';
 import {Alerts} from '../../utils/Alerts';
 import {AbstractAction, ChangeNumberValueAction, ChangeStringValueAction} from '../BaseActions';
@@ -182,16 +180,11 @@ export class SkillActionCreator {
     }
 
 
-    private static handleSkillServiceError(error: AxiosError) {
+    /**
+     * The client has shown the error already (#252); it rethrows it as a PowerApiError, not as the AxiosError
+     */
+    private static handleSkillServiceError(error: PowerApiError) {
         console.error(error);
-        if (error.response && error.response.data) {
-            let response: SkillServiceError = error.response.data;
-            Alerts.showError(response.errorType + ': ' + response.message);
-        } else if (error.response) {
-            Alerts.showError('Generic Error ' + error.response.status);
-        } else {
-            Alerts.showError('An unknown error occurred');
-        }
     }
 
 
@@ -234,7 +227,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.patchSetIsDisplayCategory(categoryId, isDisplay)
                 .then((category) => dispatch(SkillActionCreator.UpdateSkillCategory(SkillCategory.fromAPI(category))))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -248,7 +241,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.postLocaleToCategory(categoryId, locale, qualifier)
                 .then((category) => SkillActionCreator.invokeCategoryUpdate(category, dispatch))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -260,7 +253,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteLocaleFromCategory(categoryId, language)
                 .then((category) => SkillActionCreator.invokeCategoryUpdate(category, dispatch))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -269,7 +262,7 @@ export class SkillActionCreator {
             let category: SkillCategory = SkillCategory.of(null, qualifier);
             skillClient.postNewCategory(parentId, category)
                 .then((category) => dispatch(SkillActionCreator.AddCategoryToTree(parentId, SkillCategory.fromAPI(category))))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -281,7 +274,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteCategory(categoryId)
                 .then(() => dispatch(SkillActionCreator.RemoveSkillCategory(categoryId)))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -290,7 +283,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.patchMoveSkill(skillId, newCategoryId)
                 .then(() => dispatch(SkillActionCreator.MoveSkill(oldCategoryId, newCategoryId, skillId)))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -298,7 +291,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.postNewSkill(categoryId, qualifier)
                 .then((skill) => dispatch(SkillActionCreator.AddSkillToTree(categoryId, SkillServiceSkill.fromAPI(skill))))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -313,7 +306,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.addSkillLocale(skillId, language, qualifier)
                 .then((skill) => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -362,7 +355,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.deleteSkillLocale(skillId, language)
                 .then((skill) => dispatch(SkillActionCreator.UpdateSkillServiceSkill(SkillServiceSkill.fromAPI(skill))))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 
@@ -371,7 +364,7 @@ export class SkillActionCreator {
         return function (dispatch: redux.Dispatch) {
             skillClient.getFullTree()
                 .then((root) => dispatch(SkillActionCreator.InitializeTree(root)))
-                .catch((error: AxiosError) => SkillActionCreator.handleSkillServiceError(error));
+                .catch((error: PowerApiError) => SkillActionCreator.handleSkillServiceError(error));
         };
     }
 }
