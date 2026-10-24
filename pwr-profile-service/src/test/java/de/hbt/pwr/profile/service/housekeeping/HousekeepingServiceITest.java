@@ -105,6 +105,16 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         return housekeepingService.check().stream().collect(Collectors.toMap(HousekeepingFindings::getCheck, f -> f));
     }
 
+    private Map<String, Long> counts() {
+        return findings().values().stream().collect(Collectors.toMap(HousekeepingFindings::getCheck, HousekeepingFindings::getCount));
+    }
+
+    private List<ProfileEntryNotification> entryNotificationsOfAnna() {
+        entityManager.flush();
+        return entityManager.createQuery("select n from ProfileEntryNotification n where n.profile.id = :id",
+                ProfileEntryNotification.class).setParameter("id", anna.getId()).getResultList();
+    }
+
     private Profile reloaded() {
         entityManager.flush();
         entityManager.clear();
@@ -113,11 +123,13 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
 
     @Test
     public void withoutLeftOvers_everyCheckFindsNothing() {
+        // Other test classes leave data behind: what this test adds must not change any count
+        Map<String, Long> before = counts();
         sector("Banken");
         project("Portal", "Java");
         skill("Kotlin");
 
-        assertThat(findings().values()).hasSize(6).allSatisfy(findings -> assertThat(findings.getCount()).isZero());
+        assertThat(counts()).hasSize(6).isEqualTo(before);
     }
 
     @Test
@@ -135,7 +147,7 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         assertThat(housekeepingService.clean(ENTRIES_WITHOUT_PROFILE)).isEqualTo(1);
         assertThat(findings().get(ENTRIES_WITHOUT_PROFILE).getCount()).isZero();
         assertThat(entityManager.find(SectorEntry.class, removed.getId())).isNull();
-        assertThat(adminNotificationRepository.findAll()).isEmpty();
+        assertThat(entryNotificationsOfAnna()).isEmpty();
         assertThat(reloaded().getSectors()).extracting(entry -> entry.getNameEntity().getName()).containsExactly("Banken");
     }
 
@@ -184,7 +196,7 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         assertThat(findings().get(SKILLS_WITHOUT_PROFILE).getExamples()).hasSize(1).allSatisfy(example -> assertThat(example).startsWith("Cobol (#"));
 
         housekeepingService.clean(SKILLS_WITHOUT_PROFILE);
-        assertThat(entityManager.createQuery("select s from Skill s", Skill.class).getResultList()).isEmpty();
+        assertThat(entityManager.createQuery("select s from Skill s where s.name = 'Cobol'", Skill.class).getResultList()).isEmpty();
     }
 
     @Test
@@ -197,8 +209,8 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         assertThat(findings().get(SKILLS_WITHOUT_PROFILE).getExamples()).containsExactly("Fortran (#" + removed.getId() + ")");
 
         assertThat(housekeepingService.clean(SKILLS_WITHOUT_PROFILE)).isEqualTo(1);
-        assertThat(entityManager.createQuery("select s.name from Skill s order by s.name", String.class).getResultList())
-                .containsExactly("Java", "Kotlin");
+        assertThat(entityManager.find(Skill.class, removed.getId())).isNull();
+        assertThat(reloaded().getSkills()).extracting(Skill::getName).containsExactlyInAnyOrder("Java", "Kotlin");
     }
 
     @Test
@@ -210,8 +222,8 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         assertThat(findings().get(NOTIFICATIONS_WITHOUT_ENTRY).getCount()).isEqualTo(1);
 
         assertThat(housekeepingService.clean(NOTIFICATIONS_WITHOUT_ENTRY)).isEqualTo(1);
-        assertThat(adminNotificationRepository.findAll()).hasSize(1)
-                .allSatisfy(notification -> assertThat(((ProfileEntryNotification) notification).getProfileEntryId()).isEqualTo(banks.getId()));
+        assertThat(entryNotificationsOfAnna()).extracting(ProfileEntryNotification::getProfileEntryId)
+                .containsExactly(banks.getId());
     }
 
     @Test
