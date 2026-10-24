@@ -296,6 +296,8 @@
   "AdminClient.NameEntity.Delete.Success": "„{0}“ wurde gelöscht.",
   "AdminClient.NameEntity.Alias.Title": "Aliasse (andere Namen)",
   "AdminClient.NameEntity.Alias.Help": "Wer einen Alias eingibt, bekommt diesen Eintrag vorgeschlagen und gespeichert. Frühere Namen nach dem Umbenennen oder Zusammenführen sind Aliasse.",
+  "AdminClient.NameEntity.Localizations.Title": "Übersetzungen",
+  "AdminClient.NameEntity.Localizations.Help": "Ein View-Profil mit dieser Sprache zeigt die Übersetzung neben dem Namen, der Report verwendet sie statt des Namens.",
   "AdminClient.NameEntity.Alias.Conflict": "Der Alias „{0}“ ist schon vergeben: Er ist der Name oder ein Alias eines anderen Eintrags dieser Art.",
   "AdminClient.Housekeeping.Intro": "Findet Datenleichen und Daten, die anderen widersprechen. Die Daten liegen in mehreren Datenbanken, und manche Löschvorgänge sind nicht transaktional. Jeder Service prüft und bereinigt die Daten, die er selbst speichert.",
   "AdminClient.Housekeeping.Check": "Prüfen",

@@ -30,6 +30,9 @@ import {PwrUsageCount, USAGE_COLUMN_WIDTH} from '../../../general/pwr-usage-coun
 import {NameEntityAlias} from '../../../../model/NameEntityAlias';
 import {PwrFormSection} from '../../../general/pwr-form-section';
 import {AliasList} from '../../../general/skill/alias-list_module';
+import {LocalizationTable} from '../../../general/skill/localization-table_module';
+import {LocalizedQualifier} from '../../../../model/skill/LocalizedQualifier';
+import {NameEntityLocalization} from '../../../../model/NameEntityLocalization';
 
 interface NameEntityOverviewProps {
     sectors: Array<NameEntity>;
@@ -54,6 +57,8 @@ interface NameEntityOverviewLocalState {
     dialog: 'rename' | 'merge' | null;
     /** How many consultants use each element of the shown type, by id (#271); null while loading */
     usage: { type: ProfileElementType, counts: Record<string, number> } | null;
+    /** The names of the selected element in other languages (#291); null while loading */
+    localizations: { id: number, list: Array<NameEntityLocalization> } | null;
 }
 
 interface NameEntityOverviewDispatch {
@@ -68,6 +73,12 @@ interface NameEntityOverviewDispatch {
     addAlias(nameEntity: NameEntity, alias: string): void;
 
     deleteAlias(nameEntity: NameEntity, alias: string): void;
+
+    setLocalization(nameEntity: NameEntity, language: string, qualifier: string,
+                    onDone: (localizations: Array<NameEntityLocalization>) => void): void;
+
+    deleteLocalization(nameEntity: NameEntity, language: string, translation: string,
+                       onDone: (localizations: Array<NameEntityLocalization>) => void): void;
 }
 
 /**
@@ -139,7 +150,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     & NameEntityOverviewDispatch
     & ThemeProps, NameEntityOverviewLocalState> {
 
-    state: NameEntityOverviewLocalState = {dialog: null, usage: null};
+    state: NameEntityOverviewLocalState = {dialog: null, usage: null, localizations: null};
 
     public componentDidMount() {
         this.props.requestAllNameEntities();
@@ -217,6 +228,22 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         if (selected && selected !== this.requested) {
             this.requested = selected;
             this.props.requestNameEntityUsageInfo(selected, this.selectedField());
+            this.loadLocalizations(selected);
+        }
+    };
+
+    private loadLocalizations = (nameEntity: NameEntity) => {
+        this.setState({localizations: null});
+        ProfileServiceClient.instance().getNameEntityLocalizations(nameEntity.id)
+            .then(list => this.showLocalizations(nameEntity, list))
+            .catch(console.error);
+    };
+
+    /** Only if the element is still the selected one */
+    private showLocalizations = (nameEntity: NameEntity, list: Array<NameEntityLocalization>) => {
+        const selected = this.selectedEntity();
+        if (selected && selected.id === nameEntity.id) {
+            this.setState({localizations: {id: nameEntity.id, list}});
         }
     };
 
@@ -248,6 +275,10 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
             deleteNameEntity: (nameEntity, users) => dispatch(AdminActionCreator.AsyncDeleteNameEntity(nameEntity, users)),
             addAlias: (nameEntity, alias) => dispatch(AdminActionCreator.AsyncAddNameEntityAlias(nameEntity, alias)),
             deleteAlias: (nameEntity, alias) => dispatch(AdminActionCreator.AsyncDeleteNameEntityAlias(nameEntity, alias)),
+            setLocalization: (nameEntity, language, qualifier, onDone) =>
+                dispatch(AdminActionCreator.AsyncSetNameEntityLocalization(nameEntity, language, qualifier, onDone)),
+            deleteLocalization: (nameEntity, language, translation, onDone) =>
+                dispatch(AdminActionCreator.AsyncDeleteNameEntityLocalization(nameEntity, language, translation, onDone)),
         };
     }
 
@@ -288,6 +319,7 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
         return <ProfileElementInfo name={selected && displayName(selected)} usedBy={usageInfo && usageInfo.toArray()}
                                    action={selected && this.renderActions(selected)}>
             {selected && this.renderAliases(selected)}
+            {selected && this.renderLocalizations(selected)}
         </ProfileElementInfo>;
     };
 
@@ -305,6 +337,25 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
                        aliases={Immutable.List(aliases)}
                        onAliasAdd={alias => this.props.addAlias(selected, alias)}
                        onAliasDelete={alias => this.props.deleteAlias(selected, alias)}/>
+        </PwrFormSection>;
+    };
+
+    /** Shown next to the name in a view profile of the language and used in its report instead (#291) */
+    private renderLocalizations = (selected: NameEntity) => {
+        const localizations = this.state.localizations;
+        const shown = localizations && localizations.id === selected.id ? localizations.list : [];
+        const onDone = (list: Array<NameEntityLocalization>) => this.showLocalizations(selected, list);
+        return <PwrFormSection title={PowerLocalize.get('AdminClient.NameEntity.Localizations.Title')}>
+            <Typography variant="body2" color="textSecondary">
+                {PowerLocalize.get('AdminClient.NameEntity.Localizations.Help')}
+            </Typography>
+            <LocalizationTable
+                key={selected.id}
+                localizations={Immutable.List(shown.map(l => LocalizedQualifier.of(0, l.language, l.qualifier)))}
+                termToLocalize={displayName(selected)}
+                onLocaleAdd={(language, qualifier) => this.props.setLocalization(selected, language, qualifier, onDone)}
+                onLocaleDelete={(language, qualifier) => this.props.deleteLocalization(selected, language, qualifier, onDone)}
+            />
         </PwrFormSection>;
     };
 

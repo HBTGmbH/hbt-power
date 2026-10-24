@@ -23,8 +23,8 @@ export const VERSIONS_WIDTH = '128px';
 type Dated = IViewEntry & { startDate: LocalDate, endDate: LocalDate };
 
 /**
- * A name of the skill tree with its localization in the language of the view profile (#174) as a second line; none
- * when the localization says the same
+ * A name of the skill tree (#174) or of a profile element (#291) with its localization in the language of the view
+ * profile as a second line; none when the localization says the same
  */
 export const LocalizedName = (props: { name: string, localizedName?: string, className?: string }) => <>
     <span className={props.className}>{props.name}</span>
@@ -46,7 +46,7 @@ export class EntryRenderers {
                 label={PowerLocalize.get('ViewEntryField.Name')}
                 viewProfileId={viewProfileId}
             />,
-            render: entry => entry.name,
+            render: entry => <LocalizedName name={entry.name} localizedName={entry.localizedName}/>,
         };
     }
 

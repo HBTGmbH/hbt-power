@@ -4,6 +4,8 @@ import de.hbt.pwr.profile.model.FormerNameDTO;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
 import de.hbt.pwr.profile.service.NameEntityAdminService;
+import de.hbt.pwr.profile.service.NameEntityLocalizationService;
+import de.hbt.pwr.profile.model.NameEntityLocalizationDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,9 +28,45 @@ import static org.springframework.http.ResponseEntity.noContent;
 public class NameEntityAdminEndpoint {
 
     private final NameEntityAdminService nameEntityAdminService;
+    private final NameEntityLocalizationService localizationService;
 
-    public NameEntityAdminEndpoint(NameEntityAdminService nameEntityAdminService) {
+    public NameEntityAdminEndpoint(NameEntityAdminService nameEntityAdminService,
+                                   NameEntityLocalizationService localizationService) {
         this.nameEntityAdminService = nameEntityAdminService;
+        this.localizationService = localizationService;
+    }
+
+    /**
+     * The localizations of the element (#291)
+     */
+    @GetMapping("/{id}/localizations")
+    public List<NameEntityLocalizationDTO> findLocalizations(@PathVariable("id") Long id) {
+        return localizationService.findLocalizations(id);
+    }
+
+    @ApiOperation(value = "Sets the name of the profile element in a language",
+            notes = "One per language (ISO 639-2), replacing the one there was (#291); the localizations afterwards")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "No ISO 639-2 language or a blank name"),
+            @ApiResponse(code = 404, message = "No such element")
+    })
+    @PutMapping("/{id}/localizations/{language}")
+    public List<NameEntityLocalizationDTO> setLocalization(@PathVariable("id") Long id,
+                                                           @PathVariable("language") String language,
+                                                           @RequestParam("qualifier") String qualifier) {
+        return localizationService.setLocalization(id, language, qualifier);
+    }
+
+    @DeleteMapping("/{id}/localizations/{language}")
+    public List<NameEntityLocalizationDTO> deleteLocalization(@PathVariable("id") Long id,
+                                                              @PathVariable("language") String language) {
+        return localizationService.deleteLocalization(id, language);
+    }
+
+    @ApiOperation(value = "All profile elements with a localization in the language (#291), for the view-profile service")
+    @GetMapping("/localizations")
+    public List<NameEntityLocalizationDTO> findAllInLanguage(@RequestParam("language") String language) {
+        return localizationService.findAllInLanguage(language);
     }
 
     /**

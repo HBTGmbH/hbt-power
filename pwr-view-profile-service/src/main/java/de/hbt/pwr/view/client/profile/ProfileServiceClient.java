@@ -2,6 +2,7 @@ package de.hbt.pwr.view.client.profile;
 
 import de.hbt.pwr.view.client.profile.model.ConsultantInfo;
 import de.hbt.pwr.view.client.profile.model.FormerName;
+import de.hbt.pwr.view.client.profile.model.NameEntityLocalization;
 import de.hbt.pwr.view.client.profile.model.Profile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -65,6 +66,22 @@ public class ProfileServiceClient {
             return formerNames == null ? List.of() : Arrays.asList(formerNames);
         } catch (RuntimeException e) {
             log.warn("No former names of profile elements, entries are found under their current names only: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    /**
+     * The names of the profile elements in the language (#291). Empty if the profile service doesn't answer: the view
+     * profile then shows the names without localization, like before.
+     */
+    public List<NameEntityLocalization> getLocalizations(String language) {
+        try {
+            NameEntityLocalization[] localizations = restTemplate.getForObject(
+                    pwrProfileServiceUrl + "/admin/name-entities/localizations?language={language}",
+                    NameEntityLocalization[].class, Map.of("language", language));
+            return localizations == null ? List.of() : Arrays.asList(localizations);
+        } catch (RuntimeException e) {
+            log.warn("No localizations of profile elements in " + language + ": " + e.getMessage());
             return List.of();
         }
     }

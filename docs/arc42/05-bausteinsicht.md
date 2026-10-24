@@ -415,7 +415,7 @@ flowchart LR
 | profile | view-profile | `GET /view/{initials}`, `DELETE /view/{initials}/{id}` | Berater löschen |
 | profile | report | `DELETE /admin/report/{initials}` | Berater löschen |
 | profile | statistics | `POST /admin/consultants/refresh` | Kopie nach Massenänderungen neu laden |
-| view-profile | profile | `GET /profiles/{initials}`, `GET /consultants/{initials}`, `GET /admin/name-entities/former-names`, `GET /consultants/names` | Momentaufnahme, *Aktualisieren*, Housekeeping |
+| view-profile | profile | `GET /profiles/{initials}`, `GET /consultants/{initials}`, `GET /admin/name-entities/former-names`, `GET /admin/name-entities/localizations?language=`, `GET /consultants/names` | Momentaufnahme, *Aktualisieren*, Übersetzungen der Profil-Elemente (#291), Housekeeping |
 | view-profile | skill | `GET /skill/byName` | Kategorien, Namen und Übersetzungen des Baums |
 | view-profile | report | `POST /report?type=`, `POST /report/preview`, `/admin/file` | Export, Vorschau, Vorlagen-Dateien; `POST /report` und `/report/preview` nur von hier, nicht über die Edge (#262) |
 | report | profile | `GET /consultants/{initials}`, `GET /consultants/names`, `GET /profile-pictures/by-initials/{initials}` | Name des Exportierenden, Housekeeping, Profilbild im Dokument |

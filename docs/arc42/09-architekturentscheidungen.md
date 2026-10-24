@@ -29,7 +29,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 | [16](#adr-16-localdate-als-string-im-webclient) | `LocalDate` als String im Webclient | gilt | #24, #26 |
 | [17](#adr-17-vorerst-jdk-13-und-spring-boot-22) | Vorerst JDK 13 und Spring Boot 2.2 | gilt, Upgrade vorgeschlagen | #51 |
 | [18](#adr-18-ci-je-ordner-mit-pfadfiltern-und-getrenntem-publish) | CI je Ordner mit Pfadfiltern und getrenntem Publish | gilt | #6, #8 |
-| [19](#adr-19-profil-elemente-als-gemeinsame-einträge-mit-früheren-namen) | Profil-Elemente als gemeinsame Einträge mit früheren Namen | gilt | #227, #230, #270 |
+| [19](#adr-19-profil-elemente-als-gemeinsame-einträge-mit-früheren-namen) | Profil-Elemente als gemeinsame Einträge mit früheren Namen | gilt | #227, #230, #270, #291 |
 | [20](#adr-20-berater-löschen-über-services-ohne-verteilte-transaktion) | Berater löschen über Services ohne verteilte Transaktion | gilt | #240, #243 |
 | [21](#adr-21-housekeeping-je-service) | Housekeeping je Service | gilt | #242 |
 | [22](#adr-22-löschen-in-der-oberfläche-absichern) | Löschen in der Oberfläche absichern | gilt | #134, #181 |
@@ -261,12 +261,13 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 
 ## ADR-19: Profil-Elemente als gemeinsame Einträge mit früheren Namen
 
-- **Status:** gilt (#227–#230, #270)
+- **Status:** gilt (#227–#230, #270, #291)
 - **Kontext:** Firmen, Rollen, Sprachen, Qualifikationen usw. sind Einträge, die alle Profile teilen (`NameEntity`). Tippfehler und Dubletten sammelten sich.
 - **Entscheidung:**
   - Admins können Elemente über alle Profile umbenennen, zusammenführen und löschen, ebenso nicht mehr benutzte löschen.
   - Der alte Name geht in `name_entity_former_name`. Wer ihn tippt, bekommt das Element, und *Aktualisieren* eines View-Profils findet es darüber.
   - Admins legen dort auch Aliase von Hand an und löschen sie (#270). Ein Alias ist innerhalb des Typs eindeutig und nicht der Name eines anderen Elements; die Eingabefelder schlagen das Element auch über seine Aliase vor.
+  - Sie haben Übersetzungen je Sprache wie Skills (#291), auch Firmen; ein View-Profil mit Sprache zeigt sie, der Report verwendet sie.
 - **Konsequenzen:**
   - Stammdaten lassen sich pflegen, ohne Profile oder View-Profile zu brechen.
   - Danach muss die Statistik neu geladen werden.

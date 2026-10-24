@@ -80,7 +80,7 @@ public class ViewProfileImporterSkillTest {
     public void setUp() {
         profile = new Profile();
         given(profileServiceClient.getSingleProfile(initials)).willReturn(profile);
-        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, viewProfileRepository, viewProfileSortService, new ViewProfileLocalizationService(skillServiceClient));
+        viewProfileCreatorService = new ViewProfileCreatorService(profileServiceClient, skillServiceClient, viewProfileRepository, viewProfileSortService, new ViewProfileLocalizationService(skillServiceClient, profileServiceClient));
     }
 
     @After

@@ -104,6 +104,11 @@ const deferredActions: DeferrableAction<ApplicationState>[] = [
         makeAction: action => deferDeleteEntry(action)
     },
     {
+        type: ActionType.AsyncDeleteNameEntityLocalization,
+        condition: unconditional,
+        makeAction: action => deferDeleteEntry(action)
+    },
+    {
         type: ActionType.AsyncDeleteSkillLocale,
         condition: unconditional,
         makeAction: action => deferDeleteEntry(action)

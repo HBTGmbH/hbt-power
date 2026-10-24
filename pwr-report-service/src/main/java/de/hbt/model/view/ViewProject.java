@@ -11,6 +11,7 @@ public class ViewProject implements ViewEntry {
     private String description;
     private String client;
     private String broker;
+    private String localizedClient;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<ViewProjectRole> projectRoles = new ArrayList<>();
@@ -98,5 +99,14 @@ public class ViewProject implements ViewEntry {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /** The client in the language of the view profile (#291), null without a localization */
+    public String getLocalizedClient() {
+        return localizedClient;
+    }
+
+    public void setLocalizedClient(String localizedClient) {
+        this.localizedClient = localizedClient;
     }
 }

@@ -128,7 +128,8 @@ flowchart LR
 ## 8.6 Lokalisierung und Datum
 
 - **Oberfläche:** nur Deutsch. Texte laufen über `PowerLocalize.get`; die Schlüssel stehen in `src/localization/de-DE.json`. Ein fehlender Schlüssel erscheint als `<schlüssel>_NO_LOCALE`.
-- **Skills und Kategorien:** Sie lassen sich übersetzen (ISO 639-2, `LocalizedQualifier`). Die Übersetzung erscheint nur in einem View-Profil mit gewählter Sprache und nur im Dokument (#174). Der Name des Baums bleibt überall der Schlüssel.
+- **Skills und Kategorien:** Sie lassen sich übersetzen (ISO 639-2, `LocalizedQualifier`). Die Übersetzung erscheint nur in einem View-Profil mit gewählter Sprache, auf seiner Seite neben dem Namen und im Dokument statt des Namens (#174). Der Name des Baums bleibt überall der Schlüssel.
+- **Profil-Elemente** (#291): Branchen, Sprachen, Rollen, Firmen und alle anderen Typen haben ebenso Übersetzungen je Sprache (`name_entity_localization`, Profile Service, gepflegt im Infokasten des Elements). Der View-Profile Service holt sie beim Anlegen, *Aktualisieren* und Setzen der Sprache (`GET /admin/name-entities/localizations?language=`) und legt sie als `localizedName` an die Einträge, bei Projekten als `localizedClient`/`localizedBroker`. Er findet sie über Typ und Namen ohne Groß-/Kleinschreibung. Antwortet der Profile Service nicht, bleibt das View-Profil ohne Übersetzung. Zusammenführen übernimmt die Übersetzungen der Quelle für Sprachen, die dem Ziel fehlen; Löschen nimmt sie mit.
 - **Datum ohne Uhrzeit:** `LocalDate` bleibt im Webclient der String `"YYYY-MM-DD"`. Nur `PwrDatePicker` wandelt in `Date` und zurück; das verhindert Verschiebungen um einen Tag (#24, #26). Zeitstempel sind `Date`.
 
 ## 8.7 Fehlerbehandlung, Logging, Überwachung

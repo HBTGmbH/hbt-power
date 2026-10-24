@@ -75,43 +75,44 @@ public class ModelConvertService {
 
     private static Qualification toQualification(ViewQualification viewQualification) {
         Qualification res = new Qualification();
-        res.setBezeichnung(toSynonymSet(viewQualification.getName()));
+        res.setBezeichnung(toSynonymSet(nameInLanguage(viewQualification.getLocalizedName(), viewQualification.getName())));
         res.setDatum(toDatum(viewQualification.getDate()));
         return res;
     }
 
     private static Branche toBranche(ViewSector viewSector) {
         Branche res = new Branche();
-        res.setBezeichnung(toSynonymSet(viewSector.getName()));
+        res.setBezeichnung(toSynonymSet(nameInLanguage(viewSector.getLocalizedName(), viewSector.getName())));
         return res;
     }
 
     private static Sprache toSprache(ViewLanguage viewLanguage) {
         Sprache res = new Sprache();
         res.setNiveau(viewLanguage.getLevel().name());
-        res.setSprache(viewLanguage.getName());
+        res.setSprache(nameInLanguage(viewLanguage.getLocalizedName(), viewLanguage.getName()));
         return res;
     }
 
     private static Ausbildung toAusbildung(ViewEducation viewEducation) {
         Ausbildung result = new Ausbildung();
         result.setAbschluss(toSynonymSet(viewEducation.getDegree()));
-        result.setBezeichnung(toSynonymSet(viewEducation.getName()));
+        result.setBezeichnung(toSynonymSet(nameInLanguage(viewEducation.getLocalizedName(), viewEducation.getName())));
         result.setZeitraum(toZeitraum(viewEducation.getStartDate(), viewEducation.getEndDate()));
         return result;
     }
 
     private static Ausbildung toAusbildung(ViewCareer viewCareer) {
         Ausbildung result = new Ausbildung();
-        result.setBezeichnung(toSynonymSet(viewCareer.getName()));
+        result.setBezeichnung(toSynonymSet(nameInLanguage(viewCareer.getLocalizedName(), viewCareer.getName())));
         result.setZeitraum(toZeitraum(viewCareer.getStartDate(), viewCareer.getEndDate()));
         return result;
     }
 
     private static Ausbildung toAusbildung(ViewTraining viewTraining) {
         Ausbildung result = new Ausbildung();
-        result.setAbschluss(toSynonymSet(viewTraining.getName()));
-        result.setBezeichnung(toSynonymSet(viewTraining.getName()));
+        String name = nameInLanguage(viewTraining.getLocalizedName(), viewTraining.getName());
+        result.setAbschluss(toSynonymSet(name));
+        result.setBezeichnung(toSynonymSet(name));
         result.setZeitraum(toZeitraum(viewTraining.getStartDate(), viewTraining.getEndDate()));
         return result;
     }
@@ -120,7 +121,7 @@ public class ModelConvertService {
         Werdegang res = new Werdegang();
         res.setTyp(WerdegangTyp.AUSBILDUNG.name());
         res.setAusbildung(toAusbildung(viewEducation));
-        res.setBeschreibung(viewEducation.getDegree() + " " + viewEducation.getName());
+        res.setBeschreibung(viewEducation.getDegree() + " " + nameInLanguage(viewEducation.getLocalizedName(), viewEducation.getName()));
         return res;
     }
 
@@ -128,7 +129,7 @@ public class ModelConvertService {
         Werdegang res = new Werdegang();
         res.setTyp(WerdegangTyp.BERUF.name());
         res.setAusbildung(toAusbildung(viewCareer));
-        res.setBeschreibung(viewCareer.getName());
+        res.setBeschreibung(nameInLanguage(viewCareer.getLocalizedName(), viewCareer.getName()));
         return res;
     }
 
@@ -141,8 +142,9 @@ public class ModelConvertService {
 
     private static Spezialgebiet toSpezialgebiet(ViewKeySkill keySkillEntry) {
         Spezialgebiet spezialgebiet = new Spezialgebiet();
-        spezialgebiet.setBeschreibung(keySkillEntry.getName());
-        spezialgebiet.setKurzbeschreibung(keySkillEntry.getName());
+        String name = nameInLanguage(keySkillEntry.getLocalizedName(), keySkillEntry.getName());
+        spezialgebiet.setBeschreibung(name);
+        spezialgebiet.setKurzbeschreibung(name);
         return spezialgebiet;
     }
 
@@ -155,7 +157,7 @@ public class ModelConvertService {
     }
 
     /**
-     * The name in the language of the view profile (#174), otherwise the one of the skill tree
+     * The name in the language of the view profile (#174, #291), otherwise the one of the skill tree or the profile
      */
     private static String nameInLanguage(String localizedName, String name) {
         return localizedName == null || localizedName.isBlank() ? name : localizedName;
@@ -163,7 +165,7 @@ public class ModelConvertService {
 
     private static ProjektRolle mapRolle(ViewProjectRole viewProjectRole) {
         ProjektRolle rolle = new ProjektRolle();
-        rolle.setBezeichnung(toSynonymSet(viewProjectRole.getName()));
+        rolle.setBezeichnung(toSynonymSet(nameInLanguage(viewProjectRole.getLocalizedName(), viewProjectRole.getName())));
         return rolle;
     }
 
@@ -180,7 +182,7 @@ public class ModelConvertService {
         result.setKurzbeschreibung(viewProject.getDescription());
         result.setTitel(viewProject.getName());
         result.setZeitraum(toZeitraum(viewProject.getStartDate(), viewProject.getEndDate()));
-        result.setEndkunde(toUnternehmen(viewProject.getClient()));
+        result.setEndkunde(toUnternehmen(nameInLanguage(viewProject.getLocalizedClient(), viewProject.getClient())));
         result.setSkills(extractSkills(viewProject));
         result.setRollen(extractProjektRolles(viewProject));
         return result;

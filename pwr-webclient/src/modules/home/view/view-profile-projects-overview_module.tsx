@@ -103,7 +103,7 @@ class ViewProfileProjectsOverviewModule extends React.Component<ViewProfileProje
 
     private readonly roleColumns: Array<ViewEntryColumn<ViewProjectRole>> = [{
         header: PowerLocalize.get('ViewEntryField.Name'),
-        render: role => role.name,
+        render: role => <LocalizedName name={role.name} localizedName={role.localizedName}/>,
     }];
 
     private renderDetails = (project: ViewProject, projectIndex: number) => <div className="pwr-view-groups">

@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.model.NameEntityLocalizationDTO;
 import de.hbt.pwr.profile.AbstractIntegrationTest;
 import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.NameEntityRepository;
@@ -450,6 +451,92 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
     public void theUnusedRubric_isForAdminsOnly() throws Exception {
         mockMvc.perform(get("/admin/housekeeping/unused").header("X-Pwr-User-Admin", "false").header("X-Pwr-User-Initials", "ann"))
                 .andExpect(status().isForbidden());
+    }
+
+    // --------------------------------------------------------------------------------------- localizations (#291)
+
+    @Autowired
+    private NameEntityLocalizationService localizationService;
+
+    private static List<String> asText(List<NameEntityLocalizationDTO> localizations) {
+        return localizations.stream().map(l -> l.getLanguage() + "=" + l.getQualifier()).collect(Collectors.toList());
+    }
+
+    @Test
+    public void aLocalization_isSetPerLanguage_replaced_andDeleted() {
+        NameEntity banks = nameEntityRepository.save(named("Banken", SECTOR));
+
+        localizationService.setLocalization(banks.getId(), "eng", " Banking ");
+        localizationService.setLocalization(banks.getId(), "fra", "Banques");
+        assertThat(asText(localizationService.setLocalization(banks.getId(), "ENG", "Banks")))
+                .containsExactly("eng=Banks", "fra=Banques");
+        assertThat(asText(localizationService.deleteLocalization(banks.getId(), "fra"))).containsExactly("eng=Banks");
+
+        assertThat(catchThrowableOfType(() -> localizationService.setLocalization(banks.getId(), "xx", "Banks"),
+                WebApplicationException.class).getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(catchThrowableOfType(() -> localizationService.setLocalization(banks.getId(), "eng", "  "),
+                WebApplicationException.class).getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void theLocalizationsOfALanguage_nameTypeAndElement() {
+        NameEntity banks = nameEntityRepository.save(named("Banken", SECTOR));
+        NameEntity english = nameEntityRepository.save(named("Englisch", LANGUAGE));
+        localizationService.setLocalization(banks.getId(), "eng", "Banks");
+        localizationService.setLocalization(english.getId(), "eng", "English");
+        localizationService.setLocalization(english.getId(), "fra", "Anglais");
+
+        assertThat(localizationService.findAllInLanguage("eng"))
+                .extracting(l -> l.getType() + ":" + l.getName() + "=" + l.getQualifier())
+                .containsExactlyInAnyOrder("SECTOR:Banken=Banks", "LANGUAGE:Englisch=English");
+    }
+
+    @Test
+    public void merging_handsOnTheLocalizationsTheTargetLacks_deletingDeletesThem() {
+        sector(anna, "Banken");
+        sector(bert, "Bankwesen");
+        NameEntity banks = element("Banken", SECTOR);
+        NameEntity banking = element("Bankwesen", SECTOR);
+        localizationService.setLocalization(banking.getId(), "eng", "Banking");
+        localizationService.setLocalization(banking.getId(), "fra", "Banque");
+        localizationService.setLocalization(banks.getId(), "eng", "Banks");
+        entityManager.flush();
+
+        nameEntityAdminService.merge(banking.getId(), banks.getId());
+        entityManager.flush();
+        assertThat(asText(localizationService.findLocalizations(banks.getId()))).containsExactly("eng=Banks", "fra=Banque");
+
+        nameEntityAdminService.delete(banks.getId());
+        entityManager.flush();
+        assertThat(localizationService.findAllInLanguage("eng")).isEmpty();
+        assertThat(localizationService.findAllInLanguage("fra")).isEmpty();
+    }
+
+    @Test
+    public void deletingTheUnused_deletesTheirLocalizations() {
+        NameEntity idle = nameEntityRepository.save(named("Leerlauf", SECTOR));
+        localizationService.setLocalization(idle.getId(), "eng", "Idle");
+        entityManager.flush();
+
+        nameEntityAdminService.deleteUnused(SECTOR);
+        entityManager.flush();
+
+        assertThat(localizationService.findAllInLanguage("eng")).isEmpty();
+    }
+
+    @Test
+    public void localizations_areMaintainedByAdminsOnly() throws Exception {
+        NameEntity banks = nameEntityRepository.save(named("Banken", SECTOR));
+        mockMvc.perform(put("/admin/name-entities/" + banks.getId() + "/localizations/eng").param("qualifier", "Banks")
+                        .header("X-Pwr-User-Admin", "false").header("X-Pwr-User-Initials", "ann"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(put("/admin/name-entities/" + banks.getId() + "/localizations/eng").param("qualifier", "Banks"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].qualifier").value("Banks"));
+        // Between services (the view-profile service), without the header of the edge
+        mockMvc.perform(get("/admin/name-entities/localizations").param("language", "eng"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Banken"));
     }
 
     // -------------------------------------------------------------------------------------------- aliases (#270)
