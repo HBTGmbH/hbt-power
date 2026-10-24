@@ -367,6 +367,39 @@ public class NameEntityAdminService {
         return notifications;
     }
 
+    /**
+     * How many consultants use each element of the type (#271), all in one go for the list of the admin area. Counted
+     * like {@link #findUnused}, through the joins from <code>Profile</code>: the entries, and the client, broker and
+     * roles of the projects; each profile once per element, rows without a profile not at all. Elements nobody uses
+     * are there with 0.
+     */
+    public Map<Long, Integer> countUsers(NameEntityType type) {
+        Map<Long, Integer> counts = new HashMap<>();
+        nameEntityRepository.findAllByType(type).forEach(nameEntity -> counts.put(nameEntity.getId(), 0));
+        profileRepository.findAll().forEach(profile -> elementsOf(profile).stream()
+                .filter(nameEntity -> nameEntity.getId() != null)
+                .map(NameEntity::getId)
+                .distinct()
+                .forEach(id -> counts.computeIfPresent(id, (key, count) -> count + 1)));
+        return counts;
+    }
+
+    /**
+     * Every profile element the profile uses, of any type
+     */
+    private static List<NameEntity> elementsOf(Profile profile) {
+        List<NameEntity> elements = new ArrayList<>();
+        ENTRY_TYPES.forEach(type -> type.getEntryCollection(profile)
+                .forEach(entry -> elements.add(((ProfileEntry) entry).getNameEntity())));
+        profile.getProjects().forEach(project -> {
+            elements.add(project.getClient());
+            elements.add(project.getBroker());
+            elements.addAll(project.getProjectRoles());
+        });
+        elements.removeIf(Objects::isNull);
+        return elements;
+    }
+
     private static boolean uses(Profile profile, NameEntity nameEntity) {
         boolean inEntries = ENTRY_TYPES.stream()
                 .flatMap(type -> type.getEntryCollection(profile).stream())

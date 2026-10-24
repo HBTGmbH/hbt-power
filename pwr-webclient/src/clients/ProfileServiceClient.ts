@@ -128,6 +128,21 @@ export class ProfileServiceClient extends PowerHttpClient {
 
     // Profile elements in all profiles (#227)
 
+    /**
+     * How many consultants use each element of the type, by id, for the list of the admin area (#271); quietly: without
+     * the numbers the list still works
+     */
+    public getNameEntityUsage = (type: string): Promise<Record<string, number>> => {
+        return this.getQuietly(this.base() + '/admin/name-entities/usage', {params: {type}});
+    };
+
+    /**
+     * How many consultants use each skill, by the name of the skill tree, for the list of the admin area (#271); quietly
+     */
+    public getSkillUsage = (): Promise<Record<string, number>> => {
+        return this.getQuietly(this.base() + '/admin/skills/usage');
+    };
+
     /** The initials of the consultants whose profile uses the element, counted in the database */
     public getNameEntityUsers = (id: number): Promise<Array<string>> => {
         const url = this.base() + '/admin/name-entities/' + id + '/users';

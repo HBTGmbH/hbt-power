@@ -26,6 +26,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Map;
 
 import static de.hbt.pwr.profile.model.profile.NameEntityType.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -369,5 +371,52 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
                 .andExpect(status().isNoContent());
         mockMvc.perform(patch("/admin/name-entities/{id}", banks.getId()).param("name", "Banken"))
                 .andExpect(status().isNotFound());
+    }
+
+    // ---------------------------------------------------------------------------------------------- usage (#271)
+
+    @Test
+    public void countUsers_countsEachConsultantOncePerElement_andTheUnusedWithZero() {
+        sector(anna, "Banken");
+        sector(bert, "Banken");
+        sector(anna, "Versicherungen");
+        nameEntityRepository.save(named("Leerlauf", SECTOR));
+        entityManager.flush();
+        // A row without a profile counts for nobody
+        entityManager.persist(new SectorEntry(element("Versicherungen", SECTOR)));
+        entityManager.flush();
+
+        Map<Long, Integer> counts = nameEntityAdminService.countUsers(SECTOR);
+
+        assertThat(counts).containsEntry(element("Banken", SECTOR).getId(), 2)
+                .containsEntry(element("Versicherungen", SECTOR).getId(), 1)
+                .containsEntry(element("Leerlauf", SECTOR).getId(), 0);
+        // 0 exactly for what "delete unused" offers
+        assertThat(counts.entrySet().stream().filter(count -> count.getValue() == 0).map(Map.Entry::getKey))
+                .containsExactlyInAnyOrderElementsOf(nameEntityAdminService.findUnused(SECTOR).stream()
+                        .map(NameEntity::getId).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void countUsers_ofCompaniesAndRoles_countsTheProjectsOncePerConsultant() {
+        project(anna, "Kunde AG", "Entwickler");
+        project(anna, "Kunde AG", "Entwickler", "Architekt");
+        project(bert, "Kunde AG");
+        entityManager.flush();
+
+        assertThat(nameEntityAdminService.countUsers(COMPANY)).containsEntry(element("Kunde AG", COMPANY).getId(), 2);
+        assertThat(nameEntityAdminService.countUsers(PROJECT_ROLE))
+                .containsEntry(element("Entwickler", PROJECT_ROLE).getId(), 1)
+                .containsEntry(element("Architekt", PROJECT_ROLE).getId(), 1);
+    }
+
+    @Test
+    public void usage_isOneRequestForAllElementsOfAType() throws Exception {
+        sector(anna, "Banken");
+        entityManager.flush();
+
+        mockMvc.perform(get("/admin/name-entities/usage").param("type", "SECTOR"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$['" + element("Banken", SECTOR).getId() + "']").value(1));
     }
 }

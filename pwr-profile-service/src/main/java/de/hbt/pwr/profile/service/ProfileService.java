@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
 
@@ -80,6 +82,27 @@ public class ProfileService {
         // The statistics keep a copy of the profiles, which shows the admin who uses a skill (#205)
         statisticsClient.refreshConsultantsAfterCommit();
         return profiles;
+    }
+
+    /**
+     * How many consultants use each skill (#271), all in one go for the list of the admin area, under the name of the
+     * skill tree like the list (<code>GET /suggestions/skills</code>, #208): aliases and other spellings count for the
+     * skill of the tree, each profile once per skill, through its skills and those of its projects.
+     */
+    @Transactional
+    public Map<String, Integer> countSkillUsers() {
+        Function<String, String> treeName = skillProfileClient.getSkillTreeIndex()
+                .<Function<String, String>>map(index -> index::treeName)
+                .orElse(String::trim);
+        Map<String, Integer> counts = new HashMap<>();
+        profileRepository.findAll().forEach(profile -> Stream.concat(profile.getSkills().stream(),
+                        profile.getProjects().stream().flatMap(project -> project.getSkills().stream()))
+                .map(Skill::getName)
+                .filter(Objects::nonNull)
+                .map(treeName)
+                .distinct()
+                .forEach(name -> counts.merge(name, 1, Integer::sum)));
+        return counts;
     }
 
     /**

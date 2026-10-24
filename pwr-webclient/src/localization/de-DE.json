@@ -208,6 +208,8 @@
   "AdminClient.Menu.Info.ProfileElements.ElementTypes": "Typ",
   "AdminClient.Overview.Skills": "Skill-Übersicht",
   "AdminClient.Overview.Name": "Name",
+  "AdminClient.Overview.Users": "Nutzer",
+  "AdminClient.Overview.Unused": "Von niemandem genutzt",
   "AdminClient.Overview.NoEntries": "Keine Einträge",
   "AdminClient.Overview.Info.NothingSelected": "Wählen Sie einen Eintrag aus der Liste.",
   "AdminClient.Overview.Nameless": "(ohne Namen)",
