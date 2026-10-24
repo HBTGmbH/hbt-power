@@ -27,7 +27,7 @@ interface EditViewSkillDialogLocalProps {
 interface EditViewSkillDialogDispatch {
     setDisplayCategory(id: string, skillName: string, newDisplayCategoryName: string): void;
 
-    getParentCategories(skill: ViewSkill): void;
+    getParentCategories(viewProfileId: string, skill: ViewSkill): void;
 }
 
 interface EditViewSkillDialogState {
@@ -62,7 +62,7 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
     static mapDispatchToProps(dispatch: ThunkDispatch<any, any, any>): EditViewSkillDialogDispatch {
         return {
             setDisplayCategory: (id, skillName, newDisplayCategoryName) => dispatch(ViewProfileActionCreator.AsyncSetDisplayCategory(id, skillName, newDisplayCategoryName)),
-            getParentCategories: (skill) => dispatch(ViewProfileActionCreator.AsyncGetParentCategories(skill)),
+            getParentCategories: (viewProfileId, skill) => dispatch(ViewProfileActionCreator.AsyncGetParentCategories(viewProfileId, skill)),
         };
     }
 
@@ -72,7 +72,7 @@ export class EditViewSkillDialogModule extends React.Component<EditViewSkillDial
     }
 
     componentDidMount(): void {
-        this.props.getParentCategories(this.props.skill);
+        this.props.getParentCategories(this.props.viewProfile.id, this.props.skill);
     }
 
     private apply = () => {

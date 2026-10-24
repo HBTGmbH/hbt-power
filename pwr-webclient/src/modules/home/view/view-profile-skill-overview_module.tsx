@@ -50,7 +50,6 @@ interface ViewProfileSkillOverviewDispatch {
 
     setDisplayCategory(id: string, skillName: string, newDisplayCategoryName: string): void;
 
-    getParentCategories(skill: ViewSkill): void;
 
     moveNestedEntry(id: string, container: 'PROJECT' | 'DISPLAY_CATEGORY', containerIndex: number, type: string, sourceIndex: number, targetIndex: number): void;
 }
@@ -86,7 +85,6 @@ class ViewProfileSkillOverviewModule extends React.Component<ViewProfileSkillOve
             },
             toggleSkill: (id, skillName, isEnabled) => dispatch(ViewProfileActionCreator.AsyncToggleSkill(id, skillName, isEnabled)),
             setDisplayCategory: (id, skillName, newDisplayCategoryName) => dispatch(ViewProfileActionCreator.AsyncSetDisplayCategory(id, skillName, newDisplayCategoryName)),
-            getParentCategories: (skill) => dispatch(ViewProfileActionCreator.AsyncGetParentCategories(skill)),
         };
     }
 
