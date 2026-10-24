@@ -16,7 +16,6 @@ quadrantChart
     O3 Redis-Backup: [0.15, 0.68]
     T3 BIRT: [0.62, 0.72]
     D1 Migrationen: [0.4, 0.62]
-    K1 Timeouts: [0.25, 0.55]
     T6 Webclient-Tests: [0.75, 0.38]
     D2 Datenleichen: [0.62, 0.3]
     O2 Deploy: [0.88, 0.18]
@@ -61,7 +60,6 @@ quadrantChart
 
 | Nr. | Risiko / Schuld | Bewertung | Auswirkung | Maßnahme |
 |---|---|---|---|---|
-| K1 | **Keine Timeouts** in den `RestTemplate`-Clients | mittel | Hängt ein Service, hängen seine Aufrufer mit, bis hin zu blockierten Threads. | Verbindungs- und Lese-Timeouts setzen |
 | K2 | **Die Sicherheit hängt an der Edge und am Netz:** Die Backend-Services prüfen kein Token, sondern glauben den Headern der Edge; eine Anfrage ohne `X-Pwr-User-Admin` gilt als Aufruf eines anderen Service und darf alles (#255). | mittel | Ist ein Service am Ingress vorbei erreichbar, ist er offen. | Nur der Ingress ist von außen erreichbar; neue Endpunkte gegen die Regeln der Edge und die Prüfung je Berater prüfen (Definition of Done); Spring Security oder eigene Tokenprüfung in den Services: #256 |
 | K3 | **CORS der Edge** lässt jede Herkunft mit Anmeldedaten zu. | niedrig | Die Anmeldung läuft über das Bearer-Token, nicht über Cookies; die Wirkung ist daher begrenzt. | Auf die eigene Herkunft beschränken |
 | K4 | **Öffentliche Repositories:** Die Regel „keine Betriebsdetails“ hängt an Disziplin. | mittel | Einmal veröffentlicht, bleibt es in der Historie. | Regel in `AGENTS.md`, Prüfung im PR |

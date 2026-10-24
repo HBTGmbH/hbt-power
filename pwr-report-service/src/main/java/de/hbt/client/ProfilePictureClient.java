@@ -19,8 +19,8 @@ public class ProfilePictureClient {
 
     private final RestTemplate restTemplate;
 
-    public ProfilePictureClient() {
-        restTemplate = new RestTemplate();
+    public ProfilePictureClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public ResponseEntity<byte[]> getPictureByInitials(@PathVariable("initials") String initials) {

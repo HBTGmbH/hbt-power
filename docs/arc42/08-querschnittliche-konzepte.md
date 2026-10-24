@@ -102,7 +102,12 @@ flowchart LR
   | Frühere Namen beim *Aktualisieren* | leer weitermachen |
   | Housekeeping | Fehler statt Treffern |
 
-- Timeouts sind nicht gesetzt ([Kapitel 11](11-risiken-und-technische-schulden.md)).
+- **Timeouts** (#249): Jeder Aufruf hat einen Verbindungs-Timeout (2 s) und einen Lese-Timeout (10 s); Aufrufe, die bekanntlich länger dauern, 60 s:
+  - die PDF-Vorschau und das Hochladen einer Vorlagen-Datei (View-Profile → Report)
+  - das Laden aller Berater (Statistics → Profile)
+  - das Neuladen der Statistik (Profile → Statistics)
+
+  Die `RestTemplate`s kommen aus `RestClientConfig` je Service; die Werte sind Properties (`pwr.rest.timeout.connect`, `.read`, `.slow-read`). Ein Timeout ist eine `RestClientException` wie ein nicht erreichbarer Service, es greift das Verhalten aus der Tabelle. Die Edge wartet höchstens 90 s auf eine Antwort (`spring.cloud.gateway.httpclient.response-timeout`).
 
 ## 8.5 Namen und Stammdaten
 

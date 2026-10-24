@@ -24,9 +24,10 @@ public class ReportServiceClientTest {
 
     @Before
     public void setUp() {
-        client = new ReportServiceClient();
+        RestTemplate restTemplate = new RestTemplate();
+        client = new ReportServiceClient(restTemplate, restTemplate);
         ReflectionTestUtils.setField(client, "pwrReportServiceUrl", "http://report");
-        server = MockRestServiceServer.bindTo((RestTemplate) ReflectionTestUtils.getField(client, "restTemplate")).build();
+        server = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
     @Test

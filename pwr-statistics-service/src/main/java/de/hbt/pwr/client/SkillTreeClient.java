@@ -23,8 +23,8 @@ public class SkillTreeClient {
     @Value("${pwr-skill-service-url}")
     private String pwrSkillServiceUrl;
 
-    public SkillTreeClient() {
-        this.restTemplate = new RestTemplate();
+    public SkillTreeClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**
