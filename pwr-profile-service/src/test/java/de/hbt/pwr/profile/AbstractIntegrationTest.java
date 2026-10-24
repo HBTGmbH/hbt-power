@@ -1,5 +1,6 @@
 package de.hbt.pwr.profile;
 
+import de.hbt.pwr.profile.client.ReportClient;
 import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.client.StatisticsClient;
 import de.hbt.pwr.profile.client.ViewProfileClient;
@@ -20,6 +21,9 @@ public class AbstractIntegrationTest {
 
     @MockBean(name = "statisticsClient")
     protected StatisticsClient statisticsClient;
+
+    @MockBean(name = "reportClient")
+    protected ReportClient reportClient;
 
     @Before
     public void setUp() throws Exception {

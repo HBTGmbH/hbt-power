@@ -1,5 +1,7 @@
 package de.hbt.pwr.profile.service;
 
+import de.hbt.pwr.profile.client.ReportClient;
+import de.hbt.pwr.profile.client.StatisticsClient;
 import de.hbt.pwr.profile.client.ViewProfileClient;
 import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ConsultantRepository;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -36,17 +39,24 @@ public class ConsultantService {
     private final ProjectRepository projectRepository;
     private final ViewProfileClient viewProfileClient;
     private final AdminNotificationRepository adminNotificationRepository;
+    private final ReportClient reportClient;
+    private final PictureService pictureService;
+    private final StatisticsClient statisticsClient;
 
     @Autowired
     public ConsultantService(ConsultantRepository consultantRepository,
                              SkillRepository skillRepository,
                              ProjectRepository projectRepository, ViewProfileClient viewProfileClient,
-                             AdminNotificationRepository adminNotificationRepository) {
+                             AdminNotificationRepository adminNotificationRepository, ReportClient reportClient,
+                             PictureService pictureService, StatisticsClient statisticsClient) {
         this.consultantRepository = consultantRepository;
         this.skillRepository = skillRepository;
         this.projectRepository = projectRepository;
         this.viewProfileClient = viewProfileClient;
         this.adminNotificationRepository = adminNotificationRepository;
+        this.reportClient = reportClient;
+        this.pictureService = pictureService;
+        this.statisticsClient = statisticsClient;
     }
 
     /**
@@ -117,6 +127,12 @@ public class ConsultantService {
         return consultantRepository.save(res);
     }
 
+    /**
+     * Deletes an inactive consultant with everything about the consultant (#240): first the view profiles and the
+     * exported documents in the other services, then the notifications, the profile, the picture and the consultant.
+     * If another service fails, the consultant stays; deleting again deletes the rest. The statistics load their copy
+     * again after the commit. Profile elements and skills of the skill tree the consultant used stay.
+     */
     @Transactional
     public void deleteConsultant(String initials) {
 
@@ -126,11 +142,7 @@ public class ConsultantService {
             throw new WebApplicationException(HttpStatus.LOCKED, "Only Inactive Consultants can be deleted!");
         } else {
 
-            // View Profile Service bescheid sagen
-            List<String> viewIds = viewProfileClient.getAllViewProfiles(toDelete.getInitials());
-            if (viewIds != null) {
-                viewIds.forEach((id) -> viewProfileClient.deleteViewProfile(toDelete.getInitials(), id));
-            }
+            deleteInOtherServices(toDelete.getInitials());
 
             adminNotificationRepository.deleteAdminNotificationsByProfileId(toDelete.getProfile().getId());
 
@@ -142,7 +154,25 @@ public class ConsultantService {
             profileSkills.forEach(skillRepository::delete);
             toDelete.getProfile().getSkills().clear();
             toDelete.getProfile().getProjects().forEach(projectRepository::delete);
+            String pictureId = toDelete.getProfilePictureId();
             consultantRepository.delete(toDelete);
+            if (pictureId != null) {
+                pictureService.deletePicture(pictureId);
+            }
+            statisticsClient.refreshConsultantsAfterCommit();
+        }
+    }
+
+    private void deleteInOtherServices(String initials) {
+        try {
+            List<String> viewIds = viewProfileClient.getAllViewProfiles(initials);
+            if (viewIds != null) {
+                viewIds.forEach(id -> viewProfileClient.deleteViewProfile(initials, id));
+            }
+            reportClient.deleteAllReports(initials);
+        } catch (RestClientException e) {
+            throw new WebApplicationException(HttpStatus.BAD_GATEWAY, "The view profiles or documents of " + initials
+                    + " could not be deleted, the consultant stays: " + e.getMessage());
         }
     }
 

@@ -32,6 +32,8 @@ pwr-skill-service-url: http://pwr-skill-service:9003
 pwr-view-profile-service-url: http://pwr-view-profile-service:9008
 # The default is a docker-compose deployment; use hostnames
 pwr-statistics-service-url: http://pwr-statistics-service:9007
+# The default is a docker-compose deployment; use hostnames
+pwr-report-service-url: http://pwr-report-service:9005
 # Profile check (#139): what counts as missing or outdated (ProfileCheckProperties)
 profile-check:
   # Sections that need at least one entry: LANGUAGES, QUALIFICATIONS, TRAININGS, EDUCATION, SECTORS, CAREER,
@@ -60,6 +62,7 @@ spring:
 pwr-skill-service-url: http://localhost:9003
 pwr-view-profile-service-url: http://localhost:9008
 pwr-statistics-service-url: http://localhost:9007
+pwr-report-service-url: http://localhost:9005
 logging:
   # Console only; don't write profile-service.log locally
   file: ''
