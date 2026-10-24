@@ -1,17 +1,12 @@
 package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.AbstractIntegrationTest;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ConsultantRepository;
 import de.hbt.pwr.profile.data.ProfilePictureRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.model.ProfilePicture;
 import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.notification.AdminNotificationReason;
-import de.hbt.pwr.profile.model.notification.ProfileEntryNotification;
-import de.hbt.pwr.profile.model.notification.ProjectNotification;
-import de.hbt.pwr.profile.model.notification.SkillNotification;
 import de.hbt.pwr.profile.model.profile.LanguageSkillLevel;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
@@ -56,8 +51,6 @@ public class ConsultantDeleteITest extends AbstractIntegrationTest {
     @Autowired
     private ProfileEntryService profileEntryService;
     @Autowired
-    private AdminNotificationRepository adminNotificationRepository;
-    @Autowired
     private EntityManager entityManager;
 
     private ProfilePicture picture;
@@ -92,8 +85,8 @@ public class ConsultantDeleteITest extends AbstractIntegrationTest {
     }
 
     /**
-     * A full profile, written to the database: entries of every kind, projects with client, roles and skills, skills,
-     * notifications of every kind. Only flushing shows whether a row still points to a deleted one.
+     * A full profile, written to the database: entries of every kind, projects with client, roles and skills, skills.
+     * Only flushing shows whether a row still points to a deleted one.
      */
     @Test
     public void aFullProfile_isDeletedInTheDatabase() {
@@ -112,9 +105,6 @@ public class ConsultantDeleteITest extends AbstractIntegrationTest {
                 .client(named("Kunde AG", NameEntityType.COMPANY)).broker(named("Vermittler", NameEntityType.COMPANY))
                 .projectRoles(new HashSet<>(Set.of(named("Entwickler", NameEntityType.PROJECT_ROLE))))
                 .skills(projectSkills).build(), profile);
-        adminNotificationRepository.save(new ProfileEntryNotification(profile, sector.getId(), sector.getNameEntity()));
-        adminNotificationRepository.save(new SkillNotification(profile, AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN, kotlin));
-        adminNotificationRepository.save(new ProjectNotification(profile, project, project.getClient()));
         entityManager.flush();
         entityManager.clear();
 
@@ -124,16 +114,10 @@ public class ConsultantDeleteITest extends AbstractIntegrationTest {
 
         assertThat(consultantRepository.findByInitials("old")).isEmpty();
         assertThat(entityManager.find(Profile.class, profile.getId())).isNull();
-        assertThat(notificationsOf(profile)).isZero();
         assertThat(entityManager.find(Skill.class, kotlin.getId())).isNull();
         assertThat(entityManager.find(Project.class, project.getId())).isNull();
         assertThat(entityManager.find(SectorEntry.class, sector.getId())).isNull();
         assertThat(profilePictureRepository.findById(picture.getId())).isEmpty();
-    }
-
-    private long notificationsOf(Profile profile) {
-        return entityManager.createQuery("select count(n) from AdminNotification n where n.profile.id = :id", Long.class)
-                .setParameter("id", profile.getId()).getSingleResult();
     }
 
     private Project project(Profile profile, String name, String skill) {
@@ -152,7 +136,6 @@ public class ConsultantDeleteITest extends AbstractIntegrationTest {
     public void aProfileWithAProjectDeletedTheOldWay_isDeletedInTheDatabase() {
         Profile profile = consultantRepository.findByInitials("old").orElseThrow().getProfile();
         Project project = project(profile, "Altprojekt", "Java");
-        adminNotificationRepository.save(new ProjectNotification(profile, project, null));
         // The old way: out of the profile, the row stays
         profile.getProjects().remove(project);
         entityManager.flush();
@@ -164,23 +147,18 @@ public class ConsultantDeleteITest extends AbstractIntegrationTest {
 
         assertThat(consultantRepository.findByInitials("old")).isEmpty();
         assertThat(entityManager.find(Project.class, project.getId())).isNull();
-        assertThat(notificationsOf(profile)).isZero();
     }
 
     @Test
-    public void deletingAProject_deletesItsRowAndItsNotifications_theSkillsStayInTheProfile() {
+    public void deletingAProject_deletesItsRow_theSkillsStayInTheProfile() {
         Profile profile = consultantRepository.findByInitials("old").orElseThrow().getProfile();
         Project project = project(profile, "Altprojekt", "Java");
-        adminNotificationRepository.save(new ProjectNotification(profile, project, null));
-        entityManager.flush();
 
         profileEntryService.deleteProject(project.getId(), profile);
         entityManager.flush();
         entityManager.clear();
 
         assertThat(entityManager.find(Project.class, project.getId())).isNull();
-        assertThat(entityManager.createQuery("select count(n) from ProjectNotification n where n.project.id = :id", Long.class)
-                .setParameter("id", project.getId()).getSingleResult()).isZero();
         assertThat(entityManager.find(Profile.class, profile.getId()).getSkills()).extracting(Skill::getName).containsExactly("Java");
     }
 

@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 
 public class ProfileEntryServiceTest {
 
@@ -66,8 +65,8 @@ public class ProfileEntryServiceTest {
         });
         when(projectRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
-        profileUpdateService = new ProfileUpdateService(nameEntityRepository, skillRepository, profileEntryDAO, projectRepository, profileRepository, null, null);
-        profileEntryService = new ProfileEntryService(nameEntityRepository, profileEntryDAO, profileRepository, skillRepository, projectRepository, skillProfileClient, formerNameRepository, mock(AdminNotificationRepository.class), mock(SkillRows.class));
+        profileUpdateService = new ProfileUpdateService(nameEntityRepository, skillRepository, profileEntryDAO, projectRepository, profileRepository, null);
+        profileEntryService = new ProfileEntryService(nameEntityRepository, profileEntryDAO, profileRepository, skillRepository, projectRepository, skillProfileClient, formerNameRepository, mock(SkillRows.class));
     }
 
 

@@ -2,11 +2,8 @@ package de.hbt.pwr.profile.service.housekeeping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hbt.pwr.profile.AbstractIntegrationTest;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.model.HousekeepingFindings;
 import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.notification.AdminNotificationReason;
-import de.hbt.pwr.profile.model.notification.SkillNotification;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
@@ -42,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * No way of changing profiles leaves rows behind that the housekeeping would have to clean (#254): every entry,
- * project and skill that leaves its profile is deleted, with the notifications about it
+ * project and skill that leaves its profile is deleted
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -51,7 +48,7 @@ import static org.mockito.Mockito.when;
 public class NoLeftoversITest extends AbstractIntegrationTest {
 
     private static final String[] CHECKS = {ENTRIES_WITHOUT_PROFILE, PROJECTS_WITHOUT_PROFILE, SKILLS_WITHOUT_PROFILE,
-            NOTIFICATIONS_WITHOUT_ENTRY, ENTRY_ROWS_WITHOUT_TYPE};
+            ENTRY_ROWS_WITHOUT_TYPE};
 
     @Autowired
     private HousekeepingService housekeepingService;
@@ -63,8 +60,6 @@ public class NoLeftoversITest extends AbstractIntegrationTest {
     private ProfileService profileService;
     @Autowired
     private NameEntityAdminService nameEntityAdminService;
-    @Autowired
-    private AdminNotificationRepository adminNotificationRepository;
     @Autowired
     private EntityManager entityManager;
 
@@ -110,15 +105,10 @@ public class NoLeftoversITest extends AbstractIntegrationTest {
         return profileEntryService.updateProject(project, bea);
     }
 
-    private void unknownSkillNotification(Skill skill) {
-        adminNotificationRepository.save(new SkillNotification(bea, AdminNotificationReason.DANGEROUS_SKILL_ADDED_UNKNOWN, skill));
-    }
-
     @Test
     public void deletingASkillOfTheProfile() {
         Skill kotlin = skill("Kotlin", 3);
         Project project = project("Projekt", kotlin);
-        unknownSkillNotification(kotlin);
         entityManager.flush();
 
         profileEntryService.deleteSkill(kotlin.getId(), bea);
@@ -166,7 +156,6 @@ public class NoLeftoversITest extends AbstractIntegrationTest {
         Skill kotlin = skill("Kotlin", 3);
         Skill java = skill("Java", 4);
         project("Projekt", kotlin, java);
-        unknownSkillNotification(kotlin);
         when(skillProfileClient.mergeSkills("Kotlin", "Java")).thenReturn("Java");
         entityManager.flush();
 
@@ -191,7 +180,6 @@ public class NoLeftoversITest extends AbstractIntegrationTest {
     public void deletingASkillFromAllProfiles() throws Exception {
         Skill kotlin = skill("Kotlin", 3);
         project("Projekt", kotlin);
-        unknownSkillNotification(kotlin);
         when(skillProfileClient.requireTreeSkill(anyString()))
                 .thenReturn(new ObjectMapper().readTree("{\"id\": 1, \"qualifier\": \"Kotlin\", \"aliases\": []}"));
         entityManager.flush();

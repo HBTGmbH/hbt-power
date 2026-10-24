@@ -1,7 +1,6 @@
 package de.hbt.pwr.profile.service;
 
 import de.hbt.pwr.profile.client.SkillProfileClient;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.*;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
@@ -37,7 +36,6 @@ public class ProfileEntryService {
     private ProjectRepository projectRepository;
     private SkillProfileClient skillProfileClient;
     private NameEntityFormerNameRepository formerNameRepository;
-    private AdminNotificationRepository adminNotificationRepository;
     private SkillRows skillRows;
 
     @Autowired
@@ -47,7 +45,6 @@ public class ProfileEntryService {
                                SkillRepository skillRepository,
                                ProjectRepository projectRepository, SkillProfileClient skillProfileClient,
                                NameEntityFormerNameRepository formerNameRepository,
-                               AdminNotificationRepository adminNotificationRepository,
                                SkillRows skillRows) {
         this.nameEntityRepository = nameEntityRepository;
         this.profileEntryDAO = profileEntryDAO;
@@ -56,7 +53,6 @@ public class ProfileEntryService {
         this.projectRepository = projectRepository;
         this.skillProfileClient = skillProfileClient;
         this.formerNameRepository = formerNameRepository;
-        this.adminNotificationRepository = adminNotificationRepository;
         this.skillRows = skillRows;
     }
 
@@ -172,7 +168,7 @@ public class ProfileEntryService {
 
     /**
      * A skill of a project is one of the profile (<code>Project.skills</code>), so the skill goes from the projects of
-     * the profile too, and then its row with the notifications about it (#254)
+     * the profile too, and then its row (#254)
      */
     public void deleteSkill(Long id, Profile p) {
         Skill toRemove = p.getSkills().stream()
@@ -313,7 +309,6 @@ public class ProfileEntryService {
         p.getProjects().remove(remove);
         p.setLastEdited(LocalDateTime.now());
         // The row goes too, with its links to the skills, which are those of the profile (#243)
-        adminNotificationRepository.deleteAll(adminNotificationRepository.findProjectNotificationsAbout(List.of(remove)));
         remove.getSkills().clear();
         projectRepository.delete(remove);
     }

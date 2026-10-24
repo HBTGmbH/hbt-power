@@ -1,13 +1,11 @@
 package de.hbt.pwr.profile.service.housekeeping;
 
 import de.hbt.pwr.profile.AbstractIntegrationTest;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ProfilePictureRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.HousekeepingFindings;
 import de.hbt.pwr.profile.model.ProfilePicture;
 import de.hbt.pwr.profile.model.Skill;
-import de.hbt.pwr.profile.model.notification.ProfileEntryNotification;
 import de.hbt.pwr.profile.model.profile.NameEntityType;
 import de.hbt.pwr.profile.model.profile.Profile;
 import de.hbt.pwr.profile.model.profile.entries.NameEntity;
@@ -63,8 +61,6 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
     @Autowired
     private ProfileEntryService profileEntryService;
     @Autowired
-    private AdminNotificationRepository adminNotificationRepository;
-    @Autowired
     private ProfilePictureRepository profilePictureRepository;
     @Autowired
     private EntityManager entityManager;
@@ -109,12 +105,6 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         return findings().values().stream().collect(Collectors.toMap(HousekeepingFindings::getCheck, HousekeepingFindings::getCount));
     }
 
-    private List<ProfileEntryNotification> entryNotificationsOfAnna() {
-        entityManager.flush();
-        return entityManager.createQuery("select n from ProfileEntryNotification n where n.profile.id = :id",
-                ProfileEntryNotification.class).setParameter("id", anna.getId()).getResultList();
-    }
-
     private Profile reloaded() {
         entityManager.flush();
         entityManager.clear();
@@ -129,14 +119,13 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         project("Portal", "Java");
         skill("Kotlin");
 
-        assertThat(counts()).hasSize(6).isEqualTo(before);
+        assertThat(counts()).hasSize(5).isEqualTo(before);
     }
 
     @Test
-    public void entriesWithoutProfile_andTheirNotifications_areFoundAndDeleted() {
+    public void entriesWithoutProfile_areFoundAndDeleted() {
         sector("Banken");
         SectorEntry removed = sector("Versicherungen");
-        adminNotificationRepository.save(new ProfileEntryNotification(anna, removed.getId(), removed.getNameEntity()));
         // Deleting an entry removes it from the profile, the row stays
         profileEntryService.deleteEntryWithId(removed.getId(), anna, SECTOR);
 
@@ -147,7 +136,6 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
         assertThat(housekeepingService.clean(ENTRIES_WITHOUT_PROFILE)).isEqualTo(1);
         assertThat(findings().get(ENTRIES_WITHOUT_PROFILE).getCount()).isZero();
         assertThat(entityManager.find(SectorEntry.class, removed.getId())).isNull();
-        assertThat(entryNotificationsOfAnna()).isEmpty();
         assertThat(reloaded().getSectors()).extracting(entry -> entry.getNameEntity().getName()).containsExactly("Banken");
     }
 
@@ -214,19 +202,6 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void notificationsAboutEntriesThatAreGone_areFoundAndDeleted() {
-        SectorEntry banks = sector("Banken");
-        adminNotificationRepository.save(new ProfileEntryNotification(anna, banks.getId(), banks.getNameEntity()));
-        adminNotificationRepository.save(new ProfileEntryNotification(anna, 999_999L, banks.getNameEntity()));
-
-        assertThat(findings().get(NOTIFICATIONS_WITHOUT_ENTRY).getCount()).isEqualTo(1);
-
-        assertThat(housekeepingService.clean(NOTIFICATIONS_WITHOUT_ENTRY)).isEqualTo(1);
-        assertThat(entryNotificationsOfAnna()).extracting(ProfileEntryNotification::getProfileEntryId)
-                .containsExactly(banks.getId());
-    }
-
-    @Test
     public void picturesNoConsultantShows_areFoundAndDeleted() {
         ProfilePicture shown = picture();
         ProfilePicture leftOver = picture();
@@ -269,8 +244,8 @@ public class HousekeepingServiceITest extends AbstractIntegrationTest {
 
         mockMvc.perform(get("/admin/housekeeping"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[5].check").value(PICTURES_WITHOUT_CONSULTANT))
-                .andExpect(jsonPath("$[5].count").value(1));
+                .andExpect(jsonPath("$[4].check").value(PICTURES_WITHOUT_CONSULTANT))
+                .andExpect(jsonPath("$[4].count").value(1));
         mockMvc.perform(delete("/admin/housekeeping/" + PICTURES_WITHOUT_CONSULTANT))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.count").value(1));

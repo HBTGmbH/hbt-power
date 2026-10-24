@@ -3,7 +3,6 @@ package de.hbt.pwr.profile.service;
 import de.hbt.pwr.profile.client.SkillProfileClient;
 import de.hbt.pwr.profile.client.StatisticsClient;
 import com.fasterxml.jackson.databind.JsonNode;
-import de.hbt.pwr.profile.data.AdminNotificationRepository;
 import de.hbt.pwr.profile.data.ProfileRepository;
 import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Skill;
@@ -31,7 +30,6 @@ public class ProfileService {
 
     private final StatisticsClient statisticsClient;
 
-    private final AdminNotificationRepository adminNotificationRepository;
 
     private final SkillRows skillRows;
 
@@ -40,11 +38,10 @@ public class ProfileService {
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository, SkillProfileClient skillProfileClient,
-                          StatisticsClient statisticsClient, AdminNotificationRepository adminNotificationRepository,
+                          StatisticsClient statisticsClient,
                           SkillRows skillRows) {
         this.profileRepository = profileRepository;
         this.skillRows = skillRows;
-        this.adminNotificationRepository = adminNotificationRepository;
         this.skillProfileClient = skillProfileClient;
         this.statisticsClient = statisticsClient;
     }
@@ -124,8 +121,7 @@ public class ProfileService {
 
     /**
      * Deletes the skill <code>name</code> from all profiles and projects, under its name and its aliases in any case,
-     * and then from the skill tree (#229). The admin notifications about it go with it. If the skill tree refuses,
-     * the profiles stay as they were.
+     * and then from the skill tree (#229). If the skill tree refuses, the profiles stay as they were.
      */
     @Transactional
     public List<Profile> deleteSkill(String name) {
@@ -148,8 +144,6 @@ public class ProfileService {
             profile.getSkills().stream().filter(isDeleted).forEach(removed::add);
             profile.getSkills().removeIf(isDeleted);
         });
-        names.forEach(skillName -> adminNotificationRepository.deleteAll(
-                adminNotificationRepository.findSkillNotificationsBySkillName(skillName)));
         // Their rows go too, nothing holds them any more (#254)
         skillRows.delete(removed);
         skillProfileClient.deleteSkill(treeSkill.path("id").asLong());
