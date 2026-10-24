@@ -285,14 +285,14 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
 
 ## ADR-21: Housekeeping je Service
 
-- **Status:** gilt (#242, #288)
+- **Status:** gilt (#242, #288, #289)
 - **Kontext:** Datenleichen bleiben durch Altdaten, durch Collections in Hibernate und durch nicht transaktionales Löschen. Bisher sah sie niemand, bis eine Funktion daran scheiterte (#236, #243).
 - **Entscheidung:**
   - Jeder Service meldet und bereinigt die Datenleichen seiner eigenen Daten (`/admin/housekeeping`). Andere Services fragt er nur nach Daten.
   - Kann er sie nicht fragen, meldet er einen Fehler statt Treffern.
   - Bereinigen wirkt nur auf das, was beim Ausführen noch zutrifft, und loggt es.
   - Regel: Neue Verweise über Service-Grenzen oder neue nicht transaktionale Löschvorgänge bringen eine Prüfung mit.
-  - Das Housekeeping pflegt das ganze System (#288). Neben den Datenleichen hat es die Rubrik *Unbenutzt* für gültige Einträge, die niemand mehr nutzt: Profil-Elemente je Typ (Profile Service) und eigene Skills in der Kategorie *Other* (Skill Service, der die Nutzung beim Profile Service liest). Löschen ist dort eine Pflegeentscheidung, keine Reparatur. Weitere Rubriken können folgen (#289).
+  - Das Housekeeping pflegt das ganze System (#288). Neben den Datenleichen hat es die Rubrik *Unbenutzt* für gültige Einträge, die niemand mehr nutzt: Profil-Elemente je Typ (Profile Service) und eigene Skills in der Kategorie *Other* (Skill Service, der die Nutzung beim Profile Service liest). Löschen ist dort eine Pflegeentscheidung, keine Reparatur. Die Rubrik *Alt* (#289) bietet alte Exportdokumente und View-Profile an; das jüngste je Berater bleibt, Berater werden nicht gefragt.
 - **Konsequenzen:**
   - Die Verantwortung bleibt beim Besitzer der Daten.
   - Das Bereinigen ist ein bewusster Schritt eines Admins und geschieht nicht automatisch.

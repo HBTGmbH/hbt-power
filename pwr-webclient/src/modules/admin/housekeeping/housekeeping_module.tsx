@@ -55,7 +55,26 @@ const UNUSED: Array<Section> = [
     },
 ];
 
-const SECTIONS = [...LEFTOVERS, ...UNUSED];
+/** Data nobody probably needs any more (#289): deleting is a decision too; the newest of each consultant stays */
+const OLD: Array<Section> = [
+    {
+        key: 'reportOld', client: () => ({
+            getHousekeeping: () => ReportServiceClient.instance().getOldHousekeeping(),
+            cleanHousekeeping: check => ReportServiceClient.instance().cleanOldHousekeeping(check),
+        })
+    },
+    {
+        key: 'viewProfileOld', client: () => ({
+            getHousekeeping: () => ViewProfileServiceClient.instance().getOldHousekeeping(),
+            cleanHousekeeping: check => ViewProfileServiceClient.instance().cleanOldHousekeeping(check),
+        })
+    },
+];
+
+const SECTIONS = [...LEFTOVERS, ...UNUSED, ...OLD];
+
+/** "12,3 MB" */
+const megabytes = (bytes: number) => (bytes / 1000000).toLocaleString('de-DE', {maximumFractionDigits: 1}) + ' MB';
 
 const UNUSED_NAME_ENTITIES = 'unused-name-entities-';
 
@@ -149,7 +168,7 @@ export const Housekeeping = () => {
         const key = selected.findings.check;
         // The client shows an error; the service is checked again either way
         service.client().cleanHousekeeping(key)
-            .then(cleaned => Alerts.showSuccess(PowerLocalize.getFormatted(isUnused(selected)
+            .then(cleaned => Alerts.showSuccess(PowerLocalize.getFormatted(isDecision(selected)
                 ? 'AdminClient.Housekeeping.Delete.Success' : 'AdminClient.Housekeeping.Clean.Success', checkTitle(key), cleaned.count)))
             .catch(console.error)
             .finally(() => check(service));
@@ -208,7 +227,12 @@ export const Housekeeping = () => {
                         },
                         {
                             header: PowerLocalize.get('AdminClient.Housekeeping.Column.Count'), width: 64,
-                            render: findings => findings.error ? '–' : findings.count
+                            render: findings => findings.error ? '–' : <>
+                                {findings.count}
+                                {findings.bytes > 0 && <Typography variant="caption" color="textSecondary" component="div">
+                                    {megabytes(findings.bytes)}
+                                </Typography>}
+                            </>
                         },
                         {
                             header: PowerLocalize.get('AdminClient.Housekeeping.Column.Examples'),
@@ -227,7 +251,8 @@ export const Housekeeping = () => {
         </React.Fragment>;
     };
 
-    const isUnused = (selection: Selected) => UNUSED.some(section => section.key === selection.service);
+    /** Valid data nobody uses or needs: deleting is a decision, not a repair */
+    const isDecision = (selection: Selected) => [...UNUSED, ...OLD].some(section => section.key === selection.service);
 
     const checking = SECTIONS.some(service => results[service.key] && results[service.key].loading);
     return <div>
@@ -245,6 +270,10 @@ export const Housekeeping = () => {
         <Typography variant="h6" component="h2">{PowerLocalize.get('AdminClient.Housekeeping.Unused')}</Typography>
         <Typography variant="body2">{PowerLocalize.get('AdminClient.Housekeeping.Unused.Intro')}</Typography>
         {UNUSED.map(service => renderService(service, true))}
+        <PwrSpacer size="section"/>
+        <Typography variant="h6" component="h2">{PowerLocalize.get('AdminClient.Housekeeping.Old')}</Typography>
+        <Typography variant="body2">{PowerLocalize.get('AdminClient.Housekeeping.Old.Intro')}</Typography>
+        {OLD.map(service => renderService(service, true))}
         <UnusedNameEntitiesDialog open={unusedType !== null} type={unusedType || ''}
                                   typeLabel={unusedType ? PowerLocalize.get('NameEntityType.' + unusedType) : ''}
                                   onClose={() => setUnusedType(null)}
@@ -253,20 +282,20 @@ export const Housekeeping = () => {
         <Dialog open={confirming} onClose={() => setConfirming(false)} fullWidth maxWidth="sm"
                 TransitionProps={{onExited: () => setSelected(null)}}>
             {selected && <>
-                <DialogTitle>{PowerLocalize.getFormatted(isUnused(selected) ? 'AdminClient.Housekeeping.Delete.Title'
+                <DialogTitle>{PowerLocalize.getFormatted(isDecision(selected) ? 'AdminClient.Housekeeping.Delete.Title'
                     : 'AdminClient.Housekeeping.Clean.Title', checkTitle(selected.findings.check))}</DialogTitle>
                 <DialogContent>
                     <Typography variant="body1">
-                        {PowerLocalize.getFormatted(isUnused(selected) ? 'AdminClient.Housekeeping.Delete.Content'
+                        {PowerLocalize.getFormatted(isDecision(selected) ? 'AdminClient.Housekeeping.Delete.Content'
                             : 'AdminClient.Housekeeping.Clean.Content', selected.findings.count)}
                     </Typography>
-                    {isUnused(selected) && <>
+                    {isDecision(selected) && <>
                         <PwrSpacer size="tight"/>
                         <Typography variant="body2">{renderExamples(selected.findings)}</Typography>
                     </>}
                 </DialogContent>
                 <DialogActions>
-                    <PwrConfirmActions destructive confirmText={PowerLocalize.get(isUnused(selected) ? 'Action.Delete'
+                    <PwrConfirmActions destructive confirmText={PowerLocalize.get(isDecision(selected) ? 'Action.Delete'
                         : 'AdminClient.Housekeeping.Clean')}
                                        onConfirm={clean} rejectText={PowerLocalize.get('Action.Cancel')}
                                        onReject={() => setConfirming(false)}/>

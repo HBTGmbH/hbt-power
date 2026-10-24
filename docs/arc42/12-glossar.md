@@ -20,7 +20,7 @@
 | **Export** | Erzeugen eines Word-Dokuments aus einem View-Profil mit einer Vorlage |
 | **Früherer Name** (`NameEntityFormerName`) | Alter Name eines umbenannten oder zusammengeführten Profil-Elements, oder ein Alias, den ein Admin angelegt hat (#270). Wer ihn tippt, bekommt das Element. Innerhalb des Typs eindeutig. |
 | **Hausschrift** | Simplon Norm, lizenziert; in der Produktion als Volume eingebunden |
-| **Housekeeping** | Admin-Seite und Endpunkte `/admin/housekeeping` je Service, die das System sauber halten: Rubrik *Datenleichen* melden und bereinigen (#242), Rubrik *Unbenutzt* für gültige Einträge, die niemand mehr nutzt (#288) |
+| **Housekeeping** | Admin-Seite und Endpunkte `/admin/housekeeping` je Service, die das System sauber halten: Rubrik *Datenleichen* melden und bereinigen (#242), Rubrik *Unbenutzt* für gültige Einträge, die niemand mehr nutzt (#288), Rubrik *Alt* für alte Exportdokumente und View-Profile (#289) |
 | **Identitäts-Header** | `X-Pwr-User-Login`, `X-Pwr-User-Initials` und `X-Pwr-User-Admin`; die Edge setzt sie aus dem geprüften Token |
 | **Ingress** | Der nginx vor allen Containern in der Produktion: TLS, `/` zum Webclient, `/api/` zur Edge |
 | **Kurzname** | Name eines Kollegen in der App, z. B. `Kai B.` (`ConsultantShortNames`, #216) |
