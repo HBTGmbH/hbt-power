@@ -107,6 +107,22 @@ const renderName = (nameEntity: NameEntity) => isNameless(nameEntity)
     ? <Typography component="span" variant="inherit" color="textSecondary"><em>{displayName(nameEntity)}</em></Typography>
     : nameEntity.name;
 
+
+const SORTED_BY_NAME = new WeakMap<Array<NameEntity>, Array<NameEntity>>();
+
+/**
+ * A sorted copy (#274): sorting the array of the store in place would change the state. The same copy as long as the
+ * array of the store stays the same, so connect sees no change and doesn't render again.
+ */
+function sortedByName(entities: Array<NameEntity>): Array<NameEntity> {
+    let sorted = SORTED_BY_NAME.get(entities);
+    if (!sorted) {
+        sorted = [...entities].sort(NAME_ENTITY_BY_NAME);
+        SORTED_BY_NAME.set(entities, sorted);
+    }
+    return sorted;
+}
+
 class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
     & NameEntityOverviewLocalProps
     & NameEntityOverviewDispatch
@@ -173,15 +189,15 @@ class NameEntityOverviewModule extends React.Component<NameEntityOverviewProps
 
     static mapStateToProps(state: ApplicationState): NameEntityOverviewProps {
         return {
-            sectors: state.suggestionStore.allIndustrialSectors.sort(NAME_ENTITY_BY_NAME),
-            keySkills: state.suggestionStore.allSpecialFields.sort(NAME_ENTITY_BY_NAME),
-            careers: state.suggestionStore.allCareers.sort(NAME_ENTITY_BY_NAME),
-            educations: state.suggestionStore.allEducations.sort(NAME_ENTITY_BY_NAME),
-            qualifications: state.suggestionStore.allQualifications.sort(NAME_ENTITY_BY_NAME),
-            trainings: state.suggestionStore.allTrainings.sort(NAME_ENTITY_BY_NAME),
-            languages: state.suggestionStore.allLanguages.sort(NAME_ENTITY_BY_NAME),
-            projectRoles: state.suggestionStore.allProjectRoles.sort(NAME_ENTITY_BY_NAME),
-            companies: state.suggestionStore.allCompanies.sort(NAME_ENTITY_BY_NAME),
+            sectors: sortedByName(state.suggestionStore.allIndustrialSectors),
+            keySkills: sortedByName(state.suggestionStore.allSpecialFields),
+            careers: sortedByName(state.suggestionStore.allCareers),
+            educations: sortedByName(state.suggestionStore.allEducations),
+            qualifications: sortedByName(state.suggestionStore.allQualifications),
+            trainings: sortedByName(state.suggestionStore.allTrainings),
+            languages: sortedByName(state.suggestionStore.allLanguages),
+            projectRoles: sortedByName(state.suggestionStore.allProjectRoles),
+            companies: sortedByName(state.suggestionStore.allCompanies),
             currentlyUsedSkillNames: state.suggestionStore.allSkills,
             nameEntityUsageInfo: state.statisticsReducer.nameEntityUsageInfo,
             consultantNames: state.consultantNames.names,
