@@ -38,6 +38,7 @@ public class ProfileEntryService {
     private SkillProfileClient skillProfileClient;
     private NameEntityFormerNameRepository formerNameRepository;
     private AdminNotificationRepository adminNotificationRepository;
+    private SkillRows skillRows;
 
     @Autowired
     public ProfileEntryService(NameEntityRepository nameEntityRepository,
@@ -46,7 +47,8 @@ public class ProfileEntryService {
                                SkillRepository skillRepository,
                                ProjectRepository projectRepository, SkillProfileClient skillProfileClient,
                                NameEntityFormerNameRepository formerNameRepository,
-                               AdminNotificationRepository adminNotificationRepository) {
+                               AdminNotificationRepository adminNotificationRepository,
+                               SkillRows skillRows) {
         this.nameEntityRepository = nameEntityRepository;
         this.profileEntryDAO = profileEntryDAO;
         this.profileRepository = profileRepository;
@@ -55,6 +57,7 @@ public class ProfileEntryService {
         this.skillProfileClient = skillProfileClient;
         this.formerNameRepository = formerNameRepository;
         this.adminNotificationRepository = adminNotificationRepository;
+        this.skillRows = skillRows;
     }
 
     public BaseProfile updateBaseProfile(Profile p, BaseProfile baseProfile) {
@@ -163,13 +166,18 @@ public class ProfileEntryService {
     }
 
 
+    /**
+     * A skill of a project is one of the profile (<code>Project.skills</code>), so the skill goes from the projects of
+     * the profile too, and then its row with the notifications about it (#254)
+     */
     public void deleteSkill(Long id, Profile p) {
-        // TODO check Projects to delete orphan skills
         Skill toRemove = p.getSkills().stream()
                 .filter(skill -> skill.getId().equals(id))
                 .findAny()
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Skill with id: " + id + " was not found!"));
         p.getSkills().remove(toRemove);
+        p.getProjects().forEach(project -> project.getSkills().removeIf(skill -> id.equals(skill.getId())));
+        skillRows.delete(List.of(toRemove));
         skillsEdited(p);
     }
 

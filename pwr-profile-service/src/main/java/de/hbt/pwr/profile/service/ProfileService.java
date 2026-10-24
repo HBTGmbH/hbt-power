@@ -31,13 +31,17 @@ public class ProfileService {
 
     private final AdminNotificationRepository adminNotificationRepository;
 
+    private final SkillRows skillRows;
+
     private static Logger LOG = getLogger(ProfileService.class);
 
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository, SkillProfileClient skillProfileClient,
-                          StatisticsClient statisticsClient, AdminNotificationRepository adminNotificationRepository) {
+                          StatisticsClient statisticsClient, AdminNotificationRepository adminNotificationRepository,
+                          SkillRows skillRows) {
         this.profileRepository = profileRepository;
+        this.skillRows = skillRows;
         this.adminNotificationRepository = adminNotificationRepository;
         this.skillProfileClient = skillProfileClient;
         this.statisticsClient = statisticsClient;
@@ -68,10 +72,11 @@ public class ProfileService {
      */
     @Transactional
     public List<Profile> mergeSkillsInProfiles(String source, String target, String version) {
-        List<Profile> profiles = profileRepository.findAll()
-                .stream()
-                .peek(profile -> new SkillMerger(source, target, version).mergeIn(profile))
-                .collect(Collectors.toList());
+        List<Profile> profiles = profileRepository.findAll();
+        List<Skill> mergedAway = new ArrayList<>();
+        profiles.forEach(profile -> mergedAway.addAll(new SkillMerger(source, target, version).mergeIn(profile)));
+        // The skills merged into another one of the same profile: nothing holds them any more (#254)
+        skillRows.delete(mergedAway);
         // The statistics keep a copy of the profiles, which shows the admin who uses a skill (#205)
         statisticsClient.refreshConsultantsAfterCommit();
         return profiles;
@@ -111,12 +116,19 @@ public class ProfileService {
         LOG.info("Deleting skill " + names + " from all profiles and the skill tree");
         Predicate<Skill> isDeleted = skill -> skill.getName() != null && names.contains(skill.getName().toLowerCase());
         List<Profile> profiles = profileRepository.findAll();
+        List<Skill> removed = new ArrayList<>();
         profiles.forEach(profile -> {
-            profile.getProjects().forEach(project -> project.getSkills().removeIf(isDeleted));
+            profile.getProjects().forEach(project -> {
+                project.getSkills().stream().filter(isDeleted).forEach(removed::add);
+                project.getSkills().removeIf(isDeleted);
+            });
+            profile.getSkills().stream().filter(isDeleted).forEach(removed::add);
             profile.getSkills().removeIf(isDeleted);
         });
         names.forEach(skillName -> adminNotificationRepository.deleteAll(
                 adminNotificationRepository.findSkillNotificationsBySkillName(skillName)));
+        // Their rows go too, nothing holds them any more (#254)
+        skillRows.delete(removed);
         skillProfileClient.deleteSkill(treeSkill.path("id").asLong());
         statisticsClient.refreshConsultantsAfterCommit();
         return profiles;
@@ -138,11 +150,15 @@ public class ProfileService {
             this.version = version;
         }
 
-        void mergeIn(Profile profile) {
+        /**
+         * @return the skills merged into another one, which neither the profile nor its projects hold any more
+         */
+        Collection<Skill> mergeIn(Profile profile) {
             profile.setSkills(merge(profile.getSkills()));
             profile.getProjects().forEach(project -> project.setSkills(merge(project.getSkills().stream()
                     .map(skill -> replacements.getOrDefault(skill, skill))
                     .collect(Collectors.toList()))));
+            return replacements.keySet();
         }
 
         /**

@@ -245,7 +245,11 @@ function handleDeleteSkill(action: SkillDeleteAction, profile: Profile): Profile
     let skills = profile.skills;
     let newSkills = skills.filter(s => s.id !== action.id);
     newSkills.sort(skillByName);
-    return {...profile, ...{skills: newSkills}};
+    // The service takes the skill out of the projects of the profile too (#254)
+    const newProjects = profile.projects.map(project => project.skills.some(s => s.id === action.id)
+        ? {...project, skills: project.skills.filter(s => s.id !== action.id)}
+        : project);
+    return {...profile, ...{skills: newSkills, projects: newProjects}};
 }
 
 function handleUpdateProject(saved: Project, profile: Profile): Profile {
