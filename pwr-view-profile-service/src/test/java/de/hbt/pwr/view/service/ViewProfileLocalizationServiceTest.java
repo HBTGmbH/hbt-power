@@ -1,5 +1,13 @@
 package de.hbt.pwr.view.service;
 
+import java.util.List;
+import de.hbt.pwr.view.model.LanguageLevel;
+import de.hbt.pwr.view.model.entries.ProjectRole;
+import de.hbt.pwr.view.model.entries.Language;
+import de.hbt.pwr.view.model.entries.Sector;
+import de.hbt.pwr.view.client.profile.model.NameEntityType;
+import de.hbt.pwr.view.client.profile.model.NameEntityLocalization;
+import de.hbt.pwr.view.client.profile.ProfileServiceClient;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.client.skill.model.LocalizedQualifier;
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
@@ -34,7 +42,8 @@ import static org.mockito.Mockito.when;
 public class ViewProfileLocalizationServiceTest {
 
     private final SkillServiceClient skillServiceClient = mock(SkillServiceClient.class);
-    private final ViewProfileLocalizationService service = new ViewProfileLocalizationService(skillServiceClient);
+    private final ProfileServiceClient profileServiceClient = mock(ProfileServiceClient.class);
+    private final ViewProfileLocalizationService service = new ViewProfileLocalizationService(skillServiceClient, profileServiceClient);
     private ViewProfile viewProfile;
     private Category agile;
     private Skill scrum;
@@ -131,5 +140,53 @@ public class ViewProfileLocalizationServiceTest {
 
         // Merging ("Aktualisieren") compares the skills of the old and the new view profile
         assertThat(scrum.toBuilder().displayCategory(null).build()).isEqualTo(before);
+    }
+
+    // ---------------------------------------------------------------------- entries from profile elements (#291)
+
+    @Test
+    public void withLanguage_fillsTheLocalizationsOfTheEntries_byTypeAndNameIgnoringCase() {
+        when(profileServiceClient.getLocalizations("eng")).thenReturn(List.of(
+                new NameEntityLocalization(NameEntityType.SECTOR, "Banken", "eng", "Banking"),
+                new NameEntityLocalization(NameEntityType.LANGUAGE, "englisch", "eng", "English"),
+                new NameEntityLocalization(NameEntityType.PROJECT_ROLE, "Entwickler", "eng", "Developer"),
+                new NameEntityLocalization(NameEntityType.COMPANY, "Stadt Hamburg", "eng", "City of Hamburg"),
+                // Same name, other type: not a sector
+                new NameEntityLocalization(NameEntityType.CAREER, "Versicherungen", "eng", "Insurance career")));
+        Sector banks = new Sector("Banken", true);
+        Sector insurances = new Sector("Versicherungen", true);
+        Language english = new Language("Englisch", LanguageLevel.NATIVE, true);
+        ProjectRole developer = new ProjectRole("Entwickler", true);
+        viewProfile.getSectors().addAll(List.of(banks, insurances));
+        viewProfile.getLanguages().add(english);
+        Project project = viewProfile.getProjects().get(0);
+        project.setClient("Stadt Hamburg");
+        project.setBroker("Vermittler GmbH");
+        project.setProjectRoles(new ArrayList<>(List.of(developer)));
+
+        service.setLocalization(viewProfile, "eng");
+
+        assertThat(banks.getLocalizedName()).isEqualTo("Banking");
+        assertThat(insurances.getLocalizedName()).isNull();
+        assertThat(english.getLocalizedName()).isEqualTo("English");
+        assertThat(developer.getLocalizedName()).isEqualTo("Developer");
+        assertThat(project.getLocalizedClient()).isEqualTo("City of Hamburg");
+        assertThat(project.getLocalizedBroker()).isNull();
+        assertThat(banks.getName()).isEqualTo("Banken");
+
+        // Without a language, nothing is asked and everything is cleared
+        service.setLocalization(viewProfile, null);
+        assertThat(banks.getLocalizedName()).isNull();
+        assertThat(project.getLocalizedClient()).isNull();
+        verify(profileServiceClient, times(1)).getLocalizations(anyString());
+    }
+
+    @Test
+    public void theLocalizedNameOfAnEntry_isNoPartOfEquality() {
+        Sector localized = new Sector("Banken", true);
+        localized.setLocalizedName("Banking");
+
+        // Merging ("Aktualisieren") compares the entries of the old and the new view profile
+        assertThat(localized).isEqualTo(new Sector("Banken", true));
     }
 }

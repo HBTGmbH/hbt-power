@@ -2,13 +2,20 @@ package de.hbt.service;
 
 import de.hbt.model.ReportInfo;
 import de.hbt.model.export.Profil;
+import de.hbt.model.export.ProjektRolle;
 import de.hbt.model.export.Skill;
+import de.hbt.model.view.ViewSector;
+import de.hbt.model.view.ViewLanguage;
+import de.hbt.model.view.ViewProjectRole;
+import de.hbt.model.view.LanguageLevel;
+import de.hbt.model.export.Sprache;
 import de.hbt.model.view.ViewCategory;
 import de.hbt.model.view.ViewProfile;
 import de.hbt.model.view.ViewProject;
 import de.hbt.model.view.ViewSkill;
 import de.hbt.model.view.ViewSkillVersion;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,5 +140,48 @@ class ModelConvertServiceTest {
 
         assertThat(profil.getProjekte()).hasSize(1);
         assertThat(profil.getProjekte().get(0).getBerater()).isNull();
+    }
+
+    /**
+     * With a language the entries from profile elements carry their localizations too (#291); without one the name
+     */
+    @Test
+    void shouldExportLocalizedNamesOfTheEntries_whenTheViewProfileHasThem() {
+        ReportInfo reportInfo = reportInfo(true);
+        ViewSector banks = new ViewSector();
+        banks.setName("Banken");
+        banks.setLocalizedName("Banking");
+        banks.setEnabled(true);
+        ViewSector insurances = new ViewSector();
+        insurances.setName("Versicherungen");
+        insurances.setEnabled(true);
+        reportInfo.viewProfile.getSectors().addAll(Arrays.asList(banks, insurances));
+        ViewLanguage english = new ViewLanguage();
+        english.setName("Englisch");
+        english.setLocalizedName("English");
+        english.setLevel(LanguageLevel.NATIVE);
+        english.setEnabled(true);
+        reportInfo.viewProfile.getLanguages().add(english);
+        ViewProjectRole developer = new ViewProjectRole();
+        developer.setName("Entwickler");
+        developer.setLocalizedName("Developer");
+        developer.setEnabled(true);
+        ViewProject project = new ViewProject();
+        project.setName("Projekt");
+        project.setEnabled(true);
+        project.setClient("Stadt Hamburg");
+        project.setLocalizedClient("City of Hamburg");
+        project.setProjectRoles(new ArrayList<>(Arrays.asList(developer)));
+        reportInfo.viewProfile.getProjects().add(project);
+
+        Profil profil = modelConvertService.convert(reportInfo, null);
+
+        assertThat(profil.getBranchen()).extracting(branche -> branche.getBezeichnung().getHauptbegriff().getBezeichnung())
+                .containsExactly("Banking", "Versicherungen");
+        assertThat(profil.getSprachen()).extracting(Sprache::getSprache).containsExactly("English");
+        @SuppressWarnings("unchecked")
+        List<ProjektRolle> roles = (List<ProjektRolle>) ReflectionTestUtils.getField(profil.getProjekte().get(0), "rollen");
+        assertThat(roles).extracting(rolle -> rolle.getBezeichnung().getHauptbegriff().getBezeichnung()).containsExactly("Developer");
+        assertThat(profil.getProjekte().get(0).getEndkunde().getBezeichnung()).isEqualTo("City of Hamburg");
     }
 }

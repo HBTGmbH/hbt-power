@@ -8,6 +8,7 @@ public class ViewCareer implements ViewEntry {
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean enabled;
+    private String localizedName;
 
     public ViewCareer() {
     }
@@ -50,5 +51,13 @@ public class ViewCareer implements ViewEntry {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+    /** The name in the language of the view profile (#291), null without a localization */
+    public String getLocalizedName() {
+        return localizedName;
+    }
+
+    public void setLocalizedName(String localizedName) {
+        this.localizedName = localizedName;
     }
 }

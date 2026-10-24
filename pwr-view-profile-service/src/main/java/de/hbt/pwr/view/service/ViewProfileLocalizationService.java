@@ -1,6 +1,8 @@
 package de.hbt.pwr.view.service;
 
 import de.hbt.pwr.view.aspects.ViewProfileAutoSave;
+import de.hbt.pwr.view.client.profile.ProfileServiceClient;
+import de.hbt.pwr.view.client.profile.model.NameEntityType;
 import de.hbt.pwr.view.client.skill.SkillServiceClient;
 import de.hbt.pwr.view.client.skill.model.LocalizedQualifier;
 import de.hbt.pwr.view.client.skill.model.SkillServiceCategory;
@@ -13,22 +15,28 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * Names of skills and display categories in the language of a view profile (#174). The name of the skill tree stays the
- * key of a skill or category; the localization goes into {@link Skill#getLocalizedName()} and
- * {@link Category#getLocalizedName()}, null without a language or without a localization.
+ * Names of skills and display categories in the language of a view profile (#174), and of the entries from profile
+ * elements (#291). The name stays the key; the localization goes into {@link Skill#getLocalizedName()},
+ * {@link Category#getLocalizedName()} and {@code localizedName} of the entries, null without a language or without a
+ * localization.
  */
 @Service
 public class ViewProfileLocalizationService {
 
     private final SkillServiceClient skillServiceClient;
+    private final ProfileServiceClient profileServiceClient;
 
-    public ViewProfileLocalizationService(SkillServiceClient skillServiceClient) {
+    public ViewProfileLocalizationService(SkillServiceClient skillServiceClient,
+                                          ProfileServiceClient profileServiceClient) {
         this.skillServiceClient = skillServiceClient;
+        this.profileServiceClient = profileServiceClient;
     }
 
     /**
@@ -75,6 +83,41 @@ public class ViewProfileLocalizationService {
             SkillServiceCategory serviceCategory = category.getId() == null ? null : categoriesById.get(category.getId());
             category.setLocalizedName(serviceCategory == null ? null : localizedName(serviceCategory.getQualifiers(), language));
         });
+        localizeEntries(viewProfile, language);
+    }
+
+    /**
+     * The entries from profile elements (#291), found by type and name, ignoring case; companies too, as client and
+     * broker of the projects
+     */
+    private void localizeEntries(ViewProfile viewProfile, String language) {
+        Map<String, String> localized = new HashMap<>();
+        if (language != null) {
+            profileServiceClient.getLocalizations(language).forEach(localization ->
+                    localized.put(key(localization.getType(), localization.getName()), localization.getQualifier()));
+        }
+        Function<NameEntityType, Function<String, String>> in = type -> name -> name == null ? null : localized.get(key(type, name));
+        viewProfile.getCareers().forEach(entry -> entry.setLocalizedName(in.apply(NameEntityType.CAREER).apply(entry.getName())));
+        viewProfile.getEducations().forEach(entry -> entry.setLocalizedName(in.apply(NameEntityType.EDUCATION).apply(entry.getName())));
+        viewProfile.getKeySkills().forEach(entry -> entry.setLocalizedName(in.apply(NameEntityType.SPECIAL_FIELD).apply(entry.getName())));
+        viewProfile.getLanguages().forEach(entry -> entry.setLocalizedName(in.apply(NameEntityType.LANGUAGE).apply(entry.getName())));
+        viewProfile.getQualifications().forEach(entry -> entry.setLocalizedName(in.apply(NameEntityType.QUALIFICATION).apply(entry.getName())));
+        viewProfile.getSectors().forEach(entry -> entry.setLocalizedName(in.apply(NameEntityType.SECTOR).apply(entry.getName())));
+        viewProfile.getTrainings().forEach(entry -> entry.setLocalizedName(in.apply(NameEntityType.TRAINING).apply(entry.getName())));
+        Function<String, String> role = in.apply(NameEntityType.PROJECT_ROLE);
+        Function<String, String> company = in.apply(NameEntityType.COMPANY);
+        viewProfile.getProjectRoles().forEach(entry -> entry.setLocalizedName(role.apply(entry.getName())));
+        viewProfile.getProjects().forEach(project -> {
+            if (project.getProjectRoles() != null) {
+                project.getProjectRoles().forEach(entry -> entry.setLocalizedName(role.apply(entry.getName())));
+            }
+            project.setLocalizedClient(company.apply(project.getClient()));
+            project.setLocalizedBroker(company.apply(project.getBroker()));
+        });
+    }
+
+    private static String key(NameEntityType type, String name) {
+        return type + ":" + name.trim().toLowerCase(Locale.ROOT);
     }
 
     private Stream<Skill> allSkills(ViewProfile viewProfile) {

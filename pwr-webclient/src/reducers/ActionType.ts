@@ -138,6 +138,7 @@ export enum ActionType {
     AsyncDeleteSkillEverywhere = '[Async] DeleteSkillEverywhere',
     AsyncDeleteNameEntity = '[Async] DeleteNameEntity',
     AsyncDeleteNameEntityAlias = '[Async] DeleteNameEntityAlias',
+    AsyncDeleteNameEntityLocalization = '[Async] DeleteNameEntityLocalization',
     AsyncDeleteTreeCategory = '[Async] DeleteTreeCategory',
     AsyncDeleteConsultant = '[Async] DeleteConsultant',
     AsyncDeleteSkillAlias = '[Async] DeleteSkillAlias',

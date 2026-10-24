@@ -9,6 +9,7 @@ import {ConsultantInfoDTO} from '../model/ConsultantInfoDTO';
 import {ConsultantName} from '../model/ConsultantName';
 import {ProfileCheck, ProfileCheckSummary, ProfileConfirmation} from '../model/check/ProfileCheck';
 import {NameEntity} from '../reducers/profile-new/profile/model/NameEntity';
+import {NameEntityLocalization} from '../model/NameEntityLocalization';
 
 declare const POWER_PROFILE_SERVICE_URL: string;
 
@@ -179,6 +180,26 @@ export class ProfileServiceClient extends PowerHttpClient {
         const url = this.base() + '/admin/name-entities/' + id + '/aliases';
         this.beginRequest();
         return this.delete(url, {params: {alias}});
+    };
+
+    /** The names of the element in other languages (#291) */
+    public getNameEntityLocalizations = (id: number): Promise<Array<NameEntityLocalization>> => {
+        const url = this.base() + '/admin/name-entities/' + id + '/localizations';
+        this.beginRequest();
+        return this.get(url);
+    };
+
+    /** Sets the name in the language, replacing the one there was; the localizations afterwards */
+    public setNameEntityLocalization = (id: number, language: string, qualifier: string): Promise<Array<NameEntityLocalization>> => {
+        const url = this.base() + '/admin/name-entities/' + id + '/localizations/' + encodeURIComponent(language);
+        this.beginRequest();
+        return this.put(url, null, {params: {qualifier}});
+    };
+
+    public deleteNameEntityLocalization = (id: number, language: string): Promise<Array<NameEntityLocalization>> => {
+        const url = this.base() + '/admin/name-entities/' + id + '/localizations/' + encodeURIComponent(language);
+        this.beginRequest();
+        return this.delete(url);
     };
 
     public getUnusedNameEntities = (type: string): Promise<Array<NameEntity>> => {

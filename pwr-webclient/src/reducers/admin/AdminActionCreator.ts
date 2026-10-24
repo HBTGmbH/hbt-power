@@ -39,6 +39,7 @@ import {ThunkDispatch} from 'redux-thunk';
 import {resetProfileStore} from '../profile-new/profile/actions/ProfileActions';
 import {loadConsultantNames} from '../consultant-names/ConsultantNameActionCreator';
 import {NameEntity} from '../profile-new/profile/model/NameEntity';
+import {NameEntityLocalization} from '../../model/NameEntityLocalization';
 import {ConsultantInfoDTO} from '../../model/ConsultantInfoDTO';
 
 const profileServiceClient = ProfileServiceClient.instance();
@@ -573,6 +574,29 @@ export class AdminActionCreator {
         return function (dispatch: ThunkDispatch<any, any, any>) {
             profileServiceClient.deleteNameEntityAlias(nameEntity.id, alias)
                 .then(() => dispatch(SuggestionAsyncActionCreator.requestAliases()))
+                .catch(console.error);
+        };
+    }
+
+    /** Sets the name of the element in a language (#291); onDone gets the localizations afterwards */
+    public static AsyncSetNameEntityLocalization(nameEntity: NameEntity, language: string, qualifier: string,
+                                                 onDone: (localizations: Array<NameEntityLocalization>) => void) {
+        return function () {
+            profileServiceClient.setNameEntityLocalization(nameEntity.id, language, qualifier.trim())
+                .then(onDone)
+                .catch(console.error);
+        };
+    }
+
+    /** The translation has to be entered twice (#181); onDone gets the localizations afterwards */
+    @makeDeferrable(ActionType.AsyncDeleteNameEntityLocalization,
+        (nameEntity: NameEntity, language: string, translation: string) =>
+            confirmDeleteByName('Locale', translation, nameEntity.name))
+    public static AsyncDeleteNameEntityLocalization(nameEntity: NameEntity, language: string, translation: string,
+                                                    onDone: (localizations: Array<NameEntityLocalization>) => void) {
+        return function () {
+            profileServiceClient.deleteNameEntityLocalization(nameEntity.id, language)
+                .then(onDone)
                 .catch(console.error);
         };
     }

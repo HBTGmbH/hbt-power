@@ -25,7 +25,7 @@
 | **Ingress** | Der nginx vor allen Containern in der Produktion: TLS, `/` zum Webclient, `/api/` zur Edge |
 | **Kurzname** | Name eines Kollegen in der App, z. B. `Kai B.` (`ConsultantShortNames`, #216) |
 | **Kürzel** (`initials`) | Eindeutige Kennung eines Beraters, gleich dem Claim `mailnickname` seines Kontos, klein geschrieben |
-| **Lokalisierung** (`LocalizedQualifier`) | Übersetzung eines Skills oder einer Kategorie in eine Sprache (ISO 639-2), nur für Exporte |
+| **Lokalisierung** (`LocalizedQualifier`, `NameEntityLocalization`) | Übersetzung eines Skills, einer Kategorie (#174) oder eines Profil-Elements (#291) in eine Sprache (ISO 639-2); erscheint in View-Profilen dieser Sprache und ihren Dokumenten |
 | **Massenänderung** | Änderung vieler Profile auf einmal: Skills zusammenführen, umbenennen oder löschen, ebenso Profil-Elemente, oder einen Berater löschen. Danach wird die Statistik neu geladen. |
 | **Other** | Kategorie des Skill-Baums, in die unbekannte Skills kommen, bis ein Admin sie einsortiert |
 | **Postkorb, Papierkorb** | Liste der offenen bzw. verworfenen Benachrichtigungen im Admin-Bereich |

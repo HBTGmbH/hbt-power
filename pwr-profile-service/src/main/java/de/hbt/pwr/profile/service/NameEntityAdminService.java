@@ -55,16 +55,19 @@ public class NameEntityAdminService {
     private final ConsultantRepository consultantRepository;
     private final StatisticsClient statisticsClient;
     private final EntityManager entityManager;
+    private final NameEntityLocalizationService localizationService;
 
     public NameEntityAdminService(NameEntityRepository nameEntityRepository, NameEntityFormerNameRepository formerNameRepository,
                                   ProfileRepository profileRepository, ConsultantRepository consultantRepository,
-                                  StatisticsClient statisticsClient, EntityManager entityManager) {
+                                  StatisticsClient statisticsClient, EntityManager entityManager,
+                                  NameEntityLocalizationService localizationService) {
         this.nameEntityRepository = nameEntityRepository;
         this.formerNameRepository = formerNameRepository;
         this.profileRepository = profileRepository;
         this.consultantRepository = consultantRepository;
         this.statisticsClient = statisticsClient;
         this.entityManager = entityManager;
+        this.localizationService = localizationService;
     }
 
     /**
@@ -233,6 +236,7 @@ public class NameEntityAdminService {
         }
         // The former names of the source and the source itself are former names of the target
         formerNameRepository.findAllByNameEntity(source).forEach(formerName -> formerName.setNameEntity(target));
+        localizationService.handOn(source, target);
         if (!source.getName().trim().equalsIgnoreCase(target.getName().trim())) {
             addFormerName(target, source.getName());
         }
@@ -334,6 +338,7 @@ public class NameEntityAdminService {
 
     private void deleteElement(NameEntity nameEntity) {
         formerNameRepository.deleteAll(formerNameRepository.findAllByNameEntity(nameEntity));
+        localizationService.deleteAll(nameEntity);
         entityManager.flush();
         nameEntityRepository.delete(nameEntity);
     }
