@@ -345,6 +345,7 @@ flowchart LR
 
 - Die Kopie (`@RedisHash("Consultant")` mit eingebettetem Profil) wird bei jedem Laden ganz ersetzt. Scheitert das Laden, bleibt die alte (#218).
 - Alles, was der Service beantwortet, kommt aus dieser Kopie, auch „wer benutzt diesen Skill / dieses Profil-Element“ in der Admin-Oberfläche.
+- Das Clustering (K-Medoid mit SimRank als Ähnlichkeit) läuft stündlich direkt nach dem Laden, synchron im Scheduler-Thread. SimRank rechnet auf indizierten Matrizen (`double[][]`, #292): bei rund 60 Profilen und 1000 Skills etwa 16 MB in einer Zehntelsekunde. Die frühere Variante mit einem Objekt je Paar legte dafür 4,5 GB in 43 s an und ließ den Heap dauerhaft auf über 1 GiB wachsen.
 
 ### 5.2.7 pwr-webclient
 
