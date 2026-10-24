@@ -29,6 +29,15 @@ public class ReportDataService {
         reportDataRepository.deleteById(id);
     }
 
+    /**
+     * Deletes the documents about the consultant with these initials, when the consultant is deleted (#240). Those
+     * the consultant exported for others stay.
+     */
+    @Transactional
+    public long deleteAllReportDataForUser(String initials) {
+        return reportDataRepository.deleteAllByInitials(initials);
+    }
+
     @Transactional
     public ReportData saveReportData(ReportData reportData) {
         return reportDataRepository.save(reportData);
