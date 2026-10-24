@@ -13,7 +13,6 @@ quadrantChart
     quadrant-4 Bei Gelegenheit
     T1 Stack: [0.8, 0.88]
     O1 Ein Host: [0.15, 0.9]
-    O3 Redis-Backup: [0.15, 0.68]
     T3 BIRT: [0.62, 0.72]
     D1 Migrationen: [0.4, 0.62]
     T6 Webclient-Tests: [0.75, 0.38]
@@ -50,7 +49,6 @@ quadrantChart
 |---|---|---|---|---|
 | O1 | **Ein Host** für alles: Anwendung, Datenbanken und Backup | hoch | Fällt der Host aus, ist Power weg. Liegt das Backup auf demselben Host, ist es mit weg. | Backup zusätzlich außerhalb des Hosts ablegen; Wiederherstellung üben |
 | O2 | **Merge ist Deployment, ohne Staging und Rolling Update** | mittel | Kurze 502 beim Austausch der Container. Ein fehlerhafter Stand ist sofort live. Am 2026-10-20 gab es 15 Minuten lang 502, weil der Ingress die Container-IPs nur beim Start auflöste; behoben im Deploy-Repository. | Durchklicken vor dem Merge (Definition of Done); Produktion nach jedem Merge prüfen; Hinweis auf neue Version im Webclient (#247) |
-| O3 | **Redis nicht im Backup** (View-Profile, Vorlagen-Metadaten) | mittel | Ein Verlust des Volumes nimmt alle View-Profile und die Zuordnung der Vorlagen zu ihren Dateien mit. | Redis-Dump ins Backup aufnehmen; Ablösung von Redis (#52) |
 | O4 | **Kein beschriebenes Zurück** auf einen älteren Stand | mittel | Bei einem fehlerhaften Deployment muss improvisiert werden. | Vorgehen mit `:sha-<commit>`-Images beschreiben |
 | O5 | **Watchtower** aus einem nicht mehr gepflegten Fork; Ingress- und Redis-Image ohne feste Version | mittel | Unerwartete Updates oder fehlende Korrekturen | Fork wechseln (offener PR im Deploy-Repository); Versionen festlegen |
 | O6 | **Keine Pflicht-Checks** in CI | niedrig | Ein Merge mit rotem Check ist möglich. | Prüfen vor dem Merge; ein zusammenfassender Check, der immer meldet |
