@@ -420,14 +420,4 @@ public class ViewProfileOperationService {
             throw new ServiceSkillNotFoundException(skillName);
         }
     }
-
-    public void migrateViewProfiles() {
-        Iterable<ViewProfile> allOldViewProfiles =
-                viewProfileRepository.findAll();
-        allOldViewProfiles.forEach(viewProfile -> {
-            String id = viewProfile.getId();
-            viewProfileRepository.deleteById(id);
-            viewProfileRepository.save(viewProfile);
-        });
-    }
 }
