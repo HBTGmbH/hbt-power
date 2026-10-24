@@ -68,9 +68,8 @@ quadrantChart
 | K3 | **CORS der Edge** lässt jede Herkunft mit Anmeldedaten zu. | niedrig | Die Anmeldung läuft über das Bearer-Token, nicht über Cookies; die Wirkung ist daher begrenzt. | Auf die eigene Herkunft beschränken |
 | K4 | **Öffentliche Repositories:** Die Regel „keine Betriebsdetails“ hängt an Disziplin. | mittel | Einmal veröffentlicht, bleibt es in der Historie. | Regel in `AGENTS.md`, Prüfung im PR |
 
-## 11.5 Recht und Organisation
+## 11.5 Organisation
 
 | Nr. | Risiko | Bewertung | Maßnahme |
 |---|---|---|---|
-| L1 | Die Lizenz der Hausschrift für den Servereinsatz und die Einbettung in PDFs ist nicht bestätigt (#82). | mittel | Klären |
-| L2 | Wissen steckt in Issues und Köpfen. | mittel | Diese Dokumentation (#246) und `AGENTS.md` im selben PR wie die Änderung pflegen |
+| L1 | Wissen steckt in Issues und Köpfen. | mittel | Diese Dokumentation (#246) und `AGENTS.md` im selben PR wie die Änderung pflegen |

@@ -186,9 +186,7 @@ Neue Entscheidungen bekommen die nächste Nummer. Eine abgelöste Entscheidung b
   - Arial aus alten Vorlagen wird auf Simplon Norm abgebildet.
   - `.otf`-Dateien mit CFF-Konturen werden ganz eingebettet, weil iText 2.1.7 sie nicht in Teilmengen einbetten kann.
   - Ein PDF ohne `%%EOF` gilt als Fehler.
-- **Konsequenzen:**
-  - Lokal und in CI sieht das PDF anders aus als in der Produktion.
-  - Die Lizenzfrage für Server und PDF-Einbettung ist in #82 noch offen.
+- **Konsequenzen:** Lokal und in CI sieht das PDF anders aus als in der Produktion.
 
 ## ADR-13: Skill-Namen: Aliase, Normalisierung auf den Baum, Groß-/Kleinschreibung
 
