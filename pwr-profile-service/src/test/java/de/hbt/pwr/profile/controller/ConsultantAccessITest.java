@@ -224,4 +224,16 @@ public class ConsultantAccessITest extends AbstractIntegrationTest {
         mockMvc.perform(get("/profiles/own")).andExpect(status().isOk());
         mockMvc.perform(asUser(get("/profiles/own"), "own")).andExpect(status().isOk());
     }
+
+    /**
+     * A new entry comes from the webclient with id -1 (#283); the check of #255 must let it through
+     */
+    @Test
+    public void aNewEntryWithIdMinusOneIsAdded() throws Exception {
+        mockMvc.perform(asUser(put("/profile/own/specialfield"), "own").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": -1, \"nameEntity\": {\"id\": -1, \"name\": \"Ökosysteme\", \"type\": \"SPECIAL_FIELD\"}}"))
+                .andExpect(status().isOk());
+        assertThat(consultantService.getProfileByInitials("own").getSpecialFieldEntries())
+                .extracting(entry -> entry.getNameEntity().getName()).containsExactly("Ökosysteme");
+    }
 }
