@@ -77,6 +77,10 @@ public class ProfileEntryService {
         if (trimmedName(profileEntry.getNameEntity()) == null) {
             throw new WebApplicationException(HttpStatus.BAD_REQUEST, "A profile entry needs a name");
         }
+        // The webclient sends a new entry with id -1 (ProfileTypeDataMapper), which no row has (#283)
+        if (profileEntry.getId() != null && profileEntry.getId() < 0) {
+            profileEntry.setId(null);
+        }
         requireInProfile(profileEntry.getId(), nameEntityType.<Entry>getEntryCollection(profile), ProfileEntry::getId);
         // Every change counts as a profile update, not only the description and projects (#139)
         profile.setLastEdited(LocalDateTime.now());

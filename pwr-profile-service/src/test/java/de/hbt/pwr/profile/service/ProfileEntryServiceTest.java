@@ -454,6 +454,21 @@ public class ProfileEntryServiceTest {
     // ------------------------------------------------------------------- ids must belong to the profile (#255)
 
     @Test
+    public void newEntryWithIdMinusOne_isPersisted() {
+        // How the webclient sends a new entry (ProfileTypeDataMapper, #283)
+        Profile profile = new Profile();
+        LanguageSkill language = LanguageSkill.builder().id(-1L).level(LanguageSkillLevel.BASIC)
+                .language(NameEntity.builder().id(-1L).name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
+        profileEntryPersist(language);
+
+        profileEntryService.updateProfileEntry(language, profile, NameEntityType.LANGUAGE);
+
+        verify(profileEntryDAO).persist(language);
+        verify(profileEntryDAO, never()).update(any());
+        assertThat(profile.getLanguages()).containsExactly(language);
+    }
+
+    @Test
     public void entryWithTheIdOfAnotherProfile_isRejected() {
         LanguageSkill foreign = LanguageSkill.builder().id(777L).level(LanguageSkillLevel.BASIC)
                 .language(NameEntity.builder().name("Deutsch").type(NameEntityType.LANGUAGE).build()).build();
