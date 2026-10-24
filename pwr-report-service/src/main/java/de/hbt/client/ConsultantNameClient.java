@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The name of a consultant from the profile service, for who started an export (#214)
@@ -42,6 +45,23 @@ public class ConsultantNameClient {
             LOG.warn("No name for initials " + initials + ": " + e.getMessage());
             return Optional.empty();
         }
+    }
+
+    /**
+     * The initials of all consultants, active or not (#242); throws if the profile service does not answer, so a
+     * failure never looks like a list without consultants
+     */
+    public Set<String> findAllInitials() {
+        ConsultantInitials[] consultants = restTemplate.getForObject(pwrProfileServiceUrl + "/consultants/names",
+                ConsultantInitials[].class);
+        return List.of(consultants == null ? new ConsultantInitials[0] : consultants).stream()
+                .map(ConsultantInitials::getInitials).collect(Collectors.toSet());
+    }
+
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static class ConsultantInitials {
+        private String initials;
     }
 
     @Data

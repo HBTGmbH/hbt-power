@@ -26,6 +26,7 @@ management:
         allowed-origins: '*'
         allowed-methods: '*'
 pwr-profile-service-url: http://pwr-profile-service:9004
+pwr-view-profile-service-url: http://pwr-view-profile-service:9008
 ---
 spring:
   profiles: localDev
@@ -38,3 +39,4 @@ spring:
     hibernate:
       ddl-auto: update
 pwr-profile-service-url: http://localhost:9004
+pwr-view-profile-service-url: http://localhost:9008
