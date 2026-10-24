@@ -6,7 +6,7 @@ import {ConsultantInfo} from '../../../model/ConsultantInfo';
 import {PowerLocalize} from '../../../localization/PowerLocalizer';
 import {PwrListTable} from '../../general/pwr-list-table';
 import {PwrSpacer} from '../../general/pwr-spacer_module';
-import {PwrConsultantName} from '../../general/pwr-consultant-name';
+import {PwrConsultantName, useByShownName} from '../../general/pwr-consultant-name';
 
 const useStyles = makeStyles(theme => ({
     layout: {
@@ -83,14 +83,15 @@ interface ProfileElementInfoProps {
     usedBy?: Array<ConsultantInfo>;
 }
 
-const byName = (a: ConsultantInfo, b: ConsultantInfo) =>
-    (a.lastName() + ' ' + a.firstName()).localeCompare(b.lastName() + ' ' + b.firstName());
+const named = (consultant: ConsultantInfo) =>
+    ({initials: consultant.initials(), fullName: consultant.firstName() + ' ' + consultant.lastName()});
 
 /**
  * Info box of a profile element (#199): the name as heading, whatever the type adds, and the consultants using it
  */
 export const ProfileElementInfo = (props: PropsWithChildren<ProfileElementInfoProps>) => {
     const classes = useStyles();
+    const byShownName = useByShownName();
     // Nothing selected; an entry without a name comes with a label for it (#211)
     if (props.name === undefined) {
         return <Typography variant="body2" color="textSecondary">
@@ -107,7 +108,7 @@ export const ProfileElementInfo = (props: PropsWithChildren<ProfileElementInfoPr
             <PwrSpacer size="field"/>
             <div className={classes.usedBy}>
                 <PwrListTable label={PowerLocalize.get('AdminClient.Overview.Info.UsedBy')}
-                              items={[...props.usedBy].sort(byName)}
+                              items={[...props.usedBy].sort((a, b) => byShownName(named(a), named(b)))}
                               itemKey={consultant => consultant.initials()}
                               emptyText={PowerLocalize.get('AdminClient.Overview.Info.UsedByNobody')}
                               columns={[

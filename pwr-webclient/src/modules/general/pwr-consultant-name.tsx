@@ -38,3 +38,22 @@ export const PwrConsultantName = (props: PwrConsultantNameProps) => {
         <span>{name.shortName}</span>
     </Tooltip>;
 };
+
+/** A consultant to put in order by the name the app shows */
+export interface NamedConsultant {
+    initials: string;
+    /** Shown as long as the app does not know the consultant's short name */
+    fullName: string;
+}
+
+/**
+ * Compares consultants by the name {@link PwrConsultantName} shows, ignoring case and accents; the same name by the
+ * initials. For every list of who uses something, which is shown by short name (#238).
+ */
+export function useByShownName(): (a: NamedConsultant, b: NamedConsultant) => number {
+    const names = useSelector((state: ApplicationState) => state.consultantNames.names);
+    const shown = (consultant: NamedConsultant) =>
+        names[consultant.initials] ? names[consultant.initials].shortName : consultant.fullName;
+    return (a, b) => shown(a).localeCompare(shown(b), 'de', {sensitivity: 'base'})
+        || a.initials.localeCompare(b.initials, 'de', {sensitivity: 'base'});
+}

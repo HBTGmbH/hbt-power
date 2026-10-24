@@ -12,7 +12,7 @@ import {SkillServiceClient} from '../../../../clients/SkillServiceClient';
 import {APISkillServiceSkill} from '../../../../model/skill/SkillServiceSkill';
 import {PwrButton} from '../../../general/pwr-button';
 import ArrowBack from '@material-ui/icons/ArrowBack';
-import {PwrConsultantName} from '../../../general/pwr-consultant-name';
+import {PwrConsultantName, useByShownName} from '../../../general/pwr-consultant-name';
 import {PwrFormActions} from '../../../general/pwr-form-actions';
 
 interface MergeSkillDialogProps {
@@ -41,6 +41,7 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
     const [target, setTarget] = useState('');
     const [version, setVersion] = useState('');
     const [targetInfo, setTargetInfo] = useState<TargetInfo>(undefined);
+    const byShownName = useByShownName();
 
     useEffect(() => {
         setStep(STEP_OVERVIEW);
@@ -86,7 +87,8 @@ export const MergeSkillDialog = (props: MergeSkillDialogProps) => {
 
     const renderOverview = () => {
         // Short names with the full name in the tooltip (#216)
-        const consultants = props.skillInfo.toArray().map((value, index) => <React.Fragment key={value.initials()}>
+        const named = (consultant: ConsultantInfo) => ({initials: consultant.initials(), fullName: consultant.getFullName()});
+        const consultants = props.skillInfo.toArray().sort((a, b) => byShownName(named(a), named(b))).map((value, index) => <React.Fragment key={value.initials()}>
             {index > 0 && ', '}
             <PwrConsultantName initials={value.initials()} fullName={value.getFullName()}/>
         </React.Fragment>);
