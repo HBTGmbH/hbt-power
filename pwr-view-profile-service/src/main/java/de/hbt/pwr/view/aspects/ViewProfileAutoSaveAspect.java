@@ -11,6 +11,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 
 /**
  * @see ViewProfileAutoSave
@@ -49,6 +51,8 @@ public class ViewProfileAutoSaveAspect {
     private void anyViewProfileSavable(JoinPoint joinPoint, ViewProfile viewProfile) { //NOSONAR
         LOG.debug(ViewProfileAutoSaveAspect.class + " invoked after " + joinPoint.getSignature().toString() + ". Performing auto-save...");
         if(viewProfile != null) {
+            // Every change counts as use (#289)
+            viewProfile.getViewProfileInfo().setLastUsed(LocalDate.now());
             viewProfileRepository.save(viewProfile);
             LOG.debug("...done.");
         } else {

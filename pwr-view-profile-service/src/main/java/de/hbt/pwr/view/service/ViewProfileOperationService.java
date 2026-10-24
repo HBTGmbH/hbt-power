@@ -83,6 +83,14 @@ public class ViewProfileOperationService {
     }
 
     /**
+     * The view profile was exported (#289): the auto save marks it as used today, so the housekeeping doesn't offer it
+     * as old
+     */
+    public void markExported(ViewProfile viewProfile) {
+        // Nothing else: ViewProfileAutoSaveAspect sets lastUsed and saves
+    }
+
+    /**
      * Attempts to delete a {@link ViewProfile}.
      *
      * @param id    of the view profile

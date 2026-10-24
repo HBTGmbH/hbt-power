@@ -27,6 +27,10 @@ management:
         allowed-methods: '*'
 pwr-profile-service-url: http://pwr-profile-service:9004
 pwr-view-profile-service-url: http://pwr-view-profile-service:9008
+pwr:
+  housekeeping:
+    # Documents older than this the housekeeping offers to delete (#289); the newest of each consultant always stays
+    old-reports-after: 730d
 ---
 spring:
   profiles: localDev

@@ -1,6 +1,5 @@
 package de.hbt.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,6 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class HousekeepingFindings {
 
     public static final int EXAMPLES = 10;
@@ -22,6 +20,15 @@ public class HousekeepingFindings {
     private List<String> examples;
     /** Set if the check could not run, e.g. because another service did not answer */
     private String error;
+    /** Storage the findings take, if the check knows it (#289) */
+    private Long bytes;
+
+    public HousekeepingFindings(String check, long count, List<String> examples, String error) {
+        this.check = check;
+        this.count = count;
+        this.examples = examples;
+        this.error = error;
+    }
 
     public static HousekeepingFindings of(String check, List<String> findings) {
         return new HousekeepingFindings(check, findings.size(), findings.subList(0, Math.min(EXAMPLES, findings.size())), null);

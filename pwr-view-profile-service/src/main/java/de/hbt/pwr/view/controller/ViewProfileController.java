@@ -179,6 +179,7 @@ public class ViewProfileController {
         // Who exports only from the headers of the edge, never from the request (#214)
         ResponseEntity<String> response = reportServiceClient.generateReport(reportInfo(initials, viewProfile, template), "DOC",
                 login, userInitials);
+        viewProfileService.markExported(viewProfile);
         URI location =
                 ofNullable(response).map(HttpEntity::getHeaders).map(HttpHeaders::getLocation)
                         .orElse(URI.create(""));

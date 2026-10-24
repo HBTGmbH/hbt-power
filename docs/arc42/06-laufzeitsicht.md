@@ -219,6 +219,12 @@ sequenceDiagram
         W->>S: GET /admin/housekeeping/unused
         S->>P: GET /admin/skills/usage
         S-->>W: eigene Skills ohne Nutzer
+    and Rubrik „Alt“ (#289)
+        W->>R: GET /admin/housekeeping/old
+        R-->>W: alte Exportdokumente mit Speicherplatz
+    and
+        W->>V: GET /admin/housekeeping/old
+        V-->>W: alte View-Profile
     end
     W->>W: Bereinigen? (Rückfrage mit Anzahl)
     W->>R: DELETE /admin/housekeeping/reports-without-consultant

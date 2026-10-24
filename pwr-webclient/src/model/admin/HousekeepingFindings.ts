@@ -8,4 +8,6 @@ export interface HousekeepingFindings {
     examples: Array<string>;
     /** Set if the check could not run, e.g. because another service did not answer */
     error?: string;
+    /** Storage the findings take, if the check knows it (#289) */
+    bytes?: number;
 }

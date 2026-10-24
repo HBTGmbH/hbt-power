@@ -27,4 +27,10 @@ public class ViewProfileInfo {
 
     private LocalDate creationDate;
 
+    /**
+     * Last day the view profile was changed or exported (#289), for the housekeeping of old view profiles; missing in
+     * view profiles from before, which count as used on the day this was introduced
+     */
+    private LocalDate lastUsed;
+
 }

@@ -59,6 +59,18 @@ export class ReportServiceClient extends PowerHttpClient {
         return this.getQuietly(this.base() + '/admin/housekeeping');
     };
 
+    /** Housekeeping, rubric old (#289): data older than the limit of the service, the newest of each consultant excepted */
+    public getOldHousekeeping = (): Promise<Array<HousekeepingFindings>> => {
+        return this.getQuietly(this.base() + '/admin/housekeeping/old');
+    };
+
+    /** Deletes what the check of old data finds now; the answer says how many */
+    public cleanOldHousekeeping = (check: string): Promise<HousekeepingFindings> => {
+        const url = this.base() + '/admin/housekeeping/old/' + encodeURIComponent(check);
+        this.beginRequest();
+        return this.delete(url);
+    };
+
     /** Deletes what the check finds now; the answer says how many */
     public cleanHousekeeping = (check: string): Promise<HousekeepingFindings> => {
         const url = this.base() + '/admin/housekeeping/' + encodeURIComponent(check);

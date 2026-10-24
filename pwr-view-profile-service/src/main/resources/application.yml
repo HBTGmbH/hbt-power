@@ -27,6 +27,11 @@ view-profile:
   # A display category of a new view profile needs this many skills of the profile; with fewer they move up to the next
   # display category above in the skill tree (#169)
   min-skills-per-category: 3
+pwr:
+  housekeeping:
+    # View profiles not changed and not exported for longer than this the housekeeping offers to delete (#289); the
+    # most recently used of each consultant always stays
+    old-view-profiles-after: 730d
 ---
 spring:
   profiles: localDev
