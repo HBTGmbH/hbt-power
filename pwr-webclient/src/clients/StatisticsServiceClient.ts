@@ -75,13 +75,13 @@ export class StatisticsServiceClient extends PowerHttpClient {
 
 
     public getNameEntityUsageInfo(config: AxiosRequestConfig): Promise<Array<APIConsultant>> {
-        const url = this.base() + '/statistics/entries/referencing';
+        const url = this.base() + '/admin/statistics/entries/referencing';
         this.beginRequest();
         return this.get(url, config);
     }
 
     public getSkillUsageInfo(skillName: string): Promise<Array<APIConsultant>> {
-        const url = this.base() + '/statistics/skill/referencing';
+        const url = this.base() + '/admin/statistics/skill/referencing';
         let config: AxiosRequestConfig = {
             params: {'skill': skillName}
         };

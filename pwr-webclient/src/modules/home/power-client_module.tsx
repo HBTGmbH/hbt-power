@@ -14,15 +14,29 @@ import {ReportHistory} from './reportHistory/report_history-module';
 import {CrossCuttingAsyncActionCreator} from "../../reducers/crosscutting/CrossCuttingAsyncActionCreator";
 import {useEffect} from "react";
 import {useDispatch} from "react-redux";
+import {OIDCService} from '../../OIDCService';
+import {Alerts} from '../../utils/Alerts';
+import {PowerLocalize} from '../../localization/PowerLocalizer';
+import {navigateReplacing} from '../../reducers/navigation/NavigationActionCreator';
 
 
 export const PowerClient = () => {
     const dispatch = useDispatch();
     const {initials} = useParams<{initials: string}>();
+    const mayOpen = OIDCService.instance().mayOpenProfile(initials);
     useEffect(() => {
+        if (!mayOpen) {
+            // Only the own profile, an admin every one (#255): one message instead of an error from every part of the page
+            Alerts.showError(PowerLocalize.getFormatted('ProfileSelect.NotYourProfile', initials));
+            navigateReplacing(Paths.PROFILE_SELECT, dispatch);
+            return;
+        }
         dispatch(CrossCuttingAsyncActionCreator.AsyncLoadProfile(initials));
-    }, [initials])
+    }, [initials, mayOpen, dispatch]);
 
+    if (!mayOpen) {
+        return null;
+    }
     return <div>
         <PowerToolbar/>
         <div style={{marginTop: '70px'}}>

@@ -209,7 +209,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     };
 
     public uploadProfilePicture = (picture: File): Promise<string> => {
-        const url = this.base() + `/profile-pictures`;
+        const url = this.base() + `/admin/profile-pictures`;
         const config = {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -223,7 +223,7 @@ export class ProfileServiceClient extends PowerHttpClient {
     }
 
     public deleteProfilePicture = (id: string): Promise<void> => {
-        const url = this.base() + `/profile-pictures/${id}`;
+        const url = this.base() + `/admin/profile-pictures/${id}`;
         this.beginRequest();
         return this.delete(url);
     }
