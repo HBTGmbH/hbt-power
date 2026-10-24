@@ -22,6 +22,7 @@ flowchart TB
         RD[("Redis<br/>je Service eine logische DB")]
         WT["Watchtower<br/>alle 10 Minuten"]
         BK["DB-Backup<br/>täglich, 30 Stände"]
+        RB["Redis-Backup<br/>täglich, 30 Stände"]
         V1[["Volume lucene-data"]]
         V2[["Verzeichnis fonts<br/>(Hausschrift, nur lesend)"]]
         V3[["Volume db-data, rdb-data"]]
@@ -39,6 +40,7 @@ flowchart TB
     DB --- V3
     RD --- V3
     BK --> DB
+    RB --> RD
     WT -->|"zieht neue Images,<br/>erzeugt Container neu"| GHCR
 ```
 
@@ -52,7 +54,8 @@ flowchart TB
 | **pwr-skill-service** | | Lucene-Index im Volume `lucene-data`, bei jedem Start neu aufgebaut |
 | **pwr-report-service** | | Hausschrift aus dem Verzeichnis `fonts` des Deploy-Repositorys, nur lesend unter `/fonts`. Die Dateien sind lizenziert und nicht eingecheckt (#82). |
 | **MariaDB** | Daten von Profile, Skill, Report | Version 11.8 (LTS) festgelegt; Upgrades innerhalb der Linie macht `MARIADB_AUTO_UPGRADE`. |
-| **DB-Backup** | täglicher Dump der MariaDB, 30 Stände | Auf demselben Host; Redis ist nicht dabei ([Kapitel 11](11-risiken-und-technische-schulden.md)). |
+| **DB-Backup** | täglicher Dump der MariaDB, 30 Stände | Auf demselben Host ([Kapitel 11](11-risiken-und-technische-schulden.md), O1). |
+| **Redis-Backup** | täglicher Dump des Redis mit den View-Profilen und Vorlagen-Metadaten (`redis-cli --rdb`), 30 Stände (#251) | Eine halbe Stunde nach dem DB-Backup, ebenfalls auf demselben Host. Die Wiederherstellung beschreibt `REDIS-BACKUP.md` im Deploy-Repository. Mit #52 kann es entfallen. |
 | **Watchtower** | Spielt neue Images ein | Prüft alle 10 Minuten (`--interval 600`). |
 
 Alle Container liegen im Standardnetz des Compose-Projekts. Die Services erreichen sich über ihre Compose-Namen (`http://pwr-<name>-service:<port>`); das sind die Standardwerte der Properties `pwr-<name>-service-url`. Von außen ist nur der Ingress erreichbar. Die Backend-Services prüfen selbst keine Anmeldung ([Kapitel 8.1](08-querschnittliche-konzepte.md#81-sicherheit)).
