@@ -8,8 +8,8 @@ import {PwrIconButton} from '../pwr-icon-button';
 import {compareNames} from '../../../utils/Comparators';
 
 interface AliasListProps {
-    /** Name of the skill the aliases belong to */
-    skillName: string;
+    /** Name of the skill or profile element the aliases belong to */
+    name: string;
     aliases: Immutable.List<string>;
 
     onAliasAdd(alias: string): void;
@@ -18,7 +18,7 @@ interface AliasListProps {
 }
 
 /**
- * Shows the aliases (other spellings) of a skill and lets the admin add and remove them.
+ * Shows the aliases (other spellings) of a skill or profile element (#270) and lets the admin add and remove them.
  */
 export const AliasList = (props: AliasListProps) => {
     const [newAlias, setNewAlias] = useState('');
@@ -37,7 +37,7 @@ export const AliasList = (props: AliasListProps) => {
     return <div>
         {sortedAliases.isEmpty()
             ? <Typography variant="body2" color="textSecondary">
-                {PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.None', props.skillName)}
+                {PowerLocalize.getFormatted('AdminClient.Info.SkillTree.Alias.None', props.name)}
             </Typography>
             : <List dense>
                 {sortedAliases.map(alias => <ListItem key={alias}>

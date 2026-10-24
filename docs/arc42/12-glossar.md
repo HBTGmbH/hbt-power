@@ -18,7 +18,7 @@
 | **Eintragstyp** | Art eines Profileintrags: Sprache, Qualifikation, Weiterbildung, Ausbildung, Branche, Werdegang, Schwerpunkt |
 | **Entra ID** | Microsoft Entra ID (früher Azure AD), der Identitätsanbieter für die Anmeldung und die App-Rollen |
 | **Export** | Erzeugen eines Word-Dokuments aus einem View-Profil mit einer Vorlage |
-| **Früherer Name** (`NameEntityFormerName`) | Alter Name eines umbenannten oder zusammengeführten Profil-Elements. Wer ihn tippt, bekommt das Element. |
+| **Früherer Name** (`NameEntityFormerName`) | Alter Name eines umbenannten oder zusammengeführten Profil-Elements, oder ein Alias, den ein Admin angelegt hat (#270). Wer ihn tippt, bekommt das Element. Innerhalb des Typs eindeutig. |
 | **Hausschrift** | Simplon Norm, lizenziert; in der Produktion als Volume eingebunden |
 | **Housekeeping** | Admin-Seite und Endpunkte `/admin/housekeeping` je Service, die Datenleichen melden und bereinigen (#242) |
 | **Identitäts-Header** | `X-Pwr-User-Login`, `X-Pwr-User-Initials` und `X-Pwr-User-Admin`; die Edge setzt sie aus dem geprüften Token |

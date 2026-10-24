@@ -176,7 +176,7 @@ Besonderheiten (Details in [`AGENTS.md`](../../AGENTS.md)):
 - `ProfileEntry` und `AdminNotification` sind mit `JOINED` vererbt. Altdaten enthalten Zeilen in `profile_entry` ohne Zeile eines Eintragstyps (#236), deshalb werden Einträge je Typ geladen.
 - Die Skills eines Projekts sind dieselben Zeilen wie die Skills des Profils (`ProfileEntryService.handleProjectSkill`).
 - Ein aus einer Collection entferntes Element bleibt als Zeile mit `profile_id` NULL stehen. Projekte löscht `deleteProject` seit #243 wirklich.
-- Profil-Elemente (`NameEntity`) sind gemeinsame Einträge aller Profile. Umbenannte und zusammengeführte Elemente behalten ihre früheren Namen (#227, #230).
+- Profil-Elemente (`NameEntity`) sind gemeinsame Einträge aller Profile. Umbenannte und zusammengeführte Elemente behalten ihre früheren Namen (#227, #230); Admins legen weitere als Aliase an (#270). Alle Benutzer lesen sie über `GET /suggestions/aliases` für die Vorschläge.
 
 ### 5.2.3 pwr-skill-service
 

@@ -419,4 +419,103 @@ public class NameEntityAdminServiceITest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['" + element("Banken", SECTOR).getId() + "']").value(1));
     }
+
+    // -------------------------------------------------------------------------------------------- aliases (#270)
+
+    private NameEntity company(String name) {
+        return nameEntityRepository.save(named(name, COMPANY));
+    }
+
+    @Test
+    public void anAlias_standsForTheElement_whenAConsultantSavesIt() {
+        NameEntity bahn = company("Deutsche Bahn AG");
+        sector(anna, "Logistik");
+        NameEntity logistics = element("Logistik", SECTOR);
+
+        assertThat(nameEntityAdminService.addAlias(bahn.getId(), " DB ")).containsExactly("DB");
+        nameEntityAdminService.addAlias(logistics.getId(), "Transport");
+        Project project = project(bert, "db");
+        SectorEntry entry = sector(bert, "transport");
+
+        assertThat(project.getClient().getId()).isEqualTo(bahn.getId());
+        assertThat(entry.getNameEntity().getId()).isEqualTo(logistics.getId());
+    }
+
+    @Test
+    public void anAlias_mustNotBeTheNameOrAliasOfAnotherElementOfTheType() {
+        NameEntity bahn = company("Deutsche Bahn AG");
+        NameEntity otto = company("Otto GmbH");
+        nameEntityAdminService.addAlias(bahn.getId(), "DB");
+
+        assertThat(catchThrowableOfType(() -> nameEntityAdminService.addAlias(otto.getId(), "db"),
+                WebApplicationException.class).getStatus()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(catchThrowableOfType(() -> nameEntityAdminService.addAlias(otto.getId(), " deutsche bahn ag"),
+                WebApplicationException.class).getStatus()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(catchThrowableOfType(() -> nameEntityAdminService.addAlias(otto.getId(), "  "),
+                WebApplicationException.class).getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        // The own name or alias changes nothing
+        assertThat(nameEntityAdminService.addAlias(bahn.getId(), "deutsche bahn ag")).containsExactly("DB");
+        assertThat(nameEntityAdminService.addAlias(bahn.getId(), "db")).containsExactly("DB");
+    }
+
+    @Test
+    public void theSameAlias_isAllowedForElementsOfDifferentTypes() {
+        NameEntity bahn = company("Deutsche Bahn AG");
+        sector(anna, "Datenbanken");
+        nameEntityAdminService.addAlias(bahn.getId(), "DB");
+
+        assertThat(nameEntityAdminService.addAlias(element("Datenbanken", SECTOR).getId(), "DB")).containsExactly("DB");
+    }
+
+    @Test
+    public void renaming_toTheAliasOfAnotherElement_isAConflict_toAnOwnAliasIsAllowed() {
+        NameEntity bahn = company("Deutsche Bahn AG");
+        NameEntity otto = company("Otto GmbH");
+        nameEntityAdminService.addAlias(bahn.getId(), "DB");
+
+        assertThat(catchThrowableOfType(() -> nameEntityAdminService.rename(otto.getId(), "DB"),
+                WebApplicationException.class).getStatus()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(nameEntityAdminService.findAliases(bahn.getId())).containsExactly("DB");
+
+        nameEntityAdminService.rename(bahn.getId(), "DB");
+        assertThat(nameEntityAdminService.findAliases(bahn.getId())).containsExactly("Deutsche Bahn AG");
+    }
+
+    @Test
+    public void merging_movesTheAliases_deletingDeletesThem() {
+        NameEntity bahn = company("Deutsche Bahn AG");
+        NameEntity bahnShort = company("Deutsche Bahn");
+        nameEntityAdminService.addAlias(bahnShort.getId(), "DB");
+
+        nameEntityAdminService.merge(bahnShort.getId(), bahn.getId());
+        assertThat(nameEntityAdminService.findAliases(bahn.getId())).containsExactly("DB", "Deutsche Bahn");
+
+        nameEntityAdminService.delete(bahn.getId());
+        assertThat(nameEntityAdminService.findFormerNames()).noneMatch(alias -> alias.getCurrentName().equals("Deutsche Bahn AG"));
+    }
+
+    @Test
+    public void deletingAnAlias_keepsTheEntriesSavedUnderIt() {
+        NameEntity bahn = company("Deutsche Bahn AG");
+        nameEntityAdminService.addAlias(bahn.getId(), "DB");
+        Project project = project(anna, "DB");
+
+        assertThat(nameEntityAdminService.deleteAlias(bahn.getId(), "db")).isEmpty();
+        assertThat(project.getClient().getId()).isEqualTo(bahn.getId());
+    }
+
+    @Test
+    public void everyUserGetsTheAliasesForTheSuggestions_onlyAdminsChangeThem() throws Exception {
+        NameEntity bahn = company("Deutsche Bahn AG");
+        nameEntityAdminService.addAlias(bahn.getId(), "DB");
+
+        mockMvc.perform(get("/suggestions/aliases").header("X-Pwr-User-Admin", "false").header("X-Pwr-User-Initials", "ann"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.name == 'DB')].currentName").value("Deutsche Bahn AG"));
+        mockMvc.perform(post("/admin/name-entities/" + bahn.getId() + "/aliases").param("alias", "Bahn")
+                        .header("X-Pwr-User-Admin", "false").header("X-Pwr-User-Initials", "ann"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/admin/name-entities/" + bahn.getId() + "/aliases").param("alias", "Bahn"))
+                .andExpect(status().isOk());
+    }
 }

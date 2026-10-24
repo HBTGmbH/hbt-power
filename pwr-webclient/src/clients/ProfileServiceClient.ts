@@ -168,6 +168,19 @@ export class ProfileServiceClient extends PowerHttpClient {
         return this.delete(url);
     };
 
+    /** Adds an alias (#270); 400 for a blank one, 409 if it is the name or an alias of another element of the type */
+    public addNameEntityAlias = (id: number, alias: string): Promise<Array<string>> => {
+        const url = this.base() + '/admin/name-entities/' + id + '/aliases';
+        this.beginRequest();
+        return this.postExpecting(url, [400, 409], null, {params: {alias}});
+    };
+
+    public deleteNameEntityAlias = (id: number, alias: string): Promise<Array<string>> => {
+        const url = this.base() + '/admin/name-entities/' + id + '/aliases';
+        this.beginRequest();
+        return this.delete(url, {params: {alias}});
+    };
+
     public getUnusedNameEntities = (type: string): Promise<Array<NameEntity>> => {
         const url = this.base() + '/admin/name-entities/unused';
         this.beginRequest();
