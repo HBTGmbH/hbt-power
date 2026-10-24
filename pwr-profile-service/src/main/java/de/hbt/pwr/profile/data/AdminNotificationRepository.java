@@ -1,5 +1,7 @@
 package de.hbt.pwr.profile.data;
 
+import de.hbt.pwr.profile.model.notification.ProjectNotification;
+import de.hbt.pwr.profile.model.profile.entries.Project;
 import de.hbt.pwr.profile.model.notification.AdminNotification;
 import de.hbt.pwr.profile.model.notification.AdminNotificationStatus;
 import de.hbt.pwr.profile.model.notification.SkillNotification;
@@ -22,6 +24,9 @@ public interface AdminNotificationRepository extends JpaRepository<AdminNotifica
 
 
     void deleteAdminNotificationsByProfileId(Long id);
+
+    @Query("select n from ProjectNotification n where n.project in :projects")
+    List<ProjectNotification> findProjectNotificationsAbout(@Param("projects") Collection<Project> projects);
 
     void deleteByAdminNotificationStatus(AdminNotificationStatus status);
 

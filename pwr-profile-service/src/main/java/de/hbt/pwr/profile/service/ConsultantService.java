@@ -11,6 +11,7 @@ import de.hbt.pwr.profile.errors.WebApplicationException;
 import de.hbt.pwr.profile.model.Consultant;
 import de.hbt.pwr.profile.model.Skill;
 import de.hbt.pwr.profile.model.profile.Profile;
+import de.hbt.pwr.profile.model.profile.entries.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,10 @@ import org.springframework.web.client.RestClientException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
@@ -146,14 +149,7 @@ public class ConsultantService {
 
             adminNotificationRepository.deleteAdminNotificationsByProfileId(toDelete.getProfile().getId());
 
-            Stream<Skill> profileSkills = toDelete.getProfile().getSkills().stream();
-            Stream<Skill> projectSkills = toDelete.getProfile().getProjects().stream().flatMap(project -> project.getSkills().stream());
-
-            toDelete.getProfile().getProjects().forEach(project -> project.getSkills().clear());
-            projectSkills.forEach(skillRepository::delete);
-            profileSkills.forEach(skillRepository::delete);
-            toDelete.getProfile().getSkills().clear();
-            toDelete.getProfile().getProjects().forEach(projectRepository::delete);
+            deleteProjectsAndSkills(toDelete.getProfile());
             String pictureId = toDelete.getProfilePictureId();
             consultantRepository.delete(toDelete);
             if (pictureId != null) {
@@ -161,6 +157,44 @@ public class ConsultantService {
             }
             statisticsClient.refreshConsultantsAfterCommit();
         }
+    }
+
+    /**
+     * The skills of the projects are those of the profile. Until #243 a deleted project kept its row and its links to
+     * them; such projects go with the consultant, or deleting the skills breaks the links (project_skills). A skill
+     * a project of another profile holds, which old data has, stays.
+     */
+    private void deleteProjectsAndSkills(Profile profile) {
+        Set<Skill> skills = new HashSet<>(profile.getSkills());
+        profile.getProjects().forEach(project -> skills.addAll(project.getSkills()));
+        if (!skills.isEmpty()) {
+            List<Project> deletedProjects = projectRepository.findAllWithoutProfileHoldingAnyOf(skills);
+            if (!deletedProjects.isEmpty()) {
+                log.info("Deleting " + deletedProjects.size() + " projects of " + profile.getId() + " deleted before");
+                deleteProjects(deletedProjects);
+            }
+            List<Skill> elsewhere = projectRepository.findSkillsInProjectsOfOtherProfiles(skills, profile);
+            if (!elsewhere.isEmpty()) {
+                log.warn("Keeping skills a project of another profile holds: " + elsewhere);
+                skills.removeAll(elsewhere);
+            }
+        }
+        deleteProjects(new ArrayList<>(profile.getProjects()));
+        profile.getProjects().clear();
+        profile.getSkills().clear();
+        skills.forEach(skillRepository::delete);
+    }
+
+    private void deleteProjects(List<Project> projects) {
+        if (projects.isEmpty()) {
+            // MariaDB rejects "in ()"
+            return;
+        }
+        adminNotificationRepository.deleteAll(adminNotificationRepository.findProjectNotificationsAbout(projects));
+        projects.forEach(project -> {
+            project.getSkills().clear();
+            projectRepository.delete(project);
+        });
     }
 
     private void deleteInOtherServices(String initials) {
